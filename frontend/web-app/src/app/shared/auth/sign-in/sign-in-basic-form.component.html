@@ -1,0 +1,54 @@
+<form class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate" id="kt_sign_in_form"
+  data-kt-redirect-url="/craft/index.html" action="#">
+  <div class="text-center mb-10">
+    <h1 class="text-dark mb-3">
+      Iniciar sesión en {{utils.title}} </h1>
+    <div class="text-gray-400 fw-semibold fs-4">
+      ¿Eres nuevo aquí?
+      <a routerLink="/auth/sign-up/basic" class="link-primary fw-bold">
+        Crear una cuenta
+      </a>
+    </div>
+  </div>
+  <div class="fv-row mb-10 fv-plugins-icon-container">
+    <label class="form-label fs-6 fw-bold text-dark">Correo</label>
+    <input class="form-control form-control-lg form-control-solid" type="text" name="email" autocomplete="off">
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+  </div>
+  <div class="fv-row mb-10 fv-plugins-icon-container">
+    <div class="d-flex flex-stack mb-2">
+      <label class="form-label fw-bold text-dark fs-6 mb-0">Password</label>
+      <a routerLink="/auth/sign-in/password-reset" class="link-primary fs-6 fw-bold">
+        ¿Olvidaste tu contraseña?
+      </a>
+    </div>
+    <input class="form-control form-control-lg form-control-solid" type="password" name="password" autocomplete="off">
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+  </div>
+  <div class="text-center">
+    <button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary w-100 mb-5">
+      <span class="indicator-label">
+        Continuar
+      </span>
+
+      <span class="indicator-progress">
+        Por favor espere... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+      </span>
+    </button>
+    <div class="text-center text-muted text-uppercase fw-bold mb-5">o</div>
+    <a [routerLink]="[]" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
+      <img alt="Logo" src="media/svg/brand-logos/google-icon.svg" class="h-20px me-3">
+      Continuar con Google
+    </a>
+    <a [routerLink]="[]" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
+      <img alt="Logo" src="media/svg/brand-logos/facebook-4.svg" class="h-20px me-3">
+      Continuar con Facebook
+    </a>
+    <a [routerLink]="[]" class="btn btn-flex flex-center btn-light btn-lg w-100">
+      <img alt="Logo" src="media/svg/brand-logos/apple-black.svg" class="theme-light-show h-20px me-3">
+      <img alt="Logo" src="media/svg/brand-logos/apple-black-dark.svg"
+        class="theme-dark-show h-20px me-3">
+      Continuar con Apple
+    </a>
+  </div>
+</form>

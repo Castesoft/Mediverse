@@ -1,0 +1,401 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // serve home web-app (localhost:4800)
+        {
+            "label": "serve home web-app (port 4800)",
+            "detail": "(ng serve) serve home web-app (localhost:4800)",
+            "type": "shell",
+            "command": "ng s home",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // serve auth ng-client (localhost:4801)
+        {
+            "label": "serve auth ng-client (port 4801)",
+            "detail": "(ng serve) serve auth ng-client (localhost:4801)",
+            "type": "shell",
+            "command": "ng s auth",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // serve account ng-client (localhost:4802)
+        {
+            "label": "serve account ng-client (port 4802)",
+            "detail": "(ng serve) serve account ng-client (localhost:4802)",
+            "type": "shell",
+            "command": "ng s account",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // serve app ng-client (localhost:4803)
+        {
+            "label": "serve app ng-client (port 4803)",
+            "detail": "(ng serve) serve app ng-client (localhost:4803)",
+            "type": "shell",
+            "command": "ng s app",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // serve admin ng-client (localhost:4804)
+        {
+            "label": "serve admin ng-client (port 4804)",
+            "detail": "(ng serve) serve admin ng-client (localhost:4804)",
+            "type": "shell",
+            "command": "ng s admin",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // Serve all ng-clients
+        {
+            "label": "serve all ng-clients",
+            "detail": "[ (1) serve home web-app (port 4800), (2) serve auth ng-client (port 4801), (3) serve account ng-client (port 4802), (4) serve app ng-client (port 4803), (5) serve admin ng-client (port 4804) ] | this will serve all ng-clients",
+            "dependsOn": [
+                "serve home web-app (port 4800)",
+                "serve auth ng-client (port 4801)",
+                "serve account ng-client (port 4802)",
+                "serve app ng-client (port 4803)",
+                "serve admin ng-client (port 4804)"
+            ],
+            "dependsOrder": "parallel"
+        },
+        // setup account ng-client SSL
+        {
+            "label": "install account ng-client SSL cert",
+            "detail": "(mkcert localhost) install SSL certificate for account ng-client (localhost:4802)",
+            "type": "shell",
+            "command": "mkcert localhost",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite/projects/account/ssl",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // setup admin ng-client SSL
+        {
+            "label": "install admin ng-client SSL cert",
+            "detail": "(mkcert localhost) install SSL certificate for admin ng-client (localhost:4804)",
+            "type": "shell",
+            "command": "mkcert localhost",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite/projects/admin/ssl",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // setup app ng-client SSL
+        {
+            "label": "install app ng-client SSL cert",
+            "detail": "(mkcert localhost) install SSL certificate for app ng-client (localhost:4803)",
+            "type": "shell",
+            "command": "mkcert localhost",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite/projects/app/ssl",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // setup auth ng-client SSL
+        {
+            "label": "install auth ng-client SSL cert",
+            "detail": "(mkcert localhost) install SSL certificate for auth ng-client (localhost:4801)",
+            "type": "shell",
+            "command": "mkcert localhost",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite/projects/auth/ssl",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // setup home ng-client SSL
+        {
+            "label": "install home ng-client SSL cert",
+            "detail": "(mkcert localhost) install SSL certificate for home ng-client (localhost:4800)",
+            "type": "shell",
+            "command": "mkcert localhost",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite/projects/home/ssl",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // Install all SSL certificates
+        {
+            "label": "install all SSL certs",
+            "detail": "[ (1) install home ng-client SSL cert, (2) install auth ng-client SSL cert, (3) install account ng-client SSL cert, (4) install app ng-client SSL cert, (5) install admin ng-client SSL cert ] | this will install all SSL certificates",
+            "dependsOn": [
+                "install home ng-client SSL cert",
+                "install auth ng-client SSL cert",
+                "install account ng-client SSL cert",
+                "install app ng-client SSL cert",
+                "install admin ng-client SSL cert"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "install node_module",
+            "detail": "(npm i) install node modules",
+            "type": "shell",
+            "command": "npm i",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        {
+            "label": "setup frontend",
+            "detail": "[ (1) install frontend ssl cert, (2) install node_module ] | this will set up the frontend",
+            "dependsOn": [
+                "install frontend ssl cert",
+                "install node_module"
+            ],
+            "dependsOrder": "sequence"
+        },
+        // (bash) delete .angular/
+        {
+            "label": "(bash) delete .angular/",
+            "detail": "(rm -fR .angular) delete the .angular directory",
+            "type": "shell",
+            "command": "rm -fR .angular",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // (bash) delete package-lock.json
+        {
+            "label": "(bash) delete package-lock.json",
+            "detail": "(rm package-lock.json) delete the package-lock.json file if it exists",
+            "type": "shell",
+            "command": "[ -f package-lock.json ] && rm package-lock.json || echo 'No package-lock.json to remove'",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // (bash) delete node_modules
+        {
+            "label": "(bash) delete node_modules",
+            "detail": "(rm -fR node_modules) delete the node_modules directory",
+            "type": "shell",
+            "command": "rm -fR node_modules",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // (sequence) (bash) reset frontend
+        {
+            "label": "(sequence) (bash) reset frontend",
+            "detail": "[ (1) delete .angular/, (2) delete package-lock.json, (3) delete node_modules ] | this will reset the frontend",
+            "dependsOn": [
+                "(bash) delete .angular/",
+                "(bash) delete package-lock.json",
+                "(bash) delete node_modules"
+            ],
+            "dependsOrder": "sequence"
+        },
+        // update node modules and dependencies
+        {
+            "label": "npm update",
+            "detail": "(npm update) update node modules and dependencies",
+            "type": "shell",
+            "command": "npm update",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        {
+            "label": "update all dependencies",
+            "detail": "(npm i -g npm-check-updates) globally install npm-check-updates",
+            "type": "shell",
+            "command": "npm i -g npm-check-updates",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        {
+            "label": "execute update node dependencies",
+            "detail": "(ncu -u) update the package.json dependencies to their latest versions",
+            "type": "shell",
+            "command": "ncu -u",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/suite",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // (sequence) (bash) update package.json
+        {
+            "label": "(sequence) (bash) update package.json",
+            "detail": "[ (1) reset frontend, (2) npm update, (3) update all dependencies, (4) execute update node dependencies, (5) install node_module ] | this will update the package.json",
+            "dependsOn": [
+                "(sequence) (bash) reset frontend",
+                "npm update",
+                "update all dependencies",
+                "execute update node dependencies",
+                "install node_module"
+            ],
+            "dependsOrder": "sequence"
+        }
+    ]
+}

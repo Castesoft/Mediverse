@@ -1,0 +1,109 @@
+<form class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate"
+  id="kt_sign_up_form">
+  <div class="mb-10 text-center">
+    <h1 class="text-dark mb-3">
+      Crear una cuenta
+    </h1>
+
+    <div class="text-gray-400 fw-semibold fs-4">
+      ¿Ya tienes una cuenta?
+
+      <a routerLink="/auth/sign-in/basic" class="link-primary fw-bold">
+        Inicia sesión aquí
+      </a>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-light-primary fw-bold w-100 mb-10">
+    <img alt="Logo" src="media/svg/brand-logos/google-icon.svg" class="h-20px me-3">
+    Iniciar sesión con Google
+  </button>
+
+  <div class="d-flex align-items-center mb-10">
+    <div class="border-bottom border-gray-300 mw-50 w-100"></div>
+    <span class="fw-semibold text-gray-400 fs-7 mx-2">o</span>
+    <div class="border-bottom border-gray-300 mw-50 w-100"></div>
+  </div>
+
+  <div class="row fv-row mb-7 fv-plugins-icon-container">
+    <div class="col-xl-6">
+      <label class="form-label fw-bold text-dark fs-6">First Name</label>
+      <input class="form-control form-control-lg form-control-solid" type="text" placeholder="" name="first-name"
+        autocomplete="off">
+      <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
+      </div>
+    </div>
+
+    <div class="col-xl-6">
+      <label class="form-label fw-bold text-dark fs-6">Last Name</label>
+      <input class="form-control form-control-lg form-control-solid" type="text" placeholder="" name="last-name"
+        autocomplete="off">
+      <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
+      </div>
+    </div>
+  </div>
+
+  <div class="fv-row mb-7 fv-plugins-icon-container">
+    <label class="form-label fw-bold text-dark fs-6">Email</label>
+    <input class="form-control form-control-lg form-control-solid" type="email" placeholder="" name="email"
+      autocomplete="off">
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+  </div>
+
+  <div class="mb-10 fv-row fv-plugins-icon-container" data-kt-password-meter="true">
+    <div class="mb-1">
+      <label class="form-label fw-bold text-dark fs-6">
+        Password
+      </label>
+
+      <div class="position-relative mb-3">
+        <input class="form-control form-control-lg form-control-solid" type="password" placeholder="" name="password"
+          autocomplete="off">
+
+        <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
+          data-kt-password-meter-control="visibility">
+          <i class="ki-duotone ki-eye-slash fs-2"></i> <i class="ki-duotone ki-eye fs-2 d-none"></i> </span>
+      </div>
+
+      <div class="d-flex align-items-center mb-3" data-kt-password-meter-control="highlight">
+        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px"></div>
+      </div>
+    </div>
+
+    <div class="text-muted">
+      Use 8 or more characters with a mix of letters, numbers &amp; symbols.
+    </div>
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+  </div>
+
+  <div class="fv-row mb-5 fv-plugins-icon-container">
+    <label class="form-label fw-bold text-dark fs-6">Confirm Password</label>
+    <input class="form-control form-control-lg form-control-solid" type="password" placeholder=""
+      name="confirm-password" autocomplete="off">
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+  </div>
+
+  <div class="fv-row mb-10 fv-plugins-icon-container">
+    <label class="form-check form-check-custom form-check-solid form-check-inline">
+      <input class="form-check-input" type="checkbox" name="toc" value="1">
+      <span class="form-check-label fw-semibold text-gray-700 fs-6">
+        Estoy de acuerdo con los <a [routerLink]="[]" class="ms-1 link-primary">Términos y condiciones</a>.
+      </span>
+    </label>
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+  </div>
+
+  <div class="text-center">
+    <button type="button" id="kt_sign_up_submit" class="btn btn-lg btn-primary">
+      <span class="indicator-label">
+        Enviar
+      </span>
+      <span class="indicator-progress">
+        Por favor espere... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+      </span>
+    </button>
+  </div>
+</form>
