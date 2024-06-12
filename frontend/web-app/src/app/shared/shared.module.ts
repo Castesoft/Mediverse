@@ -8,6 +8,7 @@ import { SignInBasicFormComponent } from './auth/sign-in/sign-in-basic-form.comp
 import { SignUpBasicFormComponent } from './auth/sign-up/sign-up-basic-form.component';
 import { FormControlComponent } from './form-controls/form-control.component';
 import { AccountFooterComponent } from '../core/components/account/footer.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 
 
@@ -19,15 +20,12 @@ import { AccountFooterComponent } from '../core/components/account/footer.compon
 
     FormControlComponent,
     AccountFooterComponent,
-
-
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-
     NgxBootstrapModule,
   ],
   exports: [

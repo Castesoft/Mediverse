@@ -80,6 +80,8 @@
               "public/js/layout/theme-mode-user.js",
               "public/js/layout/theme-mode.js",
 
+              "node_modules/apexcharts/dist/apexcharts.min.js",
+
               "public/js/vendors/plugins/apexchart.init.js",
               "public/js/vendors/plugins/bootstrap-markdown.init.js",
               "public/js/vendors/plugins/datatables.init.js",
