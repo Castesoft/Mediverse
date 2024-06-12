@@ -9,8 +9,6 @@ import { LogisticsComponent } from './logistics.component';
 import { ProjectsComponent } from './projects.component';
 import { CoreModule } from '../../core/core.module';
 import { SharedModule } from '../../shared/shared.module';
-import { OverviewComponent } from './overview.component';
-import { NgApexchartsModule } from 'ng-apexcharts';
 
 
 @NgModule({
@@ -19,13 +17,12 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     MultipurposeComponent,
     StoreAnalyticsComponent,
     LogisticsComponent,
-    ProjectsComponent,
-    OverviewComponent
+    ProjectsComponent
   ],
   imports: [
     CommonModule,
     DashboardRoutingModule,
-    NgApexchartsModule,
+
     CoreModule,
     SharedModule,
   ]

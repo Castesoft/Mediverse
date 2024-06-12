@@ -5,10 +5,8 @@ import { LogisticsComponent } from './logistics.component';
 import { MultipurposeComponent } from './multipurpose.component';
 import { StoreAnalyticsComponent } from './store-analytics.component';
 import { ProjectsComponent } from './projects.component';
-import { OverviewComponent } from './overview.component';
 
 const routes: Routes = [
-  { path: '', component: OverviewComponent },
   {
     path: 'logistics',
     component: LogisticsComponent,
@@ -24,11 +22,11 @@ const routes: Routes = [
   {
     path: 'projects',
     component: ProjectsComponent,
-  },
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
-export class DashboardRoutingModule {}
+export class DashboardRoutingModule { }

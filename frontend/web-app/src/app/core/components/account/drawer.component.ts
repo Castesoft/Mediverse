@@ -1,4 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 declare var KTDrawer: any;
 
@@ -17,10 +18,11 @@ declare var KTDrawer: any;
   },
   selector: '[drawer]',
   templateUrl: './drawer.component.html',
+  styleUrls: ['./drawer.component.scss']
 })
 export class DrawerComponent {
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef, private route: ActivatedRoute) {
     // const element = this.el.nativeElement;
 
     // const drawer = new KTDrawer(element, {
