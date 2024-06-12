@@ -1,0 +1,183 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "web-app": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss",
+          "skipTests": true,
+          "standalone": false
+        },
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true,
+          "standalone": false
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true,
+          "standalone": false
+        },
+        "@schematics/angular:resolver": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "allowedCommonJsDependencies": [
+              "cuid"
+            ],
+            "outputPath": "dist/web-app",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "node_modules/typeface-roboto/index.css",
+              "node_modules/typeface-nunito-sans/index.css",
+              "node_modules/typeface-inter/inter.css",
+
+              "public/plugins/keenicons/duotone/style.css",
+              "public/plugins/keenicons/outline/style.css",
+              "public/plugins/keenicons/solid/style.css",
+
+              "public/sass/style.scss",
+
+              "src/styles.scss"
+            ],
+            "scripts": [
+              "public/js/layout/aside.js",
+              "public/js/layout/builder.js",
+              "public/js/layout/header.js",
+              "public/js/layout/search.js",
+              "public/js/layout/theme-mode-user.js",
+              "public/js/layout/theme-mode.js",
+
+              "public/js/vendors/plugins/apexchart.init.js",
+              "public/js/vendors/plugins/bootstrap-markdown.init.js",
+              "public/js/vendors/plugins/datatables.init.js",
+              "public/js/vendors/plugins/dropzone.init.js",
+              "public/js/vendors/plugins/prism.init.js",
+              "public/js/vendors/plugins/select2.init.js",
+              "public/js/vendors/plugins/sweetalert2.init.js",
+              "public/js/vendors/plugins/tempus-dominus.init.js",
+
+              "public/plugins/toastr/build/toastr.min.js",
+
+              "public/js/components/drawer.js",
+              "public/js/components/_init.js",
+              "public/js/components/app.js"
+            ],
+            "server": "src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "server.ts"
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kB",
+                  "maximumError": "4kB"
+                }
+              ],
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "options": {
+            "port": 4400,
+            "sslCert": "ssl/localhost.pem",
+            "sslKey": "ssl/localhost-key.pem",
+            "ssl": true
+          },
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "web-app:build:production"
+            },
+            "development": {
+              "buildTarget": "web-app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "89ad677a-f1e7-4b69-9140-decc28d7eb03"
+  }
+}

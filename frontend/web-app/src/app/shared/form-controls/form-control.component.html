@@ -1,0 +1,39 @@
+<label [for]="id ? id : controlName" class="form-label fw-bold text-gray-900 fs-6">
+  {{ label }}
+  @if(isOptional && !hideIsOptional) {
+  <span class="text-muted ms-1">(opcional)</span>
+  }
+</label>
+<input [type]="type" [formControl]="control" [placeholder]="placeholder" [autocomplete]="autocomplete"
+  [spellcheck]="spellcheck" [attr.role]="role" [enterKeyHint]="false" [id]="id ? id : controlName"
+  [attr.list]="datalistOptions ? controlName + 'datalist' : null"
+  [attr.autofocus]="shouldAutoFocus ? 'autofocus' : null" [readonly]="isReadonly" class="form-control form-control-solid"
+  [ngClass]="{
+    'is-invalid': submitted && control.invalid,
+    'is-valid': submitted && control.valid,
+    'border-warning border-2': isPending
+  }" [attr.aria-describedby]="formText ? controlName + 'helpBlock' : null" [attr.aria-label]="label + ' input'" />
+@if(datalistOptions) {
+<datalist [id]="controlName + 'datalist'">
+  @for(option of datalistOptions ;track option) {
+  <option [value]="option.name"></option>
+  }
+</datalist>
+} @if(control.status === 'PENDING' && control.dirty) {
+<div class="spinner-border spinner-border-sm text-primary ms-2 inset" role="status">
+  <span class="visually-hidden">Cargando...</span>
+</div>
+}
+
+@for(error of control.errors | keyvalue; track error) {
+  @if(submitted && control.invalid) {
+    @if (customErrorMessages[error.key]) {
+      <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">{{ customErrorMessages[error.key] }}</div>
+    }
+  }
+}
+@if(formText) {
+<div [id]="controlName + 'helpBlock'" class="form-text">
+  {{ formText }}
+</div>
+}
