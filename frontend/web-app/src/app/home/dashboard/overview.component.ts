@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ChartComponent, ApexOptions } from 'ng-apexcharts';
+import { appointments } from '../../data/appointments';
+import { Appointment } from '../../types';
 
 @Component({
   selector: 'dashboard-multipurpose-route',
@@ -10,10 +12,11 @@ export class OverviewComponent {
   @ViewChild('chart') chart!: ChartComponent;
 
   public chartOptions: Partial<ApexOptions>;
+  appointments: Appointment[] = appointments.slice(4, 7);
 
   constructor() {
     this.chartOptions = {
-      series: [76],
+      series: [37.5],
       chart: {
         fontFamily: 'Inter, Helvetica, "sans-serif"',
         type: 'radialBar',
@@ -47,13 +50,15 @@ export class OverviewComponent {
           endAngle: 90,
           dataLabels: {
             name: {
-              show: false,
+              show: true,
               fontWeight: '700',
+              offsetY: -20,
             },
             value: {
               offsetY: -2,
               fontSize: '28px',
               fontWeight: '700',
+              formatter: (val) => val + '%',
             },
           },
         },
@@ -69,7 +74,7 @@ export class OverviewComponent {
           stops: [0, 50, 53, 91],
         },
       },
-      labels: ['Average Results'],
+      labels: ['3/8 Citas'],
     };
   }
 }
