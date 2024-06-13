@@ -1,0 +1,88 @@
+$base-blue: #00a3ff;
+$transparent-blue: rgba(0, 163, 255, 0.5);
+
+::ng-deep .nav-tabs .nav-link.active {
+  color: $base-blue;
+  background-color: transparent;
+  border: 0px;
+  border-bottom: 2px solid $base-blue;
+
+  .badge {
+    background-color: $base-blue;
+  }
+}
+
+::ng-deep .nav-link.active .nav-tab-count {
+  font-weight: 500;
+  color: #888;
+}
+
+::ng-deep .nav-tab-count {
+  font-weight: 500;
+}
+
+::ng-deep .nav-tabs .nav-link {
+  font-weight: 700;
+  color: #ccc;
+  border: 0px;
+  border-bottom: 0px solid #ccc;
+  background-color: transparent;
+}
+
+::ng-deep .nav-tabs .nav-link:not(.active):hover {
+  border-bottom: 2px solid $base-blue;
+}
+
+.appointment-date {
+  background-color: red;
+}
+
+.weekday-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  cursor: pointer;
+
+  transition: all 0.2s ease-in-out;
+
+  position: relative;
+}
+
+.weekday-appointments {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  .badge {
+    border-radius: 50% !important;
+  }
+}
+
+.weekday-day {
+  font-size: 14px;
+  font-weight: 700;
+  color: $transparent-blue;
+}
+
+.weekday-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: $base-blue;
+}
+
+.weekday-circle:hover {
+  background-color: $base-blue;
+
+  .weekday-day {
+    color: #fff;
+  }
+
+  .weekday-number {
+    color: #fff;
+  }
+}

@@ -11,7 +11,12 @@ import { CoreModule } from '../../core/core.module';
 import { SharedModule } from '../../shared/shared.module';
 import { OverviewComponent } from './overview.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
-
+import { AppointmentSummaryComponent } from './components/appointment-summary/appointment-summary.component';
+import { AppointmentDetailsComponent } from './appointments/appointment-details/appointment-details.component';
+import { AppointmentsComponent } from './appointments/appointments.component';
+import { AppointmentServicesSummaryComponent } from './appointments/appointment-services-summary/appointment-services-summary.component';
+import { PatientsComponent } from './patients/patients.component';
+import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +25,17 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     StoreAnalyticsComponent,
     LogisticsComponent,
     ProjectsComponent,
-    OverviewComponent
+    OverviewComponent,
+
+    // Citas
+    AppointmentsComponent,
+    AppointmentDetailsComponent,
+    AppointmentSummaryComponent,
+    AppointmentServicesSummaryComponent,
+
+    // Pacientes
+    PatientsComponent,
+    PatientDetailsComponent,
   ],
   imports: [
     CommonModule,
@@ -28,6 +43,6 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     NgApexchartsModule,
     CoreModule,
     SharedModule,
-  ]
+  ],
 })
-export class DashboardModule { }
+export class DashboardModule {}

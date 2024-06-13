@@ -9,6 +9,7 @@ import { SignUpBasicFormComponent } from './auth/sign-up/sign-up-basic-form.comp
 import { FormControlComponent } from './form-controls/form-control.component';
 import { AccountFooterComponent } from '../core/components/account/footer.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { ScheduleSummaryCardComponent } from '../home/dashboard/components/schedule-summary-card/schedule-summary-card.component';
 
 
 
@@ -20,6 +21,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
     FormControlComponent,
     AccountFooterComponent,
+    ScheduleSummaryCardComponent
   ],
   imports: [
     CommonModule,
@@ -41,6 +43,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
     FormControlComponent,
     AccountFooterComponent,
+
+    ScheduleSummaryCardComponent
 
   ]
 })

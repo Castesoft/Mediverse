@@ -1,0 +1,167 @@
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <div
+      class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2"
+    >
+      <h1 class="text-gray-900 fw-bold my-1 fs-2">
+        Pacientes
+        <small class="text-muted fs-6 fw-normal ms-1"></small>
+      </h1>
+      <ul class="breadcrumb fw-semibold fs-base my-1">
+        <li class="breadcrumb-item text-muted">
+          <a [routerLink]="'../../'" class="text-muted text-hover-primary"
+            >Dashboard</a
+          >
+        </li>
+        <li class="breadcrumb-item text-muted">Pacientes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="container-xxl">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex flex-grow-1">
+        <div class="d-flex flex-column flex-grow-1">
+          <form class="position-relative mb-5 w-100 me-5" autocomplete="off">
+            <input type="hidden" />
+
+            <input
+              type="text"
+              class="form-control form-control-lg form-control-solid px-15"
+              name="search"
+              value=""
+              placeholder="Busca por nombre, email, teléfono, etc..."
+            />
+
+            <span
+              class="position-absolute top-50 end-0 translate-middle-y lh-0 d-none me-5"
+            >
+              <span
+                class="spinner-border h-15px w-15px align-middle text-gray-500"
+              ></span>
+            </span>
+
+            <span
+              class="btn btn-flush btn-active-color-primary position-absolute top-50 end-0 translate-middle-y lh-0 me-5 d-none"
+            >
+            </span>
+          </form>
+        </div>
+        <div class="ms-2">
+          <button class="btn btn-light-primary">
+            <i class="ki-duotone ki-filter">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+            Filtros
+          </button>
+          <button class="btn btn-primary ms-2">
+            <span class="d-flex align-items-center">
+              <i class="ki-duotone ki-plus me-1"> </i> Agregar</span
+            >
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table
+          class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+        >
+          <thead>
+            <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+              <th
+                class="w-10px pe-2 sorting_disabled"
+                rowspan="1"
+                colspan="1"
+                style="width: 29.8906px"
+              >
+                <div
+                  class="form-check form-check-sm form-check-custom form-check-solid"
+                >
+                  <input class="form-check-input" type="checkbox" value="1" />
+                </div>
+              </th>
+              <th>Cliente</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+              <th>E-mail</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (patient of patients; track patient) {
+            <tr>
+              <td>
+                <div
+                  class="form-check form-check-sm form-check-custom form-check-solid ps-0"
+                >
+                  <input class="form-check-input" type="checkbox" value="1" />
+                </div>
+              </td>
+
+              <td>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="symbol symbol-circle symbol-50px overflow-hidden me-3"
+                  >
+                    <div class="symbol-label">
+                      <a [routerLink]="['/dashboards/patients', patient.id]">
+                        <img
+                          [src]="patient.photoUrl"
+                          alt="Emma Smith"
+                          class="w-100"
+                        />
+                      </a>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-grow-1 flex-column">
+                    <div
+                      class="d-flex align-items-center justify-content-between mb-0"
+                    >
+                      <div class="fw-semibold">
+                        {{ patient.name }}
+                      </div>
+                    </div>
+                    <div
+                      class="d-flex align-items-center justify-content-between mb-0"
+                    >
+                      <div class="text-gray-600 fs-6">
+                        {{ patient.sex | titlecase }},
+                        {{ patient.birthDate | date : "yyyy" }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="text-gray-600">{{ patient.address }}</div>
+              </td>
+
+              <td>
+                <div class="text-gray-600">{{ patient.phoneNumber }}</div>
+              </td>
+
+              <td>
+                <div class="text-gray-600">{{ patient.email }}</div>
+              </td>
+              <td>
+                <a
+                  [routerLink]="['../patients', patient.id]"
+                  class="btn btn-icon btn-bg-light btn-active-light-primary btn-sm"
+                >
+                  <i class="ki-duotone ki-eye">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                  </i>
+                </a>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
