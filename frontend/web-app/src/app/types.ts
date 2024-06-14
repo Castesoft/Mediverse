@@ -1,3 +1,48 @@
+export interface Inventory {
+  medicines: Medicine[];
+  prescriptions: Prescription[];
+}
+
+export interface Medicine {
+  id: number;
+  name: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  expirationDate: Date;
+  price: number;
+  manufacturer: string;
+  lotNumber: string;
+}
+
+export interface Prescription {
+  id: number;
+  date: Date;
+  patient: Patient;
+  doctor: Doctor;
+  medicines: PrescribedMedicine[];
+  dosageInstructions: string;
+  refillable: boolean;
+  numberOfRefills: number;
+  status: PrescriptionStatus;
+}
+
+export interface PrescribedMedicine {
+  medicine: Medicine;
+  dose: number;
+  unit: string;
+  frequency: string;
+  duration: string;
+}
+
+export enum PrescriptionStatus {
+  Active = 'Activa',
+  Completed = 'Completada',
+  Canceled = 'Cancelada',
+  Expired = 'Expirada',
+}
+
+// Existing interfaces
 export interface Appointment {
   id: number;
   date: Date;
@@ -72,15 +117,6 @@ export interface Doctor {
   languagesSpoken: string[];
   availability: Availability[];
   bio: string;
-}
-
-export interface Medicine {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  dose: number;
-  units: string;
 }
 
 export interface Allergy {

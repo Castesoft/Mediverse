@@ -17,6 +17,7 @@ import { AppointmentsComponent } from './appointments/appointments.component';
 import { AppointmentServicesSummaryComponent } from './appointments/appointment-services-summary/appointment-services-summary.component';
 import { PatientsComponent } from './patients/patients.component';
 import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
+import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,9 @@ import { PatientDetailsComponent } from './patients/patient-details/patient-deta
     // Pacientes
     PatientsComponent,
     PatientDetailsComponent,
+
+    // Recetas
+    PrescriptionsComponent,
   ],
   imports: [
     CommonModule,

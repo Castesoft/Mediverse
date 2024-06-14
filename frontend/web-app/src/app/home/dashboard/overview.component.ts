@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ChartComponent, ApexOptions } from 'ng-apexcharts';
 import { appointments } from '../../data/appointments';
 import { Appointment } from '../../types';
+import { patients } from '../../data/patients';
 
 @Component({
   selector: 'dashboard-multipurpose-route',
@@ -11,11 +12,16 @@ import { Appointment } from '../../types';
 export class OverviewComponent {
   @ViewChild('chart') chart!: ChartComponent;
 
-  public chartOptions: Partial<ApexOptions>;
+  patients = patients;
+
+  public radialBarOptions: Partial<ApexOptions>;
+  public lineChartOptions: Partial<ApexOptions>;
+  public pieChartOptions: Partial<ApexOptions>;
+  public barChartOptions: Partial<ApexOptions>;
   appointments: Appointment[] = appointments.slice(4, 7);
 
   constructor() {
-    this.chartOptions = {
+    this.radialBarOptions = {
       series: [37.5],
       chart: {
         fontFamily: 'Inter, Helvetica, "sans-serif"',
@@ -75,6 +81,73 @@ export class OverviewComponent {
         },
       },
       labels: ['3/8 Citas'],
+    };
+
+    this.lineChartOptions = {
+      series: [
+        {
+          name: 'Citas Médicas',
+          data: [10, 15, 25, 30, 45, 55, 70],
+        },
+      ],
+      chart: {
+        type: 'line',
+        height: 350,
+      },
+      stroke: {
+        curve: 'smooth',
+      },
+      xaxis: {
+        categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+      },
+    };
+
+    this.pieChartOptions = {
+      series: [44, 55, 13, 43],
+      chart: {
+        type: 'pie',
+        height: 350,
+      },
+      labels: ['0-25', '25-30', '30-50', '50+'],
+    };
+
+    this.barChartOptions = {
+      series: [
+        {
+          name: 'Cirugías',
+          data: [5, 4, 8, 6, 4, 3, 2, 7],
+        },
+      ],
+      chart: {
+        type: 'bar',
+        height: 350,
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        lineCap: 'round',
+        show: true,
+        width: 2,
+        colors: ['transparent'],
+      },
+      xaxis: {
+        categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago'],
+      },
+      yaxis: {
+        title: {
+          text: 'Número de Cirugías',
+        },
+      },
+      fill: {
+        opacity: 1,
+      },
     };
   }
 }
