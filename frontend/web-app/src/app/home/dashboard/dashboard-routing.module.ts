@@ -13,6 +13,7 @@ import { PatientDetailsComponent } from './patients/patient-details/patient-deta
 import { AccountComponent } from '../account/account.component';
 import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 import { PrescriptionDetailsComponent } from './prescriptions/prescription-details/prescriptions-detail.component';
+import { PaymentsComponent } from './payments/payments.component';
 
 const routes: Routes = [
   { path: '', component: OverviewComponent },
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'patients/:id', component: PatientDetailsComponent },
   { path: 'prescriptions', component: PrescriptionsComponent },
   { path: 'prescriptions/:id', component: PrescriptionDetailsComponent },
+  { path: 'payments', component: PaymentsComponent },
   { path: 'account', component: AccountComponent },
   {
     path: 'logistics',

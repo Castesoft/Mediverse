@@ -4,7 +4,7 @@
       class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2"
     >
       <h1 class="text-gray-900 fw-bold my-1 fs-2">
-        Pacientes
+        Recetas
         <small class="text-muted fs-6 fw-normal ms-1"></small>
       </h1>
       <ul class="breadcrumb fw-semibold fs-base my-1">
@@ -13,7 +13,7 @@
             >Dashboard</a
           >
         </li>
-        <li class="breadcrumb-item text-muted">Pacientes</li>
+        <li class="breadcrumb-item text-muted">Recetas</li>
       </ul>
     </div>
   </div>
@@ -32,7 +32,7 @@
               class="form-control form-control-lg form-control-solid px-15"
               name="search"
               value=""
-              placeholder="Busca por nombre, email, teléfono, etc..."
+              placeholder="Busca por nombre, medicamento, etc..."
             />
 
             <span
@@ -83,10 +83,9 @@
                 </div>
               </th>
               <th>Fecha</th>
-              <th>Cliente</th>
-              <th>Dirección</th>
-              <th>Teléfono</th>
-              <th>E-mail</th>
+              <th>Medicamento</th>
+              <th>Paciente</th>
+              <th>Estado</th>
             </tr>
           </thead>
           <tbody>
@@ -105,11 +104,15 @@
                   {{ prescription.date | date : "dd/MM/yyyy" }}
                 </div>
               </td>
-              
-              <td>
-               @for (medicine of prescription.medicines; track medicine){
 
-               }
+              <td>
+                @for (medicine of prescription.medicines; track medicine){
+                <div>
+                  <div class="fw-bold">{{ medicine.medicine.name }}</div>
+                  {{ medicine.dose }}
+                  {{ medicine.unit }}
+                </div>
+                }
               </td>
 
               <td>
@@ -154,21 +157,30 @@
 
               <td>
                 <div class="text-gray-600">
-                  {{ prescription.patient.address }}
+                  {{ prescription.dosageInstructions }}
                 </div>
               </td>
 
               <td>
-                <div class="text-gray-600">
-                  {{ prescription.patient.phoneNumber }}
-                </div>
+                @if (prescription.status == 'Activa') {
+                <span class="badge badge-light-primary fw-bold fs-7">{{
+                  prescription.status
+                }}</span>
+                } @else if (prescription.status == 'Cancelada') {
+                <span class="badge badge-light-danger fw-bold fs-7">{{
+                  prescription.status
+                }}</span>
+                } @else if (prescription.status == 'Completada') {
+                <span class="badge badge-light-success fw-bold fs-7">{{
+                  prescription.status
+                }}</span>
+                } @else {
+                <span class="badge badge-light-warning fw-bold fs-7">{{
+                  prescription.status
+                }}</span>
+                }
               </td>
 
-              <td>
-                <div class="text-gray-600">
-                  {{ prescription.patient.email }}
-                </div>
-              </td>
               <td>
                 <a
                   [routerLink]="['../prescriptions', prescription.id]"
