@@ -104,7 +104,7 @@
                     <tr>
                       <td>
                         <a
-                          href="apps/ecommerce/catalog/edit-product.html"
+                          href="apps/ecommerce/catalog/Editar-product.html"
                           class="text-gray-900 text-hover-primary"
                         >
                           Consulta
@@ -125,7 +125,7 @@
                     <tr>
                       <td>
                         <a
-                          href="apps/ecommerce/catalog/edit-product.html"
+                          href="apps/ecommerce/catalog/Editar-product.html"
                           class="text-gray-900 text-hover-primary"
                         >
                           Consulta
@@ -146,7 +146,7 @@
                     <tr>
                       <td>
                         <a
-                          href="apps/ecommerce/catalog/edit-product.html"
+                          href="apps/ecommerce/catalog/Editar-product.html"
                           class="text-gray-900 text-hover-primary"
                         >
                           Seguimiento
@@ -167,7 +167,7 @@
                     <tr>
                       <td>
                         <a
-                          href="apps/ecommerce/catalog/edit-product.html"
+                          href="apps/ecommerce/catalog/Editar-product.html"
                           class="text-gray-900 text-hover-primary"
                         >
                           Análisis de Sangre
@@ -188,7 +188,7 @@
                     <tr>
                       <td>
                         <a
-                          href="apps/ecommerce/catalog/edit-product.html"
+                          href="apps/ecommerce/catalog/Editar-product.html"
                           class="text-gray-900 text-hover-primary"
                         >
                           Emergencia
@@ -235,25 +235,113 @@
             </h3>
           </div>
           <div class="card-body pt-1">
-            <div class="d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center">
-                <img
-                  [src]="'media/custom/visa.svg'"
-                  class="w-75px me-2"
-                  alt=""
-                />
-                <div>
-                  <div class="d-flex flex-column">
-                    <span class="fs-5 fw-bold align-items-center">
-                      **** **** **** 1234
-                    </span>
-                    <div>
-                      <span class="badge badge-danger mt-0">Error</span>
+            <div class="row row-cols-2 w-full gy-10">
+              <div class="col">
+                <div
+                  class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+                >
+                  <div class="d-flex flex-column py-2">
+                    <div class="d-flex align-items-center">
+                      <img src="media/custom/visa.svg" alt="" class="me-4" />
+                      <div>
+                        <div class="fs-4 fw-bold">
+                          Visa **** 1679
+                          <span class="badge badge-light-success fs-7 ms-2"
+                            >Primaria</span
+                          >
+                        </div>
+                        <div class="fs-6 fw-semibold text-gray-500">
+                          Vence el 09/24
+                        </div>
+                      </div>
                     </div>
+                  </div>
+                  <div class="d-flex align-items-center py-2">
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary me-3"
+                    >
+                      <span class="indicator-label">Borrar</span>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary"
+                    >
+                      Editar
+                    </button>
                   </div>
                 </div>
               </div>
-              <button class="btn btn-sm btn-light-primary">Editar</button>
+              <div class="col">
+                <div
+                  class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+                >
+                  <div class="d-flex flex-column py-2">
+                    <div class="d-flex align-items-center">
+                      <img
+                        src="media/custom/mastercard.svg"
+                        alt=""
+                        class="me-4"
+                      />
+                      <div>
+                        <div class="fs-4 fw-bold">MasterCard **** 3456</div>
+                        <div class="fs-6 fw-semibold text-gray-500">
+                          Vence el 12/25
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center py-2">
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary me-3"
+                    >
+                      <span class="indicator-label">Borrar</span>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary"
+                    >
+                      Editar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+                >
+                  <div class="d-flex flex-column py-2">
+                    <div class="d-flex align-items-center">
+                      <img
+                        src="media/custom/american-express.svg"
+                        alt=""
+                        class="me-4"
+                      />
+                      <div>
+                        <div class="fs-4 fw-bold">
+                          American Express **** 7890
+
+                          <span class="badge badge-light-danger fs-7 ms-2"
+                          >Error</span
+                        >
+                        </div>
+                        <div class="fs-6 fw-semibold text-gray-500">
+                          Venció el 05/23
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center py-2">
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary me-3"
+                    >
+                      <span class="indicator-label">Borrar</span>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary"
+                    >
+                      Editar
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -302,7 +390,7 @@
                     <button
                       class="btn btn-sm btn-light btn-active-light-primary"
                     >
-                      Editar
+                      Editarar
                     </button>
                   </div>
                 </div>
@@ -338,7 +426,7 @@
                     <button
                       class="btn btn-sm btn-light btn-active-light-primary"
                     >
-                      Editar
+                      Editarar
                     </button>
                   </div>
                 </div>
@@ -374,7 +462,7 @@
                     <button
                       class="btn btn-sm btn-light btn-active-light-primary"
                     >
-                      Editar
+                      Editarar
                     </button>
                   </div>
                 </div>
@@ -410,7 +498,7 @@
                     <button
                       class="btn btn-sm btn-light btn-active-light-primary"
                     >
-                      Editar
+                      Editarar
                     </button>
                   </div>
                 </div>
