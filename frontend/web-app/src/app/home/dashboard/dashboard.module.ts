@@ -18,6 +18,7 @@ import { AppointmentServicesSummaryComponent } from './appointments/appointment-
 import { PatientsComponent } from './patients/patients.component';
 import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
 import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
+import { PaymentsComponent } from './payments/payments.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,9 @@ import { PrescriptionsComponent } from './prescriptions/prescriptions.component'
 
     // Recetas
     PrescriptionsComponent,
+
+    // Pagos
+    PaymentsComponent,
   ],
   imports: [
     CommonModule,

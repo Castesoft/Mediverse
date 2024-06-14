@@ -1,0 +1,433 @@
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <div
+      class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2"
+    >
+      <h1 class="text-gray-900 fw-bold my-1 fs-2">
+        Pagos
+        <small class="text-muted fs-6 fw-normal ms-1"></small>
+      </h1>
+      <ul class="breadcrumb fw-semibold fs-base my-1">
+        <li class="breadcrumb-item text-muted">
+          <a [routerLink]="'../'" class="text-muted text-hover-primary"
+            >Dashboard</a
+          >
+        </li>
+        <li class="breadcrumb-item text-muted">Pagos</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+  <div class="container-xxl">
+    <div class="row g-xl-8">
+      <div class="row gy-5 g-xl-10 mt-0">
+        <div class="col-xl-12">
+          <div class="card card-flush h-xl-100">
+            <div class="card-header align-items-center border-0 mt-5">
+              <h3 class="card-title align-items-start flex-column">
+                <span class="fw-bolder text-gray-900 fs-2"
+                  >Historial de Pagos</span
+                >
+                <span class="text-gray-500 mt-2 fw-semibold fs-6"
+                  >5 pagos encontrados</span
+                >
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr
+                      class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0"
+                      role="row"
+                    >
+                      <th
+                        class="min-w-150px dt-orderable-asc dt-orderable-desc"
+                        data-dt-column="0"
+                        rowspan="1"
+                        colspan="1"
+                        aria-label="Item: Activate to sort"
+                        tabindex="0"
+                      >
+                        <span class="dt-column-title" role="button"
+                          >Servicio</span
+                        ><span class="dt-column-order"></span>
+                      </th>
+                      <th
+                        class="text-end pe-3 min-w-100px dt-orderable-none"
+                        data-dt-column="1"
+                        rowspan="1"
+                        colspan="1"
+                        aria-label="Product ID"
+                      >
+                        <span class="dt-column-title">ID de Servicio</span
+                        ><span class="dt-column-order"></span>
+                      </th>
+                      <th
+                        class="text-end pe-3 min-w-150px dt-orderable-asc dt-orderable-desc"
+                        data-dt-column="2"
+                        rowspan="1"
+                        colspan="1"
+                        aria-label="Date Added: Activate to sort"
+                        tabindex="0"
+                      >
+                        <span class="dt-column-title" role="button">Fecha</span
+                        ><span class="dt-column-order"></span>
+                      </th>
+                      <th
+                        class="text-end pe-3 min-w-100px dt-type-numeric dt-orderable-asc dt-orderable-desc"
+                        data-dt-column="3"
+                        rowspan="1"
+                        colspan="1"
+                        aria-label="Price: Activate to sort"
+                        tabindex="0"
+                      >
+                        <span class="dt-column-title" role="button">Precio</span
+                        ><span class="dt-column-order"></span>
+                      </th>
+                      <th
+                        class="text-end pe-3 min-w-100px dt-orderable-asc dt-orderable-desc"
+                        data-dt-column="4"
+                        rowspan="1"
+                        colspan="1"
+                        aria-label="Status: Activate to sort"
+                        tabindex="0"
+                      >
+                        <span class="dt-column-title" role="button">Doctor</span
+                        ><span class="dt-column-order"></span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="fw-bold text-gray-600">
+                    <tr>
+                      <td>
+                        <a
+                          href="apps/ecommerce/catalog/edit-product.html"
+                          class="text-gray-900 text-hover-primary"
+                        >
+                          Consulta
+                        </a>
+                      </td>
+                      <td class="text-end">#CON-001</td>
+                      <td
+                        class="text-end"
+                        data-order="2024-04-20T00:00:00-06:00"
+                      >
+                        22 Jul, 2024
+                      </td>
+                      <td class="text-end dt-type-numeric">
+                        {{ 1495 | currency : "MXN" }}
+                      </td>
+                      <td class="text-end dt-type-numeric">Dr. Alejandro</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a
+                          href="apps/ecommerce/catalog/edit-product.html"
+                          class="text-gray-900 text-hover-primary"
+                        >
+                          Consulta
+                        </a>
+                      </td>
+                      <td class="text-end">#CON-001</td>
+                      <td
+                        class="text-end"
+                        data-order="2024-04-20T00:00:00-06:00"
+                      >
+                        20 Jun, 2024
+                      </td>
+                      <td class="text-end dt-type-numeric">
+                        {{ 1250 | currency : "MXN" }}
+                      </td>
+                      <td class="text-end dt-type-numeric">Dr. Alejandro</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a
+                          href="apps/ecommerce/catalog/edit-product.html"
+                          class="text-gray-900 text-hover-primary"
+                        >
+                          Seguimiento
+                        </a>
+                      </td>
+                      <td class="text-end">#SEG-211</td>
+                      <td
+                        class="text-end"
+                        data-order="2024-04-20T00:00:00-06:00"
+                      >
+                        08 Oct, 2024
+                      </td>
+                      <td class="text-end dt-type-numeric">
+                        {{ 500 | currency : "MXN" }}
+                      </td>
+                      <td class="text-end dt-type-numeric">Dr. Alejandro</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a
+                          href="apps/ecommerce/catalog/edit-product.html"
+                          class="text-gray-900 text-hover-primary"
+                        >
+                          Análisis de Sangre
+                        </a>
+                      </td>
+                      <td class="text-end">#XGY-356</td>
+                      <td
+                        class="text-end"
+                        data-order="2024-04-20T00:00:00-06:00"
+                      >
+                        02 Apr, 2024
+                      </td>
+                      <td class="text-end dt-type-numeric">
+                        {{ 2500 | currency : "MXN" }}
+                      </td>
+                      <td class="text-end dt-type-numeric">Dr. Alejandro</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a
+                          href="apps/ecommerce/catalog/edit-product.html"
+                          class="text-gray-900 text-hover-primary"
+                        >
+                          Emergencia
+                        </a>
+                      </td>
+                      <td class="text-end">#XGY-356</td>
+                      <td
+                        class="text-end"
+                        data-order="2024-04-20T00:00:00-06:00"
+                      >
+                        01 May, 2024
+                      </td>
+                      <td class="text-end dt-type-numeric">
+                        {{ 35000 | currency : "MXN" }}
+                      </td>
+                      <td class="text-end dt-type-numeric">Dr. Alejandro</td>
+                    </tr>
+                  </tbody>
+                  <tfoot></tfoot>
+                </table>
+              </div>
+              <div id="" class="row">
+                <div
+                  id=""
+                  class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start dt-toolbar"
+                ></div>
+                <div
+                  id=""
+                  class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-12">
+        <div class="card h-xl-100">
+          <div class="card-header align-items-center border-0 mt-5">
+            <h3 class="card-title align-items-start flex-column">
+              <span class="fw-bolder text-gray-900 fs-2">Métodos de Pago</span>
+              <span class="text-gray-500 mt-2 fw-semibold fs-6"
+                >1 método registrado</span
+              >
+            </h3>
+          </div>
+          <div class="card-body pt-1">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <img
+                  [src]="'media/custom/visa.svg'"
+                  class="w-75px me-2"
+                  alt=""
+                />
+                <div>
+                  <div class="d-flex flex-column">
+                    <span class="fs-5 fw-bold align-items-center">
+                      **** **** **** 1234
+                    </span>
+                    <div>
+                      <span class="badge badge-danger mt-0">Error</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-light-primary">Editar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-12">
+        <div class="card h-xl-100">
+          <div class="card-header align-items-center border-0 mt-5">
+            <h3 class="card-title align-items-start flex-column">
+              <span class="fw-bolder text-gray-900 fs-2"
+                >Direcciones de Pago</span
+              >
+            </h3>
+          </div>
+          <div class="card-body pt-1">
+            <div class="row row-cols-2 gy-10">
+              <div class="col">
+                <div
+                  class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+                >
+                  <div class="d-flex flex-column py-2">
+                    <div class="d-flex align-items-center fs-5 fw-bold mb-5">
+                      Dirección 1
+                      <span class="badge badge-light-success fs-7 ms-2"
+                        >Primaria</span
+                      >
+                    </div>
+
+                    <div class="fs-6 fw-semibold text-gray-600">
+                      Calle Falsa #1234<br />
+                      Ciudad de México, CDMX 01234<br />México
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center py-2">
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary me-3"
+                    >
+                      <span class="indicator-label"> Eliminar</span>
+                      <span class="indicator-progress">
+                        Por favor espera...
+                        <span
+                          class="spinner-border spinner-border-sm align-middle ms-2"
+                        ></span>
+                      </span>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary"
+                    >
+                      Editar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col">
+                <div
+                  class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+                >
+                  <div class="d-flex flex-column py-2">
+                    <div class="d-flex align-items-center fs-5 fw-bold mb-5">
+                      Dirección 2
+                    </div>
+
+                    <div class="fs-6 fw-semibold text-gray-600">
+                      Av. Siempre Viva #742<br />
+                      Guadalajara, JAL 45678<br />México
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center py-2">
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary me-3"
+                    >
+                      <span class="indicator-label"> Eliminar</span>
+                      <span class="indicator-progress">
+                        Por favor espera...
+                        <span
+                          class="spinner-border spinner-border-sm align-middle ms-2"
+                        ></span>
+                      </span>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary"
+                    >
+                      Editar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col">
+                <div
+                  class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+                >
+                  <div class="d-flex flex-column py-2">
+                    <div class="d-flex align-items-center fs-5 fw-bold mb-5">
+                      Dirección 3
+                    </div>
+
+                    <div class="fs-6 fw-semibold text-gray-600">
+                      Calle del Sol #5678<br />
+                      Monterrey, NL 67890<br />México
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center py-2">
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary me-3"
+                    >
+                      <span class="indicator-label"> Eliminar</span>
+                      <span class="indicator-progress">
+                        Por favor espera...
+                        <span
+                          class="spinner-border spinner-border-sm align-middle ms-2"
+                        ></span>
+                      </span>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary"
+                    >
+                      Editar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col">
+                <div
+                  class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+                >
+                  <div class="d-flex flex-column py-2">
+                    <div class="d-flex align-items-center fs-5 fw-bold mb-5">
+                      Dirección 4
+                    </div>
+
+                    <div class="fs-6 fw-semibold text-gray-600">
+                      Camino Verde #91011<br />
+                      Puebla, PUE 11223<br />México
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center py-2">
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary me-3"
+                    >
+                      <span class="indicator-label"> Eliminar</span>
+                      <span class="indicator-progress">
+                        Por favor espera...
+                        <span
+                          class="spinner-border spinner-border-sm align-middle ms-2"
+                        ></span>
+                      </span>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-light btn-active-light-primary"
+                    >
+                      Editar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-10">
+                <h3 class="mb-3">Impuestos</h3>
+
+                <div class="fw-semibold text-gray-600 fs-6">
+                  Nuevo León - 16% IVA<br />
+                  <a class="fw-bold" href="#">Más Información</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
