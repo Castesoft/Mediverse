@@ -10,13 +10,15 @@ import { AppointmentsComponent } from './appointments/appointments.component';
 import { AppointmentDetailsComponent } from './appointments/appointment-details/appointment-details.component';
 import { PatientsComponent } from './patients/patients.component';
 import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
+import { AccountComponent } from '../account/account.component';
 
 const routes: Routes = [
   { path: '', component: OverviewComponent },
   { path: 'appointments', component: AppointmentsComponent },
   { path: 'appointments/:id', component: AppointmentDetailsComponent },
   { path: 'patients', component: PatientsComponent },
-  { path: 'patients/:id', component: PatientDetailsComponent},
+  { path: 'patients/:id', component: PatientDetailsComponent },
+  { path: 'account', component: AccountComponent },
   {
     path: 'logistics',
     component: LogisticsComponent,
