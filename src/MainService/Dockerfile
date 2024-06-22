@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
 WORKDIR /app
 EXPOSE 80
 
-COPY DGB.sln DGB.sln
+COPY Mediverse.sln Mediverse.sln
 COPY src/MainService/MainService.csproj src/MainService/MainService.csproj
 COPY src/MainService.Models/MainService.Models.csproj src/MainService.Models/MainService.Models.csproj
 COPY src/Migrations/MainService.Postgres/MainService.Postgres.csproj src/Migrations/MainService.Postgres/MainService.Postgres.csproj
@@ -10,7 +10,7 @@ COPY src/Migrations/MainService.Sqlite/MainService.Sqlite.csproj src/Migrations/
 COPY src/MainService.Core/MainService.Core.csproj src/MainService.Core/MainService.Core.csproj
 COPY src/MainService.Infrastructure/MainService.Infrastructure.csproj src/MainService.Infrastructure/MainService.Infrastructure.csproj
 
-RUN dotnet restore DGB.sln
+RUN dotnet restore Mediverse.sln
 
 COPY src/MainService src/MainService
 COPY src/MainService.Models src/MainService.Models
