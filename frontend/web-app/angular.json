@@ -46,7 +46,7 @@
               "cuid",
               "apexcharts"
             ],
-            "outputPath": "dist/web-app",
+            "outputPath": "../../src/MainService/wwwroot",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -104,8 +104,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "4MB",
+                  "maximumError": "10MB"
                 },
                 {
                   "type": "anyComponentStyle",

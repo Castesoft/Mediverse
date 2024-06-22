@@ -1,0 +1,17 @@
+using MainService.Core.DTOs.Services;
+using MainService.Core.Helpers.Pagination;
+using MainService.Core.Helpers.Params;
+using MainService.Models.Entities;
+
+namespace MainService.Core.Interfaces.Data;
+public interface IServiceRepository
+{
+    void Add(Service item);
+    void Delete(Service item);
+    Task<Service> GetByIdAsync(int id);
+    Task<ServiceDto> GetDtoByIdAsync(int id);
+    Task<Service> GetByIdAsNoTrackingAsync(int id);
+    Task<List<Service>> GetAllAsync();
+    Task<List<ServiceDto>> GetAllDtoAsync();
+    Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param);
+}

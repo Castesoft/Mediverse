@@ -1,0 +1,14 @@
+bin
+obj
+*.db-shm
+*.db-wal
+src/DbfConverter/dest
+src/DbfConverter/notebooks/.ipynb_checkpoints
+.idea
+.vs
+Mediverse.sln.DotSettings.user
+src/DbfConverter/dirtyData/**
+src/Infrastructure/Data/SeedData/**
+*.db
+frontend/web-app/ssl/**
+src/MainService/wwwroot/**
