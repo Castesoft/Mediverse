@@ -39,5 +39,18 @@ public class MappingProfiles : Profile
         CreateMap<RegisterDto, AppUser>();
 
         CreateMap<Product, ProductDto>();
+
+        CreateMap<Location, PrescriptionInformationDto>()
+            .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.ExteriorNumber))
+            .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.InteriorNumber))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.ZipCode))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+            .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Neighborhood))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.PhotoUrl))
+            .ForMember(dest => dest.Phones,
+                opt => opt.MapFrom(src => src.LocationPhones.Select(y => y.Phone.PhoneNumber)));
     }
 }

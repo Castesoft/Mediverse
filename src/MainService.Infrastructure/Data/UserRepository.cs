@@ -1,5 +1,6 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using MainService.Core.DTOs;
 using MainService.Core.DTOs.Patients;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -20,6 +21,24 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public void Delete(AppUser item)
     {
         context.Users.Remove(item);
+    }
+
+    public async Task<PrescriptionInformationDto> GetPrescriptionInformationAsync(int doctorId)
+    {
+        var doctor = await context.Users
+            .Where(x => x.Id == doctorId)
+            .Include(x => x.DoctorClinics).ThenInclude(x => x.Clinic)
+            .SingleOrDefaultAsync();
+
+        var clinic = doctor.DoctorClinics.FirstOrDefault()?.Clinic;
+        
+        if (clinic == null) return null;
+
+        var newVar = await context.Locations
+            .Include(x => x.LocationPhones).ThenInclude(x => x.Phone)
+            .SingleOrDefaultAsync(x => x.Id == clinic.Id);
+
+        return mapper.Map<PrescriptionInformationDto>(newVar);
     }
 
     public async Task<List<AppUser>> GetAllAsync()

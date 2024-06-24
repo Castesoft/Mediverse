@@ -20,6 +20,12 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<AppUserPermission> UserPermissions { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<DoctorInformation> DoctorInformations { get; set; }
+    public DbSet<DoctorPhone> DoctorPhones { get; set; }
+    public DbSet<DoctorLink> DoctorLinks { get; set; }
+    public DbSet<DoctorClinic> DoctorClinics { get; set; }
+    public DbSet<NurseClinic> NurseClinics { get; set; }
+    public DbSet<Location> Locations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

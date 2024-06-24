@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MainService.Core.DTOs;
 using MainService.Core.DTOs.Patients;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -36,6 +37,14 @@ namespace MainService.Controllers
             );
 
             return Ok(pagedList);
+        }
+        
+        [HttpGet("prescription-information/{doctorId}")]
+        public async Task<ActionResult<PrescriptionInformationDto>> GetPrescriptionInformation([FromRoute] int doctorId)
+        {
+            var prescriptionInformation = await _uow.UserRepository.GetPrescriptionInformationAsync(doctorId);
+
+            return Ok(prescriptionInformation);
         }
 
         [HttpGet("all")]

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainService.Sqlite.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240624205613_ModifyProduct")]
-    partial class ModifyProduct
+    [Migration("20240624225837_ModifyLocation")]
+    partial class ModifyLocation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -294,7 +294,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("ClinicId")
                         .IsUnique();
 
-                    b.ToTable("DoctorClinic");
+                    b.ToTable("DoctorClinics");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorInformation", b =>
@@ -313,7 +313,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("InformationId")
                         .IsUnique();
 
-                    b.ToTable("DoctorInformation");
+                    b.ToTable("DoctorInformations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorLink", b =>
@@ -329,7 +329,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("LinkId")
                         .IsUnique();
 
-                    b.ToTable("DoctorLink");
+                    b.ToTable("DoctorLinks");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorPhone", b =>
@@ -345,7 +345,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("PhoneId")
                         .IsUnique();
 
-                    b.ToTable("DoctorPhone");
+                    b.ToTable("DoctorPhones");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorSignature", b =>
@@ -411,6 +411,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Neighborhood")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("State")
                         .HasColumnType("TEXT");
 
@@ -422,7 +425,7 @@ namespace MainService.Sqlite.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Location");
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.LocationPhone", b =>
@@ -492,7 +495,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("NurseId")
                         .IsUnique();
 
-                    b.ToTable("NurseClinic");
+                    b.ToTable("NurseClinics");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientAppointment", b =>
