@@ -1,6 +1,6 @@
-﻿namespace MainService.Models.Entities;
+﻿namespace MainService.Core.DTOs;
 
-public class Location : BaseEntity
+public class PrescriptionInformationDto
 {
     public string ExteriorNumber { get; set; }
     public string InteriorNumber { get; set; }
@@ -11,7 +11,5 @@ public class Location : BaseEntity
     public string Country { get; set; }
     public string Neighborhood { get; set; }
     public string PhotoUrl { get; set; }
-    public DoctorClinic DoctorClinic { get; set; }  
-    public ICollection<NurseClinic> NurseClinics { get; set; } = [];
-    public ICollection<LocationPhone> LocationPhones { get; set; } = [];
+    public List<string> Phones { get; set; } = [];
 }

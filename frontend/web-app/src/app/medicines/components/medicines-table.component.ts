@@ -98,20 +98,10 @@ export class MedicinesTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectMultiple(medicineId: number) {
-    console.log(medicineId);
+  selectMultiple(medicine: Medicine) {
+    this.service.setMultipleSelected([medicine]);
 
-    this.data?.forEach((item) => {
-      if (item.id === medicineId) {
-        item.isSelected = !item.isSelected;
-      }
-    });
 
-    const medicines = this.data?.filter((x) => x.isSelected);
-
-    if (medicines) {
-      this.service.setMultipleSelected(medicines);
-    }
   }
 
   deleteById = (item: Medicine) =>

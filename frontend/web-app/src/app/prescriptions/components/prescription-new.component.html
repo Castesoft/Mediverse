@@ -101,6 +101,44 @@
   </div>
 </form>
 
+<div class="container-fluid mt-4">
+  <div class="card">
+    <div class="card-body">
+      @if (prescriptionInformation) {
+      <h5>Información de la Receta</h5>
+      <p>
+        <strong>Número Exterior:</strong> {{ prescriptionInformation.exteriorNumber }}
+      </p>
+      <p>
+        <strong>Número Interior:</strong> {{ prescriptionInformation.interiorNumber }}
+      </p>
+      <p><strong>Calle:</strong> {{ prescriptionInformation.street }}</p>
+      <p><strong>Código Postal:</strong> {{ prescriptionInformation.zipCode }}</p>
+      <p><strong>Ciudad:</strong> {{ prescriptionInformation.city }}</p>
+      <p><strong>Estado:</strong> {{ prescriptionInformation.state }}</p>
+      <p><strong>País:</strong> {{ prescriptionInformation.country }}</p>
+      <p><strong>Barrio:</strong> {{ prescriptionInformation.neighborhood }}</p>
+      <div>
+        <strong>Foto:</strong>
+        <img
+          src="{{ prescriptionInformation.photoUrl }}"
+          alt="Foto de la Receta"
+          style="width: 100px; height: auto"
+        />
+      </div>
+      <div>
+        <strong>Teléfonos:</strong>
+        <ul>
+         @for (phone of prescriptionInformation.phones; track phone) {
+          <li>{{ phone }}</li>
+         }
+        </ul>
+      </div>
+    }
+    </div>
+  </div>
+</div>
+
 <button class="btn btn-light-primary" type="submit" form="prescriptionForm">
   <i class="ki-duotone ki-filter">
     <span class="path1"></span>

@@ -16,12 +16,20 @@ import { MedicinesService } from '../../_services/data/medicines.service';
 import { Medicine } from '../../_models/medicine';
 import { MedicineSelectModalComponent } from '../../medicines/components/medicine-select-modal.component';
 import { MedicinesSelectModalService } from '../../medicines/components/medicine-select-modal.service';
+import { AccountService } from '../../_services/accounts.service';
 
 @Component({
   selector: '[prescriptionsNew]',
   templateUrl: './prescription-new.component.html',
   standalone: true,
-  imports: [ FontAwesomeModule, AlertModule, ReactiveFormsModule, RouterModule, InputControlComponent, ControlDateComponent ],
+  imports: [
+    FontAwesomeModule,
+    AlertModule,
+    ReactiveFormsModule,
+    RouterModule,
+    InputControlComponent,
+    ControlDateComponent,
+  ],
 })
 export class PrescriptionNewComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -31,9 +39,12 @@ export class PrescriptionNewComponent implements OnInit {
   public icons = inject(IconsService);
   private medicinesService = inject(MedicinesService);
   private patientsService = inject(PatientsService);
+  private accountsService = inject(AccountService);
 
-  modalRef: BsModalRef<PatientSelectModalComponent> = new BsModalRef<PatientSelectModalComponent>();
-  modalRefMedicines: BsModalRef<MedicineSelectModalComponent> = new BsModalRef<MedicineSelectModalComponent>();
+  modalRef: BsModalRef<PatientSelectModalComponent> =
+    new BsModalRef<PatientSelectModalComponent>();
+  modalRefMedicines: BsModalRef<MedicineSelectModalComponent> =
+    new BsModalRef<MedicineSelectModalComponent>();
 
   formGroup: FormGroup = new FormGroup({});
 
@@ -43,6 +54,9 @@ export class PrescriptionNewComponent implements OnInit {
   patientSelectionErrors: string[] = [];
   patient: Patient | null = null;
 
+  prescriptionInformation: any = null;
+  account: any = null;
+
   medicines: Medicine[] = [];
 
   constructor() {}
@@ -51,6 +65,7 @@ export class PrescriptionNewComponent implements OnInit {
     this.initForm();
     this.subscribeToSelectedPatient();
     this.subscribeToSelectedMedicines();
+    this.subscribeToCurrentAccount();
   }
 
   private subscribeToSelectedPatient() {
@@ -59,6 +74,26 @@ export class PrescriptionNewComponent implements OnInit {
       this.patientSelected = !!patient;
       this.selectedPatientIsValid = !!patient;
       this.patientSelectionErrors = [];
+    });
+  }
+
+  private subscribeToCurrentAccount() {
+    this.accountsService.current$.subscribe((account) => {
+      console.log(account);
+      if (account) {
+        this.account = account;
+        console.log(account);
+        this.getInfo(account.id);
+      } else {
+        this.getInfo(1);
+      }
+    });
+  }
+
+  private getInfo(id: number) {
+    this.patientsService.getPrescriptionInformation(id).subscribe((info: any) => {
+
+      this.prescriptionInformation = info;
     });
   }
 
@@ -83,19 +118,24 @@ export class PrescriptionNewComponent implements OnInit {
       notes: '',
     });
   }
-  
+
   openPatientSelectModal($event: Event): void {
     $event.preventDefault();
-    this.modalRef = this.bsModalService.show(PatientSelectModalComponent, this.modalService.getConfig('awdawdawd'));
+    this.modalRef = this.bsModalService.show(
+      PatientSelectModalComponent,
+      this.modalService.getConfig('awdawdawd')
+    );
   }
 
   openMedicinesSelectModal($event: Event): void {
     $event.preventDefault();
-    this.modalRefMedicines = this.bsModalService.show(MedicineSelectModalComponent, this.modalServiceMedicines.getConfig('multiselect', "wwwwwwwwwwwwwwww"));
+    this.modalRefMedicines = this.bsModalService.show(
+      MedicineSelectModalComponent,
+      this.modalServiceMedicines.getConfig('multiselect', 'wwwwwwwwwwwwwwww')
+    );
   }
 
   onSubmit() {
     console.log(this.formGroup.value);
   }
 }
-

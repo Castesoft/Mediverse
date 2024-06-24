@@ -154,6 +154,7 @@ public class Seed
                         State = "Nuevo León",
                         Country = "México",
                         Neighborhood = "Col. Real San Agustín",
+                        PhotoUrl = "https://hcservicios.com.mx/wp-content/uploads/2022/02/Logo_HZH-01.jpg",
                         LocationPhones =
                         [
                             new()
