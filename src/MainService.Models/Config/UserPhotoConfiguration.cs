@@ -19,6 +19,6 @@ public class UserPhotoConfiguration : IEntityTypeConfiguration<UserPhoto>
             .HasOne(x => x.User)
             .WithOne(x => x.UserPhoto)
             .HasForeignKey<UserPhoto>(x => x.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

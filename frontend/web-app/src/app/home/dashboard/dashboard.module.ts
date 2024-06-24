@@ -17,7 +17,6 @@ import { AppointmentsComponent } from './appointments/appointments.component';
 import { AppointmentServicesSummaryComponent } from './appointments/appointment-services-summary/appointment-services-summary.component';
 import { PatientsComponent } from './patients/patients.component';
 import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
-import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 import { PaymentsComponent } from './payments/payments.component';
 
 @NgModule({
@@ -38,9 +37,6 @@ import { PaymentsComponent } from './payments/payments.component';
     // Pacientes
     PatientsComponent,
     PatientDetailsComponent,
-
-    // Recetas
-    PrescriptionsComponent,
 
     // Pagos
     PaymentsComponent,

@@ -1,7 +1,7 @@
-import { Appointment, AppointmentKind, AppointmentStatus } from '../types';
 import { patients } from './patients';
 import { doctors } from './doctors';
 import { paymentBillings } from './payment-billings';
+import { Appointment, AppointmentKind, AppointmentStatus } from '../_models/appointment';
 
 export const appointments: Appointment[] = [
   {

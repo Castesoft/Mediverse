@@ -1,4 +1,4 @@
-import { Allergy, Severity } from '../types';
+import { Allergy, Severity } from "../_models/user";
 
 export const allergies: Allergy[] = [
   {

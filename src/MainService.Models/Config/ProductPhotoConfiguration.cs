@@ -13,7 +13,7 @@ public class ProductPhotoConfiguration : IEntityTypeConfiguration<ProductPhoto>
             .HasOne(x => x.Product)
             .WithMany(x => x.ProductPhotos)
             .HasForeignKey(x => x.ProductId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(x => x.Photo)

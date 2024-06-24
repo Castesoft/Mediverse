@@ -1,8 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { ChartComponent, ApexOptions } from 'ng-apexcharts';
 import { appointments } from '../../data/appointments';
-import { Appointment } from '../../types';
 import { patients } from '../../data/patients';
+import { Appointment } from '../../_models/appointment';
 
 @Component({
   selector: 'dashboard-multipurpose-route',

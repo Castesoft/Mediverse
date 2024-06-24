@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Appointment } from '../../../../types';
+import { Appointment } from '../../../../_models/appointment';
 
 @Component({
   selector: 'schedule-summary-card',

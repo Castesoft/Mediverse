@@ -44,7 +44,7 @@
                     href="#"
                     class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"
                   >
-                    {{ patient.name }}
+                    {{ patient.firstName }} {{ patient.lastName }}
                   </a>
                   <a
                     class="btn btn-light-primary py-2"
@@ -131,9 +131,9 @@
                     >Nombre Completo</label
                   >
                   <div class="col-lg-8">
-                    <span class="fw-bold fs-6 text-gray-800">{{
-                      patient.name
-                    }}</span>
+                    <span class="fw-bold fs-6 text-gray-800">
+                      {{ patient.firstName }} {{ patient.lastName }}
+                    </span>
                   </div>
                 </div>
                 <div class="row mb-7">

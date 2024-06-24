@@ -1,4 +1,4 @@
-import { MedicalHistory } from '../types';
+import { MedicalHistory } from "../_models/user";
 
 const getRandomStatus = () => {
   const statuses = ['active', 'resolved'];

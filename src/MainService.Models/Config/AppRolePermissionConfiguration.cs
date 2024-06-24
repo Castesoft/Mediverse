@@ -13,12 +13,12 @@ public class AppRolePermissionConfiguration : IEntityTypeConfiguration<AppRolePe
             .HasOne(x => x.Role)
             .WithMany(x => x.RolePermissions)
             .HasForeignKey(x => x.RoleId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(x => x.Permission)
             .WithMany(x => x.RolePermissions)
             .HasForeignKey(x => x.PermissionId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

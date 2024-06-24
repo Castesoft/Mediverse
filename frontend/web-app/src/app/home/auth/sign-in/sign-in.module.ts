@@ -9,15 +9,14 @@ import { SignInRoutingModule } from './sign-in-routing.module';
 
 @NgModule({
   declarations: [
-    BasicComponent,
-    PasswordResetComponent,
-    NewPasswordComponent,
   ],
   imports: [
     CommonModule,
     SignInRoutingModule,
-    CoreModule,
-    SharedModule,
+    BasicComponent,
+    PasswordResetComponent,
+    NewPasswordComponent,
+
   ]
 })
 export class SignInModule { }

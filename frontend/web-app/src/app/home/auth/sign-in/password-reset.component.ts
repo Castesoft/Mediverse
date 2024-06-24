@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { BottomLinksComponent } from '../bottom-links.component';
+import { PasswordResetFormComponent } from '../../../shared/auth/password-reset-form.component';
+import { AsideComponent } from '../aside.component';
 
 @Component({
   host: { class: 'd-flex flex-column flex-root h-100' },
@@ -24,5 +27,7 @@ import { Component } from '@angular/core';
       </div>
     </div>
   `,
+  standalone: true,
+  imports: [BottomLinksComponent, PasswordResetFormComponent, AsideComponent, ],
 })
 export class PasswordResetComponent {}

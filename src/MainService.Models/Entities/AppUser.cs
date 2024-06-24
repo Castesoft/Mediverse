@@ -20,6 +20,14 @@ public class AppUser : IdentityUser<int>
 
     // Navigation properties
     public UserPhoto UserPhoto { get; set; }
+    public DoctorSignature DoctorSignature { get; set; }
+    public DoctorInformation DoctorInformation { get; set; }
+    public ICollection<PatientAppointment> PatientAppointments { get; set; } = [];
+    public ICollection<DoctorAppointment> DoctorAppointments { get; set; } = [];
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
     public ICollection<AppUserPermission> UserPermissions { get; set; } = [];
+    public ICollection<DoctorPhone> DoctorPhones { get; set; } = [];
+    public ICollection<DoctorLink> DoctorLinks { get; set; } = [];
+    public ICollection<DoctorClinic> DoctorClinics { get; set; } = [];
+    public NurseClinic NurseClinic { get; set; }
 }

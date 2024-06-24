@@ -9,8 +9,6 @@ import { UserDropdownComponent } from './components/account/user-dropdown.compon
 import { NotificationsDropdownComponent } from './components/account/notifications-dropdown.component';
 import { QuickLinksDropdownComponent } from './components/account/quick-links-dropdown.component';
 import { HeaderSearchComponent } from './components/account/header-search.component';
-import { AsideComponent } from './components/auth/aside.component';
-import { BottomLinksComponent } from './components/auth/bottom-links.component';
 import { FormErrorModalComponent } from './services/form-error-modal.service';
 
 
@@ -26,8 +24,6 @@ import { FormErrorModalComponent } from './services/form-error-modal.service';
     QuickLinksDropdownComponent,
     HeaderSearchComponent,
 
-    AsideComponent,
-    BottomLinksComponent,
 
     FormErrorModalComponent,
   ],
@@ -46,8 +42,6 @@ import { FormErrorModalComponent } from './services/form-error-modal.service';
     QuickLinksDropdownComponent,
     HeaderSearchComponent,
 
-    AsideComponent,
-    BottomLinksComponent,
 
     FormErrorModalComponent,
   ]

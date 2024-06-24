@@ -1,0 +1,39 @@
+
+@if(label !== null) {
+  <label class="form-label fw-semi-bold fs--1" [for]="id ? id : controlName">{{label}}</label>
+}
+<div class="search-box w-100 me-2">
+  <div class="position-relative">
+    <input
+      class="form-control search-input search"
+      [formControl]="control"
+      type="text"
+      autocomplete="off"
+      [placeholder]="placeholder"
+      [attr.aria-label]="placeholder"
+      [id]="id ? id : controlName"
+      [ngClass]="{
+        'is-invalid': submitAttempted && control.invalid,
+        'is-valid': submitAttempted && control.valid
+      }"
+      [attr.aria-describedby]="formText ? controlName + 'helpBlock' : null"
+      [attr.aria-label]="label + ' input'"
+      bsDaterangepicker
+      [bsConfig]="datepickerConfig">
+    <fa-icon [icon]="icons.faCalendar" class="search-box-icon"></fa-icon>
+  </div>
+</div>
+
+@for(error of control.errors | keyvalue; track $index) {
+  @if(submitAttempted && control.invalid) {
+    <div class="invalid-feedback">
+      {{ customErrorMessages[error.key] }}
+    </div>
+  }
+}
+
+@if(formText) {
+  <div [id]="controlName+'helpBlock'" class="form-text">
+    {{formText}}
+  </div>
+}

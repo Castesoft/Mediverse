@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Appointment, Patient } from '../../../../types';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { patients } from '../../../../data/patients';
 import { appointments } from '../../../../data/appointments';
+import { Appointment } from '../../../../_models/appointment';
+import { Patient } from '../../../../_models/patient';
 
 @Component({
   selector: 'patient-details',

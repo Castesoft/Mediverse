@@ -1,14 +1,22 @@
 namespace MainService.Models.Entities;
+
 public class Product : BaseEntity
 {
     public string Name { get; set; }
     public string Description { get; set; }
+    public int Quantity { get; set; }
+    public string Unit { get; set; }
+    public string Manufacturer { get; set; }
+    public string LotNumber { get; set; }
     public decimal Price { get; set; }
     public double Discount { get; set; }
 
     public ICollection<ProductPhoto> ProductPhotos { get; set; } = [];
+    public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; set; } = [];
 
-    public Product() {}
+    public Product()
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.

@@ -1,0 +1,52 @@
+<label
+  [for]="id? id : controlName"
+  class="form-label"
+  >
+  {{label}}
+  @if(isOptional && !hideIsOptional) {
+    <span class="text-secondary"> (Opcional)</span>
+  }
+</label>
+<style>
+  .wrapper {
+      padding: 20px;
+      margin:15px 0; 
+      background-color: #0f9d58;
+  }
+   
+  textarea {
+      font-size:20px;
+      width:100%;
+  }
+</style>
+<textarea
+  class="form-control text-1000 fs-0"
+  [id]="id ? id : controlName"
+  [ngStyle]="{'height': fill ? '265px' : '150px', 'box-sizing': 'border-box !important'}"
+  [formControl]="control"
+  autocomplete="off"
+  [attr.autofocus]="shouldAutoFocus ? true : null"
+  spellcheck="false"
+  [readonly]="isReadonly"
+  [ngClass]="{
+    'is-invalid': !isReadonly && submitAttempted && control.invalid,
+    'is-valid': !isReadonly && submitAttempted && control.valid
+  }"
+  [attr.aria-describedby]="formText ? controlName+'helpBlock' : null"
+  [attr.aria-label]="label + ' input'"
+  >
+</textarea>
+
+@for(error of control.errors | keyvalue; let idx = $index; track idx) {
+  @if(submitAttempted && control.invalid) {
+    <div class="invalid-feedback">
+      {{ customErrorMessages[error.key] }}
+    </div>
+  }
+}
+
+@if(formText) {
+  <div [id]="controlName+'helpBlock'" class="form-text">
+    {{formText}}
+  </div>
+}

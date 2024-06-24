@@ -1,7 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-declare var KTDrawer: any;
+// declare var KTDrawer: any;
 
 @Component({
   host: {
