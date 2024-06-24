@@ -1,4 +1,4 @@
-import { Doctor, Education, Availability, Sex } from '../types';
+import { Doctor, Sex } from "../_models/user";
 
 export const doctors: Doctor[] = [
   {

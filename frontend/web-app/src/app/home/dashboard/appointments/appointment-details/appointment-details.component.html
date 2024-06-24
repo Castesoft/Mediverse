@@ -75,7 +75,7 @@
                     href="#"
                     class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"
                   >
-                    {{ item.patient.name }}
+                    {{ item.patient.firstName }} {{ item.patient.lastName }}
                   </a>
                   <a
                     class="btn btn-light-primary py-2"
@@ -276,9 +276,9 @@
                       @for (item of item.patient.currentMedications; track item)
                       {
                       <tr>
-                        <td class="fw-bold">{{ item.name }}</td>
+                        <td class="fw-bold">{{ item.firstName }}</td>
                         <td class="text-end">
-                          {{ item.quantity }} {{ item.unit }}
+                          {{ item.firstName }}
                         </td>
                       </tr>
                       }

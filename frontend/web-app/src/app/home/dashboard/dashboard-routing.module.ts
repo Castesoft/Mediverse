@@ -11,18 +11,28 @@ import { AppointmentDetailsComponent } from './appointments/appointment-details/
 import { PatientsComponent } from './patients/patients.component';
 import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
 import { AccountComponent } from '../account/account.component';
-import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
-import { PrescriptionDetailsComponent } from './prescriptions/prescription-details/prescriptions-detail.component';
 import { PaymentsComponent } from './payments/payments.component';
 
 const routes: Routes = [
   { path: '', component: OverviewComponent },
+  {
+    path: 'prescriptions',
+    loadChildren: () =>
+      import('./../../prescriptions/prescriptions.module').then(
+        (m) => m.PrescriptionsModule
+      ),
+  },
+  {
+    path: 'medicines',
+    loadChildren: () =>
+      import('./../../medicines/medicines.module').then(
+        (m) => m.MedicinesModule
+      ),
+  },
   { path: 'appointments', component: AppointmentsComponent },
   { path: 'appointments/:id', component: AppointmentDetailsComponent },
   { path: 'patients', component: PatientsComponent },
   { path: 'patients/:id', component: PatientDetailsComponent },
-  { path: 'prescriptions', component: PrescriptionsComponent },
-  { path: 'prescriptions/:id', component: PrescriptionDetailsComponent },
   { path: 'payments', component: PaymentsComponent },
   { path: 'account', component: AccountComponent },
   {

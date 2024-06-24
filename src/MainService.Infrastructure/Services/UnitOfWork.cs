@@ -12,6 +12,7 @@ public class UnitOfWork(DataContext context, IMapper mapper) : IUnitOfWork
     public IProductRepository ProductRepository => new ProductRepository(context, mapper);
     public IServiceRepository ServiceRepository => new ServiceRepository(context, mapper);
     public IPhotoRepository PhotoRepository => new PhotoRepository(context, mapper);
+    public IUserRepository UserRepository => new UserRepository(context, mapper);
 
     public async Task<bool> Complete()
     {

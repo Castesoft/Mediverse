@@ -1,0 +1,41 @@
+<label [for]="id? id : controlName" class="form-label fw-semi-bold fs--1 d-flex">
+  {{label}}
+  @if(isOptional && !hideIsOptional) {
+    <span class="text-secondary"> (Opcional)</span>
+  }
+</label>
+<select
+  class="form-select fs-0 text-1000"
+  [formControl]="control"
+  [id]="id ? id : controlName"
+  [attr.autofocus]="shouldAutoFocus ? true : null"
+  [ngClass]="{
+    'is-invalid': submitAttempted && control.invalid,
+    'is-valid': submitAttempted && control.valid
+  }"
+  [attr.aria-describedby]="formText ? controlName+'helpBlock' : null"
+  [attr.aria-label]="label + ' select'"
+  >
+  @if (placeholder) {
+    <option value="" disabled selected>{{placeholder}}</option>
+  }
+  @for(option of options; track $index) {
+    <option value="{{option.name}}">
+      {{option.name}}
+    </option>
+  }
+</select>
+
+@for(error of control.errors | keyvalue; let idx = $index; track idx) {
+  @if(submitAttempted && control.invalid) {
+    <div class="invalid-feedback">
+      {{ customErrorMessages[error.key] }}
+    </div>
+  }
+}
+
+@if(formText) {
+  <div [id]="controlName+'helpBlock'" class="form-text">
+    {{formText}}
+  </div>
+}

@@ -1,4 +1,4 @@
-import { PaymentBilling, PaymentMethod, PaymentStatus } from '../types';
+import { PaymentBilling, PaymentMethod, PaymentStatus } from '../_models/payment';
 import { services } from './services';
 
 export const paymentBillings: PaymentBilling[] = [

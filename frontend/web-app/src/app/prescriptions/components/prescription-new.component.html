@@ -1,0 +1,110 @@
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()" id="prescriptionForm">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <div class="row row-cols-1 row-cols-md-2">
+          <div
+            controlDate
+            formControlName="date"
+            class="col"
+            [label]="'Fecha'"
+          ></div>
+          <div class="col">
+            <label
+              for="patient"
+              class="form-label fw-semi-bold fs--1"
+              [style.display]="'flex'"
+            >
+              Individuo
+            </label>
+            <button
+              [disabled]="disablePatientSelect"
+              class="btn w-100 fs--1"
+              [class.btn-outline-primary]="!patientSelected"
+              [class.btn-outline-danger]="
+                patientSelected && !selectedPatientIsValid
+              "
+              [class.btn-outline-success]="
+                patientSelected && selectedPatientIsValid
+              "
+              (click)="openPatientSelectModal($event)"
+              [style.paddingTop]="'12px'"
+              [style.paddingBottom]="'12px'"
+            >
+              @if (patientSelected && patient) {
+              <span class="font-weight-bold">
+                {{ patient.firstName }} {{ patient.lastName }}
+              </span>
+              } @else { Seleccionar Individuo
+              <fa-icon [icon]="icons.faChevronRight" class="me-2" />
+              }
+            </button>
+
+            @if (patientSelectionErrors.length > 0) {
+            <alert [type]="'danger fs--1 mt-2'">
+              <span class="alert-heading fs--1 fw-bold">
+                Errores de validación
+              </span>
+              <ul class="mb-0">
+                @for (error of patientSelectionErrors; track error) {
+                <li>{{ error }}</li>
+                }
+              </ul>
+            </alert>
+            }
+          </div>
+          <div class="col">
+            <label
+              for="patient"
+              class="form-label fw-semi-bold fs--1"
+              [style.display]="'flex'"
+            >
+              Medicinaes
+            </label>
+            <button
+              [disabled]="disablePatientSelect"
+              class="btn w-100 fs--1"
+              [class.btn-outline-primary]="!(medicines.length !== 0)"
+              [class.btn-outline-success]="
+                medicines.length !== 0 && selectedPatientIsValid
+              "
+              (click)="openMedicinesSelectModal($event)"
+              [style.paddingTop]="'12px'"
+              [style.paddingBottom]="'12px'"
+            >
+              @if (medicines.length > 0) { @for (medicine of medicines; track
+              medicine) {
+              <span class="font-weight-bold">
+                {{ medicine.name }} {{ medicine.unit }}
+              </span>
+              } } @else { Seleccionar Medicamentos
+              <fa-icon [icon]="icons.faChevronRight" class="me-2" />
+              }
+            </button>
+
+            @if (patientSelectionErrors.length > 0) {
+            <alert [type]="'danger fs--1 mt-2'">
+              <span class="alert-heading fs--1 fw-bold">
+                Errores de validación
+              </span>
+              <ul class="mb-0">
+                @for (error of patientSelectionErrors; track error) {
+                <li>{{ error }}</li>
+                }
+              </ul>
+            </alert>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<button class="btn btn-light-primary" type="submit" form="prescriptionForm">
+  <i class="ki-duotone ki-filter">
+    <span class="path1"></span>
+    <span class="path2"></span>
+  </i>
+  Confirmar
+</button>

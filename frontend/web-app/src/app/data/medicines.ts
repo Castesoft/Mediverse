@@ -1,4 +1,4 @@
-import { Medicine } from '../types';
+import { Medicine } from "../_models/medicine";
 
 export const medicines: Medicine[] = [
   {
@@ -11,7 +11,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2025-12-31'),
     manufacturer: 'Pharma Inc.',
     lotNumber: 'A12345',
-  },
+  } as Medicine,
   {
     id: 2,
     name: 'Lisinopril',
@@ -22,7 +22,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-11-30'),
     manufacturer: 'Health Corp.',
     lotNumber: 'B23456',
-  },
+  } as Medicine,
   {
     id: 3,
     name: 'Ibuprofeno',
@@ -33,7 +33,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2023-10-15'),
     manufacturer: 'Wellness Labs',
     lotNumber: 'C34567',
-  },
+  } as Medicine,
   {
     id: 4,
     name: 'Paracetamol',
@@ -44,7 +44,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-01-20'),
     manufacturer: 'Medicines Co.',
     lotNumber: 'D45678',
-  },
+  } as Medicine,
   {
     id: 5,
     name: 'Atorvastatina',
@@ -55,7 +55,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-08-25'),
     manufacturer: 'CardioHealth',
     lotNumber: 'E56789',
-  },
+  } as Medicine,
   {
     id: 6,
     name: 'Amoxicilina',
@@ -66,7 +66,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2025-05-18'),
     manufacturer: 'BioPharma',
     lotNumber: 'F67890',
-  },
+  } as Medicine,
   {
     id: 7,
     name: 'Amlodipino',
@@ -77,7 +77,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2023-07-22'),
     manufacturer: 'HeartMeds',
     lotNumber: 'G78901',
-  },
+  } as Medicine,
   {
     id: 8,
     name: 'Omeprazol',
@@ -88,7 +88,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2025-04-10'),
     manufacturer: 'DigestiveHealth',
     lotNumber: 'H89012',
-  },
+  } as Medicine,
   {
     id: 9,
     name: 'Simvastatina',
@@ -99,7 +99,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-06-15'),
     manufacturer: 'CardioMeds',
     lotNumber: 'I90123',
-  },
+  } as Medicine,
   {
     id: 10,
     name: 'Levotiroxina',
@@ -110,7 +110,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2023-12-01'),
     manufacturer: 'ThyroidCare',
     lotNumber: 'J01234',
-  },
+  } as Medicine,
   {
     id: 11,
     name: 'Clopidogrel',
@@ -121,7 +121,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2025-03-21'),
     manufacturer: 'AntiClot',
     lotNumber: 'K12345',
-  },
+  } as Medicine,
   {
     id: 12,
     name: 'Furosemida',
@@ -132,7 +132,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2023-09-30'),
     manufacturer: 'DiureticMeds',
     lotNumber: 'L23456',
-  },
+  } as Medicine,
   {
     id: 13,
     name: 'Sertralina',
@@ -143,7 +143,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-02-14'),
     manufacturer: 'MoodStabilizers',
     lotNumber: 'M34567',
-  },
+  } as Medicine,
   {
     id: 14,
     name: 'Losartán',
@@ -154,7 +154,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-11-07'),
     manufacturer: 'BloodPressureInc',
     lotNumber: 'N45678',
-  },
+  } as Medicine,
   {
     id: 15,
     name: 'Salbutamol',
@@ -165,7 +165,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-05-05'),
     manufacturer: 'RespiraMeds',
     lotNumber: 'O56789',
-  },
+  } as Medicine,
   {
     id: 16,
     name: 'Prednisona',
@@ -176,7 +176,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2023-06-12'),
     manufacturer: 'AntiInflammatories',
     lotNumber: 'P67890',
-  },
+  } as Medicine,
   {
     id: 17,
     name: 'Tramadol',
@@ -187,7 +187,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2025-01-30'),
     manufacturer: 'PainRelief',
     lotNumber: 'Q78901',
-  },
+  } as Medicine,
   {
     id: 18,
     name: 'Cetirizina',
@@ -198,7 +198,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2024-09-15'),
     manufacturer: 'AllergyMeds',
     lotNumber: 'R89012',
-  },
+  } as Medicine,
   {
     id: 19,
     name: 'Insulina Glargina',
@@ -209,7 +209,7 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2025-02-20'),
     manufacturer: 'DiabetesCare',
     lotNumber: 'S90123',
-  },
+  } as Medicine,
   {
     id: 20,
     name: 'Digoxina',
@@ -220,5 +220,5 @@ export const medicines: Medicine[] = [
     expirationDate: new Date('2023-11-22'),
     manufacturer: 'HeartMeds',
     lotNumber: 'T01234',
-  },
+  } as Medicine,
 ];

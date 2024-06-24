@@ -1,4 +1,4 @@
-import { Prescription, PrescriptionStatus } from '../types';
+import { Prescription, PrescriptionStatus } from '../_models/prescription';
 import { doctors } from './doctors';
 import { medicines } from './medicines';
 import { patients } from './patients';
@@ -22,7 +22,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 1,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
   {
     id: 2,
     date: new Date('2024-01-16'),
@@ -41,7 +41,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Completed,
-  },
+  } as Prescription,
   {
     id: 3,
     date: new Date('2024-01-17'),
@@ -60,7 +60,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 2,
     status: PrescriptionStatus.Canceled,
-  },
+  } as Prescription,
   {
     id: 4,
     date: new Date('2024-01-18'),
@@ -79,7 +79,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 1,
     status: PrescriptionStatus.Expired,
-  },
+  } as Prescription,
   {
     id: 5,
     date: new Date('2024-01-19'),
@@ -98,7 +98,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
   {
     id: 6,
     date: new Date('2024-01-20'),
@@ -117,7 +117,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 2,
     status: PrescriptionStatus.Completed,
-  },
+  } as Prescription,
   {
     id: 7,
     date: new Date('2024-01-21'),
@@ -136,7 +136,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
   {
     id: 8,
     date: new Date('2024-01-22'),
@@ -155,7 +155,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 1,
     status: PrescriptionStatus.Canceled,
-  },
+  } as Prescription,
   {
     id: 9,
     date: new Date('2024-01-23'),
@@ -174,7 +174,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 3,
     status: PrescriptionStatus.Expired,
-  },
+  } as Prescription,
   {
     id: 10,
     date: new Date('2024-01-24'),
@@ -193,7 +193,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
   {
     id: 11,
     date: new Date('2024-01-25'),
@@ -212,7 +212,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 1,
     status: PrescriptionStatus.Completed,
-  },
+  } as Prescription,
   {
     id: 12,
     date: new Date('2024-01-26'),
@@ -231,7 +231,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 2,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
   {
     id: 13,
     date: new Date('2024-01-27'),
@@ -250,7 +250,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Canceled,
-  },
+  } as Prescription,
   {
     id: 14,
     date: new Date('2024-01-28'),
@@ -269,7 +269,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 1,
     status: PrescriptionStatus.Expired,
-  },
+  } as Prescription,
   {
     id: 15,
     date: new Date('2024-01-29'),
@@ -288,7 +288,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
   {
     id: 16,
     date: new Date('2024-01-30'),
@@ -307,7 +307,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 1,
     status: PrescriptionStatus.Completed,
-  },
+  } as Prescription,
   {
     id: 17,
     date: new Date('2024-01-31'),
@@ -326,7 +326,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
   {
     id: 18,
     date: new Date('2024-02-01'),
@@ -345,7 +345,7 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 1,
     status: PrescriptionStatus.Canceled,
-  },
+  } as Prescription,
   {
     id: 19,
     date: new Date('2024-02-02'),
@@ -364,7 +364,7 @@ export const prescriptions: Prescription[] = [
     refillable: false,
     numberOfRefills: 0,
     status: PrescriptionStatus.Expired,
-  },
+  } as Prescription,
   {
     id: 20,
     date: new Date('2024-02-03'),
@@ -383,5 +383,5 @@ export const prescriptions: Prescription[] = [
     refillable: true,
     numberOfRefills: 2,
     status: PrescriptionStatus.Active,
-  },
+  } as Prescription,
 ];

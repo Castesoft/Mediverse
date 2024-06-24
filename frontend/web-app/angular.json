@@ -44,7 +44,8 @@
           "options": {
             "allowedCommonJsDependencies": [
               "cuid",
-              "apexcharts"
+              "apexcharts",
+              "choices.js"
             ],
             "outputPath": "../../src/MainService/wwwroot",
             "index": "src/index.html",
@@ -64,39 +65,21 @@
               "node_modules/typeface-roboto/index.css",
               "node_modules/typeface-nunito-sans/index.css",
               "node_modules/typeface-inter/inter.css",
-
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "public/plugins/keenicons/duotone/style.css",
               "public/plugins/keenicons/outline/style.css",
               "public/plugins/keenicons/solid/style.css",
+              "node_modules/choices.js/public/assets/styles/choices.min.css",
 
               "public/sass/style.scss",
 
               "src/styles.scss"
             ],
             "scripts": [
-              "public/js/layout/aside.js",
-              "public/js/layout/builder.js",
-              "public/js/layout/header.js",
-              "public/js/layout/search.js",
-              "public/js/layout/theme-mode-user.js",
-              "public/js/layout/theme-mode.js",
-
               "node_modules/apexcharts/dist/apexcharts.min.js",
-
-              "public/js/vendors/plugins/apexchart.init.js",
-              "public/js/vendors/plugins/bootstrap-markdown.init.js",
-              "public/js/vendors/plugins/datatables.init.js",
-              "public/js/vendors/plugins/dropzone.init.js",
-              "public/js/vendors/plugins/prism.init.js",
-              "public/js/vendors/plugins/select2.init.js",
-              "public/js/vendors/plugins/sweetalert2.init.js",
-              "public/js/vendors/plugins/tempus-dominus.init.js",
-
-              "public/plugins/toastr/build/toastr.min.js",
-
-              "public/js/components/drawer.js",
-              "public/js/components/_init.js",
-              "public/js/components/app.js"
+              "node_modules/choices.js/public/assets/scripts/choices.min.js"
+              
             ]
           },
           "configurations": {

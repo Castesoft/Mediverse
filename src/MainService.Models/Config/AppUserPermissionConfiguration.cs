@@ -14,12 +14,12 @@ public class AppUserPermissionConfiguration : IEntityTypeConfiguration<AppUserPe
             .HasOne(x => x.User)
             .WithMany(x => x.UserPermissions)
             .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(x => x.Permission)
             .WithMany(x => x.UserPermissions)
             .HasForeignKey(x => x.PermissionId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

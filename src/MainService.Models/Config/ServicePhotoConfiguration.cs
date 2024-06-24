@@ -13,7 +13,7 @@ public class ServicePhotoConfiguration : IEntityTypeConfiguration<ServicePhoto>
             .HasOne(x => x.Service)
             .WithMany(x => x.ServicePhotos)
             .HasForeignKey(x => x.ServiceId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(x => x.Photo)

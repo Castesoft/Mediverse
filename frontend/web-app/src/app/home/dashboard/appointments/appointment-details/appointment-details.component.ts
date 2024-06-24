@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
-import { Appointment } from '../../../../types';
 import { appointments } from '../../../../data/appointments';
+import { Appointment } from '../../../../_models/appointment';
 
 @Component({
   selector: 'appointment-details',
@@ -32,13 +32,13 @@ export class AppointmentDetailsComponent implements OnInit {
 
       this.tax =
         appointment.paymentBilling.services.reduce(
-          (acc, service) => acc + service.price,
+          (acc: any, service: any) => acc + service.price,
           0
         ) * 0.16;
 
       this.total =
         appointment.paymentBilling.services.reduce(
-          (acc, service) => acc + service.price,
+          (acc: any, service: any) => acc + service.price,
           0
         ) + this.tax;
     } else {

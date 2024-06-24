@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { BottomLinksComponent } from '../bottom-links.component';
+import { SignInBasicFormComponent } from '../../../shared/auth/sign-in-basic-form.component';
+import { AsideComponent } from '../aside.component';
 
 @Component({
   selector: 'sign-in-basic-route',
@@ -22,5 +25,7 @@ import { Component } from '@angular/core';
       </div>
     </div>
   `,
+  standalone: true,
+  imports: [ BottomLinksComponent, SignInBasicFormComponent, AsideComponent, ],
 })
 export class BasicComponent {}

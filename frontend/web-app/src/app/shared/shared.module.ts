@@ -3,10 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgxBootstrapModule } from './groups/ngx-bootstrap.module';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PasswordResetFormComponent } from './auth/sign-in/password-reset-form.component';
-import { SignInBasicFormComponent } from './auth/sign-in/sign-in-basic-form.component';
-import { SignUpBasicFormComponent } from './auth/sign-up/sign-up-basic-form.component';
-import { FormControlComponent } from './form-controls/form-control.component';
 import { AccountFooterComponent } from '../core/components/account/footer.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { ScheduleSummaryCardComponent } from '../home/dashboard/components/schedule-summary-card/schedule-summary-card.component';
@@ -15,11 +11,6 @@ import { ScheduleSummaryCardComponent } from '../home/dashboard/components/sched
 
 @NgModule({
   declarations: [
-    PasswordResetFormComponent,
-    SignInBasicFormComponent,
-    SignUpBasicFormComponent,
-
-    FormControlComponent,
     AccountFooterComponent,
     ScheduleSummaryCardComponent
   ],
@@ -37,11 +28,7 @@ import { ScheduleSummaryCardComponent } from '../home/dashboard/components/sched
     FormsModule,
     ReactiveFormsModule,
 
-    PasswordResetFormComponent,
-    SignInBasicFormComponent,
-    SignUpBasicFormComponent,
 
-    FormControlComponent,
     AccountFooterComponent,
 
     ScheduleSummaryCardComponent

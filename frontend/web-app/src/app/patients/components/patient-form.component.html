@@ -1,0 +1,106 @@
+<div class="row align-items-center justify-content-between g-3 mb-4">
+  <div class="col-12 col-md-auto">
+    <h1>
+      @if (use === "create") { Crear {{ service.subjectSingular }}
+      @if (!validationMode) {
+      <span class="fs--1 badge badge-phoenix badge-phoenix-info me-2"
+        >Validación desactivada</span
+      >
+      @if (use === "create") {
+      <button class="btn btn-sm btn-phoenix-info" (click)="fillForm()">
+        Llenar con {{ service.subjectSingular }} aleatorio
+      </button>
+      } } } @else if (use === "edit") { Actualizar {{ service.subjectSingular }}
+      @if (!validationMode) {
+      <span class="fs--1 badge badge-phoenix badge-phoenix-info me-2"
+        >Validación desactivada</span
+      >
+      } } @else if (use === "detail" && item !== null) {
+      {{ service.subjectSingularUpperCase }} #{{ item.id }}
+      }
+    </h1>
+  </div>
+  <div class="col-12 col-md-auto d-flex">
+    <div>
+      @if (use === "detail") {
+      <a
+        class="btn btn-phoenix-secondary px-3 px-sm-5 me-2"
+        routerLink="editar"
+      >
+        <fa-icon class="me-sm-2" [icon]="icons.faPenToSquare"></fa-icon>
+        <span class="d-none d-sm-inline">Editar</span>
+      </a>
+      } @if (use === "detail" || use === "edit") {
+      <button class="btn btn-phoenix-danger me-2" (click)="onDelete()">
+        <fa-icon [icon]="icons.faTrashCan" class="me-2" />Eliminar
+        {{ service.subjectSingular }}
+      </button>
+      }
+    </div>
+  </div>
+</div>
+@if ( (use === "create" && form !== undefined) || (use === "edit" && item !==
+null && form !== undefined) || (use === "detail" && item !== null) ) {
+<div class="row g-3">
+  <div class="col-12 col-md-9 col-xl-10">
+    <form [formGroup]="form.formGroup" [id]="form.id" (ngSubmit)="onSubmit()">
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4 mb-4">
+            <div
+              inputControl
+              required
+              class="col"
+              formControlName="shortName"
+              [isReadonly]="isDetail"
+              [submitted]="
+                isDetail
+                  ? false
+                  : form.formGroup.controls['shortName'].touched ||
+                    submitAttempted
+              "
+              [label]="'Nombre corto'"
+              [placeholder]="'Nombre corto de la raza'"
+            ></div>
+            <div
+              inputControl
+              required
+              class="col"
+              formControlName="name"
+              [isReadonly]="isDetail"
+              [submitted]="
+                isDetail
+                  ? false
+                  : form.formGroup.controls['name'].touched || submitAttempted
+              "
+              [label]="'Nombre'"
+              [placeholder]="'Nombre de la raza'"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      @if (use !== "detail") {
+      <div class="col-12 d-flex justify-content-end mt-6">
+        <button class="btn btn-primary" [attr.form]="form.id" type="submit">
+          @if (use === "create") { Crear {{ service.subjectSingular }}
+          } @else if (use === "edit") { Guardar cambios }
+        </button>
+      </div>
+      }
+    </form>
+  </div>
+  <div class="col-12 col-md-3 col-xl-2">
+    @if (validationErrors.length > 0) {
+    <alert [type]="!isDetail ? 'danger' : 'text'">
+      <h4 class="alert-heading">Errores de validación del servidor</h4>
+      <ul>
+        @for (error of validationErrors; track idx; let idx = $index) {
+        <li class="text-danger">{{ error }}</li>
+        }
+      </ul>
+    </alert>
+    }
+  </div>
+</div>
+}

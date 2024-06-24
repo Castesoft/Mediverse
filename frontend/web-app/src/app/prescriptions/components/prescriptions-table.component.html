@@ -1,0 +1,84 @@
+<thead
+  tableHeader
+  [columns]="columns"
+  [params]="params" [isCompact]="isCompact()" [mode]="mode()"
+  (onParamsChange)="onSortOptionsChange($event)"
+  (onSelectAll)="selectAll($event)"
+></thead>
+<tbody class="list" id="leal-tables-body">
+  @for (item of data; track item.id; let idx = $index) {
+    <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+      <td
+        class="fs--1 align-middle"
+        [ngClass]="isCompact() ? 'py-1 fs--1 pe-3 ps-0 border-none' : ''"
+      >
+        <div class="form-check mb-0 fs-0">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [(ngModel)]="item.isSelected"
+          />
+        </div>
+      </td>
+
+      <td
+        class="name align-middle white-space-nowrap px-0 py-0"
+        [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+      >
+        <div class="d-flex align-items-center justify-content-start px-0">
+          <a
+            [routerLink]="['/admin', 'utilerias', service.subjectRoute, item.id]"
+            [href]="['/admin', 'utilerias', service.subjectRoute, item.id]"
+            class="fw-semi-bold text-primary"
+            >#{{ item.id }}</a
+          >
+        </div>
+      </td>
+
+      <td
+        class="name align-middle white-space-nowrap"
+        [ngClass]="isCompact() ? 'py-1 fs--1 pe-3 ps-1 border-none' : ''"
+      >
+        <div class="d-flex align-items-center justify-content-center">
+          <div class="font-sans-serif btn-reveal-trigger dropdown" dropdown>
+            <button
+              class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--1"
+              dropdownToggle
+              [id]="'dropdown' + item.id"
+              type="button"
+              [attr.aria-controls]="
+                'dropdown' + item.id
+              "
+            >
+              <fa-icon [icon]="icons.faEllipsisH" class="fs--1" />
+            </button>
+            <div
+              class="dropdown-menu dropdown-menu-end py-2"
+              style="z-index: 400000000000000000"
+              *dropdownMenu
+            >
+              <a
+                class="dropdown-item"
+                [routerLink]="['/admin', 'utilerias', service.subjectRoute, item.id]"
+                >Ver</a
+              >
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                [routerLink]="[item.id, 'editar']"
+                >Editar</a
+              >
+              <div class="dropdown-divider"></div>
+              <button
+                class="dropdown-item text-danger"
+                (click)="deleteById(item)"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  }
+</tbody>

@@ -5,7 +5,7 @@
       class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2"
     >
       <h1 class="text-gray-900 fw-bold my-1 fs-2">
-        {{ item.name }}
+        {{ item.firstName }} {{ item.lastName }}
         <small class="text-muted fs-6 fw-normal ms-1"></small>
       </h1>
       <ul class="breadcrumb fw-semibold fs-base my-1">
@@ -20,7 +20,7 @@
           >
         </li>
         <li class="breadcrumb-item text-muted">
-          {{ item.name }}
+          {{ item.firstName }} {{ item.lastName }}
         </li>
       </ul>
     </div>
@@ -49,7 +49,7 @@
                 </span>
               </div>
               <div class="fs-3 text-gray-800 fw-bold mb-3 mt-6">
-                {{ item.name }}
+                {{ item.firstName }} {{ item.lastName }}
               </div>
               <div>
                 <span class="badge badge-light-primary fs-5">Paciente</span>
@@ -123,7 +123,7 @@
                     <div>
                       <div class="fw-bold mt-5">Nombre</div>
                       <div class="text-gray-600 mb-0">
-                        {{ item.name }}
+                        {{ item.firstName }} {{ item.lastName }}
                       </div>
                     </div>
                     <div>
@@ -159,7 +159,7 @@
                     <div>
                       <div class="fw-bold mt-5">Método de Pago</div>
                       <div class="text-gray-600 mb-0">
-                        {{ item.name }}
+                        {{ item.firstName }} {{ item.lastName }}
                       </div>
                     </div>
                   </div>
@@ -196,7 +196,8 @@
           <div class="card-body pt-3">
             <div class="d-flex overflow-auto">
               <div class="p-2" *ngFor="let date of getNextMonth()">
-                <div (click)="onSelectedDateChange(date.date)"
+                <div
+                  (click)="onSelectedDateChange(date.date)"
                   class="weekday-circle d-flex flex-column"
                   [class.appointment-day]="date.hasAppointments"
                 >
@@ -322,7 +323,9 @@
                     <tbody>
                       @for (item of item.allergies; track item) {
                       <tr>
-                        <td class="fw-bold">{{ item.name }}</td>
+                        <td class="fw-bold">
+                          {{ item.name }}
+                        </td>
                         <td>{{ item.reactions.join(", ") }}</td>
                         <td class="text-center">
                           @if (item.severity === 'Leve') {
@@ -368,9 +371,11 @@
                     <tbody>
                       @for (item of item.currentMedications; track item) {
                       <tr>
-                        <td class="fw-bold">{{ item.name }}</td>
+                        <td class="fw-bold">
+                          {{ item.firstName }} {{ item.lastName }}
+                        </td>
                         <td class="text-end">
-                          {{ item.quantity }} {{ item.unit }}
+                          {{ item.firstName }} {{ item.lastName }}
                         </td>
                       </tr>
                       }

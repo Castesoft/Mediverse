@@ -10,6 +10,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { errorInterceptor } from './_interceptors/error.interceptor';
+import { jwtInterceptor } from './_interceptors/jwt.interceptor';
+import { loadingInterceptor } from './_interceptors/loading.interceptor';
+import { ToastrModule } from 'ngx-toastr';
 
 registerLocaleData(localeEs);
 
@@ -28,12 +33,22 @@ registerLocaleData(localeEs);
     }),
 
     BrowserAnimationsModule,
-
     CoreModule,
     SharedModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      progressBar: true,
+      closeButton: true,
+      timeOut: 5000
+    }),
   ],
   providers: [
-    provideClientHydration()
+    provideHttpClient(withInterceptors([
+      jwtInterceptor,
+      errorInterceptor,
+      loadingInterceptor
+    ]), withFetch())
   ],
   bootstrap: [AppComponent]
 })
