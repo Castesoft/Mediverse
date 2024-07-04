@@ -43,7 +43,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "cuid",
+              "@paralleldrive/cuid2",
               "apexcharts",
               "choices.js"
             ],
@@ -79,7 +79,7 @@
             "scripts": [
               "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/choices.js/public/assets/scripts/choices.min.js"
-              
+
             ]
           },
           "configurations": {
