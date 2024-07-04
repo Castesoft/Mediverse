@@ -7,10 +7,10 @@ import { Sex, MedicalHistory, Allergy, EmergencyContact } from './user';
 import { Modal } from './modal';
 import { HttpParams } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 import { getPaginationHeaders } from '../_utils/util';
 
-const subject = 'patient';
+const subject = 'patient'     ;
 
 export class Patient {
   id: number;
@@ -173,7 +173,7 @@ export class FilterForm {
   id: string;
 
   constructor() {
-    this.id = `${this.subject}filterForm${cuid()}`;
+    this.id = `${this.subject}filterForm${createId()}`;
     this.formGroup = new FormGroup({
       search: new FormControl(''),
       dateRange: new FormControl({ value: ['', ''], disabled: false }),
@@ -204,7 +204,7 @@ export class CreateForm {
   id: string;
 
   constructor(mode: boolean) {
-    this.id = `${subject}Form${cuid()}`;
+    this.id = `${subject}Form${createId()}`;
 
     this.formGroup = new FormGroup({
       name: new FormControl(''),
@@ -239,7 +239,7 @@ export class EditForm {
   id: string;
 
   constructor(mode: boolean) {
-    this.id = `${subject}Form${cuid()}`;
+    this.id = `${subject}Form${createId()}`;
 
     this.formGroup = new FormGroup({
       name: new FormControl(''),
@@ -276,7 +276,7 @@ export class DetailForm {
   patchValues = (item: Patient) => this.formGroup.patchValue(item);
 
   constructor() {
-    this.id = `${subject}Form${cuid()}`;
+    this.id = `${subject}Form${createId()}`;
 
     this.formGroup = new FormGroup({
       name: new FormControl({ value: '', disabled: true }),

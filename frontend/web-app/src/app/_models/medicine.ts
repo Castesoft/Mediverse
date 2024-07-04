@@ -6,7 +6,7 @@ import { Column } from "./types";
 import { Modal } from "./modal";
 import { HttpParams } from "@angular/common/http";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import cuid from "cuid";
+import { createId } from '@paralleldrive/cuid2';
 import { getPaginationHeaders } from "../_utils/util";
 
 const subject = 'medicine';
@@ -140,30 +140,27 @@ export class MedicineParams {
     sort = 'dateCreatedDesc';
     isSortAscending = false;
     id?: number;
-  
-  
-  
+
     toHttpParams(): HttpParams {
       let params = getPaginationHeaders(this.pageNumber, this.pageSize);
-  
+
       if (this.id) params = params.append('id', this.id.toString());
-  
-  
+
       return params;
     }
-  
+
     updateFromPartial(partial: Partial<MedicineParams>) {
       Object.assign(this, partial);
     }
   }
-  
+
   export class FilterForm {
     subject = 'medicine';
     formGroup: FormGroup;
     id: string;
-  
+
     constructor() {
-      this.id = `${this.subject}filterForm${cuid()}`;
+      this.id = `${this.subject}filterForm${createId()}`;
       this.formGroup = new FormGroup({
         search: new FormControl(''),
         dateRange: new FormControl({ value: ['', ''], disabled: false }),
@@ -174,10 +171,10 @@ export class MedicineParams {
         ]),
       });
     }
-  
+
     patchValue(params: MedicineParams) {
       const dateRange = [params.dateFrom, params.dateTo];
-  
+
       this.formGroup.patchValue(
         {
           search: params.search,
@@ -188,25 +185,25 @@ export class MedicineParams {
       );
     }
   }
-  
+
   export class CreateForm {
     formGroup: FormGroup;
     id: string;
-  
+
     constructor(mode: boolean) {
-      this.id = `${subject}Form${cuid()}`;
-  
+      this.id = `${subject}Form${createId()}`;
+
       this.formGroup = new FormGroup({
         name: new FormControl(''),
         shortName: new FormControl(''),
       });
-  
+
       this.setValidators(mode);
     }
-  
+
     setValidators(mode: boolean) {
       const controls = this.formGroup.controls;
-  
+
       if (mode) {
       //   controls['name'].setValidators([Validators.required]);
       //   controls['shortName'].setValidators([Validators.required]);
@@ -217,31 +214,31 @@ export class MedicineParams {
       //   controls['shortName'].clearAsyncValidators();
       }
     }
-  
+
     patchWithSample() {
       let sample = getRandomSample();
       this.formGroup.patchValue(sample);
     }
   }
-  
+
   export class EditForm {
     formGroup: FormGroup;
     id: string;
-  
+
     constructor(mode: boolean) {
-      this.id = `${subject}Form${cuid()}`;
-  
+      this.id = `${subject}Form${createId()}`;
+
       this.formGroup = new FormGroup({
         name: new FormControl(''),
         shortName: new FormControl(''),
       });
-  
+
       this.setValidators(mode);
     }
-  
+
     setValidators(mode: boolean) {
       const controls = this.formGroup.controls;
-  
+
       if (mode) {
       //   controls['name'].setValidators([Validators.required]);
       //   controls['shortName'].setValidators([Validators.required]);
@@ -252,57 +249,57 @@ export class MedicineParams {
       //   controls['shortName'].clearAsyncValidators();
       }
     }
-  
+
     patchWithSample() {
       let sample = getRandomSample();
       this.formGroup.patchValue(sample);
     }
   }
-  
+
   export class DetailForm {
     formGroup: FormGroup;
     id: string;
-  
+
     patchValues = (item: Medicine) => this.formGroup.patchValue(item);
-  
+
     constructor() {
-      this.id = `${subject}Form${cuid()}`;
-  
+      this.id = `${subject}Form${createId()}`;
+
       this.formGroup = new FormGroup({
         name: new FormControl({ value: '', disabled: true }),
         shortName: new FormControl({ value: '', disabled: true }),
       });
     }
   }
-  
+
   const getRandomSample = () =>
     sampleData[Math.floor(Math.random() * sampleData.length)];
-  
+
   export const medicineCreateToastSuccessMessage = 'Medicamento creada exitosamente';
   export const medicineUpdateToastSuccessMessage = 'Medicamento actualizada exitosamente';
   export const medicineDeleteToastSuccessMessage = 'Medicamento eliminada exitosamente';
-  
+
   export const medicineDeleteRangeModal: Modal = {
     title: 'Eliminar prescripciones',
     message: '¿Estás seguro que deseas eliminar los medicamentos seleccionadas?',
     btnOkText: 'Eliminar',
     btnCancelText: 'Cancelar',
   };
-  
+
   export const medicineDeleteModal: Modal = {
     title: 'Eliminar prescripción',
     message: '¿Estás seguro que deseas eliminar el medicamento?',
     btnOkText: 'Eliminar',
     btnCancelText: 'Cancelar',
   };
-  
+
   export const medicineEditModal: Modal = {
     title: 'Actualizar',
     message: '¿Confirmas los cambios hechos en este medicamento?',
     btnOkText: 'Confirmar',
     btnCancelText: 'Cancelar',
   };
-  
+
   export const medicineEditUnsavedChangesModal: Modal = {
     title: 'Cambios no guardados',
     message:
@@ -310,7 +307,7 @@ export class MedicineParams {
     btnOkText: 'Salir',
     btnCancelText: 'Cancelar',
   };
-  
+
   export const medicineCreateUnsavedChangesModal: Modal = {
     title: 'Cambios no guardados',
     message:
@@ -318,32 +315,32 @@ export class MedicineParams {
     btnOkText: 'Salir',
     btnCancelText: 'Cancelar',
   };
-  
+
   export const sample1: Medicine = {
       id: 1,
       isSelected: false,
     } as Medicine;
-    
+
     export const sample2: Medicine = {
       id: 2,
       isSelected: false,
     } as Medicine;
-    
+
     export const sample3: Medicine = {
       id: 3,
       isSelected: false,
     } as Medicine;
-    
+
     export const sample4: Medicine = {
       id: 4,
       isSelected: false,
     } as Medicine;
-    
+
     export const sample5: Medicine = {
       id: 5,
       isSelected: false,
     } as Medicine;
-    
+
     export const sampleData: Medicine[] = [
       sample1 as Medicine,
       sample2 as Medicine,
@@ -351,5 +348,5 @@ export class MedicineParams {
       sample4 as Medicine,
       sample5 as Medicine,
     ];
-    
-  
+
+

@@ -1,5 +1,5 @@
+import { createId } from "@paralleldrive/cuid2";
 import { Modal } from "./modal";
-import cuid from "cuid";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 
 export class Account {
@@ -137,17 +137,15 @@ export class PasswordResetForm {
     id: string;
     subject = 'newPassword';
     submitted = false;
-  
-    constructor(
-  
-    ) {
-      this.id = `${this.subject}Form${cuid()}`;
+
+    constructor() {
+      this.id = `${this.subject}Form${createId()}`;
       this.formGroup = new FormGroup({
         email: new FormControl(''),
       });
-  
+
     }
-  
+
     setValidators(mode: boolean) {
       if (mode) {
         this.formGroup.controls['email'].setValidators([Validators.required, Validators.email]);
@@ -155,14 +153,14 @@ export class PasswordResetForm {
         this.formGroup.controls['email'].clearValidators();
         this.formGroup.controls['email'].clearAsyncValidators();
       }
-  
+
       this.formGroup.updateValueAndValidity();
     }
-  
+
     patchWithSample = () => this.formGroup.patchValue({email: getRandomEmail()});
-  
+
   }
-  
+
   export const sampleEmails: string[] = [
     "example1@example.com", "example2@example.com", "example3@example.com", "example4@example.com", "example5@example.com", "example6@example.com", "example7@example.com",
     "example8@example.com", "example9@example.com", "example10@example.com", "example11@example.com", "example12@example.com", "example13@example.com",
@@ -173,9 +171,9 @@ export class PasswordResetForm {
     "example42@example.com", "example43@example.com", "example44@example.com", "example45@example.com", "example46@example.com", "example47@example.com", "example48@example.com",
     "example49@example.com", "example50@example.com"
   ];
-  
+
   export const getRandomEmail = () => {
     const randomIndex = Math.floor(Math.random() * sampleEmails.length);
     return sampleEmails[randomIndex];
   }
-  
+

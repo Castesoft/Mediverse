@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, switchMap, map, catchError, of } from 'rxjs';
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 import { Column } from './types';
 import { PrescriptionsService } from '../_services/data/prescriptions.service';
 import { ConfirmService } from '../_services/confirm/confirm.service';
@@ -20,7 +20,7 @@ export interface Inventory {
     medicines: Medicine[];
     prescriptions: Prescription[];
   }
-  
+
 
   export interface PrescribedMedicine {
     medicine: Medicine;
@@ -29,7 +29,7 @@ export interface Inventory {
     frequency: string;
     duration: string;
   }
-  
+
   export enum PrescriptionStatus {
     Active = 'Activa',
     Completed = 'Completada',
@@ -51,7 +51,7 @@ export class Prescription {
     refillable: boolean;
     numberOfRefills: number;
     status: PrescriptionStatus;
-  
+
   static columns: Column[] = [
     { name: 'id', label: 'ID' },
     { name: 'shortName', label: 'Nombre corto' },
@@ -187,7 +187,7 @@ export class FilterForm {
   id: string;
 
   constructor() {
-    this.id = `${this.subject}filterForm${cuid()}`;
+    this.id = `${this.subject}filterForm${createId()}`;
     this.formGroup = new FormGroup({
       search: new FormControl(''),
       dateRange: new FormControl({ value: ['', ''], disabled: false }),
@@ -218,7 +218,7 @@ export class CreateForm {
   id: string;
 
   constructor(mode: boolean) {
-    this.id = `${subject}Form${cuid()}`;
+    this.id = `${subject}Form${createId()}`;
 
     this.formGroup = new FormGroup({
       name: new FormControl(''),
@@ -253,7 +253,7 @@ export class EditForm {
   id: string;
 
   constructor(mode: boolean) {
-    this.id = `${subject}Form${cuid()}`;
+    this.id = `${subject}Form${createId()}`;
 
     this.formGroup = new FormGroup({
       name: new FormControl(''),
@@ -290,7 +290,7 @@ export class DetailForm {
   patchValues = (item: Prescription) => this.formGroup.patchValue(item);
 
   constructor() {
-    this.id = `${subject}Form${cuid()}`;
+    this.id = `${subject}Form${createId()}`;
 
     this.formGroup = new FormGroup({
       name: new FormControl({ value: '', disabled: true }),
@@ -347,27 +347,27 @@ export const sample1: Prescription = {
     id: 1,
     isSelected: false,
   } as Prescription;
-  
+
   export const sample2: Prescription = {
     id: 2,
     isSelected: false,
   } as Prescription;
-  
+
   export const sample3: Prescription = {
     id: 3,
     isSelected: false,
   } as Prescription;
-  
+
   export const sample4: Prescription = {
     id: 4,
     isSelected: false,
   } as Prescription;
-  
+
   export const sample5: Prescription = {
     id: 5,
     isSelected: false,
   } as Prescription;
-  
+
   export const sampleData: Prescription[] = [
     sample1 as Prescription,
     sample2 as Prescription,
@@ -375,4 +375,4 @@ export const sample1: Prescription = {
     sample4 as Prescription,
     sample5 as Prescription,
   ];
-  
+
