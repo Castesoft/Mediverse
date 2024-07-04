@@ -88,11 +88,8 @@ var userManager = services.GetRequiredService<UserManager<AppUser>>();
 var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 try
 {
-    if ((await context.Database.GetPendingMigrationsAsync()).Any())
-    {
-        await context.Database.MigrateAsync();
-        Log.Information("Database migration applied.");
-    }
+    await context.Database.MigrateAsync();
+    Log.Information("Database migration applied.");
     
     await Seed.SeedRolesAndPermissionsAsync(roleManager, permissionManager);
     await Seed.SeedUsersAsync(userManager);

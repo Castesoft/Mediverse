@@ -1,6 +1,4 @@
-using MainService.Errors;
 using MainService.Core.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using MainService.Infrastructure.Data;
 using MainService.Core.Settings;
@@ -18,6 +16,7 @@ public static class ApplicationServicesExtensions
         services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
         services.Configure<TwilioSettings>(config.GetSection("TwilioSettings"));
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+        services.Configure<ClientSettings>(config.GetSection("ClientSettings"));
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -28,24 +27,10 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITwilioService, TwilioService>();
         services.AddScoped<ICloudinaryService, CloudinaryService>();
         services.AddScoped<IPermissionManager, PermissionManager>();
+        services.AddScoped<IProductsService, ProductsService>();
+        services.AddScoped<IPhotosService, PhotosService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton(Log.Logger);
-
-        // Error handling
-        services.Configure<ApiBehaviorOptions>(options =>
-        {
-            options.InvalidModelStateResponseFactory = actionContext =>
-            {
-                var errors = actionContext.ModelState
-                    .Where(e => e.Value.Errors.Count > 0)
-                    .SelectMany(x => x.Value.Errors)
-                    .Select(x => x.ErrorMessage).ToArray();
-
-                ApiValidationErrorResponse errorResponse = new(errors);
-
-                return new BadRequestObjectResult(errorResponse);
-            };
-        });
 
         services.AddCors(opt =>
         {

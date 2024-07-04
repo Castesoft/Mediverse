@@ -1,5 +1,5 @@
 using AutoMapper;
-using MainService.Core.DTOs;
+using MainService.Core.DTOs.User;
 using MainService.Core.Interfaces.Services;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +9,7 @@ using Serilog;
 namespace MainService.Infrastructure.Services;
 public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICloudinaryService cloudinaryService, IMapper mapper, ITokenService tokenService) : IUsersService
 {
-    public async Task<bool> DeleteUserAsync(AppUser user)
+    public async Task<bool> DeleteAsync(AppUser user)
     {
         if (!await DeleteUserPhotoAsync(user)) return false;
 

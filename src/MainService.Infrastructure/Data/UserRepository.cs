@@ -1,7 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs;
-using MainService.Core.DTOs.Patients;
+using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
@@ -46,11 +46,13 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.Users.ToListAsync();
     }
 
-    public async Task<List<PatientDto>> GetAllDtoAsync()
+    public async Task<List<UserDto>> GetAllDtoAsync(UserParams param)
     {
+        // TODO: Implement filtering
+        
         var query = context.Users
             .AsNoTracking()
-            .ProjectTo<PatientDto>(mapper.ConfigurationProvider);
+            .ProjectTo<UserDto>(mapper.ConfigurationProvider);
 
         return await query.ToListAsync();
     }
@@ -72,17 +74,17 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return item;
     }
 
-    public async Task<PatientDto> GetDtoByIdAsync(int id)
+    public async Task<UserDto> GetDtoByIdAsync(int id)
     {
         var item = await context.Users
             .AsNoTracking()
-            .ProjectTo<PatientDto>(mapper.ConfigurationProvider)
+            .ProjectTo<UserDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
 
         return item;
     }
 
-    public async Task<PagedList<PatientDto>> GetPagedListAsync(UserParams param)
+    public async Task<PagedList<UserDto>> GetPagedListAsync(UserParams param)
     {
         var query = context.Users
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
@@ -90,8 +92,8 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
         query = query.Where(x => x.UserRoles.Any(y => y.Role.Name == "Patient"));
 
-        return await PagedList<PatientDto>.CreateAsync(
-            query.AsNoTracking().ProjectTo<PatientDto>(mapper.ConfigurationProvider),
+        return await PagedList<UserDto>.CreateAsync(
+            query.AsNoTracking().ProjectTo<UserDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
     }
 }

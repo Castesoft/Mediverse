@@ -1,9 +1,9 @@
-using MainService.Core.DTOs;
+using MainService.Core.DTOs.User;
 using MainService.Models.Entities;
 
 namespace MainService.Core.Interfaces.Services;
 public interface IUsersService
 {
-    Task<bool> DeleteUserAsync(AppUser user);
-    Task<AccountDto> GenerateAccountDtoAsync(int userId);
+    Task<bool> DeleteAsync(AppUser item);
+    Task<AccountDto> GenerateAccountDtoAsync(int id);
 }

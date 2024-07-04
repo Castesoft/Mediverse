@@ -6,14 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Models;
 
-public class DataContext : IdentityDbContext<AppUser, AppRole, int,
+public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<AppUser, AppRole, int,
     IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
-    IdentityRoleClaim<int>, IdentityUserToken<int>>
+    IdentityRoleClaim<int>, IdentityUserToken<int>>(options)
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
-    {
-    }
-
     public DbSet<Photo> Photos { get; set; }
     public DbSet<UserPhoto> UserPhotos { get; set; }
     public DbSet<AppPermission> Permissions { get; set; }

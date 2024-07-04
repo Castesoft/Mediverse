@@ -1,4 +1,4 @@
-namespace MainService.Core.DTOs;
+namespace MainService.Core.DTOs.User;
 public class AccountDto
 {
     public int Id { get; set; }

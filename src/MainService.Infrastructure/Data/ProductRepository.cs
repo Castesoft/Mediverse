@@ -26,8 +26,10 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         return await context.Products.ToListAsync();
     }
 
-    public async Task<List<ProductDto>> GetAllDtoAsync()
+    public async Task<List<ProductDto>> GetAllDtoAsync(ProductParams param)
     {
+        // TODO: filtering after
+        
         var query = context.Products
             .AsNoTracking()
             .ProjectTo<ProductDto>(mapper.ConfigurationProvider);

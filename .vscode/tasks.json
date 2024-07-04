@@ -3,16 +3,16 @@
     "tasks": [
         // setup frontend
         {
-            "label": "install frontend ssl cert",
+            "label": "mkcert localhost",
             "detail": "(mkcert localhost) install SSL certificate for localhost",
             "type": "shell",
-            "command": "mkcert localhost",
+            "command": "rm -f /c/Projects/Mediverse/frontend/web-app/ssl/localhost-key.pem && rm -f /c/Projects/Mediverse/frontend/web-app/ssl/localhost.pem && cd /c/Projects/Mediverse/frontend/web-app/ssl/ && mkcert localhost",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app/ssl",
+                "cwd": "${workspaceFolder}",
                 "shell": {
-                    "executable": "cmd.exe",
+                    "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
                     "args": [
-                        "/c"
+                        "-c"
                     ]
                 }
             },
@@ -48,6 +48,86 @@
                 "install node_module"
             ],
             "dependsOrder": "sequence"
+        },
+        // 'reset' dotnet with clean and build
+        {
+            "label": "dotnet clean && dotnet build",
+            "detail": "(dotnet clean && dotnet build) run the dotnet clean and build commands",
+            "type": "shell",
+            "command": "dotnet clean && dotnet build",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // dotnet watch --no-hot-reload Sqlite
+        {
+            "label": "(Sqlite) dotnet watch --no-hot-reload",
+            "detail": "(dotnet watch --no-hot-reload) run the dotnet watch command without hot reload",
+            "type": "shell",
+            "command": "dotnet watch --no-hot-reload -- --provider Sqlite",
+            "options": {
+                "cwd": "${workspaceFolder}/src/MainService",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // dotnet watch --no-hot-reload Postgres
+        {
+            "label": "(Postgres) dotnet watch --no-hot-reload Postgres",
+            "detail": "(dotnet watch --no-hot-reload) run the dotnet watch command without hot reload",
+            "type": "shell",
+            "command": "dotnet watch --no-hot-reload -- --provider Postgres",
+            "options": {
+                "cwd": "${workspaceFolder}/src/MainService",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // reset databases
+        {
+            "label": "reset databases",
+            "detail": "[ (1) delete migrations, (2) update database ] | this will reset the databases",
+            "type": "shell",
+            "command": "cd /c/Projects/Mediverse/ && rm -fR /c/Projects/Mediverse/src/Migrations/MainService.Postgres/Migrations && rm -fR /c/Projects/Mediverse/src/Migrations/MainService.Sqlite/Migrations && dotnet ef migrations add InitialCreate --startup-project ./src/MainService --project ./src/Migrations/MainService.Postgres -- --provider Postgres && dotnet ef migrations add InitialCreate --startup-project ./src/MainService --project ./src/Migrations/MainService.Sqlite -- --provider Sqlite",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
         },
         // (bash) delete .angular/
         {
@@ -190,6 +270,35 @@
                 "install node_module"
             ],
             "dependsOrder": "sequence"
+        },
+        {
+            "label": "serve web-app",
+            "detail": "(ng serve) serve web-app on localhost:4400",
+            "type": "shell",
+            "command": "ng serve",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/web-app",
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
+        // start all services (sqlite)
+        {
+            "label": "start all services (Postgres)",
+            "detail": "[ (1) watch MainService (Postgres), (2) serve web-app ] | this will start all services in parallel",
+            "dependsOn": [
+                "(Postgres) dotnet watch --no-hot-reload Postgres",
+                "serve web-app"
+            ],
+            "dependsOrder": "parallel"
         },
     ]
 }
