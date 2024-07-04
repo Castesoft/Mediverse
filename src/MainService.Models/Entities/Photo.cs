@@ -1,3 +1,5 @@
+using CloudinaryDotNet.Actions;
+
 namespace MainService.Models.Entities;
 public class Photo : BaseEntity
 {
@@ -11,4 +13,13 @@ public class Photo : BaseEntity
     public ServicePhoto ServicePhoto { get; set; }
     public DoctorSignature DoctorSignature { get; set; }
     public PrescriptionLogo PrescriptionLogo { get; set; }
+
+    public Photo(){}
+
+    public Photo(ImageUploadResult result, int userId)
+    {
+        Url = result.SecureUrl.AbsoluteUri;
+        PublicId = result.PublicId;
+        UserPhoto = new(userId);
+    }
 }

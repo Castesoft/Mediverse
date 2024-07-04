@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using MainService.Errors;
 using MainService.Core.Interfaces.Services;
+using MainService.Errors;
 using Microsoft.AspNetCore.Authorization;
 
 namespace MainService.Authorization.Handlers;

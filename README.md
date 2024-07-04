@@ -7,6 +7,8 @@ cd /c/Projects/Mediverse/
 dotnet ef migrations add InitialCreate --startup-project ./src/MainService --project ./src/Migrations/MainService.Sqlite -- --provider Sqlite
 # Postgres Migration for MainService
 dotnet ef migrations add InitialCreate --startup-project ./src/MainService --project ./src/Migrations/MainService.Postgres -- --provider Postgres
+
+cd /c/Projects/Mediverse/ && rm -fR /c/Projects/Mediverse/src/Migrations/MainService.Postgres/Migrations && rm -fR /c/Projects/Mediverse/src/Migrations/MainService.Sqlite/Migrations && dotnet ef migrations add InitialCreate --startup-project ./src/MainService --project ./src/Migrations/MainService.Postgres -- --provider Postgres && dotnet ef migrations add InitialCreate --startup-project ./src/MainService --project ./src/Migrations/MainService.Sqlite -- --provider Sqlite
 ```
 
 ### Correr con distintos proveedores de base de datos
@@ -29,6 +31,8 @@ rm -f /c/Projects/Mediverse/src/MainService/mediverse.db-shm
 rm -f /c/Projects/Mediverse/src/MainService/mediverse.db-wal
 
 rm -f /c/Projects/Mediverse/src/MainService/mediverse.db && rm -f /c/Projects/Mediverse/src/MainService/mediverse.db-shm && rm -f /c/Projects/Mediverse/src/MainService/mediverse.db-wal
+
+rm -f /c/Projects/Mediverse/frontend/web-app/ssl/localhost-key.pem && rm -f /c/Projects/Mediverse/frontend/web-app/ssl/localhost.pem && cd /c/Projects/Mediverse/frontend/web-app/ssl/ && mkcert localhost
 
 
 ```

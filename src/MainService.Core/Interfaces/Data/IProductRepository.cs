@@ -12,6 +12,6 @@ public interface IProductRepository
     Task<ProductDto> GetDtoByIdAsync(int id);
     Task<Product> GetByIdAsNoTrackingAsync(int id);
     Task<List<Product>> GetAllAsync();
-    Task<List<ProductDto>> GetAllDtoAsync();
+    Task<List<ProductDto>> GetAllDtoAsync(ProductParams param);
     Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param);
 }

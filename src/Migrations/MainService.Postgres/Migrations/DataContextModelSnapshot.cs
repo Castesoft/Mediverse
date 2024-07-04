@@ -304,7 +304,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("ClinicId")
                         .IsUnique();
 
-                    b.ToTable("DoctorClinic");
+                    b.ToTable("DoctorClinics");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorInformation", b =>
@@ -323,7 +323,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("InformationId")
                         .IsUnique();
 
-                    b.ToTable("DoctorInformation");
+                    b.ToTable("DoctorInformations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorLink", b =>
@@ -339,7 +339,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("LinkId")
                         .IsUnique();
 
-                    b.ToTable("DoctorLink");
+                    b.ToTable("DoctorLinks");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorPhone", b =>
@@ -355,7 +355,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("PhoneId")
                         .IsUnique();
 
-                    b.ToTable("DoctorPhone");
+                    b.ToTable("DoctorPhones");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorSignature", b =>
@@ -425,6 +425,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Neighborhood")
                         .HasColumnType("text");
 
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("State")
                         .HasColumnType("text");
 
@@ -436,7 +439,7 @@ namespace MainService.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Location");
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.LocationPhone", b =>
@@ -508,7 +511,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("NurseId")
                         .IsUnique();
 
-                    b.ToTable("NurseClinic");
+                    b.ToTable("NurseClinics");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientAppointment", b =>
@@ -689,6 +692,12 @@ namespace MainService.Postgres.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("LotNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -696,6 +705,12 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
