@@ -51,8 +51,8 @@ public class Seed
 
         var doctor = new AppUser
         {
-            UserName = "redacted+005@example.invalid",
-            Email = "redacted+005@example.invalid",
+            UserName = "redacted+022@example.invalid",
+            Email = "redacted+022@example.invalid",
             PhoneNumber = "8112089393",
             FirstName = "Ricardo",
             LastName = "Obregón",
