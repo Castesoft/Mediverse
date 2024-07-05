@@ -30,6 +30,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IProductsService, ProductsService>();
         services.AddScoped<IPhotosService, PhotosService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICodeService, CodeService>();
+        services.AddScoped<IPhoneService, PhoneService>();
         services.AddSingleton(Log.Logger);
 
         services.AddCors(opt =>
