@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "web-app": {
+    "client": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -47,7 +47,7 @@
               "apexcharts",
               "choices.js"
             ],
-            "outputPath": "../../src/MainService/wwwroot",
+            "outputPath": "../src/MainService/wwwroot",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -123,10 +123,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "web-app:build:production"
+              "buildTarget": "client:build:production"
             },
             "development": {
-              "buildTarget": "web-app:build:development"
+              "buildTarget": "client:build:development"
             }
           },
           "defaultConfiguration": "development"
