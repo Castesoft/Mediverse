@@ -1,0 +1,22 @@
+<div class="form-check form-switch">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    [id]="id ? id : controlName"
+    role="switch"
+    [formControl]="control"
+    [attr.autofocus]="autofocus() ? true : null"
+    [readonly]="isReadonly"
+    [checked]="control.value"
+    [ngClass]="{
+      'is-invalid': submitted() && control.invalid,
+      'is-valid': submitted() && control.valid
+    }"
+    [attr.aria-describedby]="formText() ? controlName+'helpBlock' : null"
+    [attr.aria-label]="label + ' input'"
+  >
+  <label class="form-check-label" [for]="id? id : controlName">{{label}}</label>
+</div>
+
+@if(control.errors) {<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>}
+@if(formText()) {<div helpBlock [controlName]="controlName" [formText]="formText()"></div>}

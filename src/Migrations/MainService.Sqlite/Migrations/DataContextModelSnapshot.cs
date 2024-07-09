@@ -329,6 +329,24 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("DoctorLinks");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("DoctorId", "PatientId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("DoctorPatients");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPhone", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -1036,6 +1054,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Link");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("Patients")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "Patient")
+                        .WithMany("Doctors")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPhone", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
@@ -1323,9 +1360,13 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("DoctorSignature");
 
+                    b.Navigation("Doctors");
+
                     b.Navigation("NurseClinic");
 
                     b.Navigation("PatientAppointments");
+
+                    b.Navigation("Patients");
 
                     b.Navigation("UserPermissions");
 

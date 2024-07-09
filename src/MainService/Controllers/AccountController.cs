@@ -6,7 +6,6 @@ using CloudinaryDotNet.Actions;
 using MainService.Core.DTOs.User;
 using MainService.Core.Interfaces.Services;
 using MainService.Core.Settings;
-using MainService.Extensions;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using MainService.Core.Extensions;
 
 namespace MainService.Controllers;
 public class AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, ITokenService tokenService, ICloudinaryService cloudinaryService, IConfiguration configuration, IEmailService emailService, IUnitOfWork uow, ICodeService codeService, IPhoneService phoneService, IUsersService usersService, IOptions<ClientSettings> clientSettings, IPhotosService photosService) : BaseApiController

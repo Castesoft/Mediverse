@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Service } from '../../../../_models/service';
+import { Service } from 'src/app/_models/service';
 
 @Component({
   selector: 'appointment-services-summary',

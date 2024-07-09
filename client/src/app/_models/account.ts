@@ -1,11 +1,9 @@
 import { createId } from "@paralleldrive/cuid2";
-import { Modal } from "./modal";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 
-export class Account {
+export interface Account {
   id: number;
   username: string;
-  riskLevel: number;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -17,101 +15,12 @@ export class Account {
   sex: string;
   token: string;
   photoUrl: string;
-  roles: string[];
   dateOfBirth: Date;
   dateCreated: Date;
+
+  roles: string[];
   permissions: string[];
-
-  constructor(
-    id: number,
-    username: string,
-    riskLevel: number,
-    firstName: string,
-    lastName: string,
-    fullName: string,
-    email: string,
-    isEmailVerified: boolean,
-    phoneNumber: string,
-    phoneNumberCountryCode: string,
-    isPhoneNumberVerified: boolean,
-    sex: string,
-    token: string,
-    photoUrl: string,
-    roles: string[],
-    dateOfBirth: Date,
-    dateCreated: Date,
-    perimissions: string[]
-  ) {
-    this.id = id;
-    this.username = username;
-    this.riskLevel = riskLevel;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.fullName = fullName;
-    this.email = email;
-    this.isEmailVerified = isEmailVerified;
-    this.phoneNumber = phoneNumber;
-    this.phoneNumberCountryCode = phoneNumberCountryCode;
-    this.isPhoneNumberVerified = isPhoneNumberVerified;
-    this.sex = sex;
-    this.token = token;
-    this.photoUrl = photoUrl;
-    this.roles = roles;
-    this.dateOfBirth = dateOfBirth;
-    this.dateCreated = dateCreated;
-    this.permissions = perimissions;
-  }
-
-  // static initDeleteForm = (
-  //   fb: FormBuilder,
-  //   dataService: AccountService,
-  // ): FormGroup => {
-
-
-  //   const form = fb.group({
-  //     requiredText: ['', [Validators.required, validateRequiredText(this.account)]],
-  //   });
-
-  //   return form;
-  // }
 }
-
-export const deleteAccountConfirmModal: Modal = {
-  title: 'Eliminar cuenta',
-  message: '¿Estás seguro que deseas eliminar esta cuenta?',
-  btnOkText: 'Eliminar',
-  btnCancelText: 'Cancelar'
-};
-
-export const updatePasswordConfirmModal: Modal = {
-  title: 'Actualizar contraseña',
-  message: '¿Estás seguro que deseas actualizar la contraseña de esta cuenta?',
-  btnOkText: 'Actualizar',
-  btnCancelText: 'Cancelar'
-};
-
-export const updateEmailAddressConfirmModal: Modal = {
-  title: 'Actualizar dirección de correo electrónico',
-  message: '¿Estás seguro que deseas actualizar la dirección de correo electrónico de esta cuenta?',
-  btnOkText: 'Actualizar',
-  btnCancelText: 'Cancelar'
-};
-
-export const updatePhoneNumberConfirmModal: Modal = {
-  title: 'Actualizar número de teléfono',
-  message: '¿Estás seguro que deseas actualizar el número de teléfono de esta cuenta?',
-  btnOkText: 'Actualizar',
-  btnCancelText: 'Cancelar'
-};
-
-export const updateProfileConfirmModal: Modal = {
-  title: 'Actualizar perfil',
-  message: '¿Estás seguro que deseas actualizar el perfil de esta cuenta?',
-  btnOkText: 'Actualizar',
-  btnCancelText: 'Cancelar'
-};
-
-export const deleteAccountToastSuccessMessage: string = 'Perfil eliminado';
 
 export const genders = [
   {

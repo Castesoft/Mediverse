@@ -1,53 +1,47 @@
-import { AfterViewInit, Component, inject, Input, Self } from '@angular/core';
+import { Component, inject, input, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
-import { IconsService } from '../_services/icons.service';
-import { datepickerConfig, isControlOptional } from '../_utils/util';
+import { IconsService } from 'src/app/_services/icons.service';
+import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
+import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
+import { DatepickerService } from 'src/app/_services/datepicker.service';
+import { FormsService } from 'src/app/_services/forms.service';
 
 @Component({
+  host: { class: '', },
   selector: '[searchDateRange]',
   templateUrl: './search-date-range.component.html',
   standalone: true,
   imports: [ FormsModule, ReactiveFormsModule, CommonModule, FontAwesomeModule,
-    BsDatepickerModule
+    BsDatepickerModule, InvalidFeedbackComponent, HelpBlockComponent,
    ]
 })
-export class SearchDateRangeComponent implements ControlValueAccessor, AfterViewInit {
+export class SearchDateRangeComponent implements ControlValueAccessor {
   icons = inject(IconsService);
+  datepicker = inject(DatepickerService);
+  service = inject(FormsService);
 
-  @Input({ required: false }) label: string | null | 'Rango de fechas' = null;
-  @Input({ required: false }) datepickerConfig: Partial<BsDatepickerConfig> = datepickerConfig;
-  @Input({ required: false }) placeholder: string = 'Rango de fechas';
-  @Input({ required: false }) submitAttempted = false;
-  @Input({ required: false }) customErrorMessages: { [key: string]: string } = {};
-  @Input({ required: false }) id?: string;
-  @Input({ required: false }) formText?: string;
-  @Input() isOptional: boolean = false;
+  label = input<string | null | 'Rango de fechas'>(null);
+  datepickerConfig = input<Partial<BsDatepickerConfig>>(this.datepicker.config);
+  placeholder = input<string>('Rango de fechas');
+  errors = input<{ [key: string]: string }>({});
+  id = input<string>();
+  formText = input<string>();
+  submitted = input<boolean>(false);
+  labelClass = input<string>('form-label fw-semi-bold fs--1');
+  inputClass = input<string>('form-control search-input search');
 
-  constructor(
-    @Self() public ngControl: NgControl,
-  ) {
+  get control(): FormControl { return this.ngControl.control as FormControl; }
+  get controlName(): string { return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName'; }
+
+  constructor(@Self() public ngControl: NgControl) {
     this.ngControl.valueAccessor = this;
-  }
-
-  ngAfterViewInit(): void {
-    if (this.ngControl.control) {
-      this.isOptional = isControlOptional(this.ngControl.control);
-    }
   }
 
   writeValue(obj: any): void { }
   registerOnChange(fn: any): void { }
   registerOnTouched(fn: any): void { }
-
-  get control(): FormControl {
-    return this.ngControl.control as FormControl;
-  }
-
-  get controlName(): string {
-    return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName';
-  }
-
+  setDisabledState?(isDisabled: boolean): void { }
 }

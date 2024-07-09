@@ -22,6 +22,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<DoctorClinic> DoctorClinics { get; set; }
     public DbSet<NurseClinic> NurseClinics { get; set; }
     public DbSet<Location> Locations { get; set; }
+    public DbSet<DoctorPatient> DoctorPatients { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

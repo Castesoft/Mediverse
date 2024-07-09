@@ -1,6 +1,6 @@
-import { Patient } from './patient';
-import { PaymentBilling } from './payment';
-import { Doctor } from './user';
+import { Patient } from "src/app/_models/patient";
+import { PaymentBilling } from "src/app/_models/payment";
+import { Doctor } from "src/app/_models/user";
 
 export enum AppointmentKind {
   Consultation = 'Consulta',

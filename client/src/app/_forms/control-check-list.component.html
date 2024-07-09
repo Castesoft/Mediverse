@@ -1,0 +1,33 @@
+<p>{{label}}
+  @if(service.isOptional(control)) { <span optionalSpan></span> }
+  @if (isNew()) { <span newBadge></span> }
+</p>
+@for(option of options; let idx = $index; track idx) {
+  <div class="form-check">
+    <input
+      [id]="controlName + '-' + idx"
+      type="checkbox"
+      [checked]="isOptionSelected(option)"
+      class="form-check-input"
+      (change)="onCheckboxChange(option, $event)"
+      (click)="preventChanges($event)"
+    >
+    <label class="form-check-label" [for]="controlName + '-' + idx">
+      {{option}}
+    </label>
+  </div>
+}
+
+@for(error of control.errors | keyvalue; let idx = $index; track idx) {
+  @if(submitted && control.invalid) {
+    <div class="invalid-feedback">
+      {{ errors[error.key] }}
+    </div>
+  }
+}
+
+@if(formText) {
+  <div [id]="controlName+'helpBlock'" class="form-text">
+    {{formText}}
+  </div>
+}

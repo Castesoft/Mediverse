@@ -45,11 +45,11 @@ public class Seed
         // TODO
     }
 
-    public static async Task SeedUsersAsync(UserManager<AppUser> userManager)
+    public static async Task SeedUsersAsync(UserManager<AppUser> userManager, DataContext context)
     {
         if (await userManager.Users.AnyAsync()) return;
 
-        var doctor = new AppUser
+        var doctor1 = new AppUser
         {
             UserName = "redacted+022@example.invalid",
             Email = "redacted+022@example.invalid",
@@ -180,7 +180,7 @@ public class Seed
             NurseClinic = null
         };
 
-        var patient = new AppUser
+        var patient1 = new AppUser
         {
             UserName = "redacted+021@example.invalid",
             Email = "redacted+021@example.invalid",
@@ -201,11 +201,81 @@ public class Seed
             },
         };
 
-        await userManager.CreateAsync(doctor, "Pa$$w0rd");
-        await userManager.CreateAsync(patient, "Pa$$w0rd");
+        await userManager.CreateAsync(doctor1, "Pa$$w0rd");
+        await userManager.CreateAsync(patient1, "Pa$$w0rd");
         
-        await userManager.AddToRoleAsync(doctor, "Doctor");
-        await userManager.AddToRoleAsync(patient, "Patient");
+        await userManager.AddToRoleAsync(doctor1, "Doctor");
+        await userManager.AddToRoleAsync(patient1, "Patient");
+
+        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(100);
+        int userIndex = 1;
+
+        var roles = await context.Roles.ToListAsync();
+        
+        foreach (var user in patientsForSeeding)
+        {
+            List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Patient").ToList();
+            var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
+            if (!createUserResult.Succeeded) return;
+            foreach (var roleName in roleNames)
+            {
+                var roleResult = await userManager.AddToRoleAsync(user, roleName);
+                if (!roleResult.Succeeded) return;
+            }
+            Log.Information($"Seeding patient {$"{userIndex++}/{patientsForSeeding.Count()}", -15} ==> {user.Email}");
+        }
+
+        var patients = await userManager.Users
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Where(x => x.UserRoles.Any(y => y.Role.Name == "Patient"))
+            .ToListAsync();
+
+        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(30);
+        userIndex = 1;
+
+        foreach (var user in doctorsForSeeding)
+        {
+            List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Doctor").ToList();
+            var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
+            if (!createUserResult.Succeeded) return;
+            foreach (var roleName in roleNames)
+            {
+                var roleResult = await userManager.AddToRoleAsync(user, roleName);
+                if (!roleResult.Succeeded) return;
+            }
+            Log.Information($"Seeding doctor {$"{userIndex++}/{doctorsForSeeding.Count()}", -15} ==> {user.Email}");
+        }
+
+        var doctors = await userManager.Users
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Where(x => x.UserRoles.Any(y => y.Role.Name == "Doctor"))
+            .ToListAsync();
+
+        var random = new Random();
+        var doctorPatientRelationships = new List<DoctorPatient>();
+
+        foreach (var doctor in doctors)
+        {
+            int numberOfPatients = random.Next(1, 20);
+            var assignedPatients = patients.OrderBy(x => random.Next()).Take(numberOfPatients).ToList();
+
+            foreach (var patient in assignedPatients)
+            {
+                if (!doctorPatientRelationships.Any(dp => dp.DoctorId == doctor.Id && dp.PatientId == patient.Id))
+                {
+                    doctorPatientRelationships.Add(new DoctorPatient
+                    {
+                        DoctorId = doctor.Id,
+                        PatientId = patient.Id
+                    });
+                }
+            }
+        }
+
+        context.DoctorPatients.AddRange(doctorPatientRelationships);
+        await context.SaveChangesAsync();
+
+        return;
     }
 
     public static async Task SeedServicesAsync(DataContext context, bool oneByOne = false)

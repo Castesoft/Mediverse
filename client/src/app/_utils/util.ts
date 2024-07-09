@@ -1,10 +1,10 @@
 import { HttpParams, HttpClient } from '@angular/common/http';
 import { AbstractControl, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
 import { debounceTime, finalize, map, of, switchMap, take } from 'rxjs';
-import { PaginatedResult } from '../_models/pagination';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { AccountService } from '../_services/accounts.service';
-import { Range } from '../_models/date-range';
+import { Range } from 'src/app/_models/date-range';
+import { PaginatedResult } from 'src/app/_models/pagination';
+import { AccountService } from 'src/app/_services/account.service';
 
 export function getPaginationHeaders(pageNumber: number, pageSize: number) {
   let params = new HttpParams();

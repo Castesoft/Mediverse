@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ActivatedRoute } from '@angular/router';
-import { patients } from '../../../../data/patients';
-import { appointments } from '../../../../data/appointments';
-import { Appointment } from '../../../../_models/appointment';
-import { Patient } from '../../../../_models/patient';
+import { Appointment } from 'src/app/_models/appointment';
+import { Patient } from 'src/app/_models/patient';
 
 @Component({
   selector: 'patient-details',
@@ -28,25 +26,25 @@ export class PatientDetailsComponent implements OnInit {
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.id = +this.route.snapshot.paramMap.get('id')!;
+    // this.id = +this.route.snapshot.paramMap.get('id')!;
 
-    const patient = patients.find((item) => item.id === this.id);
+    // const patient = patients.find((item) => item.id === this.id);
 
-    if (patient) {
-      this.item = patient;
-    } else {
-      console.error('Patient not found');
-    }
+    // if (patient) {
+    //   this.item = patient;
+    // } else {
+    //   console.error('Patient not found');
+    // }
 
-    const patientAppointments = appointments.filter(
-      (item) => item.patient.id === this.id
-    );
+    // const patientAppointments = appointments.filter(
+    //   (item) => item.patient.id === this.id
+    // );
 
-    if (patientAppointments) {
-      this.appointments = patientAppointments;
-    } else {
-      console.error('Appointments not found');
-    }
+    // if (patientAppointments) {
+    //   this.appointments = patientAppointments;
+    // } else {
+    //   console.error('Appointments not found');
+    // }
   }
 
   onSelect(data: TabDirective) {

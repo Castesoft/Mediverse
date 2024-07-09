@@ -1,7 +1,7 @@
 import { ToastrService } from "ngx-toastr";
 import { Observable, switchMap, map, catchError, of } from "rxjs";
 import { ConfirmService } from "../_services/confirm/confirm.service";
-import { MedicinesService } from "../_services/data/medicines.service";
+import { MedicinesService } from "../_services/medicines.service";
 import { Column } from "./types";
 import { Modal } from "./modal";
 import { HttpParams } from "@angular/common/http";
