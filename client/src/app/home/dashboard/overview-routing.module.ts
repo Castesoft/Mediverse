@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './dashboard.component';
-import { LogisticsComponent } from './logistics.component';
-import { MultipurposeComponent } from './multipurpose.component';
-import { StoreAnalyticsComponent } from './store-analytics.component';
-import { ProjectsComponent } from './projects.component';
+import { LogisticsComponent } from 'src/app/home/dashboard/logistics.component';
+import { MultipurposeComponent } from 'src/app/home/dashboard/multipurpose.component';
+import { ProjectsComponent } from 'src/app/home/dashboard/projects.component';
+import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.component';
 
 const routes: Routes = [
   {

@@ -1,3 +1,9 @@
+networks:
+  custom:
+    ipam:
+      config:
+        - subnet: 10.48.0.0/16
+
 services:
   postgres:
     image: postgres
@@ -9,6 +15,8 @@ services:
     volumes:
       # - pg-data:/var/lib/postresql/data
       - /var/lib/postresql/data
+    networks:
+      custom:
   
   mediverse:
     image: ramirocaste/mediverse:latest

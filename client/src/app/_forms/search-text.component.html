@@ -1,20 +1,20 @@
-@if (label) {
-  <label class="form-label fw-semi-bold fs--1" [for]="id ? id : controlName">{{label}}</label>
+@if (label() !== null) {
+  <label class="form-label fw-semi-bold fs--1" [for]="id() ? id() : controlName">{{label()}}</label>
 }
 <div class="search-box w-100 me-2">
   <div class="position-relative">
     <input
       [formControl]="control"
-      [placeholder]="placeholder"
-      [attr.aria-label]="placeholder"
-      [id]="id ? id : controlName"
-      [attr.autofocus]="shouldAutoFocus ? 'autofocus' : null"
+      [placeholder]="placeholder()"
+      [attr.aria-label]="placeholder()"
+      [id]="id() ? id() : controlName"
+      [attr.autofocus]="autofocus() ? 'autofocus' : null"
       [ngClass]="{
-        'is-invalid': submitAttempted && control.invalid,
-        'is-valid': submitAttempted && control.valid
+        'is-invalid': submitted() && control.invalid,
+        'is-valid': submitted() && control.valid
       }"
-      [attr.aria-describedby]="formText ? controlName + 'helpBlock' : null"
-      [attr.aria-label]="label + ' input'"
+      [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
+      [attr.aria-label]="label() + ' input'"
       autocomplete="off"
       class="form-control search-input search"
       type="search">
@@ -22,17 +22,5 @@
   </div>
 </div>
 
-@for(error of control.errors | keyvalue; track $index) {
-  @if(submitAttempted && control.invalid) {
-    <div class="invalid-feedback">
-      {{ customErrorMessages[error.key] }}
-    </div>
-  }
-}
-
-@if(formText) {
-  <div [id]="controlName+'helpBlock'" class="form-text">
-    {{formText}}
-  </div>
-}
-
+@if(control.errors) {<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>}
+@if(formText()) {<div helpBlock [controlName]="controlName" [formText]="formText()"></div>}

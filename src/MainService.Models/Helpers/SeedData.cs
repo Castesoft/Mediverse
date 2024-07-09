@@ -1,8 +1,9 @@
+using System.Text.RegularExpressions;
 using MainService.Models.Entities;
 
 namespace MainService.Models.Helpers;
 
-public static class SeedData
+public static partial class SeedData
 {
     public static readonly IEnumerable<string> roles =
     [
@@ -331,4 +332,280 @@ public static class SeedData
         new("Consulta de medicina deportiva para evaluación y tratamiento de lesiones deportivas",
             "La consulta de medicina deportiva ofrece evaluación y tratamiento de lesiones deportivas. Incluye diagnóstico, tratamiento y rehabilitación de lesiones, así como asesoramiento para prevenir futuras lesiones.")
     ];
+
+    public static string GenerateMexicanPhoneNumber()
+        {
+            Random random = new();
+            string areaCode = GenerateMexicanAreaCode();
+            string phoneNumber = areaCode;
+
+            int remainingLength = 10 - phoneNumber.Length;
+
+            for (int i = 0; i < remainingLength; i++)
+            {
+                phoneNumber += random.Next(0, 10).ToString();
+            }
+
+            return phoneNumber;
+        }
+
+        public static string GenerateMexicanAreaCode()
+        {
+            Random random = new();
+
+            string[] areaCodes = [
+                /* Monterrey */ "81", /* Guadalajara */ "33", /* Ciudad de México */ "55", /* Puebla */ "222", /* Tijuana */ "664",
+                /* León */ "477", /* Juárez */ "656", /* Torreón */ "871", /* Querétaro */ "442", /* Mérida */ "999", /* Mexicali */ "686",
+                /* Aguascalientes */ "449", /* Cuernavaca */ "777", /* Saltillo */ "844", /* Chihuahua */ "614", /* Morelia */ "443",
+                /* Veracruz */ "229", /* Tampico */ "833", /* Tuxtla Gutiérrez */ "961", /* Oaxaca */ "951", /* Culiacán */ "667",
+                /* Durango */ "618", /* Matamoros */ "868", /* Tepic */ "311", /* Campeche */ "981", /* Colima */ "312", /* Zacatecas */ "492",
+                /* La Paz */ "612",
+            ];
+
+            return areaCodes[random.Next(areaCodes.Length)];
+        }
+
+        public static string ReplaceSpecialChars(string input)
+        {
+            input = MyRegex1().Replace(input, "n");
+            input = MyRegex().Replace(input, "a");
+            input = MyRegex2().Replace(input, "e");
+            input = MyRegex3().Replace(input, "i");
+            input = MyRegex4().Replace(input, "o");
+            input = MyRegex5().Replace(input, "u");
+            input = MyRegex6().Replace(input, "c");
+            return input;
+        }
+
+        public static Photo GetRandomProfilePicture(string sex)
+        {
+            List<Photo> malePhotos = [
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730539/TraceTrust/SeedData/Profile%20pictures/R_az6eso.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730500/TraceTrust/SeedData/Profile%20pictures/aNWjR7MB_400x400_dmxq0i.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730491/TraceTrust/SeedData/Profile%20pictures/312e53eb2c71a023b7de3d1ea989a2c8_wgc0yu.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730486/TraceTrust/SeedData/Profile%20pictures/OIP_zb9ytk.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730473/TraceTrust/SeedData/Profile%20pictures/628ba018745087.5603efd91665d_b1djcp.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730469/TraceTrust/SeedData/Profile%20pictures/dBRXFFE_xnmhjz.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730463/TraceTrust/SeedData/Profile%20pictures/1071625_ibstgs.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730455/TraceTrust/SeedData/Profile%20pictures/a2de3954697c636276192afea0a6f661_tb2mln.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730440/TraceTrust/SeedData/Profile%20pictures/aeecc22a67dac7987a80ac0724658493_jnsgit.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730426/TraceTrust/SeedData/Profile%20pictures/avatar_be2hdh.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803500/TraceTrust/SeedData/Profile%20pictures/d8a01e34926bdb7eb9e1fb506d0aea1b_gpy8sx.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803591/TraceTrust/SeedData/Profile%20pictures/1eea135a4738f2a0c06813788620e055_wki0ea.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803615/TraceTrust/SeedData/Profile%20pictures/R_stwpdc.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803659/TraceTrust/SeedData/Profile%20pictures/unnamed_h0wdih.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803694/TraceTrust/SeedData/Profile%20pictures/7910485066_10a1e5e586_b_eqvtjw.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803754/TraceTrust/SeedData/Profile%20pictures/R_f5nggp.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803830/TraceTrust/SeedData/Profile%20pictures/b32c9c4854abc5925c2d64ee046f02f7_mtaurl.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803860/TraceTrust/SeedData/Profile%20pictures/OIP_zowcac.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803888/TraceTrust/SeedData/Profile%20pictures/sean-headshot-img_dlpwwj.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803905/TraceTrust/SeedData/Profile%20pictures/unnamed_uaq37l.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689803935/TraceTrust/SeedData/Profile%20pictures/CharlieKryzinski_mvhbgo.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804012/TraceTrust/SeedData/Profile%20pictures/unnamed_njppnj.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804090/TraceTrust/SeedData/Profile%20pictures/R_v6vs9l.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804122/TraceTrust/SeedData/Profile%20pictures/1541016168011_rfqkkn.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804193/TraceTrust/SeedData/Profile%20pictures/unnamed_gd52u0.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+            ];
+
+            List<Photo> femalePhotos = [
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730527/TraceTrust/SeedData/Profile%20pictures/de64801f0275c1ab2ea5a9e2bb3ce7bc_h3ayls.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730510/TraceTrust/SeedData/Profile%20pictures/ukxi7n1rojh21_y76zhr.webp", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730503/TraceTrust/SeedData/Profile%20pictures/sarah-parmenter_fxwaf5.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730483/TraceTrust/SeedData/Profile%20pictures/b3c9dfa78c7a93bbd84f9c8fcbcc2a0e_jmdg8j.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730480/TraceTrust/SeedData/Profile%20pictures/R_wnx3tp.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730435/TraceTrust/SeedData/Profile%20pictures/e8b271169214323595f5155a649884d2_jursx3.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804271/TraceTrust/SeedData/Profile%20pictures/OIP_fofq6a.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804396/TraceTrust/SeedData/Profile%20pictures/random_cute_girls_44_aghdvf.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804474/TraceTrust/SeedData/Profile%20pictures/3f234bb3dd39909c65f17a7e90ed89e1--legs_g5oevf.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804557/TraceTrust/SeedData/Profile%20pictures/1578203e47c1b4b660ba9d285f2bb04c_pwfl8b.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804574/TraceTrust/SeedData/Profile%20pictures/ali-brustofski-389394_bbwnmc.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804600/TraceTrust/SeedData/Profile%20pictures/00414ea5f11bf8702420c53465d21a97_hyc7kr.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804629/TraceTrust/SeedData/Profile%20pictures/485cff16aa860056913312a72f6929ee_400x400_fw55rn.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804681/TraceTrust/SeedData/Profile%20pictures/43702d5333b8c3d9ddf6cc4bb3c94347_vldhf5.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804704/TraceTrust/SeedData/Profile%20pictures/961dd1d383fde2983fd7299241b63390_gtg8lq.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804721/TraceTrust/SeedData/Profile%20pictures/7553dbe1a813ac534a1d88ec3ac07c2e_yni6cu.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804742/TraceTrust/SeedData/Profile%20pictures/93334e95100fc3ff057b725a79a5cd35_nvn0qx.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804765/TraceTrust/SeedData/Profile%20pictures/Katie-Johnson-340_rsjeiq.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804788/TraceTrust/SeedData/Profile%20pictures/9cc4f9f6-a21a-43c7-af8b-8612bc3a507c_b8sstb.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804881/TraceTrust/SeedData/Profile%20pictures/d6aa977a680777bdc1a11a757f98cda2_l9zzaq.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804945/TraceTrust/SeedData/Profile%20pictures/09cd873240bdd728ba2fb70696b6ffcc_iosjtz.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804989/TraceTrust/SeedData/Profile%20pictures/10414496_10207078099334972_7467359939825351730_n_wexpdo.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689805028/TraceTrust/SeedData/Profile%20pictures/vMLq2EWw_400x400_mnxcpy.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689805065/TraceTrust/SeedData/Profile%20pictures/photo-47510-75216_lygx3w.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689805086/TraceTrust/SeedData/Profile%20pictures/R_b08yyj.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+            ];
+
+            Random random = new();
+
+            if (sex == "Masculino")
+            {
+                int randomIndex = random.Next(malePhotos.Count);
+                return malePhotos[randomIndex];
+            }
+            else if (sex == "Femenino")
+            {
+                int randomIndex = random.Next(femalePhotos.Count);
+                return femalePhotos[randomIndex];
+            }
+
+            return null;
+        }
+
+        public static string GetRandomFirstName(string sex)
+        {
+            Random random = new();
+
+            string[] maleNames = [
+                "Juan", "José", "Antonio", "Francisco", "Jesús", "Manuel", "Miguel", "Pedro", "Alejandro", "Jorge", "Rafael",
+                "Fernando", "Roberto", "Sergio", "Eduardo", "Julio", "Ricardo", "Carlos", "Raúl", "Enrique", "Ramón", "Gabriel",
+                "Mario", "Luis", "Alberto", "Arturo", "Hugo", "Gerardo", "Guillermo", "Oscar", "Felipe", "Mauricio", "Rubén",
+                "Alfredo", "Ignacio", "Cesar", "Gustavo", "Salvador", "Victor", "Adrian", "Ernesto", "Isaac", "Diego", "Javier", "Rodrigo",
+                "Pablo", "Daniel", "Armando",
+            ];
+
+            string[] femaleNames = [
+                "María", "Carmen", "Josefa", "Ana", "Isabel", "Francisca", "Dolores", "Teresa", "Pilar", "Laura", "Juana",
+                "Lucía", "Elena", "Sofía", "Paula", "Marina", "Irene", "Inés", "Patricia", "Rosa", "Marta", "Beatriz",
+                "Sara", "Lourdes", "Cristina", "Susana", "Alicia", "Luisa", "Silvia", "Rocio", "Gloria", "Alejandra", "Gabriela",
+                "Guadalupe", "Adriana", "Graciela", "Fernanda", "Cecilia", "Alma", "Clara", "Martha", "Yolanda", "Estela", "Miriam", "Olga",
+                "Verónica", "Magdalena", "Angélica", "Mónica", "Elisa",
+            ];
+
+            if (sex == "Masculino")
+            {
+                return maleNames[random.Next(maleNames.Length)];
+            }
+            return femaleNames[random.Next(femaleNames.Length)];
+        }
+
+        public static DateOnly GenerateRandomDateOfBirth(int minYear, int maxYear)
+        {
+            Random random = new();
+
+            int year = random.Next(minYear, maxYear + 1);
+            int month = random.Next(1, 13);
+            int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
+
+            return new DateOnly(year, month, day);
+        }
+
+        public static DateTime GenerateRandomDateTime(int minYear)
+        {
+            Random random = new();
+
+            DateTime yesterday = DateTime.UtcNow.AddDays(-1);
+            int maxYear = yesterday.Year;
+
+            int year = random.Next(minYear, maxYear + 1);
+
+            int month = (year == maxYear) ? random.Next(1, yesterday.Month + 1) : random.Next(1, 13);
+            int day;
+            if (year == maxYear && month == yesterday.Month)
+            {
+                day = random.Next(1, yesterday.Day + 1);
+            }
+            else
+            {
+                int daysInMonth = DateTime.DaysInMonth(year, month);
+                day = random.Next(1, daysInMonth + 1);
+            }
+
+            int hour = random.Next(0, 24);
+            int minute = random.Next(0, 60);
+            int second = random.Next(0, 60);
+
+            return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
+        }
+
+        public static string GetRandomSex()
+        {
+            Random random = new();
+            string[] sexes = ["Masculino", "Femenino"];
+
+            return sexes[random.Next(sexes.Length)];
+        }
+
+        public static string GetRandomLastName()
+        {
+            Random random = new();
+
+            string[] lastNames = [
+                "García", "Martínez", "Rodríguez", "Hernández", "López", "González", "Pérez", "Sánchez", "Ramírez", "Torres", "Flores",
+                "Rivera", "Gómez", "Díaz", "Reyes", "Morales", "Cruz", "Ortiz", "Gutiérrez", "Chávez", "Ramos", "Guzmán", "Ruiz",
+                "Alvarez", "Moreno", "Mendoza", "Castillo", "Jiménez", "Rojas", "Vargas", "Romero", "Silva", "Muñoz", "Aguilar", "Paredes",
+                "Cervantes", "Luna", "Medina", "Navarro", "Campos", "Arias", "Juárez", "Mireles", "Escobar", "Ponce", "Carrillo", "Castañeda",
+                "Aguirre", "Núñez", "Vega", "Rangel", "Salazar", "Zamora", "Solís", "Peña",
+            ];
+
+            return lastNames[random.Next(lastNames.Length)];
+        }
+
+        public static string GetRandomEmailDomain()
+        {
+            var random = new Random();
+
+            string[] emailDomains = [
+                "gmail", "hotmail", "yahoo", "outlook", "icloud", "aol", "protonmail", "zoho", "yandex", "tutanota", "mail", "gmx",
+                "mailfence", "fastmail", "mail", "mail2world", "hushmail", "runbox", "countermail", "mailbox", "mailinator", "guerrillamail", "temp-mail", "10minutemail",
+                "maildrop", "mailnesia", "mailinator",
+            ];
+
+            return emailDomains[random.Next(emailDomains.Length)];
+        }
+
+        public static string ConstructFullEmailAddress(string firstName, string lastName, string emailDomain, int index)
+        {
+            return $@"{ReplaceSpecialChars(firstName)}.{ReplaceSpecialChars(lastName)}.demo{index}@{emailDomain}.com".ToLower();
+        }
+
+        public static List<AppUser> GenerateUsersForSeeding(int quantity)
+        {
+            Random random = new();
+            List<AppUser> users = [];
+
+            for (int i = 0; i < quantity; i++)
+            {
+                string sex = GetRandomSex();
+                string firstName = GetRandomFirstName(sex);
+                string lastName = GetRandomLastName();
+                string email = ConstructFullEmailAddress(firstName, lastName, GetRandomEmailDomain(), i);
+                string userName = email;
+
+                AppUser user = new()
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = userName,
+                    PhoneNumber = GenerateMexicanPhoneNumber(),
+                    PhoneNumberCountryCode = "+52",
+                    CreatedAt = GenerateRandomDateTime(2013),
+                    DateOfBirth = GenerateRandomDateOfBirth(1960, 2005),
+                    Sex = sex,
+                };
+
+                if (random.Next(2) == 0)
+                    user.UserPhoto = new() { Photo = GetRandomProfilePicture(sex) };
+
+                users.Add(user);
+            }
+
+            return users;
+        }
+
+    [GeneratedRegex("[áàâä]")]
+    private static partial Regex MyRegex();
+    [GeneratedRegex("[ñ]")]
+    private static partial Regex MyRegex1();
+    [GeneratedRegex("[éèêë]")]
+    private static partial Regex MyRegex2();
+    [GeneratedRegex("[íìîï]")]
+    private static partial Regex MyRegex3();
+    [GeneratedRegex("[óòôö]")]
+    private static partial Regex MyRegex4();
+    [GeneratedRegex("[úùûü]")]
+    private static partial Regex MyRegex5();
+    [GeneratedRegex("[ç]")]
+    private static partial Regex MyRegex6();
+
 }

@@ -20,10 +20,9 @@ public class UsersController(IUnitOfWork uow, UsersService usersService, UserMan
 
         
     [Authorize(Policy = "RequireAdminRole")]
-    public async Task<ActionResult<PagedList<UserDto>>> GetPagedListAsync
-        ([FromQuery] UserParams param)
+    public async Task<ActionResult<PagedList<UserDto>>> GetPagedListAsync([FromQuery] UserParams param)
     {
-        var pagedList = await uow.UserRepository.GetPagedListAsync(param);
+        var pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));

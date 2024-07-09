@@ -1,0 +1,77 @@
+<ng-template #inputTemplate>
+  @if (!useInputGroup) {
+  <label [for]="id ? id : controlName" class="form-label fw-semi-bold fs--1">
+    @if (popoverProps) {
+    <button class="form-control btn btn-sm btn-phoenix-info bg-transparent border p-0 me-2 w-100"
+      [popover]="popoverProps.text ? popoverProps.text : ''"
+      [popoverTitle]="popoverProps.title ? popoverProps.title : ''" [placement]="popoverProps.placement"
+      [adaptivePosition]="true" [boundariesElement]="'viewport'" [triggers]="popoverProps.triggers">
+      <i class="bi bi-info"></i>
+    </button>
+    }
+    {{ label }}
+    @if(optional()){@if (service.isOptional(control) || !isReadonly) {
+      <span optionalSpan></span>
+      }}
+    @if (isNew()) {
+    <span newBadge></span>
+    }
+  </label>
+  }
+  <input [type]="type" [formControl]="control" [placeholder]="placeholder" [popover]="popoverText"
+    [popoverTitle]="popoverTitle" [triggers]="'mouseenter:mouseleave'" container="body" [autocomplete]="autocomplete"
+    [spellcheck]="spellcheck" [attr.role]="role" [id]="id ? id : controlName" [attr.list]="controlName + 'datalist'"
+    [attr.autofocus]="autofocus() ? 'autofocus' : null" [readonly]="isReadonly" class="form-control text-1000 fs-0"
+    [ngClass]="{
+      'is-invalid': submitted() && control.invalid,
+      'is-valid': submitted() && control.valid,
+      'border-warning border-2': isPending,
+    }" [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null" [attr.aria-label]="label + ' input'" />
+  @if (datalistOptions) {
+  <datalist [id]="controlName + 'datalist'">
+    @for (option of datalistOptions; track option) {
+    <option [value]="option.name"></option>
+    }
+  </datalist>
+  }
+  @if (control.status === "PENDING" && control.dirty) {
+  <div class="spinner-border spinner-border-sm text-primary ms-2 inset" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  }
+</ng-template>
+
+@if (useInputGroup) {
+<label [for]="id ? id : controlName" class="form-label fw-semi-bold fs--1">
+  {{ label }}
+  @if(optional()){@if (service.isOptional(control) || !isReadonly) {
+  <span optionalSpan></span>
+  }}
+  @if (isNew()) {
+  <span newBadge></span>
+  }
+  @if (control.status === "PENDING") {
+  <div class="spinner-grow spinner-grow-sm ms-2" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  }
+</label>
+
+<div class="input-group w-100">
+  <ng-content select="[leftSpan]"></ng-content>
+  <ng-container *ngTemplateOutlet="inputTemplate"></ng-container>
+  <ng-content select="[rightSpan]"></ng-content>
+  @if (append) {
+  <span class="input-group-text">{{ append }}</span>
+  }
+</div>
+} @else {
+<ng-container *ngTemplateOutlet="inputTemplate"></ng-container>
+}
+
+@if (control.errors) {
+<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
+}
+@if (formText()) {
+<div helpBlock [controlName]="controlName" [formText]="formText()"></div>
+}

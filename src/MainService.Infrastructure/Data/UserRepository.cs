@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs;
 using MainService.Core.DTOs.User;
+using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
@@ -84,13 +86,35 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return item;
     }
 
-    public async Task<PagedList<UserDto>> GetPagedListAsync(UserParams param)
+    public async Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user)
     {
         var query = context.Users
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
             .AsQueryable();
 
-        query = query.Where(x => x.UserRoles.Any(y => y.Role.Name == "Patient"));
+        IEnumerable<string> roles = user.GetRoles();
+
+        if (!roles.Contains("Admin"))
+        {
+            // for users where the role is 'Doctor'
+            if (roles.Contains("Doctor"))
+            {
+                query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Doctor"));
+            }
+        }
+
+        if (!roles.Contains("Doctor"))
+        {
+            int doctorId = user.GetUserId();
+            
+            // for users where the role is 'Patient'
+            if (roles.Contains("Patient"))
+            {
+                query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"));
+                // also, bring users, where in its navigation property 'Doctors' contains the doctorId
+                query = query.Where(x => x.Patients.Any(x => x.DoctorId == doctorId));
+            }
+        }
 
         return await PagedList<UserDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<UserDto>(mapper.ConfigurationProvider),

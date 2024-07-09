@@ -1,5 +1,4 @@
 import { HttpParams } from '@angular/common/http';
-import { Modal } from './modal';
 import {
   Validators,
   FormGroup,
@@ -8,13 +7,14 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import { Observable, switchMap, map, catchError, of } from 'rxjs';
 import { createId } from '@paralleldrive/cuid2';
-import { Column } from './types';
-import { PrescriptionsService } from '../_services/data/prescriptions.service';
-import { ConfirmService } from '../_services/confirm/confirm.service';
-import { Doctor } from './user';
-import { getPaginationHeaders } from '../_utils/util';
-import { Medicine } from './medicine';
-import { Patient } from './patient';
+import { Medicine } from 'src/app/_models/medicine';
+import { Modal } from 'src/app/_models/modal';
+import { Patient } from 'src/app/_models/patient';
+import { Column } from 'src/app/_models/types';
+import { Doctor } from 'src/app/_models/user';
+import { ConfirmService } from 'src/app/_services/confirm.service';
+import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
+import { getPaginationHeaders } from 'src/app/_utils/util';
 
 export interface Inventory {
     medicines: Medicine[];

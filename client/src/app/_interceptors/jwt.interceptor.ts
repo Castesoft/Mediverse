@@ -1,25 +1,17 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { take } from 'rxjs';
-import { AccountService } from '../_services/accounts.service';
+import { AccountService } from 'src/app/_services/account.service';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const accountService = inject(AccountService);
-  let token: string | undefined;
 
-  accountService.current$.pipe(take(1)).subscribe({
-    next: account => {
-      token = account?.token;
-
-      if (token) {
-        req = req.clone({
-          setHeaders: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+  if (accountService.current()) {
+    req = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${accountService.current()?.token}`
       }
-    }
-  });
+    })
+  }
 
   return next(req);
 };

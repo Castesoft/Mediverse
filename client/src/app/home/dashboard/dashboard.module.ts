@@ -1,23 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { DashboardRoutingModule } from './dashboard-routing.module';
-import { DashboardComponent } from './dashboard.component';
-import { MultipurposeComponent } from './multipurpose.component';
-import { StoreAnalyticsComponent } from './store-analytics.component';
-import { LogisticsComponent } from './logistics.component';
-import { ProjectsComponent } from './projects.component';
-import { CoreModule } from '../../core/core.module';
-import { SharedModule } from '../../shared/shared.module';
-import { OverviewComponent } from './overview.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { AppointmentSummaryComponent } from './components/appointment-summary/appointment-summary.component';
-import { AppointmentDetailsComponent } from './appointments/appointment-details/appointment-details.component';
-import { AppointmentsComponent } from './appointments/appointments.component';
-import { AppointmentServicesSummaryComponent } from './appointments/appointment-services-summary/appointment-services-summary.component';
-import { PatientsComponent } from './patients/patients.component';
-import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
-import { PaymentsComponent } from './payments/payments.component';
+import { AppointmentDetailsComponent } from 'src/app/home/dashboard/appointments/appointment-details/appointment-details.component';
+import { AppointmentServicesSummaryComponent } from 'src/app/home/dashboard/appointments/appointment-services-summary/appointment-services-summary.component';
+import { AppointmentsComponent } from 'src/app/home/dashboard/appointments/appointments.component';
+import { AppointmentSummaryComponent } from 'src/app/home/dashboard/components/appointment-summary/appointment-summary.component';
+import { DashboardRoutingModule } from 'src/app/home/dashboard/dashboard-routing.module';
+import { DashboardComponent } from 'src/app/home/dashboard/dashboard.component';
+import { LogisticsComponent } from 'src/app/home/dashboard/logistics.component';
+import { MultipurposeComponent } from 'src/app/home/dashboard/multipurpose.component';
+import { OverviewComponent } from 'src/app/home/dashboard/overview.component';
+import { PatientDetailsComponent } from 'src/app/home/dashboard/patients/patient-details/patient-details.component';
+import { PatientsComponent } from 'src/app/home/dashboard/patients/patients.component';
+import { PaymentsComponent } from 'src/app/home/dashboard/payments/payments.component';
+import { ProjectsComponent } from 'src/app/home/dashboard/projects.component';
+import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.component';
 
 @NgModule({
   declarations: [

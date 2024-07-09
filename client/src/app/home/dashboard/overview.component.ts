@@ -1,8 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { ChartComponent, ApexOptions } from 'ng-apexcharts';
-import { appointments } from '../../data/appointments';
-import { patients } from '../../data/patients';
-import { Appointment } from '../../_models/appointment';
 
 @Component({
   selector: 'dashboard-multipurpose-route',
@@ -12,13 +9,13 @@ import { Appointment } from '../../_models/appointment';
 export class OverviewComponent {
   @ViewChild('chart') chart!: ChartComponent;
 
-  patients = patients;
+  patients = [];
 
   public radialBarOptions: Partial<ApexOptions>;
   public lineChartOptions: Partial<ApexOptions>;
   public pieChartOptions: Partial<ApexOptions>;
   public barChartOptions: Partial<ApexOptions>;
-  appointments: Appointment[] = appointments.slice(4, 7);
+  // appointments: Appointment[] = appointments.slice(4, 7);
 
   constructor() {
     this.radialBarOptions = {

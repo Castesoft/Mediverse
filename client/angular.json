@@ -5,36 +5,7 @@
   "projects": {
     "client": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss",
-          "skipTests": true,
-          "standalone": false
-        },
-        "@schematics/angular:class": {
-          "skipTests": true
-        },
-        "@schematics/angular:directive": {
-          "skipTests": true,
-          "standalone": false
-        },
-        "@schematics/angular:guard": {
-          "skipTests": true
-        },
-        "@schematics/angular:interceptor": {
-          "skipTests": true
-        },
-        "@schematics/angular:pipe": {
-          "skipTests": true,
-          "standalone": false
-        },
-        "@schematics/angular:resolver": {
-          "skipTests": true
-        },
-        "@schematics/angular:service": {
-          "skipTests": true
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -62,6 +33,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/cyan-orange.css",
               "node_modules/typeface-roboto/index.css",
               "node_modules/typeface-nunito-sans/index.css",
               "node_modules/typeface-inter/inter.css",
@@ -71,15 +43,12 @@
               "public/plugins/keenicons/outline/style.css",
               "public/plugins/keenicons/solid/style.css",
               "node_modules/choices.js/public/assets/styles/choices.min.css",
-
               "public/sass/style.scss",
-
               "src/styles.scss"
             ],
             "scripts": [
               "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/choices.js/public/assets/scripts/choices.min.js"
-
             ]
           },
           "configurations": {
@@ -150,6 +119,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.scss"
             ],
             "scripts": []

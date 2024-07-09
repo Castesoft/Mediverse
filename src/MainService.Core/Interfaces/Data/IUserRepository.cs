@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MainService.Core.DTOs;
 using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
@@ -15,5 +16,5 @@ public interface IUserRepository
     Task<PrescriptionInformationDto> GetPrescriptionInformationAsync(int doctorId);
     Task<List<AppUser>> GetAllAsync();
     Task<List<UserDto>> GetAllDtoAsync(UserParams param);
-    Task<PagedList<UserDto>> GetPagedListAsync(UserParams param);
+    Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user);
 }

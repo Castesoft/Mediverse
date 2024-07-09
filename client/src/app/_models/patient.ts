@@ -1,14 +1,9 @@
-import { ToastrService } from 'ngx-toastr';
-import { Observable, switchMap, map, catchError, of } from 'rxjs';
-import { ConfirmService } from '../_services/confirm/confirm.service';
-import { PatientsService } from '../_services/data/patients.service';
-import { Column } from './types';
-import { Sex, MedicalHistory, Allergy, EmergencyContact } from './user';
-import { Modal } from './modal';
 import { HttpParams } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { createId } from '@paralleldrive/cuid2';
-import { getPaginationHeaders } from '../_utils/util';
+import { Modal } from 'src/app/_models/modal';
+import { Sex, MedicalHistory, Allergy, EmergencyContact } from 'src/app/_models/user';
+import { getPaginationHeaders } from 'src/app/_utils/util';
 
 const subject = 'patient'     ;
 
@@ -28,17 +23,6 @@ export class Patient {
   allergies: Allergy[];
   currentMedications: Patient[];
   emergencyContact: EmergencyContact;
-
-  static columns: Column[] = [
-    { name: 'id', label: 'ID' },
-    { name: 'firstName', label: 'Nombre' },
-    { name: 'birthDate', label: 'Fecha de nacimiento' },
-    { name: 'photoUrl', label: 'Foto' },
-    { name: 'sex', label: 'Sexo' },
-    { name: 'address', label: 'Dirección' },
-    { name: 'phoneNumber', label: 'Teléfono' },
-    { name: 'email', label: 'Correo electrónico' },
-  ];
 
   constructor(
     id: number,
@@ -70,77 +54,6 @@ export class Patient {
     this.allergies = allergies;
     this.currentMedications = currentMedications;
     this.emergencyContact = emergencyContact;
-  }
-
-  static deleteItems = (
-    items: Patient[],
-    service: PatientsService,
-    confirm: ConfirmService,
-    toastr: ToastrService
-  ) => {
-    if (!items || items.length === 0) return;
-
-    if (items.length === 1) {
-      this.deleteById(items[0].id, service, confirm, toastr).subscribe();
-    } else {
-      const selectedIds = items
-        .filter((item) => item.isSelected)
-        .map((item) => item.id);
-
-      this.deleteRangeById(selectedIds, service, confirm, toastr).subscribe();
-    }
-  };
-
-  static deleteById(
-    id: number,
-    service: PatientsService,
-    confirm: ConfirmService,
-    toastr: ToastrService
-  ): Observable<boolean> {
-    return confirm.confirm(patientDeleteModal).pipe(
-      switchMap((result) => {
-        if (result) {
-          return service.delete(id).pipe(
-            map(() => {
-              toastr.success('Paciente eliminada');
-              return true;
-            }),
-            catchError((error) => {
-              toastr.error('Error al eliminar el paciente');
-              console.error(error);
-              return of(false);
-            })
-          );
-        }
-        return of(false);
-      })
-    );
-  }
-
-  static deleteRangeById(
-    ids: number[],
-    service: PatientsService,
-    confirm: ConfirmService,
-    toastr: ToastrService
-  ): Observable<boolean> {
-    return confirm.confirm(patientDeleteModal).pipe(
-      switchMap((result) => {
-        if (result) {
-          return service.deleteRange(ids.join(',')).pipe(
-            map(() => {
-              toastr.success('Pacientes eliminados');
-              return true;
-            }),
-            catchError((error) => {
-              toastr.error('Error al eliminar los pacientes');
-              console.error(error);
-              return of(false);
-            })
-          );
-        }
-        return of(false);
-      })
-    );
   }
 }
 

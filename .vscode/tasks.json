@@ -6,7 +6,7 @@
             "label": "mkcert localhost",
             "detail": "(mkcert localhost) install SSL certificate for localhost",
             "type": "shell",
-            "command": "rm -f /c/Projects/Mediverse/frontend/web-app/ssl/localhost-key.pem && rm -f /c/Projects/Mediverse/frontend/web-app/ssl/localhost.pem && cd /c/Projects/Mediverse/frontend/web-app/ssl/ && mkcert localhost",
+            "command": "rm -f /c/Projects/Mediverse/client/ssl/localhost-key.pem && rm -f /c/Projects/Mediverse/client/ssl/localhost.pem && cd /c/Projects/Mediverse/client/ssl/ && mkcert localhost",
             "options": {
                 "cwd": "${workspaceFolder}",
                 "shell": {
@@ -27,7 +27,7 @@
             "type": "shell",
             "command": "npm i",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "cmd.exe",
                     "args": [
@@ -136,7 +136,7 @@
             "type": "shell",
             "command": "rm -fR .angular",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
                     "args": [
@@ -156,7 +156,7 @@
             "type": "shell",
             "command": "[ -f package-lock.json ] && rm package-lock.json || echo 'No package-lock.json to remove'",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
                     "args": [
@@ -176,7 +176,7 @@
             "type": "shell",
             "command": "rm -fR node_modules",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
                     "args": [
@@ -207,7 +207,7 @@
             "type": "shell",
             "command": "npm update",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "cmd.exe",
                     "args": [
@@ -226,7 +226,7 @@
             "type": "shell",
             "command": "npm i -g npm-check-updates",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "cmd.exe",
                     "args": [
@@ -245,7 +245,7 @@
             "type": "shell",
             "command": "ncu -u",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "cmd.exe",
                     "args": [
@@ -272,12 +272,12 @@
             "dependsOrder": "sequence"
         },
         {
-            "label": "serve web-app",
-            "detail": "(ng serve) serve web-app on localhost:4400",
+            "label": "serve client",
+            "detail": "(ng serve) serve client on localhost:4400",
             "type": "shell",
             "command": "ng serve",
             "options": {
-                "cwd": "${workspaceFolder}/frontend/web-app",
+                "cwd": "${workspaceFolder}/client",
                 "shell": {
                     "executable": "cmd.exe",
                     "args": [
@@ -293,10 +293,10 @@
         // start all services (sqlite)
         {
             "label": "start all services (Postgres)",
-            "detail": "[ (1) watch MainService (Postgres), (2) serve web-app ] | this will start all services in parallel",
+            "detail": "[ (1) watch MainService (Postgres), (2) serve client ] | this will start all services in parallel",
             "dependsOn": [
                 "(Postgres) dotnet watch --no-hot-reload Postgres",
-                "serve web-app"
+                "serve client"
             ],
             "dependsOrder": "parallel"
         },

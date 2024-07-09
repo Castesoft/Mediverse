@@ -1,34 +1,33 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './dashboard.component';
-import { LogisticsComponent } from './logistics.component';
-import { MultipurposeComponent } from './multipurpose.component';
-import { StoreAnalyticsComponent } from './store-analytics.component';
-import { ProjectsComponent } from './projects.component';
-import { OverviewComponent } from './overview.component';
-import { AppointmentsComponent } from './appointments/appointments.component';
-import { AppointmentDetailsComponent } from './appointments/appointment-details/appointment-details.component';
-import { PatientsComponent } from './patients/patients.component';
-import { PatientDetailsComponent } from './patients/patient-details/patient-details.component';
-import { AccountComponent } from '../account/account.component';
-import { PaymentsComponent } from './payments/payments.component';
+import { AccountComponent } from 'src/app/account/account.component';
+import { AppointmentDetailsComponent } from 'src/app/home/dashboard/appointments/appointment-details/appointment-details.component';
+import { AppointmentsComponent } from 'src/app/home/dashboard/appointments/appointments.component';
+import { LogisticsComponent } from 'src/app/home/dashboard/logistics.component';
+import { MultipurposeComponent } from 'src/app/home/dashboard/multipurpose.component';
+import { OverviewComponent } from 'src/app/home/dashboard/overview.component';
+import { PatientDetailsComponent } from 'src/app/home/dashboard/patients/patient-details/patient-details.component';
+import { PatientsComponent } from 'src/app/home/dashboard/patients/patients.component';
+import { PaymentsComponent } from 'src/app/home/dashboard/payments/payments.component';
+import { ProjectsComponent } from 'src/app/home/dashboard/projects.component';
+import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.component';
 
 const routes: Routes = [
   { path: '', component: OverviewComponent },
-  {
-    path: 'prescriptions',
-    loadChildren: () =>
-      import('./../../prescriptions/prescriptions.module').then(
-        (m) => m.PrescriptionsModule
-      ),
-  },
-  {
-    path: 'medicines',
-    loadChildren: () =>
-      import('./../../medicines/medicines.module').then(
-        (m) => m.MedicinesModule
-      ),
-  },
+  // {
+  //   path: 'prescriptions',
+  //   loadChildren: () =>
+  //     import('.').then(
+  //       (m) => m.PrescriptionsModule
+  //     ),
+  // },
+  // {
+  //   path: 'medicines',
+  //   loadChildren: () =>
+  //     import('./../../medicines/medicines.module').then(
+  //       (m) => m.MedicinesModule
+  //     ),
+  // },
   { path: 'appointments', component: AppointmentsComponent },
   { path: 'appointments/:id', component: AppointmentDetailsComponent },
   { path: 'patients', component: PatientsComponent },

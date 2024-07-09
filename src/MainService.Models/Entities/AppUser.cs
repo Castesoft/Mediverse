@@ -30,4 +30,8 @@ public class AppUser : IdentityUser<int>
     public ICollection<DoctorLink> DoctorLinks { get; set; } = [];
     public ICollection<DoctorClinic> DoctorClinics { get; set; } = [];
     public NurseClinic NurseClinic { get; set; }
+
+    // Doctor-Patient relationships
+    public ICollection<DoctorPatient> Doctors { get; set; } = [];
+    public ICollection<DoctorPatient> Patients { get; set; } = [];
 }
