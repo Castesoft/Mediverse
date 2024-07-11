@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MainService.Sqlite.Migrations
+namespace MainService.Postgres.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -15,11 +16,11 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -30,35 +31,35 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FirstName = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    LastName = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    Sex = table.Column<string>(type: "TEXT", maxLength: 10, nullable: true),
-                    DateOfBirth = table.Column<DateOnly>(type: "TEXT", maxLength: 100, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    LastActive = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: false),
-                    PhoneNumberCountryCode = table.Column<string>(type: "TEXT", maxLength: 5, nullable: true),
-                    EmailVerificationCodeHash = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    EmailVerificationCodeSalt = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    EmailVerificationExpiryTime = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: true),
-                    PhoneNumberVerificationCodeHash = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    PhoneNumberVerificationCodeSalt = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    PhoneNumberVerificationExpiryTime = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: true),
-                    UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    PasswordHash = table.Column<string>(type: "TEXT", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "TEXT", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FirstName = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    LastName = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Sex = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastActive = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: false),
+                    PhoneNumberCountryCode = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: true),
+                    EmailVerificationCodeHash = table.Column<byte[]>(type: "bytea", nullable: true),
+                    EmailVerificationCodeSalt = table.Column<byte[]>(type: "bytea", nullable: true),
+                    EmailVerificationExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: true),
+                    PhoneNumberVerificationCodeHash = table.Column<byte[]>(type: "bytea", nullable: true),
+                    PhoneNumberVerificationCodeSalt = table.Column<byte[]>(type: "bytea", nullable: true),
+                    PhoneNumberVerificationExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: true),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,11 +70,11 @@ namespace MainService.Sqlite.Migrations
                 name: "Link",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Url = table.Column<string>(type: "TEXT", nullable: true),
-                    SiteName = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    SiteName = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,18 +85,18 @@ namespace MainService.Sqlite.Migrations
                 name: "Locations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ExteriorNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    InteriorNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    Street = table.Column<string>(type: "TEXT", nullable: true),
-                    ZipCode = table.Column<string>(type: "TEXT", nullable: true),
-                    City = table.Column<string>(type: "TEXT", nullable: true),
-                    State = table.Column<string>(type: "TEXT", nullable: true),
-                    Country = table.Column<string>(type: "TEXT", nullable: true),
-                    Neighborhood = table.Column<string>(type: "TEXT", nullable: true),
-                    PhotoUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ExteriorNumber = table.Column<string>(type: "text", nullable: true),
+                    InteriorNumber = table.Column<string>(type: "text", nullable: true),
+                    Street = table.Column<string>(type: "text", nullable: true),
+                    ZipCode = table.Column<string>(type: "text", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: true),
+                    State = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true),
+                    Neighborhood = table.Column<string>(type: "text", nullable: true),
+                    PhotoUrl = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,11 +107,11 @@ namespace MainService.Sqlite.Migrations
                 name: "MedicalLicense",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    LicenseNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    SpecialtyLicense = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LicenseNumber = table.Column<string>(type: "text", nullable: true),
+                    SpecialtyLicense = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,10 +122,10 @@ namespace MainService.Sqlite.Migrations
                 name: "Permissions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -135,12 +136,12 @@ namespace MainService.Sqlite.Migrations
                 name: "Phone",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    CountryCode = table.Column<string>(type: "TEXT", nullable: true),
-                    Extension = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    CountryCode = table.Column<string>(type: "text", nullable: true),
+                    Extension = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -151,13 +152,13 @@ namespace MainService.Sqlite.Migrations
                 name: "Photos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Url = table.Column<string>(type: "TEXT", nullable: true),
-                    PublicId = table.Column<string>(type: "TEXT", nullable: true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Size = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    PublicId = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Size = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -168,17 +169,17 @@ namespace MainService.Sqlite.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    Unit = table.Column<string>(type: "TEXT", nullable: true),
-                    Manufacturer = table.Column<string>(type: "TEXT", nullable: true),
-                    LotNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Discount = table.Column<double>(type: "REAL", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Unit = table.Column<string>(type: "text", nullable: true),
+                    Manufacturer = table.Column<string>(type: "text", nullable: true),
+                    LotNumber = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Discount = table.Column<double>(type: "double precision", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,13 +190,13 @@ namespace MainService.Sqlite.Migrations
                 name: "Services",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Discount = table.Column<double>(type: "REAL", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Discount = table.Column<double>(type: "double precision", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,9 +207,9 @@ namespace MainService.Sqlite.Migrations
                 name: "SpecialistSpecification",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -219,11 +220,11 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
-                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -240,11 +241,11 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
-                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -261,10 +262,10 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    ProviderKey = table.Column<string>(type: "TEXT", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -281,8 +282,8 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    RoleId = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    RoleId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -305,10 +306,10 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: true)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -325,9 +326,9 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorPatients",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -349,15 +350,15 @@ namespace MainService.Sqlite.Migrations
                 name: "Prescription",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    PatientFullName = table.Column<string>(type: "TEXT", nullable: true),
-                    PatientDateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    PatientAge = table.Column<int>(type: "INTEGER", nullable: false),
-                    DoctorAddress = table.Column<string>(type: "TEXT", nullable: true),
-                    PatientId = table.Column<int>(type: "INTEGER", nullable: true),
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PatientFullName = table.Column<string>(type: "text", nullable: true),
+                    PatientDateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PatientAge = table.Column<int>(type: "integer", nullable: false),
+                    DoctorAddress = table.Column<string>(type: "text", nullable: true),
+                    PatientId = table.Column<int>(type: "integer", nullable: true),
+                    DoctorId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -378,8 +379,8 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorLinks",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LinkId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    LinkId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -402,8 +403,8 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorClinics",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ClinicId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ClinicId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -426,8 +427,8 @@ namespace MainService.Sqlite.Migrations
                 name: "NurseClinics",
                 columns: table => new
                 {
-                    NurseId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ClinicId = table.Column<int>(type: "INTEGER", nullable: false)
+                    NurseId = table.Column<int>(type: "integer", nullable: false),
+                    ClinicId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -450,8 +451,8 @@ namespace MainService.Sqlite.Migrations
                 name: "AppRolePermission",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PermissionId = table.Column<int>(type: "INTEGER", nullable: false)
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    PermissionId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -474,8 +475,8 @@ namespace MainService.Sqlite.Migrations
                 name: "UserPermissions",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PermissionId = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    PermissionId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -498,8 +499,8 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorPhones",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhoneId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    PhoneId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -522,8 +523,8 @@ namespace MainService.Sqlite.Migrations
                 name: "LocationPhone",
                 columns: table => new
                 {
-                    LocationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhoneId = table.Column<int>(type: "INTEGER", nullable: false)
+                    LocationId = table.Column<int>(type: "integer", nullable: false),
+                    PhoneId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -546,8 +547,8 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorSignature",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SignatureId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    SignatureId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -570,8 +571,8 @@ namespace MainService.Sqlite.Migrations
                 name: "UserPhotos",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -594,8 +595,8 @@ namespace MainService.Sqlite.Migrations
                 name: "ProductPhoto",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -615,26 +616,26 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Appointment",
+                name: "Event",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    PatientId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ServiceId = table.Column<int>(type: "INTEGER", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PatientId = table.Column<int>(type: "integer", nullable: true),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ServiceId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Appointment", x => x.Id);
+                    table.PrimaryKey("PK_Event", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Appointment_AspNetUsers_PatientId",
+                        name: "FK_Event_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Appointment_Services_ServiceId",
+                        name: "FK_Event_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
                         principalColumn: "Id");
@@ -644,8 +645,8 @@ namespace MainService.Sqlite.Migrations
                 name: "ServicePhoto",
                 columns: table => new
                 {
-                    ServiceId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ServiceId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -668,8 +669,8 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorInformations",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    InformationId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    InformationId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -692,8 +693,8 @@ namespace MainService.Sqlite.Migrations
                 name: "MedicalProfessionalLicense",
                 columns: table => new
                 {
-                    SpecialistSpecificationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MedicalLicenseId = table.Column<int>(type: "INTEGER", nullable: false)
+                    SpecialistSpecificationId = table.Column<int>(type: "integer", nullable: false),
+                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -705,7 +706,7 @@ namespace MainService.Sqlite.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MedicalProfessionalLicense_SpecialistSpecification_SpecialistSpecificationId",
+                        name: "FK_MedicalProfessionalLicense_SpecialistSpecification_Speciali~",
                         column: x => x.SpecialistSpecificationId,
                         principalTable: "SpecialistSpecification",
                         principalColumn: "Id",
@@ -716,8 +717,8 @@ namespace MainService.Sqlite.Migrations
                 name: "PrescriptionLogo",
                 columns: table => new
                 {
-                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -740,14 +741,14 @@ namespace MainService.Sqlite.Migrations
                 name: "PrescriptionMedicine",
                 columns: table => new
                 {
-                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MedicineId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    Dosage = table.Column<string>(type: "TEXT", nullable: true),
-                    Instructions = table.Column<string>(type: "TEXT", nullable: true),
-                    Unit = table.Column<string>(type: "TEXT", nullable: true),
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
+                    MedicineId = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Dosage = table.Column<string>(type: "text", nullable: true),
+                    Instructions = table.Column<string>(type: "text", nullable: true),
+                    Unit = table.Column<string>(type: "text", nullable: true),
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -767,23 +768,47 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppointmentPrescription",
+                name: "DoctorEvent",
                 columns: table => new
                 {
-                    AppointmentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppointmentPrescription", x => new { x.AppointmentId, x.PrescriptionId });
+                    table.PrimaryKey("PK_DoctorEvent", x => new { x.DoctorId, x.EventId });
                     table.ForeignKey(
-                        name: "FK_AppointmentPrescription_Appointment_AppointmentId",
-                        column: x => x.AppointmentId,
-                        principalTable: "Appointment",
+                        name: "FK_DoctorEvent_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AppointmentPrescription_Prescription_PrescriptionId",
+                        name: "FK_DoctorEvent_Event_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Event",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventPrescription",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventPrescription", x => new { x.EventId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Event_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Event",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Prescription_PrescriptionId",
                         column: x => x.PrescriptionId,
                         principalTable: "Prescription",
                         principalColumn: "Id",
@@ -791,68 +816,28 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DoctorAppointment",
+                name: "PatientEvent",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AppointmentId = table.Column<int>(type: "INTEGER", nullable: false)
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DoctorAppointment", x => new { x.DoctorId, x.AppointmentId });
+                    table.PrimaryKey("PK_PatientEvent", x => new { x.PatientId, x.EventId });
                     table.ForeignKey(
-                        name: "FK_DoctorAppointment_Appointment_AppointmentId",
-                        column: x => x.AppointmentId,
-                        principalTable: "Appointment",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DoctorAppointment_AspNetUsers_DoctorId",
-                        column: x => x.DoctorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PatientAppointment",
-                columns: table => new
-                {
-                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AppointmentId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PatientAppointment", x => new { x.PatientId, x.AppointmentId });
-                    table.ForeignKey(
-                        name: "FK_PatientAppointment_Appointment_AppointmentId",
-                        column: x => x.AppointmentId,
-                        principalTable: "Appointment",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PatientAppointment_AspNetUsers_PatientId",
+                        name: "FK_PatientEvent_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientEvent_Event_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Event",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Appointment_PatientId",
-                table: "Appointment",
-                column: "PatientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Appointment_ServiceId",
-                table: "Appointment",
-                column: "ServiceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppointmentPrescription_PrescriptionId",
-                table: "AppointmentPrescription",
-                column: "PrescriptionId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppRolePermission_PermissionId",
@@ -897,15 +882,15 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DoctorAppointment_AppointmentId",
-                table: "DoctorAppointment",
-                column: "AppointmentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DoctorClinics_ClinicId",
                 table: "DoctorClinics",
                 column: "ClinicId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorEvent_EventId",
+                table: "DoctorEvent",
+                column: "EventId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -950,6 +935,22 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Event_PatientId",
+                table: "Event",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Event_ServiceId",
+                table: "Event",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventPrescription_PrescriptionId",
+                table: "EventPrescription",
+                column: "PrescriptionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LocationPhone_PhoneId",
                 table: "LocationPhone",
                 column: "PhoneId",
@@ -973,9 +974,9 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientAppointment_AppointmentId",
-                table: "PatientAppointment",
-                column: "AppointmentId",
+                name: "IX_PatientEvent_EventId",
+                table: "PatientEvent",
+                column: "EventId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1039,9 +1040,6 @@ namespace MainService.Sqlite.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AppointmentPrescription");
-
-            migrationBuilder.DropTable(
                 name: "AppRolePermission");
 
             migrationBuilder.DropTable(
@@ -1060,10 +1058,10 @@ namespace MainService.Sqlite.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "DoctorAppointment");
+                name: "DoctorClinics");
 
             migrationBuilder.DropTable(
-                name: "DoctorClinics");
+                name: "DoctorEvent");
 
             migrationBuilder.DropTable(
                 name: "DoctorInformations");
@@ -1081,6 +1079,9 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorSignature");
 
             migrationBuilder.DropTable(
+                name: "EventPrescription");
+
+            migrationBuilder.DropTable(
                 name: "LocationPhone");
 
             migrationBuilder.DropTable(
@@ -1090,7 +1091,7 @@ namespace MainService.Sqlite.Migrations
                 name: "NurseClinics");
 
             migrationBuilder.DropTable(
-                name: "PatientAppointment");
+                name: "PatientEvent");
 
             migrationBuilder.DropTable(
                 name: "PrescriptionLogo");
@@ -1129,7 +1130,7 @@ namespace MainService.Sqlite.Migrations
                 name: "Locations");
 
             migrationBuilder.DropTable(
-                name: "Appointment");
+                name: "Event");
 
             migrationBuilder.DropTable(
                 name: "Prescription");

@@ -275,6 +275,14 @@ public class Seed
         context.DoctorPatients.AddRange(doctorPatientRelationships);
         await context.SaveChangesAsync();
 
+        if (await context.Services.AnyAsync()) return;
+        var seedingServices = SeedData.services;
+
+        foreach (var doctor in doctors)
+            foreach (var service in seedingServices)
+                context.DoctorServices.Add(new(doctor.Id, service));
+
+        await context.SaveChangesAsync();
         return;
     }
 

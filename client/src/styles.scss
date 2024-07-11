@@ -1,3 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.menu-item{
+  border: 0!important;
+}
+
+.mat-expansion-panel-body {
+  padding-right: 0!important;
+  padding-left: 0!important;
+}
+
+.cdk-overlay-container {
+  z-index: 1000000000!important;
+}

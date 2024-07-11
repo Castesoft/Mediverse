@@ -1,13 +1,15 @@
 import { Component, Injector, Input, OnInit, forwardRef, inject, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { KeyValuePipe, NgClass } from '@angular/common';
+import {HelpBlockComponent} from "src/app/_forms/helpers/help-block.component";
+import {InvalidFeedbackComponent} from "src/app/_forms/helpers/invalid-feedback.component";
 import { FormsService } from 'src/app/_services/forms.service';
 
 @Component({
   selector: '[controlCheckRadio]',
   templateUrl: './control-check-radio.component.html',
   standalone: true,
-  imports: [ NgClass, KeyValuePipe ],
+  imports: [NgClass, KeyValuePipe, HelpBlockComponent, InvalidFeedbackComponent],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => ControlCheckRadioComponent),
@@ -18,14 +20,13 @@ export class ControlCheckRadioComponent implements ControlValueAccessor, OnInit 
   service = inject(FormsService);
 
   autofocus = input<boolean>(false);
-
-  @Input() id?: string;
-  @Input() label: string = '';
-  @Input() formText?: string;
-  @Input() options: any[] = [];
-  @Input() isReadonly= false;
-  @Input() submitted= false;
-  @Input() errors: { [key: string]: string } = {};
+  id = input<string>();
+  label = input.required<string | undefined>();
+  formText = input<string>();
+  options = input.required<{id:string,value:string}[]>();
+  isReadonly = input<boolean>(false);
+  submitted = input<boolean>(false);
+  errors = input<{ [key: string]: string }>({});
 
   private onChange = (value: any) => { };
   private onTouched = () => { };
@@ -64,7 +65,7 @@ export class ControlCheckRadioComponent implements ControlValueAccessor, OnInit 
   }
 
   preventChanges(event: Event) {
-    if (this.isReadonly) {
+    if (this.isReadonly()) {
       event.stopPropagation();
       event.preventDefault();
     }

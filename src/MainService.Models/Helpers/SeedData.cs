@@ -38,15 +38,15 @@ public static partial class SeedData
             }),
             new("Patient", new()
             {
-                { "View appointments", "Este permiso habilita al usuario para ver las citas" },
-                { "Manage appointments", "Este permiso habilita al usuario para gestionar las citas" },
+                { "View events", "Este permiso habilita al usuario para ver las citas" },
+                { "Manage events", "Este permiso habilita al usuario para gestionar las citas" },
                 { "View medical records", "Este permiso habilita al usuario para ver los registros médicos" },
                 { "Manage medical records", "Este permiso habilita al usuario para gestionar los registros médicos" },
             }),
             new("Doctor", new()
             {
-                { "View appointments", "Este permiso habilita al usuario para ver las citas" },
-                { "Manage appointments", "Este permiso habilita al usuario para gestionar las citas" },
+                { "View events", "Este permiso habilita al usuario para ver las citas" },
+                { "Manage events", "Este permiso habilita al usuario para gestionar las citas" },
                 { "View patients", "Este permiso habilita al usuario para ver los pacientes" },
                 { "Manage patients", "Este permiso habilita al usuario para gestionar los pacientes" },
                 { "View medical records", "Este permiso habilita al usuario para ver los registros médicos" },
@@ -54,8 +54,8 @@ public static partial class SeedData
             }),
             new("Nurse", new()
             {
-                { "View appointments", "Este permiso habilita al usuario para ver las citas" },
-                { "Manage appointments", "Este permiso habilita al usuario para gestionar las citas" },
+                { "View events", "Este permiso habilita al usuario para ver las citas" },
+                { "Manage events", "Este permiso habilita al usuario para gestionar las citas" },
                 { "View patients", "Este permiso habilita al usuario para ver los pacientes" },
                 { "Manage patients", "Este permiso habilita al usuario para gestionar los pacientes" },
                 { "View medical records", "Este permiso habilita al usuario para ver los registros médicos" },

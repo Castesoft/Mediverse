@@ -3,12 +3,11 @@ import { Component, model } from "@angular/core";
 import { FormControl } from "@angular/forms";
 
 @Component({
-  host: { class: '', },
-  selector: 'invalid-feedback, div[invalidFeedback]',
+  host: { class: 'fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback', },
+  selector: 'div[invalidFeedback]',
   template: `
 @for(error of control().errors | keyvalue; track $index) {
   @if(submitted() && control().invalid) {
-    <div class="invalid-feedback d-block">
       @if (!errors()[error.key]) {
         @switch(error.key) {
           @case('required') {
@@ -39,7 +38,6 @@ import { FormControl } from "@angular/forms";
       } @else {
         {{ errors()[error.key] }}
       }
-    </div>
   }
 }
   `,

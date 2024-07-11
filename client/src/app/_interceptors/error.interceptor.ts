@@ -1,12 +1,13 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { catchError } from 'rxjs';
+import {HttpInterceptorFn} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {NavigationExtras, Router} from '@angular/router';
+import {catchError} from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const toastr = inject(ToastrService);
+  const matSnackBar = inject(MatSnackBar);
+
 
   return next(req).pipe(
     catchError(error => {
@@ -22,11 +23,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
               }
               throw modalStateErrors.flat();
             } else {
-              toastr.error(error.error, error.status)
+              // matSnackBar.open(error.error, 'Cerrar', {duration: 5000});
             }
             break;
           case 401:
-            toastr.error('Unauthorised', error.status)
+            // toastr.error('Unauthorised', error.status)
+            matSnackBar.open('No autorizado', 'Cerrar', {duration: 5000});
             break;
           case 404:
             router.navigateByUrl('/not-found');
@@ -36,7 +38,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigateByUrl('/server-error', navigationExtras);
             break;
           default:
-            toastr.error('Something unexpected went wrong');
+            matSnackBar.open('Algo salió mal', 'Cerrar', {duration: 5000});
             break;
         }
       }

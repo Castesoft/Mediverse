@@ -1,0 +1,74 @@
+@if ((use() === "create" && form) ||
+(use() === "edit" && item && form) ||
+(use() === "detail" && item)) {
+  <div errorsAlert [errors]="form.errors"></div>
+  <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
+    <div class="row row-cols-1 row-cols-sm-2 rol-cols-md-1 row-cols-lg-2">
+      <div class="col">
+        <div inputControl formControlName="firstName" class="fw-semi-bold mb-0 w-100"
+             [submitted]="form.group.controls['firstName'].touched || form.submitted"
+             [placeholder]="'Ingrese el nombre'"
+             [autofocus]="use() !== 'detail'" [label]="'Nombre'" [errors]="{
+                                        'required': 'El nombre es requerido.',
+                                    }">
+        </div>
+      </div>
+      <div class="col">
+        <div inputControl formControlName="lastName" class="fw-semi-bold mb-0 w-100" [type]="'text'"
+             [submitted]="form.group.controls['lastName'].touched || form.submitted"
+             [placeholder]="'Ingrese el apellido'"
+             [label]="'Apellido'" [errors]="{
+                                              'required': 'El apellido es requerido.',
+                                          }">
+        </div>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 rol-cols-md-1 row-cols-lg-2">
+      <div class="col">
+        <div controlCheckRadio formControlName="sex" class="fw-semi-bold mb-0 w-100"
+             [options]="[
+             {id: 'Masculino', value: 'Masculino'},
+             {id: 'Femenino', value: 'Femenino'},
+             ]"
+             [submitted]="form.group.controls['sex'].touched || form.submitted"
+             [label]="'Sexo'" [errors]="{
+                                              'required': 'El sexo es requerido.',
+                                          }">
+        </div>
+      </div>
+      <div class="col">
+        <div controlDate formControlName="dateOfBirth" class="fw-semi-bold mb-0 w-100"
+             [submitted]="form.group.controls['dateOfBirth'].touched || form.submitted"
+             [placeholder]="'Ingrese la fecha de nacimiento'" [label]="'Fecha de nacimiento'" [errors]="{
+                                                  'required': 'La fecha de nacimiento es requerida.',
+                                              }">
+        </div>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 rol-cols-md-1 row-cols-lg-2">
+      <div class="col">
+        <div inputControl formControlName="email" class="fw-semi-bold mb-0 w-100"
+             [submitted]="form.group.controls['email'].touched || form.submitted" [type]="'email'"
+             [placeholder]="'Ingrese el correo'" [label]="'Correo'" [errors]="{
+                                                  'required': 'El correo es requerido.',
+                                              }">
+        </div>
+      </div>
+      <div class="col">
+        <div inputControl formControlName="phoneNumber" class="fw-semi-bold mb-0 w-100"
+             [submitted]="form.group.controls['phoneNumber'].touched || form.submitted" [type]="'tel'"
+             [placeholder]="'Ingrese el teléfono'" [label]="'Teléfono'" [errors]="{
+                                                  'required': 'El número de teléfono es requerido.',
+                                              }">
+        </div>
+      </div>
+    </div>
+  </form>
+  <button class="btn btn-primary" [attr.form]="form.id" type="submit">
+    @if (use() === "create") {
+      Crear {{ service.namingDictionary.get(role())!.singular }}
+    } @else if (use() === "edit") {
+      Guardar cambios
+    }
+  </button>
+}

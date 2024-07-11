@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AsideComponent } from 'src/app/auth/components/aside.component';
 import { BottomLinksComponent } from 'src/app/auth/components/bottom-links.component';
 import { PasswordResetFormComponent } from 'src/app/auth/components/password-reset-form.component';

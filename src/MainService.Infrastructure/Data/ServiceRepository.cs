@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Services;
@@ -26,7 +27,7 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
         return await context.Services.ToListAsync();
     }
 
-    public async Task<List<ServiceDto>> GetAllDtoAsync()
+    public async Task<List<ServiceDto>> GetAllDtoAsync(ServiceParams param, ClaimsPrincipal user)
     {
         var query = context.Services
             .AsNoTracking()
@@ -62,7 +63,7 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
         return item;
     }
 
-    public async Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param)
+    public async Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user)
     {
         var query = context.Services
             .AsQueryable();

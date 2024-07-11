@@ -1,40 +1,32 @@
-<label [for]="id? id : controlName" class="form-label fw-semi-bold fs--1">{{label}}
-  @if(optional()){@if (service.isOptional(control) || !isReadonly) {
-    <span optionalSpan></span>
-    }}
-  @if (isNew()) { <span newBadge></span> }
+<label [for]="id ? id : controlName" class="fs-6 fw-semibold mb-2"
+       [class.required]="service.isOptional(control) || !isReadonly">
+  {{ label }}
 </label>
 <input
-  bsDatepicker
   type="text"
+  mwlFlatpickr
+  [noCalendar]="timepicker()"
+
+  [enableTime]="timepicker()"
+  [dateFormat]="timepicker() ? 'H:i' : 'Y-m-d'"
   [formControl]="control"
   placeholder="{{placeholder}}"
-  [bsConfig]="bsConfig"
-  class="form-control text-1000 fs-0"
+  class="form-control form-control-solid flatpickr-input"
   [id]="id ? id : controlName"
   [attr.autofocus]="autofocus() ? true : null"
   [ngClass]="{
-    'is-invalid': !isReadonly && submitted && control.invalid,
-    'is-valid': !isReadonly && submitted && control.valid
+    'is-invalid': !isReadonly && submitted() && control.invalid,
+    'is-valid': !isReadonly && submitted() && control.valid
   }"
-  [bsConfig]="bsConfig"
-  [maxDate]="maxDate"
-  [attr.aria-describedby]="formText ? controlName+'helpBlock' : null"
+  [attr.aria-describedby]="formText() ? controlName+'helpBlock' : null"
   [attr.aria-label]="label + ' input'"
 
   (input)="onInput($event)"
 >
 
-@for(error of control.errors | keyvalue; let idx = $index; track idx) {
-  @if(submitted && control.invalid) {
-    <div class="invalid-feedback">
-      {{ errors[error.key] }}
-    </div>
-  }
+@if (control.errors) {
+  <div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
 }
-
-@if(formText) {
-  <div [id]="controlName+'helpBlock'" class="form-text">
-    {{formText}}
-  </div>
+@if (formText()) {
+  <div helpBlock [controlName]="controlName" [formText]="formText()"></div>
 }

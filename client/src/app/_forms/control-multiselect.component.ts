@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, Renderer2, Self, ViewChild, inject, input, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, Self, inject, input, viewChild } from '@angular/core';
 import Choices from 'choices.js';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MultiselectOption } from 'src/app/_models/types';

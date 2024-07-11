@@ -4,7 +4,6 @@ using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
-using MainService.Infrastructure.Services;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,13 +12,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
 
-public class UsersController(IUnitOfWork uow, UsersService usersService, UserManager<AppUser> userManager) : BaseApiController
+[Authorize]
+public class UsersController(IUnitOfWork uow, IUsersService usersService, UserManager<AppUser> userManager) : BaseApiController
 {
     private static readonly string subject = "usuario";
     private static readonly string subjectArticle = "El";
 
         
-    [Authorize(Policy = "RequireAdminRole")]
+    // [Authorize(Policy = "RequireAdminRole")]
     public async Task<ActionResult<PagedList<UserDto>>> GetPagedListAsync([FromQuery] UserParams param)
     {
         var pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
@@ -49,7 +49,7 @@ public class UsersController(IUnitOfWork uow, UsersService usersService, UserMan
         return item;
     }
 
-    [Authorize(Policy = "RequireAdminRole")]
+    // [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
@@ -83,7 +83,7 @@ public class UsersController(IUnitOfWork uow, UsersService usersService, UserMan
         return Ok();
     }
 
-    [Authorize(Policy = "RequireAdminRole")]
+    // [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("edit-roles/{email}")]
     public async Task<ActionResult<UserDto>> EditRolesAsync
         ([FromRoute]string email, [FromQuery] string roles)

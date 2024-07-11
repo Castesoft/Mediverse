@@ -34,16 +34,18 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/cyan-orange.css",
-              "node_modules/typeface-roboto/index.css",
-              "node_modules/typeface-nunito-sans/index.css",
-              "node_modules/typeface-inter/inter.css",
               "node_modules/ngx-toastr/toastr.css",
               "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+              "node_modules/flatpickr/dist/flatpickr.css",
               "public/plugins/keenicons/duotone/style.css",
               "public/plugins/keenicons/outline/style.css",
               "public/plugins/keenicons/solid/style.css",
               "node_modules/choices.js/public/assets/styles/choices.min.css",
+              "node_modules/typeface-roboto/index.css",
+              "node_modules/typeface-nunito-sans/index.css",
+              "node_modules/typeface-inter/inter.css",
               "public/sass/style.scss",
+              "public/sass/plugins.scss",
               "src/styles.scss"
             ],
             "scripts": [

@@ -1,26 +1,28 @@
-@if (label() !== null) {
-  <label class="form-label fw-semi-bold fs--1" [for]="id() ? id() : controlName">{{label()}}</label>
-}
-<div class="search-box w-100 me-2">
-  <div class="position-relative">
-    <input
-      [formControl]="control"
-      [placeholder]="placeholder()"
-      [attr.aria-label]="placeholder()"
-      [id]="id() ? id() : controlName"
-      [attr.autofocus]="autofocus() ? 'autofocus' : null"
-      [ngClass]="{
-        'is-invalid': submitted() && control.invalid,
-        'is-valid': submitted() && control.valid
-      }"
-      [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
-      [attr.aria-label]="label() + ' input'"
-      autocomplete="off"
-      class="form-control search-input search"
-      type="search">
-      <fa-icon [icon]="icons.faSearch" class="search-box-icon"></fa-icon>
-  </div>
-</div>
+<!--@if (label() !== null) {-->
+<!--  <label class="form-label fw-semi-bold fs&#45;&#45;1" [for]="id() ? id() : controlName">{{label()}}</label>-->
+<!--}-->
 
-@if(control.errors) {<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>}
-@if(formText()) {<div helpBlock [controlName]="controlName" [formText]="formText()"></div>}
+<i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+  <span class="path1"></span>
+  <span class="path2"></span>
+</i>
+
+<input
+  [formControl]="control"
+  [placeholder]="placeholder()"
+  [attr.aria-label]="placeholder()"
+  [id]="id() ? id() : controlName"
+  [attr.autofocus]="autofocus() ? 'autofocus' : null"
+  [ngClass]="{
+    'is-invalid': submitted() && control.invalid,
+    'is-valid': submitted() && control.valid
+  }"
+  [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
+  [attr.aria-label]="label() + ' input'"
+  autocomplete="off"
+  class="form-control form-control-solid w-250px ps-13"
+  type="text">
+
+
+<!--@if(control.errors) {<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>}-->
+<!--@if(formText()) {<div helpBlock [controlName]="controlName" [formText]="formText()"></div>}-->
