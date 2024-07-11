@@ -25,6 +25,11 @@ import {
   faHandsHoldingChild,
   faArrowUpRightFromSquare,
   faSignOut,
+  faFilter,
+  faFilterCircleDollar,
+  faFilterCircleXmark,
+  faFileContract,
+  faFileSignature,
   faSignInAlt,
   faHome,
   faHorseHead,
@@ -66,8 +71,8 @@ import {
   faLink,
   faCaretRight, faCaretLeft, faCaretDown,
   faCircle, faCaretUp,
+  faSave,
 } from '@fortawesome/free-solid-svg-icons';
-
 import { faClipboard, faEdit, faEye, faNoteSticky, faCalendar as faRegCalendar,
   faUser as farUser,
   faFileZipper as farFileZipper,
@@ -137,6 +142,7 @@ export class IconsService {
   faHorseHead = faHorseHead;
   faUsers = faUsers;
   faCogs = faCogs;
+  faSave = faSave;
   faCircleInfo = faCircleInfo;
   faArrowUpRightFromSquare = faArrowUpRightFromSquare;
   faSignOut = faSignOut;
@@ -158,4 +164,10 @@ export class IconsService {
   faCaretUp = faCaretUp;
   faCaretLeft = faCaretLeft;
   faCaretDown = faCaretDown;
+  faFilter = faFilter;
+  faFilterCircleDollar = faFilterCircleDollar;
+  faFilterCircleXmark = faFilterCircleXmark;
+  faFileContract = faFileContract;
+  faFileSignature = faFileSignature;
+
 }

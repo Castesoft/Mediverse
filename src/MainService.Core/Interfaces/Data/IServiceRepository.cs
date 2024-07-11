@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MainService.Core.DTOs.Services;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -12,6 +13,6 @@ public interface IServiceRepository
     Task<ServiceDto> GetDtoByIdAsync(int id);
     Task<Service> GetByIdAsNoTrackingAsync(int id);
     Task<List<Service>> GetAllAsync();
-    Task<List<ServiceDto>> GetAllDtoAsync();
-    Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param);
+    Task<List<ServiceDto>> GetAllDtoAsync(ServiceParams param, ClaimsPrincipal user);
+    Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user);
 }

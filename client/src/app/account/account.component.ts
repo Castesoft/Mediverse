@@ -1,6 +1,6 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject, NgModule, OnInit } from '@angular/core';
-import { ActivatedRoute, ResolveFn, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, ResolveFn, RouterModule } from '@angular/router';
 import { Account } from 'src/app/_models/account';
 import { AccountService } from "src/app/_services/account.service";
 import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
@@ -17,7 +17,6 @@ import { AccountCardComponent } from 'src/app/account/components/account-card.co
       <div aside></div>
       <div wrapper>
         <div header></div>
-
         <div content>
           <div toolbar>
             <div toolbarContainer>

@@ -6,7 +6,8 @@ import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedbac
 import { FormsService } from 'src/app/_services/forms.service';
 
 @Component({
-  selector: '[controlCheck]',
+  host: { class: 'fv-row mb-9', },
+  selector: 'div[controlCheck]',
   templateUrl: './control-check.component.html',
   standalone: true,
   imports: [ KeyValuePipe, NgClass, ReactiveFormsModule, HelpBlockComponent, InvalidFeedbackComponent, ],

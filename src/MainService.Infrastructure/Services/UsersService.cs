@@ -9,18 +9,18 @@ using Serilog;
 namespace MainService.Infrastructure.Services;
 public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICloudinaryService cloudinaryService, IMapper mapper, ITokenService tokenService) : IUsersService
 {
-    public async Task<bool> DeleteAsync(AppUser user)
+    public async Task<bool> DeleteAsync(AppUser item)
     {
-        if (!await DeleteUserPhotoAsync(user)) return false;
+        if (!await DeleteUserPhotoAsync(item)) return false;
 
-        var userToDelete = await userManager.Users
+        var itemToDelete = await userManager.Users
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
             .Include(x => x.UserPhoto).ThenInclude(x => x.Photo)
-            .SingleOrDefaultAsync(x => x.Id == user.Id);
+            .SingleOrDefaultAsync(x => x.Id == item.Id);
 
-        if (!await DeleteFromRolesAsync(userToDelete)) return false;
+        if (!await DeleteFromRolesAsync(itemToDelete)) return false;
 
-        var result = await userManager.DeleteAsync(userToDelete);
+        var result = await userManager.DeleteAsync(itemToDelete);
 
         if (!result.Succeeded) return false;
 

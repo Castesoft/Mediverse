@@ -89,12 +89,17 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user)
     {
         var query = context.Users
+            .Include(x => x.Patients)
+            .Include(x => x.Doctors)
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
             .AsQueryable();
 
         IEnumerable<string> roles = user.GetRoles();
+        int userId = user.GetUserId();
 
-        if (!roles.Contains("Admin"))
+        query = query.Where(x => x.Id != userId);
+
+        if (roles.Contains("Admin"))
         {
             // for users where the role is 'Doctor'
             if (roles.Contains("Doctor"))
@@ -103,17 +108,22 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             }
         }
 
-        if (!roles.Contains("Doctor"))
+        if (roles.Contains("Doctor"))
         {
-            int doctorId = user.GetUserId();
+            int doctorId = userId;
             
-            // for users where the role is 'Patient'
-            if (roles.Contains("Patient"))
-            {
-                query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"));
-                // also, bring users, where in its navigation property 'Doctors' contains the doctorId
-                query = query.Where(x => x.Patients.Any(x => x.DoctorId == doctorId));
-            }
+            query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"));
+            query = query.Where(x => x.Doctors.Any(x => x.DoctorId == doctorId));
+        }
+
+        if(!string.IsNullOrEmpty(param.Search)) 
+        {
+            query = query.Where(x => 
+            EF.Functions.Like(x.FirstName.ToLower(), $"%{param.Search}%") || 
+            EF.Functions.Like(x.LastName.ToLower(), $"%{param.Search}%") ||
+            EF.Functions.Like(x.Email.ToLower(), $"%{param.Search}%") ||
+            EF.Functions.Like(x.Sex.ToLower(), $"%{param.Search}%") ||
+            EF.Functions.Like(x.PhoneNumber.ToLower(), $"%{param.Search}%"));
         }
 
         return await PagedList<UserDto>.CreateAsync(

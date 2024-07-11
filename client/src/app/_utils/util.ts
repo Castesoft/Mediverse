@@ -5,6 +5,50 @@ import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { Range } from 'src/app/_models/date-range';
 import { PaginatedResult } from 'src/app/_models/pagination';
 import { AccountService } from 'src/app/_services/account.service';
+import { Identifiable } from 'src/app/_models/types';
+
+export const getItemsByKey = <T extends Identifiable>(key: string, cache: Map<string, Map<string, PaginatedResult<T[]>>>): T[] => {
+  const items: T[] = [];
+  const cacheMap = cache.get(key);
+
+  if (cacheMap) {
+    cacheMap.forEach(paginatedResult => {
+      if (paginatedResult.result) {
+        items.push(...paginatedResult.result);
+      }
+    })
+  }
+
+  return items.filter((item, index, self) =>
+    self.findIndex((i) => i.id === item.id) === index
+  );
+}
+
+export const downloadExcelFile = (
+  response: any,
+  fileName: string,
+) => {
+    const blob = new Blob([response], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const date = new Date();
+    const formattedDate = `${date.getFullYear()}.${String(
+      date.getMonth() + 1
+    ).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(
+      date.getHours()
+    ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(
+      date.getSeconds()
+    ).padStart(2, '0')}`;
+    a.download = `${formattedDate} ${fileName}.xlsx`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    return;
+};
 
 export function getPaginationHeaders(pageNumber: number, pageSize: number) {
   let params = new HttpParams();
@@ -226,3 +270,6 @@ export const cleanStringAndCreateRoute = (str: string) => {
     .toLowerCase();
 }
 
+export const calcDateDiff = (dateFrom: Date, dateTo: Date) => {
+  return Math.floor((Date.UTC(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()) - Date.UTC(dateTo.getFullYear(), dateTo.getMonth(), dateTo.getDate()) ) /(1000 * 60 * 60 * 24));
+}

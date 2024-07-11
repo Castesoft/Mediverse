@@ -10,7 +10,7 @@ public class Prescription : BaseEntity
     // Navigation Properties
     public AppUser Patient { get; set; }
     public AppUser Doctor { get; set; } 
-    public AppointmentPrescription AppointmentPrescription { get; set; }
+    public EventPrescription EventPrescription { get; set; }
     public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; set; } = [];
     public PrescriptionLogo PrescriptionLogo { get; set; }
 }

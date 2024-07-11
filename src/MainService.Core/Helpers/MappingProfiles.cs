@@ -2,6 +2,7 @@ using AutoMapper;
 using MainService.Core.DTOs;
 using MainService.Core.DTOs.Products;
 using MainService.Core.DTOs.User;
+using MainService.Core.Extensions;
 using MainService.Models.Entities;
 
 namespace MainService.Core.Helpers;
@@ -23,10 +24,13 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count() > 0))
+            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()))
             .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role)))
             .ForMember(dest => dest.Permissions,
                 opt => opt.MapFrom(src => src.UserPermissions.Select(x => x.Permission)))
-            .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.DateOfBirth));
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
 
         // Registration mapping
         CreateMap<RegisterDto, AppUser>();

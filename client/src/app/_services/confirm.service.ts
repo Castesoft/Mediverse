@@ -1,4 +1,4 @@
-import { Component, Inject, inject, Injectable } from '@angular/core';
+import { Component, inject, Injectable } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { Observable, map } from 'rxjs';
 import { Modal } from 'src/app/_models/modal';

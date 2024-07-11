@@ -1,52 +1,20 @@
 import { AfterViewInit, Component, ElementRef, inject, input, Input, OnInit, Renderer2, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { InputTypes } from 'src/app/_models/types';
-import { NgClass, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
-import { PopoverModule } from 'ngx-bootstrap/popover';
+import { NgClass } from '@angular/common';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
-import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
 import { PopoverProps } from 'src/app/_models/popover';
 import { FormsService } from 'src/app/_services/forms.service';
 
 @Component({
+  host: { class: 'fv-row mb-9', },
   selector: 'div[inputControl]',
   templateUrl: './input-control.component.html',
   standalone: true,
-  imports: [ ReactiveFormsModule, NgClass, KeyValuePipe, PopoverModule, NgTemplateOutlet,
-    InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent,
+  imports: [ ReactiveFormsModule, NgClass,
+    InvalidFeedbackComponent, HelpBlockComponent,
    ],
-  // providers: [ PopoverModule, ],
-  styles: `
-.invalid-feedback.show-feedback {
-  display: block !important;
-}
-
-.invalid-feedback {
-  display: block !important;
-}
-
-.inset {
-  position: absolute;
-  top: 6.7345px;
-  right: 10px;
-  z-index: 1;
-}
-
-.form-control:disabled {
-  background-color: transparent !important;
-}
-
-.form-label {
-  display: flex;
-  align-items: center;
-}
-
-.form-label .badge {
-  margin-left: 4px;
-  margin-top: -4px;
-}`
 })
 export class InputControlComponent implements ControlValueAccessor, AfterViewInit, OnInit {
   service = inject(FormsService);

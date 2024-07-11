@@ -4,25 +4,25 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
 
-public class DoctorAppointmentConfiguration : IEntityTypeConfiguration<DoctorAppointment>
+public class DoctorEventConfiguration : IEntityTypeConfiguration<DoctorEvent>
 {
-    public void Configure(EntityTypeBuilder<DoctorAppointment> builder)
+    public void Configure(EntityTypeBuilder<DoctorEvent> builder)
     {
         builder.HasKey(x =>
             new
             {
                 x.DoctorId,
-                x.AppointmentId
+                x.EventId
             });
 
         builder.HasOne(x => x.Doctor)
-            .WithMany(x => x.DoctorAppointments)
+            .WithMany(x => x.DoctorEvents)
             .HasForeignKey(x => x.DoctorId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasOne(x => x.Appointment)
-            .WithOne(x => x.DoctorAppointment)
-            .HasForeignKey<DoctorAppointment>(x => x.AppointmentId)
+        builder.HasOne(x => x.Event)
+            .WithOne(x => x.DoctorEvent)
+            .HasForeignKey<DoctorEvent>(x => x.EventId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -7,6 +7,7 @@ public class Service : BaseEntity
     public decimal Price { get; set; }
     public double Discount { get; set; }
 
+    public DoctorService DoctorService { get; set; }
     public ICollection<ServicePhoto> ServicePhotos { get; set; } = [];
 
     public Service() {}

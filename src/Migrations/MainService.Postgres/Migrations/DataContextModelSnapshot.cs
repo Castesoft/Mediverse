@@ -230,67 +230,6 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Appointment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("PatientId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ServiceId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("Appointment");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.AppointmentPrescription", b =>
-                {
-                    b.Property<int>("AppointmentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("AppointmentId", "PrescriptionId");
-
-                    b.HasIndex("PrescriptionId")
-                        .IsUnique();
-
-                    b.ToTable("AppointmentPrescription");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.DoctorAppointment", b =>
-                {
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AppointmentId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("DoctorId", "AppointmentId");
-
-                    b.HasIndex("AppointmentId")
-                        .IsUnique();
-
-                    b.ToTable("DoctorAppointment");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -305,6 +244,22 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorClinics");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorEvent", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DoctorId", "EventId");
+
+                    b.HasIndex("EventId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorEvent");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorInformation", b =>
@@ -393,6 +348,51 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorSignature");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Event");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
+                {
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EventId", "PrescriptionId");
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique();
+
+                    b.ToTable("EventPrescription");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
@@ -532,20 +532,20 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("NurseClinics");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PatientAppointment", b =>
+            modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
                     b.Property<int>("PatientId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AppointmentId")
+                    b.Property<int>("EventId")
                         .HasColumnType("integer");
 
-                    b.HasKey("PatientId", "AppointmentId");
+                    b.HasKey("PatientId", "EventId");
 
-                    b.HasIndex("AppointmentId")
+                    b.HasIndex("EventId")
                         .IsUnique();
 
-                    b.ToTable("PatientAppointment");
+                    b.ToTable("PatientEvent");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>
@@ -979,59 +979,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Appointment", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.AppUser", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId");
-
-                    b.HasOne("MainService.Models.Entities.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId");
-
-                    b.Navigation("Patient");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.AppointmentPrescription", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Appointment", "Appointment")
-                        .WithMany("AppointmentPrescriptions")
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
-                        .WithOne("AppointmentPrescription")
-                        .HasForeignKey("MainService.Models.Entities.AppointmentPrescription", "PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-
-                    b.Navigation("Prescription");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.DoctorAppointment", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Appointment", "Appointment")
-                        .WithOne("DoctorAppointment")
-                        .HasForeignKey("MainService.Models.Entities.DoctorAppointment", "AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
-                        .WithMany("DoctorAppointments")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-
-                    b.Navigation("Doctor");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Location", "Clinic")
@@ -1049,6 +996,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Clinic");
 
                     b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorEvent", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorEvents")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Event", "Event")
+                        .WithOne("DoctorEvent")
+                        .HasForeignKey("MainService.Models.Entities.DoctorEvent", "EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorInformation", b =>
@@ -1146,6 +1112,40 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Signature");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Event", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId");
+
+                    b.HasOne("MainService.Models.Entities.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Event", "Event")
+                        .WithMany("EventPrescriptions")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithOne("EventPrescription")
+                        .HasForeignKey("MainService.Models.Entities.EventPrescription", "PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Prescription");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.LocationPhone", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Location", "Location")
@@ -1203,21 +1203,21 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Nurse");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PatientAppointment", b =>
+            modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Appointment", "Appointment")
-                        .WithOne("PatientAppointment")
-                        .HasForeignKey("MainService.Models.Entities.PatientAppointment", "AppointmentId")
+                    b.HasOne("MainService.Models.Entities.Event", "Event")
+                        .WithOne("PatientEvent")
+                        .HasForeignKey("MainService.Models.Entities.PatientEvent", "EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.AppUser", "Patient")
-                        .WithMany("PatientAppointments")
+                        .WithMany("PatientEvents")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Appointment");
+                    b.Navigation("Event");
 
                     b.Navigation("Patient");
                 });
@@ -1383,9 +1383,9 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.AppUser", b =>
                 {
-                    b.Navigation("DoctorAppointments");
-
                     b.Navigation("DoctorClinics");
+
+                    b.Navigation("DoctorEvents");
 
                     b.Navigation("DoctorInformation");
 
@@ -1399,7 +1399,7 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("NurseClinic");
 
-                    b.Navigation("PatientAppointments");
+                    b.Navigation("PatientEvents");
 
                     b.Navigation("Patients");
 
@@ -1410,13 +1410,13 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Appointment", b =>
+            modelBuilder.Entity("MainService.Models.Entities.Event", b =>
                 {
-                    b.Navigation("AppointmentPrescriptions");
+                    b.Navigation("DoctorEvent");
 
-                    b.Navigation("DoctorAppointment");
+                    b.Navigation("EventPrescriptions");
 
-                    b.Navigation("PatientAppointment");
+                    b.Navigation("PatientEvent");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
@@ -1460,7 +1460,7 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Prescription", b =>
                 {
-                    b.Navigation("AppointmentPrescription");
+                    b.Navigation("EventPrescription");
 
                     b.Navigation("PrescriptionLogo");
 

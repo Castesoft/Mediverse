@@ -1,0 +1,122 @@
+<div catalogCardHeader>
+  <div class="card-title">
+    <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
+      <div searchText formControlName="search" [naming]="service.namingDictionary.get(role())!"></div>
+    </form>
+  </div>
+  <div class="card-toolbar">
+    @if (service.hasSelected(key()) && mode() === 'view') {
+      <div deleteSelectedBtn [count]="service.selectedCount(key())" (click)="service.deleteRange$(key(), role())"></div>
+    }
+    @if(!service.hasSelected(key())) {
+      <div class="d-flex justify-content-end">
+        <button filterMenuBtn (click)="service.showFiltersModal(key(), role())"></button>
+        <users-filter-menu></users-filter-menu>
+        <button exportBtn (click)="service.downloadXLSX$(key(), role())"></button>
+        <button createBtn [naming]="service.namingDictionary.get(role())!"
+                (click)="service.clickLink(role(), null, null, key(), 'create', 'modal')"
+        ></button>
+      </div>
+    }
+  </div>
+</div>
+
+<div cardBody>
+  @if (mode() === "select" || mode() === "multiselect") {
+    <h4>
+      @switch (mode()) {
+        @case ("select") {
+          {{ service.namingDictionary.get(role())?.singularTitlecase }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
+            seleccionado
+          } @else {
+            seleccionada
+          }
+        }
+        @case ("multiselect") {
+          {{ service.namingDictionary.get(role())?.pluralTitlecase }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
+            seleccionados
+          } @else {
+            seleccionadas
+          }
+        }
+      }
+    </h4>
+    @if (service.hasSelected$(key())) {
+      <div tableWrapper class="mb-4">
+        <table
+          usersTable
+          [data]="mode() === 'select' ? service.getSelected$(key()) : []"
+          [isCompact]="isCompact()"
+          [role]="role()"
+          [key]="key()"
+          [mode]="'readonly'"
+          [showHeaders]="false"
+        ></table>
+      </div>
+    } @else {
+      @switch (mode()) {
+        @case ("select") {
+          No tienes {{ service.namingDictionary.get(role())!.undefinedArticle }} {{ service.namingDictionary.get(role())!.singular }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
+            seleccionado
+          } @else {
+            seleccionada
+          }.
+        }
+        @case ("multiselect") {
+          No tienes {{ service.namingDictionary.get(role())!.plural }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
+            seleccionados
+          } @else {
+            seleccionadas
+          }.
+        }
+      }
+    }
+  }
+
+  @if (data && pagination) {
+    @if (data.length > 0) {
+      <div tableWrapper>
+        <table
+          usersTable
+          [data]="data"
+          [isCompact]="isCompact()"
+          [mode]="mode()"
+          [key]="key()"
+          [role]="role()"
+        ></table>
+      </div>
+      <div
+        tablePager
+        [isCompact]="isCompact()"
+        [currentPage]="pagination.currentPage"
+        (pageChanged)="service.onPageChanged(key(), $event)"
+        [itemsPerPage]="pagination.itemsPerPage"
+        [totalItems]="pagination.totalItems"
+        (loadMore)="service.loadMore(key())"
+        (loadLess)="service.loadLess(key())"
+      ></div>
+    } @else {
+      <div style="border-radius: 0.7em" class="bg-white border">
+        <alert type="unknown" class="mb-0 text-center">
+          <h4 class="alert-heading mt-4 pt-4 mb-4 fw-bold">
+            {{ service.namingDictionary.get(role())!.pluralTitlecase }} no encontrados
+          </h4>
+          <p class="mb-4">
+            No se encontraron {{ service.namingDictionary.get(role())!.plural }} que coincidan con los
+            criterios de búsqueda.
+          </p>
+          <p class="mb-4">
+            <button
+              class="btn btn-phoenix-secondary me-2"
+              (click)="service.resetForm(key(), form)"
+            >
+              Restablecer los filtros
+            </button>
+          </p>
+        </alert>
+      </div>
+    }
+  } @else {
+    <div tableLoadingPlaceholder></div>
+  }
+</div>

@@ -81,5 +81,11 @@ export class TableHeaderComponent implements OnInit, OnChanges {
     this.onSelectAll.emit(input.checked);
   }
 
-  onClick = (name: string) => this.onParamsChange.emit(new SortOptions(name, !this.params().isSortAscending));
+  onClick = (name: string) => {
+    if (name === this.params().sort && !this.params().isSortAscending) {
+      this.onParamsChange.emit(new SortOptions(undefined));
+    } else {
+      this.onParamsChange.emit(new SortOptions(name, !this.params().isSortAscending));
+    }
+  };
 }
