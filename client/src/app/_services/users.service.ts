@@ -173,15 +173,24 @@ export class UsersService {
     ...this.multipleSelecteds.value,
     [key]: value
   });
-  addSelected$ = (key: string, value: User): void => this.setMultipleSelected(key, [...this.getMultipleSelected(key), value]);
+  addSelected$ = (key: string, value: User): void => {
+    const selectedUsers = this.getMultipleSelected(key);
+    const index = selectedUsers.findIndex(user => user.id === value.id);
+    if (index === -1) {
+      this.setMultipleSelected(key, [...selectedUsers, value]);
+    } else {
+      selectedUsers.splice(index, 1);
+      this.setMultipleSelected(key, selectedUsers);
+    }
+  };
+
   resetMultipleSelected = (key: string): void => this.multipleSelecteds.next({
     ...this.multipleSelecteds.value,
     [key]: []
   });
-  resetMultipleSelecteds = (): void => this.multipleSelecteds.next({});
 
   // Get Paged List
-  loadPagedList(key: string, param: UserParams): Observable<PaginatedResult<User[]>> {
+  loadPagedList(role: Role, key: string, param: UserParams): Observable<PaginatedResult<User[]>> {
     this.setLoading(key, true);
     this.cacheExists(key);
 
@@ -194,6 +203,7 @@ export class UsersService {
       return of(response);
     }
 
+    param.role = role;
     let params = param.toHttpParams();
 
     return getPaginatedResult<User[]>(this.baseUrl, params, this.http).pipe(
@@ -219,7 +229,7 @@ export class UsersService {
       );
   }
 
-  getById(id: number): Observable<User> {
+  getById(id: number, role: Role): Observable<User> {
     this.setLoading("current", true);
 
     const found = this.findInCache(this.cacheMap, id);
@@ -238,7 +248,7 @@ export class UsersService {
     );
   }
 
-  create(formData: FormData): Observable<User> {
+  create(formData: FormData, role: Role): Observable<User> {
     return this.http.post<User>(this.baseUrl, formData).pipe(
       tap((response: User) => {
         // TODO
@@ -248,7 +258,7 @@ export class UsersService {
     );
   }
 
-  update(id: number, formData: FormData): Observable<User> {
+  update(id: number, formData: FormData, role: Role): Observable<User> {
     return this.http.put<User>(`${this.baseUrl}${id}`, formData).pipe(
       tap(response => {
         // TODO
@@ -492,12 +502,41 @@ export class UsersService {
     return items.filter((item) => item.isSelected).map((item) => item.id).join(",") || "";
   };
 
-  columns: Column[] = [
-    { label: "Paciente", name: "name", options: { justify: 'center' } },
-    { label: "Edad", name: "age" },
-    { label: "Sexo", name: "sex", options: { justify: 'end' } },
-    { label: "Cuenta", name: "hasAccount" },
-    { label: "Fecha de nacimiento", name: "dateOfBirth" },
-  ]
-
+  columnDictionary = new Map<Role, Column[]>([
+    ["Admin", [
+      { label: "Admins", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Doctor", [
+      { label: "Paciente", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Patient", [
+      { label: "Paciente", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Staff", [
+      { label: "Asistente", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Nurse", [
+      { label: "Especialista", name: "name", options: { justify: 'center' } },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Puesto", name: "post" },
+      { label: "Estudios", name: "education" },
+      { label: "Fecha de incorporación", name: "createdAt" },
+    ]],
+  ]);
 }

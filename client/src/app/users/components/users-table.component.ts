@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, inject, input, OnDestroy } from "@angular/core";
-import { CatalogMode, Role } from "src/app/_models/types";
+import {CatalogMode, Column, Role, View} from "src/app/_models/types";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {CdkModule} from "src/app/_shared/cdk.module";
@@ -30,13 +30,13 @@ export class UsersTableComponent implements OnInit, OnDestroy {
 
   @Input() data: User[] = [];
   key = input.required<string>();
-  isCompact = input.required<boolean>();
   mode = input.required<CatalogMode>();
   showHeaders = input<boolean>(true);
   role = input.required<Role>();
+  view = input.required<View>();
 
   sortAscending = false;
-  columns = this.service.columns;
+  columns?: Column[];
   devMode = false;
   params!: UserParams;
 
@@ -48,6 +48,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.columns = this.service.columnDictionary.get(this.role());
     const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
     this.subscriptions.push(paramsSubscription);
   }

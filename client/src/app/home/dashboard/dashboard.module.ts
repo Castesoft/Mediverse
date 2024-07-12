@@ -10,8 +10,6 @@ import { DashboardComponent } from 'src/app/home/dashboard/dashboard.component';
 import { LogisticsComponent } from 'src/app/home/dashboard/logistics.component';
 import { MultipurposeComponent } from 'src/app/home/dashboard/multipurpose.component';
 import { OverviewComponent } from 'src/app/home/dashboard/overview.component';
-import { PatientDetailsComponent } from 'src/app/home/dashboard/patients/patient-details/patient-details.component';
-import { PatientsComponent } from 'src/app/home/dashboard/patients/patients.component';
 import { PaymentsComponent } from 'src/app/home/dashboard/payments/payments.component';
 import { ProjectsComponent } from 'src/app/home/dashboard/projects.component';
 import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.component';
@@ -31,10 +29,6 @@ import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.
     AppointmentSummaryComponent,
     AppointmentServicesSummaryComponent,
 
-    // Pacientes
-    PatientsComponent,
-    PatientDetailsComponent,
-
     // Pagos
     PaymentsComponent,
   ],
@@ -42,8 +36,6 @@ import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.
     CommonModule,
     DashboardRoutingModule,
     NgApexchartsModule,
-    CoreModule,
-    SharedModule,
   ],
 })
 export class DashboardModule {}

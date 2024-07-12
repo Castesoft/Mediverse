@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using MainService.Core.Extensions;
 using MainService.Core.DTOs.Services;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -66,7 +67,12 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
     public async Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user)
     {
         var query = context.Services
+            .Include(x => x.DoctorService)
             .AsQueryable();
+
+        int userId = user.GetUserId();
+
+        query = query.Where(x => x.DoctorService.DoctorId == userId);
 
         if (param.DateFrom != DateTime.MinValue)
             query = query.Where(x => x.CreatedAt >= param.DateFrom);

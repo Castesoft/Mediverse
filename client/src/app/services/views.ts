@@ -1,30 +1,41 @@
 import { Component, input, viewChild } from "@angular/core";
 import { FormUse, Role, View } from "src/app/_models/types";
-import { User } from "src/app/_models/user";
+import { Service } from "src/app/_models/service";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { UserFormComponent } from "src/app/users/components/user-form.component";
+import { ServiceFormComponent } from "src/app/services/components/service-form.component";
+import { ServiceHeaderComponent } from "src/app/services/components/service-header.component";
 
 @Component({
-  selector: 'div[userNewView]',
+  selector: 'div[serviceNewView]',
   template: `
-  <div userForm [use]="use()" [id]="null" [view]="view()" [role]="role()"></div>
+  <div serviceForm [use]="use()" [id]="null" [view]="view()"></div>
   `,
   standalone: true,
-  imports: [ UserFormComponent, ModalWrapperModule, ],
+  imports: [ ServiceFormComponent, ModalWrapperModule, ServiceHeaderComponent, ],
 })
-export class UserNewComponent {
+export class ServiceNewComponent {
   use = input.required<FormUse>();
   view = input.required<View>();
-  role = input.required<Role>();
 
-  formComponent = viewChild.required(UserFormComponent);
+  formComponent = viewChild.required(ServiceFormComponent);
 
   onFillForm = () => this.formComponent().fillForm();
 }
 
 @Component({
-  selector: 'div[userDetailView]',
+  selector: 'div[serviceDetailView]',
   template: `
+    <!--    <div-->
+    <!--      serviceHeader-->
+    <!--      [id]="id()"-->
+    <!--      [item]="item()"-->
+    <!--      [key]="key()"-->
+    <!--      [use]="use()"-->
+    <!--      [view]="view()"-->
+    <!--     -->
+    <!--    ></div>-->
+    <!--    <div serviceForm [use]="use()" [id]="id()" [view]="view()"></div>-->
+
     <div class="d-flex flex-column flex-lg-row">
       <div class="flex-column flex-lg-row-auto w-lg-250px w-xl-350px mb-10">
         <div class="card mb-5 mb-xl-8">
@@ -80,9 +91,9 @@ export class UserNewComponent {
               </div>
             </div>
             <div class="d-flex flex-stack fs-4 py-3">
-              <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_details"
+              <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_service_view_details"
                    role="button"
-                   aria-expanded="false" aria-controls="kt_user_view_details">Details
+                   aria-expanded="false" aria-controls="kt_service_view_details">Details
                 <span class="ms-2 rotate-180">
 \t\t\t\t\t\t\t\t\t\t\t\t\t\t<i class="ki-duotone ki-down fs-3"></i>
 \t\t\t\t\t\t\t\t\t\t\t\t\t</span></div>
@@ -93,7 +104,7 @@ export class UserNewComponent {
 \t\t\t\t\t\t\t\t\t\t\t\t\t</span>
             </div>
             <div class="separator"></div>
-            <div id="kt_user_view_details" class="collapse show">
+            <div id="kt_service_view_details" class="collapse show">
               <div class="pb-5 fs-6">
                 <div class="fw-bold mt-5">Account ID</div>
                 <div class="text-gray-600">ID-45453423</div>
@@ -197,17 +208,17 @@ export class UserNewComponent {
         <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8"
             role="tablist">
           <li class="nav-item" role="presentation">
-            <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_user_view_overview_tab"
+            <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_service_view_overview_tab"
                aria-selected="true" role="tab">Overview</a>
           </li>
           <li class="nav-item" role="presentation">
             <a class="nav-link text-active-primary pb-4" data-kt-countup-tabs="true" data-bs-toggle="tab"
-               href="#kt_user_view_overview_security" data-kt-initialized="1" aria-selected="false" tabindex="-1"
+               href="#kt_service_view_overview_security" data-kt-initialized="1" aria-selected="false" tabindex="-1"
                role="tab">Security</a>
           </li>
           <li class="nav-item" role="presentation">
             <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab"
-               href="#kt_user_view_overview_events_and_logs_tab" aria-selected="false" tabindex="-1" role="tab">Events
+               href="#kt_service_view_overview_events_and_logs_tab" aria-selected="false" tabindex="-1" role="tab">Events
               &amp;
               Logs</a>
           </li>
@@ -257,9 +268,9 @@ export class UserNewComponent {
                     <div class="menu-content px-3">
                       <label class="form-check form-switch form-check-custom form-check-solid">
                         <input class="form-check-input w-30px h-20px" type="checkbox" value="" name="notifications"
-                               checked="checked" id="kt_user_menu_notifications">
+                               checked="checked" id="kt_service_menu_notifications">
                         <span class="form-check-label text-muted fs-6"
-                              for="kt_user_menu_notifications">Notifications</span>
+                              for="kt_service_menu_notifications">Notifications</span>
                       </label>
                     </div>
                   </div>
@@ -282,11 +293,11 @@ export class UserNewComponent {
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade show active" id="kt_user_view_overview_tab" role="tabpanel">
+          <div class="tab-pane fade show active" id="kt_service_view_overview_tab" role="tabpanel">
             <div class="card card-flush mb-6 mb-xl-9">
               <div class="card-header mt-6">
                 <div class="card-title flex-column">
-                  <h2 class="mb-1">User's Schedule</h2>
+                  <h2 class="mb-1">Service's Schedule</h2>
                   <div class="fs-6 fw-semibold text-muted">2 upcoming meetings</div>
                 </div>
                 <div class="card-toolbar">
@@ -893,7 +904,7 @@ export class UserNewComponent {
             <div class="card card-flush mb-6 mb-xl-9">
               <div class="card-header mt-6">
                 <div class="card-title flex-column">
-                  <h2 class="mb-1">User's Tasks</h2>
+                  <h2 class="mb-1">Service's Tasks</h2>
                   <div class="fs-6 fw-semibold text-muted">Total 25 tasks in backlog</div>
                 </div>
                 <div class="card-toolbar">
@@ -926,13 +937,13 @@ export class UserNewComponent {
                     </i>
                   </button>
                   <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
-                       data-kt-menu-id="kt-users-tasks">
+                       data-kt-menu-id="kt-services-tasks">
                     <div class="px-7 py-5">
                       <div class="fs-5 text-gray-900 fw-bold">Update Status</div>
                     </div>
                     <div class="separator border-gray-200"></div>
                     <form class="form px-7 py-5 fv-plugins-bootstrap5 fv-plugins-framework"
-                          data-kt-menu-id="kt-users-tasks-form">
+                          data-kt-menu-id="kt-services-tasks-form">
                       <div class="fv-row mb-10 fv-plugins-icon-container">
                         <label class="form-label fs-6 fw-semibold">Status:</label>
                         <select class="form-select form-select-solid select2-hidden-accessible" name="task_status"
@@ -962,9 +973,9 @@ export class UserNewComponent {
                       </div>
                       <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
-                                data-kt-users-update-task-status="reset">Reset
+                                data-kt-services-update-task-status="reset">Reset
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" data-kt-users-update-task-status="submit">
+                        <button type="submit" class="btn btn-sm btn-primary" data-kt-services-update-task-status="submit">
                           <span class="indicator-label">Apply</span>
                           <span class="indicator-progress">Please wait...
 \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -993,13 +1004,13 @@ export class UserNewComponent {
                     </i>
                   </button>
                   <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
-                       data-kt-menu-id="kt-users-tasks">
+                       data-kt-menu-id="kt-services-tasks">
                     <div class="px-7 py-5">
                       <div class="fs-5 text-gray-900 fw-bold">Update Status</div>
                     </div>
                     <div class="separator border-gray-200"></div>
                     <form class="form px-7 py-5 fv-plugins-bootstrap5 fv-plugins-framework"
-                          data-kt-menu-id="kt-users-tasks-form">
+                          data-kt-menu-id="kt-services-tasks-form">
                       <div class="fv-row mb-10 fv-plugins-icon-container">
                         <label class="form-label fs-6 fw-semibold">Status:</label>
                         <select class="form-select form-select-solid select2-hidden-accessible" name="task_status"
@@ -1029,9 +1040,9 @@ export class UserNewComponent {
                       </div>
                       <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
-                                data-kt-users-update-task-status="reset">Reset
+                                data-kt-services-update-task-status="reset">Reset
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" data-kt-users-update-task-status="submit">
+                        <button type="submit" class="btn btn-sm btn-primary" data-kt-services-update-task-status="submit">
                           <span class="indicator-label">Apply</span>
                           <span class="indicator-progress">Please wait...
 \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -1058,13 +1069,13 @@ export class UserNewComponent {
                     </i>
                   </button>
                   <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
-                       data-kt-menu-id="kt-users-tasks">
+                       data-kt-menu-id="kt-services-tasks">
                     <div class="px-7 py-5">
                       <div class="fs-5 text-gray-900 fw-bold">Update Status</div>
                     </div>
                     <div class="separator border-gray-200"></div>
                     <form class="form px-7 py-5 fv-plugins-bootstrap5 fv-plugins-framework"
-                          data-kt-menu-id="kt-users-tasks-form">
+                          data-kt-menu-id="kt-services-tasks-form">
                       <div class="fv-row mb-10 fv-plugins-icon-container">
                         <label class="form-label fs-6 fw-semibold">Status:</label>
                         <select class="form-select form-select-solid select2-hidden-accessible" name="task_status"
@@ -1094,9 +1105,9 @@ export class UserNewComponent {
                       </div>
                       <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
-                                data-kt-users-update-task-status="reset">Reset
+                                data-kt-services-update-task-status="reset">Reset
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" data-kt-users-update-task-status="submit">
+                        <button type="submit" class="btn btn-sm btn-primary" data-kt-services-update-task-status="submit">
                           <span class="indicator-label">Apply</span>
                           <span class="indicator-progress">Please wait...
 \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -1124,13 +1135,13 @@ export class UserNewComponent {
                     </i>
                   </button>
                   <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
-                       data-kt-menu-id="kt-users-tasks">
+                       data-kt-menu-id="kt-services-tasks">
                     <div class="px-7 py-5">
                       <div class="fs-5 text-gray-900 fw-bold">Update Status</div>
                     </div>
                     <div class="separator border-gray-200"></div>
                     <form class="form px-7 py-5 fv-plugins-bootstrap5 fv-plugins-framework"
-                          data-kt-menu-id="kt-users-tasks-form">
+                          data-kt-menu-id="kt-services-tasks-form">
                       <div class="fv-row mb-10 fv-plugins-icon-container">
                         <label class="form-label fs-6 fw-semibold">Status:</label>
                         <select class="form-select form-select-solid select2-hidden-accessible" name="task_status"
@@ -1160,9 +1171,9 @@ export class UserNewComponent {
                       </div>
                       <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
-                                data-kt-users-update-task-status="reset">Reset
+                                data-kt-services-update-task-status="reset">Reset
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" data-kt-users-update-task-status="submit">
+                        <button type="submit" class="btn btn-sm btn-primary" data-kt-services-update-task-status="submit">
                           <span class="indicator-label">Apply</span>
                           <span class="indicator-progress">Please wait...
 \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -1190,13 +1201,13 @@ export class UserNewComponent {
                     </i>
                   </button>
                   <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
-                       data-kt-menu-id="kt-users-tasks">
+                       data-kt-menu-id="kt-services-tasks">
                     <div class="px-7 py-5">
                       <div class="fs-5 text-gray-900 fw-bold">Update Status</div>
                     </div>
                     <div class="separator border-gray-200"></div>
                     <form class="form px-7 py-5 fv-plugins-bootstrap5 fv-plugins-framework"
-                          data-kt-menu-id="kt-users-tasks-form">
+                          data-kt-menu-id="kt-services-tasks-form">
                       <div class="fv-row mb-10 fv-plugins-icon-container">
                         <label class="form-label fs-6 fw-semibold">Status:</label>
                         <select class="form-select form-select-solid select2-hidden-accessible" name="task_status"
@@ -1226,9 +1237,9 @@ export class UserNewComponent {
                       </div>
                       <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
-                                data-kt-users-update-task-status="reset">Reset
+                                data-kt-services-update-task-status="reset">Reset
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" data-kt-users-update-task-status="submit">
+                        <button type="submit" class="btn btn-sm btn-primary" data-kt-services-update-task-status="submit">
                           <span class="indicator-label">Apply</span>
                           <span class="indicator-progress">Please wait...
 \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -1240,7 +1251,7 @@ export class UserNewComponent {
               </div>
             </div>
           </div>
-          <div class="tab-pane fade" id="kt_user_view_overview_security" role="tabpanel">
+          <div class="tab-pane fade" id="kt_service_view_overview_security" role="tabpanel">
             <div class="card pt-4 mb-6 mb-xl-9">
               <div class="card-header border-0">
                 <div class="card-title">
@@ -1249,7 +1260,7 @@ export class UserNewComponent {
               </div>
               <div class="card-body pt-0 pb-5">
                 <div class="table-responsive">
-                  <table class="table align-middle table-row-dashed gy-5" id="kt_table_users_login_session">
+                  <table class="table align-middle table-row-dashed gy-5" id="kt_table_services_login_session">
                     <tbody class="fs-6 fw-semibold text-gray-600">
                     <tr>
                       <td>Email</td>
@@ -1343,7 +1354,7 @@ export class UserNewComponent {
                       </i>
                     </button>
                     <button type="button" class="btn btn-icon btn-active-light-primary w-30px h-30px ms-auto"
-                            id="kt_users_delete_two_step">
+                            id="kt_services_delete_two_step">
                       <i class="ki-duotone ki-trash fs-3">
                         <span class="path1"></span>
                         <span class="path2"></span>
@@ -1370,7 +1381,7 @@ export class UserNewComponent {
                 </div>
               </div>
               <div class="card-body">
-                <form class="form" id="kt_users_email_notification_form">
+                <form class="form" id="kt_services_email_notification_form">
                   <div class="d-flex">
                     <div class="form-check form-check-custom form-check-solid">
                       <input class="form-check-input me-3" name="email_notification_0" type="checkbox" value="0"
@@ -1477,9 +1488,9 @@ export class UserNewComponent {
                     </div>
                   </div>
                   <div class="d-flex justify-content-end align-items-center mt-12">
-                    <button type="button" class="btn btn-light me-5" id="kt_users_email_notification_cancel">Cancel
+                    <button type="button" class="btn btn-light me-5" id="kt_services_email_notification_cancel">Cancel
                     </button>
-                    <button type="button" class="btn btn-primary" id="kt_users_email_notification_submit">
+                    <button type="button" class="btn btn-primary" id="kt_services_email_notification_submit">
                       <span class="indicator-label">Save</span>
                       <span class="indicator-progress">Please wait...
 \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -1489,7 +1500,7 @@ export class UserNewComponent {
               </div>
             </div>
           </div>
-          <div class="tab-pane fade" id="kt_user_view_overview_events_and_logs_tab" role="tabpanel">
+          <div class="tab-pane fade" id="kt_service_view_overview_events_and_logs_tab" role="tabpanel">
             <div class="card pt-4 mb-6 mb-xl-9">
               <div class="card-header border-0">
                 <div class="card-title">
@@ -1506,7 +1517,7 @@ export class UserNewComponent {
               </div>
               <div class="card-body pt-0 pb-5">
                 <div class="table-responsive">
-                  <table class="table align-middle table-row-dashed gy-5" id="kt_table_users_login_session">
+                  <table class="table align-middle table-row-dashed gy-5" id="kt_table_services_login_session">
                     <thead class="border-bottom border-gray-200 fs-7 fw-bold">
                     <tr class="text-start text-muted text-uppercase gs-0">
                       <th class="min-w-100px">Location</th>
@@ -1530,7 +1541,7 @@ export class UserNewComponent {
                       <td>207.39.21.51</td>
                       <td>3 days ago</td>
                       <td>
-                        <a href="#" data-kt-users-sign-out="single_user">Sign out</a>
+                        <a href="#" data-kt-services-sign-out="single_service">Sign out</a>
                       </td>
                     </tr>
                     <tr>
@@ -1562,7 +1573,7 @@ export class UserNewComponent {
               <div class="card-body py-0">
                 <div class="table-responsive">
                   <table class="table align-middle table-row-dashed fw-semibold text-gray-600 fs-6 gy-5"
-                         id="kt_table_users_logs">
+                         id="kt_table_services_logs">
                     <tbody>
                     <tr>
                       <td class="min-w-70px">
@@ -1700,32 +1711,30 @@ export class UserNewComponent {
     </div>
   `,
   standalone: true,
-  imports: [UserFormComponent],
+  imports: [ServiceFormComponent, ServiceHeaderComponent],
 })
-export class UserDetailComponent {
+export class ServiceDetailComponent {
   id = input.required<number>();
   use = input.required<FormUse>();
   view = input.required<View>();
-  item = input.required<User>();
+  item = input.required<Service>();
   key = input.required<string | undefined>();
-  role = input.required<Role>();
 }
 
 @Component({
-  selector: 'div[userEditView]',
+  selector: 'div[serviceEditView]',
   template: `
-  <div userForm [use]="use()" [id]="id()" [view]="view()" [role]="role()"></div>
+  <div serviceForm [use]="use()" [id]="id()" [view]="view()"></div>
   `,
   standalone: true,
-  imports: [ UserFormComponent, ModalWrapperModule, ],
+  imports: [ ServiceFormComponent, ModalWrapperModule, ServiceHeaderComponent, ],
 })
-export class UserEditComponent {
+export class ServiceEditComponent {
   id = input.required<number>();
   use = input.required<FormUse>();
   view = input.required<View>();
-  item = input.required<User>();
+  item = input.required<Service>();
   key = input.required<string | undefined>();
-  role = input.required<Role>();
 }
 
 

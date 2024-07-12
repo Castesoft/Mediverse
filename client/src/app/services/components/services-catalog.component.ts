@@ -9,43 +9,43 @@ import { AlertModule } from "ngx-bootstrap/alert";
 import { CatalogMode, Role, View } from "src/app/_models/types";
 import { Router, RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { FilterForm, Event, EventParams } from "src/app/_models/event";
+import { FilterForm, Service, ServiceParams } from "src/app/_models/service";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { CatalogModule } from "src/app/_shared/catalog.module";
-import {EventsFilterMenuComponent} from "src/app/events/components/events-filter-menu.component";
-import { EventsTableComponent } from "src/app/events/components/events-table.component";
-import { EventsService } from "src/app/_services/events.service";
+import {ServicesFilterMenuComponent} from "src/app/services/components/services-filter-menu.component";
+import { ServicesTableComponent } from "src/app/services/components/services-table.component";
+import { ServicesService } from "src/app/_services/services.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
 
 @Component({
   host: { class: 'pb-6', },
-  selector: 'div[eventsCatalog]',
-  templateUrl: './events-catalog.component.html',
+  selector: 'div[servicesCatalog]',
+  templateUrl: './services-catalog.component.html',
   standalone: true,
   imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
-    EventsTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, EventsFilterMenuComponent, LayoutModule,
+    ServicesTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
+    LayoutModule, ServicesFilterMenuComponent, LayoutModule,
    ],
 })
-export class EventsCatalogComponent implements OnInit, OnDestroy {
+export class ServicesCatalogComponent implements OnInit, OnDestroy {
   router = inject(Router);
-  service = inject(EventsService);
+  service = inject(ServicesService);
   icons = inject(IconsService);
 
   key = input.required<string>();
   mode = input.required<CatalogMode>();
   view = input.required<View>();
 
-  data?: Event[];
-  params!: EventParams;
+  data?: Service[];
+  params!: ServiceParams;
   pagination?: Pagination;
   form = new FilterForm();
   loading = true;
   private ngUnsubscribe = new Subject<void>();
 
   ngOnInit(): void {
-    this.params = new EventParams(this.key());
+    this.params = new ServiceParams(this.key());
 
     this.service.setParam$(this.key(), this.params);
 
@@ -71,7 +71,7 @@ export class EventsCatalogComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  private loadData(params: EventParams) {
+  private loadData(params: ServiceParams) {
     this.service.loadPagedList(this.key(), params).subscribe({
       next: (response) => {
         const { result, pagination } = response;

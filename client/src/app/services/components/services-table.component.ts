@@ -5,30 +5,30 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {CdkModule} from "src/app/_shared/cdk.module";
 import {MaterialModule} from "src/app/_shared/material.module";
 import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { DatePipe, DecimalPipe, NgClass } from "@angular/common";
+import { CurrencyPipe, DatePipe, DecimalPipe, NgClass } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Event, EventParams } from "src/app/_models/event";
+import { Service, ServiceParams } from "src/app/_models/service";
 import { Subscription } from "rxjs";
 import { GuidService } from "src/app/_services/guid.service";
-import { EventsService } from "src/app/_services/events.service";
-import {EventTableCellComponent, EventTableHasAccountCellComponent, EventTableSexCellComponent} from "src/app/events/components/event-table-cell.component";
+import { ServicesService } from "src/app/_services/services.service";
+import {ServiceTableCellComponent, ServiceTableHasAccountCellComponent, ServiceTableSexCellComponent} from "src/app/services/components/service-table-cell.component";
 
 @Component({
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },
-  selector: 'table[eventsTable]',
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_services', },
+  selector: 'table[servicesTable]',
   standalone: true,
-  templateUrl: './events-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, EventTableCellComponent, DatePipe,
-    EventTableSexCellComponent, EventTableHasAccountCellComponent, MaterialModule, CdkModule,
+  templateUrl: './services-table.component.html',
+  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, ServiceTableCellComponent, DatePipe,
+    ServiceTableSexCellComponent, ServiceTableHasAccountCellComponent, MaterialModule, CdkModule, CurrencyPipe,
   ],
 })
-export class EventsTableComponent implements OnInit, OnDestroy {
-  service = inject(EventsService);
+export class ServicesTableComponent implements OnInit, OnDestroy {
+  service = inject(ServicesService);
   icons = inject(IconsService);
 
-  @Input() data: Event[] = [];
+  @Input() data: Service[] = [];
   key = input.required<string>();
   mode = input.required<CatalogMode>();
   showHeaders = input<boolean>(true);
@@ -36,7 +36,7 @@ export class EventsTableComponent implements OnInit, OnDestroy {
   sortAscending = false;
   columns = this.service.columns;
   devMode = false;
-  params!: EventParams;
+  params!: ServiceParams;
 
   subscriptions: Subscription[] = [];
 

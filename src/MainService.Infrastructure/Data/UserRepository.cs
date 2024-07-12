@@ -92,30 +92,49 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .Include(x => x.Patients)
             .Include(x => x.Doctors)
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Include(x => x.DoctorNurses)
             .AsQueryable();
 
         IEnumerable<string> roles = user.GetRoles();
         int userId = user.GetUserId();
 
         query = query.Where(x => x.Id != userId);
-
-        if (roles.Contains("Admin"))
-        {
-            // for users where the role is 'Doctor'
-            if (roles.Contains("Doctor"))
-            {
-                query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Doctor"));
-            }
+        
+        switch(param.Role) {
+            case Roles.Admin:
+                if (!roles.Contains("Admin")) return null;
+                break;
+            case Roles.Doctor:
+                if (!roles.Contains("Admin") || !roles.Contains("Patient")) return null;
+                break;
+            case Roles.Patient:
+                if (!roles.Contains("Doctor") && !roles.Contains("Nurse")) return null;
+                if (roles.Contains("Doctor"))
+                {
+                    int doctorId = userId;
+                    
+                    query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"));
+                    query = query.Where(x => x.Doctors.Any(x => x.DoctorId == doctorId));
+                }
+                break;
+            case Roles.Nurse:
+                if (!roles.Contains("Doctor")) return null;
+                if (roles.Contains("Doctor"))
+                {
+                    int doctorId = userId;
+                    
+                    query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Nurse"));
+                    query = query.Where(x => x.NursesDoctor.Any(x => x.DoctorId == doctorId));
+                }
+                
+                break;
+            case Roles.Staff:
+                if (!roles.Contains("Admin")) return null;
+                break;
+            default:
+                break;
         }
-
-        if (roles.Contains("Doctor"))
-        {
-            int doctorId = userId;
-            
-            query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"));
-            query = query.Where(x => x.Doctors.Any(x => x.DoctorId == doctorId));
-        }
-
+        
         if(!string.IsNullOrEmpty(param.Search)) 
         {
             query = query.Where(x => 

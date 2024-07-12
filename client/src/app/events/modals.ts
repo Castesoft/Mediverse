@@ -162,7 +162,6 @@ export class EventsFilterModalComponent implements OnInit {
             eventsCatalog
             class="modal-body py-3 px-4"
             [mode]="mode"
-            [isCompact]="isCompact"
             [key]="key"
             [view]="view"
           ></div>

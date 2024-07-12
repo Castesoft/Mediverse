@@ -45,6 +45,8 @@ namespace MainService.Sqlite.Migrations
                     PhoneNumberVerificationCodeHash = table.Column<byte[]>(type: "BLOB", nullable: true),
                     PhoneNumberVerificationCodeSalt = table.Column<byte[]>(type: "BLOB", nullable: true),
                     PhoneNumberVerificationExpiryTime = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: true),
+                    Education = table.Column<string>(type: "TEXT", nullable: true),
+                    Post = table.Column<string>(type: "TEXT", nullable: true),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
@@ -316,6 +318,30 @@ namespace MainService.Sqlite.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorNurses",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NurseId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorNurses", x => new { x.DoctorId, x.NurseId });
+                    table.ForeignKey(
+                        name: "FK_DoctorNurses_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorNurses_AspNetUsers_NurseId",
+                        column: x => x.NurseId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -610,6 +636,30 @@ namespace MainService.Sqlite.Migrations
                         name: "FK_ProductPhoto_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorServices",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ServiceId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorServices", x => new { x.DoctorId, x.ServiceId });
+                    table.ForeignKey(
+                        name: "FK_DoctorServices_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorServices_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -911,6 +961,11 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_DoctorNurses_NurseId",
+                table: "DoctorNurses",
+                column: "NurseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DoctorPatients_PatientId",
                 table: "DoctorPatients",
                 column: "PatientId");
@@ -919,6 +974,12 @@ namespace MainService.Sqlite.Migrations
                 name: "IX_DoctorPhones_PhoneId",
                 table: "DoctorPhones",
                 column: "PhoneId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorServices_ServiceId",
+                table: "DoctorServices",
+                column: "ServiceId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1069,10 +1130,16 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorLinks");
 
             migrationBuilder.DropTable(
+                name: "DoctorNurses");
+
+            migrationBuilder.DropTable(
                 name: "DoctorPatients");
 
             migrationBuilder.DropTable(
                 name: "DoctorPhones");
+
+            migrationBuilder.DropTable(
+                name: "DoctorServices");
 
             migrationBuilder.DropTable(
                 name: "DoctorSignature");

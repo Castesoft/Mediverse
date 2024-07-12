@@ -1,6 +1,7 @@
 import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
+import { Role } from "src/app/_models/types";
 import { UsersService } from "src/app/_services/users.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
 
@@ -30,6 +31,11 @@ export class User {
   eventsCount = 0;
   eventsAmount = 0;
   eventsPayable = 0;
+
+  post?: string;
+  education?: string;
+
+
 }
 
 export class UserParams {
@@ -40,7 +46,9 @@ export class UserParams {
   dateTo?: Date;
   sort = 'createdAt';
   isSortAscending = false;
+
   key?: string;
+  role?: Role;
 
   // other
   sex?: string;
@@ -53,6 +61,7 @@ export class UserParams {
     let params = getPaginationHeaders(this.pageNumber, this.pageSize);
 
     if (this.key) params = params.append('id', this.key);
+    if (this.role) params = params.append('role', this.role);
     if (this.search) params = params.append('search', this.search);
     if (this.dateFrom)
       params = params.append(
@@ -186,6 +195,7 @@ export class EditForm {
       lastName: new FormControl(''),
       dateOfBirth: new FormControl(''),
       email: new FormControl(''),
+      phoneNumber: new FormControl(''),
       sex: new FormControl(''),
     });
   }
@@ -199,12 +209,14 @@ export class EditForm {
       controls['dateOfBirth'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
       controls['email'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
       controls['sex'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
+      controls['phoneNumber'].addValidators([Validators.required, Validators.minLength(8), Validators.maxLength(14)]);
     } else {
       controls['firstName'].clearValidators(); controls['firstName'].clearAsyncValidators();
       controls['lastName'].clearValidators(); controls['lastName'].clearAsyncValidators();
       controls['dateOfBirth'].clearValidators(); controls['dateOfBirth'].clearAsyncValidators();
       controls['email'].clearValidators(); controls['email'].clearAsyncValidators();
       controls['sex'].clearValidators(); controls['sex'].clearAsyncValidators();
+      controls['phoneNumber'].clearValidators(); controls['phoneNumber'].clearAsyncValidators();
     }
     // this.group.updateValueAndValidity();
   }

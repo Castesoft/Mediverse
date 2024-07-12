@@ -3,6 +3,7 @@ using Serilog;
 using MainService.Infrastructure.Data;
 using MainService.Core.Settings;
 using MainService.Infrastructure.Services;
+using MainService.Core.Interfaces.Data;
 
 namespace MainService.Extensions;
 public static class ApplicationServicesExtensions
@@ -23,6 +24,7 @@ public static class ApplicationServicesExtensions
         // Services
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsersService, UsersService>();
+        services.AddScoped<IServicesService, ServicesService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ITwilioService, TwilioService>();
         services.AddScoped<ICloudinaryService, CloudinaryService>();

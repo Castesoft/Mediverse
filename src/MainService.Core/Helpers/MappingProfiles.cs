@@ -1,6 +1,7 @@
 using AutoMapper;
 using MainService.Core.DTOs;
 using MainService.Core.DTOs.Products;
+using MainService.Core.DTOs.Services;
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
 using MainService.Models.Entities;
@@ -20,6 +21,19 @@ public class MappingProfiles : Profile
         CreateMap<AppRole, RoleDto>();
         CreateMap<AppPermission, PermissionDto>();
 
+        CreateMap<AppUser, NurseDto>()
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()))
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
+
+        CreateMap<AppUser, PatientDto>()
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count() > 0))
+            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()))
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
+
         CreateMap<AppUser, UserDto>()
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
@@ -36,6 +50,8 @@ public class MappingProfiles : Profile
         CreateMap<RegisterDto, AppUser>();
 
         CreateMap<Product, ProductDto>();
+        CreateMap<Service, ServiceDto>()
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
 
         CreateMap<Location, PrescriptionInformationDto>()
             .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.ExteriorNumber))

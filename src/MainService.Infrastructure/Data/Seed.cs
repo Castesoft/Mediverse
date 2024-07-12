@@ -207,7 +207,7 @@ public class Seed
         await userManager.AddToRoleAsync(doctor1, "Doctor");
         await userManager.AddToRoleAsync(patient1, "Patient");
 
-        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(100);
+        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(100, Roles.Patient);
         int userIndex = 1;
 
         var roles = await context.Roles.ToListAsync();
@@ -230,7 +230,7 @@ public class Seed
             .Where(x => x.UserRoles.Any(y => y.Role.Name == "Patient"))
             .ToListAsync();
 
-        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(30);
+        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(30, Roles.Doctor);
         userIndex = 1;
 
         foreach (var user in doctorsForSeeding)
@@ -279,37 +279,28 @@ public class Seed
         var seedingServices = SeedData.services;
 
         foreach (var doctor in doctors)
+        {
+            List<AppUser> nurses = SeedData.GenerateUsersForSeeding(15, Roles.Nurse);
+
+            foreach (var nurse in nurses)
+            {
+                var createUserResult = await userManager.CreateAsync(nurse, "Pa$$w0rd");
+                if (!createUserResult.Succeeded) return;
+                await userManager.AddToRoleAsync(nurse, "Nurse");
+
+                context.DoctorNurses.Add(new(doctor.Id, nurse.Id));
+            }
+
+            await context.SaveChangesAsync();
+
             foreach (var service in seedingServices)
+            {
                 context.DoctorServices.Add(new(doctor.Id, service));
+            }
+        }
 
         await context.SaveChangesAsync();
         return;
-    }
-
-    public static async Task SeedServicesAsync(DataContext context, bool oneByOne = false)
-    {
-        if (await context.Services.AnyAsync()) return;
-
-        var seedingServices = SeedData.services;
-
-        int idx = 1;
-        int size = seedingServices.Count();
-        if (oneByOne)
-        {
-            foreach (var item in seedingServices)
-            {
-                context.Services.Add(item);
-                context.SaveChanges();
-                Log.Information($"({idx++}/{size}) creating service: {item.Name}.");
-            }
-        }
-        else
-        {
-            context.Services.AddRange(seedingServices);
-            context.SaveChanges();
-        }
-
-        Log.Information($"{size} services created.");
     }
 
     public static async Task SeedProductsAsync(DataContext context, bool oneByOne = false)

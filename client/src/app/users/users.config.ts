@@ -15,10 +15,10 @@ import { UsersCatalogComponent } from "src/app/users/components/users-catalog.co
 import { UserDetailComponent, UserEditComponent, UserNewComponent } from "src/app/users/views";
 
 @Component({
-  selector: 'users-route',
+  selector: 'patients-route',
   template: `<router-outlet></router-outlet>`,
 })
-export class UsersComponent implements OnInit {
+export class PatientsComponent implements OnInit {
   accountService = inject(AccountService);
   breadcrumbService = inject(BreadcrumbService);
 
@@ -36,12 +36,11 @@ export class UsersComponent implements OnInit {
 }
 
 @Component({
-  selector: 'users-catalog-route',
+  selector: 'patients-catalog-route',
   template: `
   <div card>
     <div
       usersCatalog
-      [isCompact]="isCompact"
       [mode]="mode"
       [key]="key"
       [view]="view"
@@ -52,7 +51,7 @@ export class UsersComponent implements OnInit {
   standalone: true,
   imports: [RouterModule, UsersCatalogComponent, LayoutModule,],
 })
-export class CatalogComponent implements OnInit {
+class PatientsCatalogComponent implements OnInit {
   service = inject(UsersService);
   compact = inject(CompactTableService);
   guid = inject(GuidService);
@@ -75,7 +74,7 @@ export class CatalogComponent implements OnInit {
 }
 
 @Component({
-  selector: 'user-detail-route',
+  selector: 'patient-detail-route',
   template: `
     @if (id && item) {
       <div
@@ -92,7 +91,7 @@ export class CatalogComponent implements OnInit {
   standalone: true,
   imports: [RouterModule, UserDetailComponent, LayoutModule,],
 })
-export class DetailComponent implements OnInit {
+class PatientDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -122,7 +121,7 @@ export class DetailComponent implements OnInit {
   }
 }
 @Component({
-  selector: 'user-edit-route',
+  selector: 'patient-edit-route',
   template: `
       @if (id && item) {
         <div
@@ -139,7 +138,7 @@ export class DetailComponent implements OnInit {
   standalone: true,
   imports: [UserEditComponent, RouterModule, LayoutModule,],
 })
-export class EditComponent implements OnInit {
+class PatientEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   item?: User;
@@ -167,38 +166,38 @@ export class EditComponent implements OnInit {
 }
 
 @Component({
-  selector: 'user-new-route',
+  selector: 'patient-new-route',
   template: `<div userNewView [use]="use" [view]="view" [role]="role"
   ></div>`,
   standalone: true,
   imports: [UserNewComponent, RouterModule, LayoutModule,],
 })
-export class NewComponent {
+class PatientNewComponent {
   use: FormUse = 'create';
   view: View = 'page';
   role: Role = 'Patient';
 }
 
-export const itemResolver: ResolveFn<User | null> = (route, state) => {
+export const patientResolver: ResolveFn<User | null> = (route, state) => {
   const service = inject(UsersService);
   const id = +route.paramMap.get('id')!;
-  return service.getById(id);
+  return service.getById(id, 'Patient');
 };
 
-export const titleDetailResolver: ResolveFn<string> = (route, state) => {
+export const patientTitleDetailResolver: ResolveFn<string> = (route, state) => {
   const service = inject(UsersService);
   const id = +route.paramMap.get('id')!;
-  service.getById(id).subscribe();
+  service.getById(id, 'Patient').subscribe();
   const user = service.getCurrent();
   if (!user) return 'Detalle de paciente';
   const title = `Detalle de paciente - ${user.fullName}`;
   return title;
 }
 
-export const titleEditResolver: ResolveFn<string> = (route, state) => {
+export const patientTitleEditResolver: ResolveFn<string> = (route, state) => {
   const service = inject(UsersService);
   const id = +route.paramMap.get('id')!;
-  service.getById(id).subscribe();
+  service.getById(id, 'Patient').subscribe();
   const user = service.getCurrent();
   if (!user) return 'Editar paciente';
   const title = `Editar paciente - ${user.fullName}`;
@@ -209,31 +208,254 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
   imports: [RouterModule.forChild([
     {
       path: '', title: 'Pacientes', data: { breadcrumb: 'Pacientes', },
-      component: UsersComponent, runGuardsAndResolvers: 'always',
+      component: PatientsComponent, runGuardsAndResolvers: 'always',
       children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de pacientes', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'create', component: NewComponent, title: 'Crear nuevo paciente', data: { breadcrumb: 'Nuevo', }, },
+        { path: '', component: PatientsCatalogComponent, title: 'Catálogo de pacientes', data: { breadcrumb: 'Catálogo', }, },
+        { path: 'create', component: PatientNewComponent, title: 'Crear nuevo paciente', data: { breadcrumb: 'Nuevo', }, },
         {
-          path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
-          component: DetailComponent,
-          resolve: { item: itemResolver },
+          path: ':id', title: patientTitleDetailResolver, data: { breadcrumb: 'Detalle', },
+          component: PatientDetailComponent,
+          resolve: { item: patientResolver },
         },
         {
-          path: ':id/edit', title: titleEditResolver, data: { breadcrumb: 'Editar', },
-          component: EditComponent,
-          resolve: { item: itemResolver },
+          path: ':id/edit', title: patientTitleEditResolver, data: { breadcrumb: 'Editar', },
+          component: PatientEditComponent,
+          resolve: { item: patientResolver },
         },
       ],
     },
   ])],
   exports: [RouterModule]
 })
-export class UsersRoutingModule { }
+export class PatientsRoutingModule { }
 
 @NgModule({
   declarations: [
-    UsersComponent,
+    PatientsComponent,
   ],
-  imports: [ CommonModule, UsersRoutingModule, LayoutModule, ]
+  imports: [ CommonModule, PatientsRoutingModule, LayoutModule, ]
 })
-export class UsersModule { }
+export class PatientsModule { }
+
+// nurses
+
+@Component({
+  selector: 'nurses-route',
+  template: `<router-outlet></router-outlet>`,
+})
+export class NursesComponent implements OnInit {
+  accountService = inject(AccountService);
+  breadcrumbService = inject(BreadcrumbService);
+
+  account: Account | null = null;
+  label?: string;
+
+  ngOnInit(): void {
+    this.account = this.accountService.current();
+    this.breadcrumbService.breadcrumb$.subscribe({
+      next: breadcrumb => {
+        this.label = breadcrumb;
+      }
+    });
+  }
+}
+
+@Component({
+  selector: 'nurses-catalog-route',
+  template: `
+  <div card>
+    <div
+      usersCatalog
+      [mode]="mode"
+      [key]="key"
+      [view]="view"
+      [role]="role"
+    ></div>
+  </div>
+  `,
+  standalone: true,
+  imports: [RouterModule, UsersCatalogComponent, LayoutModule,],
+})
+class NursesCatalogComponent implements OnInit {
+  service = inject(UsersService);
+  compact = inject(CompactTableService);
+  guid = inject(GuidService);
+
+  isCompact = false;
+  view: View = 'page';
+  mode: CatalogMode = 'view';
+  key = this.guid.gen();
+  section: Sections = 'users';
+  role: Role = 'Nurse';
+  label: string;
+
+  constructor() {
+    this.label = this.service.namingDictionary.get(this.role)!.title;
+  }
+
+  ngOnInit(): void {
+    this.compact.mode$.subscribe({ next: (mode) => (this.isCompact = mode) });
+  }
+}
+
+@Component({
+  selector: 'nurse-detail-route',
+  template: `
+    @if (id && item) {
+      <div
+        userDetailView
+        [id]="id"
+        [use]="use"
+        [view]="view"
+        [item]="item"
+        [key]="key"
+        [role]="role"
+      ></div>
+    }
+  `,
+  standalone: true,
+  imports: [RouterModule, UserDetailComponent, LayoutModule,],
+})
+class NurseDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
+  item?: User;
+  id?: number;
+  use: FormUse = 'detail';
+  view: View = 'page';
+  label?: string;
+  key?: string;
+  section: Sections = 'users';
+  role: Role = 'Nurse';
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe({
+      next: (params) => {
+        this.id = +params.get('id')!;
+      },
+    });
+    this.route.data.subscribe({
+      next: (data) => {
+        this.item = data['item'];
+        if (this.item) this.label = this.item.fullName;
+      },
+    });
+    const navigation = this.router.getCurrentNavigation();
+    this.key = navigation?.extras?.state?.['key'];
+  }
+}
+@Component({
+  selector: 'nurse-edit-route',
+  template: `
+      @if (id && item) {
+        <div
+          userEditView
+          [id]="id"
+          [use]="use"
+          [view]="view"
+          [key]="key"
+          [item]="item"
+          [role]="role"
+        ></div>
+      }
+  `,
+  standalone: true,
+  imports: [UserEditComponent, RouterModule, LayoutModule,],
+})
+class NurseEditComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+
+  item?: User;
+  id?: number;
+  use: FormUse = 'edit';
+  view: View = 'page';
+  label?: string;
+  key = undefined;
+  section: Sections = 'users';
+  role: Role = 'Nurse';
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe({
+      next: (params) => {
+        this.id = +params.get('id')!;
+      },
+    });
+    this.route.data.subscribe({
+      next: (data) => {
+        this.item = data['item'];
+        if (this.item) this.label = this.item.fullName;
+      },
+    });
+  }
+}
+
+@Component({
+  selector: 'nurse-new-route',
+  template: `<div userNewView [use]="use" [view]="view" [role]="role"
+  ></div>`,
+  standalone: true,
+  imports: [UserNewComponent, RouterModule, LayoutModule,],
+})
+class NurseNewComponent {
+  use: FormUse = 'create';
+  view: View = 'page';
+  role: Role = 'Nurse';
+}
+
+export const nurseResolver: ResolveFn<User | null> = (route, state) => {
+  const service = inject(UsersService);
+  const id = +route.paramMap.get('id')!;
+  return service.getById(id, 'Nurse');
+};
+
+export const nurseTitleDetailResolver: ResolveFn<string> = (route, state) => {
+  const service = inject(UsersService);
+  const id = +route.paramMap.get('id')!;
+  service.getById(id, 'Nurse').subscribe();
+  const user = service.getCurrent();
+  if (!user) return 'Detalle de enfermero';
+  const title = `Detalle de enfermero - ${user.fullName}`;
+  return title;
+}
+
+export const nurseTitleEditResolver: ResolveFn<string> = (route, state) => {
+  const service = inject(UsersService);
+  const id = +route.paramMap.get('id')!;
+  service.getById(id, 'Nurse').subscribe();
+  const user = service.getCurrent();
+  if (!user) return 'Editar enfermero';
+  const title = `Editar enfermero - ${user.fullName}`;
+  return title;
+}
+
+@NgModule({
+  imports: [RouterModule.forChild([
+    {
+      path: '', title: 'Enfermeros', data: { breadcrumb: 'Enfermeros', },
+      component: NursesComponent, runGuardsAndResolvers: 'always',
+      children: [
+        { path: '', component: NursesCatalogComponent, title: 'Catálogo de enfermeros', data: { breadcrumb: 'Catálogo', }, },
+        { path: 'create', component: NurseNewComponent, title: 'Crear nuevo enfermero', data: { breadcrumb: 'Nuevo', }, },
+        {
+          path: ':id', title: nurseTitleDetailResolver, data: { breadcrumb: 'Detalle', },
+          component: NurseDetailComponent,
+          resolve: { item: nurseResolver },
+        },
+        {
+          path: ':id/edit', title: nurseTitleEditResolver, data: { breadcrumb: 'Editar', },
+          component: NurseEditComponent,
+          resolve: { item: nurseResolver },
+        },
+      ],
+    },
+  ])],
+  exports: [RouterModule]
+})
+export class NursesRoutingModule { }
+
+@NgModule({
+  declarations: [ NursesComponent, ],
+  imports: [ CommonModule, NursesRoutingModule, LayoutModule, ]
+})
+export class NursesModule { }

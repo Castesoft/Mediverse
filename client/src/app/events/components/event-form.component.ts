@@ -1,38 +1,37 @@
-import {CdkAccordion, CdkAccordionItem} from "@angular/cdk/accordion";
+import { CdkAccordion, CdkAccordionItem } from "@angular/cdk/accordion";
 import {
   Component,
   OnInit,
   OnDestroy,
   inject,
   input,
-  output,
-  model,
-  effect,
-  computed,
-  signal,
+  output, signal,
   viewChild
 } from "@angular/core";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import {DateClickArg} from "@fullcalendar/interaction";
-import { ToastrService } from "ngx-toastr";
 import { Subject, takeUntil } from "rxjs";
 import { Event, CreateForm, EditForm, DetailForm } from "src/app/_models/event";
-import { FormUse, Role, View } from "src/app/_models/types";
-import {User} from "src/app/_models/user";
+import { FormUse, View } from "src/app/_models/types";
+import { User } from "src/app/_models/user";
 import { FormsService } from "src/app/_services/forms.service";
-import {GuidService} from "src/app/_services/guid.service";
+import { GuidService } from "src/app/_services/guid.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AlertModule } from "ngx-bootstrap/alert";
-import {DatePipe, JsonPipe} from "@angular/common";
+import { CurrencyPipe, DatePipe, JsonPipe } from "@angular/common";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { EventsService } from "src/app/_services/events.service";
-import {UsersService} from "src/app/_services/users.service";
-import {MaterialModule} from "src/app/_shared/material.module";
-import {calcDateDiff} from "src/app/_utils/util";
-import {UserCardCompactComponent} from "src/app/users/components/user-card-compact.component";
-import {UserFormComponent} from "src/app/users/components/user-form.component";
+import { UsersService } from "src/app/_services/users.service";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { calcDateDiff } from "src/app/_utils/util";
+import { UserCardCompactComponent } from "src/app/users/components/user-card-compact.component";
+import { UserFormComponent } from "src/app/users/components/user-form.component";
+import { ServicesService } from "src/app/_services/services.service";
+import { Service } from "src/app/_models/service";
+import { ServiceCardCompactComponent } from "src/app/services/components/service-card-compact.component";
+import { ServiceFormComponent } from "src/app/services/components/service-form.component";
+import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/components/users-catalog.component";
 
 @Component({
   host: { class: 'pb-3', },
@@ -65,11 +64,11 @@ import {UserFormComponent} from "src/app/users/components/user-form.component";
                   Cambiar paciente
                 }
               </button>
-              @if (!panelOpenState()) {
+              @if (!patientPanelOpen()) {
                 <button
                   matTooltip="Quite al paciente actual para poder agregar uno nuevo."
                   [matTooltipDisabled]="!patient"
-                  class="btn btn-light-success me-2" (click)="handlePanelClick($event)">
+                  class="btn btn-light-success me-2" (click)="handlePatientPanelClick($event)">
                   Agregar
                 </button>
               }
@@ -83,7 +82,7 @@ import {UserFormComponent} from "src/app/users/components/user-form.component";
               matTooltip="Quite al paciente actual para poder agregar uno nuevo."
               [matTooltipDisabled]="!patient"
             >
-              <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)" [expanded]="panelOpenState()"
+              <mat-expansion-panel (opened)="patientPanelOpen.set(true)" (closed)="patientPanelOpen.set(false)" [expanded]="patientPanelOpen()"
                                    cdkAccordionItem #patientAccordion
                                    [disabled]="patient"
                                    style="background: transparent!important; box-shadow: none!important;"
@@ -119,7 +118,6 @@ import {UserFormComponent} from "src/app/users/components/user-form.component";
                     }
                   } @else {
                     @if (form.group.get('dateTime')!.get('dateFrom')!.value === form.group.get('dateTime')!.get('dateTo')!.value) {
-                      <!--                  El martes 8 de mayo de 8:30-10:30 AM, 2024 -->
                         El {{ form.group.get('dateTime')!.get('dateFrom')!.value | date: "EEEE d 'de' MMMM": "": "es-MX" }}
                       {{ form.group.get('dateTime')!.get('timeFrom')!.value | date: "h:mm": "": "es-MX" }}-{{ form.group.get('dateTime')!.get('timeTo')!.value | date: "h:mm a": "": "es-MX" }}
                       {{ form.group.get('dateTime')!.get('dateTo')!.value | date: "YYYY": "": "es-MX" }}
@@ -162,49 +160,96 @@ import {UserFormComponent} from "src/app/users/components/user-form.component";
 
           </mat-step>
           <mat-step>
-            <ng-template matStepLabel>Servicio/Tratamiento</ng-template>
-            <div inputControl formControlName="firstName" class="fw-semi-bold mb-0 w-100"
-                 [submitted]="form.group.controls['firstName'].touched || form.submitted"
-                 [placeholder]="'Ingrese el nombre'"
-                 [autofocus]="use() !== 'detail'" [label]="'Nombre'" [errors]="{
-                                        'required': 'El nombre es requerido.',
-                                    }">
+            <ng-template matStepLabel>Servicio/Tratamiento
+            @if (service) {
+                <span class="fw-semibold text-gray-500">({{ service.name }}) {{service.price | currency}}</span>
+              }
+            </ng-template>
+            @if (servicesService.hasSelected(selectServiceKey)) {
+              <div serviceCardCompact [key]="selectServiceKey" [view]="view()"></div>
+            }
+
+            <div class="my-4">
+              <button class="btn btn-light-primary me-2"
+                      (click)="servicesService.showCatalogModal($event, selectServiceKey, 'select')">
+                @if (!servicesService.hasSelected(selectServiceKey)) {
+                  Seleccionar servicio
+                } @else {
+                  Cambiar servicio
+                }
+              </button>
+              @if (!servicePanelOpen()) {
+                <button
+                  matTooltip="Quite al servicio actual para poder agregar uno nuevo."
+                  [matTooltipDisabled]="!service"
+                  class="btn btn-light-success me-2" (click)="handleServicePanelClick($event)">
+                  Agregar
+                </button>
+              }
+              @if (servicesService.hasSelected(selectServiceKey)) {
+                <button class="btn btn-light-danger me-2" (click)="servicesService.setSelected$(selectServiceKey)">Quitar
+                </button>
+              }
             </div>
 
+            <mat-accordion
+              matTooltip="Quite el servicio actual para poder agregar uno nuevo."
+              [matTooltipDisabled]="!service"
+            >
+              <mat-expansion-panel (opened)="servicePanelOpen.set(true)" (closed)="servicePanelOpen.set(false)" [expanded]="servicePanelOpen()"
+                                   cdkAccordionItem #serviceAccordion
+                                   [disabled]="service"
+                                   style="background: transparent!important; box-shadow: none!important;"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title> Crear nuevo servicio</mat-panel-title>
+                </mat-expansion-panel-header>
 
-            <div inputControl formControlName="lastName" class="fw-semi-bold mb-0 w-100" [type]="'text'"
-                 [submitted]="form.group.controls['lastName'].touched || form.submitted"
-                 [placeholder]="'Ingrese el apellido'"
-                 [label]="'apellido'" [errors]="{
-                                              'required': 'El apellido es requerido.',
-                                          }">
-            </div>
+                <div serviceForm [view]="'page'" [id]="null" [use]="'create'"></div>
 
-
-            <div inputControl formControlName="email" class="fw-semi-bold mb-0 w-100"
-                 [submitted]="form.group.controls['email'].touched || form.submitted" [type]="'email'"
-                 [placeholder]="'Ingrese el correo'" [label]="'Correo'" [errors]="{
-                                                  'required': 'El correo es requerido.',
-                                              }">
-            </div>
-
-
-            <div inputControl formControlName="sex" class="fw-semi-bold mb-0 w-100"
-                 [submitted]="form.group.controls['sex'].touched || form.submitted"
-                 [placeholder]="'Ingrese el sexo'" [label]="'Sexo'" [errors]="{
-                                              'required': 'El sexo es requerido.',
-                                          }"></div>
+              </mat-expansion-panel>
+            </mat-accordion>
             <!--          <div>-->
             <!--            <button mat-button matStepperPrevious>Back</button>-->
             <!--            <button mat-button (click)="stepper.reset()">Reset</button>-->
             <!--          </div>-->
+          </mat-step>
+
+          <!-- especialistas -->
+
+          <mat-step>
+            <ng-template matStepLabel>
+            <span class="fw-semibold text-gray-500">
+
+              @if(!nurses || nurses.length === 0) {
+                Seleccione uno o muchos especialistas
+              } @else {
+                @if(nurses.length === 1) {
+                  Especialista: {{nurses[0].fullName}} ({{nurses[0].post}})
+                } @else {
+                  ({{nurses.length}}) Especialistas:
+                  @for(item of nurses; let idx = $index; track idx; let last = $last) {
+                    {{item.firstName}} ({{item.education}}) @if (!last) {,}
+                  }
+                }
+              }
+              </span>
+            </ng-template>
+            <div
+              usersListSelect
+              [mode]="'multiselect'"
+              [key]="selectNursesKey"
+              [view]="'page'"
+              [role]="'Nurse'"
+            ></div>
+
           </mat-step>
         </mat-stepper>
       </form>
       @if (view() === 'page') {
         <button class="btn btn-primary" [attr.form]="form.id" type="submit">
           @if (use() === "create") {
-            Crear {{ service.naming!.singular }}
+            Crear {{ eventsService.naming!.singular }}
           } @else if (use() === "edit") {
             Guardar cambios
           }
@@ -217,7 +262,8 @@ import {UserFormComponent} from "src/app/users/components/user-form.component";
 
   `,
   imports: [FontAwesomeModule, AlertModule, RouterModule, JsonPipe, ControlsModule, MaterialModule, UserCardCompactComponent,
-    DatePipe, UserFormComponent, CdkAccordion, CdkAccordionItem,
+    DatePipe, UserFormComponent, CdkAccordion, CdkAccordionItem, ServiceCardCompactComponent, ServiceFormComponent,
+    CurrencyPipe, UsersCatalogComponent, UsersListSelectComponent,
   ],
 })
 export class EventFormComponent implements OnInit, OnDestroy {
@@ -225,9 +271,10 @@ export class EventFormComponent implements OnInit, OnDestroy {
   private formsService = inject(FormsService);
   private router = inject(Router);
   matSnackBar = inject(MatSnackBar);
-  service = inject(EventsService);
+  eventsService = inject(EventsService);
   icons = inject(IconsService);
   usersService = inject(UsersService);
+  servicesService = inject(ServicesService);
   guid = inject(GuidService);
 
   id = input.required<number | null>();
@@ -240,8 +287,15 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   item: Event | null = null;
   selectPatientKey: string;
-  readonly panelOpenState = signal(false);
+  selectServiceKey: string;
+  selectNursesKey: string;
+
+  readonly patientPanelOpen = signal(false);
   patientAccordion = viewChild<CdkAccordionItem>('patientAccordion');
+  readonly servicePanelOpen = signal(false);
+  serviceAccordion = viewChild<CdkAccordionItem>('serviceAccordion');
+  readonly nursesPanelOpen = signal(false);
+  nursesAccordion = viewChild<CdkAccordionItem>('nursesAccordion');
 
   form!: CreateForm | EditForm | DetailForm;
   returnUrl: string | null = null;
@@ -249,9 +303,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   isDetail = false;
   patient?: User;
+  service?: Service;
+  nurses?: User[];
 
   constructor() {
     this.selectPatientKey = this.guid.gen();
+    this.selectServiceKey = this.guid.gen();
+    this.selectNursesKey = this.guid.gen();
 
     this.route.queryParams.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (params) => {
@@ -260,7 +318,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  handlePanelClick(event: any) {
+  handlePatientPanelClick(event: any) {
     if (this.patient) {
       event.stopPropagation();
     } else {
@@ -268,14 +326,41 @@ export class EventFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit(): void {
-    console.log(this.dateFrom(), this.dateTo());
+  handleServicePanelClick(event: any) {
+    if (this.service) {
+      event.stopPropagation();
+    } else {
+      this.serviceAccordion()?.open();
+    }
+  }
 
+  handleNursesPanelClick(event: any) {
+    if (this.nurses) {
+      event.stopPropagation();
+    } else {
+      this.nursesAccordion()?.open();
+    }
+  }
+
+  ngOnInit(): void {
     this.usersService.selected$(this.selectPatientKey).subscribe({
       next: user => {
         this.patient = user;
-        console.log(this.patientAccordion())
         user && this.patientAccordion()?.close();
+      }
+    });
+
+    this.servicesService.selected$(this.selectServiceKey).subscribe({
+      next: service => {
+        this.service = service;
+        service && this.serviceAccordion()?.close();
+      }
+    });
+
+    this.usersService.multipleSelected$(this.selectNursesKey).subscribe({
+      next: nurses => {
+        this.nurses = nurses;
+        nurses && this.nursesAccordion()?.close();
       }
     });
 
@@ -290,7 +375,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     this.formId.emit(this.form.id);
 
     if (this.use() === 'edit' || this.use() === 'detail') {
-      this.service.current$.subscribe({
+      this.eventsService.current$.subscribe({
         next: (item) => {
           if (item) {
               this.item = item;
@@ -360,11 +445,11 @@ export class EventFormComponent implements OnInit, OnDestroy {
     if (this.use() === 'create') {
       this.form.group.reset();
       this.form.group.markAsPristine();
-      this.router.navigate([`${this.service.naming!.catalogRoute}/${this.service.naming!.plural}`]);
+      this.router.navigate([`${this.eventsService.naming!.catalogRoute}/${this.eventsService.naming!.plural}`]);
     } else if (this.use() === 'edit') {
       this.form.group.reset();
       this.form.group.markAsPristine();
-      this.router.navigate([`${this.service.naming!.catalogRoute}/${this.item!.id}`]);
+      this.router.navigate([`${this.eventsService.naming!.catalogRoute}/${this.item!.id}`]);
     }
   }
 
@@ -377,17 +462,17 @@ export class EventFormComponent implements OnInit, OnDestroy {
   create() {
     const formValues = this.form.group.value;
     if (this.form.group.valid || !this.form.validation) {
-      this.service.create(formValues).subscribe({
+      this.eventsService.create(formValues).subscribe({
         next: (item) => {
           this.form.submitted = false;
-          this.matSnackBar.open(this.service.naming!.singularTitlecase + ' agregado', 'Cerrar', { duration: 3000, });
+          this.matSnackBar.open(this.eventsService.naming!.singularTitlecase + ' agregado', 'Cerrar', { duration: 3000, });
           this.form.group.reset();
           this.form.group.markAsPristine();
           if (this.view() === 'modal') {
-            this.service.hideNewModal();
+            this.eventsService.hideNewModal();
           } else {
             if (this.returnUrl === null) {
-              this.router.navigate([`${this.service.naming!.catalogRoute}/${item.id}`]);
+              this.router.navigate([`${this.eventsService.naming!.catalogRoute}/${item.id}`]);
             } else {
               this.router.navigate([this.returnUrl]);
             }
@@ -395,7 +480,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           this.form.errors = error.errors;
-          this.matSnackBar.open(`${this.form.errors.length} errores al agregar ${this.service.naming!.singular}`, 'Cerrar', { duration: 3000, });
+          this.matSnackBar.open(`${this.form.errors.length} errores al agregar ${this.eventsService.naming!.singular}`, 'Cerrar', { duration: 3000, });
         },
       });
     }
@@ -404,18 +489,18 @@ export class EventFormComponent implements OnInit, OnDestroy {
   update() {
     const formValues = this.form.group.value;
     if (this.form.group.valid || !this.form.validation) {
-      this.service.update(this.item!.id, formValues).subscribe({
+      this.eventsService.update(this.item!.id, formValues).subscribe({
         next: () => {
           this.form.submitted = false;
-          this.matSnackBar.open(this.service.naming!.singularTitlecase + ' actualizado', 'Cerrar', { duration: 3000, });
+          this.matSnackBar.open(this.eventsService.naming!.singularTitlecase + ' actualizado', 'Cerrar', { duration: 3000, });
           this.form.group.reset();
           this.form.group.markAsPristine();
-          this.router.navigate([`${this.service.naming!.catalogRoute}/${this.item!.id}`]);
-          this.service.hideEditModal();
+          this.router.navigate([`${this.eventsService.naming!.catalogRoute}/${this.item!.id}`]);
+          this.eventsService.hideEditModal();
         },
         error: (error: any) => {
           this.form.errors = error.errors;
-          this.matSnackBar.open(`${this.form.errors.length} errores al actualizar ${this.service.naming!.singular}`, 'Cerrar', { duration: 3000, });
+          this.matSnackBar.open(`${this.form.errors.length} errores al actualizar ${this.eventsService.naming!.singular}`, 'Cerrar', { duration: 3000, });
         },
       });
     }

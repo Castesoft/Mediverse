@@ -1,4 +1,4 @@
-@if(columns){<thead
+<thead
   tableHeader
   [show]="showHeaders()"
   [columns]="columns"
@@ -6,7 +6,7 @@
   (onSelectAll)="service.selectAll(key(), $event)"
   [mode]="mode()"
   (onParamsChange)="service.onSortOptionsChange(key(), $event)"
-></thead>}
+></thead>
 <tbody class="text-gray-600 fw-semibold">
   @for (item of data; track item.id; let idx = $index) {
     <tr class="hover-actions-trigger btn-reveal-trigger position-static" [cdkContextMenuTriggerFor]="context_menu">
@@ -17,7 +17,7 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                [name]="service.namingDictionary.get(role())!.singular"
+                [name]="service.naming.singular"
                 [(ngModel)]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
               />
@@ -30,7 +30,7 @@
               <input
                 class="form-check-input"
                 type="radio"
-                [name]="service.namingDictionary.get(role())!.singular"
+                [name]="service.naming.singular"
                 [checked]="item.isSelected"
                 (change)="service.setSelected$(key(), item)"
               />
@@ -43,7 +43,7 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                [name]="service.namingDictionary.get(role())!.singular"
+                [name]="service.naming.singular"
                 [checked]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
                 (change)="service.addSelected$(key(), item)"
@@ -52,37 +52,18 @@
           </td>
         }
       }
+      <!-- <td serviceCell [item]="item"></td> -->
+       <td>{{item.name}}</td>
+      <td>{{ item.description }}</td>
+      <td>{{ item.price | currency }}</td>
+      <td serviceDiscount [item]="item"></td>
+      <td>{{ item.createdAt | date }}</td>
 
-      @switch(role()) {
-        @case('Admin') {
-
-        }
-        @case('Doctor') {
-
-        }
-        @case('Nurse') {
-          <td userCell [role]="role()" [user]="item"></td>
-          <td userSex [user]="item"></td>
-          <td>{{item.post}}</td>
-          <td>{{item.education}}</td>
-          <td>{{item.createdAt | date: "mediumDate" : "" : "es-MX"}}</td>
-        }
-        @case ('Patient') {
-          <td userCell [role]="role()" [user]="item"></td>
-          <td>{{ item.age }} años</td>
-          <td userSex [user]="item"></td>
-          <td userHasAccount [user]="item"></td>
-          <td>{{ item.dateOfBirth | date }}</td>
-        }
-        @case('Staff') {
-
-        }
-      }
       <td class="text-end">
         <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"
            [cdkContextMenuTriggerFor]="context_menu" [cdkMenuTriggerFor]="context_menu"
-           [id]="'dropdown' + item.fullName + item.id" type="button"
-           [attr.aria-controls]="'dropdown' + item.fullName + item.id">
+           [id]="'dropdown' + item.name + item.id" type="button"
+           [attr.aria-controls]="'dropdown' + item.name + item.id">
           Opciones
           <i class="ki-duotone ki-down fs-5 ms-1"></i>
         </a>
@@ -92,12 +73,12 @@
           class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4 show"
           cdkMenu>
           <div cdkMenuItem class="menu-item px-3">
-            <a [routerLink]="[]" (click)="service.clickLink(role(), item.id, item, key(), 'detail', view())" class="menu-link">Ver</a>
+            <a [routerLink]="[service.naming.catalogRoute,item.id]" class="menu-link">Ver</a>
           </div>
           <div cdkMenuItem class="menu-item px-3">
-            <a [routerLink]="[service.namingDictionary.get(role())!.catalogRoute, item.id, 'edit']" class="menu-link">Editar</a>
+            <a [routerLink]="[service.naming.catalogRoute, item.id, 'edit']" class="menu-link">Editar</a>
           </div>
-          <button cdkMenuItem class="menu-item px-3 text-danger" (click)="service.delete$(item, role())">
+          <button cdkMenuItem class="menu-item px-3 text-danger" (click)="service.delete$(item)">
             <a class="menu-link">Eliminar</a>
           </button>
         </div>
