@@ -14,29 +14,22 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         }
         catch (Exception ex)
         {
-            if (ex is PermissionDeniedException) Log.Warning(ex, ex.Message);
-            else Log.Error(ex, ex.Message);
-
+            Log.Error(ex, ex.Message);
             context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            if (ex is PermissionDeniedException permissionDeniedException)
+            var response = env.IsDevelopment()
+                ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace)
+                : new ApiException(context.Response.StatusCode, ex.Message, "Internal server error");
+
+            var options = new JsonSerializerOptions
             {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
 
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                var response = new ApiException(context.Response.StatusCode, "Access Denied", permissionDeniedException.Message);
-                var json = JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                await context.Response.WriteAsync(json);
-            }
-            else
-            {
+            var json = JsonSerializer.Serialize(response, options);
 
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                var response = env.IsDevelopment()
-                    ? new ApiException((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace?.ToString())
-                    : new ApiException((int)HttpStatusCode.InternalServerError, ex.Message, "Internal server error");
-                var json = JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                await context.Response.WriteAsync(json);
-            }
+            await context.Response.WriteAsync(json);
         }
     }
 }

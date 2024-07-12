@@ -14,6 +14,8 @@ public class DoctorService
         Service = service;
     }
 
+    public DoctorService(Service service) => Service = service;
+
     public DoctorService(int doctorId, Service service)
     {
         DoctorId = doctorId;

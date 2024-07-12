@@ -3,17 +3,19 @@ using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.Extensions;
 using MainService.Extensions;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace MainService.Controllers;
 
 [Authorize]
-public class UsersController(IUnitOfWork uow, IUsersService usersService, UserManager<AppUser> userManager) : BaseApiController
+public class UsersController(IUnitOfWork uow, IUsersService service, UserManager<AppUser> userManager, IMapper mapper) : BaseApiController
 {
     private static readonly string subject = "usuario";
     private static readonly string subjectArticle = "El";
@@ -57,7 +59,7 @@ public class UsersController(IUnitOfWork uow, IUsersService usersService, UserMa
 
         if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
 
-        var deleteResult = await usersService.DeleteAsync(item);
+        var deleteResult = await service.DeleteAsync(item);
 
         if (!deleteResult) return BadRequest($"Error al eliminar {subject} de {item.FirstName}.");
 
@@ -75,7 +77,7 @@ public class UsersController(IUnitOfWork uow, IUsersService usersService, UserMa
 
             if (itemToDelete == null) return NotFound($"{subjectArticle} {subject} de ID {item} no fue encontrado.");
 
-            var deleteResult = await usersService.DeleteAsync(itemToDelete);
+            var deleteResult = await service.DeleteAsync(itemToDelete);
 
             if (!deleteResult) return BadRequest($"Error al eliminar {subject} de {itemToDelete.Email}.");
         }
@@ -124,5 +126,50 @@ public class UsersController(IUnitOfWork uow, IUsersService usersService, UserMa
         var item = await uow.UserRepository.GetPrescriptionInformationAsync(doctorId);
 
         return item;
+    }
+
+    [HttpPost("patient")]
+    public async Task<ActionResult<UserDto>> CreateAsync([FromBody] PatientCreateDto request)
+    {
+        if (await service.EmailExistsAsync(request.Email))
+        {
+            var patient = await userManager.Users
+                .Include(x => x.Doctors)
+                .SingleOrDefaultAsync(x => x.Email == request.Email);
+
+            if (patient.Email == User.GetEmail())
+                return BadRequest($"No puedes agregar tu propio email como paciente.");
+
+            if (patient.Doctors.Any(x => x.DoctorId == User.GetUserId()))
+                return BadRequest($"El paciente con email {request.Email} ya está registrado.");
+
+            patient.Doctors.Add(new(User.GetUserId()));
+
+            var updateResult = await userManager.UpdateAsync(patient);
+
+            if (!updateResult.Succeeded) return BadRequest($"Error al agregar paciente con email {request.Email}.");
+        }
+        else
+        {
+            var patient = mapper.Map<AppUser>(request);
+
+            var createResult = await userManager.CreateAsync(patient, "Pa$$w0rd");
+
+            if (!createResult.Succeeded) return BadRequest($"Error al crear paciente con email {request.Email}.");
+
+            var roleResult = await userManager.AddToRoleAsync(patient, "Patient");
+
+            if (!roleResult.Succeeded) return BadRequest($"Error al agregar paciente con email {request.Email}.");
+
+            patient.Doctors.Add(new(User.GetUserId()));
+
+            var updateResult = await userManager.UpdateAsync(patient);
+
+            if (!updateResult.Succeeded) return BadRequest($"Error al agregar paciente a la lista de pacientes del doctor.");
+
+        }
+        var patientToReturn = await uow.UserRepository.GetDtoByEmailAsync(request.Email);
+
+        return Ok(patientToReturn);
     }
 }

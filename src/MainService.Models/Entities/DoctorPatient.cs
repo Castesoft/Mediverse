@@ -10,4 +10,6 @@ public class DoctorPatient
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DoctorPatient() {}
+
+    public DoctorPatient(int doctorId) => DoctorId = doctorId;
 }

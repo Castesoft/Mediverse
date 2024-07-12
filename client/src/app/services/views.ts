@@ -8,7 +8,7 @@ import { ServiceHeaderComponent } from "src/app/services/components/service-head
 @Component({
   selector: 'div[serviceNewView]',
   template: `
-  <div serviceForm [use]="use()" [id]="null" [view]="view()"></div>
+  <div serviceForm [use]="use()" [id]="null" [view]="view()" [style]="'normal'"></div>
   `,
   standalone: true,
   imports: [ ServiceFormComponent, ModalWrapperModule, ServiceHeaderComponent, ],
@@ -1724,7 +1724,7 @@ export class ServiceDetailComponent {
 @Component({
   selector: 'div[serviceEditView]',
   template: `
-  <div serviceForm [use]="use()" [id]="id()" [view]="view()"></div>
+  <div serviceForm [use]="use()" [id]="id()" [view]="view()" [style]="'normal'"></div>
   `,
   standalone: true,
   imports: [ ServiceFormComponent, ModalWrapperModule, ServiceHeaderComponent, ],
@@ -1736,5 +1736,3 @@ export class ServiceEditComponent {
   item = input.required<Service>();
   key = input.required<string | undefined>();
 }
-
-

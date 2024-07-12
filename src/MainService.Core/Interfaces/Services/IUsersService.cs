@@ -6,4 +6,6 @@ public interface IUsersService
 {
     Task<bool> DeleteAsync(AppUser item);
     Task<AccountDto> GenerateAccountDtoAsync(int id);
+    Task<bool> PhoneExistsAsync(string phoneNumber);
+    Task<bool> EmailExistsAsync(string email);
 }

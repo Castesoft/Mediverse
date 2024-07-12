@@ -6,7 +6,8 @@
   <span>{{label}}</span>
 </label>
 <textarea
-  class="form-control form-control-solid"
+  class="form-control"
+  [class.form-control-solid]="style() === 'solid'"
   [id]="id ? id : controlName"
   [formControl]="control"
   autocomplete="off"

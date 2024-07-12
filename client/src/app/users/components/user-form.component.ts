@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy, inject, input } from "@angular/core";
+import {Component, OnInit, OnDestroy, inject, input, output} from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Subject, takeUntil } from "rxjs";
 import { User, CreateForm, EditForm, DetailForm } from "src/app/_models/user";
-import { FormUse, Role, View } from "src/app/_models/types";
+import {BadRequest, FormControlStyles, FormUse, Role, View} from "src/app/_models/types";
+import { createId } from "@paralleldrive/cuid2";
 import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -31,8 +32,13 @@ export class UserFormComponent implements OnInit, OnDestroy {
   use = input.required<FormUse>();
   view = input.required<View>();
   role = input.required<Role>();
+  key = input<string>();
+  style = input<FormControlStyles>('solid');
+
+  user = output<User>();
 
   item: User | null = null;
+  _key = createId();
 
   form!: CreateForm | EditForm | DetailForm;
   returnUrl: string | null = null;
@@ -49,6 +55,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.key()) this._key = this.key()!;
+
     if (this.use() === 'create') {
       this.form = new CreateForm();
     } else if (this.use() === 'edit') {
@@ -128,31 +136,16 @@ export class UserFormComponent implements OnInit, OnDestroy {
   create() {
     const formValues = this.form.group.value;
     if (this.form.group.valid || !this.form.validation) {
-      this.service.create(formValues, this.role()).subscribe({
-        next: (item) => {
+      this.service.create(formValues, this.role(), this.view(), this._key).subscribe({
+        next: item => {
+          this.user.emit(item);
           this.form.submitted = false;
-          this.toastr.success(
-            this.service.namingDictionary.get(this.role())!.singularTitlecase + ' agregado',
-            'Éxito',
-          );
           this.form.group.reset();
           this.form.group.markAsPristine();
-          if (this.view() === 'modal') {
-            this.service.hideNewModal();
-          } else {
-            if (this.returnUrl === null) {
-              this.router.navigate([`${this.service.namingDictionary.get(this.role())!.catalogRoute}/${item.id}`]);
-            } else {
-              this.router.navigate([this.returnUrl]);
-            }
-          }
         },
-        error: (error: any) => {
-          this.form.errors = error.errors;
-          this.toastr.error(
-            `${this.form.errors.length} errores al agregar ${this.service.namingDictionary.get(this.role())!.singular}`,
-            'Validación del servidor',
-          );
+        error: (error: BadRequest) => {
+          console.log('error from component',error)
+          this.form.error = error;
         },
       });
     }
@@ -174,11 +167,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
           this.service.hideEditModal();
         },
         error: (error: any) => {
-          this.form.errors = error.errors;
-          this.toastr.error(
-            `${this.form.errors.length} errores al actualizar ${this.service.namingDictionary.get(this.role())!.singular}`,
-            'Validación del servidor',
-          );
+          this.form.error = error;
         },
       });
     }

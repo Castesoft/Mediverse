@@ -61,8 +61,7 @@ export class UserCardCompactComponent implements OnInit {
   ngOnInit(): void {
     this.service.selected$(this.key()).subscribe({
       next: user => {
-        this.user = new User();
-        console.log(this.user)
+        console.log(user)
         this.user = user;
       }
     })

@@ -1,6 +1,7 @@
 import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
+import {BadRequest} from "src/app/_models/types";
 import { ServicesService } from "src/app/_services/services.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
 
@@ -112,7 +113,7 @@ export class FilterForm {
 export class CreateForm {
   group: FormGroup;
   id: string;
-  errors: string[] = [];
+  error?: BadRequest;
   submitted = false;
   validation = true;
 
@@ -153,7 +154,7 @@ export class CreateForm {
 export class EditForm {
   group: FormGroup;
   id: string;
-  errors: string[] = [];
+  error?: BadRequest;
   submitted = false;
   validation = true;
 
@@ -191,7 +192,7 @@ export class EditForm {
 export class DetailForm {
   group: FormGroup;
   id: string;
-  errors: string[] = [];
+  error?: BadRequest;
   submitted = false;
   validation = true;
 

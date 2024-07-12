@@ -86,6 +86,16 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return item;
     }
 
+    public async Task<UserDto> GetDtoByEmailAsync(string email)
+    {
+        var item = await context.Users
+            .AsNoTracking()
+            .ProjectTo<UserDto>(mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync(x => x.Email == email);
+
+        return item;
+    }
+
     public async Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user)
     {
         var query = context.Users

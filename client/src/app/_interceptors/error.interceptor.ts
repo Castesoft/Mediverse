@@ -1,30 +1,21 @@
-import {HttpInterceptorFn} from '@angular/common/http';
+import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
 import {inject} from '@angular/core';
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {NavigationExtras, Router} from '@angular/router';
 import {catchError} from 'rxjs';
+import { BadRequest } from 'src/app/_models/types';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const matSnackBar = inject(MatSnackBar);
 
-
   return next(req).pipe(
-    catchError(error => {
+    catchError((error: HttpErrorResponse) => {
       if (error) {
         switch (error.status) {
           case 400:
-            if (error.error.errors) {
-              const modalStateErrors = [];
-              for (const key in error.error.errors) {
-                if (error.error.errors[key]) {
-                  modalStateErrors.push(error.error.errors[key])
-                }
-              }
-              throw modalStateErrors.flat();
-            } else {
-              // matSnackBar.open(error.error, 'Cerrar', {duration: 5000});
-            }
+            matSnackBar.open('Solicitud incorrecta', 'Cerrar', {duration: 5000});
+            throw new BadRequest(error);
             break;
           case 401:
             // toastr.error('Unauthorised', error.status)

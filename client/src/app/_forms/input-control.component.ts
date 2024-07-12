@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, inject, input, Input, OnInit, Renderer2, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { InputTypes } from 'src/app/_models/types';
+import {FormControlStyles, InputTypes} from 'src/app/_models/types';
 import { NgClass } from '@angular/common';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
@@ -25,6 +25,7 @@ export class InputControlComponent implements ControlValueAccessor, AfterViewIni
   autofocus = input<boolean>(false);
   isNew = input<boolean>(false);
   optional = input<boolean>(false);
+  style = input<FormControlStyles>('solid');
 
   @Input() id?: string;
   @Input() popoverProps?: PopoverProps;

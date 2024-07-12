@@ -3,16 +3,20 @@ using MainService.Core.DTOs.Services;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.Extensions;
 using MainService.Extensions;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace MainService.Controllers;
-public class ServicesController(IUnitOfWork uow, IServicesService service) : BaseApiController
+[Authorize]
+public class ServicesController(IUnitOfWork uow, IServicesService service, UserManager<AppUser> userManager, IMapper mapper) : BaseApiController
 {
-    private static readonly string subject = "usuario";
+    private static readonly string subject = "servicio";
     private static readonly string subjectArticle = "El";
 
         
@@ -80,11 +84,27 @@ public class ServicesController(IUnitOfWork uow, IServicesService service) : Bas
         return Ok();
     }
 
-    // [HttpGet("prescription-information/{doctorId}")]
-    // public async Task<ActionResult<PrescriptionInformationDto>> GetPrescriptionInformation([FromRoute] int doctorId)
-    // {
-    //     var item = await uow.ServiceRepository.GetPrescriptionInformationAsync(doctorId);
+    [HttpPost]
+    public async Task<ActionResult<ServiceDto>> CreateAsync([FromBody] ServiceCreateDto request)
+    {
+        var itemExists = await uow.ServiceRepository.GetByNameAsync(request.Name, User);
 
-    //     return item;
-    // }
+        if (itemExists != null) 
+        return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
+
+        var doctor = await userManager.Users
+            .Include(x => x.DoctorServices)
+                .ThenInclude(x => x.Service)
+            .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
+
+        var item = mapper.Map<Service>(request);
+
+        doctor.DoctorServices.Add(new(item));
+
+        await userManager.UpdateAsync(doctor);
+
+        var itemToReturn = await uow.ServiceRepository.GetDtoByIdAsync(item.Id);
+
+        return itemToReturn;
+    }
 }
