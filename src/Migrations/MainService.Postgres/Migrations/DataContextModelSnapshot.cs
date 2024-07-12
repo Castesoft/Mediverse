@@ -107,6 +107,9 @@ namespace MainService.Postgres.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("date");
 
+                    b.Property<string>("Education")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -173,6 +176,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime?>("PhoneNumberVerificationExpiryTime")
                         .HasMaxLength(100)
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Post")
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -297,6 +303,21 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("DoctorLinks");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NurseId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DoctorId", "NurseId");
+
+                    b.HasIndex("NurseId");
+
+                    b.ToTable("DoctorNurses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -329,6 +350,22 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorPhones");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DoctorId", "ServiceId");
+
+                    b.HasIndex("ServiceId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorServices");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorSignature", b =>
@@ -1055,6 +1092,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Link");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorNurses")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "Nurse")
+                        .WithMany("NursesDoctor")
+                        .HasForeignKey("NurseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Nurse");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
@@ -1091,6 +1147,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Phone");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorServices")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Service", "Service")
+                        .WithOne("DoctorService")
+                        .HasForeignKey("MainService.Models.Entities.DoctorService", "ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorSignature", b =>
@@ -1391,13 +1466,19 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("DoctorLinks");
 
+                    b.Navigation("DoctorNurses");
+
                     b.Navigation("DoctorPhones");
+
+                    b.Navigation("DoctorServices");
 
                     b.Navigation("DoctorSignature");
 
                     b.Navigation("Doctors");
 
                     b.Navigation("NurseClinic");
+
+                    b.Navigation("NursesDoctor");
 
                     b.Navigation("PatientEvents");
 
@@ -1476,6 +1557,8 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Service", b =>
                 {
+                    b.Navigation("DoctorService");
+
                     b.Navigation("ServicePhotos");
                 });
 

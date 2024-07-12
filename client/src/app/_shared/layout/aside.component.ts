@@ -83,7 +83,7 @@ import { RouterModule } from "@angular/router";
               </a>
             </div>
             <div class="menu-item">
-              <a class="menu-link" [routerLink]="[]">
+              <a class="menu-link" [routerLink]="['/home/services']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-user-square fs-2">
                 <span class="path1"></span>
@@ -91,7 +91,19 @@ import { RouterModule } from "@angular/router";
                 <span class="path3"></span>
               </i>
             </span>
-                <span class="menu-title">Staff</span>
+                <span class="menu-title">Servicios</span>
+              </a>
+            </div>
+            <div class="menu-item">
+              <a class="menu-link" [routerLink]="['/home/nurses']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+            <span class="menu-icon">
+              <i class="ki-duotone ki-user-square fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+            </span>
+                <span class="menu-title">Enfermeros</span>
               </a>
             </div>
             <div class="menu-item">

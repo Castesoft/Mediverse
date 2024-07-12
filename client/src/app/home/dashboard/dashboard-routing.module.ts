@@ -6,8 +6,6 @@ import { AppointmentsComponent } from 'src/app/home/dashboard/appointments/appoi
 import { LogisticsComponent } from 'src/app/home/dashboard/logistics.component';
 import { MultipurposeComponent } from 'src/app/home/dashboard/multipurpose.component';
 import { OverviewComponent } from 'src/app/home/dashboard/overview.component';
-import { PatientDetailsComponent } from 'src/app/home/dashboard/patients/patient-details/patient-details.component';
-import { PatientsComponent } from 'src/app/home/dashboard/patients/patients.component';
 import { PaymentsComponent } from 'src/app/home/dashboard/payments/payments.component';
 import { ProjectsComponent } from 'src/app/home/dashboard/projects.component';
 import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.component';
@@ -30,8 +28,6 @@ const routes: Routes = [
   // },
   { path: 'appointments', component: AppointmentsComponent },
   { path: 'appointments/:id', component: AppointmentDetailsComponent },
-  { path: 'patients', component: PatientsComponent },
-  { path: 'patients/:id', component: PatientDetailsComponent },
   { path: 'payments', component: PaymentsComponent },
   { path: 'account', component: AccountComponent },
   {

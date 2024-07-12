@@ -553,12 +553,43 @@ public static partial class SeedData
             return emailDomains[random.Next(emailDomains.Length)];
         }
 
+        public static string GetRandomMedicalSpecialty()
+        {
+            Random random = new();
+
+            string[] specialties = [
+                "Cardiología", "Dermatología", "Endocrinología", "Gastroenterología", "Geriatría", "Ginecología", "Hematología", "Infectología",
+                "Medicina deportiva", "Medicina interna", "Nefrología", "Neumología", "Neurología", "Nutriología", "Oftalmología", "Oncología",
+                "Ortopedia", "Otorrinolaringología", "Pediatría", "Psiquiatría", "Reumatología", "Traumatología", "Urología",
+            ];
+
+            return specialties[random.Next(specialties.Length)];
+        }
+
+        public static string GetRandomMedicalJobPosts()
+        {
+            Random random = new();
+
+            string[] jobPosts = [
+                "Médico general", "Médico especialista en cardiología", "Médico especialista en dermatología", "Médico especialista en endocrinología",
+                "Médico especialista en gastroenterología", "Médico especialista en geriatría", "Médico especialista en ginecología",
+                "Médico especialista en hematología", "Médico especialista en infectología", "Médico especialista en medicina deportiva",
+                "Médico especialista en medicina interna", "Médico especialista en nefrología", "Médico especialista en neumología",
+                "Médico especialista en neurología", "Médico especialista en nutriología", "Médico especialista en oftalmología",
+                "Médico especialista en oncología", "Médico especialista en ortopedia", "Médico especialista en otorrinolaringología",
+                "Médico especialista en pediatría", "Médico especialista en psiquiatría", "Médico especialista en reumatología",
+                "Médico especialista en traumatología", "Médico especialista en urología",
+            ];
+
+            return jobPosts[random.Next(jobPosts.Length)];
+        }
+
         public static string ConstructFullEmailAddress(string firstName, string lastName, string emailDomain, int index)
         {
             return $@"{ReplaceSpecialChars(firstName)}.{ReplaceSpecialChars(lastName)}.demo{index}@{emailDomain}.com".ToLower();
         }
 
-        public static List<AppUser> GenerateUsersForSeeding(int quantity)
+        public static List<AppUser> GenerateUsersForSeeding(int quantity, Roles role)
         {
             Random random = new();
             List<AppUser> users = [];
@@ -583,6 +614,12 @@ public static partial class SeedData
                     DateOfBirth = GenerateRandomDateOfBirth(1960, 2005),
                     Sex = sex,
                 };
+
+                if (role == Roles.Nurse || role == Roles.Doctor)
+                {
+                    user.Post = GetRandomMedicalJobPosts();
+                    user.Education = GetRandomMedicalSpecialty();
+                }
 
                 if (random.Next(2) == 0)
                     user.UserPhoto = new() { Photo = GetRandomProfilePicture(sex) };

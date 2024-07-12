@@ -66,7 +66,6 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   icons = inject(IconsService);
 
   key = input.required<string>();
-  isCompact = input.required<boolean>();
   mode = input.required<CatalogMode>();
   view = input.required<View>();
 

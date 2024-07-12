@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject, input } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Subject, takeUntil } from "rxjs";
-import { User, CreateForm, EditForm, DetailForm } from "src/app/_models/user";
+import { Service, CreateForm, EditForm, DetailForm } from "src/app/_models/service";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
@@ -10,29 +10,28 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { JsonPipe } from "@angular/common";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { UsersService } from "src/app/_services/users.service";
+import { ServicesService } from "src/app/_services/services.service";
 
 @Component({
   host: { class: 'pb-3', },
-  selector: 'div[userForm]',
-  templateUrl: './user-form.component.html',
+  selector: 'div[serviceForm]',
+  templateUrl: './service-form.component.html',
   standalone: true,
   imports: [ FontAwesomeModule, AlertModule, RouterModule, JsonPipe, ControlsModule, ],
 })
-export class UserFormComponent implements OnInit, OnDestroy {
+export class ServiceFormComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private formsService = inject(FormsService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
-  service = inject(UsersService);
+  service = inject(ServicesService);
   icons = inject(IconsService);
 
   id = input.required<number | null>();
   use = input.required<FormUse>();
   view = input.required<View>();
-  role = input.required<Role>();
 
-  item: User | null = null;
+  item: Service | null = null;
 
   form!: CreateForm | EditForm | DetailForm;
   returnUrl: string | null = null;
@@ -111,11 +110,11 @@ export class UserFormComponent implements OnInit, OnDestroy {
     if (this.use() === 'create') {
       this.form.group.reset();
       this.form.group.markAsPristine();
-      this.router.navigate([`${this.service.namingDictionary.get(this.role())!.catalogRoute}/${this.service.namingDictionary.get(this.role())!.plural}`]);
+      this.router.navigate([`${this.service.naming.catalogRoute}/${this.service.naming.plural}`]);
     } else if (this.use() === 'edit') {
       this.form.group.reset();
       this.form.group.markAsPristine();
-      this.router.navigate([`${this.service.namingDictionary.get(this.role())!.catalogRoute}/${this.item!.id}`]);
+      this.router.navigate([`${this.service.naming.catalogRoute}/${this.item!.id}`]);
     }
   }
 
@@ -128,11 +127,11 @@ export class UserFormComponent implements OnInit, OnDestroy {
   create() {
     const formValues = this.form.group.value;
     if (this.form.group.valid || !this.form.validation) {
-      this.service.create(formValues, this.role()).subscribe({
+      this.service.create(formValues).subscribe({
         next: (item) => {
           this.form.submitted = false;
           this.toastr.success(
-            this.service.namingDictionary.get(this.role())!.singularTitlecase + ' agregado',
+            this.service.naming.singularTitlecase + ' agregado',
             'Éxito',
           );
           this.form.group.reset();
@@ -141,7 +140,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
             this.service.hideNewModal();
           } else {
             if (this.returnUrl === null) {
-              this.router.navigate([`${this.service.namingDictionary.get(this.role())!.catalogRoute}/${item.id}`]);
+              this.router.navigate([`${this.service.naming.catalogRoute}/${item.id}`]);
             } else {
               this.router.navigate([this.returnUrl]);
             }
@@ -150,7 +149,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
         error: (error: any) => {
           this.form.errors = error.errors;
           this.toastr.error(
-            `${this.form.errors.length} errores al agregar ${this.service.namingDictionary.get(this.role())!.singular}`,
+            `${this.form.errors.length} errores al agregar ${this.service.naming.singular}`,
             'Validación del servidor',
           );
         },
@@ -161,22 +160,22 @@ export class UserFormComponent implements OnInit, OnDestroy {
   update() {
     const formValues = this.form.group.value;
     if (this.form.group.valid || !this.form.validation) {
-      this.service.update(this.item!.id, formValues, this.role()).subscribe({
+      this.service.update(this.item!.id, formValues).subscribe({
         next: () => {
           this.form.submitted = false;
           this.toastr.success(
-            this.service.namingDictionary.get(this.role())!.singularTitlecase + ' actualizado',
+            this.service.naming.singularTitlecase + ' actualizado',
             'Éxito',
           );
           this.form.group.reset();
           this.form.group.markAsPristine();
-          this.router.navigate([`${this.service.namingDictionary.get(this.role())!.catalogRoute}/${this.item!.id}`]);
+          this.router.navigate([`${this.service.naming.catalogRoute}/${this.item!.id}`]);
           this.service.hideEditModal();
         },
         error: (error: any) => {
           this.form.errors = error.errors;
           this.toastr.error(
-            `${this.form.errors.length} errores al actualizar ${this.service.namingDictionary.get(this.role())!.singular}`,
+            `${this.form.errors.length} errores al actualizar ${this.service.naming.singular}`,
             'Validación del servidor',
           );
         },

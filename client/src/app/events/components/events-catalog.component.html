@@ -47,7 +47,7 @@
         <table
           eventsTable
           [data]="mode() === 'select' ? service.getSelected$(key()) : []"
-          [isCompact]="isCompact()"
+
           [key]="key()"
           [mode]="'readonly'"
           [showHeaders]="false"
@@ -79,14 +79,14 @@
         <table
           eventsTable
           [data]="data"
-          [isCompact]="isCompact()"
+
           [mode]="mode()"
           [key]="key()"
         ></table>
       </div>
       <div
         tablePager
-        [isCompact]="isCompact()"
+
         [currentPage]="pagination.currentPage"
         (pageChanged)="service.onPageChanged(key(), $event)"
         [itemsPerPage]="pagination.itemsPerPage"

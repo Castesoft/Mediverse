@@ -8,6 +8,7 @@ import { OptionalSpanComponent } from "./helpers/optional-span.component";
 import { NewBadgeComponent } from "./helpers/new-badge.component";
 
 @Component({
+  host: { class: 'fv-row mb-7', },
   selector: '[controlTextarea]',
   templateUrl: './control-textarea.component.html',
   standalone: true,

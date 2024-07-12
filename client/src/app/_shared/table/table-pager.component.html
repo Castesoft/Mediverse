@@ -28,7 +28,7 @@
     <li [class.active]="page === currentPage" class="page-item">
       <button class="page-link pointer" type="button"
         (click)="page !== currentPage && navigateToPage(page); $event.preventDefault()" [attr.data-page]="itemsPerPage"
-        [attr.data-i]="page" [ngClass]="isCompact() ? 'fs--2' : 'fs--1'">
+        [attr.data-i]="page">
         {{ page | number}}
       </button>
     </li>

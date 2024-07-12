@@ -18,9 +18,19 @@ public class AppUser : IdentityUser<int>
     public byte[] PhoneNumberVerificationCodeSalt { get; set; }
     public DateTime? PhoneNumberVerificationExpiryTime { get; set; }
 
+    // Nurse properties
+    public string Education { get; set; }
+    public string Post { get; set; }
+    
+
     // Navigation properties
     public UserPhoto UserPhoto { get; set; }
+
     public List<DoctorService> DoctorServices { get; set; } = [];
+
+    public List<DoctorNurse> DoctorNurses { get; set; } = [];
+    public List<DoctorNurse> NursesDoctor { get; set; } = [];
+    
     public DoctorSignature DoctorSignature { get; set; }
     public DoctorInformation DoctorInformation { get; set; }
     public ICollection<PatientEvent> PatientEvents { get; set; } = [];

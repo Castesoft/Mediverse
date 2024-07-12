@@ -1,27 +1,13 @@
 <label
   [for]="id? id : controlName"
-  class="form-label"
+  class="fs-6 fw-semibold form-label mt-3"
+  [class.required]="service.isOptional(control) || !isReadonly"
   >
-  {{label}}
-  @if(service.isOptional(control)) { <span optionalSpan></span> }
-  @if (isNew()) { <span newBadge></span> }
+  <span>{{label}}</span>
 </label>
-<style>
-  .wrapper {
-      padding: 20px;
-      margin:15px 0;
-      background-color: #0f9d58;
-  }
-
-  textarea {
-      font-size:20px;
-      width:100%;
-  }
-</style>
 <textarea
-  class="form-control text-1000 fs-0"
+  class="form-control form-control-solid"
   [id]="id ? id : controlName"
-  [ngStyle]="{'height': fill ? '265px' : '150px', 'box-sizing': 'border-box !important'}"
   [formControl]="control"
   autocomplete="off"
   [attr.autofocus]="autofocus() ? true : null"

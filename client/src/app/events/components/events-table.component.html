@@ -4,7 +4,7 @@
   [columns]="columns"
   [params]="params"
   (onSelectAll)="service.selectAll(key(), $event)"
-  [isCompact]="isCompact()"
+
   [mode]="mode()"
   (onParamsChange)="service.onSortOptionsChange(key(), $event)"
 ></thead>
@@ -14,8 +14,7 @@
       @switch (mode()) {
         @case ("view") {
           <td
-            [ngClass]="isCompact() ? 'py-1 fs--1 pe-3 ps-1 border-none' : ''"
-            class="fs--1 align-middle"
+            class="py-1 fs--1 pe-3 ps-1 border-none"
           >
             <div class="form-check form-check-sm form-check-custom form-check-solid">
               <input
@@ -42,10 +41,7 @@
           </td>
         }
         @case ("multiselect") {
-          <td
-            [ngClass]="isCompact() ? 'py-1 fs--1 pe-3 ps-1 border-none' : ''"
-            class="fs--1 align-middle"
-          >
+          <td class="py-1 fs--1 pe-3 ps-1 border-none" >
             <div class="form-check form-check-sm form-check-custom form-check-solid">
               <input
                 class="form-check-input"

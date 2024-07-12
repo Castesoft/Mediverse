@@ -1,14 +1,14 @@
 import { Component, inject, OnInit, viewChild } from "@angular/core";
 import { CatalogMode, FormUse, Role, View } from "src/app/_models/types";
-import { User } from "src/app/_models/user";
-import { UsersService } from "src/app/_services/users.service";
+import { Service } from "src/app/_models/service";
+import { ServicesService } from "src/app/_services/services.service";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
-import { UsersFilterFormComponent } from "src/app/users/components/users-filter-form.component";
-import { UserDetailComponent, UserEditComponent, UserNewComponent } from "src/app/users/views";
+import { ServicesCatalogComponent } from "src/app/services/components/services-catalog.component";
+import { ServicesFilterFormComponent } from "src/app/services/components/services-filter-form.component";
+import { ServiceDetailComponent, ServiceEditComponent, ServiceNewComponent } from "src/app/services/views";
 
 @Component({
-  selector: 'user-edit-modal',
+  selector: 'service-edit-modal',
   template: `
     <div modalContent>
       @if (title) {
@@ -16,30 +16,30 @@ import { UserDetailComponent, UserEditComponent, UserNewComponent } from "src/ap
       }
       <div modalBody>
         <div
-          userEditView
+          serviceEditView
           [id]="id"
           [use]="use"
           [view]="'modal'"
           [key]="undefined"
           [item]="item"
-          [role]="role"
+
         ></div>
       </div>
     </div>
   `,
   standalone: true,
-  imports: [UserEditComponent, ModalWrapperModule],
+  imports: [ServiceEditComponent, ModalWrapperModule],
 })
-export class UserEditModalComponent {
+export class ServiceEditModalComponent {
   id!: number;
   use!: FormUse;
   title?: string;
-  item!: User;
-  role!: Role;
+  item!: Service;
+
 }
 
 @Component({
-  selector: 'user-edit-modal',
+  selector: 'service-edit-modal',
   template: `
     <div modalContent>
       @if (title) {
@@ -47,59 +47,59 @@ export class UserEditModalComponent {
       }
       <div modalBody>
         <div
-          userDetailView
+          serviceDetailView
           [id]="id"
           [use]="use"
           [view]="'modal'"
           [key]="key"
           [item]="item"
-          [role]="role"
+
         ></div>
       </div>
     </div>
   `,
   standalone: true,
-  imports: [UserDetailComponent, ModalWrapperModule],
+  imports: [ServiceDetailComponent, ModalWrapperModule],
 })
-export class UserDetailModalComponent {
+export class ServiceDetailModalComponent {
   id!: number;
   use!: FormUse;
   title?: string;
   key!: string;
-  item!: User;
-  role!: Role;
+  item!: Service;
+
 }
 
 @Component({
-  selector: 'user-new-modal',
+  selector: 'service-new-modal',
   template: `
     <div modalContent>
       @if (title) {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div userNewView [use]="use" [view]="'modal'" [role]="role"></div>
+        <div serviceNewView [use]="use" [view]="'modal'" ></div>
       </div>
     </div>
   `,
   standalone: true,
-  imports: [UserNewComponent, ModalWrapperModule],
+  imports: [ServiceNewComponent, ModalWrapperModule],
 })
-export class UserNewModalComponent {
+export class ServiceNewModalComponent {
   use!: FormUse;
   title?: string;
-  role!: Role;
+
 }
 
 @Component({
-  selector: 'users-filter-modal',
+  selector: 'services-filter-modal',
   template: `
     <div modalContent>
       @if (title) {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div filterForm [key]="key" [formId]="formId" [role]="role"></div>
+        <div filterForm [key]="key" [formId]="formId" ></div>
       </div>
       <div
         modalFooterFilters
@@ -110,17 +110,17 @@ export class UserNewModalComponent {
     </div>
   `,
   standalone: true,
-  imports: [UsersFilterFormComponent, ModalWrapperModule],
+  imports: [ServicesFilterFormComponent, ModalWrapperModule],
 })
-export class UsersFilterModalComponent implements OnInit {
-  service = inject(UsersService);
+export class ServicesFilterModalComponent implements OnInit {
+  service = inject(ServicesService);
 
   formId!: string;
   key!: string;
-  role!: Role;
+
   title?: string;
 
-  form = viewChild.required(UsersFilterFormComponent);
+  form = viewChild.required(ServicesFilterFormComponent);
 
   onReset = () =>
     this.form()!.service.resetForm(this.key, this.form()!.form);
@@ -132,7 +132,7 @@ export class UsersFilterModalComponent implements OnInit {
 }
 
 @Component({
-  selector: 'users-catalog-modal',
+  selector: 'services-catalog-modal',
   template: `
     @defer {
       <div modalContent>
@@ -141,10 +141,9 @@ export class UsersFilterModalComponent implements OnInit {
         }
         <div modalBody>
           <div
-            usersCatalog
+            servicesCatalog
             class="modal-body py-3 px-4"
             [mode]="mode"
-            [role]="role"
             [key]="key"
             [view]="view"
           ></div>
@@ -153,11 +152,11 @@ export class UsersFilterModalComponent implements OnInit {
     }
   `,
   standalone: true,
-  imports: [UsersCatalogComponent, ModalWrapperModule],
+  imports: [ServicesCatalogComponent, ModalWrapperModule],
 })
-export class UsersCatalogModalComponent {
+export class ServicesCatalogModalComponent {
   key!: string;
-  role!: Role;
+
   isCompact = true;
   mode!: CatalogMode;
   view: View = 'modal';

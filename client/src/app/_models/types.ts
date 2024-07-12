@@ -130,7 +130,7 @@ export type Section = {
 };
 
 export type Sections = 'admin' | 'maintenance' | 'utils' | 'reports' | 'codes' | 'events'
-  | 'males' | 'females' | 'users' | 'donors' | 'medicines' | 'customers' | 'foods' | 'irons' | 'relocations' | 'sales' | 'treatments' | 'weighings' | 'upp' | 'records' | 'animals' | 'feedings' | 'semens' | 'cells';
+  | 'males' | 'services' | 'users' | 'donors' | 'medicines' | 'customers' | 'foods' | 'irons' | 'relocations' | 'sales' | 'treatments' | 'weighings' | 'upp' | 'records' | 'animals' | 'feedings' | 'semens' | 'cells';
 ;
 
 export type SectionDictionary = {

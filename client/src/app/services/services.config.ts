@@ -2,43 +2,57 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from "@angular/router";
-import {CatalogMode, FormUse, Role, Sections, View} from "src/app/_models/types";
-import {CompactTableService} from "src/app/_services/compact-table.service";
-import {EventsService} from "src/app/_services/events.service";
-import {Event} from "src/app/_models/event";
-import {GuidService} from "src/app/_services/guid.service";
-import {LayoutModule} from "src/app/_shared/layout.module";
-import {EventsCalendarComponent} from "src/app/events/components/events-calendar.component";
-import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
-import {EventDetailComponent, EventEditComponent, EventNewComponent} from "src/app/events/views";
+import { Account } from "src/app/_models/account";
+import { CatalogMode, FormUse, Role, Sections, View } from "src/app/_models/types";
+import { Service } from "src/app/_models/service";
+import { AccountService } from "src/app/_services/account.service";
+import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
+import { CompactTableService } from "src/app/_services/compact-table.service";
+import { GuidService } from "src/app/_services/guid.service";
+import { ServicesService } from "src/app/_services/services.service";
+import { LayoutModule } from "src/app/_shared/layout.module";
+import { ServicesCatalogComponent } from "src/app/services/components/services-catalog.component";
+import { ServiceDetailComponent, ServiceEditComponent, ServiceNewComponent } from "src/app/services/views";
 
 @Component({
-  selector: 'events-route',
+  selector: 'services-route',
   template: `<router-outlet></router-outlet>`,
 })
-export class EventsComponent implements OnInit {
-    ngOnInit(): void {
+export class ServicesComponent implements OnInit {
+  accountService = inject(AccountService);
+  breadcrumbService = inject(BreadcrumbService);
 
-    }
+  account: Account | null = null;
+  label?: string;
+
+  ngOnInit(): void {
+    this.account = this.accountService.current();
+    this.breadcrumbService.breadcrumb$.subscribe({
+      next: breadcrumb => {
+        this.label = breadcrumb;
+      }
+    });
+  }
 }
 
 @Component({
-  selector: 'events-catalog-route',
+  selector: 'services-catalog-route',
   template: `
   <div card>
     <div
-      eventsCalendar
+      servicesCatalog
       [mode]="mode"
       [key]="key"
       [view]="view"
+
     ></div>
   </div>
   `,
   standalone: true,
-  imports: [RouterModule, EventsCatalogComponent, EventsCalendarComponent, LayoutModule,],
+  imports: [RouterModule, ServicesCatalogComponent, LayoutModule,],
 })
 export class CatalogComponent implements OnInit {
-  service = inject(EventsService);
+  service = inject(ServicesService);
   compact = inject(CompactTableService);
   guid = inject(GuidService);
 
@@ -46,12 +60,12 @@ export class CatalogComponent implements OnInit {
   view: View = 'page';
   mode: CatalogMode = 'view';
   key = this.guid.gen();
-  section: Sections = 'events';
+  section: Sections = 'services';
   role: Role = 'Patient';
   label: string;
 
   constructor() {
-    this.label = this.service.naming!.title;
+    this.label = this.service.naming.title;
   }
 
   ngOnInit(): void {
@@ -60,33 +74,34 @@ export class CatalogComponent implements OnInit {
 }
 
 @Component({
-  selector: 'event-detail-route',
+  selector: 'service-detail-route',
   template: `
     @if (id && item) {
       <div
-        eventDetailView
+        serviceDetailView
         [id]="id"
         [use]="use"
         [view]="view"
         [item]="item"
         [key]="key"
+
       ></div>
     }
   `,
   standalone: true,
-  imports: [RouterModule, EventDetailComponent, LayoutModule,],
+  imports: [RouterModule, ServiceDetailComponent, LayoutModule,],
 })
 export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  item?: Event;
+  item?: Service;
   id?: number;
   use: FormUse = 'detail';
   view: View = 'page';
   label?: string;
   key?: string;
-  section: Sections = 'events';
+  section: Sections = 'services';
   role: Role = 'Patient';
 
   ngOnInit(): void {
@@ -98,7 +113,7 @@ export class DetailComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        if (this.item) this.label = this.item.name;
       },
     });
     const navigation = this.router.getCurrentNavigation();
@@ -106,32 +121,33 @@ export class DetailComponent implements OnInit {
   }
 }
 @Component({
-  selector: 'event-edit-route',
+  selector: 'service-edit-route',
   template: `
       @if (id && item) {
         <div
-          eventEditView
+          serviceEditView
           [id]="id"
           [use]="use"
           [view]="view"
           [key]="key"
           [item]="item"
+
         ></div>
       }
   `,
   standalone: true,
-  imports: [EventEditComponent, RouterModule, LayoutModule,],
+  imports: [ServiceEditComponent, RouterModule, LayoutModule,],
 })
 export class EditComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  item?: Event;
+  item?: Service;
   id?: number;
   use: FormUse = 'edit';
   view: View = 'page';
   label?: string;
   key = undefined;
-  section: Sections = 'events';
+  section: Sections = 'services';
   role: Role = 'Patient';
 
   ngOnInit(): void {
@@ -143,18 +159,18 @@ export class EditComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        if (this.item) this.label = this.item.name;
       },
     });
   }
 }
 
 @Component({
-  selector: 'event-new-route',
-  template: `<div eventNewView [use]="use" [view]="view"
+  selector: 'service-new-route',
+  template: `<div serviceNewView [use]="use" [view]="view"
   ></div>`,
   standalone: true,
-  imports: [EventNewComponent, RouterModule, LayoutModule,],
+  imports: [ServiceNewComponent, RouterModule, LayoutModule,],
 })
 export class NewComponent {
   use: FormUse = 'create';
@@ -162,40 +178,40 @@ export class NewComponent {
   role: Role = 'Patient';
 }
 
-export const itemResolver: ResolveFn<Event | null> = (route, state) => {
-  const service = inject(EventsService);
+export const itemResolver: ResolveFn<Service | null> = (route, state) => {
+  const service = inject(ServicesService);
   const id = +route.paramMap.get('id')!;
   return service.getById(id);
 };
 
 export const titleDetailResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(EventsService);
+  const service = inject(ServicesService);
   const id = +route.paramMap.get('id')!;
   service.getById(id).subscribe();
-  const event = service.getCurrent();
-  if (!event) return 'Detalle de cita';
-  const title = `Detalle de cita - ${event.fullName}`;
+  const item = service.getCurrent();
+  if (!item) return 'Detalle de servicio';
+  const title = `Detalle de servicio - ${item.name}`;
   return title;
 }
 
 export const titleEditResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(EventsService);
+  const service = inject(ServicesService);
   const id = +route.paramMap.get('id')!;
   service.getById(id).subscribe();
-  const event = service.getCurrent();
-  if (!event) return 'Editar cita';
-  const title = `Editar cita - ${event.fullName}`;
+  const item = service.getCurrent();
+  if (!item) return 'Editar servicio';
+  const title = `Editar servicio - ${item.name}`;
   return title;
 }
 
 @NgModule({
   imports: [RouterModule.forChild([
     {
-      path: '', title: 'Citas', data: { breadcrumb: 'Citas', },
-      component: EventsComponent, runGuardsAndResolvers: 'always',
+      path: '', title: 'Servicios', data: { breadcrumb: 'Servicios', },
+      component: ServicesComponent, runGuardsAndResolvers: 'always',
       children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de citas', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'create', component: NewComponent, title: 'Crear nuevo cita', data: { breadcrumb: 'Nuevo', }, },
+        { path: '', component: CatalogComponent, title: 'Catálogo de servicios', data: { breadcrumb: 'Catálogo', }, },
+        { path: 'create', component: NewComponent, title: 'Crear nuevo servicio', data: { breadcrumb: 'Nuevo', }, },
         {
           path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
           component: DetailComponent,
@@ -211,12 +227,12 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
   ])],
   exports: [RouterModule]
 })
-export class EventsRoutingModule { }
+export class ServicesRoutingModule { }
 
 @NgModule({
   declarations: [
-    EventsComponent,
+    ServicesComponent,
   ],
-  imports: [ CommonModule, EventsRoutingModule, LayoutModule, ]
+  imports: [ CommonModule, ServicesRoutingModule, LayoutModule, ]
 })
-export class EventsModule { }
+export class ServicesModule { }

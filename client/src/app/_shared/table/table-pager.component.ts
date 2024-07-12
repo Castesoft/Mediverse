@@ -4,6 +4,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconsService } from 'src/app/_services/icons.service';
 
 @Component({
+  host: { class: 'row align-items-center justify-content-between pt-2 pe-0 fs--1', },
   selector: '[tablePager]',
   templateUrl: './table-pager.component.html',
   standalone: true,
@@ -13,14 +14,9 @@ export class TablePagerComponent implements OnInit, OnChanges {
   // injections
   icons = inject(IconsService);
 
-  @HostBinding('class') get hostClasses() {
-    return this.isCompact() ? 'row align-items-center justify-content-between pt-2 pe-0 fs--1' : 'row align-items-center justify-content-end pt-4 pe-0 fs--1';
-  }
-
   @Input() totalItems!: number;
   @Input() itemsPerPage!: number;
   @Input() currentPage: number = 1;
-  isCompact = input.required<boolean>();
 
   @Output() pageChanged = new EventEmitter<number>();
   @Output() loadMore = new EventEmitter<void>();

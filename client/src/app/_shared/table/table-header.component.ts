@@ -36,7 +36,6 @@ export class TableHeaderComponent implements OnInit, OnChanges {
   // required
   columns = input.required<Column[]>();
   params = input.required<any>();
-  isCompact = input.required<boolean>();
   mode = input.required<CatalogMode>();
   show = input<boolean>(true);
 
