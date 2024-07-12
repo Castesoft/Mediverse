@@ -73,10 +73,7 @@ export const appConfig: ApplicationConfig = {
         loadChildren: () => import('./home/home.config').then(x => x.HomeModule),
       }
     ]),
-    provideHttpClient(
-      withInterceptors([jwtInterceptor, errorInterceptor, loadingInterceptor]),
-      withFetch(),
-    ),
+    provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor, loadingInterceptor])),
     provideAnimations(),
     provideAnimationsAsync(),
     // localeEsMX,

@@ -12,7 +12,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { Event, CreateForm, EditForm, DetailForm } from "src/app/_models/event";
-import { FormUse, View } from "src/app/_models/types";
+import {BadRequest, FormUse, View} from "src/app/_models/types";
 import { User } from "src/app/_models/user";
 import { FormsService } from "src/app/_services/forms.service";
 import { GuidService } from "src/app/_services/guid.service";
@@ -40,7 +40,7 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
     @if ((use() === "create" && form) ||
     (use() === "edit" && item && form) ||
     (use() === "detail" && item)) {
-      <div errorsAlert [errors]="form.errors"></div>
+      @if(form.error){<div errorsAlert [error]="form.error"></div>}
 
       <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
 
@@ -51,14 +51,14 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
                 <span class="fw-semibold text-gray-500">({{ patient.fullName }})</span>
               }
             </ng-template>
-            @if (usersService.hasSelected(selectPatientKey)) {
+            @if (patient) {
               <div userCardCompact [role]="'Patient'" [key]="selectPatientKey" [view]="view()"></div>
             }
 
             <div class="my-4">
-              <button class="btn btn-light-primary me-2"
+              <button class="btn btn-light-primary me-2" type="button"
                       (click)="usersService.showCatalogModal($event, selectPatientKey, 'select', 'Patient')">
-                @if (!usersService.hasSelected(selectPatientKey)) {
+                @if (!patient) {
                   Seleccionar paciente
                 } @else {
                   Cambiar paciente
@@ -67,13 +67,13 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
               @if (!patientPanelOpen()) {
                 <button
                   matTooltip="Quite al paciente actual para poder agregar uno nuevo."
-                  [matTooltipDisabled]="!patient"
+                  [matTooltipDisabled]="!patient" type="button"
                   class="btn btn-light-success me-2" (click)="handlePatientPanelClick($event)">
                   Agregar
                 </button>
               }
-              @if (usersService.hasSelected(selectPatientKey)) {
-                <button class="btn btn-light-danger me-2" (click)="usersService.setSelected$(selectPatientKey)">Quitar
+              @if (patient) {
+                <button class="btn btn-light-danger me-2" type="button" (click)="usersService.setSelected$(selectPatientKey)">Quitar
                 </button>
               }
             </div>
@@ -90,16 +90,9 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
                 <mat-expansion-panel-header>
                   <mat-panel-title> Crear nuevo paciente</mat-panel-title>
                 </mat-expansion-panel-header>
-
-                <div userForm [view]="'page'" [role]="'Patient'" [id]="null" [use]="'create'"></div>
-
+                <div userForm [view]="'inline'" [role]="'Patient'" [id]="null" [use]="'create'" [key]="selectPatientKey" (user)="usersService.setSelected$(selectPatientKey, $event)"></div>
               </mat-expansion-panel>
             </mat-accordion>
-
-
-            <!--            <div>-->
-            <!--              <button mat-button matStepperNext>Next</button>-->
-            <!--            </div>-->
           </mat-step>
           <mat-step [stepControl]="form.group.get('dateTime')!">
             <ng-template matStepLabel>Fecha y hora
@@ -165,14 +158,14 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
                 <span class="fw-semibold text-gray-500">({{ service.name }}) {{service.price | currency}}</span>
               }
             </ng-template>
-            @if (servicesService.hasSelected(selectServiceKey)) {
+            @if (service) {
               <div serviceCardCompact [key]="selectServiceKey" [view]="view()"></div>
             }
 
             <div class="my-4">
-              <button class="btn btn-light-primary me-2"
+              <button class="btn btn-light-primary me-2" type="button"
                       (click)="servicesService.showCatalogModal($event, selectServiceKey, 'select')">
-                @if (!servicesService.hasSelected(selectServiceKey)) {
+                @if (!service) {
                   Seleccionar servicio
                 } @else {
                   Cambiar servicio
@@ -181,13 +174,13 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
               @if (!servicePanelOpen()) {
                 <button
                   matTooltip="Quite al servicio actual para poder agregar uno nuevo."
-                  [matTooltipDisabled]="!service"
+                  [matTooltipDisabled]="!service" type="button"
                   class="btn btn-light-success me-2" (click)="handleServicePanelClick($event)">
                   Agregar
                 </button>
               }
-              @if (servicesService.hasSelected(selectServiceKey)) {
-                <button class="btn btn-light-danger me-2" (click)="servicesService.setSelected$(selectServiceKey)">Quitar
+              @if (service) {
+                <button class="btn btn-light-danger me-2" type="button" (click)="servicesService.setSelected$(selectServiceKey)">Quitar
                 </button>
               }
             </div>
@@ -205,18 +198,11 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
                   <mat-panel-title> Crear nuevo servicio</mat-panel-title>
                 </mat-expansion-panel-header>
 
-                <div serviceForm [view]="'page'" [id]="null" [use]="'create'"></div>
+                <div serviceForm [view]="'inline'" [id]="null" [use]="'create'" [key]="selectServiceKey" (itemToReturn)="servicesService.setSelected$(selectServiceKey, $event)"></div>
 
               </mat-expansion-panel>
             </mat-accordion>
-            <!--          <div>-->
-            <!--            <button mat-button matStepperPrevious>Back</button>-->
-            <!--            <button mat-button (click)="stepper.reset()">Reset</button>-->
-            <!--          </div>-->
           </mat-step>
-
-          <!-- especialistas -->
-
           <mat-step>
             <ng-template matStepLabel>
             <span class="fw-semibold text-gray-500">
@@ -479,8 +465,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
           }
         },
         error: (error: any) => {
-          this.form.errors = error.errors;
-          this.matSnackBar.open(`${this.form.errors.length} errores al agregar ${this.eventsService.naming!.singular}`, 'Cerrar', { duration: 3000, });
+          this.form.error = error;
         },
       });
     }
@@ -498,9 +483,8 @@ export class EventFormComponent implements OnInit, OnDestroy {
           this.router.navigate([`${this.eventsService.naming!.catalogRoute}/${this.item!.id}`]);
           this.eventsService.hideEditModal();
         },
-        error: (error: any) => {
-          this.form.errors = error.errors;
-          this.matSnackBar.open(`${this.form.errors.length} errores al actualizar ${this.eventsService.naming!.singular}`, 'Cerrar', { duration: 3000, });
+        error: (error: BadRequest) => {
+          this.form.error = error;
         },
       });
     }

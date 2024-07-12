@@ -59,9 +59,9 @@ export class UsersService {
       articleSex: "masculine",
     }],
     [ "Nurse", {
-      singular: "enfermero", plural: "enfermeros", pluralTitlecase: "Enfermeros", singularTitlecase: "Enfermero",
+      singular: "especialista", plural: "especialistas", pluralTitlecase: "Especialistas", singularTitlecase: "Especialista",
       catalogRoute: "/home/nurses", createRoute: "/home/nurses/create",
-      title: "Enfermeros", undefinedArticle: "un", definedArticle: "el", undefinedArticlePlural: "unos", definedArticlePlural: "los",
+      title: "Especialistas", undefinedArticle: "un", definedArticle: "el", undefinedArticlePlural: "unos", definedArticlePlural: "los",
       articleSex: "masculine",
     }],
     [ "Patient", {
@@ -70,6 +70,44 @@ export class UsersService {
       title: "Pacientes", undefinedArticle: "un", definedArticle: "el", undefinedArticlePlural: "unos", definedArticlePlural: "los",
       articleSex: "masculine",
     }],
+  ]);
+
+  columnDictionary = new Map<Role, Column[]>([
+    ["Admin", [
+      { label: "Admins", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Doctor", [
+      { label: "Paciente", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Patient", [
+      { label: "Paciente", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Staff", [
+      { label: "Asistente", name: "name", options: { justify: 'center' } },
+      { label: "Edad", name: "age" },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Cuenta", name: "hasAccount" },
+      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    ]],
+    ["Nurse", [
+      { label: "Especialista", name: "name", options: { justify: 'center' } },
+      { label: "Sexo", name: "sex", options: { justify: 'end' } },
+      { label: "Puesto", name: "post" },
+      { label: "Estudios", name: "education" },
+      { label: "Fecha de incorporación", name: "createdAt" },
+    ]],
   ]);
 
   private cacheMap: Map<string, Map<string, PaginatedResult<User[]>>> = new Map<string, Map<string, PaginatedResult<User[]>>>();
@@ -248,13 +286,22 @@ export class UsersService {
     );
   }
 
-  create(formData: FormData, role: Role): Observable<User> {
-    return this.http.post<User>(this.baseUrl, formData).pipe(
-      tap((response: User) => {
+  create(formData: FormData, role: Role, view: View, key: string): Observable<User> {
+    return this.http.post<User>(`${this.baseUrl}${role}`, formData).pipe(
+      tap(response => {
         // TODO
+        this.loadPagedList(role, key, this.getParam(key)).pipe();
+        this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
-      })
+        this.matSnackBar.open(`${this.namingDictionary.get(role)!.definedArticle} ${this.namingDictionary.get(role)!.singular} ${response.fullName} fue creado exitosamente`, "Cerrar", { duration: 3000 });
+        if (view === "modal") {
+          this.hideNewModal();
+        } else if (view === 'page') {
+          this.router.navigate([this.namingDictionary.get(role)!.catalogRoute, response.id]);
+        }
+        return response;
+      }),
     );
   }
 
@@ -501,42 +548,4 @@ export class UsersService {
     const items = getItemsByKey<User>(key, this.cacheMap);
     return items.filter((item) => item.isSelected).map((item) => item.id).join(",") || "";
   };
-
-  columnDictionary = new Map<Role, Column[]>([
-    ["Admin", [
-      { label: "Admins", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
-    ]],
-    ["Doctor", [
-      { label: "Paciente", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
-    ]],
-    ["Patient", [
-      { label: "Paciente", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
-    ]],
-    ["Staff", [
-      { label: "Asistente", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
-    ]],
-    ["Nurse", [
-      { label: "Especialista", name: "name", options: { justify: 'center' } },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Puesto", name: "post" },
-      { label: "Estudios", name: "education" },
-      { label: "Fecha de incorporación", name: "createdAt" },
-    ]],
-  ]);
 }

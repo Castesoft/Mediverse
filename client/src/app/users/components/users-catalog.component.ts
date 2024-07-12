@@ -182,7 +182,7 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
             <users-filter-menu></users-filter-menu>
             <button exportBtn (click)="service.downloadXLSX$(key(), role())"></button>
             <button createBtn [naming]="service.namingDictionary.get(role())!"
-                    (click)="service.clickLink(role(), null, null, key(), 'create', 'modal')"
+                    (click)="service.clickLink(role(), null, null, key(), 'create', view())"
             ></button>
           </div>
         }

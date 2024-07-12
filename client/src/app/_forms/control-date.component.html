@@ -11,7 +11,8 @@
   [dateFormat]="timepicker() ? 'H:i' : 'Y-m-d'"
   [formControl]="control"
   placeholder="{{placeholder}}"
-  class="form-control form-control-solid flatpickr-input"
+  class="form-control flatpickr-input"
+  [class.form-control-solid]="style() === 'solid'"
   [id]="id ? id : controlName"
   [attr.autofocus]="autofocus() ? true : null"
   [ngClass]="{

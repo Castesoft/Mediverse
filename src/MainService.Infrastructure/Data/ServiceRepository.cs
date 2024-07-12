@@ -54,6 +54,12 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
         return item;
     }
 
+    public async Task<Service> GetByNameAsync(string name, ClaimsPrincipal user)
+        => await context.Services
+            .Include(x => x.DoctorService)
+            .Where(x => x.DoctorService.DoctorId == user.GetUserId())
+            .SingleOrDefaultAsync(x => x.Name == name);
+
     public async Task<ServiceDto> GetDtoByIdAsync(int id)
     {
         var item = await context.Services

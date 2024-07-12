@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, inject, input } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject, input, output } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Subject, takeUntil } from "rxjs";
 import { Service, CreateForm, EditForm, DetailForm } from "src/app/_models/service";
-import { FormUse, Role, View } from "src/app/_models/types";
+import {BadRequest, FormControlStyles, FormUse, Role, View} from "src/app/_models/types";
 import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -11,6 +11,7 @@ import { AlertModule } from "ngx-bootstrap/alert";
 import { JsonPipe } from "@angular/common";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { ServicesService } from "src/app/_services/services.service";
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   host: { class: 'pb-3', },
@@ -30,8 +31,13 @@ export class ServiceFormComponent implements OnInit, OnDestroy {
   id = input.required<number | null>();
   use = input.required<FormUse>();
   view = input.required<View>();
+  key = input<string>();
+  style = input<FormControlStyles>('solid');
+
+  itemToReturn = output<Service>();
 
   item: Service | null = null;
+  _key = createId();
 
   form!: CreateForm | EditForm | DetailForm;
   returnUrl: string | null = null;
@@ -127,31 +133,16 @@ export class ServiceFormComponent implements OnInit, OnDestroy {
   create() {
     const formValues = this.form.group.value;
     if (this.form.group.valid || !this.form.validation) {
-      this.service.create(formValues).subscribe({
-        next: (item) => {
+      this.service.create(formValues, this.view(), this._key).subscribe({
+        next: item => {
+          this.itemToReturn.emit(item);
           this.form.submitted = false;
-          this.toastr.success(
-            this.service.naming.singularTitlecase + ' agregado',
-            'Éxito',
-          );
           this.form.group.reset();
           this.form.group.markAsPristine();
-          if (this.view() === 'modal') {
-            this.service.hideNewModal();
-          } else {
-            if (this.returnUrl === null) {
-              this.router.navigate([`${this.service.naming.catalogRoute}/${item.id}`]);
-            } else {
-              this.router.navigate([this.returnUrl]);
-            }
-          }
         },
-        error: (error: any) => {
-          this.form.errors = error.errors;
-          this.toastr.error(
-            `${this.form.errors.length} errores al agregar ${this.service.naming.singular}`,
-            'Validación del servidor',
-          );
+        error: (error: BadRequest) => {
+          console.log('error from component',error)
+          this.form.error = error;
         },
       });
     }
@@ -173,11 +164,7 @@ export class ServiceFormComponent implements OnInit, OnDestroy {
           this.service.hideEditModal();
         },
         error: (error: any) => {
-          this.form.errors = error.errors;
-          this.toastr.error(
-            `${this.form.errors.length} errores al actualizar ${this.service.naming.singular}`,
-            'Validación del servidor',
-          );
+          this.form.error = error;
         },
       });
     }

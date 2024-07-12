@@ -5,7 +5,8 @@
 <input [type]="type" [formControl]="control" [placeholder]="placeholder" [autocomplete]="autocomplete"
        [spellcheck]="spellcheck" [attr.role]="role" [id]="id ? id : controlName" [attr.list]="controlName + 'datalist'"
        [attr.autofocus]="autofocus() ? 'autofocus' : null" [readonly]="isReadonly"
-       class="form-control form-control-solid mb-3 mb-lg-0"
+       class="form-control mb-3 mb-lg-0"
+       [class.form-control-solid]="style() === 'solid'"
        [ngClass]="{
       'is-invalid': submitted() && control.invalid,
       'is-valid': submitted() && control.valid,

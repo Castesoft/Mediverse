@@ -3,6 +3,7 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JsonPipe } from '@angular/common';
 import { ControlsModule } from 'src/app/_forms/controls.module';
+import {BadRequest} from "src/app/_models/types";
 import { AccountService } from 'src/app/_services/account.service';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { createId } from '@paralleldrive/cuid2';
@@ -13,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class LoginForm {
   id: string;
   group: FormGroup;
-  errors: string[] = [];
+  error?: BadRequest;
   validation = false;
   submitted = false;
 

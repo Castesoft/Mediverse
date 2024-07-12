@@ -1,3 +1,4 @@
+import {HttpErrorResponse} from "@angular/common/http";
 import {FormGroup} from "@angular/forms";
 
 export interface Column {
@@ -137,7 +138,7 @@ export type SectionDictionary = {
   [key in Sections]: Section;
 };
 
-export type View = 'page' | 'modal';
+export type View = 'page' | 'modal' | 'inline';
 
 export interface Identifiable {
   id: number | string;
@@ -152,3 +153,31 @@ export interface BaseForm {
 }
 
 export type Role = 'Admin' | 'Doctor' | 'Patient' | 'Staff' | 'Nurse';
+
+export type Errors = 'BadRequest' | 'ValidationError';
+
+export class BadRequest {
+  type: Errors;
+  message?: string;
+  validationErrors: string[] = [];
+  error: any;
+
+  constructor(error: HttpErrorResponse) {
+    this.error = error;
+    this.message = error.error;
+    if (error.error.errors) {
+      this.type = 'ValidationError';
+      const modalStateErrors = [];
+      for (const key in error.error.errors) {
+        if (error.error.errors[key]) {
+          modalStateErrors.push(error.error.errors[key])
+        }
+      }
+      this.validationErrors = modalStateErrors.flat();
+    } else {
+      this.type = 'BadRequest';
+    }
+  }
+}
+
+export type FormControlStyles = 'solid' | 'normal';

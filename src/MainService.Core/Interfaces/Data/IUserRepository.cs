@@ -12,6 +12,7 @@ public interface IUserRepository
     void Delete(AppUser item);
     Task<AppUser> GetByIdAsync(int id);
     Task<UserDto> GetDtoByIdAsync(int id);
+    Task<UserDto> GetDtoByEmailAsync(string email);
     Task<AppUser> GetByIdAsNoTrackingAsync(int id);
     Task<PrescriptionInformationDto> GetPrescriptionInformationAsync(int doctorId);
     Task<List<AppUser>> GetAllAsync();

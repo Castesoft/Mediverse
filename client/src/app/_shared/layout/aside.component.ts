@@ -103,7 +103,7 @@ import { RouterModule } from "@angular/router";
                 <span class="path3"></span>
               </i>
             </span>
-                <span class="menu-title">Enfermeros</span>
+                <span class="menu-title">Especialistas</span>
               </a>
             </div>
             <div class="menu-item">

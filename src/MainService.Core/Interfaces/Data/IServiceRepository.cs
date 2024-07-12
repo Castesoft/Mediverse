@@ -10,6 +10,7 @@ public interface IServiceRepository
     void Add(Service item);
     void Delete(Service item);
     Task<Service> GetByIdAsync(int id);
+    Task<Service> GetByNameAsync(string name, ClaimsPrincipal user);
     Task<ServiceDto> GetDtoByIdAsync(int id);
     Task<Service> GetByIdAsNoTrackingAsync(int id);
     Task<List<Service>> GetAllAsync();

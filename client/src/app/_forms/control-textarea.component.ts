@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, inject, input, Input, Renderer2, 
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
+import {FormControlStyles} from "src/app/_models/types";
 import { FormsService } from 'src/app/_services/forms.service';
 import { OptionalSpanComponent } from "./helpers/optional-span.component";
 import { NewBadgeComponent } from "./helpers/new-badge.component";
@@ -36,6 +37,7 @@ export class ControlTextareaComponent implements ControlValueAccessor, AfterView
   errors = input<{ [key: string]: string }>({});
   submitted = input<boolean>(false);
   formText = input<string>();
+  style = input<FormControlStyles>('solid');
 
   @Input() id?: string;
   @Input() label: string = '';

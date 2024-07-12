@@ -76,4 +76,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
         return true;
     }
+
+    public async Task<bool> PhoneExistsAsync(string phoneNumber) => await userManager.Users.AnyAsync(x => x.PhoneNumber == phoneNumber);
+    public async Task<bool> EmailExistsAsync(string email) => await userManager.Users.AnyAsync(x => x.Email == email);
 }

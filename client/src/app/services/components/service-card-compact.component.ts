@@ -60,7 +60,7 @@ export class ServiceCardCompactComponent implements OnInit {
   ngOnInit(): void {
     this.service.selected$(this.key()).subscribe({
       next: item => {
-        this.item = new Service();
+        console.log('ServiceCardCompactComponent.item', item);
         this.item = item;
       }
     })

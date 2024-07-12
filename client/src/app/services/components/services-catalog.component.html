@@ -14,7 +14,7 @@
         <services-filter-menu></services-filter-menu>
         <button exportBtn (click)="service.downloadXLSX$(key())"></button>
         <button createBtn [naming]="service.naming"
-                (click)="service.clickLink(null, null, key(), 'create', 'modal')"
+                (click)="service.clickLink(null, null, key(), 'create', view())"
         ></button>
       </div>
     }
@@ -46,7 +46,6 @@
         <table
           servicesTable
           [data]="mode() === 'select' ? service.getSelected$(key()) : []"
-
           [key]="key()"
           [mode]="'readonly'"
           [showHeaders]="false"

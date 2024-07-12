@@ -4,6 +4,7 @@ import {KeyValuePipe, NgClass} from '@angular/common';
 import {FlatpickrModule} from "angularx-flatpickr";
 import {HelpBlockComponent} from "src/app/_forms/helpers/help-block.component";
 import {InvalidFeedbackComponent} from "src/app/_forms/helpers/invalid-feedback.component";
+import {FormControlStyles} from "src/app/_models/types";
 import {FormsService} from 'src/app/_services/forms.service';
 import {OptionalSpanComponent} from "./helpers/optional-span.component";
 import {NewBadgeComponent} from "./helpers/new-badge.component";
@@ -28,6 +29,7 @@ export class ControlDateComponent implements ControlValueAccessor, OnInit {
   isNew = input<boolean>(false);
   optional = input<boolean>(false);
   timepicker = input<boolean>(false);
+  style = input<FormControlStyles>('solid');
 
   @Input() id?: string;
   @Input() label: string = '';

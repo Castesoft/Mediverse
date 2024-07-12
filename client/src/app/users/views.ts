@@ -7,7 +7,7 @@ import { UserFormComponent } from "src/app/users/components/user-form.component"
 @Component({
   selector: 'div[userNewView]',
   template: `
-  <div userForm [use]="use()" [id]="null" [view]="view()" [role]="role()"></div>
+  <div userForm [use]="use()" [id]="null" [view]="view()" [role]="role()" [style]="'normal'"></div>
   `,
   standalone: true,
   imports: [ UserFormComponent, ModalWrapperModule, ],
@@ -1714,7 +1714,7 @@ export class UserDetailComponent {
 @Component({
   selector: 'div[userEditView]',
   template: `
-  <div userForm [use]="use()" [id]="id()" [view]="view()" [role]="role()"></div>
+  <div userForm [use]="use()" [id]="id()" [view]="view()" [role]="role()" [style]="'normal'"></div>
   `,
   standalone: true,
   imports: [ UserFormComponent, ModalWrapperModule, ],

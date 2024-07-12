@@ -45,6 +45,14 @@ export class ServicesService {
     articleSex: 'masculine',
   };
 
+  columns: Column[] = [
+    { label: "Nombre", name: "name", options: { justify: 'center' } },
+    { label: "Descripción", name: "description" },
+    { label: "Precio", name: "price", options: { justify: 'end' } },
+    { label: "Descuento", name: "discount" },
+    { label: "Creado", name: "createdAt" },
+  ];
+
   private cacheMap: Map<string, Map<string, PaginatedResult<Service[]>>> = new Map<string, Map<string, PaginatedResult<Service[]>>>();
   private cacheExists = (key: string): boolean => this.cacheMap.has(key);
   private getCache = (key: string): Map<string, PaginatedResult<Service[]>> => {
@@ -211,12 +219,20 @@ export class ServicesService {
     );
   }
 
-  create(formData: FormData): Observable<Service> {
+  create(formData: FormData, view: View, key: string): Observable<Service> {
     return this.http.post<Service>(this.baseUrl, formData).pipe(
       tap((response: Service) => {
-        // TODO
+        this.loadPagedList(key, this.getParam(key)).pipe();
+        this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
+        this.matSnackBar.open(`${this.naming.definedArticle} ${this.naming.singular} ${response.name} fue creado exitosamente`, "Cerrar", { duration: 3000 });
+        if (view === "modal") {
+          this.hideNewModal();
+        } else if (view === 'page') {
+          this.router.navigate([this.naming.catalogRoute, response.id]);
+        }
+        return response;
       })
     );
   }
@@ -464,13 +480,5 @@ export class ServicesService {
     const items = getItemsByKey<Service>(key, this.cacheMap);
     return items.filter((item) => item.isSelected).map((item) => item.id).join(",") || "";
   };
-
-  columns: Column[] = [
-    { label: "Nombre", name: "name", options: { justify: 'center' } },
-    { label: "Descripción", name: "description" },
-    { label: "Precio", name: "price", options: { justify: 'end' } },
-    { label: "Descuento", name: "discount" },
-    { label: "Creado", name: "createdAt" },
-  ]
 
 }
