@@ -15,7 +15,10 @@
     [attr.aria-describedby]="formText() ? controlName+'helpBlock' : null"
     [attr.aria-label]="label + ' input'"
   >
-  <label class="form-check-label" [for]="id? id : controlName">{{label}}</label>
+  <label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
+         [class.required]="!service.isOptional(control) || isReadonly">
+    {{ label }}
+  </label>
 </div>
 
 @if(control.errors) {<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>}

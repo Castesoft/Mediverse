@@ -14,7 +14,7 @@ import { ServicesFilterModalComponent } from 'src/app/services/modals';
 import { ServicesService } from 'src/app/_services/services.service';
 
 @Component({
-  selector: 'div[filterForm]',
+  selector: 'div[servicesFilterForm]',
   template: `
   <form
       [formGroup]="form.group"

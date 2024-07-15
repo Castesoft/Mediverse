@@ -1,5 +1,5 @@
-<label [for]="id ? id : controlName" class="fs-6 fw-semibold mb-2"
-       [class.required]="service.isOptional(control) || !isReadonly">
+<label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
+       [class.required]="!service.isOptional(control) || isReadonly">
   {{ label }}
 </label>
 <input

@@ -1,11 +1,13 @@
 @if ((use() === "create" && form) ||
 (use() === "edit" && item && form) ||
 (use() === "detail" && item)) {
-  @if(form.error){<div errorsAlert [error]="form.error"></div>}
+  @if (form.error) {
+    <div errorsAlert [error]="form.error"></div>
+  }
   <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
     <div class="row row-cols-1 row-cols-sm-2 rol-cols-md-1 row-cols-lg-2">
       <div class="col">
-        <div inputControl formControlName="firstName" class="fw-semi-bold mb-0 w-100" [style]="style()"
+        <div inputControl formControlName="firstName" class="fw-semi-bold mb-0 w-100" [style]="view() === 'inline' ? style() : 'solid'"
              [submitted]="form.group.controls['firstName'].touched || form.submitted"
              [placeholder]="'Ingrese el nombre'"
              [autofocus]="use() !== 'detail'" [label]="'Nombre'" [errors]="{
@@ -14,7 +16,7 @@
         </div>
       </div>
       <div class="col">
-        <div inputControl formControlName="lastName" class="fw-semi-bold mb-0 w-100" [type]="'text'" [style]="style()"
+        <div inputControl formControlName="lastName" class="fw-semi-bold mb-0 w-100" [type]="'text'" [style]="view() === 'inline' ? style() : 'solid'"
              [submitted]="form.group.controls['lastName'].touched || form.submitted"
              [placeholder]="'Ingrese el apellido'"
              [label]="'Apellido'" [errors]="{
@@ -25,7 +27,7 @@
     </div>
     <div class="row row-cols-1 row-cols-sm-2 rol-cols-md-1 row-cols-lg-2">
       <div class="col">
-        <div controlCheckRadio formControlName="sex" class="fw-semi-bold mb-0 w-100" [style]="style()"
+        <div controlCheckRadio formControlName="sex" class="fw-semi-bold mb-0 w-100" [style]="view() === 'inline' ? style() : 'solid'"
              [options]="[
              {id: 'Masculino', value: 'Masculino'},
              {id: 'Femenino', value: 'Femenino'},
@@ -37,7 +39,7 @@
         </div>
       </div>
       <div class="col">
-        <div controlDate formControlName="dateOfBirth" class="fw-semi-bold mb-0 w-100" [style]="style()"
+        <div controlDate formControlName="dateOfBirth" class="fw-semi-bold mb-0 w-100" [style]="view() === 'inline' ? style() : 'solid'"
              [submitted]="form.group.controls['dateOfBirth'].touched || form.submitted"
              [placeholder]="'Ingrese la fecha de nacimiento'" [label]="'Fecha de nacimiento'" [errors]="{
                                                   'required': 'La fecha de nacimiento es requerida.',
@@ -47,7 +49,7 @@
     </div>
     <div class="row row-cols-1 row-cols-sm-2 rol-cols-md-1 row-cols-lg-2">
       <div class="col">
-        <div inputControl formControlName="email" class="fw-semi-bold mb-0 w-100" [style]="style()"
+        <div inputControl formControlName="email" class="fw-semi-bold mb-0 w-100" [style]="view() === 'inline' ? style() : 'solid'"
              [submitted]="form.group.controls['email'].touched || form.submitted" [type]="'email'"
              [placeholder]="'Ingrese el correo'" [label]="'Correo'" [errors]="{
                                                   'required': 'El correo es requerido.',
@@ -55,7 +57,7 @@
         </div>
       </div>
       <div class="col">
-        <div inputControl formControlName="phoneNumber" class="fw-semi-bold mb-0 w-100" [style]="style()"
+        <div inputControl formControlName="phoneNumber" class="fw-semi-bold mb-0 w-100" [style]="view() === 'inline' ? style() : 'solid'"
              [submitted]="form.group.controls['phoneNumber'].touched || form.submitted" [type]="'tel'"
              [placeholder]="'Ingrese el teléfono'" [label]="'Teléfono'" [errors]="{
                                                   'required': 'El número de teléfono es requerido.',

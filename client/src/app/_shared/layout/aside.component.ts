@@ -1,5 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
+import { Account } from "src/app/_models/account";
+import { AccountService } from "src/app/_services/account.service";
 
 @Component({
   host: { class: 'aside aside-default aside-hoverable', },
@@ -49,7 +51,8 @@ import { RouterModule } from "@angular/router";
                 <span class="menu-title">Inicio</span>
               </a>
             </div>
-            <div class="menu-item pt-5">
+            @if(accountService.hasRole(['Doctor'])) {
+              <div class="menu-item pt-5">
               <div class="menu-content">
             <span class="fw-bold text-muted text-uppercase fs-7"
             >Gestión Clinica</span
@@ -59,10 +62,14 @@ import { RouterModule } from "@angular/router";
             <div class="menu-item">
               <a class="menu-link" [routerLink]="['/home/events']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
-              <i class="ki-duotone ki-calendar fs-2">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
+            <i class="ki-duotone ki-calendar-8 fs-2">
+												<span class="path1"></span>
+												<span class="path2"></span>
+												<span class="path3"></span>
+												<span class="path4"></span>
+												<span class="path5"></span>
+												<span class="path6"></span>
+											</i>
             </span>
                 <span class="menu-title">
               Citas
@@ -85,11 +92,11 @@ import { RouterModule } from "@angular/router";
             <div class="menu-item">
               <a class="menu-link" [routerLink]="['/home/services']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
-              <i class="ki-duotone ki-user-square fs-2">
-                <span class="path1"></span>
-                <span class="path2"></span>
-                <span class="path3"></span>
-              </i>
+            <i class="ki-duotone ki-brifecase-tick fs-2">
+            <span class="path1"></span>
+ <span class="path2"></span>
+ <span class="path3"></span>
+											</i>
             </span>
                 <span class="menu-title">Servicios</span>
               </a>
@@ -97,13 +104,27 @@ import { RouterModule } from "@angular/router";
             <div class="menu-item">
               <a class="menu-link" [routerLink]="['/home/nurses']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
-              <i class="ki-duotone ki-user-square fs-2">
+            <i class="ki-duotone ki-people fs-2">
+            <span class="path1"></span>
+ <span class="path2"></span>
+ <span class="path3"></span>
+ <span class="path4"></span>
+ <span class="path5"></span>
+											</i>
+            </span>
+                <span class="menu-title">Especialistas</span>
+              </a>
+            </div>
+            <div class="menu-item">
+              <a class="menu-link" [routerLink]="['/home/clinics']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+            <span class="menu-icon">
+              <i class="ki-duotone ki-map fs-2">
                 <span class="path1"></span>
                 <span class="path2"></span>
                 <span class="path3"></span>
               </i>
             </span>
-                <span class="menu-title">Especialistas</span>
+                <span class="menu-title">Clínicas</span>
               </a>
             </div>
             <div class="menu-item">
@@ -145,6 +166,7 @@ import { RouterModule } from "@angular/router";
                 <span class="menu-title">Recetas</span>
               </a>
             </div>
+            }
           </div>
           <div class="menu-item pt-5">
             <div class="menu-content">
@@ -229,4 +251,13 @@ import { RouterModule } from "@angular/router";
   standalone: true,
   imports: [ RouterModule, ],
 })
-export class AsideComponent {}
+export class AsideComponent implements OnInit {
+  accountService = inject(AccountService);
+
+  account: Account | null = null;
+  label?: string;
+
+  ngOnInit(): void {
+    this.account = this.accountService.current();
+  }
+}

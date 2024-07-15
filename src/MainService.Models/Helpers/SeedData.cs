@@ -5,6 +5,8 @@ namespace MainService.Models.Helpers;
 
 public static partial class SeedData
 {
+    private static readonly Random random = new();
+    
     public static readonly IEnumerable<string> roles =
     [
         "Admin",
@@ -613,12 +615,18 @@ public static partial class SeedData
                     CreatedAt = GenerateRandomDateTime(2013),
                     DateOfBirth = GenerateRandomDateOfBirth(1960, 2005),
                     Sex = sex,
+                    UserAddresses = GenerateUserAddresses(),
                 };
 
                 if (role == Roles.Nurse || role == Roles.Doctor)
                 {
                     user.Post = GetRandomMedicalJobPosts();
                     user.Education = GetRandomMedicalSpecialty();
+                }
+
+                if (role == Roles.Doctor)
+                {
+                    user.DoctorClinics = GenerateDoctorClinics();
                 }
 
                 if (random.Next(2) == 0)
@@ -628,6 +636,550 @@ public static partial class SeedData
             }
 
             return users;
+        }
+
+        public static List<Address> GetAddresses() 
+        {
+            return [
+                new() {
+                    Zipcode = "64020",
+                    ExteriorNumber = "702",
+                    InteriorNumber = "",
+                    Street = "Gonzalitos",
+                    Neighborhood = "San Jerónimo",
+                    City = "Monterrey",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Name = "",
+                    Description = "",
+                    Latitude = 25.6769758,
+                    Longitude = -100.3531176,
+                },
+                new() {
+                    Zipcode = "64630",
+                    ExteriorNumber = "911",
+                    InteriorNumber = "",
+                    Street = "Blvd. Puerta del Sol",
+                    Neighborhood = "Colinas de San Jerónimo",
+                    City = "Monterrey",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6919463,
+                    Longitude = -100.3686293,
+                },
+                new() {
+                    Zipcode = "64640",
+                    ExteriorNumber = "2000",
+                    InteriorNumber = "",
+                    Street = "Av Insurgentes",
+                    Neighborhood = "La Escondida",
+                    City = "Monterrey",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6761058,
+                    Longitude = -100.3680975,
+                },
+                new() {
+                    Zipcode = "64630",
+                    ExteriorNumber = "705",
+                    InteriorNumber = "",
+                    Street = "P.º de Los Alamos",
+                    Neighborhood = "Colinas de San Jerónimo 1o. Sector",
+                    City = "Monterrey",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6868347,
+                    Longitude = -100.3694059,
+                },
+                new() {
+                    Zipcode = "64720",
+                    ExteriorNumber = "837",
+                    InteriorNumber = "",
+                    Street = "Calz. Francisco I. Madero",
+                    Neighborhood = "Centro",
+                    City = "Monterrey",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6848204,
+                    Longitude = -100.3212331,
+                },
+                new() {
+                    Zipcode = "66226",
+                    ExteriorNumber = "755-Pte.",
+                    InteriorNumber = "",
+                    Street = "Av. José Vasconcelos",
+                    Neighborhood = "Del Valle",
+                    City = "San Pedro Garza García",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6570637,
+                    Longitude = -100.3892309,
+                },
+                new() {
+                    Zipcode = "66259",
+                    ExteriorNumber = "926",
+                    InteriorNumber = "",
+                    Street = "Av. Manuel Gómez Morín",
+                    Neighborhood = "Comercial Gómez Morin",
+                    City = "San Pedro Garza García",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6456461,
+                    Longitude = -100.3612204,
+                },
+                new() {
+                    Zipcode = "66290",
+                    ExteriorNumber = "118 Sur",
+                    InteriorNumber = "",
+                    Street = "Av. San Angel",
+                    Neighborhood = "Zona Residencial Chipinque",
+                    City = "San Pedro Garza García",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6284384,
+                    Longitude = -100.3628003,
+                },
+                new() {
+                    Zipcode = "66267",
+                    ExteriorNumber = "107",
+                    InteriorNumber = "",
+                    Street = "Av Alfonso Reyes",
+                    Neighborhood = "Veredalta",
+                    City = "San Pedro Garza García",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6454126,
+                    Longitude = -100.3456511,
+                },
+                new() {
+                    Zipcode = "66273",
+                    ExteriorNumber = "660",
+                    InteriorNumber = "",
+                    Street = "Avenida del Roble",
+                    Neighborhood = "Blvd. Arboleda, Valle del Campestre",
+                    City = "San Pedro Garza García",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6487976,
+                    Longitude = -100.3566376,
+                },
+                new() {
+                    Zipcode = "67197",
+                    ExteriorNumber = "1100",
+                    InteriorNumber = "",
+                    Street = "Av. Pablo Livas",
+                    Neighborhood = "Gustavo Díaz Ordaz",
+                    City = "Guadalupe",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6623974,
+                    Longitude = -100.2041685,
+                },
+                new() {
+                    Zipcode = "67190",
+                    ExteriorNumber = "5500",
+                    InteriorNumber = "",
+                    Street = "Benito Juárez",
+                    Neighborhood = "Las Huertas",
+                    City = "Guadalupe",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6736607,
+                    Longitude = -100.1899381,
+                },
+                new() {
+                    Zipcode = "67167",
+                    ExteriorNumber = "108",
+                    InteriorNumber = "",
+                    Street = "Durango",
+                    Neighborhood = "Orizaba",
+                    City = "Guadalupe",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6835315,
+                    Longitude = -100.1956278,
+                },
+                new() {
+                    Zipcode = "67163",
+                    ExteriorNumber = "",
+                    InteriorNumber = "",
+                    Street = "Av. Gral. Lázaro Cárdenas",
+                    Neighborhood = "Sin Nombre de Col 13",
+                    City = "Guadalupe",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6832912,
+                    Longitude = -100.2296492,
+                },
+                new() {
+                    Zipcode = "67180",
+                    ExteriorNumber = "600",
+                    InteriorNumber = "",
+                    Street = "Av 13 de Mayo",
+                    Neighborhood = "Rafael Ramírez (U.c.)",
+                    City = "Guadalupe",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6713915,
+                    Longitude = -100.2205656,
+                },
+                new() {
+                    Zipcode = "66430",
+                    ExteriorNumber = "116",
+                    InteriorNumber = "",
+                    Street = "Av. Santo Domingo",
+                    Neighborhood = "Sta Maria",
+                    City = "San Nicolás de los Garza",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.754731,
+                    Longitude = -100.2800626,
+                },
+                new() {
+                    Zipcode = "66414",
+                    ExteriorNumber = "200A",
+                    InteriorNumber = "",
+                    Street = "Av. Santo Domingo",
+                    Neighborhood = "",
+                    City = "San Nicolás de los Garza",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.7535107,
+                    Longitude = -100.2729507,
+                },
+                new() {
+                    Zipcode = "66460",
+                    ExteriorNumber = "934",
+                    InteriorNumber = "",
+                    Street = "Av. Las Puentes",
+                    Neighborhood = "Las Puentes 7o Sector",
+                    City = "San Nicolás de los Garza",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.7458212,
+                    Longitude = -100.2700866,
+                },
+                new() {
+                    Zipcode = "66440",
+                    ExteriorNumber = "S/n",
+                    InteriorNumber = "",
+                    Street = "Av. Aceros",
+                    Neighborhood = "Col. Nuevo Mezquital",
+                    City = "San Nicolás de los Garza",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.7477499,
+                    Longitude = -100.2399072,
+                },
+                new() {
+                    Zipcode = "66417",
+                    ExteriorNumber = "528",
+                    InteriorNumber = "",
+                    Street = "Pedro F. Quintanilla",
+                    Neighborhood = "La Nogalera 1er Sector",
+                    City = "San Nicolás de los Garza",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.7640899,
+                    Longitude = -100.2744481,
+                },
+                new() {
+                    Zipcode = "66378",
+                    ExteriorNumber = "233",
+                    InteriorNumber = "",
+                    Street = "Mar Rojo",
+                    Neighborhood = "La Aurora",
+                    City = "Santa Catarina",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.672975,
+                    Longitude = -100.4543961,
+                },
+                new() {
+                    Zipcode = "66350",
+                    ExteriorNumber = "652",
+                    InteriorNumber = "",
+                    Street = "Calle Miguel Hidalgo",
+                    Neighborhood = "",
+                    City = "Santa Catarina",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6677318,
+                    Longitude = -100.4601163,
+                },
+                new() {
+                    Zipcode = "66358",
+                    ExteriorNumber = "608",
+                    InteriorNumber = "",
+                    Street = "Araucaria",
+                    Neighborhood = "Zimix Sector Leones",
+                    City = "Santa Catarina",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6809399,
+                    Longitude = -100.4686253,
+                },
+                new() {
+                    Zipcode = "66358",
+                    ExteriorNumber = "",
+                    InteriorNumber = "",
+                    Street = "Manuel Ordoñez",
+                    Neighborhood = "Sin Nombre de Col 1",
+                    City = "Santa Catarina",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6813412,
+                    Longitude = -100.4836637,
+                },
+                new() {
+                    Zipcode = "66358",
+                    ExteriorNumber = "716",
+                    InteriorNumber = "",
+                    Street = "Popocatépetl",
+                    Neighborhood = "Cordilleras del Virrey",
+                    City = "Santa Catarina",
+                    State = "Nuevo León",
+                    Country = "México",
+                    Notes = GetRandomHowToArriveNotes(),
+                    Latitude = 25.6747344,
+                    Longitude = -100.4888874,
+                },
+            ];
+        }
+
+        public static List<UserAddress> GenerateUserAddresses()
+        {
+            List<UserAddress> userAddresses = [];
+            int numberOfAddresses = random.Next(1, 4);
+
+            var addresses = GetAddresses();
+
+            for (int i = 0; i < numberOfAddresses; i++)
+            {
+                if (addresses.Count == 0) break;
+                int addressIndex = random.Next(addresses.Count);
+                userAddresses.Add(new () { Address = addresses[addressIndex] });
+                addresses.RemoveAt(addressIndex);
+            }
+
+            userAddresses.First().IsMain = true;
+
+            return userAddresses;
+        }
+
+        public static List<DoctorClinic> GenerateDoctorClinics()
+        {
+            List<DoctorClinic> doctorClinics = [];
+            int count = random.Next(1, 4);
+
+            var clinics = GetAddresses();
+
+            foreach (var item in clinics)
+            {
+                item.Name = GetRandomClinicName();
+                item.Description = GetRandomClinicDescription();
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                if (clinics.Count == 0) break;
+                int addressIndex = random.Next(clinics.Count);
+                doctorClinics.Add(new () { Clinic = clinics[addressIndex] });
+                clinics.RemoveAt(addressIndex);
+            }
+
+
+            doctorClinics.First().IsMain = true;
+
+            return doctorClinics;
+        }
+
+        public static Address GenerateRandomAddress()
+        {
+            
+            return new Address
+            {
+                Zipcode = random.Next(10000, 99999).ToString(),
+                ExteriorNumber = random.Next(1, 1000).ToString(),
+                Street = GetRandomStreet(),
+                Neighborhood = GetRandomNeighborhood(),
+                City = GetRandomCity(),
+                State = "Nuevo León",
+                Notes = GetRandomHowToArriveNotes(),
+                Country = "Mexico",
+            };
+        }
+
+        public static string GetRandomState()
+        {
+            string[] state = [
+                "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", 
+                "Ciudad de México", "Coahuila", "Colima", "Durango", "Guanajuato", "Guerrero", 
+                "Hidalgo", "Jalisco", "México", "Michoacán", "Morelos", "Nayarit", 
+                "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", 
+                "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"
+            ];
+
+            return state[random.Next(state.Length)];
+        }
+
+        public static string GetRandomClinicName()
+        {
+            string[] data = [
+                "Clínica Médica", "Hospital", "Centro de Salud", "Consultorio Médico", "Clínica de Especialidades", "Centro Médico",
+                "Hospital General", "Hospital de Especialidades", "Hospital Pediátrico", "Hospital Materno Infantil", "Hospital de la Mujer",
+                "Hospital de la Niñez", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer",
+                "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad",
+                "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer",
+            ];
+
+            return data[random.Next(data.Length)];
+        }
+
+        public static string GetRandomClinicDescription()
+        {
+            string[] data = [
+                "Clínica especializada en medicina general y familiar. Atención de urgencias, consultas médicas y estudios de laboratorio.",
+                "Hospital de especialidades médicas. Consultas con médicos especialistas en diversas áreas de la medicina.",
+                "Centro de salud con atención médica integral. Consultas médicas, estudios de laboratorio y farmacia.",
+                "Consultorio médico con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Clínica de especialidades médicas. Consultas con médicos especialistas en diversas áreas de la medicina.",
+                "Centro médico con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital general con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de especialidades médicas. Consultas con médicos especialistas en diversas áreas de la medicina.",
+                "Hospital pediátrico con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital materno infantil con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la mujer con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la niñez con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la tercera edad con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la mujer con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la tercera edad con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la mujer con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la tercera edad con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la mujer con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la tercera edad con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+                "Hospital de la mujer con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
+            ];
+
+            return data[random.Next(data.Length)];
+        }
+
+        public static string GetRandomNeighborhood()
+        {
+            string[] neightborhood = [
+                "Condesa", "Polanco", "Santa Fe", "Coyoacán", "San Ángel", "Zona Rosa", 
+                "Roma", "Del Valle", "Nápoles", "Juárez", "Tlatelolco", "Pedregal", 
+                "Chapultepec", "Lomas de Chapultepec", "La Roma", "Lindavista", "Zapopan", "Tlaquepaque", 
+                "Providencia", "Centro Histórico (CDMX)", "Centro Histórico (Puebla)", 
+                "San Pedro Garza García", "Monterrey Centro", "Barrio Antiguo", "Guadalupe Inn", "Anzures", "Santa María la Ribera", 
+                "San Rafael", "Escandón", "Narvarte", "Balcones de Galerías", "Miravalle", "Bosques de las Lomas",
+                "San Jerónimo", "Aguacaliente", "Tecamachalco", "Hacienda del Valle", "San Nicolás", "Valle Oriente",
+                "Fundadores", "Obispado", "Paseo de las Mitras", "Las Cumbres", "Vista Hermosa", "Jardines del Pedregal", 
+                "Lomas Verdes", "Bosque Real", "Santa Úrsula", "Cuajimalpa", "Mixcoac", "Churubusco"
+            ];
+
+            return neightborhood[random.Next(neightborhood.Length)];
+        }
+
+        public static string GetRandomStreet()
+        {
+            string[] street = [
+                "Avenida Revolución", "Calle Hidalgo", "Paseo de la Reforma",
+                "Avenida Juárez", "Avenida Universidad", "Calle Independencia",
+                "Avenida Insurgentes", "Calle Morelos", "Avenida Patriotismo",
+                "Calle Zaragoza", "Avenida de los Insurgentes", "Calle Libertad",
+                "Avenida Chapultepec", "Calle Allende", "Avenida Constituyentes",
+                "Avenida Paseo de la Reforma", "Avenida Aquiles Serdán", "Calle Madero",
+                "Avenida División del Norte", "Calle Guerrero", "Calle 5 de Mayo",
+                "Avenida Balderas", "Calle Vicente Guerrero", "Avenida Cuauhtémoc",
+                "Avenida Paseo de las Palmas", "Calle Ignacio Zaragoza", "Avenida Río Churubusco",
+                "Avenida Paseo de Tláhuac", "Calle Álvaro Obregón", "Avenida Santa Fe",
+                "Avenida Miguel Ángel de Quevedo", "Calle Francisco I. Madero", "Avenida Tlalpan",
+                "Avenida Coyoacán", "Calle Emiliano Zapata", "Avenida de los Maestros",
+                "Avenida Vasco de Quiroga", "Calle Mariano Escobedo", "Avenida San Jerónimo",
+                "Avenida México", "Calle José María Pino Suárez", "Avenida Ferrocarril Hidalgo",
+                "Avenida Canal de Miramontes", "Calle Dr. José María Vertiz", "Avenida Río Mixcoac",
+                "Calle Miguel Hidalgo", "Avenida Periférico", "Calle Benito Juárez",
+                "Avenida Ermita Iztapalapa", "Calle Venustiano Carranza"
+            ];
+
+            return street[random.Next(street.Length)];
+        }
+
+        public static string GetRandomHowToArriveNotes()
+        {
+            string[] notes = [
+                "Ubicado cerca de la plaza central, fácilmente identificable por la gran fuente al frente. Accesible vía líneas de autobús 5, 12 y 21.",
+                "Adyacente al parque de la ciudad. Busque un edificio azul con puerta roja. Estacionamiento disponible en la parte trasera.",
+                "A tres cuadras de la estación principal de tren, gire a la izquierda en la librería y es el segundo edificio a la derecha.",
+                "Frente a la antigua catedral. La dirección está en una casa amarilla con techo verde, al lado de un pequeño café.",
+                "Cerca del centro comercial del centro. Accesible por metro (Línea Azul), salga en la estación 'Calle del Mercado'.",
+                "Justo a la salida de la autopista, salida 14. Busque un edificio alto de vidrio con un letrero al frente. Amplio estacionamiento disponible.",
+                "En el distrito universitario, al lado de la biblioteca. Un gran mural en el costado del edificio facilita su identificación.",
+                "Tome la lanzadera desde la plaza principal y bájese en 'Callejón del Jardín'. La dirección es la tercera casa a la izquierda, con una cerca blanca.",
+                "Cerca del frente fluvial. El edificio tiene un gran cartel en la parte superior y está frente a un popular restaurante de mariscos.",
+                "En la esquina de la Quinta y la Principal, justo arriba de la panadería. La entrada está en la calle Principal, marcada con un toldo verde.",
+                "A dos cuadras del monumento histórico, junto a la farmacia grande. Visible por el mural de arte callejero en la fachada.",
+                "Detrás del hospital central, cerca de la parada del autobús número 30. La entrada está por la calle lateral, junto a una papelería.",
+                "En la zona comercial, sobre la avenida principal. Frente a la tienda de ropa, al lado de un cajero automático.",
+                "Cerca de la estación de bomberos, en la esquina con un semáforo. Hay un quiosco de revistas justo enfrente.",
+                "Al final de la calle de adoquines, pasando el puente pequeño. Reconocible por un gran árbol de jacarandas al frente.",
+                "Junto a la escuela primaria, en una calle con adoquines. Hay un mural de la Virgen de Guadalupe en la pared del costado.",
+                "Frente al supermercado, en una calle tranquila. Busque la casa con la puerta de hierro forjado y un pequeño jardín delantero.",
+                "Al lado de la plaza de mercado, donde se celebra el tianguis los fines de semana. Es la casa con tejas rojas.",
+                "En la colonia industrial, cerca de la fábrica de textiles. Siga la calle hasta ver un edificio de ladrillo rojo.",
+                "Cerca del museo de arte local, en una calle estrecha. La dirección tiene una pequeña fuente en el jardín delantero.",
+                "A una cuadra del parque ecológico, rodeado de árboles. Hay una panadería en la esquina con olor a pan recién horneado.",
+                "Al final de la avenida, pasando el centro comercial. Busque el edificio con un letrero luminoso en el techo.",
+                "Cerca de la terminal de autobuses, en una calle con varios cafés. El edificio tiene balcones con flores.",
+                "En la zona residencial, al lado de un parque con cancha de fútbol. La casa tiene una reja negra y un buzón azul.",
+                "Frente a la clínica, en una calle con muchos árboles. Hay un estacionamiento público justo al lado.",
+                "En el barrio antiguo, cerca de la iglesia de San Juan. Busque la calle empedrada con faroles antiguos.",
+                "Al lado del gimnasio, en una calle ancha. La dirección está marcada con un número grande sobre la puerta.",
+                "En la colonia moderna, cerca de la torre de oficinas. Busque un edificio con una entrada de vidrio y un lobby amplio.",
+                "A tres cuadras del cine, en una zona con muchas tiendas. La dirección está al lado de una heladería famosa.",
+                "Cerca del centro de convenciones, en una calle con palmeras. El edificio tiene una fachada de piedra y balcones de hierro."
+            ];
+
+            return notes[random.Next(notes.Length)];
+        }
+
+        public static string GetRandomCity()
+        {
+            string[] cities = [
+                "Mexico City", "Guadalajara", "Monterrey", "Puebla", "Toluca", "Tijuana", "León", "Ciudad Juárez", "Torreón", 
+                "San Luis Potosí", "Querétaro", "Mérida", "Mexicali", "Aguascalientes", "Tampico", "Cuernavaca", "Acapulco", "Chihuahua", 
+                "Morelia", "Saltillo", "Veracruz", "Villahermosa", "Reynosa", "Hermosillo", "Culiacán", "Guanajuato", "Durango", 
+                "Oaxaca", "Zacatecas", "Tuxtla Gutiérrez", "Ensenada", "Valle de Bravo", "Nuevo Laredo", "Campeche", "La Paz", "Cancún", 
+                "Playa del Carmen", "Cozumel", "Puerto Vallarta", "Los Cabos", "Mazatlán", "Irapuato", "Tlaxcala", "Xalapa", "Celaya", 
+                "Pachuca", "Orizaba", "Matamoros", "San Cristóbal de las Casas", "Loreto", "San Miguel de Allende"
+            ];
+
+            return cities[random.Next(cities.Length)];
         }
 
     [GeneratedRegex("[áàâä]")]

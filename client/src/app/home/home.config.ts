@@ -77,6 +77,9 @@ export class HomeComponent implements OnInit {
         { path: 'nurses',
           loadChildren: () => import('../users/users.config').then(x => x.NursesModule)
         },
+        { path: 'clinics',
+          loadChildren: () => import('../addresses/addresses.config').then(x => x.ClinicsModule)
+        },
       ],
     },
   ])],

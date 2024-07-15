@@ -99,7 +99,7 @@ export class ServiceNewModalComponent {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div filterForm [key]="key" [formId]="formId" ></div>
+        <div servicesFilterForm [key]="key" [formId]="formId" ></div>
       </div>
       <div
         modalFooterFilters

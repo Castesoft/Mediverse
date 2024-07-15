@@ -7,6 +7,7 @@ public interface IUnitOfWork
     IServiceRepository ServiceRepository { get; }
     IPhotoRepository PhotoRepository { get; }
     IUserRepository UserRepository { get; }
+    IAddressRepository AddressRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();

@@ -99,7 +99,7 @@ export class UserNewModalComponent {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div filterForm [key]="key" [formId]="formId" [role]="role"></div>
+        <div usersFilterForm [key]="key" [formId]="formId" [role]="role"></div>
       </div>
       <div
         modalFooterFilters

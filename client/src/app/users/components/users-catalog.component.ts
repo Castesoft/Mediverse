@@ -5,7 +5,7 @@ import { IconsService } from "src/app/_services/icons.service";
 import { Pagination } from "src/app/_models/pagination";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Subject, takeUntil } from "rxjs";
-import { DecimalPipe } from "@angular/common";
+import {DecimalPipe, NgClass} from "@angular/common";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { CatalogMode, Role, View } from "src/app/_models/types";
 import { Router, RouterModule } from "@angular/router";
@@ -26,8 +26,9 @@ import { CdkModule } from "src/app/_shared/cdk.module";
   template: `
   @if(data && pagination) {
     <div class="fs-6 fw-semibold mb-2 mt-5">{{service.namingDictionary.get(role())!.title}}</div>
-    @for(item of data; let idx = $index; track idx) {
-      <div class="d-flex flex-stack py-4 border-bottom border-gray-300 border-bottom-dashed"
+    @for(item of data; let idx = $index; track idx; let last = $last) {
+      <div class="d-flex flex-stack py-4"
+           [ngClass]="{'border-bottom border-gray-300 border-bottom-dashed': !last}"
       [cdkContextMenuTriggerFor]="context_menu">
       <div class="d-flex align-items-center">
         @switch(mode()) {
@@ -65,8 +66,13 @@ import { CdkModule } from "src/app/_shared/cdk.module";
             }
           </div>
           <div class="ms-5">
-            <a (click)="service.clickLink(role(), item.id, item, key(), 'detail', 'modal')" class="fs-5 fw-bold text-gray-900 text-hover-primary mb-2">{{item.fullName}}</a>
-            <div class="fw-semibold text-muted">{{item.email}}</div>
+            <a (click)="service.clickLink(role(), item.id, item, key(), 'detail', 'modal')" class="fs-5 fw-bold text-primary-900 text-hover-primary mb-2">{{item.fullName}}</a>
+            <div class="fs-6 fw-bold">
+              {{item.email}}
+            </div>
+            <div class="fw-semibold text-muted">
+              {{item.education}}, {{item.post}}
+            </div>
           </div>
         </div>
         <div class="ms-2 w-100px">
@@ -99,10 +105,10 @@ import { CdkModule } from "src/app/_shared/cdk.module";
   }
   `,
   standalone: true,
-  imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
+  imports: [BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
     UsersTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, UsersFilterMenuComponent, LayoutModule, CdkModule,
-   ],
+    LayoutModule, UsersFilterMenuComponent, LayoutModule, CdkModule, NgClass,
+  ],
 })
 export class UsersListSelectComponent implements OnInit, OnDestroy {
   router = inject(Router);

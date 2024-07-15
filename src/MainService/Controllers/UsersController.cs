@@ -21,7 +21,6 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     private static readonly string subjectArticle = "El";
 
         
-    // [Authorize(Policy = "RequireAdminRole")]
     public async Task<ActionResult<PagedList<UserDto>>> GetPagedListAsync([FromQuery] UserParams param)
     {
         var pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
@@ -118,14 +117,6 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
         var itemToReturn = await uow.UserRepository.GetDtoByIdAsync(item.Id);
 
         return itemToReturn;
-    }
-
-    [HttpGet("prescription-information/{doctorId}")]
-    public async Task<ActionResult<PrescriptionInformationDto>> GetPrescriptionInformation([FromRoute] int doctorId)
-    {
-        var item = await uow.UserRepository.GetPrescriptionInformationAsync(doctorId);
-
-        return item;
     }
 
     [HttpPost("patient")]

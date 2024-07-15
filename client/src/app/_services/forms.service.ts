@@ -67,11 +67,10 @@ export class FormsService {
    * have the 'required' validator or has no validators at all), otherwise returns `false`.
    */
   isOptional = (control: FormControl): boolean => {
-    if (control.validator) {
+    if (control.validator !== null) {
       const validatorResponse = control.validator({} as FormControl);
       return !(validatorResponse && validatorResponse["required"]);
     }
-
     return true;
   };
 }

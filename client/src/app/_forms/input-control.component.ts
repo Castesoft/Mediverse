@@ -8,7 +8,7 @@ import { PopoverProps } from 'src/app/_models/popover';
 import { FormsService } from 'src/app/_services/forms.service';
 
 @Component({
-  host: { class: 'fv-row mb-9', },
+  host: { class: 'd-flex flex-column mb-7 fv-row', },
   selector: 'div[inputControl]',
   templateUrl: './input-control.component.html',
   standalone: true,

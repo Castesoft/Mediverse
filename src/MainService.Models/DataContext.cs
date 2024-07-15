@@ -20,12 +20,11 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<DoctorPhone> DoctorPhones { get; set; }
     public DbSet<DoctorLink> DoctorLinks { get; set; }
     public DbSet<DoctorClinic> DoctorClinics { get; set; }
-    public DbSet<NurseClinic> NurseClinics { get; set; }
-    public DbSet<Location> Locations { get; set; }
+    public DbSet<ClinicNurse> ClinicNurses { get; set; }
+    public DbSet<Address> Addresses { get; set; }
     public DbSet<DoctorPatient> DoctorPatients { get; set; }
     public DbSet<DoctorService> DoctorServices { get; set; }
     public DbSet<DoctorNurse> DoctorNurses { get; set; }
-
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

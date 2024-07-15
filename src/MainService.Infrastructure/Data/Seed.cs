@@ -10,6 +10,8 @@ namespace MainService.Infrastructure.Data;
 
 public class Seed
 {
+    private static readonly Random random = new();
+    
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
         IPermissionManager permissionManager)
     {
@@ -49,7 +51,7 @@ public class Seed
     {
         if (await userManager.Users.AnyAsync()) return;
 
-        var doctor1 = new AppUser
+        var admin = new AppUser
         {
             UserName = "rcastellanos@castesoft.com",
             Email = "rcastellanos@castesoft.com",
@@ -57,16 +59,36 @@ public class Seed
             FirstName = "Ricardo",
             LastName = "Obregón",
             Sex = "Masculino",
-            DateOfBirth = new DateOnly(1995, 10, 10),
+            DateOfBirth = new DateOnly(2000, 5, 2),
             PhoneNumberCountryCode = "+52",
+            UserAddresses = SeedData.GenerateUserAddresses(),
             UserPhoto = new UserPhoto()
             {
                 Photo = new Photo
                 {
-                    Url =
-                        "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*",
+                    Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1711576883/Castesoft/logo_ytz4ej.png",
                     Name = "Foto chida",
                     Size = 2,
+                }
+            },
+        };
+
+        var doctor = new AppUser
+        {
+            UserName = "ramiro@castellanosbarron.com",
+            Email = "ramiro@castellanosbarron.com",
+            PhoneNumber = "8120800336",
+            FirstName = "Ramiro",
+            LastName = "Castellanos",
+            Sex = "Masculino",
+            DateOfBirth = new(1995, 10, 10),
+            UserPhoto = new UserPhoto
+            {
+                Photo = new()
+                {
+                    Url = "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*",
+                    PublicId = "avatars/ramiro_castellanos_barron",
+                    Size = 24471, Name = "Foto_ramiro.png"
                 }
             },
             DoctorSignature = new DoctorSignature
@@ -141,71 +163,14 @@ public class Seed
                     }
                 }
             ],
-            DoctorClinics =
-            [
-                new()
-                {
-                    Clinic = new()
-                    {
-                        ExteriorNumber = "112",
-                        Street = "Batallón de San Patricio",
-                        ZipCode = "66278",
-                        City = "San Pedro Garza García",
-                        State = "Nuevo León",
-                        Country = "México",
-                        Neighborhood = "Col. Real San Agustín",
-                        PhotoUrl = "https://hcservicios.com.mx/wp-content/uploads/2022/02/Logo_HZH-01.jpg",
-                        LocationPhones =
-                        [
-                            new()
-                            {
-                                Phone = new()
-                                {
-                                    PhoneNumber = "8139220332",
-                                    Extension = "222",
-                                }
-                            },
-                            new()
-                            {
-                                Phone = new()
-                                {
-                                    PhoneNumber = "8132423132",
-                                    Extension = "191",
-                                }
-                            }
-                        ]
-                    }
-                }
-            ],
-            NurseClinic = null
+            DoctorClinics = SeedData.GenerateDoctorClinics(),
         };
 
-        var patient1 = new AppUser
-        {
-            UserName = "ramiro@castellanosbarron.com",
-            Email = "ramiro@castellanosbarron.com",
-            PhoneNumber = "8120800336",
-            FirstName = "Ramiro",
-            LastName = "Castellanos",
-            Sex = "Masculino",
-            DateOfBirth = new DateOnly(1995, 10, 10),
-            UserPhoto = new UserPhoto
-            {
-                Photo = new()
-                {
-                    Url =
-                        "https://res.cloudinary.com/dmjdskgd4/image/upload/v1711576883/Castesoft/logo_ytz4ej.png",
-                    PublicId = "avatars/ramiro_castellanos_barron",
-                    Size = 24471, Name = "Foto_ramiro.png"
-                }
-            },
-        };
-
-        await userManager.CreateAsync(doctor1, "Pa$$w0rd");
-        await userManager.CreateAsync(patient1, "Pa$$w0rd");
+        await userManager.CreateAsync(admin, "Pa$$w0rd");
+        await userManager.CreateAsync(doctor, "Pa$$w0rd");
         
-        await userManager.AddToRoleAsync(doctor1, "Doctor");
-        await userManager.AddToRoleAsync(patient1, "Patient");
+        await userManager.AddToRolesAsync(admin, ["Admin"]);
+        await userManager.AddToRolesAsync(doctor, ["Doctor","Patient"]);
 
         List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(100, Roles.Patient);
         int userIndex = 1;
@@ -219,7 +184,7 @@ public class Seed
             if (!createUserResult.Succeeded) return;
             foreach (var roleName in roleNames)
             {
-                var roleResult = await userManager.AddToRoleAsync(user, roleName);
+                var roleResult = await userManager.AddToRolesAsync(user, [roleName]);
                 if (!roleResult.Succeeded) return;
             }
             Log.Information($"Seeding patient {$"{userIndex++}/{patientsForSeeding.Count()}", -15} ==> {user.Email}");
@@ -240,7 +205,7 @@ public class Seed
             if (!createUserResult.Succeeded) return;
             foreach (var roleName in roleNames)
             {
-                var roleResult = await userManager.AddToRoleAsync(user, roleName);
+                var roleResult = await userManager.AddToRolesAsync(user, [roleName,"Doctor"]);
                 if (!roleResult.Succeeded) return;
             }
             Log.Information($"Seeding doctor {$"{userIndex++}/{doctorsForSeeding.Count()}", -15} ==> {user.Email}");
@@ -251,21 +216,20 @@ public class Seed
             .Where(x => x.UserRoles.Any(y => y.Role.Name == "Doctor"))
             .ToListAsync();
 
-        var random = new Random();
-        var doctorPatientRelationships = new List<DoctorPatient>();
+        List<DoctorPatient> doctorPatientRelationships = [];
 
-        foreach (var doctor in doctors)
+        foreach (var item in doctors)
         {
             int numberOfPatients = random.Next(1, 20);
             var assignedPatients = patients.OrderBy(x => random.Next()).Take(numberOfPatients).ToList();
 
             foreach (var patient in assignedPatients)
             {
-                if (!doctorPatientRelationships.Any(dp => dp.DoctorId == doctor.Id && dp.PatientId == patient.Id))
+                if (!doctorPatientRelationships.Any(dp => dp.DoctorId == item.Id && dp.PatientId == patient.Id))
                 {
                     doctorPatientRelationships.Add(new DoctorPatient
                     {
-                        DoctorId = doctor.Id,
+                        DoctorId = item.Id,
                         PatientId = patient.Id
                     });
                 }
@@ -278,7 +242,7 @@ public class Seed
         if (await context.Services.AnyAsync()) return;
         var seedingServices = SeedData.services;
 
-        foreach (var doctor in doctors)
+        foreach (var item in doctors)
         {
             List<AppUser> nurses = SeedData.GenerateUsersForSeeding(15, Roles.Nurse);
 
@@ -286,16 +250,16 @@ public class Seed
             {
                 var createUserResult = await userManager.CreateAsync(nurse, "Pa$$w0rd");
                 if (!createUserResult.Succeeded) return;
-                await userManager.AddToRoleAsync(nurse, "Nurse");
+                await userManager.AddToRolesAsync(nurse, ["Nurse","Patient"]);
 
-                context.DoctorNurses.Add(new(doctor.Id, nurse.Id));
+                context.DoctorNurses.Add(new(item.Id, nurse.Id));
             }
 
             await context.SaveChangesAsync();
 
             foreach (var service in seedingServices)
             {
-                context.DoctorServices.Add(new(doctor.Id, service));
+                context.DoctorServices.Add(new(item.Id, service));
             }
         }
 
