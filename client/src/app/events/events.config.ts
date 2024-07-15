@@ -28,6 +28,7 @@ export class EventsComponent implements OnInit {
   <div card>
     <div
       eventsCalendar
+      [role]="role"
       [mode]="mode"
       [key]="key"
       [view]="view"
@@ -98,7 +99,7 @@ export class DetailComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        if (this.item) this.label = this.item.patient?.fullName;
       },
     });
     const navigation = this.router.getCurrentNavigation();
@@ -143,7 +144,7 @@ export class EditComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        if (this.item) this.label = this.item.patient?.fullName;
       },
     });
   }
@@ -174,7 +175,7 @@ export const titleDetailResolver: ResolveFn<string> = (route, state) => {
   service.getById(id).subscribe();
   const event = service.getCurrent();
   if (!event) return 'Detalle de cita';
-  const title = `Detalle de cita - ${event.fullName}`;
+  const title = `Detalle de cita - ${event.patient?.fullName}`;
   return title;
 }
 
@@ -184,7 +185,7 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
   service.getById(id).subscribe();
   const event = service.getCurrent();
   if (!event) return 'Editar cita';
-  const title = `Editar cita - ${event.fullName}`;
+  const title = `Editar cita - ${event.patient?.fullName}`;
   return title;
 }
 

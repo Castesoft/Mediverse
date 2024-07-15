@@ -21,6 +21,7 @@ namespace MainService.Models.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DoctorClinic DoctorClinic { get; set; }
+        public ICollection<EventClinic> EventClinics { get; set; } = [];
         public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
         public UserAddress UserAddress { get; set; }
     }

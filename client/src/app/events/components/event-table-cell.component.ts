@@ -8,7 +8,7 @@ import { EventsService } from 'src/app/_services/events.service';
 @Component({
   selector: 'td[eventHasAccount]',
   template: `
-  @if(event().hasAccount) {
+  @if(event().patient?.hasAccount) {
     <div class="badge badge-light-success fw-bold">
       Registrado
     </div>
@@ -25,8 +25,8 @@ export class EventTableHasAccountCellComponent {
   selector: 'td[eventSex]',
   template: `
     <div class="badge fw-bold"
-      [ngClass]="{ 'badge-light-primary': event().sex === 'Masculino', 'badge-light-warning': event().sex === 'Femenino'}">
-      {{event().sex}}
+      [ngClass]="{ 'badge-light-primary': event().patient?.sex === 'Masculino', 'badge-light-warning': event().patient?.sex === 'Femenino'}">
+      {{event().patient?.sex}}
     </div>
   `,
   standalone: true,
@@ -44,11 +44,11 @@ export class EventTableSexCellComponent {
     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
       <a [routerLink]="[routerLink]">
         <div class="symbol-label">
-          @if (event().photoUrl) {
-          <img [src]="event().photoUrl" alt="Emma Smith" class="w-100" />
+          @if (event().patient?.photoUrl) {
+          <img [src]="event().patient?.photoUrl" alt="Emma Smith" class="w-100" />
           } @else {
           <div class="symbol-label fs-3 bg-light-danger text-danger">
-            {{ event().firstName[0] }}
+            {{ event().patient?.firstName![0] }}
           </div>
           }
         </div>
@@ -58,9 +58,9 @@ export class EventTableSexCellComponent {
       <a
         [routerLink]="[routerLink]"
         class="text-gray-800 text-hover-primary mb-1"
-        >{{ event().fullName }}</a
+        >{{ event().patient?.fullName }}</a
       >
-      <span>{{ event().email }}</span>
+      <span>{{ event().patient?.email }}</span>
     </div>
     }
   `,

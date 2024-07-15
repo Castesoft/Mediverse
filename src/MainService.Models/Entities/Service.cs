@@ -9,8 +9,11 @@ public class Service : BaseEntity
 
     public DoctorService DoctorService { get; set; }
     public ICollection<ServicePhoto> ServicePhotos { get; set; } = [];
+    public ICollection<EventService> EventServices { get; set; } = [];
 
     public Service() {}
+    
+    public Service(int id) => Id = id;
 
     public Service(string name, string description)
     {

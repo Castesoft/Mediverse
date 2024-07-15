@@ -9,6 +9,7 @@ using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace MainService.Infrastructure.Data;
 
@@ -25,7 +26,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<List<UserDto>> GetAllDtoAsync(UserParams param)
     {
         // TODO: Implement filtering
-        
+
         var query = context.Users
             .AsNoTracking()
             .ProjectTo<UserDto>(mapper.ConfigurationProvider);
@@ -60,6 +61,29 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return item;
     }
 
+    public async Task<bool> PatientExistsAsync(int id, ClaimsPrincipal user)
+    {
+        var userId = user.GetUserId();
+        
+        return await context.Users
+            .Include(x => x.Doctors)
+            .Include(x => x.UserRoles)
+            .ThenInclude(x => x.Role)
+            .Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"))
+            .AnyAsync(x => x.Id == id
+                           && x.Doctors.Any(x => x.DoctorId == user.GetUserId()));
+    }
+
+    public async Task<bool> NurseExistsAsync(int id, ClaimsPrincipal user)
+    {
+        return await context.Users
+            .Include(x => x.NursesDoctor)
+            .Include(x => x.UserRoles)
+            .ThenInclude(x => x.Role)
+            .Where(x => x.UserRoles.Any(x => x.Role.Name == "Nurse"))
+            .AnyAsync(x => x.Id == id && x.NursesDoctor.Any(x => x.DoctorId == user.GetUserId()));
+    }
+
     public async Task<UserDto> GetDtoByEmailAsync(string email)
     {
         var item = await context.Users
@@ -76,18 +100,19 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .Include(x => x.Patients)
             .Include(x => x.Doctors)
             .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role)
+            .ThenInclude(x => x.Role)
             .Include(x => x.DoctorNurses)
             .Include(x => x.UserAddresses)
-                .ThenInclude(x => x.Address)
+            .ThenInclude(x => x.Address)
             .AsQueryable();
 
         IEnumerable<string> roles = user.GetRoles();
         int userId = user.GetUserId();
 
         query = query.Where(x => x.Id != userId);
-        
-        switch(param.Role) {
+
+        switch (param.Role)
+        {
             case Roles.Admin:
                 if (!roles.Contains("Admin")) return null;
                 break;
@@ -98,22 +123,21 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
                 if (!roles.Contains("Doctor") && !roles.Contains("Nurse")) return null;
                 if (roles.Contains("Doctor"))
                 {
-                    int doctorId = userId;
-                    
                     query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"));
-                    query = query.Where(x => x.Doctors.Any(x => x.DoctorId == doctorId));
+                    query = query.Where(x => x.Doctors.Any(x => x.DoctorId == userId));
                 }
+
                 break;
             case Roles.Nurse:
                 if (!roles.Contains("Doctor")) return null;
                 if (roles.Contains("Doctor"))
                 {
                     int doctorId = userId;
-                    
+
                     query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Nurse"));
                     query = query.Where(x => x.NursesDoctor.Any(x => x.DoctorId == doctorId));
                 }
-                
+
                 break;
             case Roles.Staff:
                 if (!roles.Contains("Admin")) return null;
@@ -121,15 +145,15 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             default:
                 break;
         }
-        
-        if(!string.IsNullOrEmpty(param.Search)) 
+
+        if (!string.IsNullOrEmpty(param.Search))
         {
-            query = query.Where(x => 
-            EF.Functions.Like(x.FirstName.ToLower(), $"%{param.Search}%") || 
-            EF.Functions.Like(x.LastName.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.Email.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.Sex.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.PhoneNumber.ToLower(), $"%{param.Search}%"));
+            query = query.Where(x =>
+                EF.Functions.Like(x.FirstName.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.LastName.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Email.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Sex.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.PhoneNumber.ToLower(), $"%{param.Search}%"));
         }
 
         return await PagedList<UserDto>.CreateAsync(
