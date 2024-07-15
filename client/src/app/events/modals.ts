@@ -160,6 +160,7 @@ export class EventsFilterModalComponent implements OnInit {
         <div modalBody>
           <div
             eventsCatalog
+            [role]="role"
             class="modal-body py-3 px-4"
             [mode]="mode"
             [key]="key"
@@ -178,4 +179,5 @@ export class EventsCatalogModalComponent {
   mode!: CatalogMode;
   view: View = 'modal';
   title?: string;
+  role!: Role;
 }

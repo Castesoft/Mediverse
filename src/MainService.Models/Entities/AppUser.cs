@@ -3,6 +3,16 @@ using Microsoft.AspNetCore.Identity;
 namespace MainService.Models.Entities;
 public class AppUser : IdentityUser<int>
 {
+    // Constructors
+
+    public AppUser(){}
+    
+    public AppUser(int id) => Id = id;
+    public AppUser(IEnumerable<int> ids)
+        {}
+
+    // Properties
+    
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Sex { get; set; }
@@ -29,6 +39,7 @@ public class AppUser : IdentityUser<int>
     public string Education { get; set; }
     public string Post { get; set; }
     public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
+    public ICollection<NurseEvent> NurseEvents { get; set; } = [];
     
 
     // Navigation properties

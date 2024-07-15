@@ -36,6 +36,7 @@ export class EventsCatalogComponent implements OnInit, OnDestroy {
   key = input.required<string>();
   mode = input.required<CatalogMode>();
   view = input.required<View>();
+  role = input.required<Role>();
 
   data?: Event[];
   params!: EventParams;
@@ -72,7 +73,7 @@ export class EventsCatalogComponent implements OnInit, OnDestroy {
   }
 
   private loadData(params: EventParams) {
-    this.service.loadPagedList(this.key(), params).subscribe({
+    this.service.loadPagedList(this.role(), this.key(), params).subscribe({
       next: (response) => {
         const { result, pagination } = response;
         this.data = result;

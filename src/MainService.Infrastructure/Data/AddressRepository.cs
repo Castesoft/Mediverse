@@ -11,6 +11,7 @@ using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Infrastructure.Data;
+
 public class AddressRepository(DataContext context, IMapper mapper) : IAddressRepository
 {
     public void Add(Address item) => context.Addresses.Remove(item);
@@ -20,7 +21,7 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
     public async Task<List<AddressDto>> GetAllDtoAsync(AddressParams param)
     {
         // TODO: Implement filtering
-        
+
         var query = context.Addresses
             .AsNoTracking()
             .ProjectTo<AddressDto>(mapper.ConfigurationProvider);
@@ -37,6 +38,13 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
         => await context.Addresses
             .SingleOrDefaultAsync(x => x.Id == id);
 
+    public async Task<bool> ClinicExistsAsync(int id, ClaimsPrincipal user)
+    {
+        return await context.Addresses
+            .Include(x => x.DoctorClinic)
+            .AnyAsync(x => x.Id == id && x.DoctorClinic.DoctorId == user.GetUserId());
+    }
+
     public async Task<AddressDto> GetDtoByIdAsync(int id)
         => await context.Addresses
             .AsNoTracking()
@@ -52,32 +60,33 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
         IEnumerable<string> roles = user.GetRoles();
         int userId = user.GetUserId();
 
-        switch(param.Type) {
+        switch (param.Type)
+        {
             case Addresses.Account:
                 query = query.Where(x => x.UserAddress.UserId == userId);
                 break;
             case Addresses.Clinic:
                 if (!roles.Contains("Doctor") && !roles.Contains("Nurse")) return null;
                 int doctorId = userId;
-                
+
                 query = query.Where(x => x.DoctorClinic.DoctorId == doctorId);
                 break;
             default:
                 break;
         }
-        
-        if(!string.IsNullOrEmpty(param.Search)) 
+
+        if (!string.IsNullOrEmpty(param.Search))
         {
-            query = query.Where(x => 
-            EF.Functions.Like(x.Name.ToLower(), $"%{param.Search}%") || 
-            EF.Functions.Like(x.Description.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.Zipcode.ToString(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.City.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.Neighborhood.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.InteriorNumber.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.ExteriorNumber.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.Street.ToLower(), $"%{param.Search}%") ||
-            EF.Functions.Like(x.State.ToLower(), $"%{param.Search}%"));
+            query = query.Where(x =>
+                EF.Functions.Like(x.Name.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Description.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Zipcode.ToString(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.City.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Neighborhood.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.InteriorNumber.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.ExteriorNumber.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Street.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.State.ToLower(), $"%{param.Search}%"));
         }
 
         if (!string.IsNullOrEmpty(param.Sort))

@@ -153,7 +153,7 @@ export class EventsService {
   resetMultipleSelecteds = (): void => this.multipleSelecteds.next({});
 
   // Get Paged List
-  loadPagedList(key: string, param: EventParams): Observable<PaginatedResult<Event[]>> {
+  loadPagedList(role: Role, key: string, param: EventParams): Observable<PaginatedResult<Event[]>> {
     this.setLoading(key, true);
     this.cacheExists(key);
 
@@ -166,6 +166,7 @@ export class EventsService {
       return of(response);
     }
 
+    param.role = role;
     let params = param.toHttpParams();
 
     return getPaginatedResult<Event[]>(this.baseUrl, params, this.http).pipe(
@@ -210,7 +211,7 @@ export class EventsService {
     );
   }
 
-  create(formData: FormData): Observable<Event> {
+  create(formData: any): Observable<Event> {
     return this.http.post<Event>(this.baseUrl, formData).pipe(
       tap((response: Event) => {
         // TODO

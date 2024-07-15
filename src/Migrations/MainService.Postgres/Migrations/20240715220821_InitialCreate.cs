@@ -95,6 +95,21 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DateFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Link",
                 columns: table => new
                 {
@@ -480,6 +495,102 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorEvent",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorEvent", x => new { x.DoctorId, x.EventId });
+                    table.ForeignKey(
+                        name: "FK_DoctorEvent_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorEvent_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventClinic",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    ClinicId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventClinic", x => new { x.EventId, x.ClinicId });
+                    table.ForeignKey(
+                        name: "FK_EventClinic_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventClinic_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NurseEvent",
+                columns: table => new
+                {
+                    NurseId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NurseEvent", x => new { x.NurseId, x.EventId });
+                    table.ForeignKey(
+                        name: "FK_NurseEvent_AspNetUsers_NurseId",
+                        column: x => x.NurseId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NurseEvent_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientEvent",
+                columns: table => new
+                {
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientEvent", x => new { x.PatientId, x.EventId });
+                    table.ForeignKey(
+                        name: "FK_PatientEvent_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientEvent_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DoctorLinks",
                 columns: table => new
                 {
@@ -672,29 +783,27 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Event",
+                name: "EventService",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PatientId = table.Column<int>(type: "integer", nullable: true),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ServiceId = table.Column<int>(type: "integer", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    ServiceId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Event", x => x.Id);
+                    table.PrimaryKey("PK_EventService", x => new { x.EventId, x.ServiceId });
                     table.ForeignKey(
-                        name: "FK_Event_AspNetUsers_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        name: "FK_EventService_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Event_Services_ServiceId",
+                        name: "FK_EventService_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -770,6 +879,30 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventPrescription",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventPrescription", x => new { x.EventId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Prescription_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescription",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PrescriptionLogo",
                 columns: table => new
                 {
@@ -821,78 +954,6 @@ namespace MainService.Postgres.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DoctorEvent",
-                columns: table => new
-                {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DoctorEvent", x => new { x.DoctorId, x.EventId });
-                    table.ForeignKey(
-                        name: "FK_DoctorEvent_AspNetUsers_DoctorId",
-                        column: x => x.DoctorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DoctorEvent_Event_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Event",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EventPrescription",
-                columns: table => new
-                {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EventPrescription", x => new { x.EventId, x.PrescriptionId });
-                    table.ForeignKey(
-                        name: "FK_EventPrescription_Event_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Event",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EventPrescription_Prescription_PrescriptionId",
-                        column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PatientEvent",
-                columns: table => new
-                {
-                    PatientId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PatientEvent", x => new { x.PatientId, x.EventId });
-                    table.ForeignKey(
-                        name: "FK_PatientEvent_AspNetUsers_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PatientEvent_Event_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Event",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -1007,14 +1068,15 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Event_PatientId",
-                table: "Event",
-                column: "PatientId");
+                name: "IX_EventClinic_ClinicId",
+                table: "EventClinic",
+                column: "ClinicId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Event_ServiceId",
-                table: "Event",
-                column: "ServiceId");
+                name: "IX_EventClinic_EventId",
+                table: "EventClinic",
+                column: "EventId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventPrescription_PrescriptionId",
@@ -1023,10 +1085,26 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_EventService_EventId",
+                table: "EventService",
+                column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventService_ServiceId",
+                table: "EventService",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MedicalProfessionalLicense_MedicalLicenseId",
                 table: "MedicalProfessionalLicense",
                 column: "MedicalLicenseId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NurseEvent_EventId",
+                table: "NurseEvent",
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PatientEvent_EventId",
@@ -1149,10 +1227,19 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorSignature");
 
             migrationBuilder.DropTable(
+                name: "EventClinic");
+
+            migrationBuilder.DropTable(
                 name: "EventPrescription");
 
             migrationBuilder.DropTable(
+                name: "EventService");
+
+            migrationBuilder.DropTable(
                 name: "MedicalProfessionalLicense");
+
+            migrationBuilder.DropTable(
+                name: "NurseEvent");
 
             migrationBuilder.DropTable(
                 name: "PatientEvent");
@@ -1194,13 +1281,16 @@ namespace MainService.Postgres.Migrations
                 name: "SpecialistSpecification");
 
             migrationBuilder.DropTable(
-                name: "Event");
+                name: "Events");
 
             migrationBuilder.DropTable(
                 name: "Prescription");
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Services");
 
             migrationBuilder.DropTable(
                 name: "Addresses");
@@ -1210,9 +1300,6 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "Photos");
-
-            migrationBuilder.DropTable(
-                name: "Services");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

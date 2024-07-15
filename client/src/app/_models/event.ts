@@ -1,7 +1,9 @@
 import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
-import {BadRequest} from "src/app/_models/types";
+import { Service } from "src/app/_models/service";
+import {BadRequest, Role} from "src/app/_models/types";
+import { User } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
 
@@ -9,31 +11,16 @@ const subject = 'event';
 
 export class Event {
   id!: number;
-  name!: string;
-  firstName!: string;
-  lastName!: string;
-  fullName!: string;
 
   allDay = false;
   dateFrom = new Date();
   dateTo = new Date();
-  timeFrom = new Date();
-  timeTo = new Date();
+  
+  patient?: User;
+  service?: Service;
 
-  email!: string;
-  isEmailVerified = false;
-  phoneNumber?: string;
-  phoneNumberCountryCode?: string;
-  isPhoneNumberVerified = false;
-  hasAccount = false;
-  age!: number;
-  sex!: string;
-  photoUrl?: string;
-  dateOfBirth!: Date;
   createdAt!: Date;
   isSelected = false;
-  roles: string[] = [];
-  permissions: string[] = [];
 }
 
 export class EventParams {
@@ -44,6 +31,7 @@ export class EventParams {
   dateTo?: Date;
   sort = 'createdAt';
   isSortAscending = false;
+  role?: Role;
   key?: string;
 
   // other
@@ -58,6 +46,7 @@ export class EventParams {
 
     if (this.key) params = params.append('id', this.key);
     if (this.search) params = params.append('search', this.search);
+    if (this.role) params = params.append('role', this.role);
     if (this.dateFrom)
       params = params.append(
         'dateFrom',
@@ -139,12 +128,10 @@ export class CreateForm {
     this.id = `${subject}Form${createId()}`;
 
     this.group = new FormGroup({
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
-      dateOfBirth: new FormControl(''),
-      email: new FormControl(''),
-      sex: new FormControl(''),
-      patient: new FormControl(''),
+      patientId: new FormControl(''),
+      nursesIds: new FormControl(''),
+      serviceId: new FormControl(''),
+      clinicId: new FormControl(''),
       dateTime: new FormGroup({
         allDay: new FormControl(false),
         dateFrom: new FormControl(''),

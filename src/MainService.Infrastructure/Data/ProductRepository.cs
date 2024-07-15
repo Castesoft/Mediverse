@@ -13,7 +13,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
 {
     public void Add(Product item)
     {
-        context.Products.Remove(item);
+        context.Products.Add(item);
     }
 
     public void Delete(Product item)
