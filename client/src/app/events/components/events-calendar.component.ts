@@ -207,7 +207,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   }
 
   handleEventClick(arg: EventClickArg) {
-    console.log(arg);
+    console.log(arg.event);
   }
 
   handleEventDragStop(arg: EventDragStopArg) {
