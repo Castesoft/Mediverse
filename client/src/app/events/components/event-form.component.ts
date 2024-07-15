@@ -11,9 +11,11 @@ import {
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
+import {Address} from "src/app/_models/address";
 import { Event, CreateForm, EditForm, DetailForm } from "src/app/_models/event";
 import {BadRequest, FormUse, View} from "src/app/_models/types";
 import { User } from "src/app/_models/user";
+import {AddressesService} from "src/app/_services/addresses.service";
 import { FormsService } from "src/app/_services/forms.service";
 import { GuidService } from "src/app/_services/guid.service";
 import { IconsService } from "src/app/_services/icons.service";
@@ -25,6 +27,7 @@ import { EventsService } from "src/app/_services/events.service";
 import { UsersService } from "src/app/_services/users.service";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { calcDateDiff } from "src/app/_utils/util";
+import {AddressesListSelectComponent} from "src/app/addresses/components/addresses-catalog.component";
 import { UserCardCompactComponent } from "src/app/users/components/user-card-compact.component";
 import { UserFormComponent } from "src/app/users/components/user-form.component";
 import { ServicesService } from "src/app/_services/services.service";
@@ -230,6 +233,20 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
             ></div>
 
           </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>
+            <span class="fw-semibold text-gray-500">
+                Seleccione la localización
+              </span>
+            </ng-template>
+            <div
+              addressesListSelect
+              [mode]="'select'"
+              [key]="selectClinicKey"
+              [view]="'page'"
+              [type]="'Clinic'"
+            ></div>
+          </mat-step>
         </mat-stepper>
       </form>
       @if (view() === 'page') {
@@ -249,7 +266,7 @@ import {UsersCatalogComponent, UsersListSelectComponent} from "src/app/users/com
   `,
   imports: [FontAwesomeModule, AlertModule, RouterModule, JsonPipe, ControlsModule, MaterialModule, UserCardCompactComponent,
     DatePipe, UserFormComponent, CdkAccordion, CdkAccordionItem, ServiceCardCompactComponent, ServiceFormComponent,
-    CurrencyPipe, UsersCatalogComponent, UsersListSelectComponent,
+    CurrencyPipe, UsersCatalogComponent, UsersListSelectComponent, AddressesListSelectComponent,
   ],
 })
 export class EventFormComponent implements OnInit, OnDestroy {
@@ -261,6 +278,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   icons = inject(IconsService);
   usersService = inject(UsersService);
   servicesService = inject(ServicesService);
+  addressesService = inject(AddressesService);
   guid = inject(GuidService);
 
   id = input.required<number | null>();
@@ -275,6 +293,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   selectPatientKey: string;
   selectServiceKey: string;
   selectNursesKey: string;
+  selectClinicKey: string;
 
   readonly patientPanelOpen = signal(false);
   patientAccordion = viewChild<CdkAccordionItem>('patientAccordion');
@@ -282,6 +301,8 @@ export class EventFormComponent implements OnInit, OnDestroy {
   serviceAccordion = viewChild<CdkAccordionItem>('serviceAccordion');
   readonly nursesPanelOpen = signal(false);
   nursesAccordion = viewChild<CdkAccordionItem>('nursesAccordion');
+  readonly clinicPanelOpen = signal(false);
+  clinicAccordion = viewChild<CdkAccordionItem>('clinicAccordion');
 
   form!: CreateForm | EditForm | DetailForm;
   returnUrl: string | null = null;
@@ -291,11 +312,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
   patient?: User;
   service?: Service;
   nurses?: User[];
+  clinic?: Address;
 
   constructor() {
     this.selectPatientKey = this.guid.gen();
     this.selectServiceKey = this.guid.gen();
     this.selectNursesKey = this.guid.gen();
+    this.selectClinicKey = this.guid.gen();
 
     this.route.queryParams.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (params) => {
@@ -343,6 +366,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.addressesService.selected$(this.selectClinicKey).subscribe({
+      next: clinic => {
+        this.clinic = clinic;
+        clinic && this.serviceAccordion()?.close();
+      }
+    });
+
     this.usersService.multipleSelected$(this.selectNursesKey).subscribe({
       next: nurses => {
         this.nurses = nurses;
@@ -379,8 +409,8 @@ export class EventFormComponent implements OnInit, OnDestroy {
       this.dateFrom() && this.form.group.get('dateTime')!.get('dateFrom')!.setValue(this.dateFrom());
       this.dateTo() && this.form.group.get('dateTime')!.get('dateTo')!.setValue(this.dateTo());
       if (this.dateFrom() && this.dateTo()) {
-        console.log('hi')
-        console.log(calcDateDiff(this.dateFrom()!, this.dateTo()!));
+        // console.log('hi')
+        // console.log(calcDateDiff(this.dateFrom()!, this.dateTo()!));
         if (calcDateDiff(this.dateFrom()!, this.dateTo()!) !== 0) {
           this.form.group.get('dateTime')!.get('allDay')!.setValue(true);
         } else {

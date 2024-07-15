@@ -17,6 +17,59 @@ namespace MainService.Sqlite.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
+            modelBuilder.Entity("MainService.Models.Entities.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("City")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ExteriorNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InteriorNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Neighborhood")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Zipcode")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.AppPermission", b =>
                 {
                     b.Property<int>("Id")
@@ -225,12 +278,30 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
+                {
+                    b.Property<int>("NurseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("NurseId", "ClinicId");
+
+                    b.HasIndex("ClinicId");
+
+                    b.ToTable("ClinicNurses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
                     b.Property<int>("DoctorId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ClinicId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsMain")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "ClinicId");
@@ -439,63 +510,6 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("Link");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("City")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ExteriorNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InteriorNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Neighborhood")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhotoUrl")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("State")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Street")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ZipCode")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Locations");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.LocationPhone", b =>
-                {
-                    b.Property<int>("LocationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PhoneId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("LocationId", "PhoneId");
-
-                    b.HasIndex("PhoneId")
-                        .IsUnique();
-
-                    b.ToTable("LocationPhone");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicense", b =>
                 {
                     b.Property<int>("Id")
@@ -530,24 +544,6 @@ namespace MainService.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("MedicalProfessionalLicense");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.NurseClinic", b =>
-                {
-                    b.Property<int>("NurseId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ClinicId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("NurseId", "ClinicId");
-
-                    b.HasIndex("ClinicId");
-
-                    b.HasIndex("NurseId")
-                        .IsUnique();
-
-                    b.ToTable("NurseClinics");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -821,6 +817,25 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("SpecialistSpecification");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "AddressId");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.ToTable("UserAddress");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.Property<int>("UserId")
@@ -981,9 +996,28 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Clinic")
+                        .WithMany("ClinicNurses")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "Nurse")
+                        .WithMany("ClinicNurses")
+                        .HasForeignKey("NurseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Nurse");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Location", "Clinic")
+                    b.HasOne("MainService.Models.Entities.Address", "Clinic")
                         .WithOne("DoctorClinic")
                         .HasForeignKey("MainService.Models.Entities.DoctorClinic", "ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1186,25 +1220,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Prescription");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.LocationPhone", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Location", "Location")
-                        .WithMany("LocationPhones")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.Phone", "Phone")
-                        .WithOne("LocationPhone")
-                        .HasForeignKey("MainService.Models.Entities.LocationPhone", "PhoneId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Phone");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.MedicalProfessionalLicense", b =>
                 {
                     b.HasOne("MainService.Models.Entities.MedicalLicense", "MedicalLicense")
@@ -1222,25 +1237,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("MedicalLicense");
 
                     b.Navigation("SpecialistSpecification");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.NurseClinic", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Location", "Clinic")
-                        .WithMany("NurseClinics")
-                        .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.AppUser", "Nurse")
-                        .WithOne("NurseClinic")
-                        .HasForeignKey("MainService.Models.Entities.NurseClinic", "NurseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Clinic");
-
-                    b.Navigation("Nurse");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -1352,6 +1348,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Address")
+                        .WithOne("UserAddress")
+                        .HasForeignKey("MainService.Models.Entities.UserAddress", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("UserAddresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Photo", "Photo")
@@ -1407,6 +1422,15 @@ namespace MainService.Sqlite.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Address", b =>
+                {
+                    b.Navigation("ClinicNurses");
+
+                    b.Navigation("DoctorClinic");
+
+                    b.Navigation("UserAddress");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.AppPermission", b =>
                 {
                     b.Navigation("RolePermissions");
@@ -1423,6 +1447,8 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.AppUser", b =>
                 {
+                    b.Navigation("ClinicNurses");
+
                     b.Navigation("DoctorClinics");
 
                     b.Navigation("DoctorEvents");
@@ -1441,13 +1467,13 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("Doctors");
 
-                    b.Navigation("NurseClinic");
-
                     b.Navigation("NursesDoctor");
 
                     b.Navigation("PatientEvents");
 
                     b.Navigation("Patients");
+
+                    b.Navigation("UserAddresses");
 
                     b.Navigation("UserPermissions");
 
@@ -1470,15 +1496,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("DoctorLink");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Location", b =>
-                {
-                    b.Navigation("DoctorClinic");
-
-                    b.Navigation("LocationPhones");
-
-                    b.Navigation("NurseClinics");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicense", b =>
                 {
                     b.Navigation("MedicalProfessionalLicense");
@@ -1487,8 +1504,6 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>
                 {
                     b.Navigation("DoctorPhone");
-
-                    b.Navigation("LocationPhone");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>

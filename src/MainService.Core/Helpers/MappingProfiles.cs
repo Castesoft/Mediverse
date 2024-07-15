@@ -1,5 +1,6 @@
 using AutoMapper;
 using MainService.Core.DTOs;
+using MainService.Core.DTOs.Addresses;
 using MainService.Core.DTOs.Products;
 using MainService.Core.DTOs.Services;
 using MainService.Core.DTOs.User;
@@ -12,6 +13,12 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        CreateMap<Address, AddressDto>()
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
+            .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count));
+        
+        CreateMap<ClinicCreateDto, Address>();
+        
         CreateMap<PatientCreateDto, AppUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
         
@@ -45,6 +52,14 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
 
         CreateMap<AppUser, UserDto>()
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street))
+            .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.InteriorNumber))
+            .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.ExteriorNumber))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.City))
+            .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.State))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Country))
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Zipcode))
+            
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
@@ -62,18 +77,5 @@ public class MappingProfiles : Profile
         CreateMap<Product, ProductDto>();
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
-
-        CreateMap<Location, PrescriptionInformationDto>()
-            .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.ExteriorNumber))
-            .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.InteriorNumber))
-            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
-            .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.ZipCode))
-            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
-            .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
-            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
-            .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Neighborhood))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.PhotoUrl))
-            .ForMember(dest => dest.Phones,
-                opt => opt.MapFrom(src => src.LocationPhones.Select(y => y.Phone.PhoneNumber)));
     }
 }

@@ -1,9 +1,6 @@
-<label
-  [for]="id? id : controlName"
-  class="fs-6 fw-semibold form-label mt-3"
-  [class.required]="service.isOptional(control) || !isReadonly"
-  >
-  <span>{{label}}</span>
+<label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
+       [class.required]="!service.isOptional(control) || isReadonly">
+  {{ label }}
 </label>
 <textarea
   class="form-control"

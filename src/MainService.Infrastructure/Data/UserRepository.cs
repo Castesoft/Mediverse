@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MainService.Core.DTOs;
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
@@ -15,33 +14,8 @@ namespace MainService.Infrastructure.Data;
 
 public class UserRepository(DataContext context, IMapper mapper) : IUserRepository
 {
-    public void Add(AppUser item)
-    {
-        context.Users.Remove(item);
-    }
-
-    public void Delete(AppUser item)
-    {
-        context.Users.Remove(item);
-    }
-
-    public async Task<PrescriptionInformationDto> GetPrescriptionInformationAsync(int doctorId)
-    {
-        var doctor = await context.Users
-            .Where(x => x.Id == doctorId)
-            .Include(x => x.DoctorClinics).ThenInclude(x => x.Clinic)
-            .SingleOrDefaultAsync();
-
-        var clinic = doctor.DoctorClinics.FirstOrDefault()?.Clinic;
-        
-        if (clinic == null) return null;
-
-        var newVar = await context.Locations
-            .Include(x => x.LocationPhones).ThenInclude(x => x.Phone)
-            .SingleOrDefaultAsync(x => x.Id == clinic.Id);
-
-        return mapper.Map<PrescriptionInformationDto>(newVar);
-    }
+    public void Add(AppUser item) => context.Users.Remove(item);
+    public void Delete(AppUser item) => context.Users.Remove(item);
 
     public async Task<List<AppUser>> GetAllAsync()
     {
@@ -101,8 +75,11 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         var query = context.Users
             .Include(x => x.Patients)
             .Include(x => x.Doctors)
-            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
             .Include(x => x.DoctorNurses)
+            .Include(x => x.UserAddresses)
+                .ThenInclude(x => x.Address)
             .AsQueryable();
 
         IEnumerable<string> roles = user.GetRoles();

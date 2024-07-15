@@ -1,7 +1,6 @@
-<label [for]="id? id : controlName" class="form-label fw-semi-bold fs--1 d-flex">
-  {{label}}
-  @if(service.isOptional(control)) { <span optionalSpan></span> }
-  @if (isNew()) { <span newBadge></span> }
+<label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
+       [class.required]="!service.isOptional(control) || isReadonly">
+  {{ label }}
 </label>
 <select
   class="form-select fs-0 text-1000"

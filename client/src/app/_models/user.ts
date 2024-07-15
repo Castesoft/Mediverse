@@ -25,12 +25,24 @@ export class User {
   dateOfBirth!: Date;
   createdAt!: Date;
   isSelected = false;
+
+  taxId?: string;
+
   roles: string[] = [];
   permissions: string[] = [];
 
   eventsCount = 0;
   eventsAmount = 0;
   eventsPayable = 0;
+
+  street!: string;
+  exteriorNumber!: string;
+  interiorNumber?: string;
+  neighborhood?: string;
+  city!: string;
+  state!: string;
+  country!: string;
+  zipcode!: string;
 
   post?: string;
   education?: string;

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, input, output } from "@angular/core";
+import {Component, OnInit, OnDestroy, inject, input, output, HostBinding} from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Subject, takeUntil } from "rxjs";
@@ -33,6 +33,11 @@ export class ServiceFormComponent implements OnInit, OnDestroy {
   view = input.required<View>();
   key = input<string>();
   style = input<FormControlStyles>('solid');
+
+  @HostBinding('class') get hostClass() {
+    if (this.view() === 'page') return 'card-body pt-9 pb-0';
+    else return '';
+  }
 
   itemToReturn = output<Service>();
 

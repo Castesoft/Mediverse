@@ -1,6 +1,6 @@
-<p>{{label}}
-  @if(service.isOptional(control)) { <span optionalSpan></span> }
-  @if (isNew()) { <span newBadge></span> }
+<p class="fw-semibold fs-6 mb-2"
+       [class.required]="!service.isOptional(control) || isReadonly">
+  {{ label }}
 </p>
 @for(option of options; let idx = $index; track idx) {
   <div class="form-check">

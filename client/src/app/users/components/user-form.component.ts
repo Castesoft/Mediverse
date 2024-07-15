@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, inject, input, output} from "@angular/core";
+import {Component, OnInit, OnDestroy, inject, input, output, HostBinding} from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Subject, takeUntil } from "rxjs";
@@ -14,7 +14,6 @@ import { ControlsModule } from "src/app/_forms/controls.module";
 import { UsersService } from "src/app/_services/users.service";
 
 @Component({
-  host: { class: 'pb-3', },
   selector: 'div[userForm]',
   templateUrl: './user-form.component.html',
   standalone: true,
@@ -34,6 +33,11 @@ export class UserFormComponent implements OnInit, OnDestroy {
   role = input.required<Role>();
   key = input<string>();
   style = input<FormControlStyles>('solid');
+
+  @HostBinding('class') get hostClass() {
+    if (this.view() === 'page') return 'card-body pt-9 pb-0';
+    else return '';
+  }
 
   user = output<User>();
 

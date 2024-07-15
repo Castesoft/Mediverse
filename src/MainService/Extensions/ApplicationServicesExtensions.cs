@@ -24,6 +24,7 @@ public static class ApplicationServicesExtensions
         // Services
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsersService, UsersService>();
+        services.AddScoped<IAddressesService, AddressesService>();
         services.AddScoped<IServicesService, ServicesService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ITwilioService, TwilioService>();

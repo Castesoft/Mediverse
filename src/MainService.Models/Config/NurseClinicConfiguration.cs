@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
 
-public class NurseClinicConfiguration : IEntityTypeConfiguration<NurseClinic>
+public class ClinicNurseConfiguration : IEntityTypeConfiguration<ClinicNurse>
 {
-    public void Configure(EntityTypeBuilder<NurseClinic> builder)
+    public void Configure(EntityTypeBuilder<ClinicNurse> builder)
     {
         builder.HasKey(x =>
             new
@@ -16,12 +16,12 @@ public class NurseClinicConfiguration : IEntityTypeConfiguration<NurseClinic>
             });
 
         builder.HasOne(x => x.Nurse)
-            .WithOne(x => x.NurseClinic)
-            .HasForeignKey<NurseClinic>(x => x.NurseId)
+            .WithMany(x => x.ClinicNurses)
+            .HasForeignKey(x => x.NurseId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Clinic)
-            .WithMany(x => x.NurseClinics)
+            .WithMany(x => x.ClinicNurses)
             .HasForeignKey(x => x.ClinicId)
             .OnDelete(DeleteBehavior.Cascade);
     }

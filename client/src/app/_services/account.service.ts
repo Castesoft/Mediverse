@@ -1,8 +1,11 @@
 import { Observable, map, tap } from "rxjs";
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { Account } from "src/app/_models/account";
+import { Role } from "src/app/_models/types";
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root',
@@ -10,26 +13,38 @@ import { Account } from "src/app/_models/account";
 export class AccountService {
   baseUrl = `${environment.apiUrl}account/`;
   current = signal<Account | null>(null);
-  roles = computed(() => {
+  roles = computed<Role[]>(() => {
+
     const user = this.current();
     if (user && user.token) {
       const role = JSON.parse(atob(user.token.split('.')[1])).role;
-      return Array.isArray(role) ? role : [role];
+      const roles = Array.isArray(role) ? role : [role];
+      user.roles = roles;
+      return roles;
     }
     return [];
   })
 
   private http = inject(HttpClient);
+  private router = inject(Router);
+  private matSnackBar = inject(MatSnackBar);
 
   login(value: any) {
     return this.http.post<Account>(`${this.baseUrl}login`, value).pipe(
       map(response => {
         if (response) {
           this.setCurrentUser(response);
+          this.router.navigate(['/account']);
+          this.matSnackBar.open(`Bienvenido ${response.firstName}`, 'Cerrar', { duration: 3000 });
         }
         return response;
       })
     );
+  }
+
+  hasRole = (inputRoles: Role[]): boolean => {
+    if (this.roles().some((role => inputRoles.includes(role)))) return true;
+    return false;
   }
 
   register(value: any) {
@@ -49,6 +64,7 @@ export class AccountService {
   logout() {
     localStorage.removeItem('user');
     this.current.set(null);
+    this.router.navigate(['/auth/sign-in/basic']);
   }
 
   update(value: any) {

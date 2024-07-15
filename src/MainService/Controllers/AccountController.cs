@@ -35,6 +35,10 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         var item = await userManager.Users
             .Include(x => x.UserPhoto)
                 .ThenInclude(x => x.Photo)
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .Include(x => x.UserPermissions)
+                .ThenInclude(x => x.Permission)
             .SingleOrDefaultAsync(x => x.Email == request.Email);
 
         if (item == null) return Unauthorized("Correo o contraseña incorrectos.");

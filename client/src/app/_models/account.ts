@@ -1,25 +1,26 @@
 import { createId } from "@paralleldrive/cuid2";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { Role } from "src/app/_models/types";
 
-export interface Account {
-  id: number;
-  username: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  isEmailVerified: boolean;
-  phoneNumber: string;
-  phoneNumberCountryCode: string;
-  isPhoneNumberVerified: boolean;
-  sex: string;
-  token: string;
-  photoUrl: string;
-  dateOfBirth: Date;
-  dateCreated: Date;
+export class Account {
+  id!: number;
+  username!: string;
+  firstName!: string;
+  lastName!: string;
+  fullName!: string;
+  email!: string;
+  isEmailVerified = false;
+  phoneNumber?: string;
+  phoneNumberCountryCode?: string;
+  isPhoneNumberVerified = false;
+  sex!: string;
+  token!: string;
+  photoUrl?: string;
+  dateOfBirth?: Date;
+  createdAt = new Date();
 
-  roles: string[];
-  permissions: string[];
+  roles: Role[] = [];
+  permissions: string[] = [];
 }
 
 export const genders = [

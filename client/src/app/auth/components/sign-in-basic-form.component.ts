@@ -94,7 +94,6 @@ export class SignInBasicFormComponent implements OnInit {
     if (this.form.group.valid) {
       this.accountService.login(this.form.group.value).subscribe({
         next: account => {
-          this.matSnackBar.open('Welcome back!', 'Close', { duration: 3000 });
           this.form.submitted = false;
           if (this.redirectUrl) {
             this.router.navigate([this.redirectUrl]);
