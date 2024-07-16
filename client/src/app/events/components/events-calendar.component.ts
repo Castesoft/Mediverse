@@ -158,16 +158,14 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
         const { result, pagination } = response;
         this.data = result;
         this.pagination = pagination;
-
         if (this.calendarOptions && result) {
-
-          console.log(result);
           this.calendarOptions.events = result!.map((event) => {
             return {
               title: `${event.patient?.firstName} ${event.service?.name}`,
               start: event.dateFrom,
               end: event.dateTo,
-            };
+              id: event.id,
+            } as any;
           });
         }
       },
@@ -207,7 +205,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   }
 
   handleEventClick(arg: EventClickArg) {
-    console.log(arg.event);
+    this.service.clickLink(+arg.event.id, this.service.getById$(+arg.event.id, this.key(), this.role()), this.key(), 'detail', 'modal')
   }
 
   handleEventDragStop(arg: EventDragStopArg) {
