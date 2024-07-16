@@ -211,6 +211,18 @@ export class EventsService {
     );
   }
 
+  getById$(id: number, key: string, role: Role) {
+    const found = this.findInCache(this.cacheMap, id);
+
+    if (found) {
+      return found;
+    }
+
+    this.loadPagedList(role, key, this.getParam(key)).subscribe();
+
+    return found;
+  }
+
   create(formData: any): Observable<Event> {
     return this.http.post<Event>(this.baseUrl, formData).pipe(
       tap((response: Event) => {
