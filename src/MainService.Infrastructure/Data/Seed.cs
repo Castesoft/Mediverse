@@ -11,7 +11,7 @@ namespace MainService.Infrastructure.Data;
 public class Seed
 {
     private static readonly Random random = new();
-    
+
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
         IPermissionManager permissionManager)
     {
@@ -86,7 +86,8 @@ public class Seed
             {
                 Photo = new()
                 {
-                    Url = "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*",
+                    Url =
+                        "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*",
                     PublicId = "avatars/ramiro_castellanos_barron",
                     Size = 24471, Name = "Foto_ramiro.png"
                 }
@@ -168,15 +169,15 @@ public class Seed
 
         await userManager.CreateAsync(admin, "Pa$$w0rd");
         await userManager.CreateAsync(doctor, "Pa$$w0rd");
-        
+
         await userManager.AddToRolesAsync(admin, ["Admin"]);
-        await userManager.AddToRolesAsync(doctor, ["Doctor","Patient"]);
+        await userManager.AddToRolesAsync(doctor, ["Doctor", "Patient"]);
 
         List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(100, Roles.Patient);
         int userIndex = 1;
 
         var roles = await context.Roles.ToListAsync();
-        
+
         foreach (var user in patientsForSeeding)
         {
             List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Patient").ToList();
@@ -187,7 +188,8 @@ public class Seed
                 var roleResult = await userManager.AddToRolesAsync(user, [roleName]);
                 if (!roleResult.Succeeded) return;
             }
-            Log.Information($"Seeding patient {$"{userIndex++}/{patientsForSeeding.Count()}", -15} ==> {user.Email}");
+
+            Log.Information($"Seeding patient {$"{userIndex++}/{patientsForSeeding.Count()}",-15} ==> {user.Email}");
         }
 
         var patients = await userManager.Users
@@ -205,10 +207,11 @@ public class Seed
             if (!createUserResult.Succeeded) return;
             foreach (var roleName in roleNames)
             {
-                var roleResult = await userManager.AddToRolesAsync(user, [roleName,"Doctor"]);
+                var roleResult = await userManager.AddToRolesAsync(user, [roleName, "Doctor"]);
                 if (!roleResult.Succeeded) return;
             }
-            Log.Information($"Seeding doctor {$"{userIndex++}/{doctorsForSeeding.Count()}", -15} ==> {user.Email}");
+
+            Log.Information($"Seeding doctor {$"{userIndex++}/{doctorsForSeeding.Count()}",-15} ==> {user.Email}");
         }
 
         var doctors = await userManager.Users
@@ -251,7 +254,7 @@ public class Seed
             {
                 var createUserResult = await userManager.CreateAsync(nurse, "Pa$$w0rd");
                 if (!createUserResult.Succeeded) return;
-                await userManager.AddToRolesAsync(nurse, ["Nurse","Patient"]);
+                await userManager.AddToRolesAsync(nurse, ["Nurse", "Patient"]);
 
                 context.DoctorNurses.Add(new(item.Id, nurse.Id));
             }
@@ -267,6 +270,117 @@ public class Seed
             {
                 context.DoctorProducts.Add(new(item.Id, product));
             }
+
+            foreach (var patient in item.Patients.Select(x => x.Patient))
+            {
+                int randomNum = random.Next(2, 25);
+
+                var events = new List<PatientEvent>();
+
+                for (int i = 2; i < randomNum; i++)
+                {
+                    var getMainClinic = random.Next(0, 1) > 0;
+                    var hasNurses = random.Next(0, 1) > 0;
+                    var hasPrescriptions = random.Next(0, 1) > 0;
+
+
+                    var randomClinic = doctor.DoctorClinics.Where(x => x.IsMain == getMainClinic).Select(x => x.Clinic)
+                        .FirstOrDefault();
+
+
+                    var newPatientEvent = new PatientEvent()
+                    {
+                        Event = new()
+                        {
+                            DoctorEvent = new()
+                            {
+                                Doctor = item
+                            },
+                            NurseEvents = new List<NurseEvent>(),
+                            EventPrescriptions = new List<EventPrescription>(),
+                            DateFrom = default,
+                            DateTo = default
+                        }
+                    };
+
+                    newPatientEvent.Event.EventService = new()
+                    {
+                        Service = doctor.DoctorServices.Select(x => x.Service).ToList()[
+                            random.Next(doctor.DoctorServices.Count)]
+                    };
+
+                    if (randomClinic != null)
+                    {
+                        newPatientEvent.Event.EventClinic = new() { Clinic = randomClinic };
+                    }
+
+                    if (hasNurses)
+                    {
+                        var randomNurses = doctor.DoctorNurses.Select(x => x.Nurse).Take(random.Next(1, 3));
+
+                        foreach (var nurse in randomNurses)
+                        {
+                            newPatientEvent.Event.NurseEvents.Add(new()
+                            {
+                                Nurse = nurse,
+                            });
+                        }
+                    }
+
+                    if (hasPrescriptions)
+                    {
+                        for (int j = 1; j < random.Next(1, 3); j++)
+                        {
+                            var newPrescriptionItems = new List<PrescriptionItem>();
+
+                            for (int k = 1; k < random.Next(1, 3); k++)
+                            {
+                                var randomMedicine =
+                                    doctor.DoctorProducts.Select(x => x.Product).ToList()[
+                                        random.Next(doctor.DoctorProducts.Count)];
+
+                                newPrescriptionItems.Add(new()
+                                {
+                                    Medicine = randomMedicine,
+                                });
+                            }
+
+                            newPatientEvent.Event.EventPrescriptions.Add(new()
+                            {
+                                Prescription = new()
+                                {
+                                    ExchangeAmount = random.Next(1, 5),
+                                    PatientPrescription = new()
+                                    {
+                                        Patient = patient
+                                    },
+                                    DoctorPrescription = new()
+                                    {
+                                        Doctor = item
+                                    },
+                                    PrescriptionItems = newPrescriptionItems,
+                                }
+                            });
+                        }
+                    }
+
+
+                    events.Add(newPatientEvent);
+                }
+            }
+
+
+            // cita 'Event'
+            // tomar a los pacientes del doctor
+            // random de 2-25 generar cita para el paciente (con el doc)
+            // para cada cita, 50/50 que sea con especialistas
+            // si no, 1-3 'nurses' o especialistas
+            // para cada cita, 50/50 que sea la clínica principal
+            // si no, cualquiera de las otras clínicas
+            // random seleccionar un servicio del doctor
+            // receta medica de la cita 'Prescription'
+            // 50/50 probabilidad para tener receta medica de la cita
+            // si sí tiene receta médica, random que sean 1-3 recetas
         }
 
         await context.SaveChangesAsync();
