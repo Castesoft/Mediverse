@@ -7,25 +7,25 @@ import {
   OnInit,
   viewChild,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IconsService } from 'src/app/_services/icons.service';
-import { Pagination } from 'src/app/_models/pagination';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Subject, takeUntil } from 'rxjs';
-import { DecimalPipe } from '@angular/common';
-import { AlertModule } from 'ngx-bootstrap/alert';
-import { CatalogMode, Role, View } from 'src/app/_models/types';
-import { Router, RouterModule } from '@angular/router';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { FilterForm, Event, EventParams } from 'src/app/_models/event';
-import { ControlsModule } from 'src/app/_forms/controls.module';
-import { TableModule } from 'src/app/_shared/table/table.module';
-import { CatalogModule } from 'src/app/_shared/catalog.module';
-import { calcDateDiff } from 'src/app/_utils/util';
-import { EventsFilterMenuComponent } from 'src/app/events/components/events-filter-menu.component';
-import { EventsTableComponent } from 'src/app/events/components/events-table.component';
-import { EventsService } from 'src/app/_services/events.service';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {IconsService} from 'src/app/_services/icons.service';
+import {Pagination} from 'src/app/_models/pagination';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {Subject, takeUntil} from 'rxjs';
+import {DecimalPipe} from '@angular/common';
+import {AlertModule} from 'ngx-bootstrap/alert';
+import {CatalogMode, Role, View} from 'src/app/_models/types';
+import {Router, RouterModule} from '@angular/router';
+import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
+import {FilterForm, Event, EventParams} from 'src/app/_models/event';
+import {ControlsModule} from 'src/app/_forms/controls.module';
+import {TableModule} from 'src/app/_shared/table/table.module';
+import {CatalogModule} from 'src/app/_shared/catalog.module';
+import {calcDateDiff} from 'src/app/_utils/util';
+import {EventsFilterMenuComponent} from 'src/app/events/components/events-filter-menu.component';
+import {EventsTableComponent} from 'src/app/events/components/events-table.component';
+import {EventsService} from 'src/app/_services/events.service';
+import {LayoutModule} from 'src/app/_shared/layout.module';
 import {
   CalendarOptions,
   Calendar,
@@ -39,32 +39,61 @@ import interactionPlugin, {
   DateClickArg,
   EventDragStopArg,
 } from '@fullcalendar/interaction';
-import { FullCalendarComponent } from '@fullcalendar/angular';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import {FullCalendarComponent} from '@fullcalendar/angular';
+import {FullCalendarModule} from '@fullcalendar/angular';
+import {ButtonsModule} from "ngx-bootstrap/buttons";
+import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
 
 @Component({
-  host: { class: 'pb-6' },
+  host: {class: 'pb-6'},
   selector: 'div[eventsCalendar]',
   template: `
     <div class="card-header">
       <h2 class="card-title fw-bold">Citas</h2>
       <div class="card-toolbar">
+        <ul class="nav nav-pills me-3 mb-2 mb-sm-0">
+          <li class="nav-item m-0">
+            <a class="btn btn-icon btn-light btn-color-muted btn-active-primary me-3"
+               (click)="calendarView = 'table'"
+               [class.active]="calendarView === 'table'"
+               data-bs-toggle="tab">
+              <i class="ki-duotone ki-row-horizontal fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+            </a>
+          </li>
+          <li class="nav-item m-0">
+            <a class="btn btn-icon btn-light btn-color-muted btn-active-primary" data-bs-toggle="tab"
+               (click)="calendarView = 'calendar'"
+               [class.active]="calendarView === 'calendar'">
+              <i class="ki-duotone ki-calendar fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+            </a>
+          </li>
+        </ul>
         <button
           createBtn
           (click)="service.clickLink(null, null, key(), 'create', 'modal')"
           [naming]="service.naming!"
         ></button>
+
       </div>
     </div>
-    <div class="card-body">
-      @if (calendarOptions) {
-      <full-calendar #fullcalendar [options]="calendarOptions">
-        <ng-template #eventContent let-arg>
-          <b>{{ arg.event.title }}</b> - {{ arg.event.start.getDate() }}
-        </ng-template>
-      </full-calendar>
-      }
-    </div>
+
+    @if (calendarOptions && calendarView === 'calendar') {
+      <div class="card-body">
+        <full-calendar #fullcalendar [options]="calendarOptions">
+          <ng-template #eventContent let-arg>
+            <b>{{ arg.event.title }}</b> - {{ arg.event.start.getDate() }}
+          </ng-template>
+        </full-calendar>
+      </div>
+    } @else {
+      <div eventsCatalog [key]="key()" [role]="role()" [mode]="mode()" [view]="view()" [hideAddButton]="true"></div>
+    }
   `,
   standalone: true,
   imports: [
@@ -82,6 +111,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     EventsFilterMenuComponent,
     LayoutModule,
     FullCalendarModule,
+    ButtonsModule,
+    EventsCatalogComponent,
   ],
 })
 export class EventsCalendarComponent implements OnInit, OnDestroy {
@@ -94,6 +125,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   view = input.required<View>();
   role = input.required<Role>();
 
+  calendarView = 'calendar';
   data?: Event[];
   params!: EventParams;
   pagination?: Pagination;
@@ -157,7 +189,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   private loadData(params: EventParams) {
     this.service.loadPagedList(this.role(), this.key(), params).subscribe({
       next: (response) => {
-        const { result, pagination } = response;
+        const {result, pagination} = response;
         this.data = result;
         this.pagination = pagination;
         if (this.calendarOptions && result) {
@@ -174,9 +206,13 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     });
   }
 
+  handleViewChange = (event: any) => {
+    console.log(event);
+  }
+
   private handleFormValueChange = () => {
-    const { controls, value } = this.form.group;
-    const { dateRange } = controls;
+    const {controls, value} = this.form.group;
+    const {dateRange} = controls;
 
     this.params.updateFromPartial({
       ...value,
@@ -241,4 +277,6 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
       },
     ];
   }
+
+  protected readonly FormGroup = FormGroup;
 }

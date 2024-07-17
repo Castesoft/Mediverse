@@ -13,9 +13,12 @@
           <button filterMenuBtn (click)="service.showFiltersModal(key())"></button>
           <events-filter-menu></events-filter-menu>
           <button exportBtn (click)="service.downloadXLSX$(key())"></button>
-          <button createBtn [naming]="service.naming!"
-                  (click)="service.clickLink(null, null, key(), 'create', 'modal')"
-          ></button>
+
+          @if (!hideAddButton()) {
+            <button createBtn [naming]="service.naming!"
+                    (click)="service.clickLink(null, null, key(), 'create', 'modal')"
+            ></button>
+          }
         </div>
       }
     }
