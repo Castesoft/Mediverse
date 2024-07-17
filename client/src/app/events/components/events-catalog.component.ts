@@ -38,6 +38,8 @@ export class EventsCatalogComponent implements OnInit, OnDestroy {
   view = input.required<View>();
   role = input.required<Role>();
 
+  hideAddButton = input<boolean>(false);
+
   data?: Event[];
   params!: EventParams;
   pagination?: Pagination;

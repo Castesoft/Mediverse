@@ -72,6 +72,7 @@ import {
   faCaretRight, faCaretLeft, faCaretDown,
   faCircle, faCaretUp,
   faSave,
+  faTableList,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faClipboard, faEdit, faEye, faNoteSticky, faCalendar as faRegCalendar,
@@ -173,5 +174,6 @@ export class IconsService {
   faFileSignature = faFileSignature;
   faRegCircleQuestion = faCircleQuestion;
   faWindowRestore = faWindowRestore;
+  faTableList = faTableList;
 
 }
