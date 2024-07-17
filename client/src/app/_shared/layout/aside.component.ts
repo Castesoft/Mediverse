@@ -102,6 +102,18 @@ import { AccountService } from "src/app/_services/account.service";
               </a>
             </div>
             <div class="menu-item">
+              <a class="menu-link" [routerLink]="['/home/products']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+            <span class="menu-icon">
+            <i class="ki-duotone ki-brifecase-tick fs-2">
+            <span class="path1"></span>
+ <span class="path2"></span>
+ <span class="path3"></span>
+											</i>
+            </span>
+                <span class="menu-title">Productos</span>
+              </a>
+            </div>
+            <div class="menu-item">
               <a class="menu-link" [routerLink]="['/home/nurses']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
             <i class="ki-duotone ki-people fs-2">
