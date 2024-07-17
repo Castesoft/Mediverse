@@ -40,45 +40,49 @@ import {
   UsersListSelectComponent,
 } from 'src/app/users/components/users-catalog.component';
 import { createId } from '@paralleldrive/cuid2';
+import {PatientTypeaheadDropdownComponent} from "src/app/_shared/components/patient-typeahead-dropdown.component";
 
 @Component({
   host: { class: 'pb-3' },
   selector: 'div[eventForm]',
   template: `
     @if ((use() === "create" && form) || (use() === "edit" && item && form) ||
-    (use() === "detail" && item)) { @if(form.error){
-    <div errorsAlert [error]="form.error"></div>
-    }
+    (use() === "detail" && item)) {
+      @if (form.error) {
+        <div errorsAlert [error]="form.error"></div>
+      }
 
-    <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
-      <mat-stepper
-        orientation="vertical"
-        [linear]="true"
-        #stepper
-        style="background: transparent!important;"
-      >
-        <mat-step [stepControl]="form.group.get('patient')!">
-          <ng-template matStepLabel
+      <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
+        <mat-stepper
+          orientation="vertical"
+          [linear]="true"
+          #stepper
+          style="background: transparent!important;"
+        >
+          <mat-step [stepControl]="form.group.get('patient')!">
+            <ng-template matStepLabel
             >Paciente @if (patient) {
-            <span class="fw-semibold text-gray-500"
+              <span class="fw-semibold text-gray-500"
               >({{ patient.fullName }})</span
-            >
+              >
             }
-          </ng-template>
-          @if (patient) {
-          <div
-            userCardCompact
-            [role]="'Patient'"
-            [key]="selectPatientKey"
-            [view]="view()"
-          ></div>
-          }
+            </ng-template>
+            @if (patient) {
+              <div
+                userCardCompact
+                [role]="'Patient'"
+                [key]="selectPatientKey"
+                [view]="view()"
+              ></div>
+            }
 
-          <div class="my-4">
-            <button
-              class="btn btn-light-primary me-2"
-              type="button"
-              (click)="
+            <div class="my-4">
+              <div customerTypeaheadDropdown [user]="patient ?? null" [isDisabled]="false" [guid]="selectPatientKey"
+                   [label]="'Paciente'"></div>
+              <button
+                class="btn btn-light-primary me-2"
+                type="button"
+                (click)="
                 usersService.showCatalogModal(
                   $event,
                   selectPatientKey,
@@ -86,287 +90,324 @@ import { createId } from '@paralleldrive/cuid2';
                   'Patient'
                 )
               "
-            >
-              @if (!patient) { Seleccionar paciente } @else { Cambiar paciente }
-            </button>
-            @if (!patientPanelOpen()) {
-            <button
+              >
+                @if (!patient) {
+                  Seleccionar paciente
+                } @else {
+                  Cambiar paciente
+                }
+              </button>
+              @if (!patientPanelOpen()) {
+                <button
+                  matTooltip="Quite al paciente actual para poder agregar uno nuevo."
+                  [matTooltipDisabled]="!patient"
+                  type="button"
+                  class="btn btn-light-success me-2"
+                  (click)="handlePatientPanelClick($event)"
+                >
+                  Agregar
+                </button>
+              }
+              @if (patient) {
+                <button
+                  class="btn btn-light-danger me-2"
+                  type="button"
+                  (click)="usersService.setSelected$(selectPatientKey)"
+                >
+                  Quitar
+                </button>
+              }
+            </div>
+
+            <mat-accordion
               matTooltip="Quite al paciente actual para poder agregar uno nuevo."
               [matTooltipDisabled]="!patient"
-              type="button"
-              class="btn btn-light-success me-2"
-              (click)="handlePatientPanelClick($event)"
             >
-              Agregar
-            </button>
-            } @if (patient) {
-            <button
-              class="btn btn-light-danger me-2"
-              type="button"
-              (click)="usersService.setSelected$(selectPatientKey)"
-            >
-              Quitar
-            </button>
-            }
-          </div>
-
-          <mat-accordion
-            matTooltip="Quite al paciente actual para poder agregar uno nuevo."
-            [matTooltipDisabled]="!patient"
-          >
-            <mat-expansion-panel
-              (opened)="patientPanelOpen.set(true)"
-              (closed)="patientPanelOpen.set(false)"
-              [expanded]="patientPanelOpen()"
-              cdkAccordionItem
-              #patientAccordion
-              [disabled]="patient"
-              style="background: transparent!important; box-shadow: none!important;"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title> Crear nuevo paciente</mat-panel-title>
-              </mat-expansion-panel-header>
-              <div
-                userForm
-                [view]="'inline'"
-                [role]="'Patient'"
-                [id]="null"
-                [use]="'create'"
-                [key]="selectPatientKey"
-                (user)="usersService.setSelected$(selectPatientKey, $event)"
-              ></div>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </mat-step>
-        <mat-step [stepControl]="form.group.get('dateTime')!">
-          <ng-template matStepLabel
+              <mat-expansion-panel
+                (opened)="patientPanelOpen.set(true)"
+                (closed)="patientPanelOpen.set(false)"
+                [expanded]="patientPanelOpen()"
+                cdkAccordionItem
+                #patientAccordion
+                [disabled]="patient"
+                style="background: transparent!important; box-shadow: none!important;"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title> Crear nuevo paciente</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div
+                  userForm
+                  [view]="'inline'"
+                  [role]="'Patient'"
+                  [id]="null"
+                  [use]="'create'"
+                  [key]="selectPatientKey"
+                  (user)="usersService.setSelected$(selectPatientKey, $event)"
+                ></div>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </mat-step>
+          <mat-step [stepControl]="form.group.get('dateTime')!">
+            <ng-template matStepLabel
             >Fecha y hora
-            <span class="fw-semibold text-gray-500">
+              <span class="fw-semibold text-gray-500">
               @if (form.group.get('dateTime')!.get('dateFrom')?.value &&
-              form.group.get('dateTime')!.get('dateTo')?.value) { @if
-              (form.group.get('dateTime')!.get('allDay')!.value) { @if
-              (form.group.get('dateTime')!.get('dateFrom')!.value ===
-              form.group.get('dateTime')!.get('dateTo')!.value) { El
-              {{
-                form.group.get('dateTime')!.get('dateFrom')!.value
-                  | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'
-              }}
-              } @else { Del @if
-              (form.group.get('dateTime')!.get('dateFrom')!.value) {
-              {{
-                form.group.get('dateTime')!.get('dateFrom')!.value
-                  | date : "EEEE d 'de' MMMM" : '' : 'es-MX'
-              }}
-              } @if (form.group.get('dateTime')!.get('dateTo')!.value) { al
-              {{
-                form.group.get('dateTime')!.get('dateTo')!.value
-                  | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'
-              }}
-              } } } @else { @if
-              (form.group.get('dateTime')!.get('dateFrom')!.value ===
-              form.group.get('dateTime')!.get('dateTo')!.value) { El
-              {{
-                form.group.get('dateTime')!.get('dateFrom')!.value
-                  | date : "EEEE d 'de' MMMM" : '' : 'es-MX'
-              }}
-              {{
-                form.group.get('dateTime')!.get('timeFrom')!.value
-                  | date : 'h:mm' : '' : 'es-MX'
-              }}-{{
-                form.group.get('dateTime')!.get('timeTo')!.value
-                  | date : 'h:mm a' : '' : 'es-MX'
-              }}
-              {{
-                form.group.get('dateTime')!.get('dateTo')!.value
-                  | date : 'YYYY' : '' : 'es-MX'
-              }}
-              } @else { Del @if
-              (form.group.get('dateTime')!.get('dateFrom')!.value) {
-              {{
-                form.group.get('dateTime')!.get('dateFrom')!.value
-                  | date : "EEEE d 'de' MMMM 'a las' h:mm a" : '' : 'es-MX'
-              }}
-              } @if (form.group.get('dateTime')!.get('dateTo')!.value) { al
-              {{
-                form.group.get('dateTime')!.get('dateTo')!.value
-                  | date
-                    : "EEEE d 'de' MMMM 'a las' h:mm a, YYYY"
-                    : ''
-                    : 'es-MX'
-              }}
-              } } } }
+              form.group.get('dateTime')!.get('dateTo')?.value) {
+                @if (form.group.get('dateTime')!.get('allDay')!.value) {
+                  @if (form.group.get('dateTime')!.get('dateFrom')!.value ===
+                  form.group.get('dateTime')!.get('dateTo')!.value) {
+                    El
+                    {{
+                      form.group.get('dateTime')!.get('dateFrom')!.value
+                        | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'
+                    }}
+                  } @else {
+                    Del @if (form.group.get('dateTime')!.get('dateFrom')!.value) {
+                      {{
+                        form.group.get('dateTime')!.get('dateFrom')!.value
+                          | date : "EEEE d 'de' MMMM" : '' : 'es-MX'
+                      }}
+                    }
+                    @if (form.group.get('dateTime')!.get('dateTo')!.value) {
+                      al
+                      {{
+                        form.group.get('dateTime')!.get('dateTo')!.value
+                          | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'
+                      }}
+                    }
+                  }
+                } @else {
+                  @if (form.group.get('dateTime')!.get('dateFrom')!.value ===
+                  form.group.get('dateTime')!.get('dateTo')!.value) {
+                    El
+                    {{
+                      form.group.get('dateTime')!.get('dateFrom')!.value
+                        | date : "EEEE d 'de' MMMM" : '' : 'es-MX'
+                    }}
+                    {{
+                      form.group.get('dateTime')!.get('timeFrom')!.value
+                        | date : 'h:mm' : '' : 'es-MX'
+                    }}-{{
+                      form.group.get('dateTime')!.get('timeTo')!.value
+                        | date : 'h:mm a' : '' : 'es-MX'
+                    }}
+                    {{
+                      form.group.get('dateTime')!.get('dateTo')!.value
+                        | date : 'YYYY' : '' : 'es-MX'
+                    }}
+                  } @else {
+                    Del @if (form.group.get('dateTime')!.get('dateFrom')!.value) {
+                      {{
+                        form.group.get('dateTime')!.get('dateFrom')!.value
+                          | date : "EEEE d 'de' MMMM 'a las' h:mm a" : '' : 'es-MX'
+                      }}
+                    }
+                    @if (form.group.get('dateTime')!.get('dateTo')!.value) {
+                      al
+                      {{
+                        form.group.get('dateTime')!.get('dateTo')!.value
+                          | date
+                          : "EEEE d 'de' MMMM 'a las' h:mm a, YYYY"
+                            : ''
+                            : 'es-MX'
+                      }}
+                    }
+                  }
+                }
+              }
             </span>
-          </ng-template>
-          <div formGroupName="dateTime">
-            <div
-              formControlName="allDay"
-              controlCheck
-              [label]="'Dia completo'"
-            ></div>
-            <div class="row row-cols-lg-2 g-10">
-              <div class="col">
-                <div
-                  controlDate
-                  formControlName="dateFrom"
-                  [label]="'Fecha de inicio'"
-                ></div>
+            </ng-template>
+            <div formGroupName="dateTime">
+              <div
+                formControlName="allDay"
+                controlCheck
+                [label]="'Dia completo'"
+              ></div>
+              <div class="row row-cols-lg-2 g-10">
+                <div class="col">
+                  <div
+                    controlDate
+                    formControlName="dateFrom"
+                    [label]="'Fecha de inicio'"
+                  ></div>
+                </div>
+                @if (!form.group.get('dateTime')!.get('allDay')!.value) {
+                  <div class="col">
+                    <div
+                      controlDate
+                      formControlName="timeFrom"
+                      [label]="'Hora de inicio'"
+                      [timepicker]="true"
+                    ></div>
+                  </div>
+                }
               </div>
-              @if (!form.group.get('dateTime')!.get('allDay')!.value) {
-              <div class="col">
-                <div
-                  controlDate
-                  formControlName="timeFrom"
-                  [label]="'Hora de inicio'"
-                  [timepicker]="true"
-                ></div>
+              <div class="row row-cols-lg-2 g-10">
+                <div class="col">
+                  <div
+                    controlDate
+                    formControlName="dateTo"
+                    [label]="'Fecha fin'"
+                  ></div>
+                </div>
+                @if (!form.group.get('dateTime')!.get('allDay')!.value) {
+                  <div class="col">
+                    <div
+                      controlDate
+                      formControlName="timeTo"
+                      [label]="'Hora fin'"
+                      [timepicker]="true"
+                    ></div>
+                  </div>
+                }
               </div>
-              }
             </div>
-            <div class="row row-cols-lg-2 g-10">
-              <div class="col">
-                <div
-                  controlDate
-                  formControlName="dateTo"
-                  [label]="'Fecha fin'"
-                ></div>
-              </div>
-              @if (!form.group.get('dateTime')!.get('allDay')!.value) {
-              <div class="col">
-                <div
-                  controlDate
-                  formControlName="timeTo"
-                  [label]="'Hora fin'"
-                  [timepicker]="true"
-                ></div>
-              </div>
-              }
-            </div>
-          </div>
-        </mat-step>
-        <mat-step>
-          <ng-template matStepLabel
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel
             >Servicio/Tratamiento @if (service) {
-            <span class="fw-semibold text-gray-500"
+              <span class="fw-semibold text-gray-500"
               >({{ service.name }}) {{ service.price | currency }}</span
-            >
+              >
             }
-          </ng-template>
-          @if (service) {
-          <div
-            serviceCardCompact
-            [key]="selectServiceKey"
-            [view]="view()"
-          ></div>
-          }
+            </ng-template>
+            @if (service) {
+              <div
+                serviceCardCompact
+                [key]="selectServiceKey"
+                [view]="view()"
+              ></div>
+            }
 
-          <div class="my-4">
-            <button
-              class="btn btn-light-primary me-2"
-              type="button"
-              (click)="
+            <div class="my-4">
+              <button
+                class="btn btn-light-primary me-2"
+                type="button"
+                (click)="
                 servicesService.showCatalogModal(
                   $event,
                   selectServiceKey,
                   'select'
                 )
               "
-            >
-              @if (!service) { Seleccionar servicio } @else { Cambiar servicio }
-            </button>
-            @if (!servicePanelOpen()) {
-            <button
-              matTooltip="Quite al servicio actual para poder agregar uno nuevo."
+              >
+                @if (!service) {
+                  Seleccionar servicio
+                } @else {
+                  Cambiar servicio
+                }
+              </button>
+              @if (!servicePanelOpen()) {
+                <button
+                  matTooltip="Quite al servicio actual para poder agregar uno nuevo."
+                  [matTooltipDisabled]="!service"
+                  type="button"
+                  class="btn btn-light-success me-2"
+                  (click)="handleServicePanelClick($event)"
+                >
+                  Agregar
+                </button>
+              }
+              @if (service) {
+                <button
+                  class="btn btn-light-danger me-2"
+                  type="button"
+                  (click)="servicesService.setSelected$(selectServiceKey)"
+                >
+                  Quitar
+                </button>
+              }
+            </div>
+
+            <mat-accordion
+              matTooltip="Quite el servicio actual para poder agregar uno nuevo."
               [matTooltipDisabled]="!service"
-              type="button"
-              class="btn btn-light-success me-2"
-              (click)="handleServicePanelClick($event)"
             >
-              Agregar
-            </button>
-            } @if (service) {
-            <button
-              class="btn btn-light-danger me-2"
-              type="button"
-              (click)="servicesService.setSelected$(selectServiceKey)"
-            >
-              Quitar
-            </button>
-            }
-          </div>
+              <mat-expansion-panel
+                (opened)="servicePanelOpen.set(true)"
+                (closed)="servicePanelOpen.set(false)"
+                [expanded]="servicePanelOpen()"
+                cdkAccordionItem
+                #serviceAccordion
+                [disabled]="service"
+                style="background: transparent!important; box-shadow: none!important;"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title> Crear nuevo servicio</mat-panel-title>
+                </mat-expansion-panel-header>
 
-          <mat-accordion
-            matTooltip="Quite el servicio actual para poder agregar uno nuevo."
-            [matTooltipDisabled]="!service"
-          >
-            <mat-expansion-panel
-              (opened)="servicePanelOpen.set(true)"
-              (closed)="servicePanelOpen.set(false)"
-              [expanded]="servicePanelOpen()"
-              cdkAccordionItem
-              #serviceAccordion
-              [disabled]="service"
-              style="background: transparent!important; box-shadow: none!important;"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title> Crear nuevo servicio</mat-panel-title>
-              </mat-expansion-panel-header>
-
-              <div
-                serviceForm
-                [view]="'inline'"
-                [id]="null"
-                [use]="'create'"
-                [key]="selectServiceKey"
-                (itemToReturn)="
+                <div
+                  serviceForm
+                  [view]="'inline'"
+                  [id]="null"
+                  [use]="'create'"
+                  [key]="selectServiceKey"
+                  (itemToReturn)="
                   servicesService.setSelected$(selectServiceKey, $event)
                 "
-              ></div>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </mat-step>
-        <mat-step>
-          <ng-template matStepLabel>
+                ></div>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>
             <span class="fw-semibold text-gray-500">
-              @if(!nurses || nurses.length === 0) { Seleccione uno o muchos
-              especialistas } @else { @if(nurses.length === 1) { Especialista:
-              {{ nurses[0].fullName }} ({{ nurses[0].post }}) } @else { ({{
-                nurses.length
-              }}) Especialistas: @for(item of nurses; let idx = $index; track
-              idx; let last = $last) { {{ item.firstName }} ({{
-                item.education
-              }}) @if (!last) {,} } } }
+              @if (!nurses || nurses.length === 0) {
+                Seleccione uno o muchos
+                  especialistas
+              } @else {
+                @if (nurses.length === 1) {
+                  Especialista:
+                  {{ nurses[0].fullName }} ({{ nurses[0].post }})
+                } @else {
+                  ({{
+                    nurses.length
+                  }}) Especialistas: @for (item of nurses; let idx = $index; track
+                    idx; let last = $last) {
+                    {{ item.firstName }} ({{
+                      item.education
+                    }}) @if (!last) {
+                      ,
+                    }
+                  }
+                }
+              }
             </span>
-          </ng-template>
-          <div
-            usersListSelect
-            [mode]="'multiselect'"
-            [key]="selectNursesKey"
-            [view]="'page'"
-            [role]="'Nurse'"
-          ></div>
-        </mat-step>
-        <mat-step>
-          <ng-template matStepLabel>
+            </ng-template>
+            <div
+              usersListSelect
+              [mode]="'multiselect'"
+              [key]="selectNursesKey"
+              [view]="'page'"
+              [role]="'Nurse'"
+            ></div>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>
             <span class="fw-semibold text-gray-500">
               Seleccione la localización
             </span>
-          </ng-template>
-          <div
-            addressesListSelect
-            [mode]="'select'"
-            [key]="selectClinicKey"
-            [view]="'page'"
-            [type]="'Clinic'"
-          ></div>
-        </mat-step>
-      </mat-stepper>
-    </form>
-    @if (view() === 'page') {
-    <button class="btn btn-primary" [attr.form]="form.id" type="submit">
-      @if (use() === "create") { Crear {{ eventsService.naming!.singular }}
-      } @else if (use() === "edit") { Guardar cambios }
-    </button>
-    } }
+            </ng-template>
+            <div
+              addressesListSelect
+              [mode]="'select'"
+              [key]="selectClinicKey"
+              [view]="'page'"
+              [type]="'Clinic'"
+            ></div>
+          </mat-step>
+        </mat-stepper>
+      </form>
+      @if (view() === 'page') {
+        <button class="btn btn-primary" [attr.form]="form.id" type="submit">
+          @if (use() === "create") {
+            Crear {{ eventsService.naming!.singular }}
+          } @else if (use() === "edit") {
+            Guardar cambios
+          }
+        </button>
+      }
+    }
   `,
   standalone: true,
   styles: `
@@ -390,6 +431,7 @@ import { createId } from '@paralleldrive/cuid2';
     UsersCatalogComponent,
     UsersListSelectComponent,
     AddressesListSelectComponent,
+    PatientTypeaheadDropdownComponent,
   ],
 })
 export class EventFormComponent implements OnInit, OnDestroy {

@@ -49,6 +49,16 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
 
         return item;
     }
+    
+    [HttpGet("summary")]
+    public async Task<ActionResult<List<UserSummaryDto>>> GetSummaryAsync([FromQuery] UserParams param)
+    {
+        var item = await uow.UserRepository.GetSummaryDtosAsync(param, User);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} no fue encontrado.");
+
+        return item;
+    }
 
     // [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id}")]

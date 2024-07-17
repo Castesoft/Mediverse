@@ -1,19 +1,37 @@
-<label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
-       [class.required]="!service.isOptional(control) || isReadonly">
-  {{ label }}
-</label>
+@if (label()) {
+  <label
+    [for]="id() ? id() : controlName"
+    class="form-label fw-semi-bold fs--1 d-flex"
+  >
+    {{ label() }}
+    @if (service.isOptional(control)) {
+      <span optionalSpan></span>
+    }
+    @if (isNew()) {
+      <span newBadge></span>
+    }
+  </label>
+}
 
 <input
-  *ngIf="!isReadonly; else readonlyInput"
+  *ngIf="!isReadonly(); "
+  #inputRef
   class="form-control text-1000 fs-0"
-  [id]="id ? id : controlName"
+  [id]="id() ? id() : controlName"
+  [typeaheadAsync]="isTypeaheadAsync()"
   [formControl]="control"
-  [typeahead]="typeaheadOptions"
+  [typeahead]="typeaheadOptions()"
+  [style.border-top-right-radius.px]="isInputGroupSpan() ? 0 : null"
+  [style.border-bottom-right-radius.px]="isInputGroupSpan() ? 0 : null"
   [typeaheadScrollable]="true"
   [typeaheadOptionsInScrollableView]="7"
   [adaptivePosition]="true"
+  (typeaheadOnSelect)="onSelect.emit($event)"
+  (typeaheadLoading)="onLoading.emit($event)"
+  [typeaheadOptionField]="typeaheadOptionField()"
+  [typeaheadItemTemplate]="typeaheadItemTemplate()"
   [typeaheadMinLength]="0"
-  [placeholder]="placeholder"
+  [placeholder]="placeholder()"
   autocomplete="off"
   [typeaheadHideResultsOnBlur]="true"
   [attr.autofocus]="autofocus() ? true : null"
@@ -23,26 +41,30 @@
     'is-valid': submitted() && control.valid
   }"
   [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
-  [attr.aria-label]="label + ' input'"
+  [attr.aria-label]="label() + ' input'"
 >
 
 <ng-template #readonlyInput>
   <input
     class="form-control text-1000 fs-0"
-    [id]="id ? id : controlName"
+    [id]="id() ? id() : controlName"
     [formControl]="control"
-    [placeholder]="placeholder"
+    [placeholder]="placeholder()"
     autocomplete="off"
     [spellcheck]="false"
-    [readonly]="isReadonly"
+    [readonly]="isReadonly()"
     [ngClass]="{
       'is-invalid': submitted() && control.invalid,
       'is-valid': submitted() && control.valid
     }"
     [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
-    [attr.aria-label]="label + ' input'"
+    [attr.aria-label]="label() + ' input'"
   >
 </ng-template>
 
-@if(control.errors) {<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>}
-@if(formText()) {<div helpBlock [controlName]="controlName" [formText]="formText()"></div>}
+@if (control.errors) {
+  <div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
+}
+@if (formText()) {
+  <div helpBlock [controlName]="controlName" [formText]="formText()"></div>
+}

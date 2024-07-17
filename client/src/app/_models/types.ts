@@ -13,6 +13,11 @@ export interface MultiselectOption {
   name: string;
 }
 
+export interface TypeaheadComplexOption {
+  name: string;
+  value: any;
+}
+
 export class DropdownMenu {
   title: string;
   items: DropdownMenuItem[];

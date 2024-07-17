@@ -73,11 +73,13 @@ import {
   faCircle, faCaretUp,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
-import { faClipboard, faEdit, faEye, faNoteSticky, faCalendar as faRegCalendar,
+import {
+  faClipboard, faEdit, faEye, faNoteSticky, faCalendar as faRegCalendar,
   faUser as farUser,
   faFileZipper as farFileZipper,
-  faImage as farImage,
- } from '@fortawesome/free-regular-svg-icons';
+  faImage as farImage, faWindowRestore,
+} from '@fortawesome/free-regular-svg-icons';
+import {faCircleQuestion} from "@fortawesome/free-regular-svg-icons/faCircleQuestion";
 
 @Injectable({
   providedIn: 'root',
@@ -169,5 +171,7 @@ export class IconsService {
   faFilterCircleXmark = faFilterCircleXmark;
   faFileContract = faFileContract;
   faFileSignature = faFileSignature;
+  faRegCircleQuestion = faCircleQuestion;
+  faWindowRestore = faWindowRestore;
 
 }

@@ -61,10 +61,36 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return item;
     }
 
+    public async Task<List<UserSummaryDto>> GetSummaryDtosAsync(UserParams param, ClaimsPrincipal user)
+    {
+        var query = context.Users
+            .AsNoTracking()
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient") && x.Doctors.Any(x => x.DoctorId == user.GetUserId()))
+            .AsQueryable();
+
+        query = query.OrderBy(x => x.FirstName).ThenBy(x => x.LastName);
+
+        if (!string.IsNullOrEmpty(param.Search))
+        {
+            string searchParam = param.Search.Replace(" ", "").ToLower();
+
+            query = query.Where(x =>
+                EF.Functions.Like(x.FirstName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
+                EF.Functions.Like(x.LastName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
+                EF.Functions.Like((x.FirstName + x.LastName).Replace(" ", "").ToLower(), $"%{searchParam}%"));
+        }
+
+        query = query.Take(10);
+
+        return await query.ProjectTo<UserSummaryDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
     public async Task<bool> PatientExistsAsync(int id, ClaimsPrincipal user)
     {
         var userId = user.GetUserId();
-        
+
         return await context.Users
             .Include(x => x.Doctors)
             .Include(x => x.UserRoles)
