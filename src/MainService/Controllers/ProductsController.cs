@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MainService.Core.Extensions;
 using MainService.Core.DTOs.Products;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -6,10 +7,12 @@ using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
-public class ProductsController(IUnitOfWork uow, IProductsService service, IMapper mapper) : BaseApiController
+public class ProductsController(IUnitOfWork uow, IProductsService service, IMapper mapper, UserManager<AppUser> userManager) : BaseApiController
 {
     private static readonly string subject = "producto";
     private static readonly string subjectArticle = "El";
@@ -17,10 +20,10 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
     [HttpGet]
     public async Task<ActionResult<PagedList<ProductDto>>> GetPagedListAsync([FromQuery] ProductParams param)
     {
-        var pagedList = await uow.ProductRepository.GetPagedListAsync(param);
+        var pagedList = await uow.ProductRepository.GetPagedListAsync(param, User);
 
-        Response.AddPaginationHeader(
-            new PaginationHeader(pagedList.CurrentPage,pagedList.PageSize,pagedList.TotalCount,pagedList.TotalPages));
+        Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
+            pagedList.TotalCount, pagedList.TotalPages));
 
         return pagedList;
     }
@@ -29,7 +32,7 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
     [HttpGet("all")]
     public async Task<ActionResult<List<ProductDto>>> GetAllAsync([FromQuery] ProductParams param)
     {
-        var data = await uow.ProductRepository.GetAllDtoAsync(param);
+        var data = await uow.ProductRepository.GetAllDtoAsync(param, User);
         
         return data;
     }
@@ -42,21 +45,6 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
         if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
 
         return item;
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<ProductDto>> AddAsync([FromBody] ProductCreateDto request)
-    {
-        Product item = new();
-
-        mapper.Map(request, item);
-
-        uow.ProductRepository.Add(item);
-
-        if (!await uow.Complete()) return BadRequest($"Error al agregar {subjectArticle} {subject}.");
-
-        var itemToReturn = await uow.ProductRepository.GetDtoByIdAsync(item.Id);
-        return itemToReturn;
     }
 
     [HttpPut("{id}")]
@@ -106,5 +94,29 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
         }
         
         return Ok();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ProductDto>> CreateAsync([FromBody] ProductCreateDto request)
+    {
+        var itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
+
+        if (itemExists != null) 
+        return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
+
+        var doctor = await userManager.Users
+            .Include(x => x.DoctorProducts)
+                .ThenInclude(x => x.Product)
+            .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
+
+        var item = mapper.Map<Product>(request);
+
+        doctor.DoctorProducts.Add(new(item));
+
+        await userManager.UpdateAsync(doctor);
+
+        var itemToReturn = await uow.ProductRepository.GetDtoByIdAsync(item.Id);
+
+        return itemToReturn;
     }
 }

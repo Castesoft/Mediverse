@@ -425,6 +425,22 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("DoctorPhones");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorProduct", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DoctorId", "ProductId");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorProducts");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -1227,6 +1243,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Phone");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorProduct", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorProducts")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Product", "Product")
+                        .WithOne("DoctorProduct")
+                        .HasForeignKey("MainService.Models.Entities.DoctorProduct", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
@@ -1584,6 +1619,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("DoctorPhones");
 
+                    b.Navigation("DoctorProducts");
+
                     b.Navigation("DoctorServices");
 
                     b.Navigation("DoctorSignature");
@@ -1661,6 +1698,8 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
                 {
+                    b.Navigation("DoctorProduct");
+
                     b.Navigation("PrescriptionMedicines");
 
                     b.Navigation("ProductPhotos");

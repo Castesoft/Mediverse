@@ -107,7 +107,7 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
             return BadRequest(
                 $"Clinica de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
 
-        if (!await uow.ServiceRepository.ServiceExistsAsync(request.ServiceId, User))
+        if (!await uow.ServiceRepository.ExistsAsync(request.ServiceId, User))
             return BadRequest(
                 $"Tratamiento de ID {request.ServiceId} no fue encontrado o no existe para el doctor actual.");
 

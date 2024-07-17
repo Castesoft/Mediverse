@@ -20,7 +20,6 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
     private static readonly string subjectArticle = "El";
 
         
-    // [Authorize(Policy = "RequireAdminRole")]
     public async Task<ActionResult<PagedList<ServiceDto>>> GetPagedListAsync([FromQuery] ServiceParams param)
     {
         var pagedList = await uow.ServiceRepository.GetPagedListAsync(param, User);

@@ -735,6 +735,30 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorProducts",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorProducts", x => new { x.DoctorId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_DoctorProducts_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorProducts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductPhoto",
                 columns: table => new
                 {
@@ -1050,6 +1074,12 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_DoctorProducts_ProductId",
+                table: "DoctorProducts",
+                column: "ProductId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DoctorServices_ServiceId",
                 table: "DoctorServices",
                 column: "ServiceId",
@@ -1219,6 +1249,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "DoctorPhones");
+
+            migrationBuilder.DropTable(
+                name: "DoctorProducts");
 
             migrationBuilder.DropTable(
                 name: "DoctorServices");

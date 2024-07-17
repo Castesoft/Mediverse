@@ -93,7 +93,7 @@ try
     
     await Seed.SeedRolesAndPermissionsAsync(roleManager, permissionManager);
     await Seed.SeedUsersAsync(userManager, context);
-    await Seed.SeedProductsAsync(context);
+    // await Seed.SeedProductsAsync(context);
     
     Log.Information("Done seeding database. Exiting.");
 }

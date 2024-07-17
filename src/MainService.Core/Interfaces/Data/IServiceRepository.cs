@@ -11,7 +11,7 @@ public interface IServiceRepository
     void Delete(Service item);
     Task<Service> GetByIdAsync(int id);
     Task<Service> GetByNameAsync(string name, ClaimsPrincipal user);
-    Task<bool> ServiceExistsAsync(int id, ClaimsPrincipal user);
+    Task<bool> ExistsAsync(int id, ClaimsPrincipal user);
     Task<ServiceDto> GetDtoByIdAsync(int id);
     Task<Service> GetByIdAsNoTrackingAsync(int id);
     Task<List<Service>> GetAllAsync();

@@ -13,15 +13,8 @@ using Microsoft.EntityFrameworkCore;
 namespace MainService.Infrastructure.Data;
 public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRepository
 {
-    public void Add(Service item)
-    {
-        context.Services.Remove(item);
-    }
-
-    public void Delete(Service item)
-    {
-        context.Services.Remove(item);
-    }
+    public void Add(Service item) => context.Services.Add(item);
+    public void Delete(Service item) => context.Services.Remove(item);
 
     public async Task<List<Service>> GetAllAsync()
     {
@@ -60,7 +53,7 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
             .Where(x => x.DoctorService.DoctorId == user.GetUserId())
             .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<bool> ServiceExistsAsync(int id, ClaimsPrincipal user)
+    public async Task<bool> ExistsAsync(int id, ClaimsPrincipal user)
     {
         return await context.Services
             .Include(x => x.DoctorService)
