@@ -1,13 +1,14 @@
-import { Component, inject, OnInit, viewChild } from "@angular/core";
-import { CatalogMode, FormUse, Role, View } from "src/app/_models/types";
-import { Event } from "src/app/_models/event";
-import { EventsService } from "src/app/_services/events.service";
-import { LayoutModule } from "src/app/_shared/layout.module";
-import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { EventFormComponent } from "src/app/events/components/event-form.component";
-import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
-import { EventsFilterFormComponent } from "src/app/events/components/events-filter-form.component";
-import { EventDetailComponent, EventEditComponent } from "src/app/events/views";
+import {Component, inject, OnInit, viewChild} from "@angular/core";
+import {CatalogMode, FormUse, Role, View} from "src/app/_models/types";
+import {Event} from "src/app/_models/event";
+import {EventsService} from "src/app/_services/events.service";
+import {LayoutModule} from "src/app/_shared/layout.module";
+import {ModalWrapperModule} from "src/app/_shared/modal-wrapper.module";
+import {EventFormComponent} from "src/app/events/components/event-form.component";
+import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
+import {EventsFilterFormComponent} from "src/app/events/components/events-filter-form.component";
+import {EventDetailsComponent} from "src/app/events/event-details.component";
+import {EventEditComponent} from "src/app/events/views";
 
 @Component({
   selector: 'event-edit-modal',
@@ -60,7 +61,7 @@ export class EventEditModalComponent {
     </div>
   `,
   standalone: true,
-  imports: [EventDetailComponent, ModalWrapperModule],
+  imports: [EventDetailsComponent, ModalWrapperModule],
 })
 export class EventDetailModalComponent {
   id!: number;
@@ -77,7 +78,7 @@ export class EventDetailModalComponent {
       @if (title) {
         <!-- <div modalHeader [title]="title"></div> -->
         <div class="modal-header">
-          <h2>{{title}}</h2>
+          <h2>{{ title }}</h2>
           <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="service.hideNewModal()">
             <i class="ki-duotone ki-cross fs-1">
               <span class="path1"></span>
@@ -93,14 +94,16 @@ export class EventDetailModalComponent {
       </div>
       <div modalFooter class="flex-center">
         <button resetBtn (click)="service.hideNewModal()">Cancel</button>
-        @if(formId){<button submitBtn [attr.form]="this.formId"></button>}
+        @if (formId) {
+          <button submitBtn [attr.form]="this.formId"></button>
+        }
       </div>
     </div>
   `,
   standalone: true,
   imports: [ModalWrapperModule, LayoutModule, EventFormComponent,],
 })
-export class EventNewModalComponent implements OnInit{
+export class EventNewModalComponent implements OnInit {
   formId?: string;
   use!: FormUse;
   title?: string;
@@ -127,7 +130,7 @@ export class EventNewModalComponent implements OnInit{
         <div modalHeader [title]="title"></div>
       }
       <div modalBody [type]="'form'">
-        <div filterForm [key]="key" [formId]="formId" ></div>
+        <div filterForm [key]="key" [formId]="formId"></div>
       </div>
       <div
         modalFooterFilters

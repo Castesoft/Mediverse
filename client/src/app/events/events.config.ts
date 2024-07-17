@@ -10,7 +10,9 @@ import {GuidService} from "src/app/_services/guid.service";
 import {LayoutModule} from "src/app/_shared/layout.module";
 import {EventsCalendarComponent} from "src/app/events/components/events-calendar.component";
 import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
-import {EventDetailComponent, EventEditComponent, EventNewComponent} from "src/app/events/views";
+import {EventEditComponent, EventNewComponent} from "src/app/events/views";
+import {EventDetailsComponent} from "src/app/events/event-details.component";
+import {createId} from "@paralleldrive/cuid2";
 
 @Component({
   selector: 'events-route',
@@ -63,7 +65,7 @@ export class CatalogComponent implements OnInit {
 @Component({
   selector: 'event-detail-route',
   template: `
-    @if (id && item) {
+    @if (id && item && key) {
       <div
         eventDetailView
         [id]="id"
@@ -75,9 +77,10 @@ export class CatalogComponent implements OnInit {
     }
   `,
   standalone: true,
-  imports: [RouterModule, EventDetailComponent, LayoutModule,],
+  imports: [RouterModule, EventDetailsComponent, LayoutModule,],
 })
 export class DetailComponent implements OnInit {
+  private eventsService = inject(EventsService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -94,6 +97,12 @@ export class DetailComponent implements OnInit {
     this.route.paramMap.subscribe({
       next: (params) => {
         this.id = +params.get('id')!;
+        this.eventsService.getById(this.id).subscribe({
+          next: (item) => {
+            this.item = item;
+            this.label = item.patient?.fullName;
+          },
+        });
       },
     });
     this.route.data.subscribe({
@@ -103,7 +112,7 @@ export class DetailComponent implements OnInit {
       },
     });
     const navigation = this.router.getCurrentNavigation();
-    this.key = navigation?.extras?.state?.['key'];
+    this.key = navigation?.extras?.state?.['key'] || createId();
   }
 }
 @Component({

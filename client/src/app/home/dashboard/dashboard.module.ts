@@ -13,29 +13,34 @@ import { OverviewComponent } from 'src/app/home/dashboard/overview.component';
 import { PaymentsComponent } from 'src/app/home/dashboard/payments/payments.component';
 import { ProjectsComponent } from 'src/app/home/dashboard/projects.component';
 import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.component';
+import {BootstrapModule} from "src/app/_shared/bootstrap.module";
 
 @NgModule({
-  declarations: [
-    DashboardComponent,
-    MultipurposeComponent,
-    StoreAnalyticsComponent,
-    LogisticsComponent,
-    ProjectsComponent,
-    OverviewComponent,
+    declarations: [
+        DashboardComponent,
+        MultipurposeComponent,
+        StoreAnalyticsComponent,
+        LogisticsComponent,
+        ProjectsComponent,
+        OverviewComponent,
 
-    // Citas
-    AppointmentsComponent,
-    AppointmentDetailsComponent,
-    AppointmentSummaryComponent,
-    AppointmentServicesSummaryComponent,
+        // Citas
+        AppointmentsComponent,
+        AppointmentDetailsComponent,
+        AppointmentSummaryComponent,
+        AppointmentServicesSummaryComponent,
 
-    // Pagos
-    PaymentsComponent,
-  ],
-  imports: [
-    CommonModule,
-    DashboardRoutingModule,
-    NgApexchartsModule,
-  ],
+        // Pagos
+        PaymentsComponent,
+    ],
+    imports: [
+        CommonModule,
+        DashboardRoutingModule,
+        NgApexchartsModule,
+        BootstrapModule,
+    ],
+    exports: [
+        AppointmentServicesSummaryComponent
+    ]
 })
 export class DashboardModule {}
