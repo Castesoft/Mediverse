@@ -53,6 +53,8 @@ export class EventsCatalogComponent implements OnInit, OnDestroy {
     this.service.param$(this.key())
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params) => {
+        console.log(params);
+
         this.params = params;
         this.loadData(params);
         this.form.patchValue(params);

@@ -1,14 +1,13 @@
-import {AfterContentChecked, AfterRenderPhase, Component, inject, OnInit, viewChild} from "@angular/core";
-import {DateClickArg} from "@fullcalendar/interaction";
+import { Component, inject, OnInit, viewChild } from "@angular/core";
 import { CatalogMode, FormUse, Role, View } from "src/app/_models/types";
 import { Event } from "src/app/_models/event";
 import { EventsService } from "src/app/_services/events.service";
-import {LayoutModule} from "src/app/_shared/layout.module";
+import { LayoutModule } from "src/app/_shared/layout.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import {EventFormComponent} from "src/app/events/components/event-form.component";
+import { EventFormComponent } from "src/app/events/components/event-form.component";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 import { EventsFilterFormComponent } from "src/app/events/components/events-filter-form.component";
-import { EventDetailComponent, EventEditComponent, EventNewComponent } from "src/app/events/views";
+import { EventDetailComponent, EventEditComponent } from "src/app/events/views";
 
 @Component({
   selector: 'event-edit-modal',
@@ -25,6 +24,7 @@ import { EventDetailComponent, EventEditComponent, EventNewComponent } from "src
           [view]="'modal'"
           [key]="undefined"
           [item]="item"
+          [role]="role"
         ></div>
       </div>
     </div>
@@ -37,6 +37,7 @@ export class EventEditModalComponent {
   use!: FormUse;
   title?: string;
   item!: Event;
+  role: Role = 'Patient';
 }
 
 @Component({
@@ -79,7 +80,7 @@ export class EventDetailModalComponent {
         }
         <div modalBody [type]="'thin'">
           <div eventForm [use]="use" [view]="'modal'" [id]="null" (formId)="formId = $event; receiveFormId($event);"
-               [dateFrom]="dateFrom" [dateTo]="dateTo"
+               [dateFrom]="dateFrom" [dateTo]="dateTo" [role]="role"
           ></div>
         </div>
         <div modalFooter class="flex-center">
@@ -99,6 +100,7 @@ export class EventNewModalComponent implements OnInit{
   service = inject(EventsService);
   dateFrom?: Date;
   dateTo?: Date;
+  role: Role = 'Patient';
 
   form = viewChild.required(EventFormComponent);
 

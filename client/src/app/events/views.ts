@@ -7,7 +7,7 @@ import { EventFormComponent } from "src/app/events/components/event-form.compone
 @Component({
   selector: 'div[eventNewView]',
   template: `
-  <div eventForm [use]="use()" [id]="null" [view]="view()"></div>
+  <div eventForm [use]="use()" [id]="null" [view]="view()" [role]="role()"></div>
   `,
   standalone: true,
   imports: [ EventFormComponent, ModalWrapperModule, ],
@@ -15,6 +15,7 @@ import { EventFormComponent } from "src/app/events/components/event-form.compone
 export class EventNewComponent {
   use = input.required<FormUse>();
   view = input.required<View>();
+  role = input.required<Role>();
 
   formComponent = viewChild.required(EventFormComponent);
 
@@ -49,7 +50,7 @@ export class EventDetailComponent {
 @Component({
   selector: 'div[eventEditView]',
   template: `
-  <div eventForm [use]="use()" [id]="id()" [view]="view()"></div>
+  <div eventForm [use]="use()" [id]="id()" [view]="view()" [role]="role()"></div>
   `,
   standalone: true,
   imports: [ EventFormComponent, ModalWrapperModule, ],
@@ -60,6 +61,7 @@ export class EventEditComponent {
   view = input.required<View>();
   item = input.required<Event>();
   key = input.required<string | undefined>();
+  role = input.required<Role>();
 }
 
 

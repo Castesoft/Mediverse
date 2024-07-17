@@ -1,10 +1,9 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
-import {Component, HostBinding, inject, input, OnInit, viewChild} from "@angular/core";
-import {ActivatedRoute, Router, RouterModule} from "@angular/router";
-import {Account} from "src/app/_models/account";
+import { Component, HostBinding, inject, input, OnInit, viewChild } from "@angular/core";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { User } from "src/app/_models/user";
-import {AccountService} from "src/app/_services/account.service";
+import { AccountService } from "src/app/_services/account.service";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { UserFormComponent } from "src/app/users/components/user-form.component";
 

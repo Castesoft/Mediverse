@@ -148,7 +148,6 @@ export class UserFormComponent implements OnInit, OnDestroy {
           this.form.group.markAsPristine();
         },
         error: (error: BadRequest) => {
-          console.log('error from component',error)
           this.form.error = error;
         },
       });

@@ -223,17 +223,26 @@ export class EventsService {
     return found;
   }
 
-  create(formData: any): Observable<Event> {
+  create(formData: any, role: Role, view: View, key: string): Observable<Event> {
     return this.http.post<Event>(this.baseUrl, formData).pipe(
-      tap((response: Event) => {
+      tap(response => {
         // TODO
+        this.loadPagedList(role, key, this.getParam(key)).pipe();
+        this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
+        this.matSnackBar.open(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.patient?.fullName} fue creado exitosamente`, "Cerrar", { duration: 3000 });
+        if (view === "modal") {
+          this.hideNewModal();
+        } else if (view === 'page') {
+          this.router.navigate([this.naming.catalogRoute, response.id]);
+        }
+        return response;
       })
     );
   }
 
-  update(id: number, formData: FormData): Observable<Event> {
+  update(id: number, formData: any): Observable<Event> {
     return this.http.put<Event>(`${this.baseUrl}${id}`, formData).pipe(
       tap(response => {
         // TODO

@@ -221,7 +221,7 @@ export class ServicesService {
 
   create(formData: FormData, view: View, key: string): Observable<Service> {
     return this.http.post<Service>(this.baseUrl, formData).pipe(
-      tap((response: Service) => {
+      tap(response => {
         this.loadPagedList(key, this.getParam(key)).pipe();
         this.setSelected(key, response);
         this.current.next(response);
