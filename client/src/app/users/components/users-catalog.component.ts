@@ -19,6 +19,7 @@ import { UsersTableComponent } from "src/app/users/components/users-table.compon
 import { UsersService } from "src/app/_services/users.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   host: { class: 'mh-300px scroll-y me-n7 pe-7', },
@@ -125,12 +126,8 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
   pagination?: Pagination;
   form = new FilterForm();
   loading = true;
-  cuid: string;
+  cuid = createId();
   private ngUnsubscribe = new Subject<void>();
-
-  constructor(guid: GuidService) {
-    this.cuid = guid.gen();
-  }
 
   ngOnInit(): void {
     this.params = new UserParams(this.key());
@@ -140,6 +137,8 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
     this.service.param$(this.key())
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params) => {
+        console.log(params);
+
         this.params = params;
         this.loadData(params);
         this.form.patchValue(params);
@@ -156,7 +155,6 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
   }
 
   private loadData(params: UserParams) {
-    console.log(this.role(), this.key());
     this.service.loadPagedList(this.role(), this.key(), params).subscribe({
       next: (response) => {
         const { result, pagination } = response;

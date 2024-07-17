@@ -15,7 +15,7 @@ export class Event {
   allDay = false;
   dateFrom = new Date();
   dateTo = new Date();
-  
+
   patient?: User;
   service?: Service;
 
@@ -165,6 +165,21 @@ export class CreateForm {
     // let sample = getRandomSample();
     // this.group.patchValue(sample);
   }
+
+  getRequest() {
+    return {
+      patientId: this.group.value.patientId,
+      nursesIds: this.group.value.nursesIds,
+      serviceId: this.group.value.serviceId,
+      clinicId: this.group.value.clinicId,
+      allDay: this.group.value.dateTime.allDay,
+      dateFrom: this.group.value.dateTime.dateFrom,
+      dateTo: this.group.value.dateTime.dateTo,
+      timeFrom: this.group.value.dateTime.timeFrom,
+      timeTo: this.group.value.dateTime.timeTo,
+    };
+  }
+
 }
 
 export class EditForm {
@@ -211,6 +226,20 @@ export class EditForm {
   }
 
   patchValues = (item: Event) => this.group.patchValue(item);
+
+  getRequest() {
+    return {
+      patientId: this.group.value.patientId,
+      nursesIds: this.group.value.nursesIds,
+      serviceId: this.group.value.serviceId,
+      clinicId: this.group.value.clinicId,
+      allDay: this.group.value.dateTime.allDay,
+      dateFrom: this.group.value.dateTime.dateFrom,
+      dateTo: this.group.value.dateTime.dateTo,
+      timeFrom: this.group.value.dateTime.timeFrom,
+      timeTo: this.group.value.dateTime.timeTo,
+    };
+  }
 }
 
 export class DetailForm {

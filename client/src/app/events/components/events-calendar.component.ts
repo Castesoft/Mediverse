@@ -110,6 +110,8 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
       .param$(this.key())
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params) => {
+        console.log(params);
+
         this.params = params;
         this.loadData(params);
         this.form.patchValue(params);
@@ -205,7 +207,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   }
 
   handleEventClick(arg: EventClickArg) {
-    this.service.clickLink(+arg.event.id, this.service.getById$(+arg.event.id, this.key(), this.role()), this.key(), 'detail', 'modal')
+    this.service.clickLink(+arg.event.id, this.service.getById$(+arg.event.id, this.key(), this.role()), this.key(), 'detail', 'modal');
   }
 
   handleEventDragStop(arg: EventDragStopArg) {

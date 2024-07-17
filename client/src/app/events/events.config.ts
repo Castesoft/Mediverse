@@ -117,6 +117,7 @@ export class DetailComponent implements OnInit {
           [view]="view"
           [key]="key"
           [item]="item"
+          [role]="role"
         ></div>
       }
   `,
@@ -152,7 +153,7 @@ export class EditComponent implements OnInit {
 
 @Component({
   selector: 'event-new-route',
-  template: `<div eventNewView [use]="use" [view]="view"
+  template: `<div eventNewView [use]="use" [view]="view" [role]="role"
   ></div>`,
   standalone: true,
   imports: [EventNewComponent, RouterModule, LayoutModule,],

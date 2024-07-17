@@ -14,7 +14,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Address } from 'src/app/_models/address';
 import { Event, CreateForm, EditForm, DetailForm } from 'src/app/_models/event';
-import { BadRequest, FormUse, View } from 'src/app/_models/types';
+import { BadRequest, FormUse, Role, View } from 'src/app/_models/types';
 import { User } from 'src/app/_models/user';
 import { AddressesService } from 'src/app/_services/addresses.service';
 import { FormsService } from 'src/app/_services/forms.service';
@@ -39,6 +39,7 @@ import {
   UsersCatalogComponent,
   UsersListSelectComponent,
 } from 'src/app/users/components/users-catalog.component';
+import { createId } from '@paralleldrive/cuid2';
 
 @Component({
   host: { class: 'pb-3' },
@@ -408,16 +409,20 @@ export class EventFormComponent implements OnInit, OnDestroy {
   id = input.required<number | null>();
   use = input.required<FormUse>();
   view = input.required<View>();
+  role = input.required<Role>();
+  key = input<string>();
   dateFrom = input<Date>();
   dateTo = input<Date>();
 
   formId = output<string>();
+  event = output<Event>();
 
   item: Event | null = null;
   selectPatientKey: string;
   selectServiceKey: string;
   selectNursesKey: string;
   selectClinicKey: string;
+  _key = createId();
 
   readonly patientPanelOpen = signal(false);
   patientAccordion = viewChild<CdkAccordionItem>('patientAccordion');
@@ -476,6 +481,8 @@ export class EventFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.key()) this._key = this.key()!;
+
     if (this.use() === 'create') {
       this.form = new CreateForm();
     } else if (this.use() === 'edit') {
@@ -581,47 +588,12 @@ export class EventFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log('onSubmit', this.form.group.value);
     this.form.submitted = true;
-
-    const jsonPayload = {
-      patientId: this.form.group.value.patientId,
-      nursesIds: this.form.group.value.nursesIds,
-      serviceId: this.form.group.value.serviceId,
-      clinicId: this.form.group.value.clinicId,
-      allDay: this.form.group.value.dateTime.allDay,
-      dateFrom: this.form.group.value.dateTime.dateFrom,
-      dateTo: this.form.group.value.dateTime.dateTo,
-      timeFrom: this.form.group.value.dateTime.timeFrom,
-      timeTo: this.form.group.value.dateTime.timeTo,
-    };
-
-    this.eventsService.create(jsonPayload).subscribe({
-      next: (item) => {
-        this.form.submitted = false;
-        this.matSnackBar.open(
-          this.eventsService.naming!.singularTitlecase + ' agregado',
-          'Cerrar',
-          { duration: 3000 }
-        );
-        this.form.group.reset();
-        this.form.group.markAsPristine();
-        if (this.view() === 'modal') {
-          this.eventsService.hideNewModal();
-        } else {
-          if (this.returnUrl === null) {
-            this.router.navigate([
-              `${this.eventsService.naming!.catalogRoute}/${item.id}`,
-            ]);
-          } else {
-            this.router.navigate([this.returnUrl]);
-          }
-        }
-      },
-      error: (error: any) => {
-        this.form.error = error;
-      },
-    });
+    if (this.use() === 'create') {
+      this.create();
+    } else {
+      this.update();
+    }
   }
 
   private applyValidationsToForm(mode: boolean) {
@@ -658,4 +630,45 @@ export class EventFormComponent implements OnInit, OnDestroy {
       // this.form.patchWithSample();
     }
   }
+
+  create() {
+    if (this.use() === 'create' && this.form instanceof CreateForm) {
+      this.eventsService.create(this.form.getRequest(), this.role(), this.view(), this._key).subscribe({
+        next: item => {
+          this.event.emit(item);
+          this.form.submitted = false;
+          this.form.group.reset();
+          this.form.group.markAsPristine();
+        },
+        error: (error: BadRequest) => {
+          this.form.error = error;
+        },
+      });
+    }
+  }
+
+  update() {
+    if (this.use() === 'edit' && this.form instanceof EditForm) {
+      this.eventsService.update(this.item!.id, this.form.getRequest()).subscribe({
+        next: () => {
+          this.form.submitted = false;
+          this.matSnackBar.open(
+            this.eventsService.naming!.singularTitlecase + ' actualizado',
+            'Cerrar',
+            { duration: 3000 }
+          );
+          this.form.group.reset();
+          this.form.group.markAsPristine();
+          this.router.navigate([
+            `${this.eventsService.naming!.catalogRoute}/${this.item!.id}`,
+          ]);
+          this.eventsService.hideEditModal();
+        },
+        error: (error: any) => {
+          this.form.error = error;
+        },
+      });
+    }
+  }
+
 }
