@@ -241,6 +241,7 @@ public class Seed
 
         if (await context.Services.AnyAsync()) return;
         var seedingServices = SeedData.services;
+        var seedingProducts = SeedData.products;
 
         foreach (var item in doctors)
         {
@@ -260,6 +261,11 @@ public class Seed
             foreach (var service in seedingServices)
             {
                 context.DoctorServices.Add(new(item.Id, service));
+            }
+
+            foreach (var product in seedingProducts)
+            {
+                context.DoctorProducts.Add(new(item.Id, product));
             }
         }
 

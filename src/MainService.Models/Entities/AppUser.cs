@@ -44,6 +44,7 @@ public class AppUser : IdentityUser<int>
 
     // Navigation properties
     public List<DoctorService> DoctorServices { get; set; } = [];
+    public List<DoctorProduct> DoctorProducts { get; set; } = [];
 
     public List<DoctorNurse> DoctorNurses { get; set; } = [];
     public List<DoctorNurse> NursesDoctor { get; set; } = [];

@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using MainService.Core.Extensions;
 using MainService.Core.DTOs.Products;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -11,25 +13,16 @@ using Microsoft.EntityFrameworkCore;
 namespace MainService.Infrastructure.Data;
 public class ProductRepository(DataContext context, IMapper mapper) : IProductRepository
 {
-    public void Add(Product item)
-    {
-        context.Products.Add(item);
-    }
-
-    public void Delete(Product item)
-    {
-        context.Products.Remove(item);
-    }
+    public void Add(Product item) => context.Products.Add(item);
+    public void Delete(Product item) => context.Products.Remove(item);
 
     public async Task<List<Product>> GetAllAsync()
     {
         return await context.Products.ToListAsync();
     }
 
-    public async Task<List<ProductDto>> GetAllDtoAsync(ProductParams param)
+    public async Task<List<ProductDto>> GetAllDtoAsync(ProductParams param, ClaimsPrincipal user)
     {
-        // TODO: filtering after
-        
         var query = context.Products
             .AsNoTracking()
             .ProjectTo<ProductDto>(mapper.ConfigurationProvider);
@@ -54,6 +47,19 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         return item;
     }
 
+    public async Task<Product> GetByNameAsync(string name, ClaimsPrincipal user)
+        => await context.Products
+            .Include(x => x.DoctorProduct)
+            .Where(x => x.DoctorProduct.DoctorId == user.GetUserId())
+            .SingleOrDefaultAsync(x => x.Name == name);
+
+    public async Task<bool> ExistsAsync(int id, ClaimsPrincipal user)
+    {
+        return await context.Products
+            .Include(x => x.DoctorProduct)
+            .AnyAsync(x => x.Id == id && x.DoctorProduct.DoctorId == user.GetUserId());
+    }
+
     public async Task<ProductDto> GetDtoByIdAsync(int id)
     {
         var item = await context.Products
@@ -64,10 +70,15 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         return item;
     }
 
-    public async Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param)
+    public async Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user)
     {
         var query = context.Products
+            .Include(x => x.DoctorProduct)
             .AsQueryable();
+
+        int userId = user.GetUserId();
+
+        query = query.Where(x => x.DoctorProduct.DoctorId == userId);
 
         if (param.DateFrom != DateTime.MinValue)
             query = query.Where(x => x.CreatedAt >= param.DateFrom);

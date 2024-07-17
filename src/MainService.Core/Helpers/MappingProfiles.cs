@@ -30,6 +30,7 @@ public class MappingProfiles : Profile
             : null);
 
         CreateMap<ServiceCreateDto, Service>();
+        CreateMap<ProductCreateDto, Product>();
 
         CreateMap<AppUser, AccountDto>()
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))

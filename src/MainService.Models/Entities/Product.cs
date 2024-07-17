@@ -11,6 +11,7 @@ public class Product : BaseEntity
     public decimal Price { get; set; }
     public double Discount { get; set; }
 
+    public DoctorProduct DoctorProduct { get; set; }
     public ICollection<ProductPhoto> ProductPhotos { get; set; } = [];
     public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; set; } = [];
 
