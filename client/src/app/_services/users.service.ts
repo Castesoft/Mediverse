@@ -1,18 +1,33 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {inject, Injectable} from "@angular/core";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import { Router } from "@angular/router";
-import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
-import { ToastrService } from "ngx-toastr";
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
-import { Modal } from "src/app/_models/modal";
-import { PaginatedResult } from "src/app/_models/pagination";
-import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, Role, SortOptions, View } from "src/app/_models/types";
-import { FilterForm, User, UserParams } from "src/app/_models/user";
-import { ConfirmService } from "src/app/_services/confirm.service";
-import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
-import { UserDetailModalComponent, UserEditModalComponent, UserNewModalComponent, UsersCatalogModalComponent, UsersFilterModalComponent } from "src/app/users/modals";
-import { environment } from "src/environments/environment";
+import {Router} from "@angular/router";
+import {BsModalRef, BsModalService, ModalOptions} from "ngx-bootstrap/modal";
+import {ToastrService} from "ngx-toastr";
+import {BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap} from "rxjs";
+import {Modal} from "src/app/_models/modal";
+import {PaginatedResult} from "src/app/_models/pagination";
+import {
+  CatalogMode,
+  Column,
+  FormUse,
+  LoadingTypes,
+  NamingSubjectType,
+  Role,
+  SortOptions,
+  View
+} from "src/app/_models/types";
+import {FilterForm, User, UserParams, UserSummary} from "src/app/_models/user";
+import {ConfirmService} from "src/app/_services/confirm.service";
+import {downloadExcelFile, getItemsByKey, getPaginatedResult} from "src/app/_utils/util";
+import {
+  UserDetailModalComponent,
+  UserEditModalComponent,
+  UserNewModalComponent,
+  UsersCatalogModalComponent,
+  UsersFilterModalComponent
+} from "src/app/users/modals";
+import {environment} from "src/environments/environment";
 
 @Injectable({
   providedIn: "root",
@@ -41,72 +56,112 @@ export class UsersService {
   // init to role 'male' and 'female' for the naming subject type
   namingDictionary = new Map<Role, NamingSubjectType>([
     ["Admin", {
-      singular: "admin", plural: "admins", pluralTitlecase: "Admins", singularTitlecase: "Admin",
-      catalogRoute: "/home/admins", createRoute: "/home/admins/create",
-      title: "Hembras", undefinedArticle: "una", definedArticle: "la", undefinedArticlePlural: "unas", definedArticlePlural: "las",
+      singular: "admin",
+      plural: "admins",
+      pluralTitlecase: "Admins",
+      singularTitlecase: "Admin",
+      catalogRoute: "/home/admins",
+      createRoute: "/home/admins/create",
+      title: "Hembras",
+      undefinedArticle: "una",
+      definedArticle: "la",
+      undefinedArticlePlural: "unas",
+      definedArticlePlural: "las",
       articleSex: 'masculine',
     }],
     ["Staff", {
-      singular: "staff", plural: "staff", pluralTitlecase: "Staff", singularTitlecase: "Staff",
-      catalogRoute: "/home/staff", createRoute: "/home/staff/create",
-      title: "Staff", undefinedArticle: "un", definedArticle: "el", undefinedArticlePlural: "unos", definedArticlePlural: "los",
+      singular: "staff",
+      plural: "staff",
+      pluralTitlecase: "Staff",
+      singularTitlecase: "Staff",
+      catalogRoute: "/home/staff",
+      createRoute: "/home/staff/create",
+      title: "Staff",
+      undefinedArticle: "un",
+      definedArticle: "el",
+      undefinedArticlePlural: "unos",
+      definedArticlePlural: "los",
       articleSex: "masculine",
     }],
     ["Doctor", {
-      singular: "doctor", plural: "doctores", pluralTitlecase: "Doctores", singularTitlecase: "Doctor",
-      catalogRoute: "/home/doctors", createRoute: "/home/doctors/create",
-      title: "Doctores", undefinedArticle: "un", definedArticle: "el", undefinedArticlePlural: "unos", definedArticlePlural: "los",
+      singular: "doctor",
+      plural: "doctores",
+      pluralTitlecase: "Doctores",
+      singularTitlecase: "Doctor",
+      catalogRoute: "/home/doctors",
+      createRoute: "/home/doctors/create",
+      title: "Doctores",
+      undefinedArticle: "un",
+      definedArticle: "el",
+      undefinedArticlePlural: "unos",
+      definedArticlePlural: "los",
       articleSex: "masculine",
     }],
-    [ "Nurse", {
-      singular: "especialista", plural: "especialistas", pluralTitlecase: "Especialistas", singularTitlecase: "Especialista",
-      catalogRoute: "/home/nurses", createRoute: "/home/nurses/create",
-      title: "Especialistas", undefinedArticle: "un", definedArticle: "el", undefinedArticlePlural: "unos", definedArticlePlural: "los",
+    ["Nurse", {
+      singular: "especialista",
+      plural: "especialistas",
+      pluralTitlecase: "Especialistas",
+      singularTitlecase: "Especialista",
+      catalogRoute: "/home/nurses",
+      createRoute: "/home/nurses/create",
+      title: "Especialistas",
+      undefinedArticle: "un",
+      definedArticle: "el",
+      undefinedArticlePlural: "unos",
+      definedArticlePlural: "los",
       articleSex: "masculine",
     }],
-    [ "Patient", {
-      singular: "paciente", plural: "pacientes", pluralTitlecase: "Pacientes", singularTitlecase: "Paciente",
-      catalogRoute: "/home/patients", createRoute: "/home/patients/create",
-      title: "Pacientes", undefinedArticle: "un", definedArticle: "el", undefinedArticlePlural: "unos", definedArticlePlural: "los",
+    ["Patient", {
+      singular: "paciente",
+      plural: "pacientes",
+      pluralTitlecase: "Pacientes",
+      singularTitlecase: "Paciente",
+      catalogRoute: "/home/patients",
+      createRoute: "/home/patients/create",
+      title: "Pacientes",
+      undefinedArticle: "un",
+      definedArticle: "el",
+      undefinedArticlePlural: "unos",
+      definedArticlePlural: "los",
       articleSex: "masculine",
     }],
   ]);
 
   columnDictionary = new Map<Role, Column[]>([
     ["Admin", [
-      { label: "Admins", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+      {label: "Admins", name: "name", options: {justify: 'center'}},
+      {label: "Edad", name: "age"},
+      {label: "Sexo", name: "sex", options: {justify: 'end'}},
+      {label: "Cuenta", name: "hasAccount"},
+      {label: "Fecha de nacimiento", name: "dateOfBirth"},
     ]],
     ["Doctor", [
-      { label: "Paciente", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+      {label: "Paciente", name: "name", options: {justify: 'center'}},
+      {label: "Edad", name: "age"},
+      {label: "Sexo", name: "sex", options: {justify: 'end'}},
+      {label: "Cuenta", name: "hasAccount"},
+      {label: "Fecha de nacimiento", name: "dateOfBirth"},
     ]],
     ["Patient", [
-      { label: "Paciente", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+      {label: "Paciente", name: "name", options: {justify: 'center'}},
+      {label: "Edad", name: "age"},
+      {label: "Sexo", name: "sex", options: {justify: 'end'}},
+      {label: "Cuenta", name: "hasAccount"},
+      {label: "Fecha de nacimiento", name: "dateOfBirth"},
     ]],
     ["Staff", [
-      { label: "Asistente", name: "name", options: { justify: 'center' } },
-      { label: "Edad", name: "age" },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Cuenta", name: "hasAccount" },
-      { label: "Fecha de nacimiento", name: "dateOfBirth" },
+      {label: "Asistente", name: "name", options: {justify: 'center'}},
+      {label: "Edad", name: "age"},
+      {label: "Sexo", name: "sex", options: {justify: 'end'}},
+      {label: "Cuenta", name: "hasAccount"},
+      {label: "Fecha de nacimiento", name: "dateOfBirth"},
     ]],
     ["Nurse", [
-      { label: "Especialista", name: "name", options: { justify: 'center' } },
-      { label: "Sexo", name: "sex", options: { justify: 'end' } },
-      { label: "Puesto", name: "post" },
-      { label: "Estudios", name: "education" },
-      { label: "Fecha de incorporación", name: "createdAt" },
+      {label: "Especialista", name: "name", options: {justify: 'center'}},
+      {label: "Sexo", name: "sex", options: {justify: 'end'}},
+      {label: "Puesto", name: "post"},
+      {label: "Estudios", name: "education"},
+      {label: "Fecha de incorporación", name: "createdAt"},
     ]],
   ]);
 
@@ -150,10 +205,10 @@ export class UsersService {
   params$ = this.params.asObservable();
   param$ = (key: string): Observable<UserParams> => this.params$.pipe(map(params => params[key]));
   setParam$ = (key: string, value: UserParams): void => {
-    this.params.next({ ...this.params.value, [key]: value });
+    this.params.next({...this.params.value, [key]: value});
     this.setParam(key, value);
   };
-  resetParam = (key: string): void => this.params.next({ ...this.params.value, [key]: new UserParams(key) });
+  resetParam = (key: string): void => this.params.next({...this.params.value, [key]: new UserParams(key)});
   resetParams = (): void => this.params.next({});
 
   // Loading
@@ -162,6 +217,27 @@ export class UsersService {
   loading$ = (key: string): Observable<boolean> => this.loadings$.pipe(map(loadings => loadings[key]));
   private setLoading = (key: LoadingTypes, value: boolean): void => this.loadings.next({
     ...this.loadings.value,
+    [key]: value
+  });
+
+
+  // User Summaries Handlers
+  private summaryCacheMap: Map<string, Map<string, UserSummary[]>> = new Map<string, Map<string, UserSummary[]>>();
+  private summaryCacheExists = (key: string): boolean => this.summaryCacheMap.has(key);
+  private getSummaryCache = (key: string): Map<string, UserSummary[]> => {
+    if (!this.summaryCacheExists(key)) this.summaryCacheMap.set(key, new Map<string, UserSummary[]>());
+    return this.summaryCacheMap.get(key)!;
+  };
+  private summaryMap = new Map<string, UserSummary[] | null>();
+  private getSummary = (key: string): UserSummary[] => this.summaryMap.get(key) || [];
+  private setSummary = (key: string, value: UserSummary[] | null): void => {
+    this.summaryMap.set(key, value);
+  };
+  private summaries = new BehaviorSubject<{ [key: string]: UserSummary[] | null }>({});
+  summaries$ = this.summaries.asObservable();
+  summary$ = (key: string): Observable<UserSummary[] | null> => this.summaries$.pipe(map(summaries => summaries[key]));
+  setSummary$ = (key: string, value: UserSummary[] | null): void => this.summaries.next({
+    ...this.summaries.value,
     [key]: value
   });
 
@@ -191,10 +267,10 @@ export class UsersService {
 
     if (value) value.isSelected = true;
 
-    this.selecteds.next({ ...this.selecteds.value, [key]: value });
+    this.selecteds.next({...this.selecteds.value, [key]: value});
   };
 
-  resetSelected = (key: string): void => this.selecteds.next({ ...this.selecteds.value, [key]: undefined });
+  resetSelected = (key: string): void => this.selecteds.next({...this.selecteds.value, [key]: undefined});
   resetSelecteds = (): void => this.selecteds.next({});
 
   private multipleSelectedMap = new Map<string, User[]>();
@@ -253,7 +329,7 @@ export class UsersService {
     );
   }
 
-  getAll(): Observable<User[]> {
+  get getAll(): Observable<User[]> {
     this.setLoading("all", true);
 
     return this.http
@@ -286,6 +362,33 @@ export class UsersService {
     );
   }
 
+  getSummaryByValue(key: string, summaryParams: UserParams): Observable<UserSummary[]> {
+    const {sex, role, search} = summaryParams;
+
+    this.setLoading(key, true);
+    this.summaryCacheExists(key);
+
+    let params = summaryParams.toHttpParams();
+
+    const response = this.getSummaryCache(key).get(search ?? '');
+
+    if (response) {
+      this.setSummary(key, response);
+      this.setLoading(key, false);
+      return of(response);
+    }
+
+    return this.http.get<UserSummary[]>(`${this.baseUrl}summary`, {params}).pipe(
+      tap(response => {
+        this.getSummaryCache(key).set(search ?? '', response);
+        this.setSummary(key, response);
+        this.setLoading(key, false);
+      }),
+      finalize(() => this.setLoading(key, false))
+    );
+  }
+
+
   create(formData: FormData, role: Role, view: View, key: string): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}${role}`, formData).pipe(
       tap(response => {
@@ -294,7 +397,7 @@ export class UsersService {
         this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
-        this.matSnackBar.open(`${this.namingDictionary.get(role)!.definedArticle} ${this.namingDictionary.get(role)!.singular} ${response.fullName} fue creado exitosamente`, "Cerrar", { duration: 3000 });
+        this.matSnackBar.open(`${this.namingDictionary.get(role)!.definedArticle} ${this.namingDictionary.get(role)!.singular} ${response.fullName} fue creado exitosamente`, "Cerrar", {duration: 3000});
         if (view === "modal") {
           this.hideNewModal();
         } else if (view === 'page') {
@@ -427,10 +530,10 @@ export class UsersService {
   downloadXLSX$ = (key: string, role: Role) => {
     this.downloadXLSX(key, role).subscribe({
       next: () => {
-        this.matSnackBar.open(`Archivo XLSX de ${this.namingDictionary.get(role)!.plural} descargado`, "Cerrar", { duration: 3000 });
+        this.matSnackBar.open(`Archivo XLSX de ${this.namingDictionary.get(role)!.plural} descargado`, "Cerrar", {duration: 3000});
       },
       error: (error) => {
-        this.matSnackBar.open(`Error descargando archivo XLSX de ${this.namingDictionary.get(role)!.plural}`, "Cerrar", { duration: 3000 });
+        this.matSnackBar.open(`Error descargando archivo XLSX de ${this.namingDictionary.get(role)!.plural}`, "Cerrar", {duration: 3000});
       }
     });
   }
@@ -438,7 +541,7 @@ export class UsersService {
   private downloadXLSX(key: string, role: Role) {
     const param = this.getParam(key);
     const params = param.toHttpParams();
-    return this.http.get(`${this.baseUrl}xlsx`, { responseType: "blob", params }).pipe(
+    return this.http.get(`${this.baseUrl}xlsx`, {responseType: "blob", params}).pipe(
       map(response => {
         downloadExcelFile(response, this.namingDictionary.get(role)!.title);
       }),
@@ -454,7 +557,7 @@ export class UsersService {
   }
 
   setDateRange(key: string, dateRange: Date[]) {
-    const updatedParams = { ...this.getParam(key) };
+    const updatedParams = {...this.getParam(key)};
     updatedParams.dateFrom = dateRange[0] || null;
     updatedParams.dateTo = dateRange[1] || null;
 
@@ -484,12 +587,12 @@ export class UsersService {
 
   showCatalogModal = (event: MouseEvent, key: string, mode: CatalogMode, role: Role): void => {
     this.catalogModalRef = this.bsModalService.show(UsersCatalogModalComponent,
-      { class: "modal-dialog-centered modal-xl", initialState: { role: role, mode: mode, key: key } });
+      {class: "modal-dialog-centered modal-xl", initialState: {role: role, mode: mode, key: key}});
   };
 
   showFiltersModal = (key: string, role: Role, title = "Filtros"): void => {
     this.filterModalRef = this.bsModalService.show(UsersFilterModalComponent,
-      { class: "modal-dialog-centered", initialState: { key: key, role: role, title: title } });
+      {class: "modal-dialog-centered", initialState: {key: key, role: role, title: title}});
   };
 
   clickLink = (role: Role, id: number | null = null, item: User | null = null, key: string | null = null, use: FormUse = "detail", view: View) => {
@@ -500,14 +603,14 @@ export class UsersService {
             this.detailModalRef = this.bsModalService.show(UserDetailModalComponent,
               {
                 class: "modal-dialog-centered modal-lg",
-                initialState: { id: id, use: use, item: item, key: key }
+                initialState: {id: id, use: use, item: item, key: key}
               } as ModalOptions<UserDetailModalComponent>);
             break;
           case "edit":
             this.editModalRef = this.bsModalService.show(UserEditModalComponent,
               {
                 class: "modal-dialog-centered modal-lg",
-                initialState: { id: id, use: use, item: item, key: key }
+                initialState: {id: id, use: use, item: item, key: key}
               } as ModalOptions<UserEditModalComponent>);
             break;
         }
@@ -515,7 +618,7 @@ export class UsersService {
         this.newModalRef = this.bsModalService.show(UserNewModalComponent,
           {
             class: "modal-dialog-centered modal-lg",
-            initialState: { use: use, role: role }
+            initialState: {use: use, role: role}
           } as ModalOptions<UserNewModalComponent>);
       }
     } else {

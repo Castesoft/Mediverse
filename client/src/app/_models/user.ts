@@ -1,9 +1,9 @@
-import { HttpParams } from "@angular/common/http";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { createId } from "@paralleldrive/cuid2";
+import {HttpParams} from "@angular/common/http";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {createId} from "@paralleldrive/cuid2";
 import {BadRequest, Role} from "src/app/_models/types";
-import { UsersService } from "src/app/_services/users.service";
-import { getPaginationHeaders } from "src/app/_utils/util";
+import {UsersService} from "src/app/_services/users.service";
+import {getPaginationHeaders} from "src/app/_utils/util";
 
 const subject = 'user';
 
@@ -112,6 +112,19 @@ export class UserParams {
   }
 }
 
+export interface UserSummary {
+  id: number;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  dateOfBirth: Date;
+  email: string;
+  sex: string;
+  age: string;
+  photoUrl: string;
+}
+
+
 export class FilterForm {
   group: FormGroup;
   id: string;
@@ -120,7 +133,7 @@ export class FilterForm {
     this.id = `${subject}filterForm${createId()}`;
     this.group = new FormGroup({
       search: new FormControl(''),
-      dateRange: new FormControl({ value: ['', ''], disabled: false }),
+      dateRange: new FormControl({value: ['', ''], disabled: false}),
       pageSize: new FormControl(10, [
         Validators.required,
         Validators.min(1),
@@ -140,7 +153,7 @@ export class FilterForm {
         pageSize: params.pageSize ?? 10,
         sex: params.sex
       },
-      { emitEvent: false, onlySelf: true },
+      {emitEvent: false, onlySelf: true},
     );
   }
 }
@@ -176,12 +189,18 @@ export class CreateForm {
       controls['sex'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
       controls['phoneNumber'].addValidators([Validators.required, Validators.minLength(8), Validators.maxLength(14)]);
     } else {
-      controls['firstName'].clearValidators(); controls['firstName'].clearAsyncValidators();
-      controls['lastName'].clearValidators(); controls['lastName'].clearAsyncValidators();
-      controls['dateOfBirth'].clearValidators(); controls['dateOfBirth'].clearAsyncValidators();
-      controls['email'].clearValidators(); controls['email'].clearAsyncValidators();
-      controls['sex'].clearValidators(); controls['sex'].clearAsyncValidators();
-      controls['phoneNumber'].clearValidators(); controls['phoneNumber'].clearAsyncValidators();
+      controls['firstName'].clearValidators();
+      controls['firstName'].clearAsyncValidators();
+      controls['lastName'].clearValidators();
+      controls['lastName'].clearAsyncValidators();
+      controls['dateOfBirth'].clearValidators();
+      controls['dateOfBirth'].clearAsyncValidators();
+      controls['email'].clearValidators();
+      controls['email'].clearAsyncValidators();
+      controls['sex'].clearValidators();
+      controls['sex'].clearAsyncValidators();
+      controls['phoneNumber'].clearValidators();
+      controls['phoneNumber'].clearAsyncValidators();
     }
     // this.group.updateValueAndValidity();
   }
@@ -223,12 +242,18 @@ export class EditForm {
       controls['sex'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
       controls['phoneNumber'].addValidators([Validators.required, Validators.minLength(8), Validators.maxLength(14)]);
     } else {
-      controls['firstName'].clearValidators(); controls['firstName'].clearAsyncValidators();
-      controls['lastName'].clearValidators(); controls['lastName'].clearAsyncValidators();
-      controls['dateOfBirth'].clearValidators(); controls['dateOfBirth'].clearAsyncValidators();
-      controls['email'].clearValidators(); controls['email'].clearAsyncValidators();
-      controls['sex'].clearValidators(); controls['sex'].clearAsyncValidators();
-      controls['phoneNumber'].clearValidators(); controls['phoneNumber'].clearAsyncValidators();
+      controls['firstName'].clearValidators();
+      controls['firstName'].clearAsyncValidators();
+      controls['lastName'].clearValidators();
+      controls['lastName'].clearAsyncValidators();
+      controls['dateOfBirth'].clearValidators();
+      controls['dateOfBirth'].clearAsyncValidators();
+      controls['email'].clearValidators();
+      controls['email'].clearAsyncValidators();
+      controls['sex'].clearValidators();
+      controls['sex'].clearAsyncValidators();
+      controls['phoneNumber'].clearValidators();
+      controls['phoneNumber'].clearAsyncValidators();
     }
     // this.group.updateValueAndValidity();
   }
@@ -249,73 +274,73 @@ export class DetailForm {
     this.id = `${subject}Form${createId()}`;
 
     this.group = new FormGroup({
-      firstName: new FormControl({ value: '', disabled: true }),
-      lastName: new FormControl({ value: '', disabled: true }),
-      email: new FormControl({ value: '', disabled: true }),
-      dateOfBirth: new FormControl({ value: '', disabled: true }),
-      sex: new FormControl({ value: '', disabled: true }),
+      firstName: new FormControl({value: '', disabled: true}),
+      lastName: new FormControl({value: '', disabled: true}),
+      email: new FormControl({value: '', disabled: true}),
+      dateOfBirth: new FormControl({value: '', disabled: true}),
+      sex: new FormControl({value: '', disabled: true}),
     });
   }
 }
 
-  export interface Doctor {
-    id: number;
-    name: string;
-    specialty: string;
-    phoneNumber: string;
-    sex: Sex;
-    email: string;
-    officeAddress: string;
-    licenseNumber: string;
-    yearsOfExperience: number;
-    education: Education[];
-    certifications: string[];
-    languagesSpoken: string[];
-    availability: Availability[];
-    bio: string;
-  }
+export interface Doctor {
+  id: number;
+  name: string;
+  specialty: string;
+  phoneNumber: string;
+  sex: Sex;
+  email: string;
+  officeAddress: string;
+  licenseNumber: string;
+  yearsOfExperience: number;
+  education: Education[];
+  certifications: string[];
+  languagesSpoken: string[];
+  availability: Availability[];
+  bio: string;
+}
 
-  export interface Allergy {
-    id: number;
-    name: string;
-    description: string;
-    severity: Severity;
-    reactions: string[];
-  }
+export interface Allergy {
+  id: number;
+  name: string;
+  description: string;
+  severity: Severity;
+  reactions: string[];
+}
 
-  export enum Severity {
-    Mild = 'Leve',
-    Moderate = 'Moderado',
-    Severe = 'Severo',
-  }
+export enum Severity {
+  Mild = 'Leve',
+  Moderate = 'Moderado',
+  Severe = 'Severo',
+}
 
-  export interface MedicalHistory {
-    id: number;
-    condition: string;
-    diagnosisDate: Date;
-    status: string;
-    notes?: string;
-  }
+export interface MedicalHistory {
+  id: number;
+  condition: string;
+  diagnosisDate: Date;
+  status: string;
+  notes?: string;
+}
 
-  export interface Education {
-    degree: string;
-    institution: string;
-    yearOfGraduation: number;
-  }
+export interface Education {
+  degree: string;
+  institution: string;
+  yearOfGraduation: number;
+}
 
-  export interface Availability {
-    day: string;
-    startTime: string;
-    endTime: string;
-  }
+export interface Availability {
+  day: string;
+  startTime: string;
+  endTime: string;
+}
 
-  export interface EmergencyContact {
-    name: string;
-    relationship: string;
-    phoneNumber: string;
-  }
+export interface EmergencyContact {
+  name: string;
+  relationship: string;
+  phoneNumber: string;
+}
 
-  export enum Sex {
-    Male = 'Masculino',
-    Female = 'Femenino',
-  }
+export enum Sex {
+  Male = 'Masculino',
+  Female = 'Femenino',
+}

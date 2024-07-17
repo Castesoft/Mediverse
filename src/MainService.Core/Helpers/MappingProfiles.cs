@@ -44,6 +44,12 @@ public class MappingProfiles : Profile
         CreateMap<DoctorEvent, DoctorDto>();
         CreateMap<PatientEvent, UserDto>();
         CreateMap<NurseEvent, NurseDto>();
+        
+        CreateMap<AppUser, UserSummaryDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
+            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()))
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url));
 
         CreateMap<Event, EventDto>()
             .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.EventService.Service))
