@@ -50,8 +50,6 @@ import { createId } from '@paralleldrive/cuid2';
     <div errorsAlert [error]="form.error"></div>
     }
 
-    {{ form.group.value | json }}
-
     <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
       <mat-stepper
         orientation="vertical"

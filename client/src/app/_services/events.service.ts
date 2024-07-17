@@ -453,7 +453,8 @@ export class EventsService {
         this.newModalRef = this.bsModalService.show(EventNewModalComponent,
           {
             class: "modal-dialog-centered mw-650px",
-            initialState: { use: use, dateFrom: dateFrom, dateTo: dateTo }
+            backdrop: 'static',
+            initialState: { use: use, dateFrom: dateFrom, dateTo: dateTo, title: `Nueva ${this.naming.singular}` }
           } as ModalOptions<EventNewModalComponent>);
       }
     } else {
