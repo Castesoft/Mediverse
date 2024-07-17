@@ -52,6 +52,8 @@ public class AppUser : IdentityUser<int>
     public DoctorSignature DoctorSignature { get; set; }
     public DoctorInformation DoctorInformation { get; set; }
     public ICollection<PatientEvent> PatientEvents { get; set; } = [];
+    public ICollection<PatientPrescription> PatientPrescriptions { get; set; } = [];
+    public ICollection<DoctorPrescription> DoctorPrescriptions { get; set; } = [];
 
     // Doctor-Patient relationships
     public ICollection<DoctorPatient> Doctors { get; set; } = [];

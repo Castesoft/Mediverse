@@ -13,7 +13,7 @@ public class Product : BaseEntity
 
     public DoctorProduct DoctorProduct { get; set; }
     public ICollection<ProductPhoto> ProductPhotos { get; set; } = [];
-    public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; set; } = [];
+    public ICollection<PrescriptionItem> PrescriptionItems { get; set; } = [];
 
     public Product()
     {

@@ -42,40 +42,6 @@ export class CardFlushComponent {
 }
 
 @Component({
-  selector: 'div[eventDetailView]',
-  template: `
-  <div class="form d-flex flex-column flex-lg-row fv-plugins-bootstrap5 fv-plugins-framework">
-    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
-      <div cardFlush [title]="'Paciente'">
-        {{ item().patient?.fullName }}
-      </div>
-      <div cardFlush [title]="'Servicio'">
-        {{ item().service?.name }}
-      </div>
-      <div cardFlush [title]="'Fecha y hora'">
-
-      </div>
-    </div>
-    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
-      <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2"></ul>
-      <div class="tab-content">
-
-      </div>
-    </div>
-  </div>
-  `,
-  standalone: true,
-  imports: [EventFormComponent, CardFlushComponent,],
-})
-export class EventDetailComponent {
-  id = input.required<number>();
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<Event>();
-  key = input.required<string | undefined>();
-}
-
-@Component({
   selector: 'div[eventEditView]',
   template: `
   <div eventForm [use]="use()" [id]="id()" [view]="view()" [role]="role()"></div>

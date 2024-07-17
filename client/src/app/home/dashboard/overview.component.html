@@ -131,9 +131,6 @@
                 </div>
               </div>
 
-              <ng-container *ngFor="let item of appointments; track: item">
-                <appointment-summary [item]="item"></appointment-summary>
-              </ng-container>
             </div>
           </div>
         </div>
@@ -297,85 +294,85 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (patient of patients; track patient) {
-                  <tr>
-                    <td>
-                      <div
-                        class="form-check form-check-sm form-check-custom form-check-solid ps-0"
-                      >
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          value="1"
-                        />
-                      </div>
-                    </td>
+<!--                  @for (patient of patients; track patient) {-->
+<!--                  <tr>-->
+<!--                    <td>-->
+<!--                      <div-->
+<!--                        class="form-check form-check-sm form-check-custom form-check-solid ps-0"-->
+<!--                      >-->
+<!--                        <input-->
+<!--                          class="form-check-input"-->
+<!--                          type="checkbox"-->
+<!--                          value="1"-->
+<!--                        />-->
+<!--                      </div>-->
+<!--                    </td>-->
 
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div
-                          class="symbol symbol-circle symbol-50px overflow-hidden me-3"
-                        >
-                          <div class="symbol-label">
-                            <a
-                              [routerLink]="[
-                                '/dashboards/patients',
-                                patient.id
-                              ]"
-                            >
-                              <img
-                                [src]="patient.photoUrl"
-                                alt="Emma Smith"
-                                class="w-100"
-                              />
-                            </a>
-                          </div>
-                        </div>
-                        <div class="d-flex flex-grow-1 flex-column">
-                          <div
-                            class="d-flex align-items-center justify-content-between mb-0"
-                          >
-                            <div class="fw-semibold">
-                              {{ patient.firstName }} {{ patient.lastName }}
-                            </div>
-                          </div>
-                          <div
-                            class="d-flex align-items-center justify-content-between mb-0"
-                          >
-                            <div class="text-gray-600 fs-6">
-                              {{ patient.sex | titlecase }},
-                              {{ patient.birthDate | date : "yyyy" }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
+<!--                    <td>-->
+<!--                      <div class="d-flex align-items-center">-->
+<!--                        <div-->
+<!--                          class="symbol symbol-circle symbol-50px overflow-hidden me-3"-->
+<!--                        >-->
+<!--                          <div class="symbol-label">-->
+<!--                            <a-->
+<!--                              [routerLink]="[-->
+<!--                                '/dashboards/patients',-->
+<!--                                patient.id-->
+<!--                              ]"-->
+<!--                            >-->
+<!--                              <img-->
+<!--                                [src]="patient.photoUrl"-->
+<!--                                alt="Emma Smith"-->
+<!--                                class="w-100"-->
+<!--                              />-->
+<!--                            </a>-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                        <div class="d-flex flex-grow-1 flex-column">-->
+<!--                          <div-->
+<!--                            class="d-flex align-items-center justify-content-between mb-0"-->
+<!--                          >-->
+<!--                            <div class="fw-semibold">-->
+<!--                              {{ patient.firstName }} {{ patient.lastName }}-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                          <div-->
+<!--                            class="d-flex align-items-center justify-content-between mb-0"-->
+<!--                          >-->
+<!--                            <div class="text-gray-600 fs-6">-->
+<!--                              {{ patient.sex | titlecase }},-->
+<!--                              {{ patient.birthDate | date : "yyyy" }}-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </td>-->
 
-                    <td>
-                      <div class="text-gray-600">{{ patient.address }}</div>
-                    </td>
+<!--                    <td>-->
+<!--                      <div class="text-gray-600">{{ patient.address }}</div>-->
+<!--                    </td>-->
 
-                    <td>
-                      <div class="text-gray-600">{{ patient.phoneNumber }}</div>
-                    </td>
+<!--                    <td>-->
+<!--                      <div class="text-gray-600">{{ patient.photoUrl }}</div>-->
+<!--                    </td>-->
 
-                    <td>
-                      <div class="text-gray-600">{{ patient.email }}</div>
-                    </td>
-                    <td>
-                      <a
-                        [routerLink]="['../patients', patient.id]"
-                        class="btn btn-icon btn-bg-light btn-active-light-primary btn-sm"
-                      >
-                        <i class="ki-duotone ki-eye">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                          <span class="path3"></span>
-                        </i>
-                      </a>
-                    </td>
-                  </tr>
-                  }
+<!--                    <td>-->
+<!--                      <div class="text-gray-600">{{ patient.email }}</div>-->
+<!--                    </td>-->
+<!--                    <td>-->
+<!--                      <a-->
+<!--                        [routerLink]="['../patients', patient.id]"-->
+<!--                        class="btn btn-icon btn-bg-light btn-active-light-primary btn-sm"-->
+<!--                      >-->
+<!--                        <i class="ki-duotone ki-eye">-->
+<!--                          <span class="path1"></span>-->
+<!--                          <span class="path2"></span>-->
+<!--                          <span class="path3"></span>-->
+<!--                        </i>-->
+<!--                      </a>-->
+<!--                    </td>-->
+<!--                  </tr>-->
+<!--                  }-->
                 </tbody>
               </table>
             </div>
