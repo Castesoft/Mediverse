@@ -73,20 +73,27 @@ export class EventDetailModalComponent {
 @Component({
   selector: 'event-new-modal',
   template: `
-    <div modalContent>
-      <div formWrapper>
-        @if (title) {
-          <div modalHeader [title]="title"></div>
-        }
-        <div modalBody [type]="'thin'">
-          <div eventForm [use]="use" [view]="'modal'" [id]="null" (formId)="formId = $event; receiveFormId($event);"
-               [dateFrom]="dateFrom" [dateTo]="dateTo" [role]="role"
-          ></div>
+    <div class="modal-content modal-rounded">
+      @if (title) {
+        <!-- <div modalHeader [title]="title"></div> -->
+        <div class="modal-header">
+          <h2>{{title}}</h2>
+          <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="service.hideNewModal()">
+            <i class="ki-duotone ki-cross fs-1">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+          </div>
         </div>
-        <div modalFooter class="flex-center">
-          <button resetBtn (click)="service.hideNewModal()">Cancel</button>
-          @if(formId){<button submitBtn [attr.form]="this.formId"></button>}
-        </div>
+      }
+      <div class="modal-body">
+        <div eventForm [use]="use" [view]="'modal'" [id]="null" (formId)="formId = $event; receiveFormId($event);"
+             [dateFrom]="dateFrom" [dateTo]="dateTo" [role]="role"
+        ></div>
+      </div>
+      <div modalFooter class="flex-center">
+        <button resetBtn (click)="service.hideNewModal()">Cancel</button>
+        @if(formId){<button submitBtn [attr.form]="this.formId"></button>}
       </div>
     </div>
   `,
