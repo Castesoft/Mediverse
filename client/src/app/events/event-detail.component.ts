@@ -6,6 +6,8 @@ import {CurrencyPipe, DatePipe, NgSwitch, NgSwitchCase} from "@angular/common";
 import {BootstrapModule} from "src/app/_shared/bootstrap.module";
 import {DashboardModule} from "src/app/home/dashboard/dashboard.module";
 import {FormUse} from "src/app/_models/types";
+import {IconsService} from "../_services/icons.service";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: '[eventDetailView]',
@@ -13,11 +15,12 @@ import {FormUse} from "src/app/_models/types";
   styleUrls: ['./event-details.component.scss'],
   standalone: true,
   imports: [
-    DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe
+    DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule
   ]
 })
 export class EventDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  icons = inject(IconsService);
 
   use = input.required<FormUse>();
   key = input.required<string>();
