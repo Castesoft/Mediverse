@@ -41,21 +41,4 @@ export class CardFlushComponent {
   title = input.required<string>();
 }
 
-@Component({
-  selector: 'div[eventEditView]',
-  template: `
-  <div eventForm [use]="use()" [id]="id()" [view]="view()" [role]="role()"></div>
-  `,
-  standalone: true,
-  imports: [ EventFormComponent, ModalWrapperModule, ],
-})
-export class EventEditComponent {
-  id = input.required<number>();
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<Event>();
-  key = input.required<string | undefined>();
-  role = input.required<Role>();
-}
-
 

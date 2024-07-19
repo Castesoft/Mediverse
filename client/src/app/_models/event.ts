@@ -6,6 +6,7 @@ import {BadRequest, Role} from "src/app/_models/types";
 import { User } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
+import {Address} from "./address";
 
 const subject = 'event';
 
@@ -18,6 +19,8 @@ export class Event {
 
   patient?: User;
   service?: Service;
+  clinic?: Address;
+  nurses?: User[];
 
   createdAt!: Date;
   isSelected = false;

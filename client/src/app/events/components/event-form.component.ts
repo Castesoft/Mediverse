@@ -264,12 +264,13 @@ import {PatientTypeaheadDropdownComponent} from "src/app/_shared/components/pati
             </div>
           </mat-step>
           <mat-step>
-            <ng-template matStepLabel
-            >Servicio/Tratamiento @if (service) {
-              <span class="fw-semibold text-gray-500"
-              >({{ service.name }}) {{ service.price | currency }}</span
-              >
-            }
+            <ng-template matStepLabel>
+              Servicio/Tratamiento
+              @if (service) {
+                <div class="fw-semibold text-gray-500">
+                  ({{ service.name }}) {{ service.price | currency }}
+                </div>
+              }
             </ng-template>
             @if (service) {
               <div
