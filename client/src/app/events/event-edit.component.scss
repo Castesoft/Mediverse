@@ -1,0 +1,24 @@
+.form-select {
+  width: auto;
+  display: inline-block;
+  font-weight: 700;
+  padding: 6px 2.25em 6px 10px;
+  font-size: 1.3rem;
+}
+
+.form-date {
+  border-radius: 8px;
+  padding: 6px 1em 6px 0;
+  text-decoration: underline;
+  text-decoration-color: #aaa;
+
+  transition: all 0.2s ease;
+}
+
+.form-date:hover {
+  cursor: pointer;
+  background-color: white;
+  padding: 6px 0.8em 6px 0.8em;
+  box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.03);
+  text-decoration-color: #fff;
+}

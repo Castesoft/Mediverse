@@ -10,15 +10,15 @@ import {IconsService} from "../_services/icons.service";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: '[eventDetailView]',
-  templateUrl: './event-details.component.html',
-  styleUrls: ['./event-details.component.scss'],
+  selector: 'div[eventDetailView]',
+  templateUrl: './event-detail.component.html',
+  styleUrls: ['./event-detail.component.scss'],
   standalone: true,
   imports: [
     DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule
   ]
 })
-export class EventDetailsComponent implements OnInit {
+export class EventDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   icons = inject(IconsService);
 
