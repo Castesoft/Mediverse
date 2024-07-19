@@ -1,0 +1,179 @@
+@if (item()) {
+
+  <div class="card-header d-flex align-items-center">
+    <div class="d-flex flex-grow-1 justify-content-between align-items-end">
+      <div class="d-flex flex-grow-1 flex-column">
+        <div class="card-label fw-regular text-gray-500 fs--0">
+          Editar cita
+        </div>
+
+        <div class="d-flex flex-grow-1 align-items-center justify-content-start">
+          <div class="text-gray-900 fw-bold my-0 fs-1 form-date">
+            <fa-icon [icon]="icons.faRegCalendar" class="me-2 text-primary"></fa-icon>
+            {{ item().dateFrom | date }}
+          </div>
+        </div>
+      </div>
+      <div class="card p-3 px-5">
+        @if (!item().allDay) {
+          <form [formGroup]="formGroup">
+            <div class="text-gray-700 fw-bold my-0 fs-3">
+              <fa-icon [icon]="icons.faClock" class="me-4 text-primary"></fa-icon>
+              <select formControlName="timeFrom" class="form-select">
+                @for (time of timeOptions; track time) {
+                  <option [value]="time">{{ time }}</option>
+                }
+              </select>
+              -
+              <select formControlName="timeTo" class="form-select">
+                @for (time of timeOptions; track time) {
+                  <option [value]="time">{{ time }}</option>
+                }
+              </select>
+            </div>
+          </form>
+        } @else {
+          <fa-icon [icon]="icons.faClock" class="me-2 text-primary"></fa-icon>
+          <div class="text-gray-700 fw-bold my-0 fs-3">
+
+            Todo el Día
+          </div>
+        }
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="mt-4">
+    <div class="card-body">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+        @if (patient) {
+          <div>
+            <div class="d-flex flex-grow-1 justify-content-between align-items-center mb-2">
+              <div class="fs-2 fw-bold text-gray-900">Paciente</div>
+              <button
+                class="btn btn-sm btn-light-primary me-2"
+                type="button"
+                (click)="showPatientSelectModal()"
+              >
+                <fa-icon [icon]="icons.faPencil" class="me-1"></fa-icon>
+                Cambiar paciente
+              </button>
+            </div>
+
+            <div patientSummaryCard [item]="patient" [key]="selectPatientKey"></div>
+          </div>
+        }
+        <div>
+          <div class="d-flex flex-grow-1 justify-content-between align-items-center mb-2">
+            <div class="fs-2 fw-bold text-gray-900">Servicio</div>
+            <button
+              class="btn btn-sm btn-light-primary me-2"
+              type="button"
+              (click)="showServiceSelectModal()"
+            >
+              <fa-icon [icon]="icons.faPencil" class="me-1"></fa-icon>
+              Cambiar servicio
+            </button>
+          </div>
+
+          @if (service) {
+            <div
+              serviceCardCompact
+              [key]="selectServiceKey"
+              [view]="view()"
+            ></div>
+          }
+
+          <div class="d-flex flex-grow-1 justify-content-between align-items-center mb-2 mt-4">
+            <div class="fs-2 fw-bold text-gray-900">Clínica</div>
+          </div>
+          @if (clinic) {
+            <div clinicSummaryCard [item]="clinic" [key]="selectClinicKey"></div>
+          }
+        </div>
+        <div>
+          @if (nurses) {
+            <div class="d-flex flex-grow-1 justify-content-between align-items-center mb-2">
+              <div class="fs-2 fw-bold text-gray-900">Especialistas</div>
+              <button
+                class="btn btn-sm btn-light-primary me-2"
+                type="button"
+                (click)="showNursesSelectModal()"
+              >
+                <fa-icon [icon]="icons.faPencil" class="me-1"></fa-icon>
+                Cambiar especialistas
+              </button>
+            </div>
+            @for (nurse of nurses; track nurse; let first = $first) {
+              <div nurseSummaryCard [class.mt-4]="!first" [item]="nurse" [key]="'key'"></div>
+            }
+          }
+        </div>
+      </div>
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+            <div class="text-gray-900 fw-bold my-0 fs-2">
+              Receta
+            </div>
+            <a class="btn btn-light-primary">
+              <fa-icon [icon]="icons.faPencil" class="me-2"></fa-icon>
+              Editar
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">Medicamento</th>
+              <th scope="col">Dosis</th>
+              <th scope="col">Frecuencia</th>
+              <th scope="col">Duración</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Paracetamol</td>
+              <td>500 mg</td>
+              <td>Cada 8 horas</td>
+              <td>5 días</td>
+            </tr>
+            <tr>
+              <td>Ibuprofeno</td>
+              <td>400 mg</td>
+              <td>Cada 6 horas</td>
+              <td>7 días</td>
+            </tr>
+            <tr>
+              <td>Amoxicilina</td>
+              <td>500 mg</td>
+              <td>Cada 12 horas</td>
+              <td>10 días</td>
+            </tr>
+            <tr>
+              <td>Loratadina</td>
+              <td>10 mg</td>
+              <td>Una vez al día</td>
+              <td>14 días</td>
+            </tr>
+            <tr>
+              <td>Omeprazol</td>
+              <td>20 mg</td>
+              <td>Una vez al día</td>
+              <td>4 semanas</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="d-flex flex-grow-1 justify-content-between align-items-center mt-8 mb-8">
+    <button class="btn btn-secondary">Cancelar</button>
+    <button class="btn btn-primary">Guardar Cambios</button>
+  </div>
+}
