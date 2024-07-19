@@ -7,8 +7,8 @@ import {ModalWrapperModule} from "src/app/_shared/modal-wrapper.module";
 import {EventFormComponent} from "src/app/events/components/event-form.component";
 import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
 import {EventsFilterFormComponent} from "src/app/events/components/events-filter-form.component";
-import {EventDetailsComponent} from "src/app/events/event-details.component";
-import {EventEditComponent} from "src/app/events/views";
+import {EventDetailComponent} from "src/app/events/event-detail.component";
+import {EventEditComponent} from "./event-edit.component";
 
 @Component({
   selector: 'event-edit-modal',
@@ -61,7 +61,7 @@ export class EventEditModalComponent {
     </div>
   `,
   standalone: true,
-  imports: [EventDetailsComponent, ModalWrapperModule],
+  imports: [EventDetailComponent, ModalWrapperModule],
 })
 export class EventDetailModalComponent {
   id!: number;

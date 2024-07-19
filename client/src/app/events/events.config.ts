@@ -1,7 +1,7 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { Component, inject, OnInit } from "@angular/core";
-import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from "@angular/router";
+import {CommonModule} from "@angular/common";
+import {NgModule} from "@angular/core";
+import {Component, inject, OnInit} from "@angular/core";
+import {ActivatedRoute, ResolveFn, Router, RouterModule, Routes} from "@angular/router";
 import {CatalogMode, FormUse, Role, Sections, View} from "src/app/_models/types";
 import {CompactTableService} from "src/app/_services/compact-table.service";
 import {EventsService} from "src/app/_services/events.service";
@@ -10,32 +10,35 @@ import {GuidService} from "src/app/_services/guid.service";
 import {LayoutModule} from "src/app/_shared/layout.module";
 import {EventsCalendarComponent} from "src/app/events/components/events-calendar.component";
 import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
-import {EventEditComponent, EventNewComponent} from "src/app/events/views";
-import {EventDetailsComponent} from "src/app/events/event-details.component";
+import {EventNewComponent} from "src/app/events/views";
+import {EventDetailComponent} from "src/app/events/event-detail.component";
 import {createId} from "@paralleldrive/cuid2";
+import {Subject, takeUntil} from "rxjs";
+import {EventEditComponent} from "./event-edit.component";
 
 @Component({
   selector: 'events-route',
-  template: `<router-outlet></router-outlet>`,
+  template: `
+    <router-outlet></router-outlet>`,
 })
 export class EventsComponent implements OnInit {
-    ngOnInit(): void {
+  ngOnInit(): void {
 
-    }
+  }
 }
 
 @Component({
   selector: 'events-catalog-route',
   template: `
-  <div card>
-    <div
-      eventsCalendar
-      [role]="role"
-      [mode]="mode"
-      [key]="key"
-      [view]="view"
-    ></div>
-  </div>
+    <div card>
+      <div
+        eventsCalendar
+        [role]="role"
+        [mode]="mode"
+        [key]="key"
+        [view]="view"
+      ></div>
+    </div>
   `,
   standalone: true,
   imports: [RouterModule, EventsCatalogComponent, EventsCalendarComponent, LayoutModule,],
@@ -58,7 +61,7 @@ export class CatalogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.compact.mode$.subscribe({ next: (mode) => (this.isCompact = mode) });
+    this.compact.mode$.subscribe({next: (mode) => (this.isCompact = mode)});
   }
 }
 
@@ -77,7 +80,7 @@ export class CatalogComponent implements OnInit {
     }
   `,
   standalone: true,
-  imports: [RouterModule, EventDetailsComponent, LayoutModule,],
+  imports: [RouterModule, EventDetailComponent, LayoutModule,],
 })
 export class DetailComponent implements OnInit {
   private eventsService = inject(EventsService);
@@ -115,25 +118,28 @@ export class DetailComponent implements OnInit {
     this.key = navigation?.extras?.state?.['key'] || createId();
   }
 }
+
 @Component({
   selector: 'event-edit-route',
   template: `
-      @if (id && item) {
-        <div
-          eventEditView
-          [id]="id"
-          [use]="use"
-          [view]="view"
-          [key]="key"
-          [item]="item"
-          [role]="role"
-        ></div>
-      }
+    @if (id && item) {
+      <div
+        eventEditView
+        [id]="id"
+        [use]="use"
+        [view]="view"
+        [key]="key"
+        [item]="item"
+        [role]="role"
+      ></div>
+    }
   `,
   standalone: true,
-  imports: [EventEditComponent, RouterModule, LayoutModule,],
+  imports: [EventEditComponent, RouterModule, LayoutModule],
 })
 export class EditComponent implements OnInit {
+  private eventsService = inject(EventsService);
+  private ngUnsubscribe = new Subject<void>();
   private route = inject(ActivatedRoute);
 
   item?: Event;
@@ -146,15 +152,33 @@ export class EditComponent implements OnInit {
   role: Role = 'Patient';
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
-    this.route.data.subscribe({
-      next: (data) => {
+    this.subscribeToParams();
+    this.subscribeToRouteData();
+  }
+
+  private subscribeToRouteData = (): void => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data): void => {
         this.item = data['item'];
         if (this.item) this.label = this.item.patient?.fullName;
+      },
+    });
+  }
+
+  private subscribeToParams = (): void => {
+    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (params): void => {
+        this.id = +params.get('id')!;
+        this.getEvent(this.id);
+      },
+    });
+  }
+
+  private getEvent = (id: number): void => {
+    this.eventsService.getById(id).subscribe({
+      next: (item): void => {
+        this.item = item;
+        this.label = item.patient?.fullName;
       },
     });
   }
@@ -162,8 +186,9 @@ export class EditComponent implements OnInit {
 
 @Component({
   selector: 'event-new-route',
-  template: `<div eventNewView [use]="use" [view]="view" [role]="role"
-  ></div>`,
+  template: `
+    <div eventNewView [use]="use" [view]="view" [role]="role"
+    ></div>`,
   standalone: true,
   imports: [EventNewComponent, RouterModule, LayoutModule,],
 })
@@ -202,32 +227,34 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
 @NgModule({
   imports: [RouterModule.forChild([
     {
-      path: '', title: 'Citas', data: { breadcrumb: 'Citas', },
+      path: '', title: 'Citas', data: {breadcrumb: 'Citas',},
       component: EventsComponent, runGuardsAndResolvers: 'always',
       children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de citas', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'create', component: NewComponent, title: 'Crear nuevo cita', data: { breadcrumb: 'Nuevo', }, },
+        {path: '', component: CatalogComponent, title: 'Catálogo de citas', data: {breadcrumb: 'Catálogo',},},
+        {path: 'create', component: NewComponent, title: 'Crear nuevo cita', data: {breadcrumb: 'Nuevo',},},
         {
-          path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
+          path: ':id', title: titleDetailResolver, data: {breadcrumb: 'Detalle',},
           component: DetailComponent,
-          resolve: { item: itemResolver },
+          resolve: {item: itemResolver},
         },
         {
-          path: ':id/edit', title: titleEditResolver, data: { breadcrumb: 'Editar', },
+          path: ':id/edit', title: titleEditResolver, data: {breadcrumb: 'Editar',},
           component: EditComponent,
-          resolve: { item: itemResolver },
+          resolve: {item: itemResolver},
         },
       ],
     },
   ])],
   exports: [RouterModule]
 })
-export class EventsRoutingModule { }
+export class EventsRoutingModule {
+}
 
 @NgModule({
   declarations: [
     EventsComponent,
   ],
-  imports: [ CommonModule, EventsRoutingModule, LayoutModule, ]
+  imports: [CommonModule, EventsRoutingModule, LayoutModule,]
 })
-export class EventsModule { }
+export class EventsModule {
+}
