@@ -16,7 +16,8 @@
             "allowedCommonJsDependencies": [
               "@paralleldrive/cuid2",
               "apexcharts",
-              "choices.js"
+              "choices.js",
+              "@fortawesome/free-regular-svg-icons"
             ],
             "outputPath": "../src/MainService/wwwroot",
             "index": "src/index.html",
