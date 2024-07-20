@@ -55,7 +55,7 @@ import { AccountService } from "src/app/_services/account.service";
               <div class="menu-item pt-5">
               <div class="menu-content">
             <span class="fw-bold text-muted text-uppercase fs-7"
-            >Gestión Clinica</span
+            >Gestión Clínica</span
             >
               </div>
             </div>
@@ -166,7 +166,7 @@ import { AccountService } from "src/app/_services/account.service";
               </a>
             </div>
             <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/dashboards/prescriptions']">
+              <a class="menu-link" [routerLink]="['/home/prescriptions']">
             <span class="menu-icon">
               <i class="ki-duotone ki-book">
                 <span class="path1"></span>

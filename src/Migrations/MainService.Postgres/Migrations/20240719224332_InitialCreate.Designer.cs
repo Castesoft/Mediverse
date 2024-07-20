@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240718172328_InitialCreate")]
+    [Migration("20240719224332_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -745,7 +745,7 @@ namespace MainService.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Prescription");
+                    b.ToTable("Prescriptions");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>

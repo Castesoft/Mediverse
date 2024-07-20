@@ -1,0 +1,98 @@
+<ng-template #eventDisplay
+             let-index="index"
+             let-model="item">
+  <div class="d-flex flex-grow-1 justify-content-start align-items-center">
+    <div class="w-100">
+      <div class="d-flex flex-grow-1 justify-content-between align-items-center">
+        <div>
+          <span class="fw-semibold">
+            {{ model.data!.dateFrom | date }},
+          </span>
+          <span>
+          {{ model.data!.dateFrom | date: 'shortTime' }} - {{ model.data!.dateTo | date: 'shortTime' }}
+          </span>
+        </div>
+
+      </div>
+      <div>{{ model.data!.patient!.fullName }}</div>
+    </div>
+  </div>
+</ng-template>
+
+
+<div [formGroup]="formGroup">
+  <label
+    class="form-label fw-semi-bold fs--1 mb-2 d-flex m-0"
+  >
+    {{ label() }}
+
+    @if (popover()) {
+      <fa-icon
+        class="ms-1"
+        [icon]="icons.faRegCircleQuestion"
+        [popover]="popover()"
+        triggers="mouseenter:mouseleave"
+      />
+    }
+  </label>
+  <div class="input-group mb-0 mb-md-3 d-flex flex-grow-1 align-items-start">
+    <div
+      (onLoading)="onTypeaheadLoading($event)"
+      (onSelect)="onTypeaheadSelect($event)"
+      [hideIsOptional]="true"
+      [id]="'event'"
+      [isInputGroupSpan]="true"
+      [placeholder]="'Seleccione o busque una cita'"
+      [submitted]="submitted"
+      [typeaheadItemTemplate]="eventDisplay"
+      [typeaheadOptionField]="'name'"
+      [typeaheadOptions]="eventSummaries$"
+      class="col"
+      controlTypeahead
+      formControlName="eventTypeahead"
+    ></div>
+
+    <button
+      (click)="openCatalogModal()"
+      [class.btn-danger]="isEventSelected() && selectionErrors().length > 0"
+      [class.btn-primary]="!isEventSelected()"
+      [class.btn-success]="
+        isEventSelected() && selectionErrors().length <= 0
+      "
+      [disabled]="isDisabled()"
+      [style.height.px]="43"
+      [style.padding-bottom]="'12px'"
+      [style.padding-top]="'12px'"
+      [type]="'button'"
+      class="btn fs-1 py-2"
+      id="button-addon2"
+      type="button"
+    >
+      @if (loading) {
+        <div class="spinner-border text-white custom-spinner"
+             role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      } @else {
+        <fa-icon [icon]="icons.faWindowRestore"/>
+      }
+    </button>
+  </div>
+</div>
+
+@if (selectionErrors().length > 0) {
+  <alert [type]="'danger'">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="fw-bold fs--1">Error en la selección</div>
+        <div class="fs--1">
+          <ul class="mb-0">
+            @for (error of selectionErrors(); track error) {
+              <li>{{ error }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </alert>
+}

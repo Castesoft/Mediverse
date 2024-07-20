@@ -24,6 +24,34 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         context.Events.Remove(item);
     }
 
+    public async Task<List<EventSummaryDto>> GetSummaryDtosAsync(EventParams param, ClaimsPrincipal user)
+    {
+        var query = context.Events
+            .AsNoTracking()
+            .Include(x => x.DoctorEvent)
+            .Where(x => x.DoctorEvent.DoctorId == user.GetUserId())
+            .AsQueryable();
+
+        query = query.OrderBy(x => x.DateFrom).ThenBy(x => x.DateTo);
+
+        if (!string.IsNullOrEmpty(param.Search))
+        {
+            string searchParam = param.Search.Replace(" ", "").ToLower();
+
+            query = query.Where(x =>
+                EF.Functions.Like(x.PatientEvent.Patient.FirstName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
+                EF.Functions.Like(x.PatientEvent.Patient.LastName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
+                EF.Functions.Like(
+                    (x.PatientEvent.Patient.FirstName + x.PatientEvent.Patient.LastName).Replace(" ", "").ToLower(),
+                    $"%{searchParam}%"));
+        }
+
+        query = query.Take(10);
+
+        return await query.ProjectTo<EventSummaryDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
     public async Task<List<Event>> GetAllAsync()
     {
         return await context.Events.ToListAsync();
@@ -52,6 +80,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
     public async Task<Event> GetByIdAsync(int id)
     {
         var item = await context.Events
+            .Include(x => x.PatientEvent)
             .SingleOrDefaultAsync(x => x.Id == id);
 
         return item;

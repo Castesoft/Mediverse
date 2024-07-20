@@ -11,6 +11,8 @@ export class Product {
   id!: number;
   name!: string;
   description!: string;
+  quantity!: string;
+  unit!: string;
   discount!: number;
   price!: number;
   photoUrl?: string;

@@ -40,7 +40,7 @@ import {
   UsersListSelectComponent,
 } from 'src/app/users/components/users-catalog.component';
 import { createId } from '@paralleldrive/cuid2';
-import {PatientTypeaheadDropdownComponent} from "src/app/_shared/components/patient-typeahead-dropdown.component";
+import {PatientSelectTypeaheadComponent} from "src/app/_shared/components/patient-select-typeahead.component";
 
 @Component({
   host: { class: 'pb-3' },
@@ -77,7 +77,7 @@ import {PatientTypeaheadDropdownComponent} from "src/app/_shared/components/pati
             }
 
             <div class="my-4">
-              <div customerTypeaheadDropdown [user]="patient ?? null" [isDisabled]="false" [guid]="selectPatientKey"
+              <div patientSelectTypeahead [user]="patient ?? null" [isDisabled]="false" [key]="selectPatientKey"
                    [label]="'Paciente'"></div>
               <button
                 class="btn btn-light-primary me-2"
@@ -432,7 +432,7 @@ import {PatientTypeaheadDropdownComponent} from "src/app/_shared/components/pati
     UsersCatalogComponent,
     UsersListSelectComponent,
     AddressesListSelectComponent,
-    PatientTypeaheadDropdownComponent,
+    PatientSelectTypeaheadComponent,
   ],
 })
 export class EventFormComponent implements OnInit, OnDestroy {

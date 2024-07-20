@@ -60,6 +60,11 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DateFrom, opt => opt.MapFrom(src => src.DateFrom))
             .ForMember(dest => dest.DateTo, opt => opt.MapFrom(src => src.DateTo));
 
+        CreateMap<Event, EventSummaryDto>()
+            .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientEvent.Patient))
+            .ForMember(dest => dest.DateFrom, opt => opt.MapFrom(src => src.DateFrom))
+            .ForMember(dest => dest.DateTo, opt => opt.MapFrom(src => src.DateTo));
+        
         CreateMap<AppRole, RoleDto>();
         CreateMap<AppUser, DoctorDto>();
         CreateMap<AppPermission, PermissionDto>();

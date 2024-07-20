@@ -35,13 +35,13 @@ export class TableHeaderComponent implements OnInit, OnChanges {
   // inputs
   // required
   columns = input.required<Column[]>();
-  params = input.required<any>();
   mode = input.required<CatalogMode>();
   show = input<boolean>(true);
 
   // optional
   sortable = input<boolean>(true);
   showActions = input<boolean>(true);
+  params = input<any>();
 
   // outputs
   onParamsChange = output<SortOptions>();

@@ -1,27 +1,27 @@
-﻿import {Component, computed, inject, input, model, OnChanges, OnInit, SimpleChanges} from "@angular/core";
-import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {ControlTypeaheadComponent} from "src/app/_forms/control-typeahead.component";
-import {PopoverModule} from "ngx-bootstrap/popover";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ErrorsAlertComponent} from "src/app/_forms/helpers/errors-alert.component";
-import {finalize, map, Observable, Subject, takeUntil} from "rxjs";
-import {UsersService} from "src/app/_services/users.service";
-import {IconsService} from "src/app/_services/icons.service";
-import {User, UserParams, UserSummary} from "src/app/_models/user";
-import {TypeaheadComplexOption} from "src/app/_models/types";
-import {createId} from "@paralleldrive/cuid2";
-import {AlertModule} from "ngx-bootstrap/alert";
-import {TypeaheadMatch} from "ngx-bootstrap/typeahead";
-import {DatePipe, JsonPipe} from "@angular/common";
+﻿import { Component, computed, inject, input, model, OnChanges, OnInit, SimpleChanges } from "@angular/core";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ControlTypeaheadComponent } from "src/app/_forms/control-typeahead.component";
+import { PopoverModule } from "ngx-bootstrap/popover";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.component";
+import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
+import { UsersService } from "src/app/_services/users.service";
+import { IconsService } from "src/app/_services/icons.service";
+import { User, UserParams, UserSummary } from "src/app/_models/user";
+import { TypeaheadComplexOption } from "src/app/_models/types";
+import { createId } from "@paralleldrive/cuid2";
+import { AlertModule } from "ngx-bootstrap/alert";
+import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
+import { DatePipe, JsonPipe } from "@angular/common";
 
 interface PatientTypeaheadOptions extends TypeaheadComplexOption {
   data: UserSummary,
 }
 
 @Component({
-  selector: '[customerTypeaheadDropdown]',
-  templateUrl: './patient-typeahead-dropdown.component.html',
-  styleUrls: ['./patient-typeahead-dropdown.component.scss'],
+  selector: '[patientSelectTypeahead]',
+  templateUrl: './patient-select-typeahead.component.html',
+  styleUrls: ['./patient-select-typeahead.component.scss'],
   imports: [
     ControlTypeaheadComponent,
     FaIconComponent,
@@ -34,19 +34,19 @@ interface PatientTypeaheadOptions extends TypeaheadComplexOption {
   ],
   standalone: true
 })
-export class PatientTypeaheadDropdownComponent implements OnInit, OnChanges {
+export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
   private ngUnsubscribe = new Subject<void>();
   service = inject(UsersService);
   icons = inject(IconsService);
 
   isUserSelected = computed(() => this.user() !== null);
   selectionErrors = input<string[]>([]);
-  label = input<string>("Individuo");
+  label = input<string>();
   isDisabled = input.required<boolean>();
   popover = input<string | undefined>();
   user = model.required<User | null>();
   sex = input<string | undefined>();
-  guid = input<string>(createId());
+  key = input<string>(createId());
 
   submitted = false;
   loading = true;
@@ -72,7 +72,7 @@ export class PatientTypeaheadDropdownComponent implements OnInit, OnChanges {
   }
 
   private subscribeToSelectedUser(): void {
-    this.service.selected$(this.guid()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (user) => {
         this.user.set(user || null);
         this.setInputStatusAndValue();
@@ -81,21 +81,21 @@ export class PatientTypeaheadDropdownComponent implements OnInit, OnChanges {
   }
 
   private initForm = (): void => {
-    this.formGroup = new FormGroup({userTypeahead: new FormControl("", Validators.required)});
+    this.formGroup = new FormGroup({ userTypeahead: new FormControl("", Validators.required) });
     this.setInputDisabled(this.isDisabled());
   };
 
   private subscribeToSummaries = (formValue: any) => {
-    const userParams: UserParams = new UserParams(this.guid());
+    const userParams: UserParams = new UserParams(this.key());
 
     userParams.search = formValue.userTypeahead;
 
-    this.userSummaries$ = this.service.getSummaryByValue(this.guid(), userParams)
+    this.userSummaries$ = this.service.getSummaryByValue(this.key(), userParams)
       .pipe(map((response: UserSummary[]) => {
         this.users = response;
 
         return response.map((user: UserSummary) => {
-            return {name: user.fullName, value: user.id, data: user};
+            return { name: user.fullName, value: user.id, data: user };
           }
         );
       }));
@@ -137,6 +137,10 @@ export class PatientTypeaheadDropdownComponent implements OnInit, OnChanges {
     }
   };
 
+  openCatalogModal = () => {
+    this.service.showCatalogModal(new MouseEvent('click'), this.key(), 'select', 'Patient')
+  }
+
   onTypeaheadSelect = (data: TypeaheadMatch): void => {
     if (!data.item.value) return;
 
@@ -146,7 +150,7 @@ export class PatientTypeaheadDropdownComponent implements OnInit, OnChanges {
         this.loading = false;
       }))
       .subscribe((user) => {
-        this.service.setSelected$(this.guid(), user);
+        this.service.setSelected$(this.key(), user);
       });
   };
 

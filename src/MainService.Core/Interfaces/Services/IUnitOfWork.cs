@@ -9,6 +9,7 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
     IAddressRepository AddressRepository { get; }
     IEventRepository EventRepository { get; }
+    IPrescriptionRepository PrescriptionRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();
