@@ -13,7 +13,7 @@ import { FilterForm, Event, EventParams } from "src/app/_models/event";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { CatalogModule } from "src/app/_shared/catalog.module";
-import {EventsFilterMenuComponent} from "src/app/events/components/events-filter-menu.component";
+import { EventsFilterMenuComponent } from "src/app/events/components/events-filter-menu.component";
 import { EventsTableComponent } from "src/app/events/components/events-table.component";
 import { EventsService } from "src/app/_services/events.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
@@ -23,10 +23,10 @@ import { LayoutModule } from "src/app/_shared/layout.module";
   selector: 'div[eventsCatalog]',
   templateUrl: './events-catalog.component.html',
   standalone: true,
-  imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
+  imports: [BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
     EventsTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
     LayoutModule, EventsFilterMenuComponent, LayoutModule,
-   ],
+  ],
 })
 export class EventsCatalogComponent implements OnInit, OnDestroy {
   router = inject(Router);

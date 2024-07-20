@@ -187,7 +187,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Prescription",
+                name: "Prescriptions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -197,7 +197,7 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Prescription", x => x.Id);
+                    table.PrimaryKey("PK_Prescriptions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -736,9 +736,9 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DoctorPrescription_Prescription_PrescriptionId",
+                        name: "FK_DoctorPrescription_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
+                        principalTable: "Prescriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -760,9 +760,9 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EventPrescription_Prescription_PrescriptionId",
+                        name: "FK_EventPrescription_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
+                        principalTable: "Prescriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -784,9 +784,9 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PatientPrescription_Prescription_PrescriptionId",
+                        name: "FK_PatientPrescription_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
+                        principalTable: "Prescriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -833,9 +833,9 @@ namespace MainService.Postgres.Migrations
                 {
                     table.PrimaryKey("PK_PrescriptionItem", x => new { x.PrescriptionId, x.MedicineId });
                     table.ForeignKey(
-                        name: "FK_PrescriptionItem_Prescription_PrescriptionId",
+                        name: "FK_PrescriptionItem_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
+                        principalTable: "Prescriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -1320,7 +1320,7 @@ namespace MainService.Postgres.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Prescription");
+                name: "Prescriptions");
 
             migrationBuilder.DropTable(
                 name: "Products");

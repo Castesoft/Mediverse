@@ -4,15 +4,16 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import {DateClickArg} from "@fullcalendar/interaction";
 import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
+import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
 import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, Role, SortOptions, View } from "src/app/_models/types";
-import { FilterForm, Event, EventParams } from "src/app/_models/event";
+import { FilterForm, Event, EventParams, EventSummary } from "src/app/_models/event";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
 import { EventDetailModalComponent, EventEditModalComponent, EventNewModalComponent, EventsCatalogModalComponent, EventsFilterModalComponent } from "src/app/events/modals";
 import { environment } from "src/environments/environment";
+import { UserParams, UserSummary } from "src/app/_models/user";
 
 @Injectable({
   providedIn: "root",
@@ -60,6 +61,26 @@ export class EventsService {
   private setParam = (key: string, value: EventParams): void => {
     this.paramsMap.set(key, value);
   };
+
+  // Summary Handlers
+  private summaryCacheMap: Map<string, Map<string, EventSummary[]>> = new Map<string, Map<string, EventSummary[]>>();
+  private summaryCacheExists = (key: string): boolean => this.summaryCacheMap.has(key);
+  private getSummaryCache = (key: string): Map<string, EventSummary[]> => {
+    if (!this.summaryCacheExists(key)) this.summaryCacheMap.set(key, new Map<string, EventSummary[]>());
+    return this.summaryCacheMap.get(key)!;
+  };
+  private summaryMap = new Map<string, EventSummary[] | null>();
+  private getSummary = (key: string): EventSummary[] => this.summaryMap.get(key) || [];
+  private setSummary = (key: string, value: EventSummary[] | null): void => {
+    this.summaryMap.set(key, value);
+  };
+  private summaries = new BehaviorSubject<{ [key: string]: EventSummary[] | null }>({});
+  summaries$ = this.summaries.asObservable();
+  summary$ = (key: string): Observable<EventSummary[] | null> => this.summaries$.pipe(map(summaries => summaries[key]));
+  setSummary$ = (key: string, value: EventSummary[] | null): void => this.summaries.next({
+    ...this.summaries.value,
+    [key]: value
+  });
 
   // Paged List
   private pagedLists = new BehaviorSubject<{ [key: string]: PaginatedResult<Event[]> }>({});
@@ -208,6 +229,32 @@ export class EventsService {
         this.current.next(response);
         this.setLoading("current", false);
       })
+    );
+  }
+
+  getSummaryByValue(key: string, summaryParams: EventParams): Observable<EventSummary[]> {
+    const { search } = summaryParams;
+
+    this.setLoading(key, true);
+    this.summaryCacheExists(key);
+
+    let params = summaryParams.toHttpParams();
+
+    const response = this.getSummaryCache(key).get(search ?? '');
+
+    if (response) {
+      this.setSummary(key, response);
+      this.setLoading(key, false);
+      return of(response);
+    }
+
+    return this.http.get<EventSummary[]>(`${this.baseUrl}summary`, {params}).pipe(
+      tap(response => {
+        this.getSummaryCache(key).set(search ?? '', response);
+        this.setSummary(key, response);
+        this.setLoading(key, false);
+      }),
+      finalize(() => this.setLoading(key, false))
     );
   }
 

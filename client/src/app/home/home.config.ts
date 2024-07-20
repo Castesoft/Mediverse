@@ -77,6 +77,10 @@ export class HomeComponent implements OnInit {
         { path: 'products',
           loadChildren: () => import('../products/products.config').then(x => x.ProductsModule)
         },
+        {
+          path: 'prescriptions',
+          loadChildren: () => import('../prescriptions/prescriptions.config').then(x => x.PrescriptionsModule)
+        },
         { path: 'nurses',
           loadChildren: () => import('../users/users.config').then(x => x.NursesModule)
         },
@@ -91,8 +95,11 @@ export class HomeComponent implements OnInit {
 export class HomeRoutingModule { }
 
 @NgModule({
-  declarations: [ HomeComponent ],
-  imports: [ HomeRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
-    LayoutModule, BreadcrumbLinkComponent, ],
+  declarations: [HomeComponent],
+  imports: [HomeRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
+    LayoutModule, BreadcrumbLinkComponent,],
+  exports: [
+    HomeComponent
+  ]
 })
 export class HomeModule {}

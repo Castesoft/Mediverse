@@ -6,7 +6,7 @@ import {IconsService} from "../_services/icons.service";
 import {faEye} from "@fortawesome/free-regular-svg-icons";
 
 @Component({
-  selector: '[nurseSummaryCard]',
+selector: '[nurseSummaryCard]',
   templateUrl: 'nurse-summary-card.component.html',
   imports: [
     FaIconComponent,

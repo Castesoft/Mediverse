@@ -11,6 +11,7 @@ using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Infrastructure.Data;
+
 public class ProductRepository(DataContext context, IMapper mapper) : IProductRepository
 {
     public void Add(Product item) => context.Products.Add(item);
@@ -78,7 +79,8 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
 
         int userId = user.GetUserId();
 
-        query = query.Where(x => x.DoctorProduct.DoctorId == userId);
+        // TODO - Uncomment this line when product assignment during seeding is fixed
+        // query = query.Where(x => x.DoctorProduct.DoctorId == userId);
 
         if (param.DateFrom != DateTime.MinValue)
             query = query.Where(x => x.CreatedAt >= param.DateFrom);
@@ -127,7 +129,6 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         }
 
         return await PagedList<ProductDto>.CreateAsync(
-            query.AsNoTracking().ProjectTo<ProductDto>(mapper.ConfigurationProvider),
-            param.PageNumber, param.PageSize);
+            query.AsNoTracking().ProjectTo<ProductDto>(mapper.ConfigurationProvider), param.PageNumber, param.PageSize);
     }
 }

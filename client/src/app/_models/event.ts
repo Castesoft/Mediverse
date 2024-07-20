@@ -2,11 +2,11 @@ import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
 import { Service } from "src/app/_models/service";
-import {BadRequest, Role} from "src/app/_models/types";
-import { User } from "src/app/_models/user";
+import { BadRequest, Role } from "src/app/_models/types";
+import { User, UserSummary } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
-import {Address} from "./address";
+import { Address } from "./address";
 
 const subject = 'event';
 
@@ -24,6 +24,14 @@ export class Event {
 
   createdAt!: Date;
   isSelected = false;
+}
+
+export class EventSummary {
+  id!: number;
+  allDay = false;
+  dateFrom = new Date();
+  dateTo = new Date();
+  patient?: UserSummary;
 }
 
 export class EventParams {
@@ -155,11 +163,16 @@ export class CreateForm {
       controls['email'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
       controls['sex'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
     } else {
-      controls['firstName'].clearValidators(); controls['firstName'].clearAsyncValidators();
-      controls['lastName'].clearValidators(); controls['lastName'].clearAsyncValidators();
-      controls['dateOfBirth'].clearValidators(); controls['dateOfBirth'].clearAsyncValidators();
-      controls['email'].clearValidators(); controls['email'].clearAsyncValidators();
-      controls['sex'].clearValidators(); controls['sex'].clearAsyncValidators();
+      controls['firstName'].clearValidators();
+      controls['firstName'].clearAsyncValidators();
+      controls['lastName'].clearValidators();
+      controls['lastName'].clearAsyncValidators();
+      controls['dateOfBirth'].clearValidators();
+      controls['dateOfBirth'].clearAsyncValidators();
+      controls['email'].clearValidators();
+      controls['email'].clearAsyncValidators();
+      controls['sex'].clearValidators();
+      controls['sex'].clearAsyncValidators();
     }
     // this.group.updateValueAndValidity();
   }
@@ -219,11 +232,16 @@ export class EditForm {
       controls['email'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
       controls['sex'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
     } else {
-      controls['firstName'].clearValidators(); controls['firstName'].clearAsyncValidators();
-      controls['lastName'].clearValidators(); controls['lastName'].clearAsyncValidators();
-      controls['dateOfBirth'].clearValidators(); controls['dateOfBirth'].clearAsyncValidators();
-      controls['email'].clearValidators(); controls['email'].clearAsyncValidators();
-      controls['sex'].clearValidators(); controls['sex'].clearAsyncValidators();
+      controls['firstName'].clearValidators();
+      controls['firstName'].clearAsyncValidators();
+      controls['lastName'].clearValidators();
+      controls['lastName'].clearAsyncValidators();
+      controls['dateOfBirth'].clearValidators();
+      controls['dateOfBirth'].clearAsyncValidators();
+      controls['email'].clearValidators();
+      controls['email'].clearAsyncValidators();
+      controls['sex'].clearValidators();
+      controls['sex'].clearAsyncValidators();
     }
     // this.group.updateValueAndValidity();
   }

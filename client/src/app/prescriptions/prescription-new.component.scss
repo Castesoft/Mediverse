@@ -1,0 +1,26 @@
+.header-fixed-height {
+  height: 60px; /* Set the desired fixed height */
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  background-color: #f8f9fc;
+}
+
+.event-details {
+  padding: 1rem;
+  border: 1px solid #e3e6f0;
+  border-radius: 0.35rem;
+  background-color: #f8f9fc;
+}
+
+.event-details p {
+  margin-bottom: 0.5rem;
+}
+
+.event-details span {
+  font-weight: 500;
+}
+
+.event-details strong {
+  font-weight: 600;
+}

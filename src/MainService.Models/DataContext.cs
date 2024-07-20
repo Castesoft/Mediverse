@@ -27,6 +27,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<DoctorProduct> DoctorProducts { get; set; }
     public DbSet<DoctorNurse> DoctorNurses { get; set; }
     public DbSet<Event> Events { get; set; }
+    public DbSet<Prescription> Prescriptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

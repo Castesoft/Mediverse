@@ -1,7 +1,10 @@
-﻿<ng-template #patientDisplay let-model="item" let-index="index">
+﻿<ng-template #patientDisplay
+             let-index="index"
+             let-model="item">
   <div class="d-flex align-items-center">
     <div class="symbol symbol-50px symbol-circle">
-      <img [src]="model.data.photoUrl || 'https://i.pravatar.cc/150'" class="w-100"/>
+      <img [src]="model.data.photoUrl || 'https://i.pravatar.cc/150'"
+           class="w-100"/>
       <div
         class="bg-success position-absolute border border-4 border-body h-15px w-15px rounded-circle translate-middle start-100 top-100 ms-n3 mt-n3">
       </div>
@@ -16,7 +19,7 @@
 
 <div [formGroup]="formGroup">
   <label
-    class="form-label fw-semi-bold fs--1 mb-0 d-flex m-0"
+    class="form-label fw-semi-bold fs--1 mb-2 d-flex m-0"
   >
     {{ label() }}
 
@@ -31,38 +34,40 @@
   </label>
   <div class="input-group mb-0 mb-md-3 d-flex flex-grow-1 align-items-start">
     <div
-      controlTypeahead
-      (onSelect)="onTypeaheadSelect($event)"
       (onLoading)="onTypeaheadLoading($event)"
-      [typeaheadOptionField]="'name'"
-      class="col"
-      formControlName="userTypeahead"
-      [typeaheadItemTemplate]="patientDisplay"
-      [typeaheadOptions]="userSummaries$"
-      [placeholder]="'Seleccione o busque un paciente'"
+      (onSelect)="onTypeaheadSelect($event)"
       [hideIsOptional]="true"
-      [isInputGroupSpan]="true"
-      [submitted]="submitted"
       [id]="'user'"
+      [isInputGroupSpan]="true"
+      [placeholder]="'Seleccione o busque un paciente'"
+      [submitted]="submitted"
+      [typeaheadItemTemplate]="patientDisplay"
+      [typeaheadOptionField]="'name'"
+      [typeaheadOptions]="userSummaries$"
+      class="col"
+      controlTypeahead
+      formControlName="userTypeahead"
     ></div>
 
     <button
-      [disabled]="isDisabled()"
-      class="btn fs-1 py-2"
-      [style.height.px]="43"
-      type="button" id="button-addon2"
-      [class.btn-primary]="!isUserSelected()"
+      (click)="openCatalogModal()"
       [class.btn-danger]="isUserSelected() && selectionErrors().length > 0"
+      [class.btn-primary]="!isUserSelected()"
       [class.btn-success]="
         isUserSelected() && selectionErrors().length <= 0
       "
-      [style.padding-top]="'12px'"
+      [disabled]="isDisabled()"
+      [style.height.px]="43"
       [style.padding-bottom]="'12px'"
+      [style.padding-top]="'12px'"
       [type]="'button'"
-      (click)="service.showCatalogModal($event, guid(), 'select', 'Patient')"
+      class="btn fs-1 py-2"
+      id="button-addon2"
+      type="button"
     >
       @if (loading) {
-        <div class="spinner-border text-white custom-spinner" role="status">
+        <div class="spinner-border text-white custom-spinner"
+             role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       } @else {

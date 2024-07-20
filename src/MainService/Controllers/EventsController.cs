@@ -55,6 +55,17 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
 
         return item;
     }
+    
+        
+    [HttpGet("summary")]
+    public async Task<ActionResult<List<EventSummaryDto>>> GetSummaryAsync([FromQuery] EventParams param)
+    {
+        var item = await uow.EventRepository.GetSummaryDtosAsync(param, User);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} no fue encontrado.");
+
+        return item;
+    }
 
     // // [Authorize(Policy = "RequireAdminRole")]
     // [HttpDelete("{id}")]

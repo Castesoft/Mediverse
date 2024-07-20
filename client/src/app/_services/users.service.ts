@@ -221,7 +221,7 @@ export class UsersService {
   });
 
 
-  // User Summaries Handlers
+  // Summaries Handlers
   private summaryCacheMap: Map<string, Map<string, UserSummary[]>> = new Map<string, Map<string, UserSummary[]>>();
   private summaryCacheExists = (key: string): boolean => this.summaryCacheMap.has(key);
   private getSummaryCache = (key: string): Map<string, UserSummary[]> => {

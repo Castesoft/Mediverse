@@ -742,7 +742,7 @@ namespace MainService.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Prescription");
+                    b.ToTable("Prescriptions");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
