@@ -12,18 +12,18 @@ import { AccountService } from "src/app/_services/account.service";
         <a [routerLink]="['/']">
           <img
             alt="Logo"
-            src="media/logos/logo-default.svg"
             class="max-h-50px logo-default theme-light-show"
+            src="media/logos/logo-default.svg"
           />
           <img
             alt="Logo"
-            src="media/logos/logo-default-dark.svg"
             class="max-h-50px logo-default theme-dark-show"
+            src="media/logos/logo-default-dark.svg"
           />
           <img
             alt="Logo"
-            src="media/logos/logo-minimize.svg"
             class="max-h-50px logo-minimize"
+            src="media/logos/logo-minimize.svg"
           />
         </a>
       </div>
@@ -37,11 +37,12 @@ import { AccountService } from "src/app/_services/account.service";
             id="kt_aside_menu_wrapper"
           >
             <div
-              class="menu-item"
               [routerLink]="['/dashboards']"
+              class="menu-item"
               routerLinkActive="active"
             >
-              <a class="menu-link" [routerLink]="['/dashboards']">
+              <a [routerLink]="['/dashboards']"
+                 class="menu-link">
             <span class="menu-icon">
               <i class="ki-duotone ki-home nav-icon fs-2">
                 <span class="path1"></span>
@@ -51,16 +52,19 @@ import { AccountService } from "src/app/_services/account.service";
                 <span class="menu-title">Inicio</span>
               </a>
             </div>
-            @if(accountService.hasRole(['Doctor'])) {
+            @if (accountService.hasRole(['Doctor'])) {
               <div class="menu-item pt-5">
-              <div class="menu-content">
-            <span class="fw-bold text-muted text-uppercase fs-7"
-            >Gestión Clínica</span
-            >
+                <div class="menu-content">
+            <span class="fw-bold text-muted text-uppercase fs-7">
+Gestión Clínica
+            </span>
+                </div>
               </div>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/home/events']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/events']"
+                   [routerLinkActive]="'active'"
+                   [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
             <i class="ki-duotone ki-calendar-8 fs-2">
 												<span class="path1"></span>
@@ -71,13 +75,16 @@ import { AccountService } from "src/app/_services/account.service";
 												<span class="path6"></span>
 											</i>
             </span>
-                <span class="menu-title">
+                  <span class="menu-title">
               Citas
             </span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/home/patients']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/patients']"
+                   [routerLinkActive]="'active'"
+                   [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-profile-user">
                 <span class="path1"></span>
@@ -86,11 +93,14 @@ import { AccountService } from "src/app/_services/account.service";
                 <span class="path4"></span>
               </i>
             </span>
-                <span class="menu-title">Pacientes</span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/home/services']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+                  <span class="menu-title">Pacientes</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/services']"
+                   [routerLinkActive]="'active'"
+                   [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
             <i class="ki-duotone ki-brifecase-tick fs-2">
             <span class="path1"></span>
@@ -98,11 +108,14 @@ import { AccountService } from "src/app/_services/account.service";
  <span class="path3"></span>
 											</i>
             </span>
-                <span class="menu-title">Servicios</span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/home/products']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+                  <span class="menu-title">Servicios</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/products']"
+                   [routerLinkActive]="'active'"
+                   [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
             <i class="ki-duotone ki-brifecase-tick fs-2">
             <span class="path1"></span>
@@ -110,11 +123,14 @@ import { AccountService } from "src/app/_services/account.service";
  <span class="path3"></span>
 											</i>
             </span>
-                <span class="menu-title">Productos</span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/home/nurses']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+                  <span class="menu-title">Productos</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/nurses']"
+                   [routerLinkActive]="'active'"
+                   [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
             <i class="ki-duotone ki-people fs-2">
             <span class="path1"></span>
@@ -124,11 +140,14 @@ import { AccountService } from "src/app/_services/account.service";
  <span class="path5"></span>
 											</i>
             </span>
-                <span class="menu-title">Especialistas</span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/home/clinics']" [routerLinkActive]="'active'" [ariaCurrentWhenActive]="'page'">
+                  <span class="menu-title">Especialistas</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/clinics']"
+                   [routerLinkActive]="'active'"
+                   [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-map fs-2">
                 <span class="path1"></span>
@@ -136,11 +155,12 @@ import { AccountService } from "src/app/_services/account.service";
                 <span class="path3"></span>
               </i>
             </span>
-                <span class="menu-title">Clínicas</span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="[]">
+                  <span class="menu-title">Clínicas</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="[]">
             <span class="menu-icon">
               <i class="ki-duotone ki-graph-up">
                 <span class="path1"></span>
@@ -151,33 +171,49 @@ import { AccountService } from "src/app/_services/account.service";
                 <span class="path6"></span>
               </i>
             </span>
-                <span class="menu-title">Analítica</span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/dashboards/medicines']">
+                  <span class="menu-title">Analítica</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/dashboards/medicines']">
             <span class="menu-icon">
               <i class="ki-duotone ki-capsule">
                 <span class="path1"></span>
                 <span class="path2"></span>
               </i>
             </span>
-                <span class="menu-title">Inventario</span>
-              </a>
-            </div>
-            <div class="menu-item">
-              <a class="menu-link" [routerLink]="['/home/prescriptions']">
-            <span class="menu-icon">
-              <i class="ki-duotone ki-book">
-                <span class="path1"></span>
-                <span class="path2"></span>
-                <span class="path3"></span>
-                <span class="path4"></span>
-              </i>
-            </span>
-                <span class="menu-title">Recetas</span>
-              </a>
-            </div>
+                  <span class="menu-title">Inventario</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/prescriptions']">
+                  <span class="menu-icon">
+                    <i class="ki-duotone ki-book">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                      <span class="path4"></span>
+                    </i>
+                  </span>
+                  <span class="menu-title">Recetas</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/orders']">
+                  <span class="menu-icon">
+                    <i class="ki-duotone ki-book">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                      <span class="path4"></span>
+                    </i>
+                  </span>
+                  <span class="menu-title">Pedidos</span>
+                </a>
+              </div>
             }
           </div>
           <div class="menu-item pt-5">
@@ -186,7 +222,8 @@ import { AccountService } from "src/app/_services/account.service";
             </div>
           </div>
           <div class="menu-item">
-            <a class="menu-link" [routerLink]="['/dashboards/payments']">
+            <a [routerLink]="['/dashboards/payments']"
+               class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-bill">
               <span class="path1"></span>
@@ -201,7 +238,8 @@ import { AccountService } from "src/app/_services/account.service";
             </a>
           </div>
           <div class="menu-item">
-            <a class="menu-link" target="_blank">
+            <a class="menu-link"
+               target="_blank">
           <span class="menu-icon">
             <i class="ki-duotone ki-financial-schedule">
               <span class="path1"></span>
@@ -219,7 +257,8 @@ import { AccountService } from "src/app/_services/account.service";
             </div>
           </div>
           <div class="menu-item">
-            <a class="menu-link" [routerLink]="['/dashboards/account']">
+            <a [routerLink]="['/dashboards/account']"
+               class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-user">
               <span class="path1"></span>
@@ -230,7 +269,8 @@ import { AccountService } from "src/app/_services/account.service";
             </a>
           </div>
           <div class="menu-item">
-            <a class="menu-link" [routerLink]="[]">
+            <a [routerLink]="[]"
+               class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-setting-2">
               <span class="path1"></span>
@@ -241,7 +281,8 @@ import { AccountService } from "src/app/_services/account.service";
             </a>
           </div>
           <div class="menu-item">
-            <a class="menu-link" [routerLink]="[]">
+            <a [routerLink]="[]"
+               class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-question-2">
               <span class="path1"></span>
@@ -254,8 +295,10 @@ import { AccountService } from "src/app/_services/account.service";
           </div>
         </div>
       </div>
-      <div class="aside-footer flex-column-auto pb-5 d-none" id="kt_aside_footer">
-        <a [routerLink]="['/']" class="btn btn-light-primary w-100">Button</a>
+      <div class="aside-footer flex-column-auto pb-5 d-none"
+           id="kt_aside_footer">
+        <a [routerLink]="['/']"
+           class="btn btn-light-primary w-100">Button</a>
       </div>
     </div>
 

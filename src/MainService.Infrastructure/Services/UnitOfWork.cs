@@ -16,6 +16,7 @@ public class UnitOfWork(DataContext context, IMapper mapper) : IUnitOfWork
     public IAddressRepository AddressRepository => new AddressRepository(context, mapper);
     public IEventRepository EventRepository => new EventRepository(context, mapper);
     public IPrescriptionRepository PrescriptionRepository => new PrescriptionRepository(context, mapper);
+    public IOrderRepository OrderRepository => new OrderRepository(context, mapper);
 
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;
     public void DetachEntity<T>(T entity) where T : class => context.Entry(entity).State = EntityState.Detached;

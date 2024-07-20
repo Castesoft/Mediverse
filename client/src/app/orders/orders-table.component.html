@@ -54,20 +54,26 @@
         }
       }
       <!-- <td productCell [item]="item"></td> -->
-      <td>{{ item.name }}</td>
-      <td>{{ item.description }}</td>
-      <td>{{ item.price | currency }}</td>
-      <td productDiscount
-          [item]="item"></td>
-      <td>{{ item.createdAt | date }}</td>
+      <td>{{ item.createdAt | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ item.total | currency }}</td>
+      <td>{{ item.subtotal | currency }}</td>
+      <td>{{ item.discount | currency }}</td>
+      <td>{{ item.tax | currency }}</td>
+      <td>{{ item.amountPaid | currency }}</td>
+      <td>{{ item.amountDue | currency }}</td>
+      <td>{{ item.patient.fullName }}</td>
+      <td>{{ item.doctor.fullName }}</td>
+      <td>{{ item.address?.street }} {{ item.address?.exteriorNumber }}</td>
+      <td>{{ item.status }}</td>
+      <td>{{ item.deliveryStatus }}</td>
 
       <td class="text-end">
         <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"
            [cdkContextMenuTriggerFor]="context_menu"
            [cdkMenuTriggerFor]="context_menu"
-           [id]="'dropdown' + item.name + item.id"
+           [id]="'dropdown' + item.createdAt + item.id"
            type="button"
-           [attr.aria-controls]="'dropdown' + item.name + item.id">
+           [attr.aria-controls]="'dropdown' + item.createdAt + item.id">
           Opciones
           <i class="ki-duotone ki-down fs-5 ms-1"></i>
         </a>

@@ -391,6 +391,22 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("DoctorNurses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorOrder", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DoctorId", "OrderId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorOrder");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -641,6 +657,100 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("NurseEvent");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AmountDue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DeliveryStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrderId", "AddressId");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("OrderAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Dosage")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
+
+                    b.HasKey("OrderId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
                     b.Property<int>("PatientId")
@@ -655,6 +765,22 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("PatientEvent");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PatientOrder", b =>
+                {
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PatientId", "OrderId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("PatientOrder");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientPrescription", b =>
@@ -778,7 +904,26 @@ namespace MainService.Postgres.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("PrescriptionItem");
+                    b.ToTable("PrescriptionItems");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
+                {
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PrescriptionId", "OrderId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique();
+
+                    b.ToTable("PrescriptionOrder");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
@@ -1202,6 +1347,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Nurse");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorOrder", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorOrders")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("DoctorOrder")
+                        .HasForeignKey("MainService.Models.Entities.DoctorOrder", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
@@ -1411,6 +1575,44 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Nurse");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Address")
+                        .WithMany("OrderAddresses")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderAddress")
+                        .HasForeignKey("MainService.Models.Entities.OrderAddress", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Product", "Item")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -1426,6 +1628,25 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
 
                     b.Navigation("Event");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PatientOrder", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("PatientOrder")
+                        .HasForeignKey("MainService.Models.Entities.PatientOrder", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "Patient")
+                        .WithMany("PatientOrders")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("Patient");
                 });
@@ -1463,6 +1684,25 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
 
                     b.Navigation("Item");
+
+                    b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("PrescriptionOrder")
+                        .HasForeignKey("MainService.Models.Entities.PrescriptionOrder", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithOne("PrescriptionOrder")
+                        .HasForeignKey("MainService.Models.Entities.PrescriptionOrder", "PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("Prescription");
                 });
@@ -1587,6 +1827,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("EventClinics");
 
+                    b.Navigation("OrderAddresses");
+
                     b.Navigation("UserAddress");
                 });
 
@@ -1618,6 +1860,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("DoctorNurses");
 
+                    b.Navigation("DoctorOrders");
+
                     b.Navigation("DoctorPhones");
 
                     b.Navigation("DoctorPrescriptions");
@@ -1635,6 +1879,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("NursesDoctor");
 
                     b.Navigation("PatientEvents");
+
+                    b.Navigation("PatientOrders");
 
                     b.Navigation("PatientPrescriptions");
 
@@ -1674,6 +1920,19 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("MedicalProfessionalLicense");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Order", b =>
+                {
+                    b.Navigation("DoctorOrder");
+
+                    b.Navigation("OrderAddress");
+
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("PatientOrder");
+
+                    b.Navigation("PrescriptionOrder");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>
                 {
                     b.Navigation("DoctorPhone");
@@ -1699,11 +1958,15 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("PatientPrescription");
 
                     b.Navigation("PrescriptionItems");
+
+                    b.Navigation("PrescriptionOrder");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
                 {
                     b.Navigation("DoctorProduct");
+
+                    b.Navigation("OrderItems");
 
                     b.Navigation("PrescriptionItems");
 

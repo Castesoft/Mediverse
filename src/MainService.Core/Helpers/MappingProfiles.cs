@@ -2,6 +2,7 @@ using AutoMapper;
 using MainService.Core.DTOs;
 using MainService.Core.DTOs.Addresses;
 using MainService.Core.DTOs.Events;
+using MainService.Core.DTOs.Orders;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.DTOs.Products;
 using MainService.Core.DTOs.Services;
@@ -74,19 +75,37 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems));
 
         CreateMap<PrescriptionItem, PrescriptionItemDto>()
-            .ForMember(dest=>dest.Dosage, opt=>opt.MapFrom(src=>src.Dosage))
-            .ForMember(dest=>dest.Instructions, opt=>opt.MapFrom(src=>src.Instructions))
-            .ForMember(dest=>dest.Notes, opt=>opt.MapFrom(src=>src.Notes))
-            .ForMember(dest=>dest.Quantity, opt=>opt.MapFrom(src=>src.Quantity))
-            .ForMember(dest=>dest.Unit, opt=>opt.MapFrom(src=>src.Item.Unit))
-            .ForMember(dest=>dest.Name, opt=>opt.MapFrom(src=>src.Item.Name))
-            .ForMember(dest=>dest.Description, opt=>opt.MapFrom(src=>src.Item.Description))
-            .ForMember(dest=>dest.Price, opt=>opt.MapFrom(src=>src.Item.Price))
-            .ForMember(dest=>dest.Discount, opt=>opt.MapFrom(src=>src.Item.Discount))
-            .ForMember(dest=>dest.Manufacturer, opt=>opt.MapFrom(src=>src.Item.Manufacturer))
-            .ForMember(dest=>dest.LotNumber, opt=>opt.MapFrom(src=>src.Item.LotNumber))
-            .ForMember(dest=>dest.CreatedAt, opt=>opt.MapFrom(src=>src.Item.CreatedAt));
-                
+            .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
+            .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))
+            .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Item.Unit))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item.Price))
+            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
+            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
+            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Item.CreatedAt));
+
+        CreateMap<Order, OrderDto>()
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.OrderAddress.Address))
+            .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientOrder.Patient))
+            .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorOrder.Doctor))
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));
+
+        CreateMap<OrderItem, PrescriptionItemDto>()
+            .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
+            .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))
+            .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Item.Unit))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item.Price))
+            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
+            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
+            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber));
         
         CreateMap<AppRole, RoleDto>();
         CreateMap<AppUser, DoctorDto>();

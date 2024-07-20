@@ -23,6 +23,7 @@ namespace MainService.Models.Entities
         public DoctorClinic DoctorClinic { get; set; }
         public ICollection<EventClinic> EventClinics { get; set; } = [];
         public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
+        public ICollection<OrderAddress> OrderAddresses { get; set; } = [];
         public UserAddress UserAddress { get; set; }
     }
     public enum Addresses
