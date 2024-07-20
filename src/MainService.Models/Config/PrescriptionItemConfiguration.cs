@@ -11,8 +11,7 @@ public class PrescriptionItemConfiguration : IEntityTypeConfiguration<Prescripti
         builder.HasKey(x =>
             new
             {
-                x.PrescriptionId,
-                x.MedicineId
+                x.PrescriptionId, MedicineId = x.ItemId
             });
 
         builder.HasOne(x => x.Prescription)
@@ -20,9 +19,9 @@ public class PrescriptionItemConfiguration : IEntityTypeConfiguration<Prescripti
             .HasForeignKey(x => x.PrescriptionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(x => x.Medicine)
+        builder.HasOne(x => x.Item)
             .WithMany(x => x.PrescriptionItems)
-            .HasForeignKey(x => x.MedicineId)
+            .HasForeignKey(x => x.ItemId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.SetNull);
     }

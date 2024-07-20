@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240719224332_InitialCreate")]
+    [Migration("20240720153441_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -753,7 +753,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("PrescriptionId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MedicineId")
+                    b.Property<int?>("ItemId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
@@ -777,9 +777,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Unit")
                         .HasColumnType("text");
 
-                    b.HasKey("PrescriptionId", "MedicineId");
+                    b.HasKey("PrescriptionId", "ItemId");
 
-                    b.HasIndex("MedicineId");
+                    b.HasIndex("ItemId");
 
                     b.ToTable("PrescriptionItem");
                 });
@@ -1454,9 +1454,9 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Product", "Medicine")
+                    b.HasOne("MainService.Models.Entities.Product", "Item")
                         .WithMany("PrescriptionItems")
-                        .HasForeignKey("MedicineId")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
@@ -1465,7 +1465,7 @@ namespace MainService.Postgres.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Medicine");
+                    b.Navigation("Item");
 
                     b.Navigation("Prescription");
                 });
