@@ -21,7 +21,7 @@ public class PrescriptionsController(
     UserManager<AppUser> userManager) : BaseApiController
 {
     [HttpPost("{doctorId}")]
-    public async Task<ActionResult<Prescription>> CreateAsync([FromRoute] int doctorId,
+    public async Task<ActionResult<PrescriptionDto>> CreateAsync([FromRoute] int doctorId,
         [FromBody] PrescriptionCreateDto request)
     {
         Log.Information("Request: {@request}, DoctorId: {@doctorId}", request, doctorId);
@@ -61,7 +61,7 @@ public class PrescriptionsController(
 
             newPrescription.PrescriptionItems.Add(new PrescriptionItem
             {
-                MedicineId = product.Id,
+                ItemId = product.Id,
                 Dosage = item.Dosage,
                 Quantity = item.Quantity,
                 Instructions = item.Instructions,
@@ -86,6 +86,6 @@ public class PrescriptionsController(
 
         await uow.Complete();
 
-        return newPrescription;
+        return await uow.PrescriptionRepository.GetDtoByIdAsync(newPrescription.Id);
     }
 }

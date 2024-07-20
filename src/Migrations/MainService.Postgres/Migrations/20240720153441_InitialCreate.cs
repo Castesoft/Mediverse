@@ -820,7 +820,7 @@ namespace MainService.Postgres.Migrations
                 columns: table => new
                 {
                     PrescriptionId = table.Column<int>(type: "integer", nullable: false),
-                    MedicineId = table.Column<int>(type: "integer", nullable: false),
+                    ItemId = table.Column<int>(type: "integer", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Dosage = table.Column<string>(type: "text", nullable: true),
                     Instructions = table.Column<string>(type: "text", nullable: true),
@@ -831,7 +831,7 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PrescriptionItem", x => new { x.PrescriptionId, x.MedicineId });
+                    table.PrimaryKey("PK_PrescriptionItem", x => new { x.PrescriptionId, x.ItemId });
                     table.ForeignKey(
                         name: "FK_PrescriptionItem_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
@@ -839,8 +839,8 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PrescriptionItem_Products_MedicineId",
-                        column: x => x.MedicineId,
+                        name: "FK_PrescriptionItem_Products_ItemId",
+                        column: x => x.ItemId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -1165,9 +1165,9 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrescriptionItem_MedicineId",
+                name: "IX_PrescriptionItem_ItemId",
                 table: "PrescriptionItem",
-                column: "MedicineId");
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductPhoto_PhotoId",

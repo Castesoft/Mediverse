@@ -3,7 +3,7 @@ namespace MainService.Models.Entities
     public class PrescriptionItem : BaseEntity
     {
         public int PrescriptionId { get; set; }
-        public int? MedicineId { get; set; }
+        public int? ItemId { get; set; }
         public int Quantity { get; set; }
         public string Dosage { get; set; }
         public string Instructions { get; set; }
@@ -12,6 +12,6 @@ namespace MainService.Models.Entities
 
         // Navigation Properties
         public Prescription Prescription { get; set; }
-        public Product Medicine { get; set; }
+        public Product Item { get; set; }
     }
 }

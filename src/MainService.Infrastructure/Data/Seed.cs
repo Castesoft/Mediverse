@@ -517,8 +517,8 @@ public static class Seed
 
                     var newPrescriptionItem = new PrescriptionItem
                     {
-                        MedicineId = randomMedicineId,
-                        Medicine = randomMedicine,
+                        ItemId = randomMedicineId,
+                        Item = randomMedicine,
                         Quantity = Random.Next(1, 10),
                         Dosage = "1 tablet daily",
                         Instructions = "Take after meals",
