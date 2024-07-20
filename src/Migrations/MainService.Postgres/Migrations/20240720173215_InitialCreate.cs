@@ -140,6 +140,27 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Total = table.Column<decimal>(type: "numeric", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "numeric", nullable: false),
+                    Discount = table.Column<double>(type: "double precision", nullable: false),
+                    Tax = table.Column<decimal>(type: "numeric", nullable: false),
+                    AmountPaid = table.Column<decimal>(type: "numeric", nullable: false),
+                    AmountDue = table.Column<decimal>(type: "numeric", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    DeliveryStatus = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
                 {
@@ -600,6 +621,78 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorOrder",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorOrder", x => new { x.DoctorId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_DoctorOrder_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderAddress",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    AddressId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderAddress", x => new { x.OrderId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_OrderAddress_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderAddress_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientOrder",
+                columns: table => new
+                {
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientOrder", x => new { x.PatientId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_PatientOrder_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppRolePermission",
                 columns: table => new
                 {
@@ -792,6 +885,30 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PrescriptionOrder",
+                columns: table => new
+                {
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrescriptionOrder", x => new { x.PrescriptionId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_PrescriptionOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PrescriptionOrder_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DoctorProducts",
                 columns: table => new
                 {
@@ -816,7 +933,38 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PrescriptionItem",
+                name: "OrderItems",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    ItemId = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Dosage = table.Column<string>(type: "text", nullable: true),
+                    Instructions = table.Column<string>(type: "text", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    Unit = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Discount = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItems", x => new { x.OrderId, x.ItemId });
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Products_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrescriptionItems",
                 columns: table => new
                 {
                     PrescriptionId = table.Column<int>(type: "integer", nullable: false),
@@ -831,15 +979,15 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PrescriptionItem", x => new { x.PrescriptionId, x.ItemId });
+                    table.PrimaryKey("PK_PrescriptionItems", x => new { x.PrescriptionId, x.ItemId });
                     table.ForeignKey(
-                        name: "FK_PrescriptionItem_Prescriptions_PrescriptionId",
+                        name: "FK_PrescriptionItems_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
                         principalTable: "Prescriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PrescriptionItem_Products_ItemId",
+                        name: "FK_PrescriptionItems_Products_ItemId",
                         column: x => x.ItemId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -1073,6 +1221,12 @@ namespace MainService.Postgres.Migrations
                 column: "NurseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DoctorOrder_OrderId",
+                table: "DoctorOrder",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DoctorPatients_PatientId",
                 table: "DoctorPatients",
                 column: "PatientId");
@@ -1153,9 +1307,31 @@ namespace MainService.Postgres.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderAddress_AddressId",
+                table: "OrderAddress",
+                column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderAddress_OrderId",
+                table: "OrderAddress",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_ItemId",
+                table: "OrderItems",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PatientEvent_EventId",
                 table: "PatientEvent",
                 column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientOrder_OrderId",
+                table: "PatientOrder",
+                column: "OrderId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1165,9 +1341,21 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrescriptionItem_ItemId",
-                table: "PrescriptionItem",
+                name: "IX_PrescriptionItems_ItemId",
+                table: "PrescriptionItems",
                 column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionOrder_OrderId",
+                table: "PrescriptionOrder",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionOrder_PrescriptionId",
+                table: "PrescriptionOrder",
+                column: "PrescriptionId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductPhoto_PhotoId",
@@ -1245,6 +1433,9 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorNurses");
 
             migrationBuilder.DropTable(
+                name: "DoctorOrder");
+
+            migrationBuilder.DropTable(
                 name: "DoctorPatients");
 
             migrationBuilder.DropTable(
@@ -1278,13 +1469,25 @@ namespace MainService.Postgres.Migrations
                 name: "NurseEvent");
 
             migrationBuilder.DropTable(
+                name: "OrderAddress");
+
+            migrationBuilder.DropTable(
+                name: "OrderItems");
+
+            migrationBuilder.DropTable(
                 name: "PatientEvent");
+
+            migrationBuilder.DropTable(
+                name: "PatientOrder");
 
             migrationBuilder.DropTable(
                 name: "PatientPrescription");
 
             migrationBuilder.DropTable(
-                name: "PrescriptionItem");
+                name: "PrescriptionItems");
+
+            migrationBuilder.DropTable(
+                name: "PrescriptionOrder");
 
             migrationBuilder.DropTable(
                 name: "ProductPhoto");
@@ -1318,6 +1521,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Prescriptions");

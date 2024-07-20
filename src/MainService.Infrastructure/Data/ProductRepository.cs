@@ -43,6 +43,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     public async Task<Product> GetByIdAsync(int id)
     {
         var item = await context.Products
+            .Include(x => x.DoctorProduct)
             .SingleOrDefaultAsync(x => x.Id == id);
 
         return item;

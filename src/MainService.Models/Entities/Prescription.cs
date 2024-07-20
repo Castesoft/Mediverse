@@ -8,4 +8,5 @@ public class Prescription : BaseEntity
     public DoctorPrescription DoctorPrescription { get; set; } 
     public EventPrescription EventPrescription { get; set; }
     public ICollection<PrescriptionItem> PrescriptionItems { get; set; } = [];
+    public PrescriptionOrder PrescriptionOrder { get; set; }
 }

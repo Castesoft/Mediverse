@@ -54,6 +54,8 @@ public class AppUser : IdentityUser<int>
     public ICollection<PatientEvent> PatientEvents { get; set; } = [];
     public ICollection<PatientPrescription> PatientPrescriptions { get; set; } = [];
     public ICollection<DoctorPrescription> DoctorPrescriptions { get; set; } = [];
+    public ICollection<PatientOrder> PatientOrders { get; set; } = [];
+    public ICollection<DoctorOrder> DoctorOrders { get; set; } = [];
 
     // Doctor-Patient relationships
     public ICollection<DoctorPatient> Doctors { get; set; } = [];

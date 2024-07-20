@@ -20,12 +20,20 @@ import { BreadcrumbLinkComponent, LayoutModule } from "src/app/_shared/layout.mo
             <div toolbar>
               <div toolbarContainer>
                 <div toolbarInfo>
-                  <h1 toolbarTitle [title]="'Mi Cuenta'"></h1>
+                  <h1 toolbarTitle
+                      [title]="'Mi Cuenta'"></h1>
                   <ul breadcrumb>
-                    <li breadcrumbLink [label]="'Inicio'" [url]="'/'"></li>
-                    <li breadcrumbLink [label]="'Cuenta'" [url]="'/account'"></li>
+                    <li breadcrumbLink
+                        [label]="'Inicio'"
+                        [url]="'/'"></li>
+                    <li breadcrumbLink
+                        [label]="'Cuenta'"
+                        [url]="'/account'"></li>
                     @if (label) {
-                      <li breadcrumbLink [label]="label" [active]="true">{{ label }}</li>
+                      <li breadcrumbLink
+                          [label]="label"
+                          [active]="true">{{ label }}
+                      </li>
                     }
                   </ul>
                 </div>
@@ -65,26 +73,35 @@ export class HomeComponent implements OnInit {
       path: '',
       component: HomeComponent,
       children: [
-        { path: 'patients',
+        {
+          path: 'patients',
           loadChildren: () => import('../users/users.config').then(x => x.PatientsModule)
         },
-        { path: 'events',
+        {
+          path: 'events',
           loadChildren: () => import('../events/events.config').then(x => x.EventsModule)
         },
-        { path: 'services',
+        {
+          path: 'services',
           loadChildren: () => import('../services/services.config').then(x => x.ServicesModule)
         },
-        { path: 'products',
+        {
+          path: 'products',
           loadChildren: () => import('../products/products.config').then(x => x.ProductsModule)
+        }, {
+          path: 'orders',
+          loadChildren: () => import('../orders/orders.config').then(x => x.OrdersModule)
         },
         {
           path: 'prescriptions',
           loadChildren: () => import('../prescriptions/prescriptions.config').then(x => x.PrescriptionsModule)
         },
-        { path: 'nurses',
+        {
+          path: 'nurses',
           loadChildren: () => import('../users/users.config').then(x => x.NursesModule)
         },
-        { path: 'clinics',
+        {
+          path: 'clinics',
           loadChildren: () => import('../addresses/addresses.config').then(x => x.ClinicsModule)
         },
       ],
@@ -92,7 +109,7 @@ export class HomeComponent implements OnInit {
   ])],
   exports: [RouterModule]
 })
-export class HomeRoutingModule { }
+export class HomeRoutingModule {}
 
 @NgModule({
   declarations: [HomeComponent],
