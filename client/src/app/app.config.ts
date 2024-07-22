@@ -22,15 +22,7 @@ import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
   host: { class: 'h-100' },
   template: `
     <router-outlet></router-outlet>
-
     <div scrolltop></div>
-    <div formErrorModal></div>
-    <mat-menu #appMenu="matMenu">
-      <ng-template matMenuContent>
-        <button mat-menu-item>Settings</button>
-        <button mat-menu-item>Help</button>
-      </ng-template>
-    </mat-menu>
   `,
   standalone: true,
   imports: [RouterOutlet, MaterialModule],

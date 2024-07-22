@@ -1,4 +1,12 @@
-<div class="d-flex flex-stack mb-6">
+import { DatePipe } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Event } from 'src/app/_models/event';
+
+@Component({
+  selector: 'appointment-summary',
+  template: `
+  <!-- <div class="d-flex flex-stack mb-6">
   <div class="d-flex align-items-center me-2">
     <div class="symbol symbol-45px me-5">
       <span class="symbol-label bg-light-danger">
@@ -29,4 +37,11 @@
       <span class="path2"></span>
     </i>
   </a>
-</div>
+</div> -->
+  `,
+  standalone: true,
+  imports: [ RouterModule, DatePipe, ]
+})
+export class EventSummaryComponent {
+  @Input({ required: true }) item!: Event;
+}
