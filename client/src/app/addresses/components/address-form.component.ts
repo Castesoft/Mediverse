@@ -14,7 +14,7 @@ import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
-  selector: 'div[addressForm]',
+  selector: 'div[addressForm], app-address-form',
   templateUrl: './address-form.component.html',
   standalone: true,
   imports: [ FontAwesomeModule, AlertModule, RouterModule, JsonPipe, ControlsModule, ],

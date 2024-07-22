@@ -192,10 +192,10 @@ export class ProductsService {
     return this.http
       .get<Product[]>(`${this.baseUrl}all/`)
       .pipe(
-        map((consecutives) => {
-          this.all.next(consecutives);
+        map(response => {
+          this.all.next(response);
           this.setLoading("all", false);
-          return consecutives;
+          return response;
         })
       );
   }

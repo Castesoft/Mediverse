@@ -8,6 +8,7 @@ import {DashboardModule} from "src/app/home/dashboard/dashboard.module";
 import {FormUse} from "src/app/_models/types";
 import {IconsService} from "../_services/icons.service";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { EventServicesSummaryComponent } from 'src/app/events/components/event-services-summary.component';
 
 @Component({
   selector: 'div[eventDetailView]',
@@ -15,7 +16,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   styleUrls: ['./event-detail.component.scss'],
   standalone: true,
   imports: [
-    DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule
+    DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule,
+    EventServicesSummaryComponent,
   ]
 })
 export class EventDetailComponent implements OnInit {

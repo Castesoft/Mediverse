@@ -9,6 +9,7 @@ import { AddressFormComponent } from "src/app/addresses/components/address-form.
   selector: 'div[addressNewView]',
   template: `
   <div addressForm [use]="use()" [id]="null" [view]="view()" [type]="type()" [style]="'normal'"></div>
+  <!-- <app-address-form [use]="use()" [id]="null" [view]="view()" [type]="type()" [style]="'normal'"></app-address-form> -->
   `,
   standalone: true,
   imports: [ AddressFormComponent, ModalWrapperModule, ],

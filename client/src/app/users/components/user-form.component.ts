@@ -73,10 +73,10 @@ export class UserFormComponent implements OnInit, OnDestroy {
       this.service.current$.subscribe({
         next: (item) => {
           if (item) {
-              this.item = item;
-              if (this.form instanceof EditForm) this.form.patchValues(item);
-              if (this.form instanceof DetailForm) this.form.patchValues(item);
-              if (this.form instanceof CreateForm) this.form.group.patchValue(item);
+            this.item = item;
+            if (this.form instanceof EditForm) this.form.patchValues(item);
+            if (this.form instanceof DetailForm) this.form.patchValues(item);
+            if (this.form instanceof CreateForm) this.form.group.patchValue(item);
           }
         },
       });
