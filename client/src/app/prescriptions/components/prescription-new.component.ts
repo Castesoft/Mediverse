@@ -11,7 +11,7 @@ import { PatientSelectTypeaheadComponent } from "src/app/_shared/components/pati
 import { PatientSelectDisplayCardComponent } from "src/app/patients/patient-select-display-card.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
-import { PrescriptionProductsTableComponent } from "src/app/prescriptions/prescription-products-table.component";
+import { PrescriptionProductsTableComponent } from "src/app/prescriptions/components/prescription-products-table.component";
 import { Prescription, PrescriptionItem } from "src/app/_models/prescription";
 import { EventsService } from "src/app/_services/events.service";
 import { Event } from "src/app/_models/event";
@@ -55,7 +55,9 @@ export class PrescriptionNewComponent implements OnInit {
   prescription: Prescription = {
     id: 0,
     exchangeAmount: 1,
-    items: []
+    notes: '',
+    items: [],
+    isSelected: false
   }
 
   patient?: User;

@@ -378,6 +378,22 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("DoctorNurses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorOrder", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DoctorId", "OrderId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorOrder");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -410,6 +426,22 @@ namespace MainService.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorPhones");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorPrescription", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DoctorId", "PrescriptionId");
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorPrescription");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorProduct", b =>
@@ -606,6 +638,98 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("NurseEvent");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("AmountDue")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("AmountPaid")
+                        .HasColumnType("REAL");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DeliveryStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Subtotal")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Tax")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("OrderId", "AddressId");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("OrderAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Dosage")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("OrderId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
                     b.Property<int>("PatientId")
@@ -620,6 +744,38 @@ namespace MainService.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("PatientEvent");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PatientOrder", b =>
+                {
+                    b.Property<int>("PatientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("PatientId", "OrderId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("PatientOrder");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PatientPrescription", b =>
+                {
+                    b.Property<int>("PatientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("PatientId", "PrescriptionId");
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique();
+
+                    b.ToTable("PatientPrescription");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>
@@ -680,58 +836,23 @@ namespace MainService.Sqlite.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DoctorAddress")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("DoctorId")
+                    b.Property<int>("ExchangeAmount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PatientAge")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("PatientDateOfBirth")
+                    b.Property<string>("Notes")
                         .HasColumnType("TEXT");
-
-                    b.Property<string>("PatientFullName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("PatientId")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Prescription");
+                    b.ToTable("Prescriptions");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionLogo", b =>
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
                     b.Property<int>("PrescriptionId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PhotoId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("PrescriptionId", "PhotoId");
-
-                    b.HasIndex("PhotoId")
-                        .IsUnique();
-
-                    b.HasIndex("PrescriptionId")
-                        .IsUnique();
-
-                    b.ToTable("PrescriptionLogo");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionMedicine", b =>
-                {
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("MedicineId")
+                    b.Property<int?>("ItemId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
@@ -746,17 +867,39 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Instructions")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Unit")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("PrescriptionId", "MedicineId");
+                    b.HasKey("PrescriptionId", "ItemId");
 
-                    b.HasIndex("MedicineId");
+                    b.HasIndex("ItemId");
 
-                    b.ToTable("PrescriptionMedicine");
+                    b.ToTable("PrescriptionItems");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
+                {
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("PrescriptionId", "OrderId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique();
+
+                    b.ToTable("PrescriptionOrder");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
@@ -1170,6 +1313,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Nurse");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorOrder", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorOrders")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("DoctorOrder")
+                        .HasForeignKey("MainService.Models.Entities.DoctorOrder", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
@@ -1206,6 +1368,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Phone");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorPrescription", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorPrescriptions")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithOne("DoctorPrescription")
+                        .HasForeignKey("MainService.Models.Entities.DoctorPrescription", "PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Prescription");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorProduct", b =>
@@ -1360,6 +1541,44 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Nurse");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Address")
+                        .WithMany("OrderAddresses")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderAddress")
+                        .HasForeignKey("MainService.Models.Entities.OrderAddress", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Product", "Item")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -1379,54 +1598,77 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Prescription", b =>
+            modelBuilder.Entity("MainService.Models.Entities.PatientOrder", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId");
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("PatientOrder")
+                        .HasForeignKey("MainService.Models.Entities.PatientOrder", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.AppUser", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId");
+                        .WithMany("PatientOrders")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Doctor");
+                    b.Navigation("Order");
 
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionLogo", b =>
+            modelBuilder.Entity("MainService.Models.Entities.PatientPrescription", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Photo", "Photo")
-                        .WithOne("PrescriptionLogo")
-                        .HasForeignKey("MainService.Models.Entities.PrescriptionLogo", "PhotoId")
+                    b.HasOne("MainService.Models.Entities.AppUser", "Patient")
+                        .WithMany("PatientPrescriptions")
+                        .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
-                        .WithOne("PrescriptionLogo")
-                        .HasForeignKey("MainService.Models.Entities.PrescriptionLogo", "PrescriptionId")
+                        .WithOne("PatientPrescription")
+                        .HasForeignKey("MainService.Models.Entities.PatientPrescription", "PrescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Photo");
+                    b.Navigation("Patient");
 
                     b.Navigation("Prescription");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionMedicine", b =>
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Product", "Medicine")
-                        .WithMany("PrescriptionMedicines")
-                        .HasForeignKey("MedicineId")
+                    b.HasOne("MainService.Models.Entities.Product", "Item")
+                        .WithMany("PrescriptionItems")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
-                        .WithMany("PrescriptionMedicines")
+                        .WithMany("PrescriptionItems")
                         .HasForeignKey("PrescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Medicine");
+                    b.Navigation("Item");
+
+                    b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("PrescriptionOrder")
+                        .HasForeignKey("MainService.Models.Entities.PrescriptionOrder", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithOne("PrescriptionOrder")
+                        .HasForeignKey("MainService.Models.Entities.PrescriptionOrder", "PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("Prescription");
                 });
@@ -1551,6 +1793,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("EventClinics");
 
+                    b.Navigation("OrderAddresses");
+
                     b.Navigation("UserAddress");
                 });
 
@@ -1582,7 +1826,11 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("DoctorNurses");
 
+                    b.Navigation("DoctorOrders");
+
                     b.Navigation("DoctorPhones");
+
+                    b.Navigation("DoctorPrescriptions");
 
                     b.Navigation("DoctorProducts");
 
@@ -1597,6 +1845,10 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("NursesDoctor");
 
                     b.Navigation("PatientEvents");
+
+                    b.Navigation("PatientOrders");
+
+                    b.Navigation("PatientPrescriptions");
 
                     b.Navigation("Patients");
 
@@ -1634,6 +1886,19 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("MedicalProfessionalLicense");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Order", b =>
+                {
+                    b.Navigation("DoctorOrder");
+
+                    b.Navigation("OrderAddress");
+
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("PatientOrder");
+
+                    b.Navigation("PrescriptionOrder");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>
                 {
                     b.Navigation("DoctorPhone");
@@ -1642,8 +1907,6 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>
                 {
                     b.Navigation("DoctorSignature");
-
-                    b.Navigation("PrescriptionLogo");
 
                     b.Navigation("ProductPhoto");
 
@@ -1654,18 +1917,24 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Prescription", b =>
                 {
+                    b.Navigation("DoctorPrescription");
+
                     b.Navigation("EventPrescription");
 
-                    b.Navigation("PrescriptionLogo");
+                    b.Navigation("PatientPrescription");
 
-                    b.Navigation("PrescriptionMedicines");
+                    b.Navigation("PrescriptionItems");
+
+                    b.Navigation("PrescriptionOrder");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
                 {
                     b.Navigation("DoctorProduct");
 
-                    b.Navigation("PrescriptionMedicines");
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("PrescriptionItems");
 
                     b.Navigation("ProductPhotos");
                 });

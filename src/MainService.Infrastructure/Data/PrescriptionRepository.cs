@@ -1,6 +1,10 @@
+using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Prescription;
+using MainService.Core.Extensions;
+using MainService.Core.Helpers.Pagination;
+using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
@@ -25,5 +29,39 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
             .Include(x => x.PatientPrescription).ThenInclude(x => x.Patient)
             .ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<PagedList<PrescriptionDto>> GetPagedListAsync(PrescriptionParams param, ClaimsPrincipal user)
+    {
+        var query = context.Prescriptions
+            .Include(x => x.PatientPrescription)
+            .ThenInclude(x => x.Patient)
+            .Include(x => x.DoctorPrescription)
+            .ThenInclude(x => x.Doctor)
+            .Include(x => x.EventPrescription)
+            .ThenInclude(x => x.Event)
+            .Include(x => x.PrescriptionItems)
+            .Include(x => x.PrescriptionOrder)
+            .ThenInclude(x => x.Order)
+            .AsQueryable();
+
+        IEnumerable<string> roles = user.GetRoles();
+        int userId = user.GetUserId();
+
+        query = query.Where(x => x.DoctorPrescription.Doctor.Id == userId);
+
+        // if (!string.IsNullOrEmpty(param.Search))
+        // {
+        //     query = query.Where(x =>
+        //         EF.Functions.Like(x.FirstName.ToLower(), $"%{param.Search}%") ||
+        //         EF.Functions.Like(x.LastName.ToLower(), $"%{param.Search}%") ||
+        //         EF.Functions.Like(x.Email.ToLower(), $"%{param.Search}%") ||
+        //         EF.Functions.Like(x.Sex.ToLower(), $"%{param.Search}%") ||
+        //         EF.Functions.Like(x.PhoneNumber.ToLower(), $"%{param.Search}%"));
+        // }
+
+        return await PagedList<PrescriptionDto>.CreateAsync(
+            query.AsNoTracking().ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider),
+            param.PageNumber, param.PageSize);
     }
 }
