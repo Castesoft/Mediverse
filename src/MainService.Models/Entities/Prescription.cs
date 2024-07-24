@@ -2,6 +2,7 @@ namespace MainService.Models.Entities;
 public class Prescription : BaseEntity
 {
     public int ExchangeAmount { get; set; }
+    public string Notes { get; set; }
     
     // Navigation Properties
     public PatientPrescription PatientPrescription { get; set; }

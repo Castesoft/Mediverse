@@ -68,9 +68,6 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
 
         int userId = user.GetUserId();
 
-        // TODO - Uncomment this line when product assignment during seeding is fixed
-        // query = query.Where(x => x.DoctorOrder.DoctorId == userId);
-
         if (param.DateFrom != DateTime.MinValue)
             query = query.Where(x => x.CreatedAt >= param.DateFrom);
 

@@ -20,6 +20,17 @@ public class PrescriptionsController(
     IMapper mapper,
     UserManager<AppUser> userManager) : BaseApiController
 {
+
+    public async Task<ActionResult<PagedList<PrescriptionDto>>> GetPagedListAsync([FromQuery] PrescriptionParams param)
+    {
+        var pagedList = await uow.PrescriptionRepository.GetPagedListAsync(param, User);
+
+        Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
+            pagedList.TotalCount, pagedList.TotalPages));
+
+        return pagedList;
+    }
+
     [HttpPost("{doctorId}")]
     public async Task<ActionResult<PrescriptionDto>> CreateAsync([FromRoute] int doctorId,
         [FromBody] PrescriptionCreateDto request)

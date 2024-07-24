@@ -1,10 +1,13 @@
-import { Component, NgModule, OnInit } from "@angular/core";
+import { Component, inject, NgModule, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { CardComponent, LayoutModule } from "src/app/_shared/layout.module";
-import { FormUse, Role, View } from "src/app/_models/types";
-import { PrescriptionNewComponent } from "src/app/prescriptions/prescription-new.component";
-import { PrescriptionsCatalogComponent } from "src/app/prescriptions/prescriptions-catalog.component";
+import { CatalogMode, FormUse, Role, View } from "src/app/_models/types";
+import { PrescriptionNewComponent } from "src/app/prescriptions/components/prescription-new.component";
+import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog.component";
+import { GuidService } from '../_services/guid.service';
+import { CompactTableService } from '../_services/compact-table.service';
+import { PrescriptionsService } from '../_services/prescriptions.service';
 
 @Component({
   selector: 'prescriptions-route',
@@ -33,22 +36,43 @@ export class NewComponent {
   selector: 'prescription-catalog-route',
   template: `
     <div card>
-      <div prescriptionsCatalog></div>
+      <div prescriptionsCatalog
+        [mode]="mode"
+        [key]="key"
+        [view]="view"
+      ></div>
     </div>`,
   standalone: true,
   imports: [CardComponent, PrescriptionsCatalogComponent]
 })
 export class CatalogComponent {
+  prescription = inject(PrescriptionsService);
+  compact = inject(CompactTableService);
+  guid = inject(GuidService);
+
+  isCompact = false;
+  view: View = 'page';
+  mode: CatalogMode = 'view';
+  key = this.guid.gen();
+  label: string;
+
+  constructor() {
+    this.label = this.prescription.naming.title;
+  }
+
+  ngOnInit(): void {
+    this.compact.mode$.subscribe({ next: (mode) => (this.isCompact = mode) });
+  }
 }
 
 @NgModule({
   imports: [RouterModule.forChild([
     {
-      path: '', title: 'Citas', data: { breadcrumb: 'Citas', },
+      path: '', title: 'Recetas', data: { breadcrumb: 'Recetas', },
       component: PrescriptionsComponent, runGuardsAndResolvers: 'always',
       children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de citas', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'create', component: NewComponent, title: 'Crear nueva cita', data: { breadcrumb: 'Nuevo', }, },
+        { path: '', component: CatalogComponent, title: 'Catálogo de recetas', data: { breadcrumb: 'Catálogo', }, },
+        { path: 'create', component: NewComponent, title: 'Crear nueva receta', data: { breadcrumb: 'Nuevo', }, },
       ],
     },
   ])],

@@ -139,6 +139,27 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Total = table.Column<double>(type: "REAL", nullable: false),
+                    Subtotal = table.Column<double>(type: "REAL", nullable: false),
+                    Discount = table.Column<double>(type: "REAL", nullable: false),
+                    Tax = table.Column<double>(type: "REAL", nullable: false),
+                    AmountPaid = table.Column<double>(type: "REAL", nullable: false),
+                    AmountDue = table.Column<double>(type: "REAL", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeliveryStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
                 {
@@ -183,6 +204,21 @@ namespace MainService.Sqlite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Photos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Prescriptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ExchangeAmount = table.Column<int>(type: "INTEGER", nullable: false),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prescriptions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -440,35 +476,6 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Prescription",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    PatientFullName = table.Column<string>(type: "TEXT", nullable: true),
-                    PatientDateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    PatientAge = table.Column<int>(type: "INTEGER", nullable: false),
-                    DoctorAddress = table.Column<string>(type: "TEXT", nullable: true),
-                    PatientId = table.Column<int>(type: "INTEGER", nullable: true),
-                    DoctorId = table.Column<int>(type: "INTEGER", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Prescription", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Prescription_AspNetUsers_DoctorId",
-                        column: x => x.DoctorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Prescription_AspNetUsers_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserAddress",
                 columns: table => new
                 {
@@ -614,6 +621,78 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorOrder",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorOrder", x => new { x.DoctorId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_DoctorOrder_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderAddress",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderAddress", x => new { x.OrderId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_OrderAddress_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderAddress_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientOrder",
+                columns: table => new
+                {
+                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientOrder", x => new { x.PatientId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_PatientOrder_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppRolePermission",
                 columns: table => new
                 {
@@ -734,6 +813,102 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorPrescription",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorPrescription", x => new { x.DoctorId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_DoctorPrescription_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPrescription_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventPrescription",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventPrescription", x => new { x.EventId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientPrescription",
+                columns: table => new
+                {
+                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientPrescription", x => new { x.PatientId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_PatientPrescription_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientPrescription_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrescriptionOrder",
+                columns: table => new
+                {
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrescriptionOrder", x => new { x.PrescriptionId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_PrescriptionOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PrescriptionOrder_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DoctorProducts",
                 columns: table => new
                 {
@@ -755,6 +930,68 @@ namespace MainService.Sqlite.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderItems",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    Dosage = table.Column<string>(type: "TEXT", nullable: true),
+                    Instructions = table.Column<string>(type: "TEXT", nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    Unit = table.Column<string>(type: "TEXT", nullable: true),
+                    Price = table.Column<double>(type: "REAL", nullable: false),
+                    Discount = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItems", x => new { x.OrderId, x.ItemId });
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Products_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrescriptionItems",
+                columns: table => new
+                {
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    Dosage = table.Column<string>(type: "TEXT", nullable: true),
+                    Instructions = table.Column<string>(type: "TEXT", nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    Unit = table.Column<string>(type: "TEXT", nullable: true),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrescriptionItems", x => new { x.PrescriptionId, x.ItemId });
+                    table.ForeignKey(
+                        name: "FK_PrescriptionItems_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PrescriptionItems_Products_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -901,84 +1138,6 @@ namespace MainService.Sqlite.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "EventPrescription",
-                columns: table => new
-                {
-                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EventPrescription", x => new { x.EventId, x.PrescriptionId });
-                    table.ForeignKey(
-                        name: "FK_EventPrescription_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EventPrescription_Prescription_PrescriptionId",
-                        column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PrescriptionLogo",
-                columns: table => new
-                {
-                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PrescriptionLogo", x => new { x.PrescriptionId, x.PhotoId });
-                    table.ForeignKey(
-                        name: "FK_PrescriptionLogo_Photos_PhotoId",
-                        column: x => x.PhotoId,
-                        principalTable: "Photos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PrescriptionLogo_Prescription_PrescriptionId",
-                        column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PrescriptionMedicine",
-                columns: table => new
-                {
-                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MedicineId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    Dosage = table.Column<string>(type: "TEXT", nullable: true),
-                    Instructions = table.Column<string>(type: "TEXT", nullable: true),
-                    Unit = table.Column<string>(type: "TEXT", nullable: true),
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PrescriptionMedicine", x => new { x.PrescriptionId, x.MedicineId });
-                    table.ForeignKey(
-                        name: "FK_PrescriptionMedicine_Prescription_PrescriptionId",
-                        column: x => x.PrescriptionId,
-                        principalTable: "Prescription",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PrescriptionMedicine_Products_MedicineId",
-                        column: x => x.MedicineId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AppRolePermission_PermissionId",
                 table: "AppRolePermission",
@@ -1062,6 +1221,12 @@ namespace MainService.Sqlite.Migrations
                 column: "NurseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DoctorOrder_OrderId",
+                table: "DoctorOrder",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DoctorPatients_PatientId",
                 table: "DoctorPatients",
                 column: "PatientId");
@@ -1070,6 +1235,12 @@ namespace MainService.Sqlite.Migrations
                 name: "IX_DoctorPhones_PhoneId",
                 table: "DoctorPhones",
                 column: "PhoneId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorPrescription_PrescriptionId",
+                table: "DoctorPrescription",
+                column: "PrescriptionId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1136,37 +1307,55 @@ namespace MainService.Sqlite.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderAddress_AddressId",
+                table: "OrderAddress",
+                column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderAddress_OrderId",
+                table: "OrderAddress",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_ItemId",
+                table: "OrderItems",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PatientEvent_EventId",
                 table: "PatientEvent",
                 column: "EventId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prescription_DoctorId",
-                table: "Prescription",
-                column: "DoctorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Prescription_PatientId",
-                table: "Prescription",
-                column: "PatientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PrescriptionLogo_PhotoId",
-                table: "PrescriptionLogo",
-                column: "PhotoId",
+                name: "IX_PatientOrder_OrderId",
+                table: "PatientOrder",
+                column: "OrderId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrescriptionLogo_PrescriptionId",
-                table: "PrescriptionLogo",
+                name: "IX_PatientPrescription_PrescriptionId",
+                table: "PatientPrescription",
                 column: "PrescriptionId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrescriptionMedicine_MedicineId",
-                table: "PrescriptionMedicine",
-                column: "MedicineId");
+                name: "IX_PrescriptionItems_ItemId",
+                table: "PrescriptionItems",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionOrder_OrderId",
+                table: "PrescriptionOrder",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionOrder_PrescriptionId",
+                table: "PrescriptionOrder",
+                column: "PrescriptionId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductPhoto_PhotoId",
@@ -1244,10 +1433,16 @@ namespace MainService.Sqlite.Migrations
                 name: "DoctorNurses");
 
             migrationBuilder.DropTable(
+                name: "DoctorOrder");
+
+            migrationBuilder.DropTable(
                 name: "DoctorPatients");
 
             migrationBuilder.DropTable(
                 name: "DoctorPhones");
+
+            migrationBuilder.DropTable(
+                name: "DoctorPrescription");
 
             migrationBuilder.DropTable(
                 name: "DoctorProducts");
@@ -1274,13 +1469,25 @@ namespace MainService.Sqlite.Migrations
                 name: "NurseEvent");
 
             migrationBuilder.DropTable(
+                name: "OrderAddress");
+
+            migrationBuilder.DropTable(
+                name: "OrderItems");
+
+            migrationBuilder.DropTable(
                 name: "PatientEvent");
 
             migrationBuilder.DropTable(
-                name: "PrescriptionLogo");
+                name: "PatientOrder");
 
             migrationBuilder.DropTable(
-                name: "PrescriptionMedicine");
+                name: "PatientPrescription");
+
+            migrationBuilder.DropTable(
+                name: "PrescriptionItems");
+
+            migrationBuilder.DropTable(
+                name: "PrescriptionOrder");
 
             migrationBuilder.DropTable(
                 name: "ProductPhoto");
@@ -1316,7 +1523,10 @@ namespace MainService.Sqlite.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Prescription");
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Prescriptions");
 
             migrationBuilder.DropTable(
                 name: "Products");
@@ -1331,10 +1541,10 @@ namespace MainService.Sqlite.Migrations
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "Photos");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Photos");
         }
     }
 }
