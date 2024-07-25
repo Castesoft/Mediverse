@@ -6,7 +6,6 @@ import { TableHeaderComponent } from "src/app/_shared/table/table-header.compone
 import { Column } from "src/app/_models/types";
 import { FormsModule } from "@angular/forms";
 import { PrescriptionItem } from "src/app/_models/prescription";
-
 @Component({
   selector: '[prescriptionProductsTable]',
   templateUrl: './prescription-products-table.component.html',

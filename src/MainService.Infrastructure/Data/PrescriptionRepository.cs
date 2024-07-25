@@ -14,10 +14,9 @@ namespace MainService.Infrastructure.Data;
 
 public class PrescriptionRepository(DataContext context, IMapper mapper) : IPrescriptionRepository
 {
-    public void Add(Prescription item)
-    {
-        context.Prescriptions.Add(item);
-    }
+    public void Add(Prescription item) => context.Prescriptions.Add(item);
+
+    public void Delete(Prescription item) => context.Prescriptions.Remove(item);
 
     public async Task<PrescriptionDto> GetDtoByIdAsync(int id)
     {
@@ -29,6 +28,15 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
             .Include(x => x.PatientPrescription).ThenInclude(x => x.Patient)
             .ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<Prescription> GetByIdAsync(int id)
+    {
+        var item = await context.Prescriptions
+            .Include(x => x.DoctorPrescription)
+            .SingleOrDefaultAsync(x => x.Id == id);
+
+        return item;
     }
 
     public async Task<PagedList<PrescriptionDto>> GetPagedListAsync(PrescriptionParams param, ClaimsPrincipal user)
@@ -50,18 +58,26 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
 
         query = query.Where(x => x.DoctorPrescription.Doctor.Id == userId);
 
-        // if (!string.IsNullOrEmpty(param.Search))
-        // {
-        //     query = query.Where(x =>
-        //         EF.Functions.Like(x.FirstName.ToLower(), $"%{param.Search}%") ||
-        //         EF.Functions.Like(x.LastName.ToLower(), $"%{param.Search}%") ||
-        //         EF.Functions.Like(x.Email.ToLower(), $"%{param.Search}%") ||
-        //         EF.Functions.Like(x.Sex.ToLower(), $"%{param.Search}%") ||
-        //         EF.Functions.Like(x.PhoneNumber.ToLower(), $"%{param.Search}%"));
-        // }
+        if (!string.IsNullOrEmpty(param.Search))
+        {
+            query = query.Where(x =>
+                EF.Functions.Like(x.PatientPrescription.Patient.FirstName.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.PatientPrescription.Patient.LastName.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.PatientPrescription.Patient.Email.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Notes.ToLower(), $"%{param.Search}%"));
+        }
 
         return await PagedList<PrescriptionDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
+    }
+
+    public async Task<Prescription> GetByIdAsNoTrackingAsync(int id)
+    {
+        var item = await context.Prescriptions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == id);
+
+        return item;
     }
 }

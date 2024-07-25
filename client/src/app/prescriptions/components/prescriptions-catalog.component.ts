@@ -1,12 +1,21 @@
 import { Component, inject, input } from "@angular/core";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink, RouterModule } from "@angular/router";
 import { CatalogMode, View } from 'src/app/_models/types';
 import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
 import { FilterForm, Prescription, PrescriptionParams } from 'src/app/_models/prescription';
 import { Pagination } from 'src/app/_models/pagination';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { ReactiveFormsModule } from '@angular/forms';
+import { LayoutModule } from 'src/app/_shared/layout.module';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { DecimalPipe } from '@angular/common';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ControlsModule } from 'src/app/_forms/controls.module';
+import { CatalogModule } from 'src/app/_shared/catalog.module';
+import { TableModule } from 'src/app/_shared/table/table.module';
+import { PrescriptionsTableComponent } from './prescriptions-table/prescriptions-table.component';
 
 @Component({
   host: { class: 'pb-6', },
@@ -14,13 +23,16 @@ import { Subject } from 'rxjs';
   templateUrl: 'prescriptions-catalog.component.html',
   standalone: true,
   imports: [
-    FaIconComponent,
-    RouterLink
+    BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
+    AlertModule, ControlsModule, TableModule, CatalogModule,
+    LayoutModule, LayoutModule, PrescriptionsTableComponent
   ]
 })
 export class PrescriptionsCatalogComponent {
   service = inject(PrescriptionsService);
   icons = inject(IconsService);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
 
   key = input.required<string>();
   mode = input.required<CatalogMode>();
@@ -32,4 +44,53 @@ export class PrescriptionsCatalogComponent {
   form = new FilterForm();
   loading = true;
   private ngUnsubscribe = new Subject<void>();
+
+  ngOnInit(): void {
+    this.params = new PrescriptionParams(this.key());
+
+    this.service.setParam$(this.key(), this.params);
+
+    this.service.param$(this.key())
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((params) => {
+        this.params = params;
+        this.loadData(params);
+        this.form.patchValue(params);
+      });
+
+    this.form.group.valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(this.handleFormValueChange.bind(this));
+
+    this.service.loading$(this.key())
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((loading) => (this.loading = loading));
+  }
+
+  private loadData(params: PrescriptionParams) {
+    this.service.loadPagedList(this.key(), params).subscribe({
+      next: (response) => {
+        const { result, pagination } = response;
+        this.data = result;
+        this.pagination = pagination;
+        console.log(this.data)
+      },
+    });
+  }
+
+  private handleFormValueChange = () => {
+    const { controls, value } = this.form.group;
+    const { dateRange } = controls;
+
+    this.params.updateFromPartial({
+      ...value,
+      dateFrom: dateRange.value[0],
+      dateTo: dateRange.value[1],
+    });
+  };
+
+  onSubmit() {
+    this.service.setParam$(this.key(), this.params);
+    this.form.patchValue(this.params);
+  }
 }

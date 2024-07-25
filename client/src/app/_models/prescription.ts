@@ -4,6 +4,8 @@ import { getPaginationHeaders } from '../_utils/util';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrescriptionsService } from '../_services/prescriptions.service';
 import { createId } from '@paralleldrive/cuid2';
+import { Address } from './address';
+import { User } from './user';
 
 const subject = 'prescription';
 
@@ -12,13 +14,31 @@ export class Prescription {
   exchangeAmount!: number;
   notes!: string;
   items!: PrescriptionItem[];
+  clinic?: Address;
+  doctor?: User;
+  patient?: User;
+  event?: Event;
+  createdAt!: Date;
+
   isSelected = false;
+  isCollapsed = true;
 }
 
 export class PrescriptionItem {
   quantity!: number;
   instructions!: string;
   notes!: string;
+  createdAt!: string;
+  description!: string;
+  discount!: number;
+  dosage!: string;
+  itemId!: number;
+  lotNumber!: string;
+  manufacturer!: string;
+  name!: string;
+  price!: number;
+  unit!: string;
+
   product?: Product;
 }
 

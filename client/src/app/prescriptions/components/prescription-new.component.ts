@@ -57,7 +57,9 @@ export class PrescriptionNewComponent implements OnInit {
     exchangeAmount: 1,
     notes: '',
     items: [],
-    isSelected: false
+    isSelected: false,
+    isCollapsed: true,
+    createdAt: new Date()
   }
 
   patient?: User;
@@ -113,7 +115,16 @@ export class PrescriptionNewComponent implements OnInit {
               instructions: "",
               notes: "",
               quantity: 1,
-              product: product
+              createdAt: "",
+              description: "",
+              discount: 0,
+              dosage: "",
+              itemId: 0,
+              lotNumber: "",
+              manufacturer: "",
+              name: "",
+              price: 0,
+              unit: ""
             };
           });
 
