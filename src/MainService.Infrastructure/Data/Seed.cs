@@ -520,10 +520,10 @@ public static class Seed
                         ItemId = randomMedicineId,
                         Item = randomMedicine,
                         Quantity = Random.Next(1, 10),
-                        Dosage = "1 tablet daily",
-                        Instructions = "Take after meals",
-                        Notes = "No specific notes",
-                        Unit = "tablet"
+                        Dosage = "500",
+                        Instructions = "Tomar 1 tableta cada 6 horas",
+                        Notes = "Según necesidad para la fiebre y el dolor.",
+                        Unit = "mg"
                     };
 
                     newPrescriptionItems.Add(newPrescriptionItem);
@@ -534,6 +534,7 @@ public static class Seed
                     Prescription = new Prescription
                     {
                         ExchangeAmount = Random.Next(1, 6),
+                        Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
                         PatientPrescription = new PatientPrescription { Patient = patient },
                         DoctorPrescription = new DoctorPrescription { Doctor = doctor },
                         PrescriptionItems = newPrescriptionItems,

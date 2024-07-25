@@ -47,7 +47,7 @@ export class UserTableSexCellComponent {
           @if (user().photoUrl) {
           <img [src]="user().photoUrl" alt="Emma Smith" class="w-100" />
           } @else {
-          <div class="symbol-label fs-3 bg-light-danger text-danger">
+          <div [class]="'symbol-label fs-3 bg-light-' + bootstrapClass + ' text-' + bootstrapClass">
             {{ user().firstName[0] }}
           </div>
           }
@@ -72,6 +72,7 @@ export class UserTableCellComponent implements OnInit {
 
   user = input.required<User>();
   role = input.required<Role>();
+  bootstrapClass = 'success';
 
   routerLink?: string;
 
@@ -79,5 +80,27 @@ export class UserTableCellComponent implements OnInit {
     this.routerLink = `${
       this.service.namingDictionary.get(this.role())!.catalogRoute
     }/${this.user().id}`;
+
+    this.bootstrapClass = this.getBootstrapClass(this.user().firstName);
   }
+
+  bootstrapClasses = [
+    'success',
+    'danger',
+    'info',
+    'primary',
+    // 'secondary',
+    'warning',
+    'light',
+    'dark'
+  ];
+  
+  getBootstrapClass(name: string) {
+    const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+    const classIndex = asciiSum % this.bootstrapClasses.length;
+
+    return this.bootstrapClasses[classIndex];
+  }
+  
 }

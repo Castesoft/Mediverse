@@ -17,9 +17,12 @@ namespace MainService.Controllers;
 
 public class PrescriptionsController(
     IUnitOfWork uow,
+    IPrescriptionsService service,
     IMapper mapper,
     UserManager<AppUser> userManager) : BaseApiController
 {
+    private static readonly string subject = "receta";
+    private static readonly string subjectArticle = "La";
 
     public async Task<ActionResult<PagedList<PrescriptionDto>>> GetPagedListAsync([FromQuery] PrescriptionParams param)
     {
@@ -176,5 +179,19 @@ public class PrescriptionsController(
         }
 
         return order;
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteByIdAsync(int id)
+    {
+        var item = await uow.PrescriptionRepository.GetByIdAsNoTrackingAsync(id);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        var deleteResult = await service.DeleteAsync(item);
+
+        if (!deleteResult) return BadRequest($"Error al eliminar {subject} con Id: {item.Id}.");
+
+        return Ok();
     }
 }

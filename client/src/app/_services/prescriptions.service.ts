@@ -5,7 +5,6 @@ import { Event, FilterForm } from "src/app/_models/event";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, SortOptions, View } from '../_models/types';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from 'express';
 import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { Modal } from '../_models/modal';
@@ -14,6 +13,7 @@ import { getItemsByKey, getPaginatedResult, downloadExcelFile } from '../_utils/
 // import { PrescriptionDetailModalComponent, PrescriptionEditModalComponent, PrescriptionNewModalComponent, PrescriptionsFilterModalComponent, PrescriptionsCatalogModalComponent } from '../Prescriptions/modals';
 import { ConfirmService } from './confirm.service';
 import { Prescription, PrescriptionParams } from '../_models/prescription';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ import { Prescription, PrescriptionParams } from '../_models/prescription';
 export class PrescriptionsService {
   private http = inject(HttpClient);
   private bsModalService = inject(BsModalService);
-  // private router = inject(Router);
+  private router = inject(Router);
   private confirm = inject(ConfirmService);
   private toastr = inject(ToastrService);
   matSnackBar = inject(MatSnackBar);
@@ -47,10 +47,9 @@ export class PrescriptionsService {
   };
 
   columns: Column[] = [
-    { label: "Nombre", name: "name", options: { justify: 'center' } },
-    { label: "Descripción", name: "description" },
-    { label: "Precio", name: "price", options: { justify: 'end' } },
-    { label: "Descuento", name: "discount" },
+    { label: "Paciente", name: "patient", options: { justify: 'center' } },
+    { label: "Diagnóstico", name: "notes" },
+    // { label: "Medicamentos", name: "items" },
     { label: "Creado", name: "createdAt" },
   ];
 
