@@ -23,7 +23,7 @@ import {Observable} from "rxjs";
   templateUrl: "./control-typeahead.component.html",
   standalone: true,
   imports: [ReactiveFormsModule, NgClass, KeyValuePipe, TypeaheadModule, NgTemplateOutlet, NgIf, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent],
-  styles: '::ng-deep .dropdown-menu { width: 100%;}'
+  // styles: '::ng-deep .dropdown-menu { width: 100%;}'
 })
 export class ControlTypeaheadComponent {
   service = inject(FormsService);

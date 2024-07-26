@@ -138,6 +138,10 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
     }
   };
 
+  onInputFocus = () => {
+    this.subscribeToSummaries({eventTypeahead: ''});
+  };
+
   openCatalogModal = () => {
     this.service.showCatalogModal(new MouseEvent('click'), this.key(), 'select')
   }
