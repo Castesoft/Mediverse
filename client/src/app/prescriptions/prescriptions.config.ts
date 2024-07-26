@@ -1,13 +1,16 @@
 import { Component, inject, NgModule, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { ActivatedRoute, ResolveFn, Router, RouterModule } from "@angular/router";
 import { CardComponent, LayoutModule } from "src/app/_shared/layout.module";
-import { CatalogMode, FormUse, Role, View } from "src/app/_models/types";
+import { CatalogMode, FormUse, Role, Sections, View } from "src/app/_models/types";
 import { PrescriptionNewComponent } from "src/app/prescriptions/components/prescription-new.component";
-import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog.component";
+import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
 import { GuidService } from '../_services/guid.service';
 import { CompactTableService } from '../_services/compact-table.service';
 import { PrescriptionsService } from '../_services/prescriptions.service';
+import { Prescription } from '../_models/prescription';
+import { PrescriptionDetailsComponent } from './components/prescription-details/prescription-details.component';
+import { PrescriptionEditComponent } from './components/prescription-edit/prescription-edit.component';
 
 @Component({
   selector: 'prescriptions-route',
@@ -65,6 +68,32 @@ export class CatalogComponent {
   }
 }
 
+export const itemResolver: ResolveFn<Prescription | null> = (route, state) => {
+  const prescription = inject(PrescriptionsService);
+  const id = +route.paramMap.get('id')!;
+  return prescription.getById(id);
+};
+
+export const titleDetailResolver: ResolveFn<string> = (route, state) => {
+  const prescription = inject(PrescriptionsService);
+  const id = +route.paramMap.get('id')!;
+  prescription.getById(id).subscribe();
+  const item = prescription.getCurrent();
+  if (!item) return 'Detalle de receta';
+  const title = `Detalle de receta - ${item.id}`;
+  return title;
+}
+
+export const titleEditResolver: ResolveFn<string> = (route, state) => {
+  const prescription = inject(PrescriptionsService);
+  const id = +route.paramMap.get('id')!;
+  prescription.getById(id).subscribe();
+  const item = prescription.getCurrent();
+  if (!item) return 'Editar receta';
+  const title = `Editar receta - ${item.id}`;
+  return title;
+}
+
 @NgModule({
   imports: [RouterModule.forChild([
     {
@@ -73,6 +102,16 @@ export class CatalogComponent {
       children: [
         { path: '', component: CatalogComponent, title: 'Catálogo de recetas', data: { breadcrumb: 'Catálogo', }, },
         { path: 'create', component: NewComponent, title: 'Crear nueva receta', data: { breadcrumb: 'Nuevo', }, },
+        {
+          path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
+          component: PrescriptionDetailsComponent,
+          resolve: { item: itemResolver },
+        },
+        {
+          path: ':id/edit', title: titleEditResolver, data: { breadcrumb: 'Editar', },
+          component: PrescriptionEditComponent,
+          resolve: { item: itemResolver },
+        },
       ],
     },
   ])],

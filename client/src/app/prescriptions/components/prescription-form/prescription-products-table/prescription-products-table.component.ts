@@ -23,6 +23,7 @@ export class PrescriptionProductsTableComponent implements OnInit {
 
   data = model.required<PrescriptionItem[]>();
   key = input.required<string>();
+  mode = input.required<'view' | 'edit'>();
 
   columns: Column[] = [
     { label: 'Nombre', name: 'name' },
@@ -34,7 +35,7 @@ export class PrescriptionProductsTableComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   handleAmountChange = (item: PrescriptionItem, quantity: number) => {
     if (item.quantity + quantity < 0) { return; }

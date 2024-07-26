@@ -58,6 +58,7 @@
   @if (prescription) {
     <div [data]="prescription.items"
          [key]="selectedProductsKey"
+         [mode]="'edit'"
          prescriptionProductsTable></div>
   }
   <div class="d-flex flex-grow-1 justify-content-between align-items-center mt-6">

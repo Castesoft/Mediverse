@@ -3,8 +3,7 @@
              let-model="item">
   <div class="d-flex align-items-center">
     <div class="symbol symbol-50px symbol-circle">
-      <img [src]="model.data.photoUrl || 'https://i.pravatar.cc/150'"
-           class="w-100"/>
+      <app-user-profile-picture [user]="model.data"></app-user-profile-picture>
       <div
         class="bg-success position-absolute border border-4 border-body h-15px w-15px rounded-circle translate-middle start-100 top-100 ms-n3 mt-n3">
       </div>
@@ -49,31 +48,33 @@
       formControlName="userTypeahead"
     ></div>
 
-    <button
-      (click)="openCatalogModal()"
-      [class.btn-danger]="isUserSelected() && selectionErrors().length > 0"
-      [class.btn-primary]="!isUserSelected()"
-      [class.btn-success]="
-        isUserSelected() && selectionErrors().length <= 0
-      "
-      [disabled]="isDisabled()"
-      [style.height.px]="43"
-      [style.padding-bottom]="'12px'"
-      [style.padding-top]="'12px'"
-      [type]="'button'"
-      class="btn fs-1 py-2"
-      id="button-addon2"
-      type="button"
-    >
-      @if (loading) {
-        <div class="spinner-border text-white custom-spinner"
-             role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      } @else {
-        <fa-icon [icon]="icons.faWindowRestore"/>
-      }
-    </button>
+    @if (showCatalogButton()) {
+      <button
+        (click)="openCatalogModal()"
+        [class.btn-danger]="isUserSelected() && selectionErrors().length > 0"
+        [class.btn-primary]="!isUserSelected()"
+        [class.btn-success]="
+          isUserSelected() && selectionErrors().length <= 0
+        "
+        [disabled]="isDisabled()"
+        [style.height.px]="43"
+        [style.padding-bottom]="'12px'"
+        [style.padding-top]="'12px'"
+        [type]="'button'"
+        class="btn fs-1 py-2"
+        id="button-addon2"
+        type="button"
+      >
+        @if (loading) {
+          <div class="spinner-border text-white custom-spinner"
+               role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        } @else {
+          <fa-icon [icon]="icons.faWindowRestore"/>
+        }
+      </button>
+    }
   </div>
 </div>
 
