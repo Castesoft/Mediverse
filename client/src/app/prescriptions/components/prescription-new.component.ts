@@ -22,6 +22,7 @@ import { firstValueFrom } from "rxjs";
 import { PrescriptionsService } from "src/app/_services/prescriptions.service";
 import { AccountService } from "src/app/_services/account.service";
 import { PrescriptionProductsTableComponent } from './prescription-form/prescription-products-table/prescription-products-table.component';
+import { ProductSelectTypeaheadComponent } from "src/app/_shared/components/product-select-typeahead.component";
 
 @Component({
   selector: '[prescriptionNewView]',
@@ -36,7 +37,8 @@ import { PrescriptionProductsTableComponent } from './prescription-form/prescrip
     PrescriptionProductsTableComponent,
     EventSelectTypeaheadComponent,
     EventSelectDisplayCardComponent,
-    BootstrapModule
+    BootstrapModule,
+    ProductSelectTypeaheadComponent
   ]
 })
 export class PrescriptionNewComponent implements OnInit {
@@ -66,6 +68,8 @@ export class PrescriptionNewComponent implements OnInit {
   selectedPatientKey = createId();
 
   products: Product[] = [];
+  demoProduct?: Product; // TODO - REMOVE
+  selectedProductKey = createId();
   selectedProductsKey = createId();
 
   event?: Event;
@@ -85,6 +89,7 @@ export class PrescriptionNewComponent implements OnInit {
   private initForm = () => {
     this.formGroup = new FormGroup({
       name: new FormControl(''),
+      productTypeahead: new FormControl('')
     });
   }
 
@@ -110,6 +115,7 @@ export class PrescriptionNewComponent implements OnInit {
       next: (products) => {
         if (products) {
           this.products = products;
+          this.demoProduct = products[0]; // TODO - REMOVE
           this.prescription.items = products.map((product): PrescriptionItem => {
             return {
               instructions: "",

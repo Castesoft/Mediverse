@@ -110,7 +110,7 @@ export class PrescriptionsService {
 
   selectAll(key: string, event: any) {
     const items = getItemsByKey<Prescription>(key, this.cacheMap);
-    // if all of them are already selected, then disselect all of them...
+    // if all of them are already selected, then deselect all of them...
     // however if there's at least one that is not selected, then select all of them
     const allSelected = items.every((item) => item.isSelected);
     items.forEach((item) => item.isSelected = !allSelected);
@@ -229,7 +229,7 @@ export class PrescriptionsService {
     );
   }
 
-  
+
   update(id: number, formData: FormData): Observable<Prescription> {
     return this.http.put<Prescription>(`${this.baseUrl}${id}`, formData).pipe(
       tap(response => {
