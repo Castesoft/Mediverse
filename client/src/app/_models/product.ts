@@ -11,12 +11,14 @@ export class Product {
   id!: number;
   name!: string;
   description!: string;
-  quantity!: string;
+  quantity!: number;
   unit!: string;
   discount!: number;
   price!: number;
+  lotNumber!: string;
+  manufacturer!: string;
   photoUrl?: string;
-  createdAt!: Date;
+  createdAt!: string;
   isSelected = false;
 }
 

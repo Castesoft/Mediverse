@@ -4,13 +4,13 @@
       <div class="fs-2 fw-bold text-gray-900">
         Medicamentos
       </div>
-      @if (mode() === 'edit') {
+      <!-- @if (mode() === 'edit') {
         <button (click)="openProductSelectModal()"
                 class="btn btn-primary">
           <fa-icon [icon]="icons.faPlus"></fa-icon>
           Agregar medicamento
         </button>
-      }
+      } -->
     </div>
   </div>
   <div class="card-body py-4">
@@ -61,17 +61,28 @@
                 }
               </td>
               @if (mode() === 'edit') {
-                <td class="d-flex align-items-center">
-                  <button class="btn btn-sm btn-light-primary">
+                <td style="text-align: end;">
+                  <!-- <button class="btn btn-sm btn-light-primary">
                     <fa-icon [icon]="icons.faPencil"></fa-icon>
-                  </button>
-                  <button class="btn btn-sm btn-light-danger">
+                  </button> -->
+                  <button class="btn btn-sm btn-light-danger" (click)="handleDeleteProduct(item)">
                     <fa-icon [icon]="icons.faClipboard"></fa-icon>
                   </button>
                 </td>
               }
             </tr>
-
+          }
+          @if (mode() === 'edit') {
+            <tr>
+              <td></td>
+              <td colspan="3">
+                <div productSelectTypeahead
+                    [key]="selectedProductKey"
+                    [isDisabled]="false"
+                    [product]="product ?? null"
+                    [showCatalogButton]="false"></div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>

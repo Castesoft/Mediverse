@@ -89,6 +89,7 @@ export class PrescriptionFormComponent {
   ngOnInit() {
     if (this.use() !== 'create' && this.item()) {
       this.prescription = this.item()!;
+      console.log(this.prescription.items[0])
       this.patient = this.item()?.patient;
       this.event = this.item()?.event;
       this.formGroup.get('notes')?.setValue(this.item()?.notes);
@@ -128,6 +129,7 @@ export class PrescriptionFormComponent {
     .pipe(skip(this.use() === 'edit' ? 1 : 0))
     .subscribe({
       next: (products) => {
+        console.log(products)
         if (products) {
           this.products = products;
           this.prescription.items = products.map((product): PrescriptionItem => {
@@ -154,6 +156,14 @@ export class PrescriptionFormComponent {
     });
   }
 
+  selectProduct(product: PrescriptionItem) {
+    this.prescription.items.push(product);
+  }
+
+  deleteProduct(product: PrescriptionItem) {
+    this.prescription.items = this.prescription.items.filter(prescriptionItem => prescriptionItem.itemId !== product.itemId)
+  }
+
   onSubmit = async () => {
     const authorized = await firstValueFrom(this.confirmService.confirm({
       btnCancelText: 'Cancelar',
@@ -168,6 +178,7 @@ export class PrescriptionFormComponent {
       exchangeAmount: this.prescription.exchangeAmount,
       eventId: this.event?.id || null,
       patientId: this.patient?.id || null,
+      notes: this.formGroup.get('notes')?.value,
       prescriptionItems: this.prescription.items.map((item) => {
         return {
           instructions: item.instructions,
