@@ -99,10 +99,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
             .Include(x => x.DoctorProduct)
             .AsQueryable();
 
-        int userId = user.GetUserId();
-
-        // TODO - Uncomment this line when product assignment during seeding is fixed
-        // query = query.Where(x => x.DoctorProduct.DoctorId == userId);
+        query = query.Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null);
 
         if (param.DateFrom != DateTime.MinValue)
             query = query.Where(x => x.CreatedAt >= param.DateFrom);

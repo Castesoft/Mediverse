@@ -78,11 +78,6 @@ export class AddressParams {
     this.pageSize = group.controls['pageSize'].value;
     this.search = group.controls['search'].value;
   }
-
-  update(group: FormGroup, service: AddressesService, key: string) {
-    this.setFromFormGroup(group);
-    service.setParam$(key, this);
-  }
 }
 
 export class FilterForm {

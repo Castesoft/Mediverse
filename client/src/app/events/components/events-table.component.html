@@ -55,10 +55,10 @@
           </td>
         }
       }
-      <td eventCell [event]="item"></td>
+      <td patientCell [patient]="item.patient"></td>
       <td>{{ item.patient?.age }} años</td>
-      <td eventSex [event]="item"></td>
-      <td eventHasAccount [event]="item"></td>
+      <td patientSex [patient]="item.patient"></td>
+      <td patientHasAccount [patient]="item.patient"></td>
       <td>{{ item.patient?.dateOfBirth | date }}</td>
       <td class="text-end">
         <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"

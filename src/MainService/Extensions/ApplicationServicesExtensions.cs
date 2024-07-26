@@ -11,7 +11,6 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration config)
     {
-
         // Settings
         services.Configure<TokenSettings>(config.GetSection("TokenSettings"));
         services.Configure<EmailSettings>(config.GetSection("EmailSettings"));

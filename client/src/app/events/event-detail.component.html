@@ -211,7 +211,7 @@
           <div class="card-body">
             <h5 class="text-gray-500 mb-3">Servicios solicitados</h5>
             @if (item()!.service) {
-              <appointment-services-summary [item]="item()!.service!"/>
+              <div eventServicesSummary [item]="item()!.service!"></div>
             }
 
             <div class="row mt-2">

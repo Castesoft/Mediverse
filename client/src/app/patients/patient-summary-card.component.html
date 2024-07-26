@@ -1,20 +1,32 @@
 @if (item()) {
   <div class="card mb-5 mb-xl-8">
+    <div class="card-header py-5">
+      <div class="row g-0 w-100 d-flex align-items-center justify-content-between">
+        <div class="col-6 px-0">
+          @if (headerTitle()) {
+            <h3 class="card-title align-items-start flex-column">
+              <div class="card-label fw-bolder text-gray-900 fs-2">
+                {{ headerTitle() }}
+              </div>
+            </h3>
+          }
+        </div>
+        <div class="col-6 text-end px-0">
+        </div>
+      </div>
+    </div>
+
     <div class="card-body">
-      <div
-        class="d-flex flex-grow-1 flex-column text-center justify-content-center"
-      >
-        <div
-          class="symbol symbol-150px me-5 d-flex flex-wrap justify-content-center"
-        >
-                <span class="symbol-label bg-light-danger">
-                  <img
-                    [src]="photoUrl"
-                    class="h-100 align-self-center"
-                    alt=""
-                    [style]="{ borderRadius: '0.475rem' }"
-                  />
-                </span>
+      <div class="d-flex flex-grow-1 flex-column text-center justify-content-center">
+        <div class="symbol symbol-150px me-5 d-flex flex-wrap justify-content-center">
+          <div class="symbol-label bg-light-danger">
+            <img
+              [src]="photoUrl"
+              class="h-100 align-self-center"
+              alt=""
+              [style]="{ borderRadius: '0.475rem' }"
+            />
+          </div>
         </div>
         <div class="fs-3 text-gray-800 fw-bold mb-3 mt-6">
           {{ item().fullName }}

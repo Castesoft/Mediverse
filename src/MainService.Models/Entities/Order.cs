@@ -1,3 +1,5 @@
+using System.Runtime.Serialization;
+
 namespace MainService.Models.Entities;
 
 public class Order : BaseEntity
@@ -15,21 +17,21 @@ public class Order : BaseEntity
     public DoctorOrder DoctorOrder { get; set; }
     public OrderAddress OrderAddress { get; set; }
     public List<OrderItem> OrderItems { get; set; } = [];
-    public SaleStatus Status { get; set; } = SaleStatus.Pending;
-    public SaleDeliveryStatus DeliveryStatus { get; set; } = SaleDeliveryStatus.Pending;
+    public OrderStatus Status { get; set; } = OrderStatus.Pending;
+    public OrderDeliveryStatus DeliveryStatus { get; set; } = OrderDeliveryStatus.Processing;
 }
 
-public enum SaleStatus
+public enum OrderStatus
 {
-    Pending,
-    Completed,
-    Cancelled
+    [EnumMember(Value = "pending")] Pending,
+    [EnumMember(Value = "completed")] Completed,
+    [EnumMember(Value = "cancelled")] Cancelled
 }
 
-public enum SaleDeliveryStatus
+public enum OrderDeliveryStatus
 {
-    Pending,
-    InProgress,
-    Delivered,
-    Cancelled
+    [EnumMember(Value = "processing")] Processing,
+    [EnumMember(Value = "inprogress")] InProgress,
+    [EnumMember(Value = "delivered")] Delivered,
+    [EnumMember(Value = "cancelled")] Cancelled
 }

@@ -14,6 +14,7 @@ export class Product {
   quantity!: number;
   unit!: string;
   discount!: number;
+  dosage!: string;
   price!: number;
   lotNumber!: string;
   manufacturer!: string;

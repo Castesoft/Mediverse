@@ -240,38 +240,25 @@ public static class Seed
         context.DoctorPatients.AddRange(doctorPatientRelationships);
         await context.SaveChangesAsync();
 
-        if (await context.Services.AnyAsync()) return;
-
         await SeedProductsAsync(context);
         await SeedServicesAsync(context);
         await SeedRandomDoctorData(context, userManager);
-
-        await context.SaveChangesAsync();
     }
 
     private static async Task SeedProductsAsync(DataContext context)
     {
         if (await context.Products.AnyAsync()) return;
-
-        foreach (var product in SeedData.products)
-        {
-            context.Products.Add(product);
-        }
-
+        await context.Products.AddRangeAsync(SeedData.products.ToArray());
         await context.SaveChangesAsync();
     }
 
     private static async Task SeedServicesAsync(DataContext context)
     {
         if (await context.Services.AnyAsync()) return;
-
-        foreach (var service in SeedData.services.ToList())
-        {
-            context.Services.Add(service);
-        }
-
+        await context.Services.AddRangeAsync(SeedData.services.ToArray());
         await context.SaveChangesAsync();
     }
+
 
     private static async Task<List<DoctorNurse>> SeedDoctorNursesAsync(DataContext context,
         UserManager<AppUser> userManager, int doctorId)
@@ -286,14 +273,14 @@ public static class Seed
             if (!createUserResult.Succeeded)
             {
                 Log.Error("Failed to create nurse user {NurseId} for doctor {DoctorId}", nurse.Id, doctorId);
-                continue; // Skip to the next nurse if creation fails
+                continue;
             }
 
             var addToRolesResult = await userManager.AddToRolesAsync(nurse, new[] { "Nurse", "Patient" });
             if (!addToRolesResult.Succeeded)
             {
                 Log.Error("Failed to add roles to nurse user {NurseId} for doctor {DoctorId}", nurse.Id, doctorId);
-                continue; // Skip to the next nurse if role addition fails
+                continue;
             }
 
             context.DoctorNurses.Add(new DoctorNurse(doctorId, nurse.Id));
@@ -307,28 +294,28 @@ public static class Seed
     private static async Task<List<DoctorProduct>> SeedDoctorProductsAsync(DataContext context, AppUser doctor)
     {
         var random = new Random();
+        var numberOfProductsToAdd = random.Next(5, 16);
+        var products =
+            SeedData.products.OrderBy(_ => Guid.NewGuid()).Take(numberOfProductsToAdd)
+                .ToList();
         var doctorProducts = new List<DoctorProduct>();
-        var products = SeedData.products.ToList();
-        int numberOfProducts = random.Next(1, products.Count + 1);
 
-        var addedProductIds = new HashSet<int>(); // Track added product IDs
-
-        for (int i = 0; i < numberOfProducts; i++)
+        foreach (var product in products)
         {
-            int productId;
-            do
-            {
-                productId = products[random.Next(products.Count)].Id;
-            } while (addedProductIds.Contains(productId));
-
-            addedProductIds.Add(productId);
-
-            var product = products.First(p => p.Id == productId);
-
             doctorProducts.Add(new DoctorProduct
             {
-                Doctor = doctor,
-                Product = product
+                DoctorId = doctor.Id,
+                Product = new Product
+                {
+                    Name = product.Name,
+                    Description = product.Description,
+                    Dosage = product.Dosage,
+                    Unit = product.Unit,
+                    Manufacturer = product.Manufacturer,
+                    LotNumber = product.LotNumber,
+                    Price = product.Price,
+                    Discount = product.Discount,
+                }
             });
         }
 
@@ -338,38 +325,29 @@ public static class Seed
         return doctorProducts;
     }
 
+
     private static async Task<List<DoctorService>> SeedDoctorServicesAsync(DataContext context, AppUser doctor)
     {
         var random = new Random();
-        var doctorServices = new List<DoctorService>();
         var services = SeedData.services.ToList();
-        int numberOfServices = random.Next(1, services.Count + 1);
 
-        var addedServiceIds = new HashSet<int>(); // Track added service IDs
-
-        for (int i = 0; i < numberOfServices; i++)
+        foreach (var service in services.Take(random.Next(4, services.Count + 1)))
         {
-            int serviceId;
-            do
+            doctor.DoctorServices.Add(new DoctorService()
             {
-                serviceId = services[random.Next(services.Count)].Id;
-            } while (addedServiceIds.Contains(serviceId));
-
-            addedServiceIds.Add(serviceId);
-
-            var service = services.First(s => s.Id == serviceId);
-
-            doctorServices.Add(new DoctorService
-            {
-                Doctor = doctor,
-                Service = service
+                Service = new()
+                {
+                    Name = service.Name,
+                    Description = service.Description,
+                    Price = service.Price,
+                    Discount = service.Discount,
+                }
             });
         }
 
-        context.DoctorServices.AddRange(doctorServices);
         await context.SaveChangesAsync();
 
-        return doctorServices;
+        return await context.DoctorServices.Where(x => x.DoctorId == doctor.Id).ToListAsync();
     }
 
 
@@ -380,10 +358,13 @@ public static class Seed
 
         foreach (var doctor in doctors)
         {
-            Log.Information($"Seeding random data for doctor {$"{userIndex++}/{doctors.Count - 1}",-15} ==> {doctor.Email}");
+            Log.Information(
+                $"Seeding random data for doctor {$"{userIndex++}/{doctors.Count - 1}",-15} ==> {doctor.Email}");
             await SeedDoctorDataAsync(context, userManager, doctor);
         }
 
+        Log.Information("Saving randomDoctorData changes to database...");
+        await context.SaveChangesAsync();
         Log.Information("Seeding process completed.");
     }
 
@@ -413,17 +394,12 @@ public static class Seed
                 SeedPatientEventsAsync(doctor, patient, doctorNurses, doctorProducts, doctorServices);
             }
         }
-
-        await SaveChangesWithTimeoutAsync(context, doctor.Email);
     }
 
     private static void SeedPatientEventsAsync(AppUser doctor, AppUser patient,
         List<DoctorNurse> doctorNurses, List<DoctorProduct> doctorProducts, List<DoctorService> doctorServices)
     {
-        int eventCount = Random.Next(2, 11);
-        // Log.Debug($"Generating {eventCount - 2} events for patient {patient.Id}");
-
-        for (int i = 2; i < eventCount; i++)
+        for (int i = 2; i < Random.Next(2, 11); i++)
         {
             var newPatientEvent = CreatePatientEvent(doctor, doctorServices);
             AddNursesToEvent(newPatientEvent, doctorNurses);
@@ -434,7 +410,17 @@ public static class Seed
 
     private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices)
     {
+        if (doctorServices == null || doctorServices.Count == 0)
+        {
+            throw new ArgumentException("Doctor services list cannot be null or empty", nameof(doctorServices));
+        }
+
         var eventDate = DateGenerator.GenerateRandomDate(2024, 7);
+
+        var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
+
+        var isMainClinic = Random.Next(0, 2) > 0;
+        var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
 
         var newPatientEvent = new PatientEvent
         {
@@ -447,14 +433,10 @@ public static class Seed
                 DateTo = eventDate.AddHours(1).ToUniversalTime(),
                 EventService = new EventService
                 {
-                    Service = doctorServices[Random.Next(doctorServices.Count)].Service
+                    Service = selectedService
                 }
             }
         };
-
-        var randomClinic = doctor.DoctorClinics.Where(x => x.IsMain == Random.Next(0, 2) > 0)
-            .Select(x => x.Clinic)
-            .FirstOrDefault();
 
         if (randomClinic != null)
         {
@@ -464,12 +446,12 @@ public static class Seed
         return newPatientEvent;
     }
 
+
     private static void AddNursesToEvent(PatientEvent patientEvent, List<DoctorNurse> doctorNurses)
     {
         if (Random.Next(0, 2) > 0)
         {
             var randomNurses = doctorNurses.Select(x => x.Nurse).Take(Random.Next(1, 4)).ToList();
-            // Log.Debug($"Adding {randomNurses.Count} nurses to event");
 
             foreach (var nurse in randomNurses)
             {
@@ -483,12 +465,10 @@ public static class Seed
     {
         if (Random.Next(0, 2) > 0)
         {
-            // Log.Debug($"Adding prescriptions to event for patient {patient.Id}");
-
             for (int j = 1; j < Random.Next(1, 4); j++)
             {
                 var newPrescriptionItems = new List<PrescriptionItem>();
-                var existingMedicineIds = new HashSet<int>(); // To keep track of used MedicineIds
+                var existingMedicineIds = new HashSet<int>();
                 var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
 
                 for (int k = 1; k < Random.Next(1, 4); k++)
@@ -541,21 +521,6 @@ public static class Seed
                     }
                 });
             }
-        }
-    }
-
-    private static async Task SaveChangesWithTimeoutAsync(DataContext context, string doctorEmail)
-    {
-        // Log.Debug($"Saving changes for doctor {doctorEmail}");
-        var saveTask = context.SaveChangesAsync();
-        if (await Task.WhenAny(saveTask, Task.Delay(TimeSpan.FromMinutes(5))) == saveTask)
-        {
-            // Log.Debug($"Successfully saved changes for doctor {doctorEmail}");
-        }
-        else
-        {
-            Log.Error($"Timed out saving changes for doctor {doctorEmail}");
-            throw new TimeoutException($"Saving changes for doctor {doctorEmail} took too long.");
         }
     }
 }
