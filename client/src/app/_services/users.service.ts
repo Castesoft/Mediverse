@@ -243,7 +243,7 @@ export class UsersService {
 
   selectAll(key: string, event: any) {
     const items = getItemsByKey<User>(key, this.cacheMap);
-    // if all of them are already selected, then disselect all of them...
+    // if all of them are already selected, then deselect all of them...
     // however if there's at least one that is not selected, then select all of them
     const allSelected = items.every((item) => item.isSelected);
     items.forEach((item) => item.isSelected = !allSelected);
