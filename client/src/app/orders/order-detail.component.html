@@ -1,0 +1,203 @@
+@if (item()) {
+  <div class="d-flex flex-grow-1 justify-content-between mb-4">
+    <div class="fs-1 fw-bolder">
+      Pedido #{{ item().id }}
+    </div>
+    <div class="fs-1 fw-regular text-gray-1000">
+      Pedido creado el
+      <span class="fw-bold">{{ item().createdAt | date: 'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+
+  <div class="row h-100">
+    <div class="col-xxl-4">
+      <div patientSummaryCard
+           class="h-100"
+           [headerTitle]="'Paciente'"
+           [item]="item().patient"
+           [key]="'order-detail'">
+      </div>
+    </div>
+
+
+    <div class="col-xxl-8 mb-8">
+      <div class="card h-100">
+        <div class="card-header">
+          <h3 class="card-title align-items-start flex-column">
+            <div class="card-label fw-bolder text-gray-900 fs-2">
+              Envío
+            </div>
+          </h3>
+        </div>
+        <div class="card-body p-0">
+          <div class="steps">
+            <ul class="steps-list">
+              <li class="steps-list-item completed"><span>1</span>Pedido recibido</li>
+              <li class="steps-list-item completed"><span>2</span>Preparando el pedido</li>
+              <li class="steps-list-item"><span>3</span>En tránsito</li>
+              <li class="steps-list-item"><span>4</span>Entregado</li>
+            </ul>
+          </div>
+          <div class="row pt-8 pb-8 h-100">
+            <div class="col-3 ps-10">
+              <div class="col-12">
+                <div class="fw-bold">Dirección de Envío</div>
+                <div class="text-gray-600 mb-0">
+                  Avenida de la Paz 1234, Colonia Centro, CDMX
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="fw-bold mt-5">Método de Envío</div>
+                <div class="text-gray-600 mb-0">
+                  Envío Estándar
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="fw-bold mt-5">Fecha Estimada de Entrega</div>
+                <div class="text-gray-600 mb-0">
+                  01/08/2024
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="fw-bold mt-5">Información del Receptor</div>
+                <div class="text-gray-600 mb-0">
+                  <span class="fw-bold">Nombre:</span>
+                  Juan Pérez<br>
+                  <span class="fw-bold">Teléfono:</span>
+                  555-123-4567<br>
+                  <span class="fw-bold">Correo:</span>
+                  juan.perez<br/>
+                </div>
+                <div class="fw-bold mt-5">Estado de Entrega</div>
+                <div ordersDeliveryStatusBadge
+                     class="mt-1"
+                     [status]="item().deliveryStatus"
+                     [size]="'lg'"></div>
+              </div>
+            </div>
+            <div class="col-9 PS-0">
+              <div class="lg:col-span-2 flex flex-col gap-2 text-center items-center content-center "
+                   data-aos="zoom-in">
+                <iframe
+                  src="https://maps.google.com/maps?q=Jordan%202745%2C%20Pedro%20Lozano%2C%2064400%2C%20Monterrey%2C%20N.L.&t=m&z=10&output=embed&iwloc=near"
+                  width="550"
+                  height="400"
+                  class="flex sm:hidden rounded-xl"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Camionetas y Autos Location"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-xxl-12">
+      <div class="card pb-5 mb-xl-8">
+        <div class="card-header border-0 py-5">
+          <div class="row g-0 w-100 d-flex align-items-center justify-content-between">
+            <div class="col-6 px-0">
+              <h3 class="card-title align-items-start flex-column">
+                <div class="card-label fw-bolder text-gray-900 fs-2">
+                  Información de Cobro
+                </div>
+              </h3>
+            </div>
+            <div class="col-6 text-end px-0">
+              <div ordersStatusBadge
+                   [status]="item().status"
+                   [size]="'lg'"></div>
+            </div>
+          </div>
+        </div>
+        <div class="separator mb-3 opacity-75"></div>
+        <div class="card-body">
+          <h5 class="text-gray-500 mb-3">Medicamentos solicitados</h5>
+          @if (item()!.items) {
+            <div class="table-responsive">
+              <table class="table table-hover w-100">
+                <thead class="border-bottom border-bottom-dashed">
+                <tr class="fw-bold fs-6 text-gray-800">
+                  <th class="py-1 ">Producto</th>
+                  <th class="py-1 text-end">Precio</th>
+                  <th class="py-1 text-end">Cantidad</th>
+                  <th class="py-1 text-end">Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (item of item().items; track item) {
+                    <tr orderProductsSummary
+                        [item]="item"></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <div class="separator mb-3 opacity-75"></div>
+          }
+
+          <div class="row mt-2">
+            <div class="col">
+              <p class="fs-5 fw-bold mb-0">IVA (16%)</p>
+            </div>
+            <div class="col text-end fw-bolder">
+              {{ tax | currency }}
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col">
+              <p class="fs-5 fw-bold mb-3">Total</p>
+            </div>
+            <div class="col text-end fw-bolder">
+              {{ total | currency : "MXN" }}
+            </div>
+          </div>
+          <div class="row mt-2 gy-4">
+            <div class="col-6">
+              <div class="fw-bold mt-5">Método de Pago</div>
+              <div class="text-gray-600 mb-0">
+              <span class="fw-bolder text-primary">
+              VISA
+              </span>
+                **** **** **** 1234
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="fw-bold mt-5">Dirección de Pago</div>
+              <div class="text-gray-600 mb-0">
+                Avenida de la Paz 1234, Colonia Centro, CDMX
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="fw-bold mt-5">Seguro</div>
+              <div class="text-gray-600 mb-0">
+                AXA Seguros
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="fw-bold mt-5">N° de Poliza</div>
+              <div class="text-gray-600 mb-0">
+                123456789
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="fw-bold mt-5">N° de Transacción</div>
+              <div class="text-gray-600 mb-0">
+                TSC192412
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="fw-bold mt-5">Notas</div>
+              <div class="text-gray-600 mb-0">
+                <i>No Disponible</i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

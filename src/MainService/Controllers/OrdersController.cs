@@ -24,4 +24,14 @@ public class OrdersController(IUnitOfWork uow, IMapper mapper, UserManager<AppUs
 
         return pagedList;
     }
+    
+    [HttpGet("{id}")]
+    public async Task<ActionResult<OrderDto>> GetByIdAsync([FromRoute] int id)
+    {
+        var order = await uow.OrderRepository.GetDtoByIdAsync(id);
+
+        if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
+
+        return order;
+    }
 }

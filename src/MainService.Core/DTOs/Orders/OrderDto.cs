@@ -17,25 +17,10 @@ public class OrderDto : BaseEntity
     public decimal AmountPaid { get; set; }
     public decimal AmountDue { get; set; }
 
-    public UserDto Patient { get; set; }
+    public UserDto Patient { get; set; }    
     public UserDto Doctor { get; set; }
     public AddressDto Address { get; set; }
-    public List<PrescriptionItemDto> Items { get; set; } = [];
-    public SaleStatus Status { get; set; } = SaleStatus.Pending;
-    public SaleDeliveryStatus DeliveryStatus { get; set; } = SaleDeliveryStatus.Pending;
-}
-
-public enum SaleStatus
-{
-    [EnumMember(Value = "Pending")] Pending,
-    [EnumMember(Value = "Completed")] Completed,
-    [EnumMember(Value = "Cancelled")] Cancelled
-}
-
-public enum SaleDeliveryStatus
-{
-    [EnumMember(Value = "Pending")] Pending,
-    [EnumMember(Value = "InProgress")] InProgress,
-    [EnumMember(Value = "Delivered")] Delivered,
-    [EnumMember(Value = "Cancelled")] Cancelled
+    public List<OrderItemDto> Items { get; set; } = [];
+    public string Status { get; set; }
+    public string DeliveryStatus { get; set; }
 }
