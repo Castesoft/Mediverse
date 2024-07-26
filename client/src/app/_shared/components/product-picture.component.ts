@@ -6,7 +6,6 @@ import { Product } from 'src/app/_models/product';
   standalone: true,
   imports: [],
   templateUrl: './product-picture.component.html',
-  styleUrl: './product-picture.component.scss'
 })
 export class ProductProfilePictureComponent implements OnInit {
 
