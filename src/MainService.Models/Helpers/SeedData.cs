@@ -75,13 +75,13 @@ public static partial class SeedData
             Name = "Metformina",
             Description = "Tratamiento de la diabetes tipo 2.",
             Price = 200,
-            Dosage = 100,
+            Dosage = 850,
             ProductPhotos = [
                 new ()
                 {
                     Photo = new ()
                     {
-                        Url = "https://www.fahorro.com/media/catalog/product/3/3/3337871330286_1_1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700",
+                        Url = "https://chedrauimx.vtexassets.com/arquivos/ids/32138501-800-auto?v=638560236813070000&width=800&height=auto&aspect=true",
                     }
                 }
             ],
@@ -94,7 +94,16 @@ public static partial class SeedData
             Name = "Lisinopril",
             Description = "Tratamiento de la hipertensión.",
             Price = 150,
-            Dosage = 200,
+            Dosage = 10,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://i0.wp.com/prixz.com/salud/wp-content/uploads/2020/06/lisinopril.jpg?fit=720%2C440&ssl=1",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "Health Corp.",
             LotNumber = "B23456",
@@ -104,7 +113,16 @@ public static partial class SeedData
             Name = "Ibuprofeno",
             Description = "Antiinflamatorio y analgésico.",
             Price = 100,
-            Dosage = 300,
+            Dosage = 400,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.benavides.com.mx/media/catalog/product/cache/13134524bf2f7c32f6bea508eba7e730/2/0/20231002_1042110.jpg",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "Wellness Labs",
             LotNumber = "C34567",
@@ -114,7 +132,16 @@ public static partial class SeedData
             Name = "Paracetamol",
             Description = "Analgésico y antipirético.",
             Price = 50,
-            Dosage = 400,
+            Dosage = 500,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.soriana.com/on/demandware.static/-/Sites-soriana-grocery-master-catalog/default/dw83b430ea/images/product/7500093754574_A.jpg",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "Medicines Co.",
             LotNumber = "D45678",
@@ -124,7 +151,16 @@ public static partial class SeedData
             Name = "Atorvastatina",
             Description = "Reducción del colesterol.",
             Price = 180,
-            Dosage = 150,
+            Dosage = 20,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://heka.mx/wp-content/uploads/1970/01/atorvastatina-psicofarma-20mg-heka.jpg",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "CardioHealth",
             LotNumber = "E56789",
@@ -134,7 +170,16 @@ public static partial class SeedData
             Name = "Amoxicilina",
             Description = "Antibiótico de amplio espectro.",
             Price = 120,
-            Dosage = 250,
+            Dosage = 500,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7501349021570.jpg?scale=500&qlty=75",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "BioPharma",
             LotNumber = "F67890",
@@ -144,7 +189,16 @@ public static partial class SeedData
             Name = "Amlodipino",
             Description = "Tratamiento de la hipertensión y angina.",
             Price = 140,
-            Dosage = 180,
+            Dosage = 5,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7502216793378.jpg?scale=500&qlty=75",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "HeartMeds",
             LotNumber = "G78901",
@@ -154,7 +208,16 @@ public static partial class SeedData
             Name = "Omeprazol",
             Description = "Tratamiento de la acidez y úlceras gástricas.",
             Price = 90,
-            Dosage = 220,
+            Dosage = 20,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7501277093472.jpg?scale=500&qlty=75",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "DigestiveHealth",
             LotNumber = "H89012",
@@ -164,7 +227,16 @@ public static partial class SeedData
             Name = "Simvastatina",
             Description = "Reducción del colesterol.",
             Price = 170,
-            Dosage = 160,
+            Dosage = 20,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.movil.farmaciasguadalajara.com/wcsstore/FGCAS/wcs/products/1187074_A_1280_AL.jpg",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "CardioMeds",
             LotNumber = "I90123",
@@ -174,7 +246,16 @@ public static partial class SeedData
             Name = "Levotiroxina",
             Description = "Tratamiento del hipotiroidismo.",
             Price = 130,
-            Dosage = 350,
+            Dosage = 100,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.plmconnection.com/plmservices/PharmaSearchEngine/Mexico/DEF/SIDEF/400x400/ifa_celtics_levotiroxina_tab_100mcg_c100.png",
+                    }
+                }
+            ],
             Unit = "mcg",
             Manufacturer = "ThyroidCare",
             LotNumber = "J01234",
@@ -184,7 +265,16 @@ public static partial class SeedData
             Name = "Clopidogrel",
             Description = "Prevención de eventos trombóticos.",
             Price = 250,
-            Dosage = 140,
+            Dosage = 75,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://resources.sears.com.mx/medios-plazavip/s2/23552/3904489/62d92f55d4bce-03c29096-bcb9-45f2-b8d2-69637743f15d-1600x1600.jpg?scale=500&qlty=75",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "AntiClot",
             LotNumber = "K12345",
@@ -194,7 +284,16 @@ public static partial class SeedData
             Name = "Furosemida",
             Description = "Diurético para la hipertensión y edema.",
             Price = 110,
-            Dosage = 270,
+            Dosage = 40,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750157390847L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "DiureticMeds",
             LotNumber = "L23456",
@@ -204,7 +303,16 @@ public static partial class SeedData
             Name = "Sertralina",
             Description = "Antidepresivo.",
             Price = 220,
-            Dosage = 190,
+            Dosage = 50,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://sanorim.mx/cdn/shop/files/Setralina.jpg?v=1686540790",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "MoodStabilizers",
             LotNumber = "M34567",
@@ -214,7 +322,16 @@ public static partial class SeedData
             Name = "Losartán",
             Description = "Tratamiento de la hipertensión.",
             Price = 160,
-            Dosage = 210,
+            Dosage = 50,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://chedrauimx.vtexassets.com/arquivos/ids/32159730-800-auto?v=638560300075600000&width=800&height=auto&aspect=true",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "BloodPressureInc",
             LotNumber = "N45678",
@@ -224,7 +341,16 @@ public static partial class SeedData
             Name = "Salbutamol",
             Description = "Broncodilatador para el asma.",
             Price = 130,
-            Dosage = 300,
+            Dosage = 100,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.fahorro.com/media/catalog/product/7/5/7501043100595.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=265&width=265&canvas=265:265",
+                    }
+                }
+            ],
             Unit = "mcg",
             Manufacturer = "RespiraMeds",
             LotNumber = "O56789",
@@ -234,7 +360,16 @@ public static partial class SeedData
             Name = "Prednisona",
             Description = "Corticosteroide antiinflamatorio.",
             Price = 200,
-            Dosage = 280,
+            Dosage = 5,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.plmconnection.com/plmservices/PharmaSearchEngine/Mexico/DEF/SIDEF/400x400/amsa_prednisona_tabs_5mg_20.png",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "AntiInflammatories",
             LotNumber = "P67890",
@@ -244,7 +379,16 @@ public static partial class SeedData
             Name = "Tramadol",
             Description = "Analgésico para el dolor moderado a severo.",
             Price = 300,
-            Dosage = 230,
+            Dosage = 150,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750138454555L.jpg",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "PainRelief",
             LotNumber = "Q78901",
@@ -254,7 +398,16 @@ public static partial class SeedData
             Name = "Cetirizina",
             Description = "Antihistamínico para alergias.",
             Price = 80,
-            Dosage = 240,
+            Dosage = 10,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.fahorro.com/media/catalog/product/7/5/7502223706156.png?optimize=medium&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700&format=jpeg",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "AllergyMeds",
             LotNumber = "R89012",
@@ -265,6 +418,15 @@ public static partial class SeedData
             Description = "Tratamiento de la diabetes.",
             Price = 400,
             Dosage = 100,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.movil.farmaciasguadalajara.com/wcsstore/FGCAS/wcs/products/1234889_A_1280_AL.jpg",
+                    }
+                }
+            ],
             Unit = "U/ml",
             Manufacturer = "DiabetesCare",
             LotNumber = "90123",
@@ -274,7 +436,16 @@ public static partial class SeedData
             Name = "Digoxina",
             Description = "Tratamiento de insuficiencia cardíaca.",
             Price = 210,
-            Dosage = 150,
+            Dosage = 1,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://representacionland.com/wp-content/uploads/2023/03/Digoxina-025mg-tab-estuche-x-10tag-LAND.jpg",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "HeartMeds",
             LotNumber = "T01234",
