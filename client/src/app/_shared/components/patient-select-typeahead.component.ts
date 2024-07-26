@@ -13,6 +13,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
+import { UserProfilePictureComponent } from "../../users/components/user-profile-picture/user-profile-picture.component";
 
 interface PatientTypeaheadOptions extends TypeaheadComplexOption {
   data: UserSummary,
@@ -21,7 +22,7 @@ interface PatientTypeaheadOptions extends TypeaheadComplexOption {
 @Component({
   selector: '[patientSelectTypeahead]',
   templateUrl: './patient-select-typeahead.component.html',
-  styleUrls: ['./patient-select-typeahead.component.scss'],
+  styleUrls: ['./styles/select-typeahead.component.scss'],
   imports: [
     ControlTypeaheadComponent,
     FaIconComponent,
@@ -30,8 +31,9 @@ interface PatientTypeaheadOptions extends TypeaheadComplexOption {
     ErrorsAlertComponent,
     AlertModule,
     JsonPipe,
-    DatePipe
-  ],
+    DatePipe,
+    UserProfilePictureComponent
+],
   standalone: true
 })
 export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
@@ -47,6 +49,7 @@ export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
   user = model.required<User | null>();
   sex = input<string | undefined>();
   key = input<string>(createId());
+  showCatalogButton = input<boolean>(true);
 
   submitted = false;
   loading = true;
@@ -135,6 +138,10 @@ export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
     } else {
       this.formGroup.controls["userTypeahead"].enable();
     }
+  };
+
+  onInputFocus = () => {
+    this.subscribeToSummaries({eventTypeahead: ''});
   };
 
   openCatalogModal = () => {

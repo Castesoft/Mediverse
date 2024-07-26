@@ -16,9 +16,17 @@ export class Product {
   discount!: number;
   dosage!: string;
   price!: number;
+  lotNumber!: string;
+  manufacturer!: string;
   photoUrl?: string;
-  createdAt!: Date;
+  createdAt!: string;
   isSelected = false;
+}
+
+export interface ProductSummary {
+  id: number;
+  name: string;
+  description: string;
 }
 
 export class ProductParams {

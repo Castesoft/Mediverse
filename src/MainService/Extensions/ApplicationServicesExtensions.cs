@@ -30,6 +30,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICloudinaryService, CloudinaryService>();
         services.AddScoped<IPermissionManager, PermissionManager>();
         services.AddScoped<IProductsService, ProductsService>();
+        services.AddScoped<IPrescriptionsService, PrescriptionsService>();
         services.AddScoped<IPhotosService, PhotosService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICodeService, CodeService>();

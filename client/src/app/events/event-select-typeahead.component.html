@@ -39,6 +39,7 @@
     <div
       (onLoading)="onTypeaheadLoading($event)"
       (onSelect)="onTypeaheadSelect($event)"
+      (onInputFocus)="onInputFocus()"
       [hideIsOptional]="true"
       [id]="'event'"
       [isInputGroupSpan]="true"
@@ -52,31 +53,33 @@
       formControlName="eventTypeahead"
     ></div>
 
-    <button
-      (click)="openCatalogModal()"
-      [class.btn-danger]="isEventSelected() && selectionErrors().length > 0"
-      [class.btn-primary]="!isEventSelected()"
-      [class.btn-success]="
-        isEventSelected() && selectionErrors().length <= 0
-      "
-      [disabled]="isDisabled()"
-      [style.height.px]="43"
-      [style.padding-bottom]="'12px'"
-      [style.padding-top]="'12px'"
-      [type]="'button'"
-      class="btn fs-1 py-2"
-      id="button-addon2"
-      type="button"
-    >
-      @if (loading) {
-        <div class="spinner-border text-white custom-spinner"
-             role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      } @else {
-        <fa-icon [icon]="icons.faWindowRestore"/>
-      }
-    </button>
+    @if (showCatalogButton()) {
+      <button
+        (click)="openCatalogModal()"
+        [class.btn-danger]="isEventSelected() && selectionErrors().length > 0"
+        [class.btn-primary]="!isEventSelected()"
+        [class.btn-success]="
+          isEventSelected() && selectionErrors().length <= 0
+        "
+        [disabled]="isDisabled()"
+        [style.height.px]="43"
+        [style.padding-bottom]="'12px'"
+        [style.padding-top]="'12px'"
+        [type]="'button'"
+        class="btn fs-1 py-2"
+        id="button-addon2"
+        type="button"
+      >
+        @if (loading) {
+          <div class="spinner-border text-white custom-spinner"
+               role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        } @else {
+          <fa-icon [icon]="icons.faWindowRestore"/>
+        }
+      </button>
+    }
   </div>
 </div>
 

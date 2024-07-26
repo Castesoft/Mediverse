@@ -4,7 +4,8 @@ import {
   inject,
   input, output,
   Renderer2,
-  Self
+  Self,
+  ViewEncapsulation
 } from "@angular/core";
 import {PopoverProps} from "src/app/_models/popover";
 import {NgControl, FormControl, ReactiveFormsModule} from "@angular/forms";
@@ -21,7 +22,8 @@ import {Observable} from "rxjs";
   selector: "[controlTypeahead]",
   templateUrl: "./control-typeahead.component.html",
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, TypeaheadModule, NgTemplateOutlet, NgIf, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent]
+  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, TypeaheadModule, NgTemplateOutlet, NgIf, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent],
+  // styles: '::ng-deep .dropdown-menu { width: 100%;}'
 })
 export class ControlTypeaheadComponent {
   service = inject(FormsService);
@@ -46,6 +48,7 @@ export class ControlTypeaheadComponent {
 
   onSelect = output<TypeaheadMatch>();
   onLoading = output<boolean>();
+  onInputFocus = output();
 
   get control(): FormControl {
     return this.ngControl.control as FormControl;

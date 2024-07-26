@@ -72,6 +72,27 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         return item;
     }
 
+    public async Task<List<ProductSummaryDto>> GetSummaryDtosAsync(ProductParams param, ClaimsPrincipal user)
+    {
+        var query = context.Products
+            .Include(x => x.DoctorProduct)
+            .AsNoTracking()
+            // TODO - Uncomment after merge
+            // .Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null) 
+            .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider);
+
+        if (!string.IsNullOrEmpty(param.Search))
+        {
+            string searchParam = param.Search.Replace(" ", "").ToLower();
+
+            query = query.Where(x =>
+                EF.Functions.Like(x.Name.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
+                EF.Functions.Like(x.Description.Replace(" ", "").ToLower(), $"%{searchParam}%"));
+        }
+
+        return await query.ToListAsync();
+    }
+
     public async Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user)
     {
         var query = context.Products

@@ -28,6 +28,7 @@
   [adaptivePosition]="true"
   (typeaheadOnSelect)="onSelect.emit($event)"
   (typeaheadLoading)="onLoading.emit($event)"
+  (focus)="onInputFocus.emit()"
   [typeaheadOptionField]="typeaheadOptionField()"
   [typeaheadItemTemplate]="typeaheadItemTemplate()"
   [typeaheadMinLength]="0"
@@ -42,6 +43,7 @@
   }"
   [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
   [attr.aria-label]="label() + ' input'"
+  container="body"
 >
 
 <ng-template #readonlyInput>

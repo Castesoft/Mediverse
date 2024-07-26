@@ -169,6 +169,7 @@ public class MappingProfiles : Profile
         CreateMap<RegisterDto, AppUser>();
 
         CreateMap<Product, ProductDto>();
+        CreateMap<Product, ProductSummaryDto>();
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
     }

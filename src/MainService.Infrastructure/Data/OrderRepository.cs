@@ -83,7 +83,6 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
                 query = query.Where(x => x.DoctorOrder.DoctorId == userId);
             }
         }
-
         if (param.DateFrom != DateTime.MinValue)
             query = query.Where(x => x.CreatedAt >= param.DateFrom);
 

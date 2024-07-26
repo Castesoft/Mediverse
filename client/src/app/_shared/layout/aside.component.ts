@@ -200,6 +200,8 @@ Gestión Clínica
                   <span class="menu-title">Recetas</span>
                 </a>
               </div>
+            }
+            @if (accountService.hasRole(['Admin', 'Doctor'])) {
               <div class="menu-item">
                 <a class="menu-link"
                    [routerLink]="['/home/orders']">

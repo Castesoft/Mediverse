@@ -1,0 +1,92 @@
+﻿<ng-template
+  #patientDisplay
+  let-index="index"
+  let-model="item">
+  <div class="d-flex align-items-center">
+    <div class="d-flex flex-column ms-4">
+      <div class="fw-bolder fs-5">{{ model.data.name }}</div>
+      <div class="fs-6 text-gray-600">{{ model.data.description }}</div>
+    </div>
+  </div>
+</ng-template>
+
+
+<div [formGroup]="formGroup">
+  <label
+    class="form-label fw-semi-bold fs--1 mb-2 d-flex m-0"
+  >
+    {{ label() }}
+
+    @if (popover()) {
+      <fa-icon
+        class="ms-1"
+        [icon]="icons.faRegCircleQuestion"
+        [popover]="popover()"
+        triggers="mouseenter:mouseleave"
+      />
+    }
+  </label>
+  <div class="input-group mb-0 mb-md-3 d-flex flex-grow-1 align-items-start">
+    <div
+      (onLoading)="onTypeaheadLoading($event)"
+      (onSelect)="onTypeaheadSelect($event)"
+      (onInputFocus)="onInputFocus()"
+      [hideIsOptional]="true"
+      [id]="'user'"
+      [isInputGroupSpan]="true"
+      [placeholder]="'Seleccione o busque un medicamento'"
+      [submitted]="submitted"
+      [typeaheadItemTemplate]="patientDisplay"
+      [typeaheadOptionField]="'name'"
+      [typeaheadOptions]="productSummaries$"
+      class="col"
+      controlTypeahead
+      formControlName="productTypeahead"
+    ></div>
+
+    @if (showCatalogButton()) {
+      <button
+        (click)="openCatalogModal()"
+        [class.btn-danger]="isProductSelected() && selectionErrors().length > 0"
+        [class.btn-primary]="!isProductSelected()"
+        [class.btn-success]="
+          isProductSelected() && selectionErrors().length <= 0
+        "
+        [disabled]="isDisabled()"
+        [style.height.px]="43"
+        [style.padding-bottom]="'12px'"
+        [style.padding-top]="'12px'"
+        [type]="'button'"
+        class="btn fs-1 py-2"
+        id="button-addon2"
+        type="button"
+      >
+        @if (loading) {
+          <div class="spinner-border text-white custom-spinner"
+               role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        } @else {
+          <fa-icon [icon]="icons.faWindowRestore"/>
+        }
+      </button>
+    }
+  </div>
+</div>
+
+@if (selectionErrors().length > 0) {
+  <alert [type]="'danger'">
+    <div class="d-flex align-items-center">
+      <div>
+        <div class="fw-bold fs--1">Error en la selección</div>
+        <div class="fs--1">
+          <ul class="mb-0">
+            @for (error of selectionErrors(); track error) {
+              <li>{{ error }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </alert>
+}

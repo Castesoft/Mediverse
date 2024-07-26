@@ -17,9 +17,48 @@ namespace MainService.Controllers;
 
 public class PrescriptionsController(
     IUnitOfWork uow,
+    IPrescriptionsService service,
     IMapper mapper,
     UserManager<AppUser> userManager) : BaseApiController
 {
+    private static readonly string subject = "receta";
+    private static readonly string subjectArticle = "La";
+
+    public async Task<ActionResult<PagedList<PrescriptionDto>>> GetPagedListAsync([FromQuery] PrescriptionParams param)
+    {
+        var pagedList = await uow.PrescriptionRepository.GetPagedListAsync(param, User);
+
+        Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
+            pagedList.TotalCount, pagedList.TotalPages));
+
+        return pagedList;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PrescriptionDto>> GetByIdAsync([FromRoute]int id)
+    {
+        var item = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        return item;
+    }
+
+    // [HttpPut("{id}")]
+    // public async Task<ActionResult<PrescriptionDto>> UpdateAsync([FromRoute] int id, [FromBody] PrescriptionUpdateDto request)
+    // {
+    //     var item = await uow.PrescriptionRepository.GetByIdAsync(id);
+
+    //     if (item == null) return NotFound($"{subjectArticle} {subject} con ID {id} no fue encontrado.");
+
+    //     mapper.Map(request, item);
+
+    //     if (!await uow.Complete()) return BadRequest($"Error al actualizar {subjectArticle} {subject} con ID {id}.");
+
+    //     var itemToReturn = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
+    //     return itemToReturn;
+    // }
+
     [HttpPost("{doctorId}")]
     public async Task<ActionResult<PrescriptionDto>> CreateAsync([FromRoute] int doctorId,
         [FromBody] PrescriptionCreateDto request)
@@ -164,5 +203,19 @@ public class PrescriptionsController(
         }
 
         return order;
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteByIdAsync(int id)
+    {
+        var item = await uow.PrescriptionRepository.GetByIdAsNoTrackingAsync(id);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        var deleteResult = await service.DeleteAsync(item);
+
+        if (!deleteResult) return BadRequest($"Error al eliminar {subject} con Id: {item.Id}.");
+
+        return Ok();
     }
 }

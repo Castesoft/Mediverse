@@ -1,18 +1,19 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
+import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
-import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, Role, SortOptions, View } from "src/app/_models/types";
-import { FilterForm, Product, ProductParams } from "src/app/_models/product";
+import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, SortOptions, View } from "src/app/_models/types";
+import { FilterForm, Product, ProductParams, ProductSummary } from "src/app/_models/product";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
 import { ProductDetailModalComponent, ProductEditModalComponent, ProductNewModalComponent, ProductsCatalogModalComponent, ProductsFilterModalComponent } from "src/app/products/modals";
 import { environment } from "src/environments/environment";
+import { UserParams, UserSummary } from "src/app/_models/user";
 
 @Injectable({
   providedIn: "root",
@@ -39,9 +40,17 @@ export class ProductsService {
   hideCatalogModal = () => this.catalogModalRef.hide();
 
   naming: NamingSubjectType = {
-    singular: "producto", plural: "productos", pluralTitlecase: "Productos", singularTitlecase: "Producto",
-    catalogRoute: "/home/products", createRoute: "/home/products/create",
-    title: "Servicios", undefinedArticle: "uno", definedArticle: "lo", undefinedArticlePlural: "unos", definedArticlePlural: "los",
+    singular: "producto",
+    plural: "productos",
+    pluralTitlecase: "Productos",
+    singularTitlecase: "Producto",
+    catalogRoute: "/home/products",
+    createRoute: "/home/products/create",
+    title: "Servicios",
+    undefinedArticle: "uno",
+    definedArticle: "lo",
+    undefinedArticlePlural: "unos",
+    definedArticlePlural: "los",
     articleSex: 'masculine',
   };
 
@@ -110,7 +119,7 @@ export class ProductsService {
 
   selectAll(key: string, event: any) {
     const items = getItemsByKey<Product>(key, this.cacheMap);
-    // if all of them are already selected, then disselect all of them...
+    // if all of them are already selected, then deselect all of them...
     // however if there's at least one that is not selected, then select all of them
     const allSelected = items.every((item) => item.isSelected);
     items.forEach((item) => item.isSelected = !allSelected);
@@ -136,6 +145,27 @@ export class ProductsService {
 
     this.selecteds.next({ ...this.selecteds.value, [key]: value });
   };
+
+  // Summaries Handlers
+  private summaryCacheMap: Map<string, Map<string, ProductSummary[]>> = new Map<string, Map<string, ProductSummary[]>>();
+  private summaryCacheExists = (key: string): boolean => this.summaryCacheMap.has(key);
+  private getSummaryCache = (key: string): Map<string, ProductSummary[]> => {
+    if (!this.summaryCacheExists(key)) this.summaryCacheMap.set(key, new Map<string, ProductSummary[]>());
+    return this.summaryCacheMap.get(key)!;
+  };
+  private summaryMap = new Map<string, ProductSummary[] | null>();
+  private getSummary = (key: string): ProductSummary[] => this.summaryMap.get(key) || [];
+  private setSummary = (key: string, value: ProductSummary[] | null): void => {
+    this.summaryMap.set(key, value);
+  };
+  private summaries = new BehaviorSubject<{ [key: string]: ProductSummary[] | null }>({});
+  summaries$ = this.summaries.asObservable();
+  summary$ = (key: string): Observable<ProductSummary[] | null> => this.summaries$.pipe(map(summaries => summaries[key]));
+  setSummary$ = (key: string, value: ProductSummary[] | null): void => this.summaries.next({
+    ...this.summaries.value,
+    [key]: value
+  });
+
 
   resetSelected = (key: string): void => this.selecteds.next({ ...this.selecteds.value, [key]: undefined });
   resetSelecteds = (): void => this.selecteds.next({});
@@ -198,6 +228,32 @@ export class ProductsService {
           return response;
         })
       );
+  }
+
+  getSummaryByValue(key: string, summaryParams: ProductParams): Observable<ProductSummary[]> {
+    const { search } = summaryParams;
+
+    this.setLoading(key, true);
+    this.summaryCacheExists(key);
+
+    let params = summaryParams.toHttpParams();
+
+    const response = this.getSummaryCache(key).get(search ?? '');
+
+    if (response) {
+      this.setSummary(key, response);
+      this.setLoading(key, false);
+      return of(response);
+    }
+
+    return this.http.get<ProductSummary[]>(`${this.baseUrl}summary`, {params}).pipe(
+      tap(response => {
+        this.getSummaryCache(key).set(search ?? '', response);
+        this.setSummary(key, response);
+        this.setLoading(key, false);
+      }),
+      finalize(() => this.setLoading(key, false))
+    );
   }
 
   getById(id: number): Observable<Product> {

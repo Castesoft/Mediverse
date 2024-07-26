@@ -8,6 +8,8 @@ public class PrescriptionDto
 {
     public int Id { get; set; }
     public int ExchangeAmount { get; set; }
+    public string Notes { get; set; }
+    public DateTime CreatedAt { get; set; }
     public AddressDto Clinic { get; set; }
     public UserDto Patient { get; set; }
     public UserDto Doctor { get; set; }

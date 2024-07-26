@@ -870,6 +870,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("ExchangeAmount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Prescriptions");
