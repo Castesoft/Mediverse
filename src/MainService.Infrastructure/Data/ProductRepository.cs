@@ -81,6 +81,15 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
             // .Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null) 
             .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider);
 
+        if (!string.IsNullOrEmpty(param.Search))
+        {
+            string searchParam = param.Search.Replace(" ", "").ToLower();
+
+            query = query.Where(x =>
+                EF.Functions.Like(x.Name.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
+                EF.Functions.Like(x.Description.Replace(" ", "").ToLower(), $"%{searchParam}%"));
+        }
+
         return await query.ToListAsync();
     }
 
