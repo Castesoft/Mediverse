@@ -34,6 +34,31 @@ public class PrescriptionsController(
         return pagedList;
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PrescriptionDto>> GetByIdAsync([FromRoute]int id)
+    {
+        var item = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        return item;
+    }
+
+    // [HttpPut("{id}")]
+    // public async Task<ActionResult<PrescriptionDto>> UpdateAsync([FromRoute] int id, [FromBody] PrescriptionUpdateDto request)
+    // {
+    //     var item = await uow.PrescriptionRepository.GetByIdAsync(id);
+
+    //     if (item == null) return NotFound($"{subjectArticle} {subject} con ID {id} no fue encontrado.");
+
+    //     mapper.Map(request, item);
+
+    //     if (!await uow.Complete()) return BadRequest($"Error al actualizar {subjectArticle} {subject} con ID {id}.");
+
+    //     var itemToReturn = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
+    //     return itemToReturn;
+    // }
+
     [HttpPost("{doctorId}")]
     public async Task<ActionResult<PrescriptionDto>> CreateAsync([FromRoute] int doctorId,
         [FromBody] PrescriptionCreateDto request)
