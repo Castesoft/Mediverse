@@ -13,6 +13,8 @@ import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
+import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { ProductProfilePictureComponent } from "src/app/_shared/components/product-picture.component";
 
 interface ProductTypeaheadOptions extends TypeaheadComplexOption {
   data: ProductSummary,
@@ -21,7 +23,6 @@ interface ProductTypeaheadOptions extends TypeaheadComplexOption {
 @Component({
   selector: '[productSelectTypeahead]',
   templateUrl: './product-select-typeahead.component.html',
-  styleUrls: ['./styles/select-typeahead.component.scss'],
   imports: [
     ControlTypeaheadComponent,
     FaIconComponent,
@@ -31,6 +32,8 @@ interface ProductTypeaheadOptions extends TypeaheadComplexOption {
     AlertModule,
     JsonPipe,
     DatePipe,
+    UserProfilePictureComponent,
+    ProductProfilePictureComponent,
   ],
   standalone: true
 })

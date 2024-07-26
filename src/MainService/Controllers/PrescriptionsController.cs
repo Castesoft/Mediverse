@@ -90,7 +90,8 @@ public class PrescriptionsController(
                 DoctorId = User.GetUserId()
             },
             ExchangeAmount = request.ExchangeAmount ?? 1,
-            PrescriptionItems = new List<PrescriptionItem>()
+            PrescriptionItems = new List<PrescriptionItem>(),
+            Notes = request.Notes
         };
 
         var foreignItems = new List<OrderItem>();

@@ -3,6 +3,12 @@
   let-index="index"
   let-model="item">
   <div class="d-flex align-items-center">
+    <div class="symbol symbol-50px symbol-circle">
+      <div productPicture [product]="model.data"></div>
+      <div
+        class="bg-success position-absolute border border-4 border-body h-15px w-15px rounded-circle translate-middle start-100 top-100 ms-n3 mt-n3">
+      </div>
+    </div>
     <div class="d-flex flex-column ms-4">
       <div class="fw-bolder fs-5">{{ model.data.name }}</div>
       <div class="fs-6 text-gray-600">{{ model.data.description }}</div>

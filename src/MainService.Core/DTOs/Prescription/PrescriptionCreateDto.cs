@@ -11,4 +11,5 @@ public class PrescriptionCreateDto
     
     public int? EventId { get; set; }
     public int? ExchangeAmount { get; set; }
+    public string Notes { get; set; }
 }

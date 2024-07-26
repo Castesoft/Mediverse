@@ -1,0 +1,11 @@
+@if (product().photoUrl) {
+  <div class="symbol symbol-50px symbol-circle">
+    <img [src]="product().photoUrl" alt="Emma Smith" class="w-100" />
+  </div>
+} @else {
+  <div class="symbol symbol-50px symbol-circle">
+    <div [class]="'symbol-label fs-3 bg-light-' + bootstrapClass + ' text-' + bootstrapClass">
+      {{ product().name[0] }}
+    </div>
+  </div>
+}

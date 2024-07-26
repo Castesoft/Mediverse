@@ -76,6 +76,15 @@ public static partial class SeedData
             Description = "Tratamiento de la diabetes tipo 2.",
             Price = 200,
             Dosage = 100,
+            ProductPhotos = [
+                new ()
+                {
+                    Photo = new ()
+                    {
+                        Url = "https://www.fahorro.com/media/catalog/product/3/3/3337871330286_1_1.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700",
+                    }
+                }
+            ],
             Unit = "mg",
             Manufacturer = "Pharma Inc.",
             LotNumber = "A12345",

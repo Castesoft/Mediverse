@@ -58,7 +58,7 @@ export class PrescriptionFormComponent {
   key = input<string>();
   style = input<FormControlStyles>('solid');
   _key = createId();
-  
+
   item = input<Prescription>();
 
   prescription: Prescription = {
@@ -70,7 +70,7 @@ export class PrescriptionFormComponent {
     isCollapsed: true,
     createdAt: new Date()
   }
-  
+
   patient?: User;
   selectedPatientKey = createId();
 
@@ -81,7 +81,7 @@ export class PrescriptionFormComponent {
   selectedEventKey = createId();
 
   isSubmitted = false;
-  
+
   formGroup: FormGroup = this.fb.group({
     notes: ['', [Validators.required]]
   });
@@ -149,8 +149,6 @@ export class PrescriptionFormComponent {
               unit: ""
             };
           });
-
-          console.log(this.prescription);
         }
       }
     });
@@ -182,13 +180,15 @@ export class PrescriptionFormComponent {
       prescriptionItems: this.prescription.items.map((item) => {
         return {
           instructions: item.instructions,
-          dosage: '',
+          dosage: item.dosage,
           notes: item.notes,
-          productId: item.product?.id || null,
+          productId: item.itemId || null,
           quantity: item.quantity
         }
       })
     };
+
+    console.log(jsonPayload);
 
     const doctorId = this.accountService.current()?.id;
 

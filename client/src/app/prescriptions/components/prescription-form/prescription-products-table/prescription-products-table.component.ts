@@ -55,11 +55,11 @@ export class PrescriptionProductsTableComponent implements OnInit {
           this.product = null;
           this.onProductSelected.emit({
             ...product,
-            dosage: product.quantity.toString(),
+            dosage: product.dosage.toString(),
             instructions: "",
             itemId: product.id,
             notes: "",
-            quantity: 0
+            quantity: 1
           });
         }
       }

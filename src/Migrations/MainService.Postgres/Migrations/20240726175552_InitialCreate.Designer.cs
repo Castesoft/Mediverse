@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240726152759_InitialCreate")]
+    [Migration("20240726175552_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -677,14 +677,18 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("DeliveryStatus")
-                        .HasColumnType("integer");
+                    b.Property<string>("DeliveryStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<double>("Discount")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("Subtotal")
                         .HasColumnType("numeric");
@@ -951,6 +955,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("double precision");
 
+                    b.Property<int>("Dosage")
+                        .HasColumnType("integer");
+
                     b.Property<string>("LotNumber")
                         .HasColumnType("text");
 
@@ -964,9 +971,6 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Unit")
                         .HasColumnType("text");
