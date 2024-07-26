@@ -1,100 +1,36 @@
-import {
-  Component,
-  forwardRef,
-  inject,
-  input,
-  OnDestroy,
-  OnInit,
-  viewChild,
-} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {IconsService} from 'src/app/_services/icons.service';
-import {Pagination} from 'src/app/_models/pagination';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {Subject, takeUntil} from 'rxjs';
-import {DecimalPipe} from '@angular/common';
-import {AlertModule} from 'ngx-bootstrap/alert';
-import {CatalogMode, Role, View} from 'src/app/_models/types';
-import {Router, RouterModule} from '@angular/router';
-import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
-import {FilterForm, Event, EventParams} from 'src/app/_models/event';
-import {ControlsModule} from 'src/app/_forms/controls.module';
-import {TableModule} from 'src/app/_shared/table/table.module';
-import {CatalogModule} from 'src/app/_shared/catalog.module';
-import {calcDateDiff} from 'src/app/_utils/util';
-import {EventsFilterMenuComponent} from 'src/app/events/components/events-filter-menu.component';
-import {EventsTableComponent} from 'src/app/events/components/events-table.component';
-import {EventsService} from 'src/app/_services/events.service';
-import {LayoutModule} from 'src/app/_shared/layout.module';
-import {
-  CalendarOptions,
-  Calendar,
-  EventClickArg,
-  DateSelectArg,
-} from '@fullcalendar/core';
+import { Component, forwardRef, inject, input, OnDestroy, OnInit, viewChild, } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { IconsService } from 'src/app/_services/icons.service';
+import { Pagination } from 'src/app/_models/pagination';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Subject, takeUntil } from 'rxjs';
+import { DatePipe, DecimalPipe, JsonPipe } from '@angular/common';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { CatalogMode, Role, View } from 'src/app/_models/types';
+import { Router, RouterModule } from '@angular/router';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { Event, EventParams, FilterForm } from 'src/app/_models/event';
+import { ControlsModule } from 'src/app/_forms/controls.module';
+import { TableModule } from 'src/app/_shared/table/table.module';
+import { CatalogModule } from 'src/app/_shared/catalog.module';
+import { calcDateDiff } from 'src/app/_utils/util';
+import { EventsFilterMenuComponent } from 'src/app/events/components/events-filter-menu.component';
+import { EventsTableComponent } from 'src/app/events/components/events-table.component';
+import { EventsService } from 'src/app/_services/events.service';
+import { LayoutModule } from 'src/app/_shared/layout.module';
+import { Calendar, CalendarOptions, DateSelectArg, EventClickArg, } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridDayPlugin from '@fullcalendar/timegrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
-import interactionPlugin, {
-  DateClickArg,
-  EventDragStopArg,
-} from '@fullcalendar/interaction';
-import {FullCalendarComponent} from '@fullcalendar/angular';
-import {FullCalendarModule} from '@fullcalendar/angular';
-import {ButtonsModule} from "ngx-bootstrap/buttons";
-import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
+import interactionPlugin, { DateClickArg, EventDragStopArg, } from '@fullcalendar/interaction';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
+import { ButtonsModule } from "ngx-bootstrap/buttons";
+import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 
 @Component({
-  host: {class: 'pb-6'},
+  host: { class: 'pb-6' },
   selector: 'div[eventsCalendar]',
-  template: `
-    <div class="card-header">
-      <h2 class="card-title fw-bold">Citas</h2>
-      <div class="card-toolbar">
-        <ul class="nav nav-pills me-3 mb-2 mb-sm-0">
-          <li class="nav-item m-0">
-            <a class="btn btn-icon btn-light btn-color-muted btn-active-primary me-3"
-               (click)="calendarView = 'table'"
-               [class.active]="calendarView === 'table'"
-               data-bs-toggle="tab">
-              <i class="ki-duotone ki-row-horizontal fs-1">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-            </a>
-          </li>
-          <li class="nav-item m-0">
-            <a class="btn btn-icon btn-light btn-color-muted btn-active-primary" data-bs-toggle="tab"
-               (click)="calendarView = 'calendar'"
-               [class.active]="calendarView === 'calendar'">
-              <i class="ki-duotone ki-calendar fs-1">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-            </a>
-          </li>
-        </ul>
-        <button
-          createBtn
-          (click)="service.clickLink(null, null, key(), 'create', 'modal')"
-          [naming]="service.naming!"
-        ></button>
-
-      </div>
-    </div>
-
-    @if (calendarOptions && calendarView === 'calendar') {
-      <div class="card-body">
-        <full-calendar #fullcalendar [options]="calendarOptions">
-          <ng-template #eventContent let-arg>
-            <b>{{ arg.event.title }}</b> - {{ arg.event.start.getDate() }}
-          </ng-template>
-        </full-calendar>
-      </div>
-    } @else {
-      <div eventsCatalog [key]="key()" [role]="role()" [mode]="mode()" [view]="view()" [hideAddButton]="true"></div>
-    }
-  `,
+  templateUrl: `./events-calendar.component.html`,
   standalone: true,
   imports: [
     BsDropdownModule,
@@ -113,6 +49,8 @@ import {EventsCatalogComponent} from "src/app/events/components/events-catalog.c
     FullCalendarModule,
     ButtonsModule,
     EventsCatalogComponent,
+    DatePipe,
+    JsonPipe,
   ],
 })
 export class EventsCalendarComponent implements OnInit, OnDestroy {
@@ -186,19 +124,26 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
+  private getRandomColorClass = (): string => {
+    const colors = ['bg-primary', 'bg-info', 'bg-success', 'bg-warning'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
   private loadData(params: EventParams) {
     this.service.loadPagedList(this.role(), this.key(), params).subscribe({
       next: (response) => {
-        const {result, pagination} = response;
+        const { result, pagination } = response;
         this.data = result;
         this.pagination = pagination;
         if (this.calendarOptions && result) {
           this.calendarOptions.events = result!.map((event) => {
             return {
-              title: `${event.patient?.firstName} ${event.service?.name}`,
+              patient: `${event.patient?.firstName} ${event.patient?.lastName}`,
+              description: `${event.service?.name}`,
               start: event.dateFrom,
               end: event.dateTo,
               id: event.id,
+              bgColor: this.getRandomColorClass(),
             } as any;
           });
         }
@@ -211,8 +156,8 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   }
 
   private handleFormValueChange = () => {
-    const {controls, value} = this.form.group;
-    const {dateRange} = controls;
+    const { controls, value } = this.form.group;
+    const { dateRange } = controls;
 
     this.params.updateFromPartial({
       ...value,
@@ -240,6 +185,25 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
       arg.date,
       arg.date
     );
+  }
+
+  formatTimeRange = (start: Date, end: Date): string => {
+    const startHours = start.getHours();
+    const endHours = end.getHours();
+    const startPeriod = startHours >= 12 ? 'PM' : 'AM';
+    const endPeriod = endHours >= 12 ? 'PM' : 'AM';
+
+    const startTime = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    const endTime = end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    const startTimeFormatted = startTime.replace(/AM|PM/, '').trim();
+    const endTimeFormatted = endTime.replace(/AM|PM/, '').trim();
+
+    if (startPeriod === endPeriod) {
+      return `${startTimeFormatted} - ${endTimeFormatted} ${endPeriod}`;
+    } else {
+      return `${startTimeFormatted} ${startPeriod} - ${endTimeFormatted} ${endPeriod}`;
+    }
   }
 
   handleEventClick(arg: EventClickArg) {
