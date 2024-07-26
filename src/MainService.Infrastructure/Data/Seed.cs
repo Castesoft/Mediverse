@@ -309,7 +309,7 @@ public static class Seed
                 {
                     Name = product.Name,
                     Description = product.Description,
-                    Quantity = product.Quantity,
+                    Dosage = product.Dosage,
                     Unit = product.Unit,
                     Manufacturer = product.Manufacturer,
                     LotNumber = product.LotNumber,

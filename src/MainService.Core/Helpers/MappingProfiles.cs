@@ -92,7 +92,22 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.OrderAddress.Address))
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientOrder.Patient))
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorOrder.Doctor))
-            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString().ToLower()))
+            .ForMember(dest => dest.DeliveryStatus, opt => opt.MapFrom(src => src.DeliveryStatus.ToString().ToLower()));
+
+        CreateMap<OrderItem, OrderItemDto>()
+            .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
+            .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))
+            .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Item.Unit))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item.Price))
+            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
+            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
+            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber));
 
         CreateMap<OrderItem, PrescriptionItemDto>()
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
@@ -106,7 +121,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
             .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
             .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber));
-        
+
         CreateMap<AppRole, RoleDto>();
         CreateMap<AppUser, DoctorDto>();
         CreateMap<AppPermission, PermissionDto>();

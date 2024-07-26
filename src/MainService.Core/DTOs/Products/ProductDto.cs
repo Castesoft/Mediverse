@@ -10,6 +10,7 @@ public class ProductDto
     public string Manufacturer { get; set; }
     public string LotNumber { get; set; }
     public string Unit { get; set; }
+    public int Dosage { get; set; }
     public int Quantity { get; set; }
     public DateTime CreatedAt { get; set; }
 }
