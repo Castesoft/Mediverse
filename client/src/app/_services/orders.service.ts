@@ -27,13 +27,13 @@ export class OrdersService {
   baseUrl = `${environment.apiUrl}orders/`;
 
   naming: NamingSubjectType = {
-    singular: "orden",
-    plural: "ordenes",
-    pluralTitlecase: "Ordenes",
-    singularTitlecase: "Orden",
+    singular: "pedido",
+    plural: "pedidos",
+    pluralTitlecase: "Pedidos",
+    singularTitlecase: "Pedido",
     catalogRoute: "/home/orders",
     createRoute: "/home/orders/create",
-    title: "Servicios",
+    title: "Pedidos",
     undefinedArticle: "uno",
     definedArticle: "lo",
     undefinedArticlePlural: "unos",
@@ -43,17 +43,11 @@ export class OrdersService {
 
   columns: Column[] = [
     { label: "Fecha", name: "createdAt" },
-    { label: "Total", name: "total" },
-    { label: "Subtotal", name: "subtotal" },
-    { label: "Descuento", name: "discount" },
-    { label: "Impuesto", name: "tax" },
-    { label: "Monto Pagado", name: "amountPaid" },
-    { label: "Monto Pendiente", name: "amountDue" },
     { label: "Paciente", name: "patient" },
-    { label: "Doctor", name: "doctor" },
-    { label: "Dirección", name: "address" },
     { label: "Estado", name: "status" },
-    { label: "Estado de Entrega", name: "deliveryStatus" },
+    { label: "Entrega", name: "deliveryStatus" },
+    { label: "Dirección", name: "address" },
+    { label: "Total", name: "total", options: { justify: "end" } },
   ];
 
   private cacheMap: Map<string, Map<string, PaginatedResult<Order[]>>> = new Map<string, Map<string, PaginatedResult<Order[]>>>();
@@ -239,7 +233,7 @@ export class OrdersService {
     );
   }
 
-  update(id: number, formData: FormData): Observable<Order> {
+  update(id: number, formData: any): Observable<Order> {
     return this.http.put<Order>(`${this.baseUrl}${id}`, formData).pipe(
       tap(response => {
         // TODO

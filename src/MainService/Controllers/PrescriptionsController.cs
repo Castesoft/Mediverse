@@ -54,16 +54,24 @@ public class PrescriptionsController(
             PrescriptionItems = new List<PrescriptionItem>()
         };
 
-        var foreignItems = new List<Product>();
+        var foreignItems = new List<OrderItem>();
 
         foreach (var item in request.PrescriptionItems)
         {
             var product = await uow.ProductRepository.GetByIdAsync(item.ProductId);
             if (product == null) return NotFound($"Producto {item.ProductId} no existe");
 
-            if (product.DoctorProduct.DoctorId != doctorId)
+            if (product.DoctorProduct?.DoctorId != doctorId)
             {
-                foreignItems.Add(product);
+                foreignItems.Add(new OrderItem
+                {
+                    Quantity = item.Quantity,
+                    Dosage = product.Dosage.ToString(),
+                    Instructions = item.Instructions,
+                    Notes = item.Notes,
+                    Unit = product.Unit,
+                    Item = product
+                });
             }
 
             newPrescription.PrescriptionItems.Add(new PrescriptionItem
@@ -128,7 +136,7 @@ public class PrescriptionsController(
         return await uow.PrescriptionRepository.GetDtoByIdAsync(newPrescription.Id);
     }
 
-    private async Task<Order> CreateOrder(List<Product> products)
+    private async Task<Order> CreateOrder(List<OrderItem> orderItems)
     {
         var order = new Order
         {
@@ -143,21 +151,12 @@ public class PrescriptionsController(
             DoctorOrder = null,
             OrderAddress = null,
             OrderItems = new List<OrderItem>(),
-            Status = SaleStatus.Pending,
-            DeliveryStatus = SaleDeliveryStatus.Pending
+            Status = OrderStatus.Pending,
+            DeliveryStatus = OrderDeliveryStatus.Processing
         };
 
-        foreach (var product in products)
+        foreach (var orderItem in orderItems)
         {
-            var orderItem = new OrderItem
-            {
-                Item = product,
-                Quantity = product.Quantity,
-                Price = product.Price,
-                Discount = product.Discount,
-                Order = order
-            };
-
             order.OrderItems.Add(orderItem);
             order.Subtotal += orderItem.Price * orderItem.Quantity;
             order.Tax += order.Subtotal * (decimal)0.16;

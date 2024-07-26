@@ -20,6 +20,7 @@ export class PatientSummaryCardComponent implements OnInit {
 
   key = input.required<string>();
   item = model.required<User>();
+  headerTitle = input<string>();
 
   isDetailsCollapsed = true;
   photoUrl = 'https://i.pravatar.cc/300';
