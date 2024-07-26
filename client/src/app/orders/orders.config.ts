@@ -4,11 +4,12 @@ import { LayoutModule } from "src/app/_shared/layout.module";
 import { ActivatedRoute, ResolveFn, Router, RouterModule } from "@angular/router";
 import { OrdersCatalogComponent } from "src/app/orders/orders-catalog.component";
 import { FormUse, Role, View } from "src/app/_models/types";
-import { OrdersService } from "src/app/_services/orders.service";
 import { OrderDetailComponent } from "src/app/orders/order-detail.component";
 import { createId } from "@paralleldrive/cuid2";
-import { Order } from "src/app/_models/order";
 import { Subject, takeUntil } from "rxjs";
+import { OrderEditComponent } from "src/app/orders/order-edit.component";
+import { OrdersService } from "src/app/_services/orders.service";
+import { Order } from "src/app/_models/order";
 
 export const titleDetailResolver: ResolveFn<string> = (route, state) => {
   const service = inject(OrdersService);
@@ -23,6 +24,15 @@ export const itemResolver: ResolveFn<Order | null> = (route, state) => {
   const id = +route.paramMap.get('id')!;
   return service.getById(id);
 };
+
+export const titleEditResolver: ResolveFn<string> = (route, state) => {
+  const service = inject(OrdersService);
+  const id = +route.paramMap.get('id')!;
+  service.getById(id).subscribe();
+  const order = service.getCurrent();
+  if (!order) return 'Editar pedido';
+  return `Editar pedido - #${order.id}`;
+}
 
 @Component({
   selector: 'orders-route',
@@ -56,6 +66,70 @@ export class CatalogComponent implements OnInit {
   view: View = 'page';
 
   ngOnInit(): void {
+  }
+}
+
+@Component({
+  selector: 'order-edit-route',
+  template: `
+    @if (id && item) {
+      <div
+        orderEditView
+        [id]="id"
+        [use]="use"
+        [view]="view"
+        [key]="key"
+        [item]="item"
+        [role]="role"
+      ></div>
+    }
+  `,
+  standalone: true,
+  imports: [OrderEditComponent, RouterModule, LayoutModule],
+})
+export class EditComponent implements OnInit {
+  private ordersService = inject(OrdersService);
+  private ngUnsubscribe = new Subject<void>();
+  private route = inject(ActivatedRoute);
+
+  item?: Order;
+  id?: number;
+  use: FormUse = 'edit';
+  view: View = 'page';
+  label?: string;
+  key = undefined;
+  role: Role = 'Patient';
+
+  ngOnInit(): void {
+    this.subscribeToParams();
+    this.subscribeToRouteData();
+  }
+
+  private subscribeToRouteData = (): void => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data): void => {
+        this.item = data['item'];
+        if (this.item) this.label = this.item.patient?.fullName;
+      },
+    });
+  }
+
+  private subscribeToParams = (): void => {
+    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (params): void => {
+        this.id = +params.get('id')!;
+        this.getOrder(this.id);
+      },
+    });
+  }
+
+  private getOrder = (id: number): void => {
+    this.ordersService.getById(id).subscribe({
+      next: (item): void => {
+        this.item = item;
+        this.label = item.patient?.fullName;
+      },
+    });
   }
 }
 
@@ -142,6 +216,11 @@ export class DetailComponent implements OnInit, OnDestroy {
         {
           path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
           component: DetailComponent,
+          resolve: { item: itemResolver },
+        },
+        {
+          path: ':id/edit', title: titleEditResolver, data: { breadcrumb: 'Editar', },
+          component: EditComponent,
           resolve: { item: itemResolver },
         },
       ],

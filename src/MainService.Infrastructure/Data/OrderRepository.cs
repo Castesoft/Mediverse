@@ -22,9 +22,9 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
         throw new NotImplementedException();
     }
 
-    public Task<Order> GetByIdAsync(int id)
+    public async Task<Order> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 
     public Task<Order> GetByNameAsync(string name, ClaimsPrincipal user)
