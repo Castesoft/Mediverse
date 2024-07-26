@@ -17,16 +17,17 @@ import {ProductsFilterMenuComponent} from "src/app/products/components/products-
 import { ProductsTableComponent } from "src/app/products/components/products-table.component";
 import { ProductsService } from "src/app/_services/products.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
+import { ProductSelectTypeaheadComponent } from "src/app/_shared/components/product-select-typeahead.component";
 
 @Component({
   host: { class: 'pb-6', },
   selector: 'div[productsCatalog]',
   templateUrl: './products-catalog.component.html',
   standalone: true,
-  imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
+  imports: [BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
     ProductsTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
     LayoutModule, ProductsFilterMenuComponent, LayoutModule,
-   ],
+  ],
 })
 export class ProductsCatalogComponent implements OnInit, OnDestroy {
   router = inject(Router);

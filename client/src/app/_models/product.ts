@@ -20,6 +20,12 @@ export class Product {
   isSelected = false;
 }
 
+export interface ProductSummary {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export class ProductParams {
   pageNumber = 1;
   pageSize = 10;

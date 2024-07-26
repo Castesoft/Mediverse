@@ -76,6 +76,16 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
 
         return Ok();
     }
+    
+    [HttpGet("summary")]
+    public async Task<ActionResult<List<ProductSummaryDto>>> GetSummaryAsync([FromQuery] ProductParams param)
+    {
+        var item = await uow.ProductRepository.GetSummaryDtosAsync(param, User);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} no fue encontrado.");
+
+        return item;
+    }
 
     [HttpDelete("range/{ids}")]
     public async Task<ActionResult> DeleteRangeAsync([FromRoute]string ids)
