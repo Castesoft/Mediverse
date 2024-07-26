@@ -233,7 +233,7 @@ export class OrdersService {
     );
   }
 
-  update(id: number, formData: FormData): Observable<Order> {
+  update(id: number, formData: any): Observable<Order> {
     return this.http.put<Order>(`${this.baseUrl}${id}`, formData).pipe(
       tap(response => {
         // TODO

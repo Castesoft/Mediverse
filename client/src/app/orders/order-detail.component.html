@@ -6,6 +6,12 @@
     <div class="fs-1 fw-regular text-gray-1000">
       Pedido creado el
       <span class="fw-bold">{{ item().createdAt | date: 'dd/MM/yyyy' }}</span>
+      <a class="btn btn-light-primary ms-4"
+         [routerLink]="['edit']">
+        Editar
+        <fa-icon [icon]="icons.faPencil"
+                 class="ms-2"></fa-icon>
+      </a>
     </div>
   </div>
 

@@ -1,6 +1,6 @@
 import { Component, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { FormUse } from "src/app/_models/types";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { IconsService } from "src/app/_services/icons.service";
 import { Subject } from "rxjs";
 import { Order } from "src/app/_models/order";
@@ -10,6 +10,7 @@ import { OrderProductsSummaryComponent } from "src/app/orders/components/order-i
 import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
 import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-deilvery-status-badge.component";
 import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'div[orderDetailView]',
@@ -23,7 +24,9 @@ import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-sta
     PatientSummaryCardComponent,
     OrdersDeliveryStatusBadgeComponent,
     OrdersStatusBadgeComponent,
-    DatePipe
+    DatePipe,
+    FaIconComponent,
+    RouterLink
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
