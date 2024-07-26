@@ -49,6 +49,7 @@ export class EventSelectTypeaheadComponent implements OnInit, OnChanges {
   sex = input<string | undefined>();
   key = input<string>(createId());
   label = input<string>();
+  showCatalogButton = input<boolean>(true);
 
   submitted = false;
   loading = true;

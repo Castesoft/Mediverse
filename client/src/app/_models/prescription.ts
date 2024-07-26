@@ -1,11 +1,13 @@
 import { HttpParams } from '@angular/common/http';
-import { Product } from "src/app/_models/product";
 import { getPaginationHeaders } from '../_utils/util';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrescriptionsService } from '../_services/prescriptions.service';
 import { createId } from '@paralleldrive/cuid2';
 import { Address } from './address';
 import { User } from './user';
+import { BadRequest } from './types';
+import { Product } from './product';
+import { Event } from './event';
 
 const subject = 'prescription';
 
@@ -131,5 +133,105 @@ export class FilterForm {
       },
       { emitEvent: false, onlySelf: true },
     );
+  }
+}
+
+export class CreateForm {
+  group: FormGroup;
+  id: string;
+  error?: BadRequest;
+  submitted = false;
+  validation = true;
+
+  constructor() {
+    this.id = `${subject}Form${createId()}`;
+
+    this.group = new FormGroup({
+      name: new FormControl(''),
+      description: new FormControl(''),
+      price: new FormControl(''),
+      discount: new FormControl(''),
+    });
+  }
+
+  setValidators(mode: boolean) {
+    const controls = this.group.controls;
+
+    if (mode) {
+      controls['name'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
+      controls['description'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
+      controls['price'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
+      controls['discount'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
+    } else {
+      controls['name'].clearValidators(); controls['name'].clearAsyncValidators();
+      controls['description'].clearValidators(); controls['description'].clearAsyncValidators();
+      controls['price'].clearValidators(); controls['price'].clearAsyncValidators();
+      controls['discount'].clearValidators(); controls['discount'].clearAsyncValidators();
+    }
+    // this.group.updateValueAndValidity();
+  }
+
+  patchWithSample() {
+    // let sample = getRandomSample();
+    // this.group.patchValue(sample);
+  }
+}
+
+export class EditForm {
+  group: FormGroup;
+  id: string;
+  error?: BadRequest;
+  submitted = false;
+  validation = true;
+
+  constructor() {
+    this.id = `${subject}Form${createId()}`;
+
+    this.group = new FormGroup({
+      name: new FormControl(''),
+      description: new FormControl(''),
+      price: new FormControl(''),
+      discount: new FormControl(''),
+    });
+  }
+
+  setValidators(mode: boolean) {
+    const controls = this.group.controls;
+
+    if (mode) {
+      controls['name'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
+      controls['description'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
+      controls['price'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
+      controls['discount'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
+    } else {
+      controls['name'].clearValidators(); controls['name'].clearAsyncValidators();
+      controls['description'].clearValidators(); controls['description'].clearAsyncValidators();
+      controls['price'].clearValidators(); controls['price'].clearAsyncValidators();
+      controls['discount'].clearValidators(); controls['discount'].clearAsyncValidators();
+    }
+    // this.group.updateValueAndValidity();
+  }
+
+  patchValues = (item: Prescription) => this.group.patchValue(item);
+}
+
+export class DetailForm {
+  group: FormGroup;
+  id: string;
+  error?: BadRequest;
+  submitted = false;
+  validation = true;
+
+  patchValues = (item: Prescription) => this.group.patchValue(item);
+
+  constructor() {
+    this.id = `${subject}Form${createId()}`;
+
+    this.group = new FormGroup({
+      name: new FormControl({ value: '', disabled: true }),
+      description: new FormControl({ value: '', disabled: true }),
+      discount: new FormControl({ value: '', disabled: true }),
+      price: new FormControl({ value: '', disabled: true }),
+    });
   }
 }

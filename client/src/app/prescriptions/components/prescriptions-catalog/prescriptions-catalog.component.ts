@@ -67,13 +67,12 @@ export class PrescriptionsCatalogComponent {
       .subscribe((loading) => (this.loading = loading));
   }
 
-  private loadData(params: PrescriptionParams) {
-    this.service.loadPagedList(this.key(), params).subscribe({
+  private loadData(params: PrescriptionParams, noCache = false) {
+    this.service.loadPagedList(this.key(), params, noCache).subscribe({
       next: (response) => {
         const { result, pagination } = response;
         this.data = result;
         this.pagination = pagination;
-        console.log(this.data)
       },
     });
   }
@@ -88,6 +87,10 @@ export class PrescriptionsCatalogComponent {
       dateTo: dateRange.value[1],
     });
   };
+
+  reloadData() {
+    this.loadData(this.params, true);
+  }
 
   onSubmit() {
     this.service.setParam$(this.key(), this.params);

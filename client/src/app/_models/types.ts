@@ -136,7 +136,7 @@ export type Section = {
 };
 
 export type Sections = 'admin' | 'maintenance' | 'utils' | 'reports' | 'codes' | 'events'
-  | 'males' | 'services' | 'users' | 'donors' | 'medicines' | 'customers' | 'foods' | 'irons' | 'relocations' | 'sales' | 'treatments' | 'addresses' | 'products' | 'records' | 'animals' | 'feedings' | 'semens' | 'clinics';
+  | 'males' | 'services' | 'users' | 'donors' | 'medicines' | 'customers' | 'foods' | 'irons' | 'relocations' | 'sales' | 'treatments' | 'addresses' | 'products' | 'prescriptions' | 'records' | 'animals' | 'feedings' | 'semens' | 'clinics';
 ;
 
 export type SectionDictionary = {

@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
 import { User } from 'src/app/_models/user';
 import { UsersService } from 'src/app/_services/users.service';
+import { UserProfilePictureComponent } from './user-profile-picture/user-profile-picture.component';
 
 @Component({
   selector: 'td[userHasAccount]',
@@ -44,13 +45,7 @@ export class UserTableSexCellComponent {
     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
       <a [routerLink]="[routerLink]">
         <div class="symbol-label">
-          @if (user().photoUrl) {
-          <img [src]="user().photoUrl" alt="Emma Smith" class="w-100" />
-          } @else {
-          <div [class]="'symbol-label fs-3 bg-light-' + bootstrapClass + ' text-' + bootstrapClass">
-            {{ user().firstName[0] }}
-          </div>
-          }
+          <app-user-profile-picture [user]="user()"></app-user-profile-picture>
         </div>
       </a>
     </div>
@@ -65,14 +60,13 @@ export class UserTableSexCellComponent {
     }
   `,
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, UserProfilePictureComponent],
 })
 export class UserTableCellComponent implements OnInit {
   service = inject(UsersService);
 
   user = input.required<User>();
   role = input.required<Role>();
-  bootstrapClass = 'success';
 
   routerLink?: string;
 
@@ -80,27 +74,6 @@ export class UserTableCellComponent implements OnInit {
     this.routerLink = `${
       this.service.namingDictionary.get(this.role())!.catalogRoute
     }/${this.user().id}`;
-
-    this.bootstrapClass = this.getBootstrapClass(this.user().firstName);
   }
 
-  bootstrapClasses = [
-    'success',
-    'danger',
-    'info',
-    'primary',
-    // 'secondary',
-    'warning',
-    'light',
-    'dark'
-  ];
-  
-  getBootstrapClass(name: string) {
-    const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-
-    const classIndex = asciiSum % this.bootstrapClasses.length;
-
-    return this.bootstrapClasses[classIndex];
-  }
-  
 }

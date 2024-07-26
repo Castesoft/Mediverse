@@ -162,14 +162,14 @@ export class PrescriptionsService {
   resetMultipleSelecteds = (): void => this.multipleSelecteds.next({});
 
   // Get Paged List
-  loadPagedList(key: string, param: PrescriptionParams): Observable<PaginatedResult<Prescription[]>> {
+  loadPagedList(key: string, param: PrescriptionParams, noCache = false): Observable<PaginatedResult<Prescription[]>> {
     this.setLoading(key, true);
     this.cacheExists(key);
 
     const mapKey = Object.values(param).join("-");
     const response = this.getCache(key).get(mapKey);
 
-    if (response) {
+    if (response && !noCache) {
       this.setPagedList(key, response);
       this.setLoading(key, false);
       return of(response);
@@ -240,7 +240,7 @@ export class PrescriptionsService {
 
   private delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}${id}`).pipe(
-      tap(() => {
+      tap((res) => {
         // TODO
         this.current.next(null);
         this.all.next(this.all.value.filter(s => s.id !== id));
@@ -300,7 +300,7 @@ export class PrescriptionsService {
         if (result) {
           return this.delete(item.id).pipe(
             map(() => {
-              this.toastr.success(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminado`);
+              this.toastr.success(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminada`);
               return true;
             }),
             catchError(error => {

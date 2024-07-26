@@ -10,7 +10,7 @@ tableHeader
 ></thead>
 <tbody class="text-gray-600 fw-semibold">
     @for (item of data; track item.id; let idx = $index) {
-    <tr class="hover-actions-trigger btn-reveal-trigger position-static" style="border-bottom: none;" (click)="toggleCollapsed(item)" [attr.aria-expanded]="!item.isCollapsed" [attr.aria-controls]="'collapseBasic' + item.id" [attr.data-target]="'collapseBasic' + item.id"
+    <tr class="hover-actions-trigger btn-reveal-trigger position-static cursor-pointer" style="border-bottom: none;" (click)="toggleCollapsed(item)" [attr.aria-expanded]="!item.isCollapsed" [attr.aria-controls]="'collapseBasic' + item.id" [attr.data-target]="'collapseBasic' + item.id"
         [cdkContextMenuTriggerFor]="context_menu">
       @switch (mode()) {
         @case ("view") {
@@ -22,6 +22,7 @@ tableHeader
                 [name]="service.naming.singular"
                 [(ngModel)]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
+                (click)="stopPropagation($event)"
               />
             </div>
           </td>
@@ -35,6 +36,7 @@ tableHeader
                 [name]="service.naming.singular"
                 [checked]="item.isSelected"
                 (change)="service.setSelected$(key(), item)"
+                (click)="stopPropagation($event)"
               />
             </div>
           </td>
@@ -49,6 +51,7 @@ tableHeader
                 [checked]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
                 (change)="service.addSelected$(key(), item)"
+                (click)="stopPropagation($event)"
               />
             </div>
           </td>
@@ -64,7 +67,8 @@ tableHeader
            [cdkMenuTriggerFor]="context_menu"
            [id]="'dropdown' + item.patient + item.id"
            type="button"
-           [attr.aria-controls]="'dropdown' + item.patient?.fullName + item.id">
+           [attr.aria-controls]="'dropdown' + item.patient?.fullName + item.id"
+           (click)="stopPropagation($event)">
           Opciones
           <i class="ki-duotone ki-down fs-5 ms-1"></i>
         </a>
@@ -85,7 +89,7 @@ tableHeader
           </div>
           <button cdkMenuItem
                   class="menu-item px-3 text-danger"
-                  (click)="service.delete$(item)">
+                  (click)="deleteItem(item)">
             <a class="menu-link">Eliminar</a>
           </button>
         </div>

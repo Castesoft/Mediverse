@@ -1,0 +1,11 @@
+@if (user().photoUrl) {
+    <div class="symbol symbol-50px symbol-circle">
+        <img [src]="user().photoUrl" alt="Emma Smith" class="w-100" />
+    </div>
+} @else {
+    <div class="symbol symbol-50px symbol-circle">
+        <div [class]="'symbol-label fs-3 bg-light-' + bootstrapClass + ' text-' + bootstrapClass">
+            {{ user().firstName[0] }}
+        </div>
+    </div>
+}

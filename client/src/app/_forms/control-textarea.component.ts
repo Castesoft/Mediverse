@@ -44,6 +44,7 @@ export class ControlTextareaComponent implements ControlValueAccessor, AfterView
   @Input() isReadonly= false;
   @Input() hideIsOptional= false;
   @Input() fill= false;
+  @Input() rows? = 2;
 
   get control(): FormControl { return this.ngControl.control as FormControl; }
   get controlName(): string { return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName'; }
