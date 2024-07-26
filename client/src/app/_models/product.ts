@@ -1,7 +1,7 @@
 import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
-import {BadRequest} from "src/app/_models/types";
+import { BadRequest } from "src/app/_models/types";
 import { ProductsService } from "src/app/_services/products.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
 
@@ -20,6 +20,7 @@ export class Product {
   manufacturer!: string;
   photoUrl?: string;
   createdAt!: string;
+  isInternal?: boolean;
   isSelected = false;
 }
 
@@ -27,6 +28,8 @@ export interface ProductSummary {
   id: number;
   name: string;
   description: string;
+  photoUrl?: string;
+  isInternal: boolean;
 }
 
 export class ProductParams {
@@ -148,10 +151,14 @@ export class CreateForm {
       controls['price'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
       controls['discount'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
     } else {
-      controls['name'].clearValidators(); controls['name'].clearAsyncValidators();
-      controls['description'].clearValidators(); controls['description'].clearAsyncValidators();
-      controls['price'].clearValidators(); controls['price'].clearAsyncValidators();
-      controls['discount'].clearValidators(); controls['discount'].clearAsyncValidators();
+      controls['name'].clearValidators();
+      controls['name'].clearAsyncValidators();
+      controls['description'].clearValidators();
+      controls['description'].clearAsyncValidators();
+      controls['price'].clearValidators();
+      controls['price'].clearAsyncValidators();
+      controls['discount'].clearValidators();
+      controls['discount'].clearAsyncValidators();
     }
     // this.group.updateValueAndValidity();
   }
@@ -189,10 +196,14 @@ export class EditForm {
       controls['price'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
       controls['discount'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
     } else {
-      controls['name'].clearValidators(); controls['name'].clearAsyncValidators();
-      controls['description'].clearValidators(); controls['description'].clearAsyncValidators();
-      controls['price'].clearValidators(); controls['price'].clearAsyncValidators();
-      controls['discount'].clearValidators(); controls['discount'].clearAsyncValidators();
+      controls['name'].clearValidators();
+      controls['name'].clearAsyncValidators();
+      controls['description'].clearValidators();
+      controls['description'].clearAsyncValidators();
+      controls['price'].clearValidators();
+      controls['price'].clearAsyncValidators();
+      controls['discount'].clearValidators();
+      controls['discount'].clearAsyncValidators();
     }
     // this.group.updateValueAndValidity();
   }

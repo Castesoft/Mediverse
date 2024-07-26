@@ -168,8 +168,14 @@ public class MappingProfiles : Profile
         // Registration mapping
         CreateMap<RegisterDto, AppUser>();
 
-        CreateMap<Product, ProductDto>();
-        CreateMap<Product, ProductSummaryDto>();
+        CreateMap<Product, ProductDto>()
+            .ForMember(dest => dest.IsInternal, opt => opt.MapFrom(src => src.DoctorProduct == null))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url));
+        
+        CreateMap<Product, ProductSummaryDto>()
+            .ForMember(dest => dest.IsInternal, opt => opt.MapFrom(src => src.DoctorProduct == null))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url));
+
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
     }

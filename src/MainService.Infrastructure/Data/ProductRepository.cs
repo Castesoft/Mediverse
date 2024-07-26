@@ -44,6 +44,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     {
         var item = await context.Products
             .Include(x => x.DoctorProduct)
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .SingleOrDefaultAsync(x => x.Id == id);
 
         return item;
@@ -52,6 +53,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     public async Task<Product> GetByNameAsync(string name, ClaimsPrincipal user)
         => await context.Products
             .Include(x => x.DoctorProduct)
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .Where(x => x.DoctorProduct.DoctorId == user.GetUserId())
             .SingleOrDefaultAsync(x => x.Name == name);
 
@@ -59,12 +61,14 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     {
         return await context.Products
             .Include(x => x.DoctorProduct)
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .AnyAsync(x => x.Id == id && x.DoctorProduct.DoctorId == user.GetUserId());
     }
 
     public async Task<ProductDto> GetDtoByIdAsync(int id)
     {
         var item = await context.Products
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .AsNoTracking()
             .ProjectTo<ProductDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
@@ -76,7 +80,9 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     {
         var query = context.Products
             .Include(x => x.DoctorProduct)
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .AsNoTracking()
+            .Take(20)
             // TODO - Uncomment after merge
             // .Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null) 
             .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider);
@@ -97,6 +103,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     {
         var query = context.Products
             .Include(x => x.DoctorProduct)
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .AsQueryable();
 
         query = query.Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null);
