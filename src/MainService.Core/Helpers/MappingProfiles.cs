@@ -106,7 +106,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
             .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
             .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber));
-        
+
         CreateMap<AppRole, RoleDto>();
         CreateMap<AppUser, DoctorDto>();
         CreateMap<AppPermission, PermissionDto>();
@@ -154,6 +154,7 @@ public class MappingProfiles : Profile
         CreateMap<RegisterDto, AppUser>();
 
         CreateMap<Product, ProductDto>();
+        CreateMap<Product, ProductSummaryDto>();
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
     }

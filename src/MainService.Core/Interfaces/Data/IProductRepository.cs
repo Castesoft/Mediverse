@@ -11,6 +11,7 @@ public interface IProductRepository
     void Delete(Product item);
     Task<Product> GetByIdAsync(int id);
     Task<Product> GetByNameAsync(string name, ClaimsPrincipal user);
+    Task<List<ProductSummaryDto>> GetSummaryDtosAsync(ProductParams param, ClaimsPrincipal user);
     Task<bool> ExistsAsync(int id, ClaimsPrincipal user);
     Task<ProductDto> GetDtoByIdAsync(int id);
     Task<Product> GetByIdAsNoTrackingAsync(int id);
