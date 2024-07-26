@@ -27,9 +27,10 @@
       (params()?.isSortAscending ? 'Activate to invert sorting' : 'Activate to remove sorting') :
       'Activate to sort'))"
             [ngClass]="{
-      'dt-ordering-asc': params()?.isSortAscending && column.name === params()?.sort,
-      'dt-ordering-desc': !params()?.isSortAscending && column.name === params()?.sort,
-    }">
+              'text-end pe-2': column.options?.justify === 'end',
+              'dt-ordering-asc': params()?.isSortAscending && column.name === params()?.sort,
+              'dt-ordering-desc': !params()?.isSortAscending && column.name === params()?.sort,
+            }">
 
           <span class="dt-column-title"
                 role="button">{{ column.label }}</span>

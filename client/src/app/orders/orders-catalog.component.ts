@@ -69,6 +69,7 @@ export class OrdersCatalogComponent implements OnInit, OnDestroy {
     this.service.loadPagedList(this.key(), params).subscribe({
       next: (response) => {
         const { result, pagination } = response;
+        console.log(result);
         this.data = result;
         this.pagination = pagination;
       },

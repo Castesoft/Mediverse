@@ -1,0 +1,47 @@
+@if (item()) {
+  <div class="d-flex flex-grow-1 justify-content-between mb-4">
+    <div class="fs-1 fw-bolder">
+      Editar Pedido #{{ item().id }}
+    </div>
+    <div class="fs-1 fw-regular text-gray-1000">
+      Pedido creado el
+      <span class="fw-bold">{{ item().createdAt | date: 'dd/MM/yyyy' }}</span>
+      <a class="btn btn-light-primary ms-4"
+         [routerLink]="['edit']">
+        Editar
+        <fa-icon [icon]="icons.faPencil"
+                 class="ms-2"></fa-icon>
+      </a>
+    </div>
+  </div>
+
+  <form [formGroup]="formGroup">
+    <div class="card">
+      <div class="card-body">
+        <div class="row row-cols-2 gy-8">
+          <div controlSelect
+               formControlName="status"
+               [label]="'Estatus de Pago'"
+               [options]="statusSelectOptions"
+          ></div>
+          <div controlSelect
+               formControlName="deliveryStatus"
+               [options]="deliveryStatusSelectOptions"
+               [label]="'Estatus de Entrega'"></div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-grow-1 justify-content-between mt-8">
+      <a class="btn btn-light btn-active-light-primary"
+         [routerLink]="['/orders']">
+        Cancelar
+      </a>
+      <button class="btn btn-primary"
+              [disabled]="!formGroup.valid"
+              [type]="'button'"
+              (click)="onSubmit()">
+        Guardar Cambios
+      </button>
+    </div>
+  </form>
+}
