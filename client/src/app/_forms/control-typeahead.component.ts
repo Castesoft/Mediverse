@@ -48,6 +48,7 @@ export class ControlTypeaheadComponent {
 
   onSelect = output<TypeaheadMatch>();
   onLoading = output<boolean>();
+  onInputFocus = output();
 
   get control(): FormControl {
     return this.ngControl.control as FormControl;

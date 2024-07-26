@@ -117,8 +117,8 @@ export class PrescriptionFormComponent {
     .pipe(skip(this.use() === 'edit' ? 1 : 0))
     .subscribe({
       next: (event) => {
-        this.event = event || undefined;
         this.patientsService.setSelected$(this.selectedPatientKey, event?.patient || undefined);
+        this.event = event || undefined;
       }
     });
   }

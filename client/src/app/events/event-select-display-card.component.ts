@@ -23,8 +23,7 @@ export class EventSelectDisplayCardComponent implements OnInit {
   item = input<Event>();
   key = input.required<string>();
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   protected readonly faEye = faEye;
 }
