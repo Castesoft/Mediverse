@@ -30,6 +30,8 @@ export interface ProductSummary {
   description: string;
   photoUrl?: string;
   isInternal: boolean;
+  dosage: string;
+  unit: string;
 }
 
 export class ProductParams {

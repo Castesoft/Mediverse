@@ -82,8 +82,6 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .AsNoTracking()
-            .Take(20)
-            .Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null) 
             .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider);
 
         if (!string.IsNullOrEmpty(param.Search))

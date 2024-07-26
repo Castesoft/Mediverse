@@ -7,4 +7,6 @@ public class ProductSummaryDto
     public string Name { get; set; }
     public string Description { get; set; }
     public string PhotoUrl { get; set; }
+    public string Dosage { get; set; }
+    public string Unit { get; set; }
 }

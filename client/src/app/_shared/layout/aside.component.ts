@@ -111,21 +111,7 @@ Gestión Clínica
                   <span class="menu-title">Servicios</span>
                 </a>
               </div>
-              <div class="menu-item">
-                <a class="menu-link"
-                   [routerLink]="['/home/products']"
-                   [routerLinkActive]="'active'"
-                   [ariaCurrentWhenActive]="'page'">
-            <span class="menu-icon">
-            <i class="ki-duotone ki-brifecase-tick fs-2">
-            <span class="path1"></span>
- <span class="path2"></span>
- <span class="path3"></span>
-											</i>
-            </span>
-                  <span class="menu-title">Productos</span>
-                </a>
-              </div>
+
               <div class="menu-item">
                 <a class="menu-link"
                    [routerLink]="['/home/nurses']"
@@ -140,6 +126,8 @@ Gestión Clínica
  <span class="path5"></span>
 											</i>
             </span>
+
+
                   <span class="menu-title">Especialistas</span>
                 </a>
               </div>
@@ -202,6 +190,23 @@ Gestión Clínica
               </div>
             }
             @if (accountService.hasRole(['Admin', 'Doctor'])) {
+              <div class="menu-item">
+                <a class="menu-link"
+                   [routerLink]="['/home/products']"
+                   [routerLinkActive]="'active'"
+                   [ariaCurrentWhenActive]="'page'">
+            <span class="menu-icon">
+            <i class="ki-duotone ki-brifecase-tick fs-2">
+            <span class="path1"></span>
+ <span class="path2"></span>
+ <span class="path3"></span>
+											</i>
+            </span>
+
+
+                  <span class="menu-title">Productos</span>
+                </a>
+              </div>
               <div class="menu-item">
                 <a class="menu-link"
                    [routerLink]="['/home/orders']">

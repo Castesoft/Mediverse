@@ -169,10 +169,14 @@ public class MappingProfiles : Profile
         CreateMap<RegisterDto, AppUser>();
 
         CreateMap<Product, ProductDto>()
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
+            .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.IsInternal, opt => opt.MapFrom(src => src.DoctorProduct == null))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url));
-        
+
         CreateMap<Product, ProductSummaryDto>()
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
+            .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.IsInternal, opt => opt.MapFrom(src => src.DoctorProduct == null))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url));
 

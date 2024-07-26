@@ -3,13 +3,13 @@
   let-index="index"
   let-model="item">
   <div class="d-flex align-items-center">
-    <div class="symbol symbol-50px symbol-circle">
+    <div class="symbol symbol-50px">
       <div [product]="model.data"
            productPicture></div>
     </div>
     <div class="d-flex flex-column ms-4">
       <div class="fw-bolder fs-5 d-flex flex-grow-1 justify-content-start align-items-center">
-        {{ model.data.name }}
+        {{ model.data.name }} {{ model.data.dosage }}{{ model.data.unit }}
 
         @if (!model.data.isInternal) {
           <div class="ms-2 badge badge-info badge-sm">Mediverse</div>
