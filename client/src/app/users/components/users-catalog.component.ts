@@ -1,4 +1,4 @@
-import { Component, HostBinding, inject, input, OnDestroy, OnInit } from "@angular/core";
+import { Component, HostBinding, inject, input, OnChanges, OnDestroy, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import {GuidService} from "src/app/_services/guid.service";
 import { IconsService } from "src/app/_services/icons.service";

@@ -22,9 +22,9 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
         throw new NotImplementedException();
     }
 
-    public Task<Order> GetByIdAsync(int id)
+    public async Task<Order> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 
     public Task<Order> GetByNameAsync(string name, ClaimsPrincipal user)
@@ -39,7 +39,14 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
 
     public Task<OrderDto> GetDtoByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return context.Orders
+            .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
+            .Include(x => x.OrderItems).ThenInclude(x => x.Item)
+            .Include(x => x.OrderAddress).ThenInclude(x => x.Address)
+            .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
+            .AsNoTracking()
+            .ProjectTo<OrderDto>(mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync(x => x.Id == id);
     }
 
     public Task<Order> GetByIdAsNoTrackingAsync(int id)
@@ -66,8 +73,16 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsQueryable();
 
-        int userId = user.GetUserId();
+        var userId = user.GetUserId();
+        var userRoles = user.GetRoles();
 
+        foreach (var role in userRoles)
+        {
+            if (role == "Doctor")
+            {
+                query = query.Where(x => x.DoctorOrder.DoctorId == userId);
+            }
+        }
         if (param.DateFrom != DateTime.MinValue)
             query = query.Where(x => x.CreatedAt >= param.DateFrom);
 

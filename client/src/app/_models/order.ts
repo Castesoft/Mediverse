@@ -20,11 +20,14 @@ export class Order {
   doctor!: User;
   address?: Address;
   items: Product[] = [];
-  status!: string;
-  deliveryStatus!: string;
+  status?: OrderStatus;
+  deliveryStatus?: OrderDeliveryStatus;
   createdAt!: Date;
   isSelected = false;
 }
+
+export type OrderStatus = 'pending' | 'completed' | 'cancelled';
+export type OrderDeliveryStatus = 'processing' | 'inprogress' | 'delivered' | 'cancelled';
 
 export class OrderParams {
   pageNumber = 1;

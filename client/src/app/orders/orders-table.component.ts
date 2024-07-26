@@ -14,13 +14,19 @@ import { Subscription } from "rxjs";
 import { GuidService } from "src/app/_services/guid.service";
 import { OrdersService } from "src/app/_services/orders.service";
 import { ProductTableHasAccountCellComponent } from "src/app/products/components/product-table-cell.component";
+import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
+import { PatientSelectDisplayCardComponent } from "src/app/patients/patient-select-display-card.component";
+import { PatientTableCellComponent } from "src/app/_shared/components/patient-table-cell.component";
+import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-deilvery-status-badge.component";
+import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
 
 @Component({
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_orders', },
   selector: 'table[ordersTable]',
-  standalone: true,
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_orders', },
   templateUrl: './orders-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, DatePipe, MaterialModule, CdkModule, CurrencyPipe, ProductTableHasAccountCellComponent],
+  styleUrls: ['./orders-table.component.scss'],
+  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, DatePipe, MaterialModule, CdkModule, CurrencyPipe, ProductTableHasAccountCellComponent, PatientSummaryCardComponent, PatientSelectDisplayCardComponent, PatientTableCellComponent, OrdersDeliveryStatusBadgeComponent, OrdersStatusBadgeComponent],
+  standalone: true,
 })
 export class OrdersTableComponent implements OnInit, OnDestroy {
   service = inject(OrdersService);

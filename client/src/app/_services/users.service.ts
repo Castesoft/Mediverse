@@ -335,10 +335,10 @@ export class UsersService {
     return this.http
       .get<User[]>(`${this.baseUrl}all/`)
       .pipe(
-        map((consecutives) => {
-          this.all.next(consecutives);
+        map(response => {
+          this.all.next(response);
           this.setLoading("all", false);
-          return consecutives;
+          return response;
         })
       );
   }

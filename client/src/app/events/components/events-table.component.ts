@@ -13,15 +13,15 @@ import { Event, EventParams } from "src/app/_models/event";
 import { Subscription } from "rxjs";
 import { GuidService } from "src/app/_services/guid.service";
 import { EventsService } from "src/app/_services/events.service";
-import {EventTableCellComponent, EventTableHasAccountCellComponent, EventTableSexCellComponent} from "src/app/events/components/event-table-cell.component";
+import {PatientTableCellComponent, PatientTableHasAccountCellComponent, PatientTableSexCellComponent} from "src/app/_shared/components/patient-table-cell.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },
   selector: 'table[eventsTable]',
   standalone: true,
   templateUrl: './events-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, EventTableCellComponent, DatePipe,
-    EventTableSexCellComponent, EventTableHasAccountCellComponent, MaterialModule, CdkModule,
+  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, PatientTableCellComponent, DatePipe,
+    PatientTableSexCellComponent, PatientTableHasAccountCellComponent, MaterialModule, CdkModule,
   ],
 })
 export class EventsTableComponent implements OnInit, OnDestroy {

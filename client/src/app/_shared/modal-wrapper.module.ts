@@ -17,7 +17,7 @@ export class ModalContentComponent {
 
 @Component({
   host: {class: 'modal-header border-200 p-4',},
-  selector: 'modal-header, div[modalHeader]',
+  selector: 'div[modalHeader]',
   template: `
     <h4 class="modal-title text-1000 fs-2 lh-sm">{{ title() }}</h4>
     <button class="btn p-1 text-900" type="button" aria-label="Close" (click)="modal.hide()">
@@ -36,7 +36,7 @@ export class ModalHeaderComponent {
 
 @Component({
   host: {class: 'modal-body',},
-  selector: 'modal-body, div[modalBody]',
+  selector: 'div[modalBody]',
   template: `
     <ng-content></ng-content>`,
   standalone: true,
@@ -60,7 +60,7 @@ export class ModalBodyComponent {
 
 @Component({
   host: {class: 'modal-footer',},
-  selector: 'modal-footer, div[modalFooter]',
+  selector: 'div[modalFooter]',
   template: `
     <ng-content></ng-content>`,
   standalone: true,
@@ -70,7 +70,7 @@ export class ModalFooterComponent {
 
 @Component({
   host: {class: 'modal-footer d-flex justify-content-end align-items-center px-4 pb-4 border-0 pt-3',},
-  selector: 'div[modalFooterFilters], modal-footer-filters',
+  selector: 'div[modalFooterFilters]',
   template: `
     <button class="btn btn-sm btn-phoenix-primary px-4 fs--2 my-0" type="button" (click)="emitReset()">
       <fa-icon [icon]="icons.faArrowsRotate" class="me-2 fs--2"></fa-icon>

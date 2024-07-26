@@ -54,19 +54,29 @@
         }
       }
       <!-- <td productCell [item]="item"></td> -->
-      <td>{{ item.createdAt | date: 'dd/MM/yyyy' }}</td>
-      <td>{{ item.total | currency }}</td>
-      <td>{{ item.subtotal | currency }}</td>
-      <td>{{ item.discount | currency }}</td>
-      <td>{{ item.tax | currency }}</td>
-      <td>{{ item.amountPaid | currency }}</td>
-      <td>{{ item.amountDue | currency }}</td>
-      <td>{{ item.patient.fullName }}</td>
-      <td>{{ item.doctor.fullName }}</td>
-      <td>{{ item.address?.street }} {{ item.address?.exteriorNumber }}</td>
-      <td>{{ item.status }}</td>
-      <td>{{ item.deliveryStatus }}</td>
-
+      <td class="fw-bold">{{ item.createdAt | date: 'dd/MM/yyyy' }}</td>
+      <td class="d-flex align-items-center">
+        <div patientCell
+             [patient]="item.patient"></div>
+      </td>
+      <td>
+        <div ordersStatusBadge
+             [status]="item.status"></div>
+      </td>
+      <td>
+        <div ordersDeliveryStatusBadge
+             [status]="item.deliveryStatus"></div>
+      </td>
+      <td>
+        @if (item.address) {
+          {{ item.address.street }} {{ item.address.exteriorNumber }}
+        } @else {
+          <div class="text-muted">Sin Dirección</div>
+        }
+      </td>
+      <td class="currency fw-bold">
+        {{ item.total | currency: 'MXN' }}
+      </td>
       <td class="text-end">
         <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"
            [cdkContextMenuTriggerFor]="context_menu"
@@ -84,7 +94,7 @@
           cdkMenu>
           <div cdkMenuItem
                class="menu-item px-3">
-            <a [routerLink]="[service.naming.catalogRoute,item.id]"
+            <a [routerLink]="[service.naming.catalogRoute, item.id]"
                class="menu-link">Ver</a>
           </div>
           <div cdkMenuItem

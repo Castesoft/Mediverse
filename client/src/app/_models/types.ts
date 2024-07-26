@@ -165,7 +165,7 @@ export class BadRequest {
   type: Errors;
   message?: string;
   validationErrors: string[] = [];
-  error: any;
+  error: HttpErrorResponse;
 
   constructor(error: HttpErrorResponse) {
     this.error = error;
