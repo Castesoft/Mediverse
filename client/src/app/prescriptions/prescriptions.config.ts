@@ -57,7 +57,8 @@ export class CatalogComponent {
 export const itemResolver: ResolveFn<Prescription | null> = (route, state) => {
   const prescription = inject(PrescriptionsService);
   const id = +route.paramMap.get('id')!;
-  return prescription.getById(id);
+  const edited = route.queryParamMap.get('edited');
+  return prescription.getById(id, { noCache: edited ? true : false });
 };
 
 export const titleDetailResolver: ResolveFn<string> = (route, state) => {

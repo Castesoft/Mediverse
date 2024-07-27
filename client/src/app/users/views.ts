@@ -6,6 +6,7 @@ import { User } from "src/app/_models/user";
 import { AccountService } from "src/app/_services/account.service";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { UserFormComponent } from "src/app/users/components/user-form.component";
+import { UserProfilePictureComponent } from "./components/user-profile-picture/user-profile-picture.component";
 
 @Component({
   selector: 'div[userNewView]',
@@ -42,12 +43,7 @@ export class UserNewComponent {
             <div class="card-body pt-15">
               <div class="d-flex flex-center flex-column mb-5">
                 <div class="symbol symbol-100px symbol-circle mb-7">
-                  @if(user.photoUrl){<img [src]="user.photoUrl" [alt]="user.fullName">}
-                  @else {
-                    <span class="symbol-label fs-2x fw-semibold text-primary bg-light-primary">
-                {{ user.firstName[0] }}
-            </span>
-                  }
+                  <app-user-profile-picture [user]="user" size="lg"></app-user-profile-picture>
                 </div>
                 <a [routerLink]="['']" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">{{user.fullName}}</a>
                 <div class="fs-5 fw-semibold text-muted mb-6">Paciente</div>
@@ -122,7 +118,7 @@ export class UserNewComponent {
   }
   `,
   standalone: true,
-  imports: [UserFormComponent, RouterModule, DatePipe, DecimalPipe,],
+  imports: [UserFormComponent, RouterModule, DatePipe, DecimalPipe, UserProfilePictureComponent],
 })
 export class UserDetailComponent implements OnInit {
   accountService = inject(AccountService);

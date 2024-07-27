@@ -1,16 +1,18 @@
+import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { User } from 'src/app/_models/user';
 
 @Component({
   selector: 'app-user-profile-picture',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './user-profile-picture.component.html',
   styleUrl: './user-profile-picture.component.scss'
 })
 export class UserProfilePictureComponent {
 
   user = input.required<User>();
+  size = input<string>('sm');
   bootstrapClass = 'success';
 
   ngOnInit(): void {
@@ -22,10 +24,10 @@ export class UserProfilePictureComponent {
     'danger',
     'info',
     'primary',
-    // 'secondary',
     'warning',
-    'light',
     'dark'
+    // 'secondary', No son visibles
+    // 'light',
   ];
 
   getBootstrapClass(name: string) {

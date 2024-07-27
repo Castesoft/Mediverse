@@ -200,12 +200,12 @@ export class PrescriptionsService {
       );
   }
 
-  getById(id: number): Observable<Prescription> {
+  getById(id: number, options?: {noCache: boolean}): Observable<Prescription> {
     this.setLoading("current", true);
 
     const found = this.findInCache(this.cacheMap, id);
 
-    if (found) {
+    if (found && !options?.noCache) {
       this.current.next(found);
       this.setLoading("current", false);
       return of(found);
@@ -230,7 +230,7 @@ export class PrescriptionsService {
   }
 
 
-  update(id: number, formData: FormData): Observable<Prescription> {
+  update(id: number, formData: any): Observable<Prescription> {
     return this.http.put<Prescription>(`${this.baseUrl}${id}`, formData).pipe(
       tap(response => {
         // TODO
@@ -323,10 +323,12 @@ export class PrescriptionsService {
     const selectedCount = selectedItems.length;
     if (selectedCount === 1) {
       const item = selectedItems[0];
-      this.delete$(item).subscribe();
+      return this.delete$(item);
     } else if (selectedCount > 1) {
       const selectedIds = selectedItems.map((item) => item.id);
-      this.deleteRangeByIds$(selectedIds).subscribe();
+      return this.deleteRangeByIds$(selectedIds);
+    } else {
+      return of();
     }
   };
 

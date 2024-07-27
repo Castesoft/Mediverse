@@ -44,20 +44,20 @@ public class PrescriptionsController(
         return item;
     }
 
-    // [HttpPut("{id}")]
-    // public async Task<ActionResult<PrescriptionDto>> UpdateAsync([FromRoute] int id, [FromBody] PrescriptionUpdateDto request)
-    // {
-    //     var item = await uow.PrescriptionRepository.GetByIdAsync(id);
+    [HttpPut("{id}")]
+    public async Task<ActionResult<PrescriptionDto>> UpdateAsync([FromRoute] int id, [FromBody] PrescriptionUpdateDto request)
+    {
+        var item = await uow.PrescriptionRepository.GetByIdAsync(id);
 
-    //     if (item == null) return NotFound($"{subjectArticle} {subject} con ID {id} no fue encontrado.");
+        if (item == null) return NotFound($"{subjectArticle} {subject} con ID {id} no fue encontrado.");
 
-    //     mapper.Map(request, item);
+        mapper.Map(request, item);
 
-    //     if (!await uow.Complete()) return BadRequest($"Error al actualizar {subjectArticle} {subject} con ID {id}.");
+        if (!await uow.Complete()) return BadRequest($"Error al actualizar {subjectArticle} {subject} con ID {id}.");
 
-    //     var itemToReturn = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
-    //     return itemToReturn;
-    // }
+        var itemToReturn = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
+        return itemToReturn;
+    }
 
     [HttpPost("{doctorId}")]
     public async Task<ActionResult<PrescriptionDto>> CreateAsync([FromRoute] int doctorId,
@@ -217,6 +217,25 @@ public class PrescriptionsController(
 
         if (!deleteResult) return BadRequest($"Error al eliminar {subject} con Id: {item.Id}.");
 
+        return Ok();
+    }
+
+    [HttpDelete("range/{ids}")]
+    public async Task<ActionResult> DeleteRangeAsync([FromRoute]string ids)
+    {   
+        var selectedIds = ids.Split(',').Select(int.Parse).ToList();
+
+        foreach (var item in selectedIds)
+        {
+            var itemToDelete = await uow.PrescriptionRepository.GetByIdAsNoTrackingAsync(item);
+
+            if (itemToDelete == null) return NotFound($"{subjectArticle} {subject} de ID {item} no fue encontrado.");
+
+            var deleteResult = await service.DeleteAsync(itemToDelete);
+
+            if (!deleteResult) return BadRequest($"Error al eliminar {subject} de {itemToDelete.Id}.");
+        }
+        
         return Ok();
     }
 }

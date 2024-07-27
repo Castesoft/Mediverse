@@ -19,7 +19,7 @@
           <hr class="text-gray-400 m-0"/>
           <div class="card-body p-6">
             <div class="row row-cols-1 align-items-end justify-content-center">
-                @if (use() !== 'detail') {
+                @if (use() === 'create') {
                     <div [isDisabled]="false"
                         [key]="selectedPatientKey"
                         [user]="patient ?? null"
@@ -50,7 +50,7 @@
           <hr class="text-gray-400 m-0"/>
           <div class="card-body p-6">
             <div class="row row-cols-1 align-items-start">
-                @if (use() !== 'detail') {
+                @if (use() === 'create') {
                     <div [isDisabled]="false"
                         [item]="event ?? null"
                         [key]="selectedEventKey"
@@ -64,7 +64,7 @@
                     class="flex-grow-1"
                     eventSelectDisplayCard></div>
                 }
-                @if (!event && use() === 'detail') {
+                @if (!event && use() !== 'create') {
                     Esta receta no está asociada a una cita.
                 }
             </div>
@@ -83,7 +83,7 @@
                         [rows]="6"
                         [submitted]="formGroup.controls['notes'].touched || isSubmitted"></div>
                   } @else {
-                      {{item()!.notes}}
+                    <pre style="font-family: var(--bs-body-font-family);">{{item()!.notes}}</pre>
                   }
               </div>
             </div>
@@ -92,13 +92,13 @@
     @if (prescription) {
       <div [data]="prescription.items"
            [key]="selectedProductsKey"
-           [mode]="use() === 'detail' ? 'view' : 'edit'"
+           [mode]="use() !== 'create' ? 'view' : 'edit'"
            (onProductSelected)="selectProduct($event)"
            (onProductDeleted)="deleteProduct($event)"
            prescriptionProductsTable></div>
     }
     <div class="d-flex flex-grow-1 justify-content-between align-items-center mt-6">
-      <button class="btn btn-secondary" (click)="location.back()">
+      <button class="btn btn-secondary" (click)="router.navigate(['/home/prescriptions'])">
         @if (use() !== 'detail') {
             Cancelar
         } @else {

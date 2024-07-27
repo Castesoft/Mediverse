@@ -18,10 +18,10 @@
           }
           }
 </div>
-<div class="col-auto d-flex">
-  <button (click)="onPrevious()" data-list-pagination="prev" class="page-link" [disabled]="currentPage === 1"
+<div class="col-auto d-flex gap-3">
+  <button (click)="onPrevious()" data-list-pagination="prev" class="page-link pointer" [disabled]="currentPage === 1"
     [class.disabled]="currentPage === 1">
-    <fa-icon [icon]="icons.faChevronLeft" />
+    <fa-icon [icon]="icons.faChevronLeft" size="sm" [ngStyle]="{color: currentPage === 1 ? '#C4CADA' : '#4B5675'}" />
   </button>
   <ul class="mb-0 pagination">
     @for(page of pages; let idx = $index; track idx) {
@@ -36,6 +36,6 @@
   </ul>
   <button (click)="onNext()" class="page-link pe-0" data-list-pagination="next" [disabled]="currentPage === totalPages"
     [class.disabled]="currentPage === totalPages">
-    <fa-icon [icon]="icons.faChevronRight" />
+    <fa-icon [icon]="icons.faChevronRight" size="sm"  [ngStyle]="{color: currentPage === totalPages ? '#C4CADA' : '#4B5675'}" />
   </button>
 </div>

@@ -74,6 +74,9 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems));
 
+        CreateMap<PrescriptionUpdateDto, Prescription>()
+            .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));
+
         CreateMap<PrescriptionItem, PrescriptionItemDto>()
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))

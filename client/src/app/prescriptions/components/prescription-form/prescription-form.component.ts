@@ -22,7 +22,6 @@ import { ConfirmService } from 'src/app/_services/confirm.service';
 import { AccountService } from 'src/app/_services/account.service';
 import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
 import { ControlTextareaComponent } from 'src/app/_forms/control-textarea.component';
 
 @Component({
@@ -44,8 +43,8 @@ export class PrescriptionFormComponent {
   private confirmService = inject(ConfirmService);
   private accountService = inject(AccountService);
   private prescriptionsService = inject(PrescriptionsService);
+  router = inject(Router);
   icons = inject(IconsService);
-  location = inject(Location);
 
   @HostBinding('class') get hostClass() {
     if (this.view() === 'page') return 'card-body pt-9 pb-9';
@@ -89,7 +88,6 @@ export class PrescriptionFormComponent {
   ngOnInit() {
     if (this.use() !== 'create' && this.item()) {
       this.prescription = this.item()!;
-      console.log(this.prescription.items[0])
       this.patient = this.item()?.patient;
       this.event = this.item()?.event;
       this.formGroup.get('notes')?.setValue(this.item()?.notes);
@@ -172,38 +170,51 @@ export class PrescriptionFormComponent {
 
     if (!authorized) return;
 
-    const jsonPayload = {
-      exchangeAmount: this.prescription.exchangeAmount,
-      eventId: this.event?.id || null,
-      patientId: this.patient?.id || null,
-      notes: this.formGroup.get('notes')?.value,
-      prescriptionItems: this.prescription.items.map((item) => {
-        return {
-          instructions: item.instructions,
-          dosage: item.dosage,
-          notes: item.notes,
-          productId: item.itemId || null,
-          quantity: item.quantity
-        }
-      })
-    };
-
-    console.log(jsonPayload);
-
-    const doctorId = this.accountService.current()?.id;
-
-    if (!doctorId) {
-      console.error("Doctor ID not found");
-      return;
-    }
-
-    this.prescriptionsService.create(jsonPayload, doctorId).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.error(error);
+    if (this.use() === 'create') {
+      const jsonPayload = {
+        exchangeAmount: this.prescription.exchangeAmount,
+        eventId: this.event?.id || null,
+        patientId: this.patient?.id || null,
+        notes: this.formGroup.get('notes')?.value,
+        prescriptionItems: this.prescription.items.map((item) => {
+          return {
+            instructions: item.instructions,
+            dosage: item.dosage,
+            notes: item.notes,
+            productId: item.itemId || null,
+            quantity: item.quantity
+          }
+        })
+      };
+  
+      const doctorId = this.accountService.current()?.id;
+  
+      if (!doctorId) {
+        console.error("Doctor ID not found");
+        return;
       }
-    });
+  
+      this.prescriptionsService.create(jsonPayload, doctorId).subscribe({
+        next: (response) => {
+          this.router.navigate(['/home/prescriptions']);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    } else if (this.use() === 'edit') {
+      const jsonPayload = {
+        notes: this.formGroup.get('notes')?.value,
+      };
+
+      this.prescriptionsService.update(this.prescription.id, jsonPayload).subscribe({
+        next: (response) => {
+          this.router.navigate(['/home/prescriptions', this.prescription.id], {queryParams: {edited: true}});
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
   }
 }

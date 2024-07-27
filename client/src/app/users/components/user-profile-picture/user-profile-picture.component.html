@@ -1,10 +1,10 @@
 @if (user().photoUrl) {
-    <div class="symbol symbol-50px symbol-circle">
+    <div class="symbol symbol-circle" [ngClass]="[size() === 'sm' ? 'symbol-50px' : 'symbol-100px']">
         <img [src]="user().photoUrl" alt="Emma Smith" class="w-100" />
     </div>
 } @else {
-    <div class="symbol symbol-50px symbol-circle">
-        <div [class]="'symbol-label fs-3 bg-light-' + bootstrapClass + ' text-' + bootstrapClass">
+    <div class="symbol symbol-circle" [ngClass]="[size() === 'sm' ? 'symbol-50px' : 'symbol-100px']">
+        <div [class]="'symbol-label fs-3 bg-light-' + bootstrapClass + ' text-' + bootstrapClass" [ngClass]="[size() === 'lg' ? 'fs-2x fw-semibold text-primary' : '']">
             {{ user().firstName[0] }}
         </div>
     </div>

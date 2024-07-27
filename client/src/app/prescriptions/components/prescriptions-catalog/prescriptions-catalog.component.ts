@@ -92,6 +92,10 @@ export class PrescriptionsCatalogComponent {
     this.loadData(this.params, true);
   }
 
+  deleteRange() {
+    this.service.deleteRange$(this.key())?.subscribe(()=> this.reloadData());
+  }
+
   onSubmit() {
     this.service.setParam$(this.key(), this.params);
     this.form.patchValue(this.params);

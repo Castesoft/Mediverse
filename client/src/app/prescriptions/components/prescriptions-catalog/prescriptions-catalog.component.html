@@ -18,7 +18,7 @@
   </div>
   <div class="card-toolbar">
     @if (service.hasSelected(key()) && mode() === 'view') {
-      <div deleteSelectedBtn [count]="service.selectedCount(key())" (click)="service.deleteRange$(key())"></div>
+      <div deleteSelectedBtn [count]="service.selectedCount(key())" (click)="deleteRange()"></div>
     }
     @if(!service.hasSelected(key())) {
       <div class="d-flex justify-content-end">
