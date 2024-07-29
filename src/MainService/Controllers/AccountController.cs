@@ -198,7 +198,7 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         string rawToken = await userManager.GeneratePasswordResetTokenAsync(user);
         var resetToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
         string clientUrl = clientSettings.Value.Url;
-        string resetUrl = $"{clientUrl}/auth/reset-password?resetToken={resetToken}&firstName={user.FirstName}&email={user.Email}";
+        string resetUrl = $"{clientUrl}/auth/sign-in/new-password?resetToken={resetToken}&firstName={user.FirstName}&email={user.Email}";
 
         string subject = $"🚨 ¡Recupera tu contraseña, {user.FirstName}! 🔒";
 

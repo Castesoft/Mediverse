@@ -31,6 +31,9 @@ import { FormControl } from "@angular/forms";
           @case('max') {
             Deber ser menor o igual a {{ control().errors?.['max'].max }}.
           }
+          @case('notEqual') {
+            Las contraseñas no coinciden.
+          }
           @default {
             Error desconocido.
           }

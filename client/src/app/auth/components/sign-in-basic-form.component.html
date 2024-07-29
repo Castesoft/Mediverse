@@ -21,14 +21,16 @@
         'El nombre de usuario o el correo no debe tener más de 255 caracteres.'
     }"></div>
 
-  <div class="fv-row mb-10 fv-plugins-icon-container" inputControl formControlName="password" [type]="'password'"
+  <div class="fv-row mb-5 fv-plugins-icon-container" inputControl formControlName="password" [type]="'password'"
     [label]="'Contraseña'" [autofocus]="true" [placeholder]="'Ingrese su usuario o correo electrónico'" [errors]="{
       'required': 'La contraseña es requerida',
       'minlength': 'La contraseña debe tener al menos 6 caracteres.',
       'maxlength': 'La contraseña no debe tener más de 100 caracteres.'
     }"></div>
 
-  <div class="text-center">
+  <a class="fs-6 link-primary" routerLink="/auth/sign-in/password-reset">¿Olvidaste tu contraseña?</a>
+
+  <div class="text-center mt-5">
     <button type="submit" [attr.form]="form.id" class="btn btn-lg btn-primary w-100 mb-5">
       <span class="indicator-label"> Continuar </span>
 

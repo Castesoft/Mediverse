@@ -30,7 +30,9 @@ public static class IdentityServiceExtensions
             .AddRoleValidator<RoleValidator<AppRole>>()
 
             // Entity Framework Stores
-            .AddEntityFrameworkStores<DataContext>();
+            .AddEntityFrameworkStores<DataContext>()
+            
+            .AddDefaultTokenProviders();
 
         services.Configure<DataProtectionTokenProviderOptions>(opt =>
             opt.TokenLifespan = TimeSpan.FromHours(2));

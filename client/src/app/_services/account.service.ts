@@ -6,6 +6,7 @@ import { Account } from "src/app/_models/account";
 import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { FormGroup, ValidationErrors } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,8 @@ export class AccountService {
       return roles;
     }
     return [];
-  })
+  });
+  passwordPattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[*@$¡!%*¿?&.,_-]).{8,}$/;
 
   private http = inject(HttpClient);
   private router = inject(Router);
@@ -204,4 +206,17 @@ export class AccountService {
   resendPhoneNumberVerificationCode = () =>
     this.http.get(`${this.baseUrl}resend-phone-verification`);
 
+  equalFields(field1:string, field2:string) {
+    return ( formGroup:FormGroup ): ValidationErrors | null => {
+        const fieldValue1 = formGroup.get(field1)?.value;
+        const fieldValue2 = formGroup.get(field2)?.value;
+        if( fieldValue1 !== fieldValue2 ) {
+            formGroup.get(field2)?.setErrors({ notEqual:true });
+            return { notEqual: true }
+        }
+
+        return null;
+  }
+
+}
 }
