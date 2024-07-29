@@ -169,11 +169,11 @@ export class PrescriptionsService {
     const mapKey = Object.values(param).join("-");
     const response = this.getCache(key).get(mapKey);
 
-    if (response && !noCache) {
-      this.setPagedList(key, response);
-      this.setLoading(key, false);
-      return of(response);
-    }
+    // if (response && !noCache) {
+    //   this.setPagedList(key, response);
+    //   this.setLoading(key, false);
+    //   return of(response);
+    // }
 
     let params = param.toHttpParams();
 
@@ -205,11 +205,11 @@ export class PrescriptionsService {
 
     const found = this.findInCache(this.cacheMap, id);
 
-    if (found && !options?.noCache) {
-      this.current.next(found);
-      this.setLoading("current", false);
-      return of(found);
-    }
+    // if (found && !options?.noCache) {
+    //   this.current.next(found);
+    //   this.setLoading("current", false);
+    //   return of(found);
+    // }
 
     return this.http.get<Prescription>(`${this.baseUrl}${id}`).pipe(
       tap(response => {

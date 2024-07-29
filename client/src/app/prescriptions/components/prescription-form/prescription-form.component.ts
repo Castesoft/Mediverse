@@ -153,7 +153,12 @@ export class PrescriptionFormComponent {
   }
 
   selectProduct(product: PrescriptionItem) {
-    this.prescription.items.push(product);
+    if (product.itemId === 0 && this.prescription.items.findIndex(item => item.itemId === 0) === -1) {
+      this.prescription.items.push(product);
+    } else {
+      const emtpyIndex = this.prescription.items.findIndex(item => item.itemId === 0);
+      this.prescription.items[emtpyIndex] = product;
+    }
   }
 
   deleteProduct(product: PrescriptionItem) {
@@ -176,7 +181,7 @@ export class PrescriptionFormComponent {
         eventId: this.event?.id || null,
         patientId: this.patient?.id || null,
         notes: this.formGroup.get('notes')?.value,
-        prescriptionItems: this.prescription.items.map((item) => {
+        prescriptionItems: this.prescription.items.filter(item => item.itemId !== 0).map((item) => {
           return {
             instructions: item.instructions,
             dosage: item.dosage,
@@ -193,7 +198,7 @@ export class PrescriptionFormComponent {
         console.error("Doctor ID not found");
         return;
       }
-  
+
       this.prescriptionsService.create(jsonPayload, doctorId).subscribe({
         next: (response) => {
           this.router.navigate(['/home/prescriptions']);

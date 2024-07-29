@@ -67,8 +67,12 @@ export class PrescriptionsCatalogComponent {
       .subscribe((loading) => (this.loading = loading));
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+  }
+
   private loadData(params: PrescriptionParams, noCache = false) {
-    this.service.loadPagedList(this.key(), params, noCache).subscribe({
+    this.service.loadPagedList(this.key(), params, noCache).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (response) => {
         const { result, pagination } = response;
         this.data = result;

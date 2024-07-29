@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model, OnChanges, OnInit, SimpleChanges } from "@angular/core";
+import { Component, computed, inject, input, model, OnChanges, OnInit, output, SimpleChanges } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ControlTypeaheadComponent } from "src/app/_forms/control-typeahead.component";
 import { PopoverModule } from "ngx-bootstrap/popover";
@@ -51,6 +51,7 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
   sex = input<string | undefined>();
   key = input<string>(createId());
   showCatalogButton = input<boolean>(true);
+  onSelectProduct = output<Product>();
 
   submitted = false;
   loading = true;
@@ -158,6 +159,7 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
         this.loading = false;
       }))
       .subscribe((product) => {
+        this.onSelectProduct.emit(product);
         this.service.setSelected$(this.key(), product);
       });
   };

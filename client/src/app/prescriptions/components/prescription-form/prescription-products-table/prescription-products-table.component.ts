@@ -1,4 +1,4 @@
-import { Component, inject, input, model, OnInit, output } from "@angular/core";
+import { Component, ElementRef, inject, input, model, OnInit, output, ViewChild, viewChild } from "@angular/core";
 import { ProductsService } from "src/app/_services/products.service";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
@@ -8,6 +8,7 @@ import { FormsModule } from "@angular/forms";
 import { PrescriptionItem } from "src/app/_models/prescription";
 import { ProductSelectTypeaheadComponent } from 'src/app/_shared/components/product-select-typeahead.component';
 import { createId } from '@paralleldrive/cuid2';
+import { Product } from 'src/app/_models/product';
 @Component({
   selector: '[prescriptionProductsTable]',
   templateUrl: './prescription-products-table.component.html',
@@ -43,27 +44,20 @@ export class PrescriptionProductsTableComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
-    this.subscribeToSelectedProduct();
-  }
+  ngOnInit(): void {}
 
-  private subscribeToSelectedProduct = () => {
-    this.productsService.selected$(this.selectedProductKey)
-    .subscribe({
-      next: (product) => {
-        if (product) {
-          this.product = null;
-          this.onProductSelected.emit({
-            ...product,
-            dosage: product.dosage.toString(),
-            instructions: "",
-            itemId: product.id,
-            notes: "",
-            quantity: 1
-          });
-        }
-      }
-    });
+  selectProduct(product: Product) {
+    if (product) {
+      this.onProductSelected.emit({
+        ...product,
+        dosage: product.dosage.toString(),
+        instructions: "",
+        itemId: product.id,
+        notes: "",
+        quantity: 1
+      });
+      this.selectedProductKey = createId();
+    }
   }
 
   handleAmountChange = (item: PrescriptionItem, quantity: number) => {
@@ -77,5 +71,16 @@ export class PrescriptionProductsTableComponent implements OnInit {
 
   openProductSelectModal = () => {
     this.productsService.showCatalogModal(new MouseEvent('click'), this.key(), "multiselect");
+  }
+
+  addEmptyPrescriptionItem() {
+    this.onProductSelected.emit({
+      ... new Product(),
+      dosage: "",
+      instructions: "",
+      itemId: 0,
+      notes: "",
+      quantity: 1
+    });
   }
 }
