@@ -1,0 +1,36 @@
+<div class="mr-2">
+    @if (currentStep() > 1 && currentStep() < totalSteps()) {
+        <button type="button" class="btn btn-lg btn-light-primary me-4" data-kt-stepper-action="previous" (click)="previousStep()">
+            <i class="ki-duotone ki-arrow-left fs-4 me-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+            Anterior
+        </button>
+    }
+    @if (currentStep() === totalSteps()) {
+        <a class="btn btn-lg btn-primary me-3" data-kt-stepper-action="final">Entrar a mi cuenta</a>
+    }
+</div>
+<div>
+    @if (currentStep() === totalSteps() - 1) {
+        <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit" (click)="submit()">
+            <span class="indicator-label">Enviar
+            <i class="ki-duotone ki-arrow-right fs-4 ms-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i></span>
+            <span class="indicator-progress">Por favor espera...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+        </button>
+    }
+    @if (currentStep() < totalSteps() - 1) {
+        <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next" (click)="nextStep()">
+            Continuar
+            <i class="ki-duotone ki-arrow-right fs-4 ms-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </button>
+    }
+</div>
