@@ -1,4 +1,9 @@
 <div class="mr-2">
+    @if (currentStep() === 1) {
+        <button type="button" class="btn btn-lg btn-light-primary me-4" data-kt-stepper-action="previous" (click)="navigateToLogin()">
+            Ir a inicio de sesión
+        </button>
+    }
     @if (currentStep() > 1 && currentStep() < totalSteps()) {
         <button type="button" class="btn btn-lg btn-light-primary me-4" data-kt-stepper-action="previous" (click)="previousStep()">
             <i class="ki-duotone ki-arrow-left fs-4 me-1">

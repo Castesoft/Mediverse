@@ -153,17 +153,17 @@ export class AuthComponent { }
 
 @NgModule({
   imports: [RouterModule.forChild([
-    { path: 'basic', component: SignUpComponent },
-    { path: 'multi-steps', component: MultiStepsComponent },
-    { path: 'free-trial', component: FreeTrialComponent },
-    { path: 'coming-soon', component: ComingSoonComponent },
+    { path: '', component: SignUpComponent },
+    // { path: 'multi-steps', component: MultiStepsComponent },
+    // { path: 'free-trial', component: FreeTrialComponent },
+    // { path: 'coming-soon', component: ComingSoonComponent },
   ])],
   exports: [RouterModule],
 })class SignUpRoutingModule {}
 
 @NgModule({
   imports: [RouterModule.forChild([
-    { path: 'basic', component: SignInBasicComponent },
+    { path: '', component: SignInBasicComponent },
     { path: 'password-reset', component: PasswordResetComponent },
     { path: 'new-password', component: NewPasswordComponent },
   ])],
@@ -172,7 +172,10 @@ export class AuthComponent { }
 
 @NgModule({
   imports: [RouterModule.forChild([
-    { path: '', component: AuthComponent, },
+    { path: '',
+      redirectTo: 'sign-in',
+      pathMatch: 'full'
+    },
     { path: 'sign-in', loadChildren: () => SignInModule, title: 'Iniciar sesión en Mediverse', },
     { path: 'sign-up', loadChildren: () => SignUpModule, title: 'Registrarse en Mediverse', },
   ])],

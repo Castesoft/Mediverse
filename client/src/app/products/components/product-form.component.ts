@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, inject, input, output, HostBinding} from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { Subject, takeUntil } from "rxjs";
 import { Product, CreateForm, EditForm, DetailForm } from "src/app/_models/product";
 import {BadRequest, FormControlStyles, FormUse, Role, View} from "src/app/_models/types";
@@ -24,7 +24,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private formsService = inject(FormsService);
   private router = inject(Router);
-  private toastr = inject(ToastrService);
+  private snackbarService = inject(SnackbarService);
   service = inject(ProductsService);
   icons = inject(IconsService);
 
@@ -159,10 +159,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       this.service.update(this.item!.id, formValues).subscribe({
         next: () => {
           this.form.submitted = false;
-          this.toastr.success(
-            this.service.naming.singularTitlecase + ' actualizado',
-            'Éxito',
-          );
+          this.snackbarService.success(this.service.naming.singularTitlecase + ' actualizado');
           this.form.group.reset();
           this.form.group.markAsPristine();
           this.router.navigate([`${this.service.naming.catalogRoute}/${this.item!.id}`]);

@@ -1,9 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import {MatSnackBar} from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
-import { ToastrService } from "ngx-toastr";
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
@@ -22,8 +21,7 @@ export class AddressesService {
   private bsModalService = inject(BsModalService);
   private router = inject(Router);
   private confirm = inject(ConfirmService);
-  private toastr = inject(ToastrService);
-  private matSnackBar = inject(MatSnackBar);
+  private snackbarService = inject(SnackbarService);
 
   baseUrl = `${environment.apiUrl}addresses/`;
 
@@ -254,7 +252,7 @@ export class AddressesService {
         this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
-        this.matSnackBar.open(`${this.namingDictionary.get(type)!.definedArticle} ${this.namingDictionary.get(type)!.singular} ${response.name} fue creado exitosamente`, "Cerrar", { duration: 3000 });
+        this.snackbarService.success(`${this.namingDictionary.get(type)!.definedArticle} ${this.namingDictionary.get(type)!.singular} ${response.name} fue creado exitosamente`);
         if (view === "modal") {
           this.hideNewModal();
         } else if (view === 'page') {
@@ -334,11 +332,11 @@ export class AddressesService {
         if (result) {
           return this.delete(item.id).pipe(
             map(() => {
-              this.toastr.success(`${this.namingDictionary.get(type)!.definedArticle} ${this.namingDictionary.get(type)!.singular} ${item.id} ha sido eliminado`);
+              this.snackbarService.success(`${this.namingDictionary.get(type)!.definedArticle} ${this.namingDictionary.get(type)!.singular} ${item.id} ha sido eliminado`);
               return true;
             }),
             catchError(error => {
-              this.toastr.error(`Error eliminando ${this.namingDictionary.get(type)!.definedArticle} ${this.namingDictionary.get(type)!.singular} ${item.id}.`);
+              this.snackbarService.error(`Error eliminando ${this.namingDictionary.get(type)!.definedArticle} ${this.namingDictionary.get(type)!.singular} ${item.id}.`);
               console.error(error);
               return of(false);
             })
@@ -370,11 +368,11 @@ export class AddressesService {
         if (result) {
           return this.deleteRange(ids.join(",")).pipe(
             map(() => {
-              this.toastr.success(`${this.namingDictionary.get(type)!.definedArticlePlural} (${ids.length}) ${this.namingDictionary.get(type)!.plural} seleccionados fueron eliminados.`);
+              this.snackbarService.success(`${this.namingDictionary.get(type)!.definedArticlePlural} (${ids.length}) ${this.namingDictionary.get(type)!.plural} seleccionados fueron eliminados.`);
               return true;
             }),
             catchError(error => {
-              this.toastr.error(`Ocurrió un error eliminando ${this.namingDictionary.get(type)!.definedArticlePlural} (${ids.length}) ${this.namingDictionary.get(type)!.plural}.`);
+              this.snackbarService.error(`Ocurrió un error eliminando ${this.namingDictionary.get(type)!.definedArticlePlural} (${ids.length}) ${this.namingDictionary.get(type)!.plural}.`);
               return of(false);
             })
           );
@@ -387,10 +385,10 @@ export class AddressesService {
   downloadXLSX$ = (key: string, type: Addresses) => {
     this.downloadXLSX(key, type).subscribe({
       next: () => {
-        this.matSnackBar.open(`Archivo XLSX de ${this.namingDictionary.get(type)!.plural} descargado`, "Cerrar", { duration: 3000 });
+        this.snackbarService.success(`Archivo XLSX de ${this.namingDictionary.get(type)!.plural} descargado`);
       },
       error: (error) => {
-        this.matSnackBar.open(`Error descargando archivo XLSX de ${this.namingDictionary.get(type)!.plural}`, "Cerrar", { duration: 3000 });
+        this.snackbarService.error(`Error descargando archivo XLSX de ${this.namingDictionary.get(type)!.plural}`);
       }
     });
   }

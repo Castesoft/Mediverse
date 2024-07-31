@@ -16,6 +16,8 @@ import { MaterialModule } from 'src/app/_shared/material.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AccountService } from 'src/app/_services/account.service';
 import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
+import { authGuard } from './_guards/auth.guard';
+import { anonymousGuard } from './_guards/anonymous.guard';
 
 @Component({
   selector: 'app-root',
@@ -51,21 +53,30 @@ registerLocaleData(localeEsMX, 'es-MX');
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter([
-      // {
-      //   path: '',
-      //   loadChildren: () => import('./home/').then(m => m.HomeModule)
-      // },
-      { path: 'account',
-        loadChildren: () => import('./account/account.component').then(m => m.AccountModule)
-       },
+      {
+        path: '',
+        redirectTo: '/auth',
+        pathMatch: 'full',
+      },
       {
         path: 'auth',
+        canActivate: [anonymousGuard],
         loadChildren: () => import('./auth/auth.config').then(m => m.AuthModule)
       },
       {
-        path: 'home',
-        loadChildren: () => import('./home/home.config').then(x => x.HomeModule),
-      }
+        path: '',
+        runGuardsAndResolvers: 'always',
+        canActivate: [authGuard],
+        children: [
+          { path: 'account',
+            loadChildren: () => import('./account/account.component').then(m => m.AccountModule)
+           },
+          {
+            path: 'home',
+            loadChildren: () => import('./home/home.config').then(x => x.HomeModule),
+          }
+        ]
+      },
     ]),
     provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor, loadingInterceptor])),
     provideAnimations(),

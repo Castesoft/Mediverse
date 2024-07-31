@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, inject, input, output, HostBinding} from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { Subject, takeUntil } from "rxjs";
 import { User, CreateForm, EditForm, DetailForm } from "src/app/_models/user";
 import {BadRequest, FormControlStyles, FormUse, Role, View} from "src/app/_models/types";
@@ -23,7 +23,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private formsService = inject(FormsService);
   private router = inject(Router);
-  private toastr = inject(ToastrService);
+  private snackbarService = inject(SnackbarService);
   service = inject(UsersService);
   icons = inject(IconsService);
 
@@ -160,10 +160,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       this.service.update(this.item!.id, formValues, this.role()).subscribe({
         next: () => {
           this.form.submitted = false;
-          this.toastr.success(
-            this.service.namingDictionary.get(this.role())!.singularTitlecase + ' actualizado',
-            'Éxito',
-          );
+          this.snackbarService.success(this.service.namingDictionary.get(this.role())!.singularTitlecase + ' actualizado');
           this.form.group.reset();
           this.form.group.markAsPristine();
           this.router.navigate([`${this.service.namingDictionary.get(this.role())!.catalogRoute}/${this.item!.id}`]);

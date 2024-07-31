@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { Router } from "@angular/router";
 import {DateClickArg} from "@fullcalendar/interaction";
 import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
@@ -23,7 +23,7 @@ export class EventsService {
   private bsModalService = inject(BsModalService);
   private router = inject(Router);
   private confirm = inject(ConfirmService);
-  matSnackBar = inject(MatSnackBar);
+  snackbarService = inject(SnackbarService)
 
   baseUrl = `${environment.apiUrl}events/`;
 
@@ -278,7 +278,7 @@ export class EventsService {
         this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
-        this.matSnackBar.open(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.patient?.fullName} fue creado exitosamente`, "Cerrar", { duration: 3000 });
+        this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.patient?.fullName} fue creado exitosamente`);
         if (view === "modal") {
           this.hideNewModal();
         } else if (view === 'page') {
@@ -358,11 +358,11 @@ export class EventsService {
         if (result) {
           return this.delete(item.id).pipe(
             map(() => {
-              this.matSnackBar.open(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminado`, "Cerrar", { duration: 3000 });
+              this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminado`);
               return true;
             }),
             catchError(error => {
-              this.matSnackBar.open(`Error eliminando ${this.naming.definedArticle} ${this.naming.singular} ${item.id}.`, "Cerrar", { duration: 3000 });
+              this.snackbarService.error(`Error eliminando ${this.naming.definedArticle} ${this.naming.singular} ${item.id}.`);
               console.error(error);
               return of(false);
             })
@@ -394,11 +394,11 @@ export class EventsService {
         if (result) {
           return this.deleteRange(ids.join(",")).pipe(
             map(() => {
-              this.matSnackBar.open(`${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural} seleccionados fueron eliminados.`, "Cerrar", { duration: 3000 })
+              this.snackbarService.success(`${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural} seleccionados fueron eliminados.`)
               return true;
             }),
             catchError(error => {
-              this.matSnackBar.open(`Ocurrió un error eliminando ${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural}.`, "Cerrar", { duration: 3000 });
+              this.snackbarService.error(`Ocurrió un error eliminando ${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural}.`);
               return of(false);
             })
           );
@@ -411,10 +411,10 @@ export class EventsService {
   downloadXLSX$ = (key: string) => {
     this.downloadXLSX(key).subscribe({
       next: () => {
-        this.matSnackBar.open(`Archivo XLSX de ${this.naming.plural} descargado`, "Cerrar", { duration: 3000 });
+        this.snackbarService.success(`Archivo XLSX de ${this.naming.plural} descargado`);
       },
       error: (error) => {
-        this.matSnackBar.open(`Error descargando archivo XLSX de ${this.naming.plural}`, "Cerrar", { duration: 3000 });
+        this.snackbarService.error(`Error descargando archivo XLSX de ${this.naming.plural}`);
       }
     });
   }

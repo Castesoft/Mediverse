@@ -11,7 +11,7 @@ import { InputControlComponent } from "src/app/_forms/input-control.component";
 import { ControlSelectComponent } from "src/app/_forms/control-select.component";
 import { OrdersService } from "src/app/_services/orders.service";
 import { parseOrderDeliveryStatus, parseOrderStatus, reverseParseOrderDeliveryStatus, reverseParseOrderStatus } from "src/app/orders/orders-util";
-import { ToastrService } from "ngx-toastr";
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 
 @Component({
   selector: '[orderEditView]',
@@ -29,7 +29,7 @@ import { ToastrService } from "ngx-toastr";
 })
 export class OrderEditComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
-  private toastr = inject(ToastrService);
+  private snackbarService = inject(SnackbarService);
   service = inject(OrdersService);
   icons = inject(IconsService);
 
@@ -101,7 +101,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 
     this.service.update(this.id(), jsonPayload).subscribe({
       next: () => {
-        this.toastr.success('Pedido actualizado');
+        this.snackbarService.success('Pedido actualizado');
       }
     });
   }

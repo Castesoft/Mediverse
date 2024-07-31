@@ -5,8 +5,8 @@ import { environment } from "src/environments/environment";
 import { Account } from "src/app/_models/account";
 import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormGroup, ValidationErrors } from '@angular/forms';
+import { SnackbarService } from './snackbar.service';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +29,7 @@ export class AccountService {
 
   private http = inject(HttpClient);
   private router = inject(Router);
-  private matSnackBar = inject(MatSnackBar);
+  private snackbarService = inject(SnackbarService);
 
   login(value: any) {
     return this.http.post<Account>(`${this.baseUrl}login`, value).pipe(
@@ -37,7 +37,7 @@ export class AccountService {
         if (response) {
           this.setCurrentUser(response);
           this.router.navigate(['/account']);
-          this.matSnackBar.open(`Bienvenido ${response.firstName}`, 'Cerrar', { duration: 3000 });
+          this.snackbarService.success(`Bienvenido ${response.firstName}!`);
         }
         return response;
       })
@@ -66,7 +66,7 @@ export class AccountService {
   logout() {
     localStorage.removeItem('user');
     this.current.set(null);
-    this.router.navigate(['/auth/sign-in/basic']);
+    this.router.navigate(['/auth/sign-in']);
   }
 
   update(value: any) {

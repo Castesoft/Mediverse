@@ -1,25 +1,25 @@
 import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
 import {inject} from '@angular/core';
-import {MatSnackBar} from "@angular/material/snack-bar";
 import {NavigationExtras, Router} from '@angular/router';
 import {catchError} from 'rxjs';
 import { BadRequest } from 'src/app/_models/types';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const matSnackBar = inject(MatSnackBar);
+  const snackbarService = inject(SnackbarService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error) {
         switch (error.status) {
           case 400:
-            matSnackBar.open('Solicitud incorrecta', 'Cerrar', {duration: 5000});
+            snackbarService.error('Solicitud incorrecta');
             throw new BadRequest(error);
             break;
           case 401:
             // toastr.error('Unauthorised', error.status)
-            matSnackBar.open('No autorizado', 'Cerrar', {duration: 5000});
+            snackbarService.error('No autorizado');
             break;
           case 404:
             router.navigateByUrl('/not-found');
@@ -29,7 +29,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigateByUrl('/server-error', navigationExtras);
             break;
           default:
-            matSnackBar.open('Algo salió mal', 'Cerrar', {duration: 5000});
+            snackbarService.error('Algo salió mal');
             break;
         }
       }

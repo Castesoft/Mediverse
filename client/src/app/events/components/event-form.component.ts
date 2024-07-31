@@ -9,7 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Address } from 'src/app/_models/address';
@@ -439,7 +439,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private formsService = inject(FormsService);
   private router = inject(Router);
-  matSnackBar = inject(MatSnackBar);
+  snackbarService = inject(SnackbarService)
   eventsService = inject(EventsService);
   icons = inject(IconsService);
   usersService = inject(UsersService);
@@ -693,11 +693,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
       this.eventsService.update(this.item!.id, this.form.getRequest()).subscribe({
         next: () => {
           this.form.submitted = false;
-          this.matSnackBar.open(
-            this.eventsService.naming!.singularTitlecase + ' actualizado',
-            'Cerrar',
-            { duration: 3000 }
-          );
+          this.snackbarService.success(this.eventsService.naming!.singularTitlecase + ' actualizado');
           this.form.group.reset();
           this.form.group.markAsPristine();
           this.router.navigate([

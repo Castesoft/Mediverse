@@ -14,3 +14,35 @@ html, body { height: 100%; }
 .cdk-overlay-container {
   z-index: 1000000000!important;
 }
+
+.custom-snackbar {
+  .mat-mdc-snackbar-surface {
+    margin-bottom: 20px !important;
+    background-color: var(--bs-success) !important;
+  }
+  .mat-mdc-snack-bar-label {
+    color: white !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: white !important;
+    font-size: 1rem !important;
+  }
+}
+
+.snackbar-danger {
+  .mat-mdc-snackbar-surface {
+    margin-bottom: 20px !important;
+    background-color: var(--bs-danger) !important;
+  }
+  .mat-mdc-snack-bar-label {
+    color: white !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: white !important;
+    font-size: 1rem !important;
+  }
+}

@@ -9,7 +9,7 @@ import { UtilsService } from 'src/app/_services/utils.service';
 import { createId } from '@paralleldrive/cuid2';
 import { FormsService } from 'src/app/_services/forms.service';
 import { MaterialModule } from 'src/app/_shared/material.module';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 
 export class LoginForm {
   id: string;
@@ -59,7 +59,7 @@ export class SignInBasicFormComponent implements OnInit {
   route = inject(ActivatedRoute);
   utils = inject(UtilsService);
   forms = inject(FormsService);
-  matSnackBar = inject(MatSnackBar);
+  snackbarService = inject(SnackbarService)
 
   form = new LoginForm(true);
   emailFromQuery: string = 'redacted+021@example.invalid';

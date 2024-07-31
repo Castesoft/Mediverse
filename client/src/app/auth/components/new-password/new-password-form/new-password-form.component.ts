@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
@@ -16,7 +16,7 @@ import { AccountService } from 'src/app/_services/account.service';
 export class NewPasswordFormComponent {
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
-  private matSnackBar = inject(MatSnackBar);
+  private snackbarService = inject(SnackbarService)
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -40,8 +40,8 @@ export class NewPasswordFormComponent {
       const paramToken = params.get('resetToken');
 
       if (!paramEmail || !paramToken) {
-        this.matSnackBar.open(`Operación inválida, intentalo de nuevo`, 'Cerrar', { duration: 3000 });
-        this.router.navigateByUrl('/auth/sign-in/basic');
+        this.snackbarService.error(`Operación inválida, intentalo de nuevo`);
+        this.router.navigateByUrl('/auth/sign-in');
       }
 
       this.email = paramEmail!;
@@ -56,10 +56,10 @@ export class NewPasswordFormComponent {
     }
 
     this.accountService.resetPasswordWithToken(this.resetToken, this.form.get('password')?.value, this.email).subscribe(response => {
-      this.matSnackBar.open(`Contraseña reestablecida`, 'Cerrar', { duration: 3000 });
+      this.snackbarService.success(`Contraseña reestablecida`);
       this.form.reset();
       this.submitted = false;
-      this.router.navigateByUrl('/auth/sign-in/basic');
+      this.router.navigateByUrl('/auth/sign-in');
     });
   }
 }

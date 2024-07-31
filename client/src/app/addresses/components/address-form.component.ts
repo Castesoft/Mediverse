@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";
-import { ToastrService } from "ngx-toastr";
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { Subject, takeUntil } from "rxjs";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Address, CreateForm, DetailForm, EditForm } from "src/app/_models/address";
@@ -23,7 +23,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private formsService = inject(FormsService);
   private router = inject(Router);
-  private toastr = inject(ToastrService);
+  private snackbarService = inject(SnackbarService);
   service = inject(AddressesService);
   icons = inject(IconsService);
 
@@ -161,10 +161,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
       this.service.update(this.item!.id, formValues, this.type()).subscribe({
         next: () => {
           this.form.submitted = false;
-          this.toastr.success(
-            this.service.namingDictionary.get(this.type())!.singularTitlecase + ' actualizado',
-            'Éxito',
-          );
+          this.snackbarService.success(this.service.namingDictionary.get(this.type())!.singularTitlecase + ' actualizado');
           this.form.group.reset();
           this.form.group.markAsPristine();
           this.router.navigate([`${this.service.namingDictionary.get(this.type())!.catalogRoute}/${this.item!.id}`]);

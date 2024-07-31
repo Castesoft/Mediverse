@@ -7,7 +7,7 @@ import { FormErrorModalService } from 'src/app/_services/form-error-modal.servic
 import { UtilsService } from 'src/app/_services/utils.service';
 import { FormsService } from 'src/app/_services/forms.service';
 import { AccountService } from 'src/app/_services/account.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 
 @Component({
   selector: '[passwordResetForm]',
@@ -20,7 +20,7 @@ export class PasswordResetFormComponent implements OnInit {
   private fs = inject(FormsService);
   private errorModal = inject(FormErrorModalService);
   private accountService = inject(AccountService);
-  private matSnackBar = inject(MatSnackBar);
+  private snackbarService = inject(SnackbarService)
 
 
   form = new PasswordResetForm();
@@ -40,7 +40,7 @@ export class PasswordResetFormComponent implements OnInit {
     this.form.submitted = true;
     if (this.form.formGroup.valid) {
       this.accountService.sendEmailForPasswordReset(this.form.formGroup.get('email')?.value).subscribe(response => {
-        this.matSnackBar.open(`Correo de confirmación enviado`, 'Cerrar', { duration: 3000 });
+        this.snackbarService.success(`Correo de confirmación enviado`);
         this.form.formGroup.reset();
         this.form.submitted = false;
       });

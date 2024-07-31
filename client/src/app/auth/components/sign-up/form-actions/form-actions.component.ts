@@ -1,4 +1,5 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   host: { class: 'd-flex flex-stack pt-15' },
@@ -9,11 +10,17 @@ import { Component, input, output } from '@angular/core';
   styleUrl: './form-actions.component.scss'
 })
 export class FormActionsComponent {
+  private router = inject(Router);
+
   totalSteps = input.required<number>();
   currentStep = input.required<number>();
   onNextStep = output();
   onPreviousStep = output();
   onSubmit = output();
+
+  navigateToLogin() {
+    this.router.navigateByUrl('/auth/sign-in');
+  }
 
   nextStep() {
     this.onNextStep.emit();

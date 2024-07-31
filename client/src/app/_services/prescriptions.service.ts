@@ -4,9 +4,8 @@ import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from
 import { Event, FilterForm } from "src/app/_models/event";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, SortOptions, View } from '../_models/types';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
-import { ToastrService } from 'ngx-toastr';
 import { Modal } from '../_models/modal';
 import { PaginatedResult } from '../_models/pagination';
 import { getItemsByKey, getPaginatedResult, downloadExcelFile } from '../_utils/util';
@@ -23,8 +22,7 @@ export class PrescriptionsService {
   private bsModalService = inject(BsModalService);
   private router = inject(Router);
   private confirm = inject(ConfirmService);
-  private toastr = inject(ToastrService);
-  matSnackBar = inject(MatSnackBar);
+  private snackbarService = inject(SnackbarService);
 
   baseUrl = `${environment.apiUrl}prescriptions/`;
 
@@ -300,11 +298,11 @@ export class PrescriptionsService {
         if (result) {
           return this.delete(item.id).pipe(
             map(() => {
-              this.toastr.success(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminada`);
+              this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminada`);
               return true;
             }),
             catchError(error => {
-              this.toastr.error(`Error eliminando ${this.naming.definedArticle} ${this.naming.singular} ${item.id}.`);
+              this.snackbarService.error(`Error eliminando ${this.naming.definedArticle} ${this.naming.singular} ${item.id}.`);
               console.error(error);
               return of(false);
             })
@@ -338,11 +336,11 @@ export class PrescriptionsService {
         if (result) {
           return this.deleteRange(ids.join(",")).pipe(
             map(() => {
-              this.toastr.success(`${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural} seleccionados fueron eliminados.`);
+              this.snackbarService.success(`${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural} seleccionados fueron eliminados.`);
               return true;
             }),
             catchError(error => {
-              this.toastr.error(`Ocurrió un error eliminando ${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural}.`);
+              this.snackbarService.error(`Ocurrió un error eliminando ${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural}.`);
               return of(false);
             })
           );
@@ -355,10 +353,10 @@ export class PrescriptionsService {
   downloadXLSX$ = (key: string) => {
     this.downloadXLSX(key).subscribe({
       next: () => {
-        this.matSnackBar.open(`Archivo XLSX de ${this.naming.plural} descargado`, "Cerrar", { duration: 3000 });
+        this.snackbarService.success(`Archivo XLSX de ${this.naming.plural} descargado`);
       },
       error: (error) => {
-        this.matSnackBar.open(`Error descargando archivo XLSX de ${this.naming.plural}`, "Cerrar", { duration: 3000 });
+        this.snackbarService.error(`Error descargando archivo XLSX de ${this.naming.plural}`);
       }
     });
   }
