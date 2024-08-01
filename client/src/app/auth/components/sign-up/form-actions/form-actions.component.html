@@ -13,7 +13,7 @@
             Anterior
         </button>
     }
-    @if (currentStep() === totalSteps()) {
+    @if (currentStep() === totalSteps() && totalSteps() !== 1) {
         <a class="btn btn-lg btn-primary me-3" data-kt-stepper-action="final">Entrar a mi cuenta</a>
     }
 </div>
@@ -29,7 +29,7 @@
             <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
         </button>
     }
-    @if (currentStep() < totalSteps() - 1) {
+    @if (currentStep() < totalSteps() - 1 || totalSteps() === 1) {
         <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next" (click)="nextStep()">
             Continuar
             <i class="ki-duotone ki-arrow-right fs-4 ms-1">

@@ -5,7 +5,7 @@ import { environment } from "src/environments/environment";
 import { Account } from "src/app/_models/account";
 import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
-import { FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
 
 @Injectable({
@@ -26,6 +26,8 @@ export class AccountService {
     return [];
   });
   passwordPattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[*@$¡!%*¿?&.,_-]).{8,}$/;
+  emailPattern:string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
+  phonePattern: string = '^[0-9]+$';
 
   private http = inject(HttpClient);
   private router = inject(Router);
@@ -206,7 +208,7 @@ export class AccountService {
   resendPhoneNumberVerificationCode = () =>
     this.http.get(`${this.baseUrl}resend-phone-verification`);
 
-  equalFields(field1:string, field2:string) {
+  equalFields(field1:string, field2:string): ValidationErrors | null {
     return ( formGroup:FormGroup ): ValidationErrors | null => {
         const fieldValue1 = formGroup.get(field1)?.value;
         const fieldValue2 = formGroup.get(field2)?.value;
@@ -216,7 +218,11 @@ export class AccountService {
         }
 
         return null;
+    }
   }
 
-}
+  termsAndConditionsValidator(control: AbstractControl): ValidationErrors | null {
+    return control.value === true ? null : {termsAndConditions: true};
+  }
+
 }

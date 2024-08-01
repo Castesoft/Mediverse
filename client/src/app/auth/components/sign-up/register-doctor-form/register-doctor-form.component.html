@@ -1,0 +1,14 @@
+@if (currentStep() === 2) {
+    <app-account-settings
+        [formGroup]="accountSettingsForm"
+        [submitted]="submitted()"
+    ></app-account-settings>
+} @else if (currentStep() === 3) {
+    <app-account-details
+        [formGroup]="accountDetailsForm"
+    ></app-account-details>
+} @else if (currentStep() === 4) {
+    <app-billing-details
+    [formGroup]="billingDetailsForm"
+    ></app-billing-details>
+}

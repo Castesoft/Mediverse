@@ -34,6 +34,9 @@ import { FormControl } from "@angular/forms";
           @case('notEqual') {
             Las contraseñas no coinciden.
           }
+          @case('termsAndConditions') {
+            Debes aceptar los términos y condiciones para continuar.
+          }
           @default {
             Error desconocido.
           }

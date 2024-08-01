@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
@@ -24,10 +24,8 @@ export class NewPasswordFormComponent {
     password    : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
     confirm     : [ '', [Validators.required] ],
   },{
-    validators: [
-      this.accountService.equalFields('password','confirm')
-    ]
-  });
+    validators: this.accountService.equalFields('password','confirm')
+  } as AbstractControlOptions);
 
   id: string = `newPasswordForm${createId()}`;
   submitted = false;

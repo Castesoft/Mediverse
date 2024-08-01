@@ -16,10 +16,16 @@
     [attr.aria-describedby]="formText() ? controlName+'helpBlock' : null"
     [attr.aria-label]="label ? label + ' input' : null"
   >
-  <span class="form-check-label fw-semibold">{{ label }}</span>
+  <span class="form-check-label fw-semibold">
+    @if (label) {
+      {{ label }}
+    } @else {
+      <ng-content></ng-content>
+    }
+  </span>
 </label>
 
-@if (control.errors && control.errors['length'] > 0) {
+@if (control.errors) {
   <div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
 }
 @if (formText()) {
