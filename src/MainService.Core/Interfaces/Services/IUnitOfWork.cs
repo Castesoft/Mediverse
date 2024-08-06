@@ -11,6 +11,7 @@ public interface IUnitOfWork
     IEventRepository EventRepository { get; }
     IPrescriptionRepository PrescriptionRepository { get; }
     IOrderRepository OrderRepository { get; }
+    ISpecialtyRepository SpecialtyRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();

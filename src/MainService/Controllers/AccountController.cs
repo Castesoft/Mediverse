@@ -201,7 +201,7 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         };
         user.UserPaymentMethods.Add(paymentMethod);
 
-        var acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
+        List<int> acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
         foreach (var paymentMethodTypeId in acceptedPaymentMethods)
         {
             var paymentMethodType = new DoctorPaymentMethodType
@@ -212,7 +212,12 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
             user.DoctorPaymentMethodTypes.Add(paymentMethodType);
         }
 
-        string emailVerificationCode =  codeService.GenerateEmailCode();
+        if (await uow.SpecialtyRepository.GetByIdAsync(request.SpecialtyId) == null)
+            return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
+
+        user.UserMedicalLicenses.Add(new (request.SpecialtyId));
+
+        string emailVerificationCode = codeService.GenerateEmailCode();
 
         user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
         user.EmailVerificationCodeSalt = hmac.Key;

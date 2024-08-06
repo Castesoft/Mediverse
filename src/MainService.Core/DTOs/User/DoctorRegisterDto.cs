@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace MainService.Core.DTOs.User;
 public class DoctorRegisterDto
