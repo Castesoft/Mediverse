@@ -186,4 +186,18 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             query.AsNoTracking().ProjectTo<UserDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
     }
+
+    public async Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync()
+    {
+        return await context.PaymentMethodTypes
+            .ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
+    public async Task<List<SpecialtyDto>> GetSpecialtiesAsync()
+    {
+        return await context.Specialties
+            .ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 }

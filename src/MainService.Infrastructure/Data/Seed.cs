@@ -12,6 +12,20 @@ public static class Seed
 {
     private static readonly Random Random = new();
 
+    private static async Task SeedSpecialtiesAsync(DataContext context)
+    {
+        if (await context.Specialties.AnyAsync()) return;
+        await context.Specialties.AddRangeAsync(SeedData.specialties.ToArray());
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedPaymentMethodTypesAsync(DataContext context)
+    {
+        if (await context.PaymentMethodTypes.AnyAsync()) return;
+        await context.PaymentMethodTypes.AddRangeAsync(SeedData.paymentMethodTypes.ToArray());
+        await context.SaveChangesAsync();
+    }
+
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
         IPermissionManager permissionManager)
     {
@@ -218,6 +232,8 @@ public static class Seed
         await SeedProductsAsync(context);
         await SeedServicesAsync(context);
         await SeedRandomDoctorData(context, userManager);
+        await SeedSpecialtiesAsync(context);
+        await SeedPaymentMethodTypesAsync(context);
     }
 
     private static async Task SeedProductsAsync(DataContext context)

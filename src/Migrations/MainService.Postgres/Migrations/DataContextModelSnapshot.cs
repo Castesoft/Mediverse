@@ -940,7 +940,7 @@ namespace MainService.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PaymentMethodType");
+                    b.ToTable("PaymentMethodTypes");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>

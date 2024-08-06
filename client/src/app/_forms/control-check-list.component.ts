@@ -18,7 +18,7 @@ export class ControlCheckListComponent implements ControlValueAccessor {
   isNew = input<boolean>(false);
 
   @Input() label: string = '';
-  @Input() options: string[] = [];
+  @Input() options: string[] | {id: number, name: string}[] = [];
   @Input() formText?: string;
   @Input() isReadonly= false;
   @Input() submitted= false;
@@ -27,33 +27,28 @@ export class ControlCheckListComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => { };
   private onTouched: () => void = () => { };
 
+  getOptionName(option: string | {id: number, name: string}): string {
+    return typeof option === 'object' ? option.name : option;
+  }
+
   constructor(public ngControl: NgControl) {
     this.ngControl.valueAccessor = this;
   }
 
-  onCheckboxChange(option: string, event: Event) {
-    const checked = (event.target as HTMLInputElement).checked;
+  onCheckboxChange(option: string | {id: number, name: string}, event: Event) {
+    const selectedOptions = (this.control.value || '').split(',').filter((v: string) => !!v);
+    const optionValue = typeof option === 'object' ? option.id : option;
 
-    const values = (this.control.value || '').split(',').filter((v: string) => !!v);
-
-    if (checked) {
-      values.push(option);
+    if ((event.target as HTMLInputElement).checked) {
+      selectedOptions.push(optionValue.toString());
     } else {
-      const index = values.indexOf(option);
-      if (index >= 0) {
-        values.splice(index, 1);
+      const index = selectedOptions.indexOf(optionValue.toString());
+      if (index > -1) {
+        selectedOptions.splice(index, 1);
       }
     }
 
-    const newValue = values.join(',');
-    this.onChange(newValue);
-    this.onTouched();
-
-    if (!newValue) {
-      this.control.setErrors({ required: true });
-    } else {
-      this.control.setErrors(null);
-    }
+    this.onChange(selectedOptions.join(','));
   }
 
   writeValue(value: any): void {
@@ -72,7 +67,11 @@ export class ControlCheckListComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  isOptionSelected(option: string): boolean {
+  isOptionSelected(option: string | {id: number, name: string} | number): boolean {
+    if (typeof option === 'object') {
+      return this.isOptionSelected(option.id);
+    }
+
     const selectedOptions = (this.control.value || '').split(',').filter((v: string) => !!v);
     return selectedOptions.includes(option);
   }

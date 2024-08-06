@@ -22,6 +22,10 @@
       <option value="{{option.value}}">
         {{option.name}}
       </option>
+    } @else if (option.id && option.name) {
+      <option value="{{option.id}}">
+        {{option.name}}
+      </option>
     } @else if (option.name) {
       <option value="{{option.name}}">
         {{option.name | titlecase}}

@@ -171,6 +171,9 @@ public class MappingProfiles : Profile
         // Registration mapping
         CreateMap<RegisterDto, AppUser>()
             .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Gender));
+        CreateMap<DoctorRegisterDto, AppUser>()
+            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Gender))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone));
 
         CreateMap<Product, ProductDto>()
             .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
@@ -186,5 +189,8 @@ public class MappingProfiles : Profile
 
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
+
+        CreateMap<PaymentMethodType, PaymentMethodTypeDto>();
+        CreateMap<Specialty, SpecialtyDto>();
     }
 }

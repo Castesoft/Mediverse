@@ -79,4 +79,15 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
     public async Task<bool> PhoneExistsAsync(string phoneNumber) => await userManager.Users.AnyAsync(x => x.PhoneNumber == phoneNumber);
     public async Task<bool> EmailExistsAsync(string email) => await userManager.Users.AnyAsync(x => x.Email == email);
+
+    
+    public async Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync()
+    {
+        return await uow.UserRepository.GetPaymentMethodTypesAsync();
+    }
+
+    public async Task<List<SpecialtyDto>> GetSpecialtiesAsync()
+    {
+        return await uow.UserRepository.GetSpecialtiesAsync();
+    }
 }

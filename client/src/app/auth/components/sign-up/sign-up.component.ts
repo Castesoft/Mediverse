@@ -21,8 +21,8 @@ export class SignUpComponent {
   fb = inject(FormBuilder);
   @ViewChild('registerDoctor') registerDoctor!: RegisterDoctorFormComponent;
 
-  currentStep = 4;
-  accountType: 'patient' | 'doctor' = 'doctor';
+  currentStep = 1;
+  accountType: 'patient' | 'doctor' = 'patient';
   submitted = false;
 
   steps = [
@@ -73,19 +73,24 @@ export class SignUpComponent {
       city                    : [ '', [Validators.required] ],
       address                 : [ '', [Validators.required] ],
       zipcode                 : [ '', [Validators.required] ],
-      specialty               : [ '', [Validators.required] ],
+      specialtyid             : [ '', [Validators.required] ],
       // services                : [ '', [Validators.required] ],
       certification           : [ '', [Validators.required] ],
       acceptedpaymentmethods  : [ '', [Validators.required] ],
     }),
     billingDetailsForm: this.fb.group({
-      sameaddress       : [ true, [Validators.required] ],
-      billingstate      : [ '' ],
-      billingcity       : [ '' ],
-      billingaddress    : [ '' ],
-      billingzipcode    : [ '' ],
-      nameoncard        : [ '', [Validators.required] ],
-      paymentmethod     : [ '' ],
+      sameaddress             : [ true, [Validators.required] ],
+      billingstate            : [ '' ],
+      billingcity             : [ '' ],
+      billingaddress          : [ '' ],
+      billingzipcode          : [ '' ],
+      displayname             : [ '', [Validators.required] ],
+      stripepaymentmethodid   : [ '' ],
+      last4                   : [ '' ],
+      expirationmonth         : [ '' ],
+      expirationyear          : [ '' ],
+      brand                   : [ '' ],
+      country                 : [ '' ],
     })
   });
 
@@ -141,12 +146,17 @@ export class SignUpComponent {
       if (!this.doctorForm.valid || !this.registerDoctor.billingDetails.stripe || !this.registerDoctor.billingDetails.cardNumber) {
         return;
       }
-
+      
       const paymentMethod = await this.registerDoctor.billingDetails.stripe?.createPaymentMethod({
         type: 'card',
         card: this.registerDoctor.billingDetails.cardNumber!
       });
-      this.doctorForm.get('billingDetailsForm.paymentmethod')?.setValue(paymentMethod?.paymentMethod?.id);
+      this.doctorForm.get('billingDetailsForm.stripepaymentmethodid')?.setValue(paymentMethod?.paymentMethod?.id);
+      this.doctorForm.get('billingDetailsForm.last4')?.setValue(paymentMethod?.paymentMethod?.card?.last4);
+      this.doctorForm.get('billingDetailsForm.expirationmonth')?.setValue(paymentMethod?.paymentMethod?.card?.exp_month);
+      this.doctorForm.get('billingDetailsForm.expirationyear')?.setValue(paymentMethod?.paymentMethod?.card?.exp_year);
+      this.doctorForm.get('billingDetailsForm.brand')?.setValue(paymentMethod?.paymentMethod?.card?.brand);
+      this.doctorForm.get('billingDetailsForm.country')?.setValue(paymentMethod?.paymentMethod?.card?.country);
       if (this.doctorForm.get('billingDetailsForm.sameaddress')?.value) {
         this.doctorForm.get('billingDetailsForm.billingstate')?.setValue(this.doctorForm.get('accountDetailsForm.state')?.value);
         this.doctorForm.get('billingDetailsForm.billingcity')?.setValue(this.doctorForm.get('accountDetailsForm.city')?.value);
@@ -154,7 +164,13 @@ export class SignUpComponent {
         this.doctorForm.get('billingDetailsForm.billingzipcode')?.setValue(this.doctorForm.get('accountDetailsForm.zipcode')?.value);
       }
 
-      console.log(this.doctorForm.value);
+      this.accountService.registerDoctor({
+        ...this.doctorForm.value.accountSettingsForm,
+        ...this.doctorForm.value.accountDetailsForm,
+        ...this.doctorForm.value.billingDetailsForm
+      }).subscribe({
+        next: _ => this.currentStep++,
+      });
     }
   }
 }

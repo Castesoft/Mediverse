@@ -8,4 +8,6 @@ public interface IUsersService
     Task<AccountDto> GenerateAccountDtoAsync(int id);
     Task<bool> PhoneExistsAsync(string phoneNumber);
     Task<bool> EmailExistsAsync(string email);
+    Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync();
+    Task<List<SpecialtyDto>> GetSpecialtiesAsync();
 }

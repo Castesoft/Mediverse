@@ -39,6 +39,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<MedicalLicenseDocument> MedicalLicenseDocuments { get; set; }
     public DbSet<Document> Documents { get; set; }
     public DbSet<Specialty> Specialties { get; set; }
+    public DbSet<PaymentMethodType> PaymentMethodTypes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)

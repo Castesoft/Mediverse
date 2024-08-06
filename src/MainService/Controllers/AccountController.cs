@@ -97,10 +97,139 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         return itemToReturn;
     }
 
+// {
+//     "firstname": "Joel Isaac", LISTO
+//     "lastname": "Reyna Villarreal", LISTO
+//     "gender": "Masculino", LISTO
+//     "email": "redacted+011@example.invalid", LISTO
+//  *   "phone": "8186034514",
+//     "password": "Password_1", LISTO
+//     "confirmpassword": "Password_1", LISTO
+//     "agreeterms": true, LISTO
+//  *address   "state": "Nuevo Leon",
+//     "city": "Monterrey",
+//     "address": "Pinos 321",
+//  *address   "zipcode": "66644",
+//  *billing_address   "sameaddress": true,
+//     "billingstate": "Nuevo Leon",
+//     "billingcity": "Monterrey",
+//     "billingaddress": "Pinos 321",
+//  *billing_address   "billingzipcode": "66644",
+//  *payment_method   "displayname": "Joel reyna",
+//     "stripepaymentmethodid": "pm_1PkvBmLXJ0z5yQSuQmulXIyo",
+//     "last4": "4242",
+//     "expirationmonth": 1,
+//     "expirationyear": 2025,
+//     "brand": "visa",
+//  *payment_method   "country": "US"
+//  *payment_methods_types   "acceptedpaymentmethods": "1,4,3",
+//  *specialty   "specialtyid": "17",
+//  *document   "certification": "C:\\fakepath\\cover.png",
+// }
+
     [HttpPost("register-doctor")]
     public async Task<ActionResult<AccountDto>> RegisterDoctorAsync([FromBody] DoctorRegisterDto request)
     {
-        return Ok();
+        using var hmac = new HMACSHA512();
+
+        if ((await userManager.FindByEmailAsync(request.Email)) != null)
+        return BadRequest("No puede crearse una cuenta con este correo.");
+
+        AppUser user = new();
+
+        user = mapper.Map<AppUser>(request);
+
+        user.UserName = request.Email;
+
+        if (request.Gender == "Otro")
+            user.Sex = request.OtherGender;
+
+        var createUser = await userManager.CreateAsync(user, request.Password);
+        if (!createUser.Succeeded) return BadRequest(createUser.Errors);
+
+        var addRole = await userManager.AddToRolesAsync(user, ["Patient", "Doctor"]);
+        if (!addRole.Succeeded) return BadRequest(addRole.Errors);
+
+        // Create doctor properties
+        var mainAddress = new UserAddress
+        {
+            UserId = user.Id,
+            Address = new Address
+            {
+                State = request.State,
+                City = request.City,
+                Street = request.Address,
+                Zipcode = request.ZipCode,
+            },
+            IsMain = true,
+            IsBilling = request.SameAddress ? true : false
+        };
+        user.UserAddresses.Add(mainAddress);
+
+        if (!request.SameAddress)
+        {
+            var billingAddress = new UserAddress
+            {
+                UserId = user.Id,
+                Address = new Address
+                {
+                    State = request.BillingState,
+                    City = request.BillingCity,
+                    Street = request.BillingAddress,
+                    Zipcode = request.BillingZipCode,
+                },
+                IsMain = false,
+                IsBilling = true
+            };
+            user.UserAddresses.Add(billingAddress);
+        }
+
+        var paymentMethod = new UserPaymentMethod
+        {
+            UserId = user.Id,
+            IsMain = true,
+            PaymentMethod = new PaymentMethod
+            {
+                DisplayName = request.DisplayName,
+                StripePaymentMethodId = request.StripePaymentMethodId,
+                Last4 = request.Last4,
+                ExpirationMonth = request.ExpirationMonth,
+                ExpirationYear = request.ExpirationYear,
+                Brand = request.Brand,
+                Country = request.Country
+            }
+        };
+        user.UserPaymentMethods.Add(paymentMethod);
+
+        var acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
+        foreach (var paymentMethodTypeId in acceptedPaymentMethods)
+        {
+            var paymentMethodType = new DoctorPaymentMethodType
+            {
+                DoctorId = user.Id,
+                PaymentMethodTypeId = paymentMethodTypeId
+            };
+            user.DoctorPaymentMethodTypes.Add(paymentMethodType);
+        }
+
+        string emailVerificationCode =  codeService.GenerateEmailCode();
+
+        user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
+        user.EmailVerificationCodeSalt = hmac.Key;
+        user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
+
+        if (!(await userManager.UpdateAsync(user)).Succeeded) 
+        return BadRequest("No pudo actualizarse la información del usuario.");
+
+        string clientUrl = clientSettings.Value.Url;
+        string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
+        string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
+        string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
+
+        await emailService.SendMail(user.Email, subject, htmlMessage);
+
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+        return itemToReturn;
     }
 
     [Authorize]
@@ -535,5 +664,18 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         var messageResponse = await  phoneService.SendMessage(user.PhoneNumberCountryCode + user.PhoneNumber, message);
 
         return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("register-doctor-fields")]
+    public async Task<ActionResult<DoctorRegisterFieldsDto>> GetDoctorRegisterFields()
+    {
+        var item = new DoctorRegisterFieldsDto
+        {
+            Specialties = await usersService.GetSpecialtiesAsync(),
+            PaymentMethodTypes = await usersService.GetPaymentMethodTypesAsync()
+        };
+
+        return item;
     }
 }

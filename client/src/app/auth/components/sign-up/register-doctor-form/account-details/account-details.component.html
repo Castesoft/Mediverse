@@ -78,7 +78,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 controlSelect
-                formControlName="specialty"
+                formControlName="specialtyid"
                 [label]="'Especialidad'"
                 [placeholder]="''"
                 [options]="specialties"
@@ -110,7 +110,7 @@
         controlCheckList
         formControlName="acceptedpaymentmethods"
         [label]="'Métodos de Pago Aceptados'"
-        [options]="['Efectivo', 'Tarjeta de Crédito', 'Tarjeta de Débito', 'Transferencia Bancaria', 'Paypal']"
+        [options]="paymentMethodTypes"
         [submitted]="submitted()"
         [errors]="{
             required: 'Selecciona al menos un método de pago.'

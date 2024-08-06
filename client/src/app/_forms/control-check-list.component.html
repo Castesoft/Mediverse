@@ -15,7 +15,7 @@
         (click)="preventChanges($event)"
       >
       <label class="form-check-label" [for]="controlName + '-' + idx">
-        {{option}}
+        {{getOptionName(option)}}
       </label>
     </div>
   }
