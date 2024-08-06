@@ -19,7 +19,9 @@ using Serilog;
 namespace MainService.Controllers;
 
 [Authorize]
-public class EventsController(IUnitOfWork uow, IEventsService service, UserManager<AppUser> userManager, IMapper mapper)
+public class EventsController(IUnitOfWork uow, IEventsService service
+// , UserManager<AppUser> userManager, IMapper mapper
+)
     : BaseApiController
 {
     private static readonly string subject = "cita";

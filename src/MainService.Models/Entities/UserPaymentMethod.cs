@@ -1,11 +1,10 @@
 namespace MainService.Models.Entities;
-public class UserAddress
+public class UserPaymentMethod
 {
     public int UserId { get; set; }
-    public int AddressId { get; set; }
+    public int PaymentMethodId { get; set; }
     public AppUser User { get; set; }
-    public Address Address { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
 
     public bool IsMain { get; set; }
-    public bool IsBilling { get; set; }
 }

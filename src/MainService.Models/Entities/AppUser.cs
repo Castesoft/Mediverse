@@ -27,20 +27,30 @@ public class AppUser : IdentityUser<int>
     public byte[] PhoneNumberVerificationCodeHash { get; set; }
     public byte[] PhoneNumberVerificationCodeSalt { get; set; }
     public DateTime? PhoneNumberVerificationExpiryTime { get; set; }
+    public string StripeCustomerId { get; set; }
 
     // Base account properties
+
     public ICollection<UserAddress> UserAddresses { get; set; } = [];
     public UserPhoto UserPhoto { get; set; }
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
     public ICollection<AppUserPermission> UserPermissions { get; set; } = [];
 
+    // User Billing Information Properties
+    public ICollection<UserPaymentMethod> UserPaymentMethods { get; set; } = [];
+    public string RFC { get; set; }
+    public string CURP { get; set; }
+    public string CommercialName { get; set; }
+    public string LegalName { get; set; }
+    public ICollection<UserTaxRegime> UserTaxRegimes { get; set; } = [];
 
-    // Nurse properties
+    // Medical Properties
     public string Education { get; set; }
     public string Post { get; set; }
     public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
     public ICollection<NurseEvent> NurseEvents { get; set; } = [];
-    
+    public ICollection<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
+    public ICollection<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];    
 
     // Navigation properties
     public List<DoctorService> DoctorServices { get; set; } = [];
@@ -50,7 +60,6 @@ public class AppUser : IdentityUser<int>
     public List<DoctorNurse> NursesDoctor { get; set; } = [];
     
     public DoctorSignature DoctorSignature { get; set; }
-    public DoctorInformation DoctorInformation { get; set; }
     public ICollection<PatientEvent> PatientEvents { get; set; } = [];
     public ICollection<PatientPrescription> PatientPrescriptions { get; set; } = [];
     public ICollection<DoctorPrescription> DoctorPrescriptions { get; set; } = [];

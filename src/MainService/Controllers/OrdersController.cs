@@ -12,7 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MainService.Controllers;
 
-public class OrdersController(IUnitOfWork uow, IMapper mapper, UserManager<AppUser> userManager) : BaseApiController
+public class OrdersController(IUnitOfWork uow
+// ,IMapper mapper, 
+// UserManager<AppUser> userManager
+) : BaseApiController
 {
     private static readonly string subject = "orden";
     private static readonly string subjectArticle = "La";

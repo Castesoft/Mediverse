@@ -99,31 +99,6 @@ public static class Seed
                     Size = 2,
                 }
             },
-            DoctorInformation = new DoctorInformation
-            {
-                Information = new()
-                {
-                    MedicalProfessionalLicenses =
-                    [
-                        new()
-                        {
-                            MedicalLicense = new()
-                            {
-                                LicenseNumber = "4468301 (UANL)",
-                                SpecialtyLicense = "609706 (UANL)",
-                            }
-                        },
-                        new()
-                        {
-                            MedicalLicense = new()
-                            {
-                                LicenseNumber = "1928941 (UANL)",
-                                SpecialtyLicense = "923401 (UANL)",
-                            }
-                        }
-                    ],
-                }
-            },
             DoctorPhones =
             [
                 new()

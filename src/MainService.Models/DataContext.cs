@@ -16,7 +16,6 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<AppUserPermission> UserPermissions { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<DoctorInformation> DoctorInformations { get; set; }
     public DbSet<DoctorPhone> DoctorPhones { get; set; }
     public DbSet<DoctorLink> DoctorLinks { get; set; }
     public DbSet<DoctorClinic> DoctorClinics { get; set; }
@@ -31,6 +30,16 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<PrescriptionItem> PrescriptionItems { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<UserPaymentMethod> UserPaymentMethods { get; set; }
+    public DbSet<UserTaxRegime> UserTaxRegimes { get; set; }
+    public DbSet<UserMedicalLicense> UserMedicalLicenses { get; set; }
+    public DbSet<MedicalLicense> MedicalLicenses { get; set; }
+    public DbSet<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; }
+    public DbSet<PaymentMethod> PaymentMethods { get; set; }
+    public DbSet<MedicalLicenseDocument> MedicalLicenseDocuments { get; set; }
+    public DbSet<Document> Documents { get; set; }
+    public DbSet<Specialty> Specialties { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

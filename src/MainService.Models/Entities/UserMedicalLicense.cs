@@ -1,11 +1,10 @@
 namespace MainService.Models.Entities;
-public class UserAddress
+public class UserMedicalLicense
 {
     public int UserId { get; set; }
-    public int AddressId { get; set; }
+    public int MedicalLicenseId { get; set; }
     public AppUser User { get; set; }
-    public Address Address { get; set; }
+    public MedicalLicense MedicalLicense { get; set; }
 
     public bool IsMain { get; set; }
-    public bool IsBilling { get; set; }
 }

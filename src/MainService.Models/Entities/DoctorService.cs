@@ -1,11 +1,6 @@
 namespace MainService.Models.Entities;
 public class DoctorService
 {
-    public int DoctorId { get; set; }
-    public AppUser Doctor { get; set; }
-    public int ServiceId { get; set; }
-    public Service Service { get; set; }
-    
     public DoctorService() {}
     
     public DoctorService(AppUser doctor, Service service)
@@ -21,4 +16,9 @@ public class DoctorService
         DoctorId = doctorId;
         Service = new(service.Name, service.Description);
     }
+    
+    public int DoctorId { get; set; }
+    public AppUser Doctor { get; set; }
+    public int ServiceId { get; set; }
+    public Service Service { get; set; }
 }

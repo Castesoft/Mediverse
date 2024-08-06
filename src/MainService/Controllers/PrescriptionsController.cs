@@ -1,7 +1,6 @@
 using AutoMapper;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.Extensions;
-using MainService.Core.DTOs.Prescription;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
@@ -139,7 +138,7 @@ public class PrescriptionsController(
 
         if (foreignItems.Count > 0)
         {
-            var order = await CreateOrder(foreignItems);
+            var order = CreateOrder(foreignItems);
 
             order.PrescriptionOrder = new PrescriptionOrder
             {
@@ -176,7 +175,7 @@ public class PrescriptionsController(
         return await uow.PrescriptionRepository.GetDtoByIdAsync(newPrescription.Id);
     }
 
-    private async Task<Order> CreateOrder(List<OrderItem> orderItems)
+    private Order CreateOrder(List<OrderItem> orderItems)
     {
         var order = new Order
         {

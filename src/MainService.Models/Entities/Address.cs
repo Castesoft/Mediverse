@@ -19,6 +19,8 @@ namespace MainService.Models.Entities
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string CrossStreet1 { get; set; }
+        public string CrossStreet2 { get; set; }
 
         public DoctorClinic DoctorClinic { get; set; }
         public ICollection<EventClinic> EventClinics { get; set; } = [];
