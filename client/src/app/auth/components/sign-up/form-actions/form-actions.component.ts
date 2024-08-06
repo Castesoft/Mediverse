@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   styleUrl: './form-actions.component.scss'
 })
 export class FormActionsComponent {
-  private router = inject(Router);
+  router = inject(Router);
 
   totalSteps = input.required<number>();
   currentStep = input.required<number>();

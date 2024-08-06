@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, inject, input, Input, OnChanges, Renderer2, Self, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { NgClass, KeyValuePipe } from '@angular/common';
+import { NgClass, KeyValuePipe, TitleCasePipe } from '@angular/common';
 import { FormsService } from 'src/app/_services/forms.service';
 import { OptionalSpanComponent } from "./helpers/optional-span.component";
 import { NewBadgeComponent } from "./helpers/new-badge.component";
@@ -9,7 +9,7 @@ import { NewBadgeComponent } from "./helpers/new-badge.component";
   selector: '[controlSelect]',
   templateUrl: './control-select.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, OptionalSpanComponent, NewBadgeComponent]
+  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, OptionalSpanComponent, NewBadgeComponent, TitleCasePipe]
 })
 export class ControlSelectComponent implements ControlValueAccessor, AfterViewInit, OnChanges {
   service = inject(FormsService);

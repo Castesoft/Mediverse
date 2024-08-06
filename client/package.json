@@ -33,6 +33,7 @@
     "@fullcalendar/resource-timeline": "^6.1.15",
     "@ngx-loading-bar/core": "^6.0.2",
     "@paralleldrive/cuid2": "^2.2.2",
+    "@stripe/stripe-js": "^4.1.0",
     "angularx-flatpickr": "^7.3.0",
     "apexcharts": "^3.51.0",
     "bootstrap": "^5.3.3",

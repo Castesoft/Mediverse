@@ -109,7 +109,7 @@ export type AnimalStatus = { name: 'active', label: 'Activo' } | { name: 'inacti
 
 export type tooltipTrigger = 'hover' | 'click' | 'focus' | 'manual';
 
-export type InputTypes = 'text' | 'number' | 'email' | 'password' | 'date' | 'time' | 'datetime-local' | 'month' | 'week' | 'url' | 'tel' | 'search' | 'color';
+export type InputTypes = 'text' | 'number' | 'email' | 'password' | 'date' | 'time' | 'datetime-local' | 'month' | 'week' | 'url' | 'tel' | 'search' | 'color' | 'file';
 
 export type CatalogMode = 'view' | 'select' | 'multiselect' | 'readonly';
 

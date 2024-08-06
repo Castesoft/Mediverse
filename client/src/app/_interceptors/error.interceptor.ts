@@ -14,7 +14,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error) {
         switch (error.status) {
           case 400:
-            snackbarService.error('Solicitud incorrecta');
+            snackbarService.error('Solicitud incorrecta: ' + error.error);
             throw new BadRequest(error);
             break;
           case 401:

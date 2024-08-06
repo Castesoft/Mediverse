@@ -1,1 +1,115 @@
-<p>billing-details works!</p>
+<form
+    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" 
+    novalidate="novalidate"
+    id="kt_sign_up_form"
+    [formGroup]="myForm">
+    <div class="mb-10 text-center">
+        <h1 class="text-dark mb-3">
+            Datos de facturación
+        </h1>
+    </div>
+
+    <div class="fv-row fv-plugins-icon-container">
+        <div controlCheck formControlName="sameaddress" [submitted]="submitted()">
+            <span class="form-check-label fw-semibold text-gray-700 fs-6">
+                Utilizar mi dirección como dirección de facturación.
+            </span>
+        </div>
+    </div>
+
+    @if (myForm.get('sameaddress')?.value !== true) {
+        <div class="row mb-5">
+            <div class="col-xl-6">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    controlSelect
+                    formControlName="billingstate"
+                    [label]="'Estado'"
+                    [options]="states"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    (change)="unselectCity()"
+                    [errors]="{
+                        required: 'El estado es requerido.'
+                    }"
+                ></div>
+            </div>
+    
+            <div class="col-xl-6">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    controlSelect
+                    formControlName="billingcity"
+                    [label]="'Ciudad'"
+                    [options]="citiesList"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    [errors]="{
+                        required: 'La ciudad es requerida.'
+                    }"
+                ></div>
+            </div>
+        </div>
+    
+        <div class="row mb-5">
+            <div class="col-xl-8">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="billingaddress"
+                    [label]="'Dirección'"
+                    [type]="'text'"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    [errors]="{
+                        required: 'La dirección es requerida.'
+                    }"
+                ></div>
+            </div>
+            <div class="col-xl-4">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="billingzipcode"
+                    [label]="'Código postal'"
+                    [type]="'tel'"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    [errors]="{
+                        required: 'El código postal es requerido.'
+                    }"
+                ></div>
+            </div>
+        </div>    
+    }
+
+    <div
+        class="fv-row mb-5 fv-plugins-icon-container"
+        inputControl
+        formControlName="nameoncard"
+        [label]="'Nombre en la tarjeta'"
+        [type]="'text'"
+        [placeholder]="''"
+        [submitted]="submitted()"
+        [errors]="{
+            required: 'El nombre es requerido.'
+        }"
+    ></div>
+
+    <div class="row mb-3">
+        <div class="col-6">
+            <label class="fw-semibold fs-6 mb-2 required">Número de tarjeta</label>
+            <div class="form-control form-control-solid" #cardNumber></div>
+        </div>
+        <div class="col-3">
+            <label class="fw-semibold fs-6 mb-2 required">Expiración</label>
+            <div class="form-control form-control-solid" #cardExpiry></div>
+        </div>
+        <div class="col-3">
+            <label class="fw-semibold fs-6 mb-2 required">CVC</label>
+            <div class="form-control form-control-solid" #cardCvc></div>
+        </div>
+        <span class="text-danger">{{cardErrors}}</span>
+    </div>
+
+</form>

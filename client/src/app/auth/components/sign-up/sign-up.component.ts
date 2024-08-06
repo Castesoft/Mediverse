@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { AsideStepperComponent } from './aside-stepper/aside-stepper.component';
 import { BottomLinksComponent } from '../bottom-links.component';
 import { FormActionsComponent } from './form-actions/form-actions.component';
-import { AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { AccoutTypeSelectorComponent } from "./accout-type-selector/accout-type-selector.component";
 import { RegisterPatientFormComponent } from "./register-patient-form/register-patient-form.component";
 import { RegisterDoctorFormComponent } from './register-doctor-form/register-doctor-form.component';
@@ -19,9 +19,10 @@ import { AccountCompletedComponent } from './account-completed/account-completed
 export class SignUpComponent {
   private accountService = inject(AccountService);
   fb = inject(FormBuilder);
+  @ViewChild('registerDoctor') registerDoctor!: RegisterDoctorFormComponent;
 
-  currentStep = 1;
-  accountType: 'patient' | 'doctor' = 'patient';
+  currentStep = 4;
+  accountType: 'patient' | 'doctor' = 'doctor';
   submitted = false;
 
   steps = [
@@ -43,33 +44,48 @@ export class SignUpComponent {
   ]
 
   patientForm: FormGroup = this.fb.group({
-    first_name            : [ '', [Validators.required, Validators.minLength(3)] ],
-    last_name             : [ '', [Validators.required, Validators.minLength(3)] ],
+    firstname            : [ '', [Validators.required, Validators.minLength(3)] ],
+    lastname             : [ '', [Validators.required, Validators.minLength(3)] ],
+    gender                : [ 'Masculino', [Validators.required] ],
     email                 : [ '', [Validators.required, Validators.pattern(this.accountService.emailPattern)] ],
     password              : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
-    confirm               : [ '', [Validators.required] ],
-    terms_and_conditions  : [false, [this.accountService.termsAndConditionsValidator] ]
+    confirmpassword               : [ '', [Validators.required] ],
+    agreeterms  : [false, [this.accountService.termsAndConditionsValidator] ]
   },{
-    validators: [this.accountService.equalFields('password','confirm')]
+    validators: [this.accountService.equalFields('password','confirmpassword')]
   } as AbstractControlOptions);
 
   doctorForm: FormGroup = this.fb.group({
     accountSettingsForm: this.fb.group({
-      first_name            : [ '', [Validators.required, Validators.minLength(3)] ],
-      last_name             : [ '', [Validators.required, Validators.minLength(3)] ],
+      firstname             : [ '', [Validators.required, Validators.minLength(3)] ],
+      lastname              : [ '', [Validators.required, Validators.minLength(3)] ],
+      gender                : [ 'Masculino', [Validators.required] ],
       email                 : [ '', [Validators.required, Validators.pattern(this.accountService.emailPattern)] ],
       phone                 : [ '', [Validators.required, Validators.pattern(this.accountService.phonePattern)] ],
       password              : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
-      confirm               : [ '', [Validators.required] ],
-      terms_and_conditions  : [false, [this.accountService.termsAndConditionsValidator] ]
+      confirmpassword       : [ '', [Validators.required] ],
+      agreeterms            : [false, [this.accountService.termsAndConditionsValidator] ]
     },{
-      validators: [this.accountService.equalFields('password','confirm')]
+      validators: [this.accountService.equalFields('password','confirmpassword')]
     } as AbstractControlOptions),
     accountDetailsForm: this.fb.group({
-      full_name   : [ '', [Validators.required, Validators.minLength(3)] ],
+      state                   : [ '', [Validators.required] ],
+      city                    : [ '', [Validators.required] ],
+      address                 : [ '', [Validators.required] ],
+      zipcode                 : [ '', [Validators.required] ],
+      specialty               : [ '', [Validators.required] ],
+      // services                : [ '', [Validators.required] ],
+      certification           : [ '', [Validators.required] ],
+      acceptedpaymentmethods  : [ '', [Validators.required] ],
     }),
-    billingForm: this.fb.group({
-      full_name   : [ '', [Validators.required, Validators.minLength(3)] ],
+    billingDetailsForm: this.fb.group({
+      sameaddress       : [ true, [Validators.required] ],
+      billingstate      : [ '' ],
+      billingcity       : [ '' ],
+      billingaddress    : [ '' ],
+      billingzipcode    : [ '' ],
+      nameoncard        : [ '', [Validators.required] ],
+      paymentmethod     : [ '' ],
     })
   });
 
@@ -92,7 +108,11 @@ export class SignUpComponent {
         }
         this.submitted = false;
       } else if (this.currentStep == 3) {
-        // Validate second form
+        this.submitted = true;
+        if (!this.doctorForm.get('accountDetailsForm')?.valid) {
+          return;
+        }
+        this.submitted = false;
       }
     }
 
@@ -104,27 +124,37 @@ export class SignUpComponent {
     this.currentStep = this.currentStep - 1
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.submitted = true;
 
     if (this.accountType === 'patient') {
-      console.log(this.patientForm.controls);
       if (!this.patientForm.valid) {
         return;
       }
 
-      // Register patient
+      this.accountService.register(this.patientForm.value).subscribe({
+        next: _ => this.currentStep++,
+      });
     }
 
     if (this.accountType === 'doctor') {
-      console.log(this.doctorForm.controls);
-      if (!this.doctorForm.valid) {
+      if (!this.doctorForm.valid || !this.registerDoctor.billingDetails.stripe || !this.registerDoctor.billingDetails.cardNumber) {
         return;
       }
 
-      // Register doctor
-    }
+      const paymentMethod = await this.registerDoctor.billingDetails.stripe?.createPaymentMethod({
+        type: 'card',
+        card: this.registerDoctor.billingDetails.cardNumber!
+      });
+      this.doctorForm.get('billingDetailsForm.paymentmethod')?.setValue(paymentMethod?.paymentMethod?.id);
+      if (this.doctorForm.get('billingDetailsForm.sameaddress')?.value) {
+        this.doctorForm.get('billingDetailsForm.billingstate')?.setValue(this.doctorForm.get('accountDetailsForm.state')?.value);
+        this.doctorForm.get('billingDetailsForm.billingcity')?.setValue(this.doctorForm.get('accountDetailsForm.city')?.value);
+        this.doctorForm.get('billingDetailsForm.billingaddress')?.setValue(this.doctorForm.get('accountDetailsForm.address')?.value);
+        this.doctorForm.get('billingDetailsForm.billingzipcode')?.setValue(this.doctorForm.get('accountDetailsForm.zipcode')?.value);
+      }
 
-    this.currentStep++;
+      console.log(this.doctorForm.value);
+    }
   }
 }

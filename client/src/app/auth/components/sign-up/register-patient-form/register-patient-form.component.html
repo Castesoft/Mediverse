@@ -33,7 +33,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 inputControl
-                formControlName="first_name"
+                formControlName="firstname"
                 [label]="'Nombre(s)'"
                 [type]="'text'"
                 [placeholder]="''"
@@ -48,7 +48,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 inputControl
-                formControlName="last_name"
+                formControlName="lastname"
                 [label]="'Apellidos'"
                 [type]="'text'"
                 [placeholder]="''"
@@ -110,7 +110,7 @@
     <div
         class="fv-row mb-5 fv-plugins-icon-container"
         inputControl
-        formControlName="confirm"
+        formControlName="confirmpassword"
         [label]="'Confirmar contraseña'"
         [type]="'password'"
         [placeholder]="''"
@@ -121,7 +121,7 @@
     ></div>
 
     <div class="fv-row fv-plugins-icon-container">
-        <div controlCheck formControlName="terms_and_conditions" [submitted]="submitted()">
+        <div controlCheck formControlName="agreeterms" [submitted]="submitted()">
             <span class="form-check-label fw-semibold text-gray-700 fs-6">
                 Estoy de acuerdo con los <a routerLink="/" class="ms-1 link-primary">Términos y condiciones</a>.
             </span>

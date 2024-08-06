@@ -6,9 +6,12 @@
 } @else if (currentStep() === 3) {
     <app-account-details
         [formGroup]="accountDetailsForm"
+        [submitted]="submitted()"
     ></app-account-details>
 } @else if (currentStep() === 4) {
     <app-billing-details
-    [formGroup]="billingDetailsForm"
+        #billingDetails
+        [formGroup]="billingDetailsForm"
+        [submitted]="submitted()"
     ></app-billing-details>
 }

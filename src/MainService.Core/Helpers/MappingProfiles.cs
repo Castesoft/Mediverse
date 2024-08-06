@@ -169,7 +169,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
 
         // Registration mapping
-        CreateMap<RegisterDto, AppUser>();
+        CreateMap<RegisterDto, AppUser>()
+            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Gender));
 
         CreateMap<Product, ProductDto>()
             .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))

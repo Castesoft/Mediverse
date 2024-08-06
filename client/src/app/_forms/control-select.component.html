@@ -18,9 +18,19 @@
     <option value="" disabled selected>{{placeholder}}</option>
   }
   @for(option of options; track $index) {
-    <option value="{{option.name}}">
-      {{option.name}}
-    </option>
+    @if (option.value && option.name) {
+      <option value="{{option.value}}">
+        {{option.name}}
+      </option>
+    } @else if (option.name) {
+      <option value="{{option.name}}">
+        {{option.name | titlecase}}
+      </option>
+    } @else {
+      <option value="{{option}}">
+        {{option}}
+      </option>
+    }
   }
 </select>
 

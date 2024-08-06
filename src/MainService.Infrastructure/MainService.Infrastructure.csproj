@@ -11,6 +11,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageReference Include="PreMailer.Net" Version="2.6.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Stripe.net" Version="45.6.0" />
     <PackageReference Include="Twilio" Version="7.2.0" />
   </ItemGroup>
 

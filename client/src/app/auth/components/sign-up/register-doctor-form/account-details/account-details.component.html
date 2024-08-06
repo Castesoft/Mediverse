@@ -1,1 +1,120 @@
-<p>account-details works!</p>
+<form
+    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" 
+    novalidate="novalidate"
+    id="kt_sign_up_form"
+    [formGroup]="myForm">
+    <div class="mb-10 text-center">
+        <h1 class="text-dark mb-3">
+            Detalles de Cuenta
+        </h1>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-xl-6">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                controlSelect
+                formControlName="state"
+                [label]="'Estado'"
+                [options]="states"
+                [placeholder]="''"
+                [submitted]="submitted()"
+                (change)="unselectCity()"
+                [errors]="{
+                    required: 'El estado es requerido.'
+                }"
+            ></div>
+        </div>
+
+        <div class="col-xl-6">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                controlSelect
+                formControlName="city"
+                [label]="'Ciudad'"
+                [options]="citiesList"
+                [placeholder]="''"
+                [submitted]="submitted()"
+                [errors]="{
+                    required: 'La ciudad es requerida.'
+                }"
+            ></div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-xl-8">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="address"
+                [label]="'Dirección'"
+                [type]="'text'"
+                [placeholder]="''"
+                [submitted]="submitted()"
+                [errors]="{
+                    required: 'La dirección es requerida.'
+                }"
+            ></div>
+        </div>
+        <div class="col-xl-4">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="zipcode"
+                [label]="'Código postal'"
+                [type]="'tel'"
+                [placeholder]="''"
+                [submitted]="submitted()"
+                [errors]="{
+                    required: 'El código postal es requerido.'
+                }"
+            ></div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-xl-6">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                controlSelect
+                formControlName="specialty"
+                [label]="'Especialidad'"
+                [placeholder]="''"
+                [options]="specialties"
+                [submitted]="submitted()"
+                [errors]="{
+                    required: 'La especialdiad es requerida.'
+                }"
+            ></div>
+        </div>
+
+        <div class="col-xl-6">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="certification"
+                [label]="'Cédula/Certificación'"
+                [type]="'file'"
+                [placeholder]="''"
+                [submitted]="submitted()"
+                [errors]="{
+                    required: 'La cédula o certificación es requerida.'
+                }"
+            ></div>
+        </div>
+    </div>
+
+    <div
+        class="fv-row mb-5 fv-plugins-icon-container"
+        controlCheckList
+        formControlName="acceptedpaymentmethods"
+        [label]="'Métodos de Pago Aceptados'"
+        [options]="['Efectivo', 'Tarjeta de Crédito', 'Tarjeta de Débito', 'Transferencia Bancaria', 'Paypal']"
+        [submitted]="submitted()"
+        [errors]="{
+            required: 'Selecciona al menos un método de pago.'
+        }"
+    ></div>
+
+</form>

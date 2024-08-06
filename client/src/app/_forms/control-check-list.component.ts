@@ -4,12 +4,13 @@ import { KeyValuePipe } from '@angular/common';
 import { FormsService } from 'src/app/_services/forms.service';
 import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
 import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
+import { InvalidFeedbackComponent } from './helpers/invalid-feedback.component';
 
 @Component({
   selector: '[controlCheckList]',
   templateUrl: './control-check-list.component.html',
   standalone: true,
-  imports: [KeyValuePipe, OptionalSpanComponent, NewBadgeComponent]
+  imports: [KeyValuePipe, OptionalSpanComponent, NewBadgeComponent, InvalidFeedbackComponent]
 })
 export class ControlCheckListComponent implements ControlValueAccessor {
   service = inject(FormsService);

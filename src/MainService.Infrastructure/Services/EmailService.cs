@@ -55,10 +55,11 @@ public class EmailService : IEmailService
 
     public string CreateVerifyEmailAddressEmailForRegister(AppUser user, string verificationUrl, string verificationCode)
     {
-        string cssFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "email-styles", "styles.css");
-        string cssContent = File.ReadAllText(cssFilePath);
+        // string cssFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "email-styles", "styles.css");
+        // string cssContent = File.ReadAllText(cssFilePath);
 
-        var htmlContent = $$"""
+        // var htmlContent = 
+        return $$"""
 <html><body>
     <section class="border border-0 border-bottom" style="padding-top: 30px; padding-bottom: 60px;">
       <div class="container-fluid container-lg" style="max-width: 1320px;">
@@ -116,11 +117,11 @@ public class EmailService : IEmailService
     </html>
 """;
 
-        var inlineResult = PreMailer.Net.PreMailer.MoveCssInline(htmlContent, css: cssContent);
+        // var inlineResult = PreMailer.Net.PreMailer.MoveCssInline(htmlContent, css: cssContent);
 
-        string inlinedHtmlContent = inlineResult.Html;
+        // string inlinedHtmlContent = inlineResult.Html;
 
-        return inlinedHtmlContent;
+        // return inlinedHtmlContent;
     }
 
     public string CreateVerifyEmailAddressEmailForUpdate(AppUser user, string verificationCode)

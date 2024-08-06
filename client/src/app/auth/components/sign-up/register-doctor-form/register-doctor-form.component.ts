@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, ViewChild } from '@angular/core';
 import { AccountSettingsComponent } from './account-settings/account-settings.component';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { BillingDetailsComponent } from './billing-details/billing-details.component';
@@ -13,6 +13,7 @@ import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms
 })
 export class RegisterDoctorFormComponent {
   public controlContainer = inject(ControlContainer);
+  @ViewChild('billingDetails') billingDetails!: BillingDetailsComponent;
   
   currentStep = input.required<number>();
   submitted = input.required<boolean>();

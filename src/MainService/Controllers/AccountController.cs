@@ -66,14 +66,16 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
 
         user = mapper.Map<AppUser>(request);
 
+        user.UserName = request.Email;
+
         if (request.Gender == "Otro")
             user.Sex = request.OtherGender;
 
-        if ((await userManager.CreateAsync(user, request.Password)).Succeeded)
-            return BadRequest("Error al crear cuenta.");
+        var createUser = await userManager.CreateAsync(user, request.Password);
+        if (!createUser.Succeeded) return BadRequest(createUser.Errors);
 
-        if (!(await userManager.AddToRolesAsync(user, ["Inversionista"])).Succeeded)
-            return BadRequest("No pudo agregarse el usuario al rol.");
+        var addRole = await userManager.AddToRolesAsync(user, ["Patient"]);
+        if (!addRole.Succeeded) return BadRequest(addRole.Errors);
 
         string emailVerificationCode =  codeService.GenerateEmailCode();
 
@@ -93,6 +95,12 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
         return itemToReturn;
+    }
+
+    [HttpPost("register-doctor")]
+    public async Task<ActionResult<AccountDto>> RegisterDoctorAsync([FromBody] DoctorRegisterDto request)
+    {
+        return Ok();
     }
 
     [Authorize]
