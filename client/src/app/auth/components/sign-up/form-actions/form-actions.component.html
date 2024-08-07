@@ -5,7 +5,7 @@
         </button>
     }
     @if (currentStep() > 1 && currentStep() < totalSteps()) {
-        <button type="button" class="btn btn-lg btn-light-primary me-4" data-kt-stepper-action="previous" (click)="previousStep()">
+        <button type="button" [disabled]="isSubmittingApi()" class="btn btn-lg btn-light-primary me-4" data-kt-stepper-action="previous" (click)="previousStep()">
             <i class="ki-duotone ki-arrow-left fs-4 me-1">
                 <span class="path1"></span>
                 <span class="path2"></span>
@@ -19,14 +19,18 @@
 </div>
 <div>
     @if (currentStep() === totalSteps() - 1) {
-        <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit" (click)="submit()">
-            <span class="indicator-label">Enviar
-            <i class="ki-duotone ki-arrow-right fs-4 ms-2">
-                <span class="path1"></span>
-                <span class="path2"></span>
-            </i></span>
-            <span class="indicator-progress">Por favor espera...
-            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+        <button type="button" [disabled]="isSubmittingApi()" class="btn btn-lg btn-primary" style="width: 120px;" data-kt-stepper-action="submit" (click)="submit()">
+            @if (!isSubmittingApi()) {
+                <span class="indicator-label">
+                    Enviar
+                    <i class="ki-duotone ki-arrow-right fs-4 ms-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </span>
+            } @else {
+                <span class="spinner-border spinner-border-sm align-middle"></span>
+            }
         </button>
     }
     @if (currentStep() < totalSteps() - 1 || totalSteps() === 1) {

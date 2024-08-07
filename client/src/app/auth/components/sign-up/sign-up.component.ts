@@ -24,6 +24,7 @@ export class SignUpComponent {
   currentStep = 1;
   accountType: 'patient' | 'doctor' = 'patient';
   submitted = false;
+  isSubmittingApi = false;
 
   steps = [
     { number: 1, title: 'Tipo de cuenta', subtitle: 'Selecciona tu tipo de cuenta' }
@@ -57,40 +58,41 @@ export class SignUpComponent {
 
   doctorForm: FormGroup = this.fb.group({
     accountSettingsForm: this.fb.group({
-      firstname             : [ '', [Validators.required, Validators.minLength(3)] ],
-      lastname              : [ '', [Validators.required, Validators.minLength(3)] ],
-      gender                : [ 'Masculino', [Validators.required] ],
-      email                 : [ '', [Validators.required, Validators.pattern(this.accountService.emailPattern)] ],
-      phone                 : [ '', [Validators.required, Validators.pattern(this.accountService.phonePattern)] ],
-      password              : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
-      confirmpassword       : [ '', [Validators.required] ],
-      agreeterms            : [false, [this.accountService.termsAndConditionsValidator] ]
+      FirstName             : [ '', [Validators.required, Validators.minLength(3)] ],
+      LastName              : [ '', [Validators.required, Validators.minLength(3)] ],
+      Gender                : [ 'Masculino', [Validators.required] ],
+      Email                 : [ '', [Validators.required, Validators.pattern(this.accountService.emailPattern)] ],
+      Phone                 : [ '', [Validators.required, Validators.pattern(this.accountService.phonePattern)] ],
+      Password              : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
+      ConfirmPassword       : [ '', [Validators.required] ],
+      AgreeTerms            : [false, [this.accountService.termsAndConditionsValidator] ]
     },{
-      validators: [this.accountService.equalFields('password','confirmpassword')]
+      validators: [this.accountService.equalFields('Password','ConfirmPassword')]
     } as AbstractControlOptions),
     accountDetailsForm: this.fb.group({
-      state                   : [ '', [Validators.required] ],
-      city                    : [ '', [Validators.required] ],
-      address                 : [ '', [Validators.required] ],
-      zipcode                 : [ '', [Validators.required] ],
-      specialtyid             : [ '', [Validators.required] ],
+      State                   : [ '', [Validators.required] ],
+      City                    : [ '', [Validators.required] ],
+      Address                 : [ '', [Validators.required] ],
+      ZipCode                 : [ '', [Validators.required] ],
+      SpecialtyId             : [ '', [Validators.required] ],
       // services                : [ '', [Validators.required] ],
       certification           : [ '', [Validators.required] ],
-      acceptedpaymentmethods  : [ '', [Validators.required] ],
+      file                    : [ '' ],
+      AcceptedPaymentMethods  : [ '', [Validators.required] ],
     }),
     billingDetailsForm: this.fb.group({
-      sameaddress             : [ true, [Validators.required] ],
-      billingstate            : [ '' ],
-      billingcity             : [ '' ],
-      billingaddress          : [ '' ],
-      billingzipcode          : [ '' ],
-      displayname             : [ '', [Validators.required] ],
-      stripepaymentmethodid   : [ '' ],
-      last4                   : [ '' ],
-      expirationmonth         : [ '' ],
-      expirationyear          : [ '' ],
-      brand                   : [ '' ],
-      country                 : [ '' ],
+      SameAddress             : [ true, [Validators.required] ],
+      BillingState            : [ '' ],
+      BillingCity             : [ '' ],
+      BillingAddress          : [ '' ],
+      BillingZipCode          : [ '' ],
+      DisplayName             : [ '', [Validators.required] ],
+      StripePaymentMethodId   : [ '' ],
+      Last4                   : [ '' ],
+      ExpirationMonth         : [ '' ],
+      ExpirationYear          : [ '' ],
+      Brand                   : [ '' ],
+      Country                 : [ '' ],
     })
   });
 
@@ -136,9 +138,13 @@ export class SignUpComponent {
       if (!this.patientForm.valid) {
         return;
       }
+      this.isSubmittingApi = true;
 
       this.accountService.register(this.patientForm.value).subscribe({
-        next: _ => this.currentStep++,
+        next: _ => {
+          this.currentStep++;
+          this.isSubmittingApi = false;
+        },
       });
     }
 
@@ -146,30 +152,41 @@ export class SignUpComponent {
       if (!this.doctorForm.valid || !this.registerDoctor.billingDetails.stripe || !this.registerDoctor.billingDetails.cardNumber) {
         return;
       }
-      
+      this.isSubmittingApi = true;
+
       const paymentMethod = await this.registerDoctor.billingDetails.stripe?.createPaymentMethod({
         type: 'card',
         card: this.registerDoctor.billingDetails.cardNumber!
       });
-      this.doctorForm.get('billingDetailsForm.stripepaymentmethodid')?.setValue(paymentMethod?.paymentMethod?.id);
-      this.doctorForm.get('billingDetailsForm.last4')?.setValue(paymentMethod?.paymentMethod?.card?.last4);
-      this.doctorForm.get('billingDetailsForm.expirationmonth')?.setValue(paymentMethod?.paymentMethod?.card?.exp_month);
-      this.doctorForm.get('billingDetailsForm.expirationyear')?.setValue(paymentMethod?.paymentMethod?.card?.exp_year);
-      this.doctorForm.get('billingDetailsForm.brand')?.setValue(paymentMethod?.paymentMethod?.card?.brand);
-      this.doctorForm.get('billingDetailsForm.country')?.setValue(paymentMethod?.paymentMethod?.card?.country);
-      if (this.doctorForm.get('billingDetailsForm.sameaddress')?.value) {
-        this.doctorForm.get('billingDetailsForm.billingstate')?.setValue(this.doctorForm.get('accountDetailsForm.state')?.value);
-        this.doctorForm.get('billingDetailsForm.billingcity')?.setValue(this.doctorForm.get('accountDetailsForm.city')?.value);
-        this.doctorForm.get('billingDetailsForm.billingaddress')?.setValue(this.doctorForm.get('accountDetailsForm.address')?.value);
-        this.doctorForm.get('billingDetailsForm.billingzipcode')?.setValue(this.doctorForm.get('accountDetailsForm.zipcode')?.value);
+      this.doctorForm.get('billingDetailsForm.StripePaymentMethodId')?.setValue(paymentMethod?.paymentMethod?.id);
+      this.doctorForm.get('billingDetailsForm.Last4')?.setValue(paymentMethod?.paymentMethod?.card?.last4);
+      this.doctorForm.get('billingDetailsForm.ExpirationMonth')?.setValue(paymentMethod?.paymentMethod?.card?.exp_month);
+      this.doctorForm.get('billingDetailsForm.ExpirationYear')?.setValue(paymentMethod?.paymentMethod?.card?.exp_year);
+      this.doctorForm.get('billingDetailsForm.Brand')?.setValue(paymentMethod?.paymentMethod?.card?.brand);
+      this.doctorForm.get('billingDetailsForm.Country')?.setValue(paymentMethod?.paymentMethod?.card?.country);
+      if (this.doctorForm.get('billingDetailsForm.SameAddress')?.value) {
+        this.doctorForm.get('billingDetailsForm.BillingState')?.setValue(this.doctorForm.get('accountDetailsForm.State')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingCity')?.setValue(this.doctorForm.get('accountDetailsForm.City')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingAddress')?.setValue(this.doctorForm.get('accountDetailsForm.Address')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingZipCode')?.setValue(this.doctorForm.get('accountDetailsForm.ZipCode')?.value);
       }
 
-      this.accountService.registerDoctor({
+      const jsonData = JSON.stringify({
         ...this.doctorForm.value.accountSettingsForm,
         ...this.doctorForm.value.accountDetailsForm,
         ...this.doctorForm.value.billingDetailsForm
-      }).subscribe({
-        next: _ => this.currentStep++,
+      });
+
+      const formData = new FormData();
+
+      formData.append('json', jsonData);
+      formData.append('file', this.doctorForm.get('accountDetailsForm.file')?.value);
+
+      this.accountService.registerDoctor(formData).subscribe({
+        next: _ => {
+          this.currentStep++;
+          this.isSubmittingApi = false;
+        },
       });
     }
   }

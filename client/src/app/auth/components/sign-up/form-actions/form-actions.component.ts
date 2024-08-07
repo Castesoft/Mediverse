@@ -14,6 +14,7 @@ export class FormActionsComponent {
 
   totalSteps = input.required<number>();
   currentStep = input.required<number>();
+  isSubmittingApi = input.required<boolean>();
   onNextStep = output();
   onPreviousStep = output();
   onSubmit = output();

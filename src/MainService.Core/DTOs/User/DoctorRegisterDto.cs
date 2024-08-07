@@ -50,7 +50,7 @@ public class DoctorRegisterDto
     public string ZipCode { get; set; }
 
     [Required]
-    public int SpecialtyId { get; set; }
+    public string SpecialtyId { get; set; }
 
     [Required]
     public string AcceptedPaymentMethods { get; set; }

@@ -11,7 +11,9 @@
       'is-invalid': submitted() && control.invalid,
       'is-valid': submitted() && control.valid,
       'border-warning border-2': isPending,
-    }" [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null" [attr.aria-label]="label + ' input'"/>
+      }" [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null" [attr.aria-label]="label + ' input'"
+      (change)="handleChange($event)"
+    />
 @if (datalistOptions) {
   <datalist [id]="controlName + 'datalist'">
     @for (option of datalistOptions; track option) {

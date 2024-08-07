@@ -10,20 +10,20 @@
     </div>
 
     <div class="fv-row fv-plugins-icon-container">
-        <div controlCheck formControlName="sameaddress" [submitted]="submitted()">
+        <div controlCheck formControlName="SameAddress" [submitted]="submitted()">
             <span class="form-check-label fw-semibold text-gray-700 fs-6">
                 Utilizar mi dirección como dirección de facturación.
             </span>
         </div>
     </div>
 
-    @if (myForm.get('sameaddress')?.value !== true) {
+    @if (myForm.get('SameAddress')?.value !== true) {
         <div class="row mb-5">
             <div class="col-xl-6">
                 <div
                     class="fv-row fv-plugins-icon-container"
                     controlSelect
-                    formControlName="billingstate"
+                    formControlName="BillingState"
                     [label]="'Estado'"
                     [options]="states"
                     [placeholder]="''"
@@ -39,7 +39,7 @@
                 <div
                     class="fv-row fv-plugins-icon-container"
                     controlSelect
-                    formControlName="billingcity"
+                    formControlName="BillingCity"
                     [label]="'Ciudad'"
                     [options]="citiesList"
                     [placeholder]="''"
@@ -56,7 +56,7 @@
                 <div
                     class="fv-row fv-plugins-icon-container"
                     inputControl
-                    formControlName="billingaddress"
+                    formControlName="BillingAddress"
                     [label]="'Dirección'"
                     [type]="'text'"
                     [placeholder]="''"
@@ -70,7 +70,7 @@
                 <div
                     class="fv-row fv-plugins-icon-container"
                     inputControl
-                    formControlName="billingzipcode"
+                    formControlName="BillingZipCode"
                     [label]="'Código postal'"
                     [type]="'tel'"
                     [placeholder]="''"
@@ -86,7 +86,7 @@
     <div
         class="fv-row mb-5 fv-plugins-icon-container"
         inputControl
-        formControlName="displayname"
+        formControlName="DisplayName"
         [label]="'Nombre en la tarjeta'"
         [type]="'text'"
         [placeholder]="''"

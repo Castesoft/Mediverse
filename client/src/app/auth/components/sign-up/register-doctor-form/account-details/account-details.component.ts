@@ -24,7 +24,7 @@ export class AccountDetailsComponent {
   myForm!: FormGroup;
   states: string[] = this.utilsService.states;
   get citiesList() {
-    const selectedState = this.myForm.get('state')?.value;
+    const selectedState = this.myForm.get('State')?.value;
     if (!selectedState) return [];
     return this.utilsService.cities(selectedState);
   }
@@ -44,6 +44,12 @@ export class AccountDetailsComponent {
   }
 
   unselectCity() {
-    this.myForm.get('city')?.setValue('');
+    this.myForm.get('City')?.setValue('');
+  }
+
+  onFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.myForm.get('file')?.setValue(event.target.files[0]);
+    }
   }
 }

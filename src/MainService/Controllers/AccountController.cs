@@ -14,9 +14,25 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
+using System.Text.Json;
 
 namespace MainService.Controllers;
-public class AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, ITokenService tokenService, ICloudinaryService cloudinaryService, IConfiguration configuration, IEmailService emailService, IUnitOfWork uow, ICodeService codeService, IPhoneService phoneService, IUsersService usersService, IOptions<ClientSettings> clientSettings, IPhotosService photosService) : BaseApiController
+public class AccountController(
+    UserManager<AppUser> userManager, 
+    SignInManager<AppUser> signInManager, 
+    IMapper mapper, 
+    ITokenService tokenService, 
+    ICloudinaryService cloudinaryService, 
+    IConfiguration configuration, 
+    IEmailService emailService, 
+    IUnitOfWork uow, 
+    ICodeService codeService, 
+    IPhoneService phoneService, 
+    IUsersService usersService, 
+    IOptions<ClientSettings> clientSettings, 
+    IPhotosService photosService,
+    IStripeService stripeService
+) : BaseApiController
 {
     [Authorize]
     [HttpGet]
@@ -98,8 +114,12 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
     }
 
     [HttpPost("register-doctor")]
-    public async Task<ActionResult<AccountDto>> RegisterDoctorAsync([FromBody] DoctorRegisterDto request)
+    public async Task<ActionResult<AccountDto>> RegisterDoctorAsync([FromForm] IFormFile file, [FromForm] string json)
     {
+        if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
+
+        var request = JsonSerializer.Deserialize<DoctorRegisterDto>(json);
+
         using var hmac = new HMACSHA512();
 
         if ((await userManager.FindByEmailAsync(request.Email)) != null)
@@ -182,10 +202,19 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
             user.DoctorPaymentMethodTypes.Add(paymentMethodType);
         }
 
-        if (await uow.SpecialtyRepository.GetByIdAsync(request.SpecialtyId) == null)
+        if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
             return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
 
-        user.UserMedicalLicenses.Add(new (request.SpecialtyId) { IsMain = true });
+         var uploadResult = await cloudinaryService.Upload(file, new() {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/DoctorMedicalLicenses",
+        });
+        if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+
+        user.UserMedicalLicenses.Add(new (int.Parse(request.SpecialtyId), uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
+
+        string customerId = await stripeService.CreateCustomerAsync(user.Email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
+        user.StripeCustomerId = customerId;
 
         string emailVerificationCode = codeService.GenerateEmailCode();
 

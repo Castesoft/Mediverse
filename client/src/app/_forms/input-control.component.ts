@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, input, Input, OnInit, Renderer2, Self } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, input, Input, OnInit, output, Renderer2, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
 import {FormControlStyles, InputTypes} from 'src/app/_models/types';
 import { NgClass } from '@angular/common';
@@ -26,6 +26,8 @@ export class InputControlComponent implements ControlValueAccessor, AfterViewIni
   isNew = input<boolean>(false);
   optional = input<boolean>(false);
   style = input<FormControlStyles>('solid');
+
+  onChange = output<any>();
 
   @Input() id?: string;
   @Input() popoverProps?: PopoverProps;
@@ -73,5 +75,9 @@ export class InputControlComponent implements ControlValueAccessor, AfterViewIni
     //   this.renderer.setAttribute(inputEl, 'autofocus', 'autofocus');
     //   inputEl.focus();
     // }
+  }
+
+  handleChange(event: any) {
+    this.onChange.emit(event);
   }
 }

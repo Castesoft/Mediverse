@@ -14,6 +14,7 @@ import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms
 export class RegisterDoctorFormComponent {
   public controlContainer = inject(ControlContainer);
   @ViewChild('billingDetails') billingDetails!: BillingDetailsComponent;
+  @ViewChild('accountDetails') accountDetails!: AccountDetailsComponent;
   
   currentStep = input.required<number>();
   submitted = input.required<boolean>();

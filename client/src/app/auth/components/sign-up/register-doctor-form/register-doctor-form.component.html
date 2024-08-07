@@ -5,6 +5,7 @@
     ></app-account-settings>
 } @else if (currentStep() === 3) {
     <app-account-details
+        #accountDetails
         [formGroup]="accountDetailsForm"
         [submitted]="submitted()"
     ></app-account-details>

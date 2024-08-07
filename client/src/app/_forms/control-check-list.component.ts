@@ -72,8 +72,9 @@ export class ControlCheckListComponent implements ControlValueAccessor {
       return this.isOptionSelected(option.id);
     }
 
+    
     const selectedOptions = (this.control.value || '').split(',').filter((v: string) => !!v);
-    return selectedOptions.includes(option);
+    return selectedOptions.includes(option.toString());
   }
 
   preventChanges(event: Event) {

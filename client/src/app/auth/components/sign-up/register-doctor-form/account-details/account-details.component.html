@@ -14,7 +14,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 controlSelect
-                formControlName="state"
+                formControlName="State"
                 [label]="'Estado'"
                 [options]="states"
                 [placeholder]="''"
@@ -30,7 +30,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 controlSelect
-                formControlName="city"
+                formControlName="City"
                 [label]="'Ciudad'"
                 [options]="citiesList"
                 [placeholder]="''"
@@ -47,7 +47,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 inputControl
-                formControlName="address"
+                formControlName="Address"
                 [label]="'Dirección'"
                 [type]="'text'"
                 [placeholder]="''"
@@ -61,7 +61,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 inputControl
-                formControlName="zipcode"
+                formControlName="ZipCode"
                 [label]="'Código postal'"
                 [type]="'tel'"
                 [placeholder]="''"
@@ -78,7 +78,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 controlSelect
-                formControlName="specialtyid"
+                formControlName="SpecialtyId"
                 [label]="'Especialidad'"
                 [placeholder]="''"
                 [options]="specialties"
@@ -101,14 +101,18 @@
                 [errors]="{
                     required: 'La cédula o certificación es requerida.'
                 }"
+                (onChange)="onFileChange($event)"
             ></div>
+            @if (this.myForm.get('file')?.value) {
+                <div class="mt-2">Archivo seleccionado: {{this.myForm.get('file')?.value.name}}</div>
+            }
         </div>
     </div>
 
     <div
         class="fv-row mb-5 fv-plugins-icon-container"
         controlCheckList
-        formControlName="acceptedpaymentmethods"
+        formControlName="AcceptedPaymentMethods"
         [label]="'Métodos de Pago Aceptados'"
         [options]="paymentMethodTypes"
         [submitted]="submitted()"

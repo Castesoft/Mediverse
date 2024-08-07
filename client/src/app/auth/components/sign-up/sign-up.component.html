@@ -37,6 +37,7 @@
                     <div formActions
                         [totalSteps]="formSteps.length"
                         [currentStep]="currentStep"
+                        [isSubmittingApi]="isSubmittingApi"
                         (onNextStep)="onNextStep()"
                         (onPreviousStep)="onPreviousStep()"
                         (onSubmit)="onSubmit()"

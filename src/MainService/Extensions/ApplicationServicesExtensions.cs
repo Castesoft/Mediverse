@@ -32,6 +32,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IProductsService, ProductsService>();
         services.AddScoped<IPrescriptionsService, PrescriptionsService>();
         services.AddScoped<IPhotosService, PhotosService>();
+        services.AddScoped<IStripeService, StripeService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICodeService, CodeService>();
         services.AddScoped<IPhoneService, PhoneService>();
