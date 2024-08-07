@@ -15,7 +15,7 @@ public static class Seed
     private static async Task SeedSpecialtiesAsync(DataContext context)
     {
         if (await context.Specialties.AnyAsync()) return;
-        await context.Specialties.AddRangeAsync(SeedData.specialties.ToArray());
+        await context.Specialties.AddRangeAsync(SeedDataSpecialties.specialties.ToArray());
         await context.SaveChangesAsync();
     }
 

@@ -97,36 +97,6 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         return itemToReturn;
     }
 
-// {
-//     "firstname": "Joel Isaac", LISTO
-//     "lastname": "Reyna Villarreal", LISTO
-//     "gender": "Masculino", LISTO
-//     "email": "redacted+011@example.invalid", LISTO
-//  *   "phone": "8186034514",
-//     "password": "Password_1", LISTO
-//     "confirmpassword": "Password_1", LISTO
-//     "agreeterms": true, LISTO
-//  *address   "state": "Nuevo Leon",
-//     "city": "Monterrey",
-//     "address": "Pinos 321",
-//  *address   "zipcode": "66644",
-//  *billing_address   "sameaddress": true,
-//     "billingstate": "Nuevo Leon",
-//     "billingcity": "Monterrey",
-//     "billingaddress": "Pinos 321",
-//  *billing_address   "billingzipcode": "66644",
-//  *payment_method   "displayname": "Joel reyna",
-//     "stripepaymentmethodid": "pm_1PkvBmLXJ0z5yQSuQmulXIyo",
-//     "last4": "4242",
-//     "expirationmonth": 1,
-//     "expirationyear": 2025,
-//     "brand": "visa",
-//  *payment_method   "country": "US"
-//  *payment_methods_types   "acceptedpaymentmethods": "1,4,3",
-//  *specialty   "specialtyid": "17",
-//  *document   "certification": "C:\\fakepath\\cover.png",
-// }
-
     [HttpPost("register-doctor")]
     public async Task<ActionResult<AccountDto>> RegisterDoctorAsync([FromBody] DoctorRegisterDto request)
     {
@@ -215,7 +185,7 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         if (await uow.SpecialtyRepository.GetByIdAsync(request.SpecialtyId) == null)
             return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
 
-        user.UserMedicalLicenses.Add(new (request.SpecialtyId));
+        user.UserMedicalLicenses.Add(new (request.SpecialtyId) { IsMain = true });
 
         string emailVerificationCode = codeService.GenerateEmailCode();
 

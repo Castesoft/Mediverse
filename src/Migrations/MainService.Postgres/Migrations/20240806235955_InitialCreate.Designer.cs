@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240806202924_InitialCreate")]
+    [Migration("20240806235955_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -714,6 +714,39 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("MedicalLicenseDocuments");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSpecialty", b =>
+                {
+                    b.Property<int>("MedicalLicenseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SpecialtyId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MedicalLicenseId", "SpecialtyId");
+
+                    b.HasIndex("MedicalLicenseId")
+                        .IsUnique();
+
+                    b.HasIndex("SpecialtyId");
+
+                    b.ToTable("MedicalLicenseSpecialty");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSubSpecialty", b =>
+                {
+                    b.Property<int>("MedicalLicenseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SubSpecialtyId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MedicalLicenseId", "SubSpecialtyId");
+
+                    b.HasIndex("SubSpecialtyId");
+
+                    b.ToTable("MedicalLicenseSubSpecialties");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.Property<int>("NurseId")
@@ -1205,6 +1238,22 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("ServicePhoto");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.SpecialitySubSpecialty", b =>
+                {
+                    b.Property<int>("SpecialtyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SubSpecialtyId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SpecialtyId", "SubSpecialtyId");
+
+                    b.HasIndex("SubSpecialtyId")
+                        .IsUnique();
+
+                    b.ToTable("SpecialitySubSpecialties");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Specialty", b =>
                 {
                     b.Property<int>("Id")
@@ -1240,6 +1289,28 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("SpecialtyService");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubSpecialties");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
@@ -1300,14 +1371,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<bool>("IsMain")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("SpecialtyId")
-                        .HasColumnType("integer");
-
                     b.HasKey("UserId", "MedicalLicenseId");
 
                     b.HasIndex("MedicalLicenseId");
-
-                    b.HasIndex("SpecialtyId");
 
                     b.ToTable("UserMedicalLicenses");
                 });
@@ -1837,6 +1903,44 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("MedicalLicense");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSpecialty", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalLicense", "MedicalLicense")
+                        .WithOne("MedicalLicenseSpecialty")
+                        .HasForeignKey("MainService.Models.Entities.MedicalLicenseSpecialty", "MedicalLicenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Specialty", "Specialty")
+                        .WithMany("MedicalLicenseSpecialties")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalLicense");
+
+                    b.Navigation("Specialty");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSubSpecialty", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalLicense", "MedicalLicense")
+                        .WithMany("MedicalLicenseSubSpecialties")
+                        .HasForeignKey("MedicalLicenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.SubSpecialty", "SubSpecialty")
+                        .WithMany()
+                        .HasForeignKey("SubSpecialtyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalLicense");
+
+                    b.Navigation("SubSpecialty");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -2026,6 +2130,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.SpecialitySubSpecialty", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Specialty", "Specialty")
+                        .WithMany("SpecialitySubSpecialties")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.SubSpecialty", "SubSpecialty")
+                        .WithOne("SpecialitySubSpecialty")
+                        .HasForeignKey("MainService.Models.Entities.SpecialitySubSpecialty", "SubSpecialtyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Specialty");
+
+                    b.Navigation("SubSpecialty");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.SpecialtyService", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Service", "Service")
@@ -2071,10 +2194,6 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("MedicalLicenseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.Specialty", null)
-                        .WithMany("UserMedicalLicenses")
-                        .HasForeignKey("SpecialtyId");
 
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
                         .WithMany("UserMedicalLicenses")
@@ -2290,6 +2409,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicense", b =>
                 {
                     b.Navigation("MedicalLicenseDocument");
+
+                    b.Navigation("MedicalLicenseSpecialty");
+
+                    b.Navigation("MedicalLicenseSubSpecialties");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
@@ -2368,9 +2491,16 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Specialty", b =>
                 {
-                    b.Navigation("SpecialtyServices");
+                    b.Navigation("MedicalLicenseSpecialties");
 
-                    b.Navigation("UserMedicalLicenses");
+                    b.Navigation("SpecialitySubSpecialties");
+
+                    b.Navigation("SpecialtyServices");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
+                {
+                    b.Navigation("SpecialitySubSpecialty");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
