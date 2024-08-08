@@ -33,6 +33,11 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
             .Include(x => x.UserPhoto).ThenInclude(x => x.Photo)
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
             .Include(x => x.UserPermissions).ThenInclude(x => x.Permission)
+            .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense)
+                .ThenInclude(x => x.MedicalLicenseSpecialty)
+                .ThenInclude(x => x.Specialty)
+            .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         var accountToReturn = mapper.Map<AppUser, AccountDto>(user);
@@ -89,5 +94,15 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
     public async Task<List<SpecialtyDto>> GetSpecialtiesAsync()
     {
         return await uow.UserRepository.GetSpecialtiesAsync();
+    }
+
+    public async Task<BillingDetailsDto> GetBillingDetailsAsync(int userId)
+    {
+         var user = await userManager.Users
+            .Include(x => x.UserPaymentMethods).ThenInclude(x => x.PaymentMethod)
+            .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        return mapper.Map<AppUser, BillingDetailsDto>(user);
     }
 }

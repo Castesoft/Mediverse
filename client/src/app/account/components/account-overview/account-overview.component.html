@@ -1,0 +1,103 @@
+<div card>
+  <div cardHeader>
+    <div cardTitle [title]="'Detalles de perfil'"></div>
+    <a
+      [routerLink]="['/account/settings']"
+      class="btn btn-sm btn-primary align-self-center"
+      >Editar perfil</a
+    >
+  </div>
+  <div cardBody>
+    @if(account) {
+
+    <div class="row mb-7">
+      <label class="col-lg-4 fw-semibold text-muted">Nombre</label>
+      <div class="col-lg-8">
+        <span class="fw-bold fs-6 text-gray-800">{{ account.fullName }}</span>
+      </div>
+    </div>
+    <div class="row mb-7">
+      <label class="col-lg-4 fw-semibold text-muted">Especialidad</label>
+      <div class="col-lg-8 fv-row">
+        <span class="fw-semibold text-gray-800 fs-6">{{
+          account.mainSpecialty
+        }}</span>
+      </div>
+    </div>
+    <div class="row mb-7">
+      <label class="col-lg-4 fw-semibold text-muted"
+        >Celular
+        <!-- <span class="ms-1" aria-label="Phone number must be active"
+            >
+				<i class="ki-duotone ki-information fs-7">
+					<span class="path1"></span>
+					<span class="path2"></span>
+					<span class="path3"></span>
+				</i>
+			</span> -->
+      </label>
+      <div class="col-lg-8 d-flex align-items-center">
+        <span class="fw-bold fs-6 text-gray-800 me-2"
+          >{{ account.phoneNumberCountryCode }} {{ account.phoneNumber }}</span
+        >
+        <span class="badge badge-success">Verificado</span>
+      </div>
+    </div>
+    <!-- <div class="row mb-7">
+          <label class="col-lg-4 fw-semibold text-muted">Sitio</label>
+          <div class="col-lg-8">
+            <a [routerLink]="[]" class="fw-semibold fs-6 text-gray-800 text-hover-primary">[sitio web]</a>
+          </div>
+        </div> -->
+    <div class="row mb-7">
+      <label class="col-lg-4 fw-semibold text-muted"
+        >País
+        <!-- <span class="ms-1" aria-label="Country of origination"
+            >
+			<i class="ki-duotone ki-information fs-7">
+				<span class="path1"></span>
+				<span class="path2"></span>
+				<span class="path3"></span>
+			</i>
+			</span> -->
+      </label>
+      <div class="col-lg-8">
+        <span class="fw-bold fs-6 text-gray-800">{{ account.country }}</span>
+      </div>
+    </div>
+    <!-- <div class="row mb-7">
+          <label class="col-lg-4 fw-semibold text-muted">Communication</label>
+          <div class="col-lg-8">
+            <span class="fw-bold fs-6 text-gray-800">Email, Phone</span>
+          </div>
+        </div>
+        <div class="row mb-10">
+          <label class="col-lg-4 fw-semibold text-muted">Permitir cambios</label>
+          <div class="col-lg-8">
+            <span class="fw-semibold fs-6 text-gray-800">Sí</span>
+          </div>
+        </div> -->
+    <div
+      class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6"
+    >
+      <i class="ki-duotone ki-information fs-2tx text-warning me-4">
+        <span class="path1"></span>
+        <span class="path2"></span>
+        <span class="path3"></span>
+      </i>
+      <div class="d-flex flex-stack flex-grow-1">
+        <div class="fw-semibold">
+          <h4 class="text-gray-900 fw-bold">¡Requerimos su atención!</h4>
+          <div class="fs-6 text-gray-700">
+            Su pago fue rechazado. Para comenzar a usar Mediverse, favor de
+            <a class="fw-bold" [routerLink]="['/account/billing']"
+              >Agregar método de pago</a
+            >.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    }
+  </div>
+</div>

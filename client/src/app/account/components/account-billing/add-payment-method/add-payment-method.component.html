@@ -1,0 +1,37 @@
+<div modalContent>
+  @if (title) {
+  <div modalHeader [title]="title"></div>
+  }
+  <div modalBody>
+    <form [formGroup]="paymentMethodForm">
+        <div
+            class="fv-row mb-5 fv-plugins-icon-container"
+            inputControl
+            formControlName="DisplayName"
+            [label]="'Nombre en la tarjeta'"
+            [type]="'text'"
+            [placeholder]="''"
+            [submitted]="submitted"
+            [errors]="{
+                required: 'El nombre es requerido.'
+            }"
+        ></div>
+    
+        <div class="row mb-3">
+            <div class="col-6">
+                <label class="fw-semibold fs-6 mb-2 required">Número de tarjeta</label>
+                <div class="form-control form-control-solid" #cardNumber></div>
+            </div>
+            <div class="col-3">
+                <label class="fw-semibold fs-6 mb-2 required">Expiración</label>
+                <div class="form-control form-control-solid" #cardExpiry></div>
+            </div>
+            <div class="col-3">
+                <label class="fw-semibold fs-6 mb-2 required">CVC</label>
+                <div class="form-control form-control-solid" #cardCvc></div>
+            </div>
+            <span class="text-danger">{{cardErrors}}</span>
+        </div>
+    </form>
+  </div>
+</div>

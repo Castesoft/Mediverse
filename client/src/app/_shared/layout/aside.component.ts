@@ -264,7 +264,7 @@ Gestión Clínica
             </div>
           </div>
           <div class="menu-item">
-            <a [routerLink]="['/dashboards/account']"
+            <a [routerLink]="['/account']"
                class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-user">
@@ -276,7 +276,7 @@ Gestión Clínica
             </a>
           </div>
           <div class="menu-item">
-            <a [routerLink]="[]"
+            <a [routerLink]="['/account/settings']"
                class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-setting-2">

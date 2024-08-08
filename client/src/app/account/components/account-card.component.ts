@@ -1,8 +1,10 @@
 import { LayoutModule } from "@angular/cdk/layout";
-import {Component, input} from "@angular/core";
+import {Component, inject, input} from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {Account} from "src/app/_models/account";
 import {SymbolComponent} from "src/app/_shared/layout.module";
+import { UserProfilePictureComponent } from "../../users/components/user-profile-picture/user-profile-picture.component";
+import { AccountService } from 'src/app/_services/account.service';
 
 @Component({
   host: { class: 'card-body pt-9 pb-0', },
@@ -24,7 +26,7 @@ import {SymbolComponent} from "src/app/_shared/layout.module";
                 </i>}
               </a>
               <a [routerLink]="[]" class="btn btn-sm btn-light-success fw-bold ms-2 fs-8 py-1 px-3"
-              >Upgrade to Pro</a>
+              >Conviértete en Pro</a>
             </div>
             <div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
               <a [routerLink]="[]" class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2">
@@ -32,12 +34,12 @@ import {SymbolComponent} from "src/app/_shared/layout.module";
                   <span class="path1"></span>
                   <span class="path2"></span>
                   <span class="path3"></span>
-                </i>[Especialidad]</a>
+                </i>{{ account().mainSpecialty }}</a>
               <a [routerLink]="[]" class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2">
                 <i class="ki-duotone ki-geolocation fs-4 me-1">
                   <span class="path1"></span>
                   <span class="path2"></span>
-                </i>SF, Bay Area</a>
+                </i>{{ account().city }}, {{ account().state }}</a>
               <a [routerLink]="[]" class="d-flex align-items-center text-gray-500 text-hover-primary mb-2">
                 <i class="ki-duotone ki-sms fs-4 me-1">
                   <span class="path1"></span>
@@ -46,13 +48,15 @@ import {SymbolComponent} from "src/app/_shared/layout.module";
             </div>
           </div>
           <div class="d-flex my-4">
-            <a [routerLink]="[]" class="btn btn-sm btn-light me-2" id="kt_user_follow_button">
+            <!-- <a [routerLink]="[]" class="btn btn-sm btn-light me-2" id="kt_user_follow_button">
               <i class="ki-duotone ki-check fs-3 d-none"></i>
               <span class="indicator-label">Seguir</span>
               <span class="indicator-progress">Por favor espere...
                           <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-            </a>
-            <a [routerLink]="[]" class="btn btn-sm btn-primary me-2">Agenda una cita</a>
+            </a> -->
+            @if (accountService.current()?.username !== account().email) {
+              <a [routerLink]="[]" class="btn btn-sm btn-primary me-2">Agenda una cita</a>
+            }
             <div class="me-0">
               <button class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary">
                 <i class="ki-solid ki-dots-horizontal fs-2x"></i>
@@ -165,28 +169,18 @@ import {SymbolComponent} from "src/app/_shared/layout.module";
         <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/settings']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Configuración</a>
       </li>
       <li class="nav-item mt-2">
-        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/security']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Seguridad</a>
-      </li>
-      <li class="nav-item mt-2">
         <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/billing']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Facturación</a>
       </li>
       <li class="nav-item mt-2">
-        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/statements']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Resultados</a>
-      </li>
-      <li class="nav-item mt-2">
-        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/referrals']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Recomendaciones</a>
-      </li>
-      <li class="nav-item mt-2">
-        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/api-keys']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">API Keys</a>
-      </li>
-      <li class="nav-item mt-2">
-        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/logs']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Logs</a>
+        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/payments']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Pagos/Cobros</a>
       </li>
     </ul>
   `,
   standalone: true,
-  imports: [RouterModule, LayoutModule, SymbolComponent, ],
+  imports: [RouterModule, LayoutModule, SymbolComponent, UserProfilePictureComponent],
 })
 export class AccountCardComponent {
+  accountService = inject(AccountService);
+
   account = input.required<Account>();
 }

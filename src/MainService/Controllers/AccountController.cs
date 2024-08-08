@@ -48,24 +48,17 @@ public class AccountController(
     [HttpPost("login")]
     public async Task<ActionResult<AccountDto>> LoginAsync([FromBody]LoginDto request)
     {
-        var item = await userManager.Users
-            .Include(x => x.UserPhoto)
-                .ThenInclude(x => x.Photo)
-            .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role)
-            .Include(x => x.UserPermissions)
-                .ThenInclude(x => x.Permission)
-            .SingleOrDefaultAsync(x => x.Email == request.Email);
+        AppUser user = await userManager.FindByEmailAsync(request.Email);
 
-        if (item == null) return Unauthorized("Correo o contraseña incorrectos.");
+        if (user == null) return Unauthorized("Correo o contraseña incorrectos.");
 
-        var result = await  signInManager.CheckPasswordSignInAsync(item, request.Password, false);
+        var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
         if (!result.Succeeded) return Unauthorized("Correo o contraseña incorrectos.");
 
-        var itemToReturn =  mapper.Map<AccountDto>(item);
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
-        itemToReturn.Token = await tokenService.CreateToken(item);
+        itemToReturn.Token = await tokenService.CreateToken(user);
 
         return itemToReturn;
     }
@@ -422,11 +415,10 @@ public class AccountController(
     }
 
     [HttpPost("send-phone-verification-code")]
-    public async Task<ActionResult> SendPhoneVerificationCode
-        ([FromBody] PhoneVerificationCodeDto request)
+    public async Task<ActionResult> SendPhoneVerificationCode([FromBody] PhoneVerificationCodeDto request)
     {
         using var hmac = new HMACSHA512();
-            
+
         var user = await userManager.Users
             .SingleOrDefaultAsync(x => x.Email == request.Email);
 
@@ -462,8 +454,7 @@ public class AccountController(
     }
 
     [HttpPost("phone-verification")] 
-    public async Task<ActionResult<AccountDto>> VerifyPhoneNumber
-        ([FromBody] PhoneNumberVerificationDto request)
+    public async Task<ActionResult<AccountDto>> VerifyPhoneNumber([FromBody] PhoneNumberVerificationDto request)
     {
         var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
 
@@ -681,5 +672,16 @@ public class AccountController(
         };
 
         return item;
+    }
+
+    [Authorize]
+    [HttpGet("billing-details")]
+    public async Task<ActionResult<BillingDetailsDto>> GetBillingDetails()
+    {
+        int userId = User.GetUserId();
+
+        var itemToReturn = await usersService.GetBillingDetailsAsync(userId);
+
+        return itemToReturn;
     }
 }

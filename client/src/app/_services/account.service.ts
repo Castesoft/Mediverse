@@ -7,6 +7,7 @@ import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
+import { BillingDetails } from '../_models/billingDetails';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +72,14 @@ export class AccountService {
         return response;
       })
     );
+  }
+
+  billingDetails() {
+    return this.http.get<BillingDetails>(`${this.baseUrl}billing-details`);
+  }
+
+  addPaymentMethod(value: any) {
+    return this.http.post(`${this.baseUrl}add-payment-method`, value);
   }
 
   setCurrentUser(user: Account) {

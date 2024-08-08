@@ -30,7 +30,7 @@ export class RootComponent { }
 export class PageComponent { }
 
 @Component({
-  host: { class: 'position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-body h-20px w-20px', },
+  host: { class: 'position-absolute bg-success rounded-circle border border-4 border-body h-20px w-20px', style: 'bottom: -5px; right: -5px;', },
   selector: 'div[onlineBadge]',
   template: ``,
   standalone: true,
@@ -38,7 +38,7 @@ export class PageComponent { }
 export class OnlineBadgeComponent { }
 
 @Component({
-  host: { class: 'symbol-label bg-light-danger text-danger fs-6 fw-bolder', },
+  host: { class: 'symbol-label bg-light-danger text-danger fs-1 fw-bolder', },
   selector: 'span[symbolLabel]',
   template: `{{label()[0]}}`,
   standalone: true,

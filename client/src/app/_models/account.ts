@@ -16,6 +16,11 @@ export class Account {
   sex!: string;
   token!: string;
   photoUrl?: string;
+  mainSpecialty!: string;
+  country!: string;
+  state!: string;
+  city!: string;
+  address!: string;
   dateOfBirth?: Date;
   createdAt = new Date();
 

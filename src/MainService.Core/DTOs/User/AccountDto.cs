@@ -14,6 +14,11 @@ public class AccountDto
     public bool IsPhoneNumberVerified { get; set; }
     public string Token { get; set; }
     public string PhotoUrl { get; set; }
+    public string MainSpecialty { get; set; }
+    public string Country { get; set; } = "México";
+    public string State { get; set; }
+    public string City { get; set; }
+    public string Address { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public DateTime CreatedAt { get; set; }
 }

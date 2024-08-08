@@ -38,7 +38,20 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url));
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.MainSpecialty, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
+            .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.State))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.City))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street));
+
+        CreateMap<AppUser, BillingDetailsDto>()
+            .ForMember(dest => dest.UserAddresses, opt => opt.MapFrom(src => src.UserAddresses.Select(x => x.Address)))
+            .ForMember(dest => dest.UserPaymentMethods, opt => opt.MapFrom(src => src.UserPaymentMethods.Select(x => x.PaymentMethod)));
+        CreateMap<Address, UserAddressDto>()
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.UserAddress.IsMain))
+            .ForMember(dest => dest.IsBilling, opt => opt.MapFrom(src => src.UserAddress.IsBilling));
+        CreateMap<PaymentMethod, UserPaymentMethodDto>()
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.UserPaymentMethod.IsMain));
 
         CreateMap<EventClinic, AddressDto>();
         CreateMap<EventService, ServiceDto>();

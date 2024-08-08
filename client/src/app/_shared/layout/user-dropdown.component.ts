@@ -33,7 +33,7 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
         </div>
         <div class="separator my-2"></div>
         <div class="menu-item px-5">
-          <a [routerLink]="['/account/overview']" class="menu-link px-5">Mi cuenta</a>
+          <a [routerLink]="['/account']" class="menu-link px-5">Mi cuenta</a>
         </div>
         <div class="menu-item px-5">
           <a [routerLink]="['/apps/projects/list']" class="menu-link px-5">

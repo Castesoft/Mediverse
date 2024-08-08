@@ -10,4 +10,5 @@ public interface IUsersService
     Task<bool> EmailExistsAsync(string email);
     Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync();
     Task<List<SpecialtyDto>> GetSpecialtiesAsync();
+    Task<BillingDetailsDto> GetBillingDetailsAsync(int userId);
 }
