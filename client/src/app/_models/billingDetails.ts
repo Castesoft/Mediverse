@@ -4,6 +4,7 @@ export interface BillingDetails {
 }
 
 export interface UserAddress {
+  addressId: number;
   isMain: boolean;
   isBilling: boolean;
   street: string;
@@ -21,4 +22,5 @@ export interface UserPaymentMethod {
   country: string;
   expirationMonth: number;
   expirationYear: number;
+  stripePaymentMethodId: string;
 }

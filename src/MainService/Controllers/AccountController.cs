@@ -682,6 +682,218 @@ public class AccountController(
 
         var itemToReturn = await usersService.GetBillingDetailsAsync(userId);
 
+        itemToReturn.UserPaymentMethods = [..itemToReturn.UserPaymentMethods.OrderBy(x => !x.IsMain)];
+        itemToReturn.UserAddresses = [..itemToReturn.UserAddresses.OrderBy(x => !x.IsBilling)];
+
         return itemToReturn;
+    }
+
+    [Authorize]
+    [HttpPost("payment-method")]
+    public async Task<ActionResult<UserPaymentMethodDto>> AddPaymentMethod(UserPaymentMethodCreateDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserPaymentMethods)
+                .ThenInclude(x => x.PaymentMethod)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (request.IsMain)
+        {
+            var mainPaymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.IsMain);
+            if (mainPaymentMethod != null) mainPaymentMethod.IsMain = false;
+        }
+
+        user.UserPaymentMethods.Add(new() {
+            UserId = userId,
+            IsMain = request.IsMain,
+            PaymentMethod = new()
+            {
+                DisplayName = request.DisplayName,
+                StripePaymentMethodId = request.StripePaymentMethodId,
+                Last4 = request.Last4,
+                ExpirationMonth = request.ExpirationMonth,
+                ExpirationYear = request.ExpirationYear,
+                Brand = request.Brand,
+                Country = request.Country
+            }
+        });
+
+        if (!await stripeService.AddPaymentMethodAsync(user.StripeCustomerId, request.StripePaymentMethodId, request.IsMain))
+            return BadRequest("Error agregando el método de pago a Stripe.");
+
+        if (!await uow.Complete()) return BadRequest("Error guardando el método de pago.");
+
+        return mapper.Map<UserPaymentMethodDto>(user.UserPaymentMethods.Last());
+    }
+
+    [Authorize]
+    [HttpDelete("payment-method/{paymentMethodId}")]
+    public async Task<ActionResult> DeletePaymentMethod(string paymentMethodId)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserPaymentMethods)
+                .ThenInclude(x => x.PaymentMethod)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        UserPaymentMethod paymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
+        if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
+
+        if (paymentMethod.IsMain) return BadRequest("No puedes eliminar tu método de pago principal.");
+
+        user.UserPaymentMethods.Remove(paymentMethod);
+
+        if (!await stripeService.DeletePaymentMethodAsync(paymentMethodId))
+            return BadRequest("Error eliminando el método de pago de Stripe.");
+
+        if (!await uow.Complete()) return BadRequest("Error eliminando el método de pago.");
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPut("payment-method/{paymentMethodId}")]
+    public async Task<ActionResult> SetMainPaymentMethod(string paymentMethodId)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserPaymentMethods)
+                .ThenInclude(x => x.PaymentMethod)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        UserPaymentMethod paymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
+        if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
+
+        UserPaymentMethod mainPaymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.IsMain);
+        if (mainPaymentMethod.PaymentMethod.StripePaymentMethodId == paymentMethodId) return BadRequest("Este método de pago ya es el principal.");
+        if (mainPaymentMethod != null) mainPaymentMethod.IsMain = false;
+
+        paymentMethod.IsMain = true;
+
+        if (!await stripeService.SetMainPaymentMethodAsync(user.StripeCustomerId, paymentMethodId))
+            return BadRequest("Error actualizando el método de pago en Stripe.");
+
+        if (!await uow.Complete()) return BadRequest("Error actualizando el método de pago.");
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPost("address")]
+    public async Task<ActionResult<UserAddressDto>> AddAddress(UserAddressCreateDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserAddresses)
+                .ThenInclude(x => x.Address)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (request.IsMain)
+        {
+            var mainAddress = user.UserAddresses.SingleOrDefault(x => x.IsMain);
+            if (mainAddress != null) mainAddress.IsMain = false;
+        }
+
+        if (request.IsBilling)
+        {
+            var billingAddress = user.UserAddresses.SingleOrDefault(x => x.IsBilling);
+            if (billingAddress != null) billingAddress.IsBilling = false;
+        }
+
+        user.UserAddresses.Add(new() {
+            UserId = userId,
+            IsMain = request.IsMain,
+            IsBilling = request.IsBilling,
+            Address = new()
+            {
+                State = request.State,
+                City = request.City,
+                Street = request.Address,
+                Zipcode = request.ZipCode
+            }
+        });
+
+        if (!await uow.Complete()) return BadRequest("Error guardando la dirección.");
+
+        return mapper.Map<UserAddressDto>(user.UserAddresses.Last());
+    }
+
+    [Authorize]
+    [HttpDelete("address/{addressId}")]
+    public async Task<ActionResult> DeleteAddress(int addressId)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserAddresses)
+                .ThenInclude(x => x.Address)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        UserAddress address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
+        if (address == null) return NotFound($"La dirección con id {addressId} no existe.");
+
+        if (address.IsMain) return BadRequest("No puedes eliminar tu dirección principal.");
+
+        user.UserAddresses.Remove(address);
+
+        if (!await uow.Complete()) return BadRequest("Error eliminando la dirección.");
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPut("address/{addressId}")]
+    public async Task<ActionResult> UpdateAddress(int addressId, UserAddressUpdateDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserAddresses)
+                .ThenInclude(x => x.Address)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        UserAddress address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
+        if (address == null) return NotFound($"La dirección con id {addressId} no existe.");
+
+        if (request.IsMain)
+        {
+            var mainAddress = user.UserAddresses.SingleOrDefault(x => x.IsMain);
+            if (mainAddress != null) mainAddress.IsMain = false;
+        }
+
+        if (request.IsBilling)
+        {
+            var billingAddress = user.UserAddresses.SingleOrDefault(x => x.IsBilling);
+            if (billingAddress != null) billingAddress.IsBilling = false;
+        }
+
+        address.IsMain = request.IsMain;
+        address.IsBilling = request.IsBilling;
+        address.Address.State = request.State;
+        address.Address.City = request.City;
+        address.Address.Street = request.Address;
+        address.Address.Zipcode = request.ZipCode;
+
+        if (!uow.HasChanges()) return Ok();
+        if (!await uow.Complete()) return BadRequest("Error actualizando la dirección.");
+
+        return Ok();
     }
 }

@@ -3,7 +3,7 @@
   <div modalHeader [title]="title"></div>
   }
   <div modalBody>
-    <form [formGroup]="paymentMethodForm">
+    <form [formGroup]="paymentMethodForm" (ngSubmit)="onSubmit()">
         <div
             class="fv-row mb-5 fv-plugins-icon-container"
             inputControl
@@ -32,6 +32,35 @@
             </div>
             <span class="text-danger">{{cardErrors}}</span>
         </div>
+
+        <div class="d-flex flex-stack mt-5">
+            <div class="me-5">
+                <label class="fs-6 fw-semibold form-label">¿Guardar como método de pago principal?</label>
+                <div class="fs-7 fw-semibold text-muted">Esta tarjeta se guardará como su método de pago principal</div>
+            </div>
+            <label class="form-check form-switch form-check-custom form-check-solid">
+                <input class="form-check-input" type="checkbox" formControlName="IsMain"  />
+            </label>
+        </div>
+
+        <div class="text-center pt-15">
+            <button 
+                type="reset" id="kt_modal_new_card_cancel" class="btn btn-light me-3" 
+                (click)="bsModalRef.hide()" [disabled]="submitted">
+                Cancelar
+            </button>
+            <button 
+                type="submit" id="kt_modal_new_card_submit" class="btn btn-primary" 
+                style="width: 96px;" [disabled]="submitted"
+            >
+                @if (!submitted) {
+                    <span class="indicator-label">Guardar</span>
+                } @else {
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                }
+            </button>
+        </div>
+
     </form>
   </div>
 </div>

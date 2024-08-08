@@ -1,4 +1,4 @@
-import { Observable, map, tap } from "rxjs";
+import { Observable, map, of, tap } from "rxjs";
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
@@ -7,7 +7,7 @@ import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
-import { BillingDetails } from '../_models/billingDetails';
+import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billingDetails';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +15,7 @@ import { BillingDetails } from '../_models/billingDetails';
 export class AccountService {
   baseUrl = `${environment.apiUrl}account/`;
   current = signal<Account | null>(null);
+  billingDetails = signal<BillingDetails | null>(null);
   roles = computed<Role[]>(() => {
 
     const user = this.current();
@@ -74,12 +75,122 @@ export class AccountService {
     );
   }
 
-  billingDetails() {
-    return this.http.get<BillingDetails>(`${this.baseUrl}billing-details`);
+  getBillingDetails() {
+    if (this.billingDetails() !== null) return;
+
+    this.http.get<BillingDetails>(`${this.baseUrl}billing-details`).subscribe({
+      next: billingDetails => {
+        this.billingDetails.set(billingDetails);
+      }
+    });
   }
 
   addPaymentMethod(value: any) {
-    return this.http.post(`${this.baseUrl}add-payment-method`, value);
+    return this.http.post<UserPaymentMethod>(`${this.baseUrl}payment-method`, value).pipe(
+      map(newPaymentMehod => {
+        this.snackbarService.success('Método de pago añadido correctamente');
+        if (newPaymentMehod.isMain) {
+          const paymentMethods = this.billingDetails()?.userPaymentMethods || [];
+          paymentMethods.forEach(pm => pm.isMain = false);
+          paymentMethods.push(newPaymentMehod as UserPaymentMethod);
+          this.billingDetails.set({
+            userAddresses: this.billingDetails()?.userAddresses || [],
+            userPaymentMethods: paymentMethods.sort((a, b) => a.isMain ? -1 : 1)
+          });
+        } else {
+          this.billingDetails.set({
+            userAddresses: this.billingDetails()?.userAddresses || [],
+            userPaymentMethods: [...this.billingDetails()?.userPaymentMethods || [], newPaymentMehod as UserPaymentMethod]
+          });
+        }
+      })
+    );
+  }
+
+  deletePaymentMethod(id: string) {
+    return this.http.delete(`${this.baseUrl}payment-method/${id}`).pipe(
+      tap(() => {
+        this.snackbarService.success('Método de pago eliminado correctamente');
+        this.billingDetails.set({
+          userAddresses: this.billingDetails()?.userAddresses || [],
+          userPaymentMethods: this.billingDetails()?.userPaymentMethods?.filter(pm => pm.stripePaymentMethodId !== id) || []
+        });
+      })
+    );
+  }
+
+  setMainPaymentMethod(id: string) {
+    return this.http.put(`${this.baseUrl}payment-method/${id}`, {}).pipe(
+      tap(() => {
+        this.snackbarService.success('Método de pago principal actualizado correctamente');
+        const paymentMethods = this.billingDetails()?.userPaymentMethods || [];
+        paymentMethods.forEach(pm => pm.isMain = pm.stripePaymentMethodId === id);
+        this.billingDetails.set({
+          userAddresses: this.billingDetails()?.userAddresses || [],
+          userPaymentMethods: paymentMethods.sort((a, b) => a.isMain ? -1 : 1)
+        });
+      })
+    );
+  }
+
+  addAddress(value: any) {
+    return this.http.post<UserAddress>(`${this.baseUrl}address`, value).pipe(
+      map(newAddress => {
+        this.snackbarService.success('Dirección añadida correctamente');
+        if (newAddress.isBilling) {
+          const addresses = this.billingDetails()?.userAddresses || [];
+          addresses.forEach(a => a.isBilling = false);
+          addresses.push(newAddress as UserAddress);
+          this.billingDetails.set({
+            userAddresses: addresses.sort((a, b) => a.isBilling ? -1 : 1),
+            userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
+          });
+        } else {
+          this.billingDetails.set({
+            userAddresses: [...this.billingDetails()?.userAddresses || [], newAddress as UserAddress],
+            userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
+          });
+        }
+      })
+    );
+  }
+
+  deleteAddress(id: number) {
+    return this.http.delete(`${this.baseUrl}address/${id}`).pipe(
+      tap(() => {
+        this.snackbarService.success('Dirección eliminada correctamente');
+        this.billingDetails.set({
+          userAddresses: this.billingDetails()?.userAddresses?.filter(a => a.addressId !== id) || [],
+          userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
+        });
+      })
+    );
+  }
+
+  updateAddress(id:number, value: any) {
+    return this.http.put<UserAddress>(`${this.baseUrl}address/${id}`, value).pipe(
+      tap(_ => {
+        this.snackbarService.success('Dirección actualizada correctamente');
+        let addresses = this.billingDetails()?.userAddresses || [];
+        if (value.IsBilling) {
+          addresses.forEach(a => a.isBilling = false);
+        }
+        addresses = addresses.map(a => a.addressId === id ? {
+          addressId: id,
+          isMain: value.IsMain,
+          isBilling: value.IsBilling,
+          street: value.Address,
+          city: value.City,
+          state: value.State,
+          country: value.Country,
+          zipcode: value.ZipCode
+        } : a);
+        this.billingDetails.set({
+          userAddresses: addresses.sort((a, b) => a.isBilling ? -1 : 1),
+          userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
+        });
+      })
+    );
   }
 
   setCurrentUser(user: Account) {

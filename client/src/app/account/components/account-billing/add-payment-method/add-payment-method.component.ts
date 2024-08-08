@@ -1,6 +1,7 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Stripe, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, loadStripe } from '@stripe/stripe-js';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
@@ -16,6 +17,8 @@ import { environment } from 'src/environments/environment';
 export class AddPaymentMethodComponent implements OnInit {
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
+
+  bsModalRef = inject(BsModalRef);
   title?: string;
 
   @ViewChild('cardNumber') cardNumberElement!: ElementRef;
@@ -25,9 +28,9 @@ export class AddPaymentMethodComponent implements OnInit {
   cardNumber?: StripeCardNumberElement;
   cardExpiry?: StripeCardExpiryElement;
   cardCvc?: StripeCardCvcElement;
-  submitted = false;
   cardErrors: any;
-
+  
+  submitted = false;
   paymentMethodForm = this.fb.group({
     DisplayName             : [ '', [Validators.required] ],
     StripePaymentMethodId   : [ '' ],
@@ -36,6 +39,7 @@ export class AddPaymentMethodComponent implements OnInit {
     ExpirationYear          : [ 0 ],
     Brand                   : [ '' ],
     Country                 : [ '' ],
+    IsMain                  : [ false ]
   });
 
   ngOnInit() {
@@ -79,7 +83,7 @@ export class AddPaymentMethodComponent implements OnInit {
   async onSubmit() {
     this.submitted = true;
 
-    if (!this.paymentMethodForm.valid) {
+    if (!this.paymentMethodForm.valid || !this.stripe || !this.cardNumber) {
       return;
     }
 
@@ -87,6 +91,10 @@ export class AddPaymentMethodComponent implements OnInit {
       type: 'card',
       card: this.cardNumber!
     });
+    if (paymentMethod.error) {
+      this.cardErrors = paymentMethod.error.message;
+      return;
+    }
     this.paymentMethodForm.get('StripePaymentMethodId')?.setValue(paymentMethod!.paymentMethod!.id);
     this.paymentMethodForm.get('Last4')?.setValue(paymentMethod!.paymentMethod!.card!.last4);
     this.paymentMethodForm.get('ExpirationMonth')?.setValue(paymentMethod!.paymentMethod!.card!.exp_month);
@@ -95,7 +103,10 @@ export class AddPaymentMethodComponent implements OnInit {
     this.paymentMethodForm.get('Country')?.setValue(paymentMethod!.paymentMethod!.card!.country);
 
     this.accountService.addPaymentMethod(this.paymentMethodForm.value).subscribe({
-      next: _ => this.submitted = false
+      next: _ => {
+        this.bsModalRef.hide();
+        this.submitted = false
+      }
     });
   }
 }

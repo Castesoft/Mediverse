@@ -1,6 +1,6 @@
 namespace MainService.Core.DTOs.User
 {
-    public class UserPaymentMethodDto
+    public class UserPaymentMethodCreateDto
     {
         public bool IsMain { get; set; }
         public string DisplayName { get; set; }
