@@ -12,6 +12,7 @@
   autocomplete="off"
   [attr.autofocus]="autofocus() ? true : null"
   spellcheck="false"
+  [placeholder]="placeholder()"
   [readonly]="isReadonly"
   [ngClass]="{
     'is-invalid': !isReadonly && submitted() && control.invalid,

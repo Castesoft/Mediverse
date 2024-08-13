@@ -43,30 +43,16 @@ export class OrderEditComponent implements OnInit, OnDestroy {
   formGroup: FormGroup = new FormGroup({});
 
   readonly statusSelectOptions = [
-    {
-      name: 'Pendiente',
-    },
-    {
-      name: 'Completado',
-    },
-    {
-      name: 'Cancelado',
-    }
+    { name: 'Pendiente', },
+    { name: 'Completado', },
+    { name: 'Cancelado', }
   ]
 
   readonly deliveryStatusSelectOptions = [
-    {
-      name: 'Procesando',
-    },
-    {
-      name: 'Enviado',
-    },
-    {
-      name: 'Entregado',
-    },
-    {
-      name: 'Cancelado',
-    }
+    { name: 'Procesando', },
+    { name: 'Enviado', },
+    { name: 'Entregado', },
+    { name: 'Cancelado', }
   ];
 
   ngOnInit(): void {

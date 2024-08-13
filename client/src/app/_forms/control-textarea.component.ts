@@ -38,6 +38,7 @@ export class ControlTextareaComponent implements ControlValueAccessor, AfterView
   submitted = input<boolean>(false);
   formText = input<string>();
   style = input<FormControlStyles>('solid');
+  placeholder = input<string>('');
 
   @Input() id?: string;
   @Input() label: string = '';
