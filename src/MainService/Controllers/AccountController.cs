@@ -104,8 +104,6 @@ public class AccountController(
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
-        itemToReturn.Token = await tokenService.CreateToken(user);
-
         return itemToReturn;
     }
 
@@ -1026,8 +1024,6 @@ public class AccountController(
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
-        itemToReturn.Token = await tokenService.CreateToken(user);
-
         return itemToReturn;
     }
 
@@ -1171,8 +1167,6 @@ public class AccountController(
         }
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(userId);
-
-        itemToReturn.Token = await tokenService.CreateToken(user);
 
         return itemToReturn;
     }
