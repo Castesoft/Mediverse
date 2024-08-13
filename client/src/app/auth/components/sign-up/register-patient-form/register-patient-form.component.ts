@@ -1,3 +1,4 @@
+declare var google: any;
 import { Component, inject, input } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -19,5 +20,14 @@ export class RegisterPatientFormComponent {
 
   ngOnInit() {
     this.myForm = <FormGroup>this.controlContainer.control;
+
+    google.accounts.id.renderButton(document.getElementById('google-btn-signup'), {
+      theme: 'outline',
+      size: 'large',
+      text: 'signup_with',
+      locale: 'es',
+      width: document.getElementById('google-btn-signup')!.offsetWidth.toFixed(0).toString() > '400' ? document.getElementById('google-btn-signup')!.offsetWidth.toFixed(0).toString() : '400',
+      height: '80'
+    });
   }
 }

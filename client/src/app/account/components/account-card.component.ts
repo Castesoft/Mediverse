@@ -12,7 +12,7 @@ import { AccountService } from 'src/app/_services/account.service';
   template: `
     <div class="d-flex flex-wrap flex-sm-nowrap mb-3">
       <div class="me-7 mb-4">
-        <div symbol [account]="account()"></div>
+        <app-user-profile-picture [user]="account()" shape="square" size="lg" [showOnline]=true></app-user-profile-picture>
       </div>
       <div class="flex-grow-1">
         <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">

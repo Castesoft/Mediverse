@@ -1,0 +1,102 @@
+<div class="flex-column flex-md-row-auto w-100 w-lg-250px w-xxl-275px">
+  <div
+    #stickyRef
+    class="sticky card mb-6 mb-xl-9"
+    style="animation-duration: 0.3s"
+    [class.fixed]="isSticky"
+  >
+    <div class="card-body py-10 px-6">
+      <ul
+        id="kt_account_settings"
+        class="nav nav-flush menu menu-column menu-rounded menu-title-gray-600 menu-bullet-gray-300 menu-state-bg menu-state-bullet-primary fw-semibold fs-6 mb-2"
+      >
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/account/settings#account_settings_overview"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'account_settings_overview'"
+            (click)="selectSection('account_settings_overview')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Generales</span>
+          </a>
+        </li>
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/account/settings#account_settings_signin_method"
+            class="menu-link px-3 nav-link"
+            [class.active]="
+              currentSection() === 'account_settings_signin_method'
+            "
+            (click)="selectSection('account_settings_signin_method')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Inicio de sesión</span>
+          </a>
+        </li>
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/account/settings#account_settings_profile_details"
+            class="menu-link px-3 nav-link"
+            [class.active]="
+              currentSection() === 'account_settings_profile_details'
+            "
+            (click)="selectSection('account_settings_profile_details')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Detalles de perfil</span>
+          </a>
+        </li>
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/account/settings#account_settings_connected_accounts"
+            class="menu-link px-3 nav-link"
+            [class.active]="
+              currentSection() === 'account_settings_connected_accounts'
+            "
+            (click)="selectSection('account_settings_connected_accounts')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Cuentas conectadas</span>
+          </a>
+        </li>
+        <li class="menu-item px-3 pt-0">
+          <a
+            href="/account/settings#account_settings_notifications"
+            class="menu-link px-3 nav-link"
+            [class.active]="
+              currentSection() === 'account_settings_notifications'
+            "
+            (click)="selectSection('account_settings_notifications')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Notificaciones</span>
+          </a>
+        </li>
+        <li class="menu-item px-3 pt-0">
+          <a
+            href="/account/settings#account_settings_deactivate"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'account_settings_deactivate'"
+            (click)="selectSection('account_settings_deactivate')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Desactivar cuenta</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

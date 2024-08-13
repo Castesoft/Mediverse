@@ -1,0 +1,10 @@
+.sticky {
+  transition: top 0.3s;
+}
+
+.fixed {
+  position: fixed;
+  top: 20px;
+  width: inherit;
+  z-index: 1000; /* Make sure it's on top */
+}

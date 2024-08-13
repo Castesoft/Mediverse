@@ -37,6 +37,9 @@ import { FormControl } from "@angular/forms";
           @case('termsAndConditions') {
             Debes aceptar los términos y condiciones para continuar.
           }
+          @case('same') {
+            {{ control().errors?.['same'] }}
+          }
           @default {
             Error desconocido.
           }

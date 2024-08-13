@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
+import { Account } from 'src/app/_models/account';
 import { User } from 'src/app/_models/user';
 
 @Component({
@@ -11,8 +12,10 @@ import { User } from 'src/app/_models/user';
 })
 export class UserProfilePictureComponent {
 
-  user = input.required<User>();
-  size = input<string>('sm');
+  user = input.required<User | Account>();
+  shape = input<'circle' | 'square'>('circle');
+  size = input<'sm' | 'md' | 'md2' | 'lg'>('sm');
+  showOnline = input<boolean>(false);
   bootstrapClass = 'success';
 
   ngOnInit(): void {

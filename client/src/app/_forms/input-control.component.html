@@ -1,7 +1,9 @@
-<label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
-     [class.required]="!service.isOptional(control) || isReadonly">
-{{ label }}
-</label>
+@if (label) {
+  <label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
+       [class.required]="!service.isOptional(control) || isReadonly">
+  {{ label }}
+  </label>
+}
 <input [type]="type" [formControl]="control" [placeholder]="placeholder" [autocomplete]="autocomplete"
        [spellcheck]="spellcheck" [attr.role]="role" [id]="id ? id : controlName" [attr.list]="controlName + 'datalist'"
        [attr.autofocus]="autofocus() ? 'autofocus' : null" [readonly]="isReadonly"

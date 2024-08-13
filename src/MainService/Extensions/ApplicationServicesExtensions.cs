@@ -16,6 +16,7 @@ public static class ApplicationServicesExtensions
         services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
         services.Configure<TwilioSettings>(config.GetSection("TwilioSettings"));
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+        services.Configure<GoogleSettings>(config.GetSection("GoogleSettings"));
         services.Configure<ClientSettings>(config.GetSection("ClientSettings"));
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -28,6 +29,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ITwilioService, TwilioService>();
         services.AddScoped<ICloudinaryService, CloudinaryService>();
+        services.AddScoped<IGoogleService, GoogleService>();
         services.AddScoped<IPermissionManager, PermissionManager>();
         services.AddScoped<IProductsService, ProductsService>();
         services.AddScoped<IPrescriptionsService, PrescriptionsService>();

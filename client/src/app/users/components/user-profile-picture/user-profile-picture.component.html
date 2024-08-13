@@ -1,11 +1,24 @@
-@if (user().photoUrl) {
-    <div class="symbol symbol-circle" [ngClass]="[size() === 'sm' ? 'symbol-50px' : 'symbol-100px']">
-        <img [src]="user().photoUrl" alt="Emma Smith" class="w-100" />
-    </div>
-} @else {
-    <div class="symbol symbol-circle" [ngClass]="[size() === 'sm' ? 'symbol-50px' : 'symbol-100px']">
-        <div [class]="'symbol-label fs-3 bg-light-' + bootstrapClass + ' text-' + bootstrapClass" [ngClass]="[size() === 'lg' ? 'fs-2x fw-semibold text-primary' : '']">
+<div
+    class="symbol"
+    [class.symbol-circle]="shape() === 'circle'"
+    [class.symbol-50px]="size() === 'sm'"
+    [class.symbol-100px]="size() === 'md'"
+    [class.symbol-125px]="size() === 'md2'"
+    [class.symbol-160px]="size() === 'lg'"
+>
+    @if (user().photoUrl) {
+        <img [src]="user().photoUrl" [alt]="user().fullName" class="w-100" />
+    } @else {
+        <div
+            [class]="'symbol-label fw-semibold text-primary bg-light-' + bootstrapClass + ' text-' + bootstrapClass"
+            [class.fs-3]="size() === 'sm'"
+            [class.fs-2x]="size() === 'md' || size() === 'md2' || size() === 'lg'"
+        >
             {{ user().firstName[0] }}
         </div>
-    </div>
-}
+    }
+
+    @if (showOnline()) {
+        <div class="position-absolute bg-success rounded-circle border border-4 border-body h-20px w-20px" style="bottom: -5px; right: -5px;"></div>
+    }
+</div>

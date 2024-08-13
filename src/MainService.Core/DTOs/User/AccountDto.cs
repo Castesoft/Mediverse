@@ -1,3 +1,5 @@
+using MainService.Models.Entities;
+
 namespace MainService.Core.DTOs.User;
 public class AccountDto
 {
@@ -15,6 +17,10 @@ public class AccountDto
     public string Token { get; set; }
     public string PhotoUrl { get; set; }
     public string MainSpecialty { get; set; }
+    public bool LinkedEmail { get; set; }
+    public bool LinkedGoogle { get; set; }
+    public int SpecialtyId { get; set; }
+    public ICollection<PaymentMethodTypeDto> PaymentMethodTypes { get; set; }
     public string Country { get; set; } = "México";
     public string State { get; set; }
     public string City { get; set; }

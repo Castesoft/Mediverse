@@ -38,9 +38,13 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
                 .ThenInclude(x => x.MedicalLicenseSpecialty)
                 .ThenInclude(x => x.Specialty)
             .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
+            .Include(x => x.DoctorPaymentMethodTypes).ThenInclude(x => x.PaymentMethodType)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         var accountToReturn = mapper.Map<AppUser, AccountDto>(user);
+
+        accountToReturn.LinkedEmail = !string.IsNullOrEmpty(user.PasswordHash);
+        accountToReturn.LinkedGoogle = userManager.GetLoginsAsync(user).Result.Any(x => x.LoginProvider == "GOOGLE");
 
         accountToReturn.Token = await tokenService.CreateToken(user);
 

@@ -48,6 +48,30 @@ export class AccountService {
     );
   }
 
+  loginWithSocialAuth(provider: string, token: string) {
+    return this.http.post<Account>(`${this.baseUrl}login-social`, { provider, accessToken: token }).pipe(
+      map(response => {
+        if (response) {
+          this.setCurrentUser(response);
+          this.router.navigate(['/account']);
+          this.snackbarService.success(`Bienvenido ${response.firstName}!`);
+        }
+        return response;
+      })
+    );
+  }
+
+  linkSocialAccount(provider: string, token: string) {
+    return this.http.put(`${this.baseUrl}link-social`, { provider, accessToken: token }).pipe(
+      tap(_ => {
+        if (provider === 'GOOGLE') {
+          this.setCurrentUser({ ...this.current()!, linkedGoogle: true });
+        }
+        this.snackbarService.success(`Cuenta de ${provider} vinculada correctamente`);
+      })
+    );
+  }
+
   hasRole = (inputRoles: Role[]): boolean => {
     if (this.roles().some((role => inputRoles.includes(role)))) return true;
     return false;
@@ -189,6 +213,45 @@ export class AccountService {
           userAddresses: addresses.sort((a, b) => a.isBilling ? -1 : 1),
           userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
         });
+      })
+    );
+  }
+
+  changeEmail(value: any) {
+    return this.http.put<Account>(`${this.baseUrl}email`, value).pipe(
+      map(response => {
+        this.snackbarService.success('Email cambiado correctamente');
+        this.setCurrentUser(response);
+        return response;
+      })
+    );
+  }
+
+  setPassword(value: any) {
+    return this.http.put<Account>(`${this.baseUrl}set-password`, value).pipe(
+      map(response => {
+        this.snackbarService.success('Contraseña establecida correctamente');
+        this.setCurrentUser({ ...this.current()!, linkedEmail: true });
+        return response;
+      })
+    );
+  }
+
+  changePassword(value: any) {
+    return this.http.put<Account>(`${this.baseUrl}password`, value).pipe(
+      map(response => {
+        this.snackbarService.success('Contraseña cambiada correctamente');
+        return response;
+      })
+    );
+  }
+
+  updateAccountDetails(value: any) {
+    return this.http.put<Account>(`${this.baseUrl}account-details`, value).pipe(
+      map(response => {
+        this.snackbarService.success('Detalles del perfil actualizados correctamente');
+        this.setCurrentUser(response);
+        return response;
       })
     );
   }

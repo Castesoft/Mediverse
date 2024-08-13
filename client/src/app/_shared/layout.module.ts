@@ -239,7 +239,6 @@ export class ToolbarTitleComponent implements OnInit {
     this.router.events.subscribe({
       next: (event: any) => {
         if (this.title() !== this.route.snapshot.title) {
-          console.log('title', this.route.snapshot.title);
           this.title.set(this.route.snapshot.title);
         }
       }

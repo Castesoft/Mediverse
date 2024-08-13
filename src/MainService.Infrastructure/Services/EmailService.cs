@@ -126,10 +126,10 @@ public class EmailService : IEmailService
 
     public string CreateVerifyEmailAddressEmailForUpdate(AppUser user, string verificationCode)
     {
-        string cssFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "email-styles", "styles.css");
-        string cssContent = File.ReadAllText(cssFilePath);
+        // string cssFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "email-styles", "styles.css");
+        // string cssContent = File.ReadAllText(cssFilePath);
 
-        var htmlContent = $$"""
+        return $$"""
     <html>
         <body>
                 <h1>¡Hola {{user.FirstName}}!</h1>
@@ -141,11 +141,11 @@ public class EmailService : IEmailService
     </html>
 """;
 
-        var inlineResult = PreMailer.Net.PreMailer.MoveCssInline(htmlContent, css: cssContent);
+        // var inlineResult = PreMailer.Net.PreMailer.MoveCssInline(htmlContent, css: cssContent);
 
-        string inlinedHtmlContent = inlineResult.Html;
+        // string inlinedHtmlContent = inlineResult.Html;
 
-        return inlinedHtmlContent;
+        // return inlinedHtmlContent;
     }
 
     public async Task SendMail(string to, string subject, string htmlMessage)

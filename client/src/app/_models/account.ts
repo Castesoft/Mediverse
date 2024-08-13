@@ -1,6 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Role } from "src/app/_models/types";
+import { PaymentMethodType } from './paymentMethodType';
 
 export class Account {
   id!: number;
@@ -17,6 +18,10 @@ export class Account {
   token!: string;
   photoUrl?: string;
   mainSpecialty!: string;
+  linkedEmail!: boolean;
+  linkedGoogle!: boolean;
+  specialtyId!: string;
+  paymentMethodTypes: PaymentMethodType[] = [];
   country!: string;
   state!: string;
   city!: string;

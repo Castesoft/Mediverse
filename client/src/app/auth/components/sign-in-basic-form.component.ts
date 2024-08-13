@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+declare var google: any;
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JsonPipe } from '@angular/common';
@@ -51,7 +52,7 @@ export class LoginForm {
   selector: '[signInBasicForm]',
   templateUrl: './sign-in-basic-form.component.html',
   standalone: true,
-  imports: [ RouterModule, ControlsModule, JsonPipe, MaterialModule, ],
+  imports: [ RouterModule, ControlsModule, JsonPipe, MaterialModule ],
 })
 export class SignInBasicFormComponent implements OnInit {
   private accountService = inject(AccountService);
@@ -86,10 +87,18 @@ export class SignInBasicFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.getQueryParams();
+
+    google.accounts.id.renderButton(document.getElementById('google-btn'), {
+      theme: 'outline',
+      size: 'large',
+      text: 'continue_with',
+      locale: 'es',
+      width: document.getElementById('google-btn')!.offsetWidth.toFixed(0).toString(),
+      height: '80'
+    });
   }
 
   onSubmit() {
-    console.log(this.form.group.value);
     this.form.submitted = true;
     if (this.form.group.valid) {
       this.accountService.login(this.form.group.value).subscribe({

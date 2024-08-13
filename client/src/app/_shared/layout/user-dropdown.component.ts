@@ -3,15 +3,16 @@ import { RouterModule } from '@angular/router';
 import { Account } from 'src/app/_models/account';
 import { AccountService } from 'src/app/_services/account.service';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
+import { UserProfilePictureComponent } from "../../users/components/user-profile-picture/user-profile-picture.component";
 
 @Component({
   host: { class: 'd-flex align-items-center ms-2 ms-lg-3', id: 'userDropdown'},
   selector: '[userDropdown]',
   template: `
-    @if (account) {
+    @if (accountService.current()) {
 
       <div class="cursor-pointer symbol symbol-35px symbol-lg-35px" dropdownToggle tabindex="0">
-        <img [alt]="account.fullName" [src]="account.photoUrl">
+        <app-user-profile-picture [user]="accountService.current()!"></app-user-profile-picture>
       </div>
       <div
         class="dropdown-menu dropdown-menu-right menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px"
@@ -19,15 +20,15 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
         <div class="menu-item px-3">
           <div class="menu-content d-flex align-items-center px-3">
             <div class="symbol symbol-50px me-5">
-              <img alt="Logo" [src]="account.photoUrl">
+              <app-user-profile-picture [user]="accountService.current()!"></app-user-profile-picture>
             </div>
             <div class="d-flex flex-column">
-              <div class="fw-bold d-flex align-items-center fs-5">{{ account.fullName }}
-                <!--              @for(role of account.roles; let idx = $index; track idx) {-->
+              <div class="fw-bold d-flex align-items-center fs-5">{{ accountService.current()!.fullName }}
+                <!--              @for(role of accountService.current().roles; let idx = $index; track idx) {-->
                 <!--                <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 mx-2">{{role}}</span>-->
                 <!--              }-->
               </div>
-              <a [routerLink]="[]" class="fw-semibold text-muted text-hover-primary fs-7">{{ account.email }}</a>
+              <a [routerLink]="[]" class="fw-semibold text-muted text-hover-primary fs-7">{{ accountService.current()!.email }}</a>
             </div>
           </div>
         </div>
@@ -96,7 +97,7 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
     }
   `,
   standalone: true,
-  imports: [ BootstrapModule, RouterModule,],
+  imports: [BootstrapModule, RouterModule, UserProfilePictureComponent],
 })
 export class UserDropdownComponent implements OnInit {
   accountService = inject(AccountService);

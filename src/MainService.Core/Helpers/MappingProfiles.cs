@@ -40,9 +40,17 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
             .ForMember(dest => dest.MainSpecialty, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
+            .ForMember(dest => dest.SpecialtyId, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense.MedicalLicenseSpecialty.Specialty.Id))
+            .ForMember(dest => dest.PaymentMethodTypes, opt => opt.MapFrom(src => src.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodType)))
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.State))
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.City))
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street));
+
+        CreateMap<Google.Apis.Auth.GoogleJsonWebSignature.Payload, AppUser>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.GivenName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.FamilyName));
 
         CreateMap<AppUser, BillingDetailsDto>()
             .ForMember(dest => dest.UserAddresses, opt => opt.MapFrom(src => src.UserAddresses.Select(x => x.Address)))
@@ -208,6 +216,8 @@ public class MappingProfiles : Profile
         CreateMap<DoctorRegisterDto, AppUser>()
             .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Gender))
             .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone));
+
+        CreateMap<AccountDetailsUpdateDto, AppUser>();
 
         CreateMap<Product, ProductDto>()
             .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))

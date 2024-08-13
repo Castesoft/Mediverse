@@ -22,7 +22,8 @@ public class AccountController(
     SignInManager<AppUser> signInManager, 
     IMapper mapper, 
     ITokenService tokenService, 
-    ICloudinaryService cloudinaryService, 
+    ICloudinaryService cloudinaryService,
+    IGoogleService googleService,
     IConfiguration configuration, 
     IEmailService emailService, 
     IUnitOfWork uow, 
@@ -61,6 +62,77 @@ public class AccountController(
         itemToReturn.Token = await tokenService.CreateToken(user);
 
         return itemToReturn;
+    }
+
+    [HttpPost("login-social")]
+    public async Task<ActionResult<AccountDto>> LoginSocialAsync([FromBody] SocialAuthDto request)
+    {
+        var payload = await googleService.VerifyGoogleTokenAsync(request.AccessToken);
+
+        if (payload == null) return Unauthorized("Token inválido.");
+
+        UserLoginInfo info = new(request.Provider, payload.Subject, request.Provider);
+
+        AppUser user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+        if (user == null)
+        {
+            user = await userManager.FindByEmailAsync(payload.Email);
+
+            if (user == null)
+            {
+                AppUser newUser = mapper.Map<AppUser>(payload);
+
+                newUser.UserPhoto = new() { Photo = new() { Url = payload.Picture } };
+
+                var createUser = await userManager.CreateAsync(newUser);
+                if (!createUser.Succeeded) return BadRequest(createUser.Errors);
+
+                var addRole = await userManager.AddToRolesAsync(newUser, ["Patient"]);
+                if (!addRole.Succeeded) return BadRequest(addRole.Errors);
+
+                await userManager.AddLoginAsync(newUser, info);
+
+                user = newUser;
+            }
+            else
+            {
+                await userManager.AddLoginAsync(user, info);
+            }
+        }
+
+        if (user == null) return Unauthorized("Autenticación externa inválida.");
+
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+
+        itemToReturn.Token = await tokenService.CreateToken(user);
+
+        return itemToReturn;
+    }
+
+    [Authorize]
+    [HttpPut("link-social")]
+    public async Task<ActionResult> LinkSocialAsync([FromBody] SocialAuthDto request)
+    {
+        var payload = await googleService.VerifyGoogleTokenAsync(request.AccessToken);
+
+        if (payload == null) return Unauthorized("Token inválido.");
+
+        UserLoginInfo info = new(request.Provider, payload.Subject, request.Provider);
+
+        string email = User.GetEmail();
+
+        if (email != payload.Email) return BadRequest("El correo no coincide con el de la cuenta.");
+
+        AppUser user = await userManager.FindByEmailAsync(email);
+
+        if (user == null) return NotFound("No se ha encontrado al usuario.");
+
+        var loginExists = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+        if (loginExists != null) return BadRequest("Ya existe una cuenta con este proveedor.");
+
+        await userManager.AddLoginAsync(user, info);
+
+        return Ok();
     }
 
     [HttpPost("register")]
@@ -368,6 +440,24 @@ public class AccountController(
 
             return BadRequest("Error restableciendo contraseña.");
         }
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPut("set-password")]
+    public async Task<ActionResult> SetPassword([FromBody] PasswordSetDto request)
+    {
+        if (request.Password != request.ConfirmPassword) return BadRequest("Las contraseñas no coinciden.");
+
+        var user = await userManager.Users
+            .SingleOrDefaultAsync(u => u.Email == User.GetEmail());
+
+        if (user.PasswordHash != null) return BadRequest("Ya tienes una contraseña establecida.");
+
+        var result = await userManager.AddPasswordAsync(user, request.Password);
+
+        if (!result.Succeeded) return BadRequest("Error estableciendo contraseña.");
 
         return Ok();
     }
@@ -895,5 +985,195 @@ public class AccountController(
         if (!await uow.Complete()) return BadRequest("Error actualizando la dirección.");
 
         return Ok();
+    }
+
+    [Authorize]
+    [HttpPut("email")]
+    public async Task<ActionResult<AccountDto>> UpdateEmail([FromBody] EmailUpdateDto request)
+    {
+        using var hmac = new HMACSHA512();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
+
+        if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
+
+        if (!userManager.CheckPasswordAsync(user, request.Password).Result) return BadRequest("La contraseña es incorrecta.");
+
+        if (await userManager.FindByEmailAsync(request.Email) != null) return BadRequest("Ya existe una cuenta con este correo.");
+
+        var result = await userManager.SetEmailAsync(user, request.Email);
+        if (!result.Succeeded) return BadRequest("Error al actualizar correo.");
+
+        var updateUsernameResult = await userManager.SetUserNameAsync(user, request.Email);
+        if (!updateUsernameResult.Succeeded) return BadRequest("Error al actualizar nombre de usuario.");
+
+        user.EmailConfirmed = false;
+
+        string emailVerificationCode =  codeService.GenerateEmailCode();
+        user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
+        user.EmailVerificationCodeSalt = hmac.Key;
+        user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
+
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
+
+        string clientUrl = clientSettings.Value.Url;
+        string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
+        string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
+        string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
+
+        await emailService.SendMail(user.Email, subject, htmlMessage);
+
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+
+        itemToReturn.Token = await tokenService.CreateToken(user);
+
+        return itemToReturn;
+    }
+
+    [Authorize]
+    [HttpPut("password")]
+    public async Task<ActionResult> UpdatePassword([FromBody] PasswordUpdateDto request)
+    {
+        if (request.NewPassword != request.ConfirmPassword) return BadRequest("Las contraseñas no coinciden.");
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
+
+        if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
+
+        var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+
+        if (!result.Succeeded) return BadRequest("Error actualizando contraseña.");
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPut("account-details")]
+    public async Task<ActionResult<AccountDto>> UpdateAccountDetails([FromForm] IFormFile photo, [FromForm] IFormFile file, [FromForm] string json)
+    {
+        int userId = User.GetUserId();
+
+        var request = JsonSerializer.Deserialize<AccountDetailsUpdateDto>(json);
+
+        var user = await userManager.Users
+            .Include(x => x.UserPhoto)
+                .ThenInclude(x => x.Photo)
+            .Include(x => x.DoctorPaymentMethodTypes)
+            .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense)
+                .ThenInclude(x => x.MedicalLicenseSpecialty)
+            .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense)
+                .ThenInclude(x => x.MedicalLicenseDocument)
+                .ThenInclude(x => x.Document)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        mapper.Map<AccountDetailsUpdateDto, AppUser>(request, user);
+
+        MedicalLicense prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
+        if (prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
+        {
+            if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
+
+            if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
+                return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
+
+            var uploadResult = await cloudinaryService.Upload(file, new() {
+                File = new FileDescription(file.FileName, file.OpenReadStream()),
+                Folder = "Mediverse/DoctorMedicalLicenses",
+            });
+            if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+
+            var deletionResult = await cloudinaryService.Delete(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
+            if (deletionResult.Error != null)
+                return BadRequest("Error eliminando la prueba de especialidad anterior.");
+
+            user.UserMedicalLicenses.Clear();
+
+            user.UserMedicalLicenses.Add(new (int.Parse(request.SpecialtyId), uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
+        }
+        else
+        {
+            if (file != null && file.Length > 0)
+            {
+                var medicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == int.Parse(request.SpecialtyId));
+                if (medicalLicense == null) return BadRequest("No se ha encontrado la prueba de especialidad.");
+
+                var uploadResult = await cloudinaryService.Upload(file, new() {
+                    File = new FileDescription(file.FileName, file.OpenReadStream()),
+                    Folder = "Mediverse/DoctorMedicalLicenses",
+                });
+                if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+
+                var previousMedicalLicenseDocument = medicalLicense.MedicalLicense.MedicalLicenseDocument;
+                var prevDocumentDeleteResult = await cloudinaryService.Delete(previousMedicalLicenseDocument.Document.PublicId);
+                if (prevDocumentDeleteResult.Error != null) return BadRequest("Error eliminando la prueba de especialidad anterior.");
+
+                medicalLicense.MedicalLicense.MedicalLicenseDocument = new(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
+            }
+        }
+
+        if (request.AcceptedPaymentMethods != null)
+        {
+            List<int> acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
+            var userPaymentMethodTypes = user.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodTypeId).ToList();
+            if (!userPaymentMethodTypes.All(acceptedPaymentMethods.Contains) || !acceptedPaymentMethods.All(userPaymentMethodTypes.Contains)) {
+                user.DoctorPaymentMethodTypes.Clear();
+
+                foreach (var paymentMethodTypeId in acceptedPaymentMethods)
+                {
+                    var paymentMethodType = new DoctorPaymentMethodType
+                    {
+                        DoctorId = user.Id,
+                        PaymentMethodTypeId = paymentMethodTypeId
+                    };
+                    user.DoctorPaymentMethodTypes.Add(paymentMethodType);
+                }
+            }
+        }
+
+        if (photo != null)
+        {
+            ImageUploadParams imageUploadParams = new() {
+                File = new FileDescription(photo.FileName, photo.OpenReadStream()),
+                Folder = "Mediverse/UserPhoto",
+                Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
+            };
+
+            var result = await cloudinaryService.Upload(photo, imageUploadParams);
+
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            if (user.UserPhoto != null)
+            {
+                if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
+                    return BadRequest("Error eliminando la foto anterior.");
+            }
+
+            Photo newPhoto = new(result, userId);
+
+            uow.PhotoRepository.Add(newPhoto);
+        }
+
+        if (request.RemoveAvatar) {
+            if (user.UserPhoto != null)
+            {
+                if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
+                    return BadRequest("Error eliminando la foto.");
+            }
+        }
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest("Error actualizando la información del usuario.");
+        }
+
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(userId);
+
+        itemToReturn.Token = await tokenService.CreateToken(user);
+
+        return itemToReturn;
     }
 }

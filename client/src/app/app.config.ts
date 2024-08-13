@@ -1,3 +1,4 @@
+declare var google: any;
 import localeEsMX from '@angular/common/locales/es-MX';
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -18,6 +19,8 @@ import { AccountService } from 'src/app/_services/account.service';
 import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
 import { authGuard } from './_guards/auth.guard';
 import { anonymousGuard } from './_guards/anonymous.guard';
+import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +39,19 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.setCurrentUser();
     this.breadcrumb.init();
+
+    google.accounts.id.initialize({
+      client_id: environment.google_client_id,
+      use_fedcm_for_prompt: true,
+      callback: (resp: any) => {
+        if (this.accountService.current() === null) {
+          this.accountService.loginWithSocialAuth('GOOGLE', resp.credential).subscribe();
+        } else {
+          this.accountService.linkSocialAccount('GOOGLE', resp.credential).subscribe();
+        }
+      }
+    });
+
   }
 
   setCurrentUser() {
@@ -95,7 +111,17 @@ export const appConfig: ApplicationConfig = {
         registrationStrategy: 'registerWhenStable:30000',
       }),
       BrowserAnimationsModule,
-    ),
+      SocialLoginModule.initialize({
+        autoLogin: false,
+        lang: 'es',
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(environment.google_client_id),
+          },
+        ],
+      })
+    )
   ],
 };
 
