@@ -1,8 +1,8 @@
-import { Component, HostBinding, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Prescription } from 'src/app/_models/prescription';
 import { FormUse, View } from 'src/app/_models/types';
-import { PrescriptionFormComponent } from '../prescription-form/prescription-form.component';
+import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
 
 @Component({
   selector: 'app-prescription-new',
@@ -11,15 +11,8 @@ import { PrescriptionFormComponent } from '../prescription-form/prescription-for
   templateUrl: './prescription-new.component.html',
   styleUrl: './prescription-new.component.scss'
 })
-export class PrescriptionNewComponent {
+export class PrescriptionNewComponent implements OnInit {
   private router = inject(Router);
-
-  @HostBinding('class') get hostClass() {
-    if (this.view === 'page') {
-      return 'card';
-    }
-    else return '';
-  }
 
   // View Configuration
   use: FormUse = 'create';
