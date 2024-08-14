@@ -20,6 +20,7 @@ export class Account {
   mainSpecialty!: string;
   linkedEmail!: boolean;
   linkedGoogle!: boolean;
+  twoFactorEnabled!: boolean;
   specialtyId!: string;
   paymentMethodTypes: PaymentMethodType[] = [];
   country!: string;
@@ -28,6 +29,8 @@ export class Account {
   address!: string;
   dateOfBirth?: Date;
   createdAt = new Date();
+
+  requiresTwoFactor?: boolean;
 
   roles: Role[] = [];
   permissions: string[] = [];

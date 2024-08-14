@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
 using System.Text.Json;
+using Twilio.TwiML.Voice;
 
 namespace MainService.Controllers;
 public class AccountController(
@@ -26,6 +27,8 @@ public class AccountController(
     IGoogleService googleService,
     IConfiguration configuration, 
     IEmailService emailService, 
+    ITwoFactorAuthService twoFactorAuthService, 
+    IQRCoderService qrCoderService, 
     IUnitOfWork uow, 
     ICodeService codeService, 
     IPhoneService phoneService, 
@@ -47,7 +50,7 @@ public class AccountController(
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AccountDto>> LoginAsync([FromBody]LoginDto request)
+    public async Task<ActionResult> LoginAsync([FromBody]LoginDto request)
     {
         AppUser user = await userManager.FindByEmailAsync(request.Email);
 
@@ -56,6 +59,29 @@ public class AccountController(
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
         if (!result.Succeeded) return Unauthorized("Correo o contraseña incorrectos.");
+
+        if (user.TwoFactorEnabled)
+        {
+            return Ok(new { RequiresTwoFactor = true });
+        }
+
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+
+        itemToReturn.Token = await tokenService.CreateToken(user);
+
+        return Ok(itemToReturn);
+    }
+
+    [HttpPost("login-two-factor")]
+    public async Task<ActionResult<AccountDto>> LoginTwoFactorAsync([FromBody] TwoFactorLoginDto request)
+    {
+        AppUser user = await userManager.FindByEmailAsync(request.Email);
+
+        if (user == null) return Unauthorized("No se ha encontrado al usuario.");
+
+        var validVerification = await userManager.VerifyTwoFactorTokenAsync(user, userManager.Options.Tokens.AuthenticatorTokenProvider, request.VerificationCode);
+
+        if (!validVerification) return Unauthorized("Código de verificación incorrecto.");
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
@@ -297,6 +323,69 @@ public class AccountController(
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
         return itemToReturn;
+    }
+
+    [Authorize]
+    [HttpGet("two-factor-setup")]
+    public async Task<ActionResult<TwoFactorSetupDto>> GetTwoFactorSetupAsync()
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        var (sharedKey, authenticatorUri) = await twoFactorAuthService.GenerateTwoFactorTokenAsync(user);
+        var qrCode = qrCoderService.GenerateQRCode(authenticatorUri);
+
+        return new TwoFactorSetupDto
+        {
+            SharedKey = sharedKey,
+            AuthenticatorUri = authenticatorUri,
+            QrCode = qrCode
+        };
+    }
+
+    [Authorize]
+    [HttpPost("two-factor-verify")]
+    public async Task<ActionResult> VerifyTwoFactorAsync([FromBody] TwoFactorVerifyDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        var isTokenValid = await userManager.VerifyTwoFactorTokenAsync(user, userManager.Options.Tokens.AuthenticatorTokenProvider, request.VerificationCode);
+
+        if (!isTokenValid) return BadRequest("El token es inválido.");
+
+        user.TwoFactorEnabled = true;
+
+        if (!(await userManager.UpdateAsync(user)).Succeeded) 
+        return BadRequest("No pudo actualizarse la información del usuario.");
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpDelete("two-factor")]
+    public async Task<ActionResult> DeleteTwoFactorAsync()
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        user.TwoFactorEnabled = false;
+
+        if (!(await userManager.UpdateAsync(user)).Succeeded)
+        return BadRequest("No pudo actualizarse la información del usuario.");
+
+        await userManager.ResetAuthenticatorKeyAsync(user);
+
+        return Ok();
     }
 
     [Authorize]

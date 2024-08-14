@@ -39,6 +39,21 @@ export class AccountService {
     return this.http.post<Account>(`${this.baseUrl}login`, value).pipe(
       map(response => {
         if (response) {
+          if (!response.requiresTwoFactor) {
+            this.setCurrentUser(response);
+            this.router.navigate(['/account']);
+            this.snackbarService.success(`Bienvenido ${response.firstName}!`);
+          }
+        }
+        return response;
+      })
+    );
+  }
+
+  twoFactorLogin(email: string, verificationCode: string) {
+    return this.http.post<Account>(`${this.baseUrl}login-two-factor`, { email, verificationCode }, {withCredentials: true}).pipe(
+      map(response => {
+        if (response) {
           this.setCurrentUser(response);
           this.router.navigate(['/account']);
           this.snackbarService.success(`Bienvenido ${response.firstName}!`);
@@ -68,6 +83,28 @@ export class AccountService {
           this.setCurrentUser({ ...this.current()!, linkedGoogle: true });
         }
         this.snackbarService.success(`Cuenta de ${provider} vinculada correctamente`);
+      })
+    );
+  }
+
+  getTwoFactorSetupInfo() {
+    return this.http.get(`${this.baseUrl}two-factor-setup`);
+  }
+
+  enableTwoFactorAuth(verificationCode: string) {
+    return this.http.post(`${this.baseUrl}two-factor-verify`, { verificationCode }).pipe(
+      tap(() => {
+        this.setCurrentUser({ ...this.current()!, twoFactorEnabled: true });
+        this.snackbarService.success('Autenticación de dos factores habilitada correctamente');
+      })
+    );
+  }
+
+  disableTwoFactorAuth() {
+    return this.http.delete(`${this.baseUrl}two-factor`).pipe(
+      tap(() => {
+        this.setCurrentUser({ ...this.current()!, twoFactorEnabled: false });
+        this.snackbarService.success('Autenticación de dos factores deshabilitada correctamente');
       })
     );
   }

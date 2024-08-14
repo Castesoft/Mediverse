@@ -30,6 +30,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITwilioService, TwilioService>();
         services.AddScoped<ICloudinaryService, CloudinaryService>();
         services.AddScoped<IGoogleService, GoogleService>();
+        services.AddScoped<IQRCoderService, QRCoderService>();
+        services.AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
         services.AddScoped<IPermissionManager, PermissionManager>();
         services.AddScoped<IProductsService, ProductsService>();
         services.AddScoped<IPrescriptionsService, PrescriptionsService>();

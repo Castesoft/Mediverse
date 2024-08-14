@@ -19,6 +19,7 @@ public class AccountDto
     public string MainSpecialty { get; set; }
     public bool LinkedEmail { get; set; }
     public bool LinkedGoogle { get; set; }
+    public bool TwoFactorEnabled { get; set; }
     public int SpecialtyId { get; set; }
     public ICollection<PaymentMethodTypeDto> PaymentMethodTypes { get; set; }
     public string Country { get; set; } = "México";

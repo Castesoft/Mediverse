@@ -1,5 +1,5 @@
 declare var google: any;
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JsonPipe } from '@angular/common';
@@ -24,6 +24,7 @@ export class LoginForm {
     this.group = new FormGroup({
       email: new FormControl(''),
       password: new FormControl(''),
+      twoFactorCode: new FormControl('')
     });
 
     if (creds) {
@@ -54,7 +55,7 @@ export class LoginForm {
   standalone: true,
   imports: [ RouterModule, ControlsModule, JsonPipe, MaterialModule ],
 })
-export class SignInBasicFormComponent implements OnInit {
+export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   private accountService = inject(AccountService);
   private router = inject(Router);
   route = inject(ActivatedRoute);
@@ -68,6 +69,7 @@ export class SignInBasicFormComponent implements OnInit {
   focusOnEmail: boolean = false;
   focusOnPassword: boolean = false;
   redirectUrl: string | null = "/account";
+  requiresTwoFactor: boolean = false;
 
   constructor() {
     this.forms.mode$.subscribe({
@@ -87,7 +89,9 @@ export class SignInBasicFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.getQueryParams();
+  }
 
+  ngAfterViewInit() {
     google.accounts.id.renderButton(document.getElementById('google-btn'), {
       theme: 'outline',
       size: 'large',
@@ -101,16 +105,32 @@ export class SignInBasicFormComponent implements OnInit {
   onSubmit() {
     this.form.submitted = true;
     if (this.form.group.valid) {
-      this.accountService.login(this.form.group.value).subscribe({
-        next: account => {
-          this.form.submitted = false;
-          if (this.redirectUrl) {
-            this.router.navigate([this.redirectUrl]);
-          } else {
-            this.router.navigate([this.returnUrl]);
+      if (!this.requiresTwoFactor) {
+        this.accountService.login(this.form.group.value).subscribe({
+          next: response => {
+            this.form.submitted = false;
+            if (response.requiresTwoFactor) {
+              this.requiresTwoFactor = true;
+            } else {
+              if (this.redirectUrl) {
+                this.router.navigate([this.redirectUrl]);
+              } else {
+                this.router.navigate([this.returnUrl]);
+              }
+            }
           }
-        }
-      })
+        })
+      } else {
+        this.accountService.twoFactorLogin(this.form.group.get('email')?.value, this.form.group.get('twoFactorCode')?.value).subscribe({
+          next: response => {
+            if (this.redirectUrl) {
+              this.router.navigate([this.redirectUrl]);
+            } else {
+              this.router.navigate([this.returnUrl]);
+            }
+          }
+        });
+      }
     }
   }
 
