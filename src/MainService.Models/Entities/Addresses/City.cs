@@ -1,4 +1,4 @@
-namespace MainService.Models.Entities.Addresses;
+namespace MainService.Models.Entities;
 public class City : BaseEntity
 {
     

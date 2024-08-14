@@ -312,6 +312,44 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CityNeighborhood", b =>
+                {
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NeighborhoodId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CityId", "NeighborhoodId");
+
+                    b.HasIndex("NeighborhoodId")
+                        .IsUnique();
+
+                    b.ToTable("CityNeighborhood");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
                 {
                     b.Property<int>("NurseId")
@@ -742,6 +780,34 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("SubSpecialtyId");
 
                     b.ToTable("MedicalLicenseSubSpecialties");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Settlement")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Zipcode")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Neighborhoods");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
@@ -1288,6 +1354,44 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("SpecialtyService");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.State", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("States");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.StateCity", b =>
+                {
+                    b.Property<int>("StateId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("StateId", "CityId");
+
+                    b.HasIndex("CityId")
+                        .IsUnique();
+
+                    b.ToTable("StateCity");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
                 {
                     b.Property<int>("Id")
@@ -1575,6 +1679,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CityNeighborhood", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.City", "City")
+                        .WithMany("CityNeighborhoods")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Neighborhood", "Neighborhood")
+                        .WithOne("CityNeighborhood")
+                        .HasForeignKey("MainService.Models.Entities.CityNeighborhood", "NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("Neighborhood");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
@@ -2165,6 +2288,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Specialty");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.StateCity", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.City", "City")
+                        .WithOne("StateCity")
+                        .HasForeignKey("MainService.Models.Entities.StateCity", "CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.State", "State")
+                        .WithMany("StateCities")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("State");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Address", "Address")
@@ -2378,6 +2520,13 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("UserTaxRegimes");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.City", b =>
+                {
+                    b.Navigation("CityNeighborhoods");
+
+                    b.Navigation("StateCity");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
                     b.Navigation("MedicalLicenseDocument");
@@ -2410,6 +2559,11 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("MedicalLicenseSpecialty");
 
                     b.Navigation("MedicalLicenseSubSpecialties");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
+                {
+                    b.Navigation("CityNeighborhood");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
@@ -2493,6 +2647,11 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("SpecialitySubSpecialties");
 
                     b.Navigation("SpecialtyServices");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.State", b =>
+                {
+                    b.Navigation("StateCities");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>

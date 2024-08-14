@@ -1,14 +1,6 @@
-namespace MainService.Models.Entities.Addresses;
+namespace MainService.Models.Entities;
 public class State : BaseEntity
 {
     
     public ICollection<StateCity> StateCities { get; set; } = [];
 }
-
-/*
-
-un estado muchos zipCodes
-
-un zipCode muchas colonias o asentas
-
-*/

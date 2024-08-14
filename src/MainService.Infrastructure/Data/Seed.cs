@@ -12,6 +12,76 @@ public static class Seed
 {
     private static readonly Random Random = new();
 
+    private static async Task SeedMexicoStates(DataContext context)
+    {
+        if (await context.States.AnyAsync()) return;
+        await context.States.AddRangeAsync(SeedDataAguascalientes.state.ToArray());
+        Log.Information("Seeding Aguascalientes state.");
+        await context.States.AddRangeAsync(SeedDataBajaCalifornia.state.ToArray());
+        Log.Information("Seeding Baja California state.");
+        await context.States.AddRangeAsync(SeedDataBajaCaliforniaSur.state.ToArray());
+        Log.Information("Seeding Baja California Sur state.");
+        await context.States.AddRangeAsync(SeedDataCampeche.state.ToArray());
+        Log.Information("Seeding Campeche state.");
+        await context.States.AddRangeAsync(SeedDataChiapas.state.ToArray());
+        Log.Information("Seeding Chiapas state.");
+        await context.States.AddRangeAsync(SeedDataChihuahua.state.ToArray());
+        Log.Information("Seeding Chihuahua state.");
+        await context.States.AddRangeAsync(SeedDataCiudaddeMexico.state.ToArray());
+        Log.Information("Seeding Ciudad de México state.");
+        await context.States.AddRangeAsync(SeedDataCoahuila.state.ToArray());
+        Log.Information("Seeding Coahuila state.");
+        await context.States.AddRangeAsync(SeedDataColima.state.ToArray());
+        Log.Information("Seeding Colima state.");
+        await context.States.AddRangeAsync(SeedDataDurango.state.ToArray());
+        Log.Information("Seeding Durango state.");
+        await context.States.AddRangeAsync(SeedDataGuanajuato.state.ToArray());
+        Log.Information("Seeding Guanajuato state.");
+        await context.States.AddRangeAsync(SeedDataGuerrero.state.ToArray());
+        Log.Information("Seeding Guerrero state.");
+        await context.States.AddRangeAsync(SeedDataHidalgo.state.ToArray());
+        Log.Information("Seeding Hidalgo state.");
+        await context.States.AddRangeAsync(SeedDataJalisco.state.ToArray());
+        Log.Information("Seeding Jalisco state.");
+        await context.States.AddRangeAsync(SeedDataMexico.state.ToArray());
+        Log.Information("Seeding México state.");
+        await context.States.AddRangeAsync(SeedDataMichoacan.state.ToArray());
+        Log.Information("Seeding Michoacán state.");
+        await context.States.AddRangeAsync(SeedDataMorelos.state.ToArray());
+        Log.Information("Seeding Morelos state.");
+        await context.States.AddRangeAsync(SeedDataNayarit.state.ToArray());
+        Log.Information("Seeding Nayarit state.");
+        await context.States.AddRangeAsync(SeedDataNuevoLeon.state.ToArray());
+        Log.Information("Seeding Nuevo León state.");
+        await context.States.AddRangeAsync(SeedDataOaxaca.state.ToArray());
+        Log.Information("Seeding Oaxaca state.");
+        await context.States.AddRangeAsync(SeedDataPuebla.state.ToArray());
+        Log.Information("Seeding Puebla state.");
+        await context.States.AddRangeAsync(SeedDataQueretaro.state.ToArray());
+        Log.Information("Seeding Querétaro state.");
+        await context.States.AddRangeAsync(SeedDataQuintanaRoo.state.ToArray());
+        Log.Information("Seeding Quintana Roo state.");
+        await context.States.AddRangeAsync(SeedDataSanLuisPotosi.state.ToArray());
+        Log.Information("Seeding San Luis Potosí state.");
+        await context.States.AddRangeAsync(SeedDataSinaloa.state.ToArray());
+        Log.Information("Seeding Sinaloa state.");
+        await context.States.AddRangeAsync(SeedDataSonora.state.ToArray());
+        Log.Information("Seeding Sonora state.");
+        await context.States.AddRangeAsync(SeedDataTabasco.state.ToArray());
+        Log.Information("Seeding Tabasco state.");
+        await context.States.AddRangeAsync(SeedDataTamaulipas.state.ToArray());
+        Log.Information("Seeding Tamaulipas state.");
+        await context.States.AddRangeAsync(SeedDataTlaxcala.state.ToArray());
+        Log.Information("Seeding Tlaxcala state.");
+        await context.States.AddRangeAsync(SeedDataVeracruz.state.ToArray());
+        Log.Information("Seeding Veracruz state.");
+        await context.States.AddRangeAsync(SeedDataYucatan.state.ToArray());
+        Log.Information("Seeding Yucatán state.");
+        await context.States.AddRangeAsync(SeedDataZacatecas.state.ToArray());
+        Log.Information("Seeding Zacatecas state.");
+        await context.SaveChangesAsync();
+    }
+
     private static async Task SeedSpecialtiesAsync(DataContext context)
     {
         if (await context.Specialties.AnyAsync()) return;
@@ -234,6 +304,7 @@ public static class Seed
         await SeedRandomDoctorData(context, userManager);
         await SeedSpecialtiesAsync(context);
         await SeedPaymentMethodTypesAsync(context);
+        await SeedMexicoStates(context);
     }
 
     private static async Task SeedProductsAsync(DataContext context)
