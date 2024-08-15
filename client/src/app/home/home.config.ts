@@ -74,6 +74,10 @@ export class HomeComponent implements OnInit {
       component: HomeComponent,
       children: [
         {
+          path: 'search',
+          loadChildren: () => import('../search/search.config').then(x => x.SearchModule)
+        },
+        {
           path: 'patients',
           loadChildren: () => import('../users/users.config').then(x => x.PatientsModule)
         },

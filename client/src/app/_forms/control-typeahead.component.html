@@ -17,6 +17,7 @@
   *ngIf="!isReadonly(); "
   #inputRef
   class="form-control text-1000 fs-0"
+  [class.border-0]="hideBorder()"
   [id]="id() ? id() : controlName"
   [typeaheadAsync]="isTypeaheadAsync()"
   [formControl]="control"

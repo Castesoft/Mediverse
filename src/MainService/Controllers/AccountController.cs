@@ -990,6 +990,9 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
+        string fullAddress = $"{request.Address}, {request.City}, {request.State}, {request.ZipCode}";
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(fullAddress);
+
         user.UserAddresses.Add(new() {
             UserId = userId,
             IsMain = request.IsMain,
@@ -999,7 +1002,9 @@ public class AccountController(
                 State = request.State,
                 City = request.City,
                 Street = request.Address,
-                Zipcode = request.ZipCode
+                Zipcode = request.ZipCode,
+                Latitude = latitude,
+                Longitude = longitude
             }
         });
 
@@ -1061,12 +1066,17 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
+        string fullAddress = $"{request.Address}, {request.City}, {request.State}, {request.ZipCode}";
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(fullAddress);
+
         address.IsMain = request.IsMain;
         address.IsBilling = request.IsBilling;
         address.Address.State = request.State;
         address.Address.City = request.City;
         address.Address.Street = request.Address;
         address.Address.Zipcode = request.ZipCode;
+        address.Address.Latitude = latitude;
+        address.Address.Longitude = longitude;
 
         if (!uow.HasChanges()) return Ok();
         if (!await uow.Complete()) return BadRequest("Error actualizando la dirección.");

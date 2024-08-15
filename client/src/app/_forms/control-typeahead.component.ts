@@ -34,6 +34,7 @@ export class ControlTypeaheadComponent {
   isInputGroupSpan = input<boolean>(false);
   isTypeaheadAsync = input<boolean>(false);
   hideIsOptional = input<boolean>(false);
+  hideBorder = input<boolean>(false);
   isReadonly = input<boolean>(false);
   autofocus = input<boolean>(false);
   submitted = input<boolean>(false);

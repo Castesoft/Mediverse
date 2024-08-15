@@ -37,11 +37,11 @@ import { AccountService } from "src/app/_services/account.service";
             id="kt_aside_menu_wrapper"
           >
             <div
-              [routerLink]="['/dashboards']"
+              [routerLink]="['/home/search']"
               class="menu-item"
               routerLinkActive="active"
             >
-              <a [routerLink]="['/dashboards']"
+              <a [routerLink]="['/home/search']"
                  class="menu-link">
             <span class="menu-icon">
               <i class="ki-duotone ki-home nav-icon fs-2">
