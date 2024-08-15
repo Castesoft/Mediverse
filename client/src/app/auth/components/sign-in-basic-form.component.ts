@@ -28,8 +28,8 @@ export class LoginForm {
     });
 
     if (creds) {
-      this.group.controls['email'].setValue('redacted+022@example.invalid');
-      this.group.controls['password'].setValue('Pa$$w0rd');
+      this.group.controls['email'].setValue('');
+      this.group.controls['password'].setValue('');
     }
   }
 
@@ -64,7 +64,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   snackbarService = inject(SnackbarService)
 
   form = new LoginForm(true);
-  emailFromQuery: string = 'redacted+021@example.invalid';
+  emailFromQuery: string = '';
   returnUrl: string = '/admin';
   focusOnEmail: boolean = false;
   focusOnPassword: boolean = false;
