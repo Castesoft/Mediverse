@@ -1169,7 +1169,7 @@ public class AccountController(
         mapper.Map<AccountDetailsUpdateDto, AppUser>(request, user);
 
         MedicalLicense prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
-        if (prevMedicalLicense == null || prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
+        if (prevMedicalLicense != null && prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
         {
             if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
 
@@ -1214,7 +1214,7 @@ public class AccountController(
             }
         }
 
-        if (request.AcceptedPaymentMethods != null)
+        if (!string.IsNullOrEmpty(request.AcceptedPaymentMethods))
         {
             List<int> acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
             var userPaymentMethodTypes = user.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodTypeId).ToList();
