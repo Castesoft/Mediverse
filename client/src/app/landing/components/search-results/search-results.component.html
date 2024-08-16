@@ -1,0 +1,89 @@
+
+<div class="h-100 d-flex">
+    <div class="d-flex flex-column position-relative" style="width: 33%;">
+        @if (!isLoading) {
+            <!-- <div class="d-flex">
+                <span class="navbar-brand mb-0 h1">Mediverse</span>
+                <button routerLink="/auth" class="btn btn-success me-2" type="button">
+                    Iniciar sesión
+                </button>
+            </div> -->
+            <div class="container">
+                <h1 class="text-gray-800 fw-bold my-3 text-center">Mediverse</h1>
+                <div class="py-3">
+                    <app-search-general 
+                        [compact]="true"
+                        (onSearch)="onSearch($event)"
+                        [selectedSpecialty]="specialty"
+                        [selectedPlaceId]="location"
+                        [selectedLocation]="locationName"
+                    ></app-search-general>
+                </div>
+
+                <div class="d-flex flex-wrap flex-stack mb-1">
+                    <h3 class="text-gray-800 fw-bold my-2">Mis Resultados 
+                    <span class="fs-6 text-gray-500 fw-semibold ms-1">({{searchService.searchResults()?.doctors!.length}})</span></h3>
+                </div>
+            </div>
+
+            @if (searchService.searchResults() && searchService.searchResults()?.doctors!.length > 0) {
+                <div class="overflow-y-auto" style="flex: 1;">
+                    @for (doctor of searchService.searchResults()?.doctors; track $index) {
+                        <div class="d-flex flex-column p-6 doctor-search-result" (click)="showDoctorDetails(doctor)">
+                            <div class="d-flex gap-3">
+                                <app-user-profile-picture
+                                    [firstName]="doctor.firstName"
+                                    [photoUrl]="doctor.photoUrl"
+                                    [showOnline]="true"
+                                    size="sm"
+                                ></app-user-profile-picture>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{doctor.firstName}} {{doctor.lastName}}</a>
+                                    <div class="fw-semibold text-gray-500">
+                                        @for (specialty of doctor.specialties; track $index) {
+                                            {{specialty.name}}@if ($index < doctor.specialties.length - 1) {, }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            @for (address of doctor.addresses; track $index) {
+                                <div class="fw-semibold text-gray-500 pt-3">
+                                    {{address.street}}, {{address.city}}, {{address.state}}
+                                </div>
+                            }
+                        </div>
+                        <div class="separator separator-dashed"></div>
+                    }
+                </div>
+                <div class="d-flex flex-center pb-6 container">
+                    @if (pagination) {
+                        <div
+                            tablePager
+                            [currentPage]="pagination.currentPage"
+                            [itemsPerPage]="pagination.itemsPerPage"
+                            [totalItems]="pagination.totalItems"
+                            (pageChanged)="onPageChanged($event)"
+                            [hideShowAll]="true"
+                            [hideShowing]="true"
+                        ></div>
+                    }
+                </div>
+            } @else {
+                No hay resultados
+            }
+        } @else {
+            <div class="d-flex flex-center flex-column">
+                <div class="spinner spinner-primary spinner-center mb-5"></div>
+                <span class="text-gray-800 fw-bold fs-4">Buscando especialistas...</span>
+            </div>
+        }
+        @if (selectedDoctor) {
+            <div class="doctor-details">
+                <app-doctor-details [doctor]="selectedDoctor" (onClose)="onCloseDoctorDetails()"></app-doctor-details>
+            </div>
+        }
+    </div>
+    <div class="w-100">
+        <div id="map" style="height: 100%;"></div>
+    </div>
+</div>

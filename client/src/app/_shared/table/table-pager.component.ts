@@ -17,6 +17,8 @@ export class TablePagerComponent implements OnInit, OnChanges {
   @Input() totalItems!: number;
   @Input() itemsPerPage!: number;
   @Input() currentPage: number = 1;
+  @Input() hideShowAll = false;
+  @Input() hideShowing = false;
 
   @Output() pageChanged = new EventEmitter<number>();
   @Output() loadMore = new EventEmitter<void>();

@@ -1,0 +1,12 @@
+.doctor-search-result:hover {
+  background-color: #f5f5f5;
+}
+
+.doctor-details {
+    z-index: 999;
+    position: absolute;
+    right: 0;
+    top: 5%;
+    transform: translateX(105%);
+    height: 90%;
+}

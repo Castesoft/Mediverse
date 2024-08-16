@@ -1,23 +1,30 @@
-<div class="col-auto d-flex">
-  <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900">
-    Mostrando {{(currentPage
-    - 1) * itemsPerPage + 1 | number}} a {{currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage :
-      totalItems | number}} de {{totalItems | number}} </p>
-      @if (!isLastPage) {
-      @if (totalItems <= 50) { <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadMore()">
-        Mostrar todos<fa-icon [icon]="icons.faAngleRight" class="ms-1" />
+@if (!hideShowing) {
+  <div class="col-auto d-flex">
+    <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900">
+      Mostrando 
+      {{(currentPage - 1) * itemsPerPage + 1 | number}} 
+      a 
+      {{currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems | number}} 
+      de 
+      {{totalItems | number}} 
+    </p>
+    @if (!isLastPage && !hideShowAll) {
+      @if (totalItems <= 50) { 
+        <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadMore()">
+          Mostrar todos<fa-icon [icon]="icons.faAngleRight" class="ms-1" />
         </a>
-        } @else if (totalPages > 1 && itemsPerPage < 50) { <a class="fw-semi-bold pointer"
-          style="text-decoration: none;" (click)="onLoadMore()">
+      } @else if (totalPages > 1 && itemsPerPage < 50) { 
+        <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadMore()">
           Cargar más<fa-icon [icon]="icons.faAngleRight" class="ms-1" />
-          </a>
-          } @else {
-          <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadLess()">
-            Mostrar menos<fa-icon [icon]="icons.faAngleRight" class="ms-1" />
-          </a>
-          }
-          }
-</div>
+        </a>
+      } @else {
+        <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadLess()">
+          Mostrar menos<fa-icon [icon]="icons.faAngleRight" class="ms-1" />
+        </a>
+      }
+    }
+  </div>
+}
 <div class="col-auto d-flex gap-3">
   <button (click)="onPrevious()" data-list-pagination="prev" class="page-link pointer" [disabled]="currentPage === 1"
     [class.disabled]="currentPage === 1">

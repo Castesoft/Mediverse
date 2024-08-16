@@ -1169,7 +1169,7 @@ public class AccountController(
         mapper.Map<AccountDetailsUpdateDto, AppUser>(request, user);
 
         MedicalLicense prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
-        if (prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
+        if (prevMedicalLicense == null || prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
         {
             if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
 
@@ -1182,9 +1182,12 @@ public class AccountController(
             });
             if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
-            var deletionResult = await cloudinaryService.Delete(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
-            if (deletionResult.Error != null)
-                return BadRequest("Error eliminando la prueba de especialidad anterior.");
+            if (prevMedicalLicense != null)
+            {
+                var deletionResult = await cloudinaryService.Delete(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
+                if (deletionResult.Error != null)
+                    return BadRequest("Error eliminando la prueba de especialidad anterior.");
+            }
 
             user.UserMedicalLicenses.Clear();
 

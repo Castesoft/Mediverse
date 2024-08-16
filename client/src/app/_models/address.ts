@@ -20,6 +20,8 @@ export class Address {
   country!: string;
   zipcode!: string;
   photoUrl?: string;
+  latitude?: number;
+  longitude?: number;
 
   nursesCount = 0;
   isMain = false;

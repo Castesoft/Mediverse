@@ -1,0 +1,43 @@
+namespace MainService.Core.DTOs.Google
+{
+    public class GooglePlacesDetailsResponse
+    {
+        public List<object> HtmlAttributions { get; set; }
+        public GooglePlacesDetailsResult Result { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class AddressComponent
+    {
+        public string LongName { get; set; }
+        public string ShortName { get; set; }
+        public List<string> Types { get; set; }
+    }
+
+    public class Photo
+    {
+        public int Height { get; set; }
+        public List<string> HtmlAttributions { get; set; }
+        public string PhotoReference { get; set; }
+        public int Width { get; set; }
+    }
+
+    public class GooglePlacesDetailsResult
+    {
+        public List<AddressComponent> AddressComponents { get; set; }
+        public string AdrAddress { get; set; }
+        public string FormattedAddress { get; set; }
+        public Geometry Geometry { get; set; }
+        public string Icon { get; set; }
+        public string IconBackgroundColor { get; set; }
+        public string IconMaskBaseUri { get; set; }
+        public string Name { get; set; }
+        public List<Photo> Photos { get; set; }
+        public string PlaceId { get; set; }
+        public string Reference { get; set; }
+        public List<string> Types { get; set; }
+        public string Url { get; set; }
+        public int UtcOffset { get; set; }
+        public string Vicinity { get; set; }
+    }
+}

@@ -6,15 +6,15 @@
     [class.symbol-125px]="size() === 'md2'"
     [class.symbol-160px]="size() === 'lg'"
 >
-    @if (user().photoUrl) {
-        <img [src]="user().photoUrl" [alt]="user().fullName" class="w-100" />
+    @if (photoUrl()) {
+        <img [src]="photoUrl()" [alt]="firstName()" class="w-100" />
     } @else {
         <div
             [class]="'symbol-label fw-semibold text-primary bg-light-' + bootstrapClass + ' text-' + bootstrapClass"
             [class.fs-3]="size() === 'sm'"
             [class.fs-2x]="size() === 'md' || size() === 'md2' || size() === 'lg'"
         >
-            {{ user().firstName[0] }}
+            {{ firstName()[0] }}
         </div>
     }
 

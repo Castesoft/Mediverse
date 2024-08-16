@@ -12,14 +12,15 @@ import { User } from 'src/app/_models/user';
 })
 export class UserProfilePictureComponent {
 
-  user = input.required<User | Account>();
+  photoUrl = input<string>('');
+  firstName = input<string>('');
   shape = input<'circle' | 'square'>('circle');
   size = input<'sm' | 'md' | 'md2' | 'lg'>('sm');
   showOnline = input<boolean>(false);
   bootstrapClass = 'success';
 
   ngOnInit(): void {
-    this.bootstrapClass = this.getBootstrapClass(this.user().firstName);
+    this.bootstrapClass = this.getBootstrapClass(this.firstName());
   }
 
   bootstrapClasses = [

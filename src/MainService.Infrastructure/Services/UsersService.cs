@@ -109,4 +109,13 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
         return mapper.Map<AppUser, BillingDetailsDto>(user);
     }
+
+    public Task<int> GetSpecialistsQuantityAsync()
+    {
+        var specialists = userManager.Users
+            .Include(x => x.UserMedicalLicenses)
+            .Where(x => x.UserMedicalLicenses.Count != 0);
+
+        return specialists.CountAsync();
+    }
 }

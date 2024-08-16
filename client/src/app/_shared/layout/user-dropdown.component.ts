@@ -12,7 +12,10 @@ import { UserProfilePictureComponent } from "../../users/components/user-profile
     @if (accountService.current()) {
 
       <div class="cursor-pointer symbol symbol-35px symbol-lg-35px" dropdownToggle tabindex="0">
-        <app-user-profile-picture [user]="accountService.current()!"></app-user-profile-picture>
+        <app-user-profile-picture 
+          [firstName]="accountService.current()!.firstName"
+          [photoUrl]="accountService.current()!.photoUrl ?? ''"
+        ></app-user-profile-picture>
       </div>
       <div
         class="dropdown-menu dropdown-menu-right menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px"
@@ -20,7 +23,10 @@ import { UserProfilePictureComponent } from "../../users/components/user-profile
         <div class="menu-item px-3">
           <div class="menu-content d-flex align-items-center px-3">
             <div class="symbol symbol-50px me-5">
-              <app-user-profile-picture [user]="accountService.current()!"></app-user-profile-picture>
+              <app-user-profile-picture 
+                [firstName]="accountService.current()!.firstName"
+                [photoUrl]="accountService.current()!.photoUrl ?? ''"
+              ></app-user-profile-picture>
             </div>
             <div class="d-flex flex-column">
               <div class="fw-bold d-flex align-items-center fs-5">{{ accountService.current()!.fullName }}

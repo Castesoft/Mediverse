@@ -71,8 +71,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter([
       {
         path: '',
-        redirectTo: '/auth',
-        pathMatch: 'full',
+        canActivate: [anonymousGuard],
+        loadChildren: () => import('./landing/landing.config').then(m => m.LadingModule),
       },
       {
         path: 'auth',

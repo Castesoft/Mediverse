@@ -5,6 +5,7 @@ using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Orders;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.DTOs.Products;
+using MainService.Core.DTOs.Search;
 using MainService.Core.DTOs.Services;
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
@@ -16,6 +17,11 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        CreateMap<AppUser, DoctorSearchResultDto>()
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.Specialties, opt => opt.MapFrom(src => src.UserMedicalLicenses.Select(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)))
+            .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.UserAddresses.Select(x => x.Address)));
+
         CreateMap<Address, AddressDto>()
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
             .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count));

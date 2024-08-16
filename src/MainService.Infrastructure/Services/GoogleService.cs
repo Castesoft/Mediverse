@@ -24,7 +24,7 @@ namespace MainService.Infrastructure.Services
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<GooglePlaceResponse>(json);
+                var result = JsonConvert.DeserializeObject<GooglePlacesTextSearchResponse>(json);
 
                 if (result?.Status == "OK" && result.Results.Count > 0)
                 {
@@ -34,6 +34,24 @@ namespace MainService.Infrastructure.Services
             }
 
             return (null, null);
+        }
+
+        public async Task<GooglePlacesDetailsResult> GetLocationByPlaceIdAsync(string placeId)
+        {
+            var url = $"https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&key={_googleSettings.ApiKey}";
+            var response = await _httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<GooglePlacesDetailsResponse>(json);
+
+                if (result.Status == "OK")
+                {
+                    return result.Result;
+                }
+            }
+
+            return null;
         }
 
         public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(string token)

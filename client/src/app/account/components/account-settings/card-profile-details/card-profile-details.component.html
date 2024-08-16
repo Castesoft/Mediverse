@@ -12,7 +12,11 @@
                 @if (photoUrl) {
                   <img [src]="photoUrl" class="mw-100 mh-100 rounded" alt="photo" />
                 } @else {
-                  <app-user-profile-picture [user]="userForProfilePicture" shape="square" size="md2"></app-user-profile-picture>
+                  <app-user-profile-picture 
+                    [firstName]="userForProfilePicture.firstName"
+                    [photoUrl]="userForProfilePicture.photoUrl ?? ''"
+                    shape="square" size="md2"
+                  ></app-user-profile-picture>
                 }
               </div>
               <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">

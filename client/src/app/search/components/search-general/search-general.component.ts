@@ -1,10 +1,11 @@
+/// <reference types="@types/google.maps" />
 declare var google: any;
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ControlTypeaheadComponent } from 'src/app/_forms/control-typeahead.component';
-import { Specialty } from 'src/app/_models/specialty';
 import { SearchService } from 'src/app/_services/search.service';
 
 @Component({
@@ -16,26 +17,46 @@ import { SearchService } from 'src/app/_services/search.service';
 })
 export class SearchGeneralComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private router = inject(Router);
   searchService = inject(SearchService);
+
+  compact = input(false);
+  selectedSpecialty = input('');
+  selectedLocation = input('');
+  selectedPlaceId = input('');
+  onSearch = output<{specialty: string, location: string}>();
 
   private autocompleteService: any;
   haveSelected = false;
   autocompleteResults: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   specialties: any[] = [];
+  specialistsQuantity = 0;
 
   form = this.fb.group({
     specialty: [''],
+    specialtyId: [''],
     location: [''],
     placeId: ['']
   });
 
   constructor() { 
-    this.autocompleteService = new google.maps.places.AutocompleteService();
   }
+  
+  async ngOnInit() {
+    if (this.selectedSpecialty()) {
+      this.form.get('specialty')?.setValue(this.selectedSpecialty());
+    }
+    if (this.selectedLocation() && this.selectedPlaceId()) {
+      this.form.get('location')?.setValue(this.selectedLocation());
+      this.form.get('placeId')?.setValue(this.selectedPlaceId());
+    }
 
-  ngOnInit(): void {
+    const {AutocompleteService} = await google.maps.importLibrary("places")
+    this.autocompleteService = new AutocompleteService();
+
     this.searchService.getSearchFields().subscribe({
       next: () => {
+        this.specialistsQuantity = this.searchService.fields()?.specialistsQuantity || 0;
         this.specialties = this.searchService.fields()?.specialties || [];
       }
     });
@@ -80,7 +101,31 @@ export class SearchGeneralComponent implements OnInit {
     this.autocompleteResults.next([]);
   }
 
+  onLocationTypeaheadBlur(e: TypeaheadMatch | undefined) {
+    if (e) {
+      this.haveSelected = true;
+      this.form.get('location')?.setValue(e.item.name);
+      this.form.get('placeId')?.setValue(e.item.value);
+      this.autocompleteResults.next([]);
+    }
+  }
+
+  onSpecialtyTypeaheadSelect(e: TypeaheadMatch | undefined) {
+    if (e) {
+      this.form.get('specialtyId')?.setValue(e.item.id);
+      this.form.get('specialty')?.setValue(e.item.name);
+    }
+  }
+
   onSubmit() {
-    console.log(this.form.value);
+    if (this.form.get('location')?.value === '') {
+      this.form.get('placeId')?.setValue('');
+    }
+    const params: any = {};
+    if (this.form.get('specialty')?.value) params['specialty'] = this.form.get('specialty')?.value;
+    if (this.form.get('placeId')?.value) params['location'] = this.form.get('placeId')?.value;
+    if (this.form.get('location')?.value) params['locationName'] = this.form.get('location')?.value;
+    this.router.navigate(['/search'], { queryParams: params });
+    this.onSearch.emit(params);
   }
 }

@@ -12,6 +12,7 @@ public interface IUnitOfWork
     IPrescriptionRepository PrescriptionRepository { get; }
     IOrderRepository OrderRepository { get; }
     ISpecialtyRepository SpecialtyRepository { get; }
+    ISearchRepository SearchRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();

@@ -29,6 +29,7 @@
   [adaptivePosition]="true"
   (typeaheadOnSelect)="onSelect.emit($event)"
   (typeaheadLoading)="onLoading.emit($event)"
+  (typeaheadOnBlur)="onBlur.emit($event)"
   (focus)="onInputFocus.emit()"
   [typeaheadOptionField]="typeaheadOptionField()"
   [typeaheadItemTemplate]="typeaheadItemTemplate()"
