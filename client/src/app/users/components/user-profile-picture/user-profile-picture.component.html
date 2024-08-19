@@ -1,16 +1,24 @@
 <div
     class="symbol"
     [class.symbol-circle]="shape() === 'circle'"
+
     [class.symbol-50px]="size() === 'sm'"
+    [class.min-w-50px]="size() === 'sm'"
+
     [class.symbol-100px]="size() === 'md'"
+    [class.min-w-100px]="size() === 'md'"
+
     [class.symbol-125px]="size() === 'md2'"
+    [class.min-w-125px]="size() === 'md2'"
+
     [class.symbol-160px]="size() === 'lg'"
+    [class.min-w-160px]="size() === 'lg'"
 >
     @if (photoUrl()) {
         <img [src]="photoUrl()" [alt]="firstName()" class="w-100" />
     } @else {
         <div
-            [class]="'symbol-label fw-semibold text-primary bg-light-' + bootstrapClass + ' text-' + bootstrapClass"
+            [class]="'symbol-label fw-semibold text-primary bg-light-' + getBootstrapClass(firstName()) + ' text-' + getBootstrapClass(firstName())"
             [class.fs-3]="size() === 'sm'"
             [class.fs-2x]="size() === 'md' || size() === 'md2' || size() === 'lg'"
         >

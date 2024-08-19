@@ -17,11 +17,6 @@ export class UserProfilePictureComponent {
   shape = input<'circle' | 'square'>('circle');
   size = input<'sm' | 'md' | 'md2' | 'lg'>('sm');
   showOnline = input<boolean>(false);
-  bootstrapClass = 'success';
-
-  ngOnInit(): void {
-    this.bootstrapClass = this.getBootstrapClass(this.firstName());
-  }
 
   bootstrapClasses = [
     'success',
