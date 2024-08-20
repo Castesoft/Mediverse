@@ -1,6 +1,25 @@
 {
     "version": "2.0.0",
     "tasks": [
+        {
+            "label": "clean client",
+            "detail": "rm -fR /c/Projects/Mediverse/client/node_modules && rm -fR /c/Projects/Mediverse/client/.angular && rm -f /c/Projects/Mediverse/client/package-lock.json && cd /c/Projects/Mediverse/client && npm i",
+            "type": "shell",
+            "command": "rm -fR /c/Projects/Mediverse/client/node_modules && rm -fR /c/Projects/Mediverse/client/.angular && rm -f /c/Projects/Mediverse/client/package-lock.json && cd /c/Projects/Mediverse/client && npm i",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "presentation": {
+                "panel": "shared",
+                "group": "myGroup"
+            }
+        },
         // setup frontend
         {
             "label": "mkcert localhost",
