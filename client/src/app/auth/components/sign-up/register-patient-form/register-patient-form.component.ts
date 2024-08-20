@@ -2,8 +2,10 @@ declare var google: any;
 import { Component, inject, input } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
+import { TermsAndConditionsModalComponent } from '../../terms-and-conditions-modal/terms-and-conditions-modal.component';
 
 @Component({
   selector: 'app-register-patient-form',
@@ -13,6 +15,7 @@ import { InputControlComponent } from 'src/app/_forms/input-control.component';
   styleUrl: './register-patient-form.component.scss'
 })
 export class RegisterPatientFormComponent {
+  private bsModalService = inject(BsModalService);
   public controlContainer = inject(ControlContainer);
 
   submitted = input.required<boolean>();
@@ -29,5 +32,9 @@ export class RegisterPatientFormComponent {
       width: document.getElementById('google-btn-signup')!.offsetWidth.toFixed(0).toString() > '400' ? document.getElementById('google-btn-signup')!.offsetWidth.toFixed(0).toString() : '400',
       height: '80'
     });
+  }
+
+  openTermsAndConditionsModal() {
+    this.bsModalService.show(TermsAndConditionsModalComponent);
   }
 }

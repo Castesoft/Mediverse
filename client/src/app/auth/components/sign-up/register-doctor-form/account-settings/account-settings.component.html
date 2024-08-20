@@ -126,7 +126,7 @@
     <div class="fv-row fv-plugins-icon-container">
         <div controlCheck formControlName="AgreeTerms" [submitted]="submitted()">
             <span class="form-check-label fw-semibold text-gray-700 fs-6">
-                Estoy de acuerdo con los <a routerLink="/" class="ms-1 link-primary">Términos y condiciones</a>.
+                Estoy de acuerdo con los <a (click)="openTermsAndConditionsModal()" class="ms-1 link-primary" style="cursor: pointer;">Términos y condiciones</a>.
             </span>
         </div>
     </div>
