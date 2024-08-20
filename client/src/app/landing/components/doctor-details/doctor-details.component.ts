@@ -18,6 +18,10 @@ export class DoctorDetailsComponent {
 
   selectedTab = 'general';
 
+  ngOnInit() {
+    console.log(this.doctor());
+  }
+
   selectTab(tab: string) {
     this.selectedTab = tab;
   }

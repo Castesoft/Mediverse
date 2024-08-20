@@ -49,3 +49,23 @@ html {
     font-size: 1rem !important;
   }
 }
+
+.doctor-map-marker {
+  transform: translateY(-10px);
+  padding: 4px;
+  background-color: #00A3FF;
+}
+
+.doctor-map-marker:after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #00A3FF;
+  z-index: 0;
+}

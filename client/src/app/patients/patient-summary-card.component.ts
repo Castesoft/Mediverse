@@ -4,14 +4,16 @@ import {DatePipe} from "@angular/common";
 import {User} from "../_models/user";
 import {UsersService} from "../_services/users.service";
 import {Subject, takeUntil} from "rxjs";
+import { UserProfilePictureComponent } from "../users/components/user-profile-picture/user-profile-picture.component";
 
 @Component({
   selector: 'div[patientSummaryCard]',
   templateUrl: 'patient-summary-card.component.html',
   imports: [
     BootstrapModule,
-    DatePipe
-  ],
+    DatePipe,
+    UserProfilePictureComponent
+],
   standalone: true,
 })
 export class PatientSummaryCardComponent implements OnInit {

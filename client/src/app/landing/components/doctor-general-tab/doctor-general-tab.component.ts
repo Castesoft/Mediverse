@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 
 @Component({
   selector: 'app-doctor-general-tab',
@@ -8,5 +9,5 @@ import { Component } from '@angular/core';
   styleUrl: './doctor-general-tab.component.scss'
 })
 export class DoctorGeneralTabComponent {
-
+  doctor = input<DoctorSearchResult>();
 }

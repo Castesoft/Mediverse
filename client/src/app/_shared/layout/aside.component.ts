@@ -55,9 +55,9 @@ import { AccountService } from "src/app/_services/account.service";
             @if (accountService.hasRole(['Doctor'])) {
               <div class="menu-item pt-5">
                 <div class="menu-content">
-            <span class="fw-bold text-muted text-uppercase fs-7">
-Gestión Clínica
-            </span>
+                  <span class="fw-bold text-muted text-uppercase fs-7">
+                    Gestión Clínica
+                  </span>
                 </div>
               </div>
               <div class="menu-item">
@@ -65,19 +65,17 @@ Gestión Clínica
                    [routerLink]="['/home/events']"
                    [routerLinkActive]="'active'"
                    [ariaCurrentWhenActive]="'page'">
-            <span class="menu-icon">
-            <i class="ki-duotone ki-calendar-8 fs-2">
-												<span class="path1"></span>
-												<span class="path2"></span>
-												<span class="path3"></span>
-												<span class="path4"></span>
-												<span class="path5"></span>
-												<span class="path6"></span>
-											</i>
-            </span>
-                  <span class="menu-title">
-              Citas
-            </span>
+                  <span class="menu-icon">
+                  <i class="ki-duotone ki-calendar-8 fs-2">
+                              <span class="path1"></span>
+                              <span class="path2"></span>
+                              <span class="path3"></span>
+                              <span class="path4"></span>
+                              <span class="path5"></span>
+                              <span class="path6"></span>
+                            </i>
+                  </span>
+                  <span class="menu-title">Citas</span>
                 </a>
               </div>
               <div class="menu-item">
@@ -229,7 +227,7 @@ Gestión Clínica
             </div>
           </div>
           <div class="menu-item">
-            <a [routerLink]="['/dashboards/payments']"
+            <a [routerLink]="['/account/payments']"
                class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-bill">
@@ -245,8 +243,7 @@ Gestión Clínica
             </a>
           </div>
           <div class="menu-item">
-            <a class="menu-link"
-               target="_blank">
+            <a [routerLink]="['/account/billing']" class="menu-link">
           <span class="menu-icon">
             <i class="ki-duotone ki-financial-schedule">
               <span class="path1"></span>

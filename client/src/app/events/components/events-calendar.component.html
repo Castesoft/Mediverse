@@ -36,13 +36,15 @@
 
 @if (calendarOptions && calendarView === 'calendar') {
   <div class="card-body">
-    <full-calendar #fullcalendar
-                   [options]="calendarOptions">
-      <ng-template #eventContent
-                   let-arg>
+    <full-calendar #fullcalendar [options]="calendarOptions">
+      <ng-template #eventContent let-arg>
         <div class="d-flex flex-grow-1 flex-column px-1 {{ arg.event.extendedProps.bgColor }}">
           <div class="fw-bold text-white">
-            {{ arg.event.extendedProps.patient }}
+            @if (accountService.hasRole(['Doctor'])) {
+              {{ arg.event.extendedProps.patient }}
+            } @else {
+              {{ arg.event.extendedProps.doctor }}
+            }
           </div>
           <div class="text-white">
             {{ formatTimeRange(arg.event.start, arg.event.end) }}

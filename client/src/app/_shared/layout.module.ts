@@ -326,7 +326,7 @@ export class ExportBtnComponent {}
 @Component({
   host: { class: 'btn btn-primary', type: 'button',},
   selector: 'button[createBtn]',
-  template: `<i class="ki-duotone ki-plus fs-2"></i>Agregar {{naming().singular}}`,
+  template: `<i class="ki-duotone ki-plus fs-2"></i>Agendar {{naming().singular}}`,
   standalone: true,
   imports: [],
 })

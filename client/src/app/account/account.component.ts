@@ -74,7 +74,7 @@ export const itemResolver: ResolveFn<Account | null> = (route, state) => {
         { path: '', component: AccountOverviewComponent, data: { breadcrumb: 'Mi Cuenta', }, title: 'Mi Cuenta',  },
         { path: 'settings', component: AccountSettingsComponent, data: { breadcrumb: 'Configuración', }, title: 'Configuración', },
         { path: 'billing', component: AccountBillingComponent, data: { breadcrumb: 'Facturación', }, title: 'Facturación', },
-        { path: 'payments', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos/Cobros', }, title: 'Pagos/Cobros', }
+        { path: 'payments', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', }
       ],
     },
   ])],

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Account } from 'src/app/_models/account';
 import { User } from 'src/app/_models/user';
+import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
   selector: 'app-user-profile-picture',
@@ -11,30 +12,11 @@ import { User } from 'src/app/_models/user';
   styleUrl: './user-profile-picture.component.scss'
 })
 export class UserProfilePictureComponent {
+  utilsService = inject(UtilsService);
 
   photoUrl = input<string>('');
   firstName = input<string>('');
   shape = input<'circle' | 'square'>('circle');
   size = input<'sm' | 'md' | 'md2' | 'lg'>('sm');
   showOnline = input<boolean>(false);
-
-  bootstrapClasses = [
-    'success',
-    'danger',
-    'info',
-    'primary',
-    'warning',
-    'dark'
-    // 'secondary', No son visibles
-    // 'light',
-  ];
-
-  getBootstrapClass(name: string) {
-    const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-
-    const classIndex = asciiSum % this.bootstrapClasses.length;
-
-    return this.bootstrapClasses[classIndex];
-  }
-
 }

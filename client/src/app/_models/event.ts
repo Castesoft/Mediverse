@@ -18,6 +18,7 @@ export class Event {
   dateTo = new Date();
 
   patient?: User;
+  doctor?: User;
   service?: Service;
   clinic?: Address;
   nurses?: User[];

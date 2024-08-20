@@ -20,7 +20,8 @@ public class MappingProfiles : Profile
         CreateMap<AppUser, DoctorSearchResultDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
             .ForMember(dest => dest.Specialties, opt => opt.MapFrom(src => src.UserMedicalLicenses.Select(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)))
-            .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.UserAddresses.Select(x => x.Address)));
+            .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.UserAddresses.Select(x => x.Address)))
+            .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodType)));
 
         CreateMap<Address, AddressDto>()
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))

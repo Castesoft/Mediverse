@@ -1,22 +1,32 @@
 <div class="tab-pane fade show active" id="kt_contact_view_general" role="tabpanel">
     <div class="d-flex flex-column gap-5 mt-7">
         <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">Company Name</div>
-            <div class="fw-bold fs-5">Keenthemes Inc</div>
+            <div class="fw-bold text-muted">Especialidad</div>
+            <div class="fw-bold fs-5">{{doctor()?.specialties![0].name}}</div>
         </div>
         <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">City</div>
-            <div class="fw-bold fs-5">Melbourne</div>
+            <div class="fw-bold text-muted">{{doctor()?.addresses && doctor()?.addresses!.length > 1 ? 'Direcciones' : 'Dirección'}}</div>
+            @for (address of doctor()?.addresses; track $index) {
+                <div class="fw-bold fs-5">
+                    <i class="ki-duotone ki-geolocation fs-4 text-gray-500">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                    {{address.street}}, {{address.city}}, {{address.state}}
+                </div>
+            }
         </div>
         <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">Country</div>
-            <div class="fw-bold fs-5">Australia</div>
+            <div class="fw-bold text-muted">Métodos de pago</div>
+            <div class="fw-bold fs-5">
+                @for (paymentMethod of doctor()?.paymentMethods; track $index) {
+                    {{paymentMethod.name}}@if ($index < doctor()?.paymentMethods!.length - 1) {,}
+                }
+            </div>
         </div>
         <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">Notes</div>
-            <p>Emma Smith joined the team on September 2019 as a junior associate. She soon showcased her expertise and experience in knowledge and skill in the field, which was very valuable to the company. She was promptly promoted to senior associate on July 2020. 
-            <br />
-            <br />Emma Smith now heads a team of 5 associates and leads the company's sales growth by 7%.</p>
+            <div class="fw-bold text-muted">Sobre {{doctor()?.firstName}}</div>
+            <p>{{doctor()?.firstName}} {{doctor()?.lastName}} es un médico especialista en {{doctor()?.specialties![0].name}} con más de 10 años de experiencia en el campo de la medicina. Ha trabajado en varios hospitales y clínicas en todo el país y ha tratado a miles de pacientes con éxito. {{doctor()?.firstName}} es conocido por su enfoque amigable y compasivo para tratar a sus pacientes y siempre se asegura de que sus pacientes se sientan cómodos y bien atendidos. {{doctor()?.firstName}} es un médico altamente calificado y ha recibido numerosos premios y reconocimientos por su excelente trabajo en el campo de la medicina.</p>
         </div>
     </div>
 </div>

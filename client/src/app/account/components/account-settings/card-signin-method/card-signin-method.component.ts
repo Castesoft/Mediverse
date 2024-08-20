@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, output } from '@angular/core';
 import { AbstractControlOptions, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { LayoutModule } from 'src/app/_shared/layout.module';
@@ -7,7 +8,7 @@ import { LayoutModule } from 'src/app/_shared/layout.module';
 @Component({
   selector: 'app-card-signin-method',
   standalone: true,
-  imports: [LayoutModule, ReactiveFormsModule, InputControlComponent],
+  imports: [LayoutModule, ReactiveFormsModule, InputControlComponent, RouterLink],
   templateUrl: './card-signin-method.component.html',
   styleUrl: './card-signin-method.component.scss'
 })

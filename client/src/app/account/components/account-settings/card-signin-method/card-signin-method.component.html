@@ -9,9 +9,15 @@
             <div class="fs-6 fw-bold mb-1">Correo electrónico</div>
             <div class="fw-semibold text-gray-600">{{accountService.current()?.email}}</div>
           </div>
-          <button class="btn btn-light btn-active-light-primary" (click)="toggleChangeEmailForm()">
-            Cambiar Email
-          </button>
+          @if (!accountService.current()?.linkedEmail) {
+            <button class="btn btn-light btn-active-light-primary" [disabled]="true">
+              Cambiar Email
+            </button>
+          } @else {
+            <button class="btn btn-light btn-active-light-primary" (click)="toggleChangeEmailForm()">
+              Cambiar Email
+            </button>
+          }
         </div>
         <div class="flex-row-fluid" [class.d-none]="hideChangeEmailForm">
           <form
@@ -78,9 +84,15 @@
             <div class="fs-6 fw-bold mb-1">Contraseña</div>
             <div class="fw-semibold text-gray-600">************</div>
           </div>
-          <button class="btn btn-light btn-active-light-primary" (click)="toggleChangePasswordForm()">
-            Reestablecer Contraseña
-          </button>
+          @if (!accountService.current()?.linkedEmail) {
+            <button class="btn btn-light btn-active-light-primary" [disabled]="true">
+              Reestablecer Contraseña
+            </button>
+          } @else {
+            <button class="btn btn-light btn-active-light-primary" (click)="toggleChangePasswordForm()">
+              Reestablecer Contraseña
+            </button>
+          }
         </div>
         <div class="flex-row-fluid d-none" [class.d-none]="hideChangePasswordForm">
           <form
@@ -151,98 +163,115 @@
           </form>
         </div>
       </div>
-      @if (!accountService.current()?.twoFactorEnabled) {
-        @if (!isSettingUpTwoFactor) {
-          <div
-            class="notice d-flex bg-light-primary rounded border-primary border border-dashed p-6"
-          >
-            <i class="ki-duotone ki-shield-tick fs-2tx text-primary me-4">
-              <span class="path1"></span>
-              <span class="path2"></span>
-            </i>
-            <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
-              <div class="mb-3 mb-md-0 fw-semibold">
-                <h4 class="text-gray-900 fw-bold">Asegura Tu Cuenta</h4>
-                <div class="fs-6 text-gray-700 pe-7">
-                    La autenticación de dos factores agrega una capa adicional de seguridad a tu cuenta. 
-                    Para iniciar sesión, además necesitarás proporcionar un código de 6 dígitos
+      @if (accountService.current()?.linkedEmail) {
+        @if (!accountService.current()?.twoFactorEnabled) {
+          @if (!isSettingUpTwoFactor) {
+            <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed p-6">
+              <i class="ki-duotone ki-shield-tick fs-2tx text-primary me-4">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+              <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                <div class="mb-3 mb-md-0 fw-semibold">
+                  <h4 class="text-gray-900 fw-bold">Asegura Tu Cuenta</h4>
+                  <div class="fs-6 text-gray-700 pe-7">
+                      La autenticación de dos factores agrega una capa adicional de seguridad a tu cuenta. 
+                      Para iniciar sesión, además necesitarás proporcionar un código de 6 dígitos
+                  </div>
+                </div>
+                <a
+                  class="btn btn-primary px-6 align-self-center text-nowrap"
+                  (click)="enableTwoFactor()"
+                  >Habilitar</a
+                >
+              </div>
+            </div>
+          } @else {
+            <div class="separator separator-dashed my-6"></div>
+            <div class="d-flex flex-wrap align-items-center">
+              <div class="d-flex w-100 justify-content-between">
+                <div>
+                  <div class="fs-6 fw-bold mb-1">Autenticación de dos factores</div>
+                  <div>
+                    <div>Paso 1</div>
+                    <div>Usando tu aplicación de 2FA preferida, escanea el siguiente código QR:</div>
+                    <div class="mt-3">
+                      <img
+                        src="{{'data:image/png;base64,' + twoFactorSetupInfo.qrCode}}"
+                        alt="QR Code"
+                        class="mw-100px mw-md-150px"
+                      />
+                    </div>
+                    <div>En su defecto, introduce el siguiente código en la aplicación:</div>
+                    <div class="fw-semibold text-gray-600">{{twoFactorSetupInfo.sharedKey}}</div>
+                  </div>
+  
+                  <div class="mt-3">
+                    <div class="fw-semibold">Paso 2</div>
+                    <div>Introduce el código de 6 dígitos generado por tu aplicación de 2FA:</div>
+                    <form [formGroup]="twoFactorAuthForm" (ngSubmit)="verifyTwoFactorAuth()">
+                      <div class="mt-3">
+                        <div
+                          class="fv-row fv-plugins-icon-container"
+                          inputControl
+                          formControlName="verificationCode"
+                          type="text"
+                          [label]="'Código de 2FA'"
+                          [placeholder]="'Introduce el código de 6 dígitos'"
+                          [submitted]="submitted"
+                          [errors]="{
+                              required: 'El código de 2FA es requerido.'
+                          }"
+                        ></div>
+                      </div>
+                      <div class="mt-3">
+                        <button
+                          type="submit"
+                          class="btn btn-primary me-2 px-6"
+                        >
+                          Activar
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-color-gray-500 btn-active-light-primary px-6"
+                          (click)="isSettingUpTwoFactor = false"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
-              <a
-                class="btn btn-primary px-6 align-self-center text-nowrap"
-                (click)="enableTwoFactor()"
-                >Habilitar</a
-              >
             </div>
-          </div>
+          }
         } @else {
           <div class="separator separator-dashed my-6"></div>
           <div class="d-flex flex-wrap align-items-center">
             <div class="d-flex w-100 justify-content-between">
               <div>
                 <div class="fs-6 fw-bold mb-1">Autenticación de dos factores</div>
-                <div>
-                  <div>Paso 1</div>
-                  <div>Usando tu aplicación de 2FA preferida, escanea el siguiente código QR:</div>
-                  <div class="mt-3">
-                    <img
-                      src="{{'data:image/png;base64,' + twoFactorSetupInfo.qrCode}}"
-                      alt="QR Code"
-                      class="mw-100px mw-md-150px"
-                    />
-                  </div>
-                  <div>En su defecto, introduce el siguiente código en la aplicación:</div>
-                  <div class="fw-semibold text-gray-600">{{twoFactorSetupInfo.sharedKey}}</div>
-                </div>
-
-                <div class="mt-3">
-                  <div class="fw-semibold">Paso 2</div>
-                  <div>Introduce el código de 6 dígitos generado por tu aplicación de 2FA:</div>
-                  <form [formGroup]="twoFactorAuthForm" (ngSubmit)="verifyTwoFactorAuth()">
-                    <div class="mt-3">
-                      <div
-                        class="fv-row fv-plugins-icon-container"
-                        inputControl
-                        formControlName="verificationCode"
-                        type="text"
-                        [label]="'Código de 2FA'"
-                        [placeholder]="'Introduce el código de 6 dígitos'"
-                        [submitted]="submitted"
-                        [errors]="{
-                            required: 'El código de 2FA es requerido.'
-                        }"
-                      ></div>
-                    </div>
-                    <div class="mt-3">
-                      <button
-                        type="submit"
-                        class="btn btn-primary me-2 px-6"
-                      >
-                        Activar
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-color-gray-500 btn-active-light-primary px-6"
-                        (click)="isSettingUpTwoFactor = false"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                <div class="fw-semibold text-gray-600">Habilitado</div>
               </div>
+              <button class="btn btn-light btn-active-light-primary" (click)="disableTwoFactor()">Desactivar</button>
             </div>
           </div>
         }
       } @else {
-        <div class="separator separator-dashed my-6"></div>
-        <div class="d-flex flex-wrap align-items-center">
-          <div class="d-flex w-100 justify-content-between">
-            <div>
-              <div class="fs-6 fw-bold mb-1">Autenticación de dos factores</div>
-              <div class="fw-semibold text-gray-600">Habilitado</div>
+        <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6">
+          <i class="ki-duotone ki-information fs-2tx text-warning me-4">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+          <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+            <div class="mb-3 mb-md-0 fw-semibold">
+              <h4 class="text-gray-900 fw-bold">¡Atención!</h4>
+              <div class="fs-6 text-gray-700 pe-7">
+                  Para modificar sus datos de inicio de sesión, primero debe vincular su cuenta con un correo electrónico y asociarle una contraseña.
+                  Para ello, por favor, siga las instrucciones en la sección de "Cuentas conectadas".
+              </div>
             </div>
-            <button class="btn btn-light btn-active-light-primary" (click)="disableTwoFactor()">Desactivar</button>
           </div>
         </div>
       }

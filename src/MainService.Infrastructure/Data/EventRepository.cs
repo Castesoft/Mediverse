@@ -115,36 +115,10 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
         IEnumerable<string> roles = user.GetRoles();
 
-        switch (param.Role)
-        {
-            case Roles.Admin:
-                if (!roles.Contains("Admin")) return null;
-                break;
-            case Roles.Doctor:
-                if (!roles.Contains("Admin") || !roles.Contains("Patient")) return null;
-                break;
-            case Roles.Patient:
-                if (!roles.Contains("Doctor") && !roles.Contains("Nurse")) return null;
-                if (roles.Contains("Doctor"))
-                {
-                    query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
-                }
-
-                break;
-            case Roles.Nurse:
-                if (!roles.Contains("Doctor")) return null;
-                if (roles.Contains("Doctor"))
-                {
-                    query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
-                }
-
-                break;
-            case Roles.Staff:
-                if (!roles.Contains("Admin")) return null;
-                break;
-            default:
-                break;
-        }
+        if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
+        else if (roles.Contains("Nurse")) query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == user.GetUserId()));
+        else if (roles.Contains("Patient")) query = query.Where(x => x.PatientEvent.PatientId == user.GetUserId());
+        else return null;
 
 
         return await PagedList<EventDto>.CreateAsync(

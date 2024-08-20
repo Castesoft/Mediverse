@@ -20,6 +20,7 @@ namespace MainService.Core.DTOs.Search
         public string Title { get; set; }
         public SpecialtyDto[] Specialties { get; set; }
         public UserAddressDto[] Addresses { get; set; }
+        public PaymentMethodTypeDto[] PaymentMethods { get; set; }
         public string PhotoUrl { get; set; }
     }
 }

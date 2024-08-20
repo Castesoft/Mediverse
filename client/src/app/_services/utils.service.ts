@@ -50,5 +50,24 @@ export class UtilsService {
     return this.mexicoCities[selectedState];
   }
 
+  getBootstrapClass(name: string) {
+    const bootstrapClasses = [
+      'success',
+      'danger',
+      'info',
+      'primary',
+      'warning',
+      'dark'
+      // 'secondary', No son visibles
+      // 'light',
+    ];
+
+    const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+    const classIndex = asciiSum % bootstrapClasses.length;
+
+    return bootstrapClasses[classIndex];
+  }
+
   constructor() { }
 }

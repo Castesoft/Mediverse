@@ -26,6 +26,9 @@ import interactionPlugin, { DateClickArg, EventDragStopArg, } from '@fullcalenda
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { ButtonsModule } from "ngx-bootstrap/buttons";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
+import esLocale from '@fullcalendar/core/locales/es';
+import { AccountService } from 'src/app/_services/account.service';
+import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
   host: { class: 'pb-6' },
@@ -54,6 +57,8 @@ import { EventsCatalogComponent } from "src/app/events/components/events-catalog
   ],
 })
 export class EventsCalendarComponent implements OnInit, OnDestroy {
+  private utilsService = inject(UtilsService);
+  accountService = inject(AccountService);
   router = inject(Router);
   service = inject(EventsService);
   icons = inject(IconsService);
@@ -116,6 +121,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
       eventClick: this.handleEventClick.bind(this),
       eventDragStop: this.handleEventDragStop.bind(this),
       select: this.handleSelect.bind(this),
+      locale: esLocale,
     };
   }
 
@@ -124,9 +130,11 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  private getRandomColorClass = (): string => {
+  private getBgColorClass = (name: string): string => {
     const colors = ['bg-primary', 'bg-info', 'bg-success', 'bg-warning'];
-    return colors[Math.floor(Math.random() * colors.length)];
+    const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const classIndex = asciiSum % colors.length;
+    return colors[classIndex];
   }
 
   private loadData(params: EventParams) {
@@ -138,12 +146,13 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
         if (this.calendarOptions && result) {
           this.calendarOptions.events = result!.map((event) => {
             return {
-              patient: `${event.patient?.firstName} ${event.patient?.lastName}`,
+              patient: `${event.patient?.firstName} ${event.patient?.lastName || ''}`,
+              doctor: `${event.doctor?.firstName} ${event.doctor?.lastName || ''}`,
               description: `${event.service?.name}`,
               start: event.dateFrom,
               end: event.dateTo,
               id: event.id,
-              bgColor: this.getRandomColorClass(),
+              bgColor: this.getBgColorClass(event.patient?.firstName || ''),
             } as any;
           });
         }
@@ -188,6 +197,9 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   }
 
   formatTimeRange = (start: Date, end: Date): string => {
+    if (!start || !end) {
+      return '';
+    }
     const startHours = start.getHours();
     const endHours = end.getHours();
     const startPeriod = startHours >= 12 ? 'PM' : 'AM';

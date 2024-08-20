@@ -1,4 +1,4 @@
-<div class="card card-flush h-lg-100" style="min-width: 390px;" id="kt_contacts_main">
+<div class="card card-flush h-lg-100" style="width: 420px;" id="kt_contacts_main">
     <div class="card-header pt-7" id="kt_chat_contacts_header">
         <div class="card-title">
             <i class="ki-duotone ki-badge fs-1 me-2">
@@ -18,7 +18,7 @@
             </i>
         </div>
     </div>
-    <div class="card-body pt-5">
+    <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
         <div class="d-flex gap-3 align-items-center">
             <app-user-profile-picture
                 [firstName]="doctor()?.firstName ?? ''"
@@ -32,18 +32,18 @@
                         <span class="path1"></span>
                         <span class="path2"></span>
                     </i>
-                    <a href="#" class="text-muted text-hover-primary">{{doctor()?.email}}</a>
+                    <a class="text-muted text-hover-primary">{{doctor()?.email}}</a>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     <i class="ki-duotone ki-phone fs-2">
                         <span class="path1"></span>
                         <span class="path2"></span>
                     </i>
-                    <a href="#" class="text-muted text-hover-primary">{{doctor()?.phoneNumber}}</a>
+                    <a class="text-muted text-hover-primary">{{doctor()?.phoneNumber}}</a>
                 </div>
             </div>
         </div>
-        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x fs-6 fw-semibold mt-6 mb-8 gap-2">
+        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x fs-6 fw-semibold mt-6 mb-3 gap-2">
             <li class="nav-item" style="cursor: pointer;">
                 <a class="nav-link text-active-primary d-flex align-items-center pb-4" [class.active]="selectedTab === 'general'" (click)="selectTab('general')">
                 <i class="ki-duotone ki-home fs-4 me-1"></i>General</a>
@@ -69,7 +69,7 @@
         </ul>
         <div class="tab-content" id="">
             @if (selectedTab === 'general') {
-                <app-doctor-general-tab></app-doctor-general-tab>
+                <app-doctor-general-tab [doctor]="doctor()"></app-doctor-general-tab>
             } @else if (selectedTab === 'schedule') {
                 <app-doctor-schedule-tab></app-doctor-schedule-tab>
             } @else if (selectedTab === 'reviews') {

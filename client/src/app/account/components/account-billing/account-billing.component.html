@@ -1,81 +1,84 @@
-<div class="card mb-5 mb-xl-10">
-  <div class="card-body">
-    <!-- <div
-      class="notice d-flex bg-light-warning rounded border-warning border border-dashed mb-12 p-6"
-    >
-      <i class="ki-duotone ki-information fs-2tx text-warning me-4">
-        <span class="path1"></span>
-        <span class="path2"></span>
-        <span class="path3"></span>
-      </i>
-      <div class="d-flex flex-stack flex-grow-1">
-        <div class="fw-semibold">
-          <h4 class="text-gray-900 fw-bold">We need your attention!</h4>
-          <div class="fs-6 text-gray-700">
-            Your payment was declined. To start using tools, please
-            <a
-              href="#"
-              class="fw-bold"
-              data-bs-toggle="modal"
-              data-bs-target="#kt_modal_new_card"
-              >Add Payment Method</a
-            >.
+@if (accountService.hasRole(['Doctor'])) {
+  <div class="card mb-5 mb-xl-10">
+    <div class="card-body">
+      <!-- <div
+        class="notice d-flex bg-light-warning rounded border-warning border border-dashed mb-12 p-6"
+      >
+        <i class="ki-duotone ki-information fs-2tx text-warning me-4">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+        <div class="d-flex flex-stack flex-grow-1">
+          <div class="fw-semibold">
+            <h4 class="text-gray-900 fw-bold">We need your attention!</h4>
+            <div class="fs-6 text-gray-700">
+              Your payment was declined. To start using tools, please
+              <a
+                href="#"
+                class="fw-bold"
+                data-bs-toggle="modal"
+                data-bs-target="#kt_modal_new_card"
+                >Add Payment Method</a
+              >.
+            </div>
           </div>
         </div>
-      </div>
-    </div> -->
-    <div class="row">
-      <div class="col-lg-7">
-        <h3 class="mb-2">Activo hasta Ene 09, 2024</h3>
-        <p class="fs-6 text-gray-600 fw-semibold mb-6 mb-lg-15">
-          Te enviaremos una notificación al vencimiento de la suscripción
-        </p>
-      </div>
-      <div class="col-lg-5">
-        <div class="fs-5 mb-2">
-          <span class="text-gray-800 fw-bold me-1">$199.99 MXN</span>
-          <span class="text-gray-600 fw-semibold">al mes</span>
+      </div> -->
+      <div class="row">
+        <div class="col-lg-7">
+          <h3 class="mb-2">Activo hasta Ene 09, 2024</h3>
+          <p class="fs-6 text-gray-600 fw-semibold mb-6 mb-lg-15">
+            Te enviaremos una notificación al vencimiento de la suscripción
+          </p>
         </div>
-        <div class="fs-6 text-gray-600 fw-semibold">
-          Miembro Pro. Acceso a todas las funciones y herramientas
-        </div>
-        <!-- <div class="d-flex text-muted fw-bold fs-5 mb-3">
-          <span class="flex-grow-1 text-gray-800">Users</span>
-          <span class="text-gray-800">86 of 100 Used</span>
-        </div>
-        <div class="progress h-8px bg-light-primary mb-2">
-          <div
-            class="progress-bar bg-primary"
-            role="progressbar"
-            style="width: 86%"
-            aria-label="progressbar"
-            aria-valuenow="86"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          ></div>
-        </div>
-        <div class="fs-6 text-gray-600 fw-semibold mb-10">
-          14 Users remaining until your plan requires update
-        </div> -->
-        <div class="d-flex justify-content-end pb-0 px-0 mt-5">
-          <a
-            href="#"
-            class="btn btn-light btn-active-light-primary me-2"
-            id="kt_account_billing_cancel_subscription_btn"
-            >Cancelar Suscripción</a
-          >
-          <button
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#kt_modal_upgrade_plan"
-          >
-            Cambiar Plan
-          </button>
+        <div class="col-lg-5">
+          <div class="fs-5 mb-2">
+            <span class="text-gray-800 fw-bold me-1">$199.99 MXN</span>
+            <span class="text-gray-600 fw-semibold">al mes</span>
+          </div>
+          <div class="fs-6 text-gray-600 fw-semibold">
+            Miembro Pro. Acceso a todas las funciones y herramientas
+          </div>
+          <!-- <div class="d-flex text-muted fw-bold fs-5 mb-3">
+            <span class="flex-grow-1 text-gray-800">Users</span>
+            <span class="text-gray-800">86 of 100 Used</span>
+          </div>
+          <div class="progress h-8px bg-light-primary mb-2">
+            <div
+              class="progress-bar bg-primary"
+              role="progressbar"
+              style="width: 86%"
+              aria-label="progressbar"
+              aria-valuenow="86"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+          <div class="fs-6 text-gray-600 fw-semibold mb-10">
+            14 Users remaining until your plan requires update
+          </div> -->
+          <div class="d-flex justify-content-end pb-0 px-0 mt-5">
+            <a
+              href="#"
+              class="btn btn-light btn-active-light-primary me-2"
+              id="kt_account_billing_cancel_subscription_btn"
+              >Cancelar Suscripción</a
+            >
+            <button
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#kt_modal_upgrade_plan"
+            >
+              Cambiar Plan
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+}
+
 <div class="card mb-5 mb-xl-10">
   <div class="card-header card-header-stretch pb-0">
     <div class="card-title">
@@ -263,511 +266,6 @@
         México - 16% IVA
         <br />
         <a class="fw-bold" href="#">Más Información</a>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="card">
-  <div class="card-header card-header-stretch border-bottom border-gray-200">
-    <div class="card-title">
-      <h3 class="fw-bold m-0">Historial de Facturación</h3>
-    </div>
-    <div class="card-toolbar m-0">
-      <ul
-        class="nav nav-stretch nav-line-tabs border-transparent"
-        role="tablist"
-      >
-        <li class="nav-item" role="presentation">
-          <a
-            id="kt_billing_6months_tab"
-            class="nav-link fs-5 fw-semibold me-3 active"
-            data-bs-toggle="tab"
-            role="tab"
-            href="#kt_billing_months"
-            >Mes</a
-          >
-        </li>
-        <li class="nav-item" role="presentation">
-          <a
-            id="kt_billing_1year_tab"
-            class="nav-link fs-5 fw-semibold me-3"
-            data-bs-toggle="tab"
-            role="tab"
-            href="#kt_billing_year"
-            >Año</a
-          >
-        </li>
-        <li class="nav-item" role="presentation">
-          <a
-            id="kt_billing_alltime_tab"
-            class="nav-link fs-5 fw-semibold"
-            data-bs-toggle="tab"
-            role="tab"
-            href="#kt_billing_all"
-            >Histórico</a
-          >
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="tab-content">
-    <div
-      id="kt_billing_months"
-      class="card-body p-0 tab-pane fade show active"
-      role="tabpanel"
-      aria-labelledby="kt_billing_months"
-    >
-      <div class="table-responsive">
-        <table class="table table-row-bordered align-middle gy-4 gs-9">
-          <thead
-            class="border-bottom border-gray-200 fs-6 text-gray-600 fw-bold bg-light bg-opacity-75"
-          >
-            <tr>
-              <td class="min-w-150px">Fecha</td>
-              <td class="min-w-250px">Descripción</td>
-              <td class="min-w-150px">Cantidad</td>
-              <td class="min-w-150px">Factura</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody class="fw-semibold text-gray-600">
-            <tr>
-              <td>Nov 01, 2020</td>
-              <td>
-                <a href="#">Invoice for Ocrober 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Oct 08, 2020</td>
-              <td>
-                <a href="#">Invoice for September 2024</a>
-              </td>
-              <td>$98.03</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 24, 2020</td>
-              <td>Paypal</td>
-              <td>$35.07</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 01, 2020</td>
-              <td>
-                <a href="#">Invoice for July 2024</a>
-              </td>
-              <td>$142.80</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jul 01, 2020</td>
-              <td>
-                <a href="#">Invoice for June 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jun 17, 2020</td>
-              <td>Paypal</td>
-              <td>$523.09</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jun 01, 2020</td>
-              <td>
-                <a href="#">Invoice for May 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div
-      id="kt_billing_year"
-      class="card-body p-0 tab-pane fade"
-      role="tabpanel"
-      aria-labelledby="kt_billing_year"
-    >
-      <div class="table-responsive">
-        <table class="table table-row-bordered align-middle gy-4 gs-9">
-          <thead
-            class="border-bottom border-gray-200 fs-6 text-gray-600 fw-bold bg-light bg-opacity-75"
-          >
-            <tr>
-              <td class="min-w-150px">Fecha</td>
-              <td class="min-w-250px">Descripción</td>
-              <td class="min-w-150px">Cantidad</td>
-              <td class="min-w-150px">Factura</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody class="fw-semibold text-gray-600">
-            <tr>
-              <td>Dec 01, 2021</td>
-              <td>
-                <a href="#">Billing for Ocrober 2024</a>
-              </td>
-              <td>$250.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Oct 08, 2021</td>
-              <td>
-                <a href="#">Statements for September 2024</a>
-              </td>
-              <td>$98.03</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 24, 2021</td>
-              <td>Paypal</td>
-              <td>$35.07</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 01, 2021</td>
-              <td>
-                <a href="#">Invoice for July 2024</a>
-              </td>
-              <td>$142.80</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jul 01, 2021</td>
-              <td>
-                <a href="#">Statements for June 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jun 17, 2021</td>
-              <td>Paypal</td>
-              <td>$23.09</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div
-      id="kt_billing_all"
-      class="card-body p-0 tab-pane fade"
-      role="tabpanel"
-      aria-labelledby="kt_billing_all"
-    >
-      <div class="table-responsive">
-        <table class="table table-row-bordered align-middle gy-4 gs-9">
-          <thead
-            class="border-bottom border-gray-200 fs-6 text-gray-600 fw-bold bg-light bg-opacity-75"
-          >
-            <tr>
-              <td class="min-w-150px">Fecha</td>
-              <td class="min-w-250px">Descripción</td>
-              <td class="min-w-150px">Cantidad</td>
-              <td class="min-w-150px">Factura</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody class="fw-semibold text-gray-600">
-            <tr>
-              <td>Nov 01, 2021</td>
-              <td>
-                <a href="#">Billing for Ocrober 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 10, 2021</td>
-              <td>Paypal</td>
-              <td>$35.07</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 01, 2021</td>
-              <td>
-                <a href="#">Invoice for July 2024</a>
-              </td>
-              <td>$142.80</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jul 20, 2021</td>
-              <td>
-                <a href="#">Statements for June 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jun 17, 2021</td>
-              <td>Paypal</td>
-              <td>$23.09</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jun 01, 2021</td>
-              <td>
-                <a href="#">Invoice for May 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>

@@ -29,10 +29,13 @@ import { AccountService } from 'src/app/_services/account.service';
                   <span class="path2"></span>
                 </i>}
               </a>
-              <a [routerLink]="[]" class="btn btn-sm btn-light-success fw-bold ms-2 fs-8 py-1 px-3"
-              >Conviértete en Pro</a>
+              @if (accountService.hasRole(['Doctor'])) {
+                <a [routerLink]="[]" class="btn btn-sm btn-light-success fw-bold ms-2 fs-8 py-1 px-3"
+                >Conviértete en Pro</a>
+              }
             </div>
             <div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
+            @if (accountService.hasRole(['Doctor'])) {
               <a [routerLink]="[]" class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2">
                 <i class="ki-duotone ki-profile-circle fs-4 me-1">
                   <span class="path1"></span>
@@ -44,6 +47,7 @@ import { AccountService } from 'src/app/_services/account.service';
                   <span class="path1"></span>
                   <span class="path2"></span>
                 </i>{{ account().city }}, {{ account().state }}</a>
+            }
               <a [routerLink]="[]" class="d-flex align-items-center text-gray-500 text-hover-primary mb-2">
                 <i class="ki-duotone ki-sms fs-4 me-1">
                   <span class="path1"></span>
@@ -58,8 +62,8 @@ import { AccountService } from 'src/app/_services/account.service';
               <span class="indicator-progress">Por favor espere...
                           <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
             </a> -->
-            @if (accountService.current()?.username !== account().email) {
-              <a [routerLink]="[]" class="btn btn-sm btn-primary me-2">Agenda una cita</a>
+            @if (!accountService.hasRole(['Doctor'])) {
+              <a [routerLink]="['/home/search']" class="btn btn-sm btn-primary me-2">Agenda una cita</a>
             }
             <div class="me-0">
               <button class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary">
@@ -118,51 +122,55 @@ import { AccountService } from 'src/app/_services/account.service';
             </div>
           </div>
         </div>
-        <div class="d-flex flex-wrap flex-stack">
-          <div class="d-flex flex-column flex-grow-1 pe-8">
-            <div class="d-flex flex-wrap">
-              <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                <div class="d-flex align-items-center">
-                  <i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                  </i>
-                  <div class="fs-2 fw-bold counted">$4,500</div>
+
+        @if (accountService.hasRole(['Doctor'])) {
+          <div class="d-flex flex-wrap flex-stack">
+            <div class="d-flex flex-column flex-grow-1 pe-8">
+              <div class="d-flex flex-wrap">
+                <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                  <div class="d-flex align-items-center">
+                    <i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                    <div class="fs-2 fw-bold counted">$4,500</div>
+                  </div>
+                  <div class="fw-semibold fs-6 text-gray-500">Ganancias</div>
                 </div>
-                <div class="fw-semibold fs-6 text-gray-500">Ganancias</div>
+                <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                  <div class="d-flex align-items-center">
+                    <i class="ki-duotone ki-arrow-down fs-3 text-danger me-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                    <div class="fs-2 fw-bold counted">75</div>
+                  </div>
+                  <div class="fw-semibold fs-6 text-gray-500">Retención</div>
+                </div>
+                <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                  <div class="d-flex align-items-center">
+                    <i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                    <div class="fs-2 fw-bold counted">%60</div>
+                  </div>
+                  <div class="fw-semibold fs-6 text-gray-500">Success Rate</div>
+                </div>
               </div>
-              <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                <div class="d-flex align-items-center">
-                  <i class="ki-duotone ki-arrow-down fs-3 text-danger me-2">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                  </i>
-                  <div class="fs-2 fw-bold counted">75</div>
-                </div>
-                <div class="fw-semibold fs-6 text-gray-500">Retención</div>
+            </div>
+            <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
+              <div class="d-flex justify-content-between w-100 mt-auto mb-2">
+                <span class="fw-semibold fs-6 text-gray-500">Cuenta configurada</span>
+                <span class="fw-bold fs-6">50%</span>
               </div>
-              <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                <div class="d-flex align-items-center">
-                  <i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                  </i>
-                  <div class="fs-2 fw-bold counted">%60</div>
-                </div>
-                <div class="fw-semibold fs-6 text-gray-500">Success Rate</div>
+              <div class="h-5px mx-3 w-100 bg-light mb-3">
+                <div class="bg-success rounded h-5px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
             </div>
           </div>
-          <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
-            <div class="d-flex justify-content-between w-100 mt-auto mb-2">
-              <span class="fw-semibold fs-6 text-gray-500">Cuenta configurada</span>
-              <span class="fw-bold fs-6">50%</span>
-            </div>
-            <div class="h-5px mx-3 w-100 bg-light mb-3">
-              <div class="bg-success rounded h-5px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-          </div>
-        </div>
+        }
+
       </div>
     </div>
     <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
@@ -176,7 +184,7 @@ import { AccountService } from 'src/app/_services/account.service';
         <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/billing']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Facturación</a>
       </li>
       <li class="nav-item mt-2">
-        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/payments']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Pagos/Cobros</a>
+        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/payments']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Pagos</a>
       </li>
     </ul>
   `,

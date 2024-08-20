@@ -676,17 +676,22 @@ public class AccountController(
     public async Task<ActionResult<AccountDto>> UpdateEmail([FromRoute] string newEmail)
     {
         using var hmac = new HMACSHA512();
-            
+
         var user = await userManager.Users
             .SingleOrDefaultAsync(x => x.Email == User.GetEmail());
 
         if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
 
-        // update email
         var result = await userManager.SetEmailAsync(user, newEmail);
         if (!result.Succeeded) return BadRequest("Error al actualizar correo.");
-        
-        // update email confirmation
+
+        var logins = await userManager.GetLoginsAsync(user);
+        foreach (var login in logins)
+        {
+            var removeLoginResult = await userManager.RemoveLoginAsync(user, login.LoginProvider, login.ProviderKey);
+            if (!removeLoginResult.Succeeded) return BadRequest("Error al desvincular cuentas sociales.");
+        }
+
         user.EmailConfirmed = false;
 
         string emailVerificationCode =  codeService.GenerateEmailCode();

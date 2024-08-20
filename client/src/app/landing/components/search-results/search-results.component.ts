@@ -8,6 +8,7 @@ import { TablePagerComponent } from 'src/app/_shared/table/table-pager.component
 import { SearchGeneralComponent } from 'src/app/search/components/search-general/search-general.component';
 import { UserProfilePictureComponent } from "../../../users/components/user-profile-picture/user-profile-picture.component";
 import { DoctorDetailsComponent } from '../doctor-details/doctor-details.component';
+import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
   selector: 'app-search-results',
@@ -18,6 +19,7 @@ import { DoctorDetailsComponent } from '../doctor-details/doctor-details.compone
 })
 export class SearchResultsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private utilsService = inject(UtilsService);
   searchService = inject(SearchService);
 
   params!: DoctorSearchResultParams;
@@ -32,6 +34,8 @@ export class SearchResultsComponent implements OnInit {
 
   map: google.maps.Map | undefined;
   markers: google.maps.marker.AdvancedMarkerElement[] = [];
+  doctorMarkersMap = new Map<DoctorSearchResult, google.maps.marker.AdvancedMarkerElement[]>();
+  hoveredMarkerDoctor: DoctorSearchResult | null = null;
 
   async ngOnInit() {
     this.isLoading = true;
@@ -75,10 +79,10 @@ export class SearchResultsComponent implements OnInit {
   }
 
   onSearch(event: {specialty: string, location: string}) {
+    this.resetMarkers();
     const specialty = event.specialty;
     const location = event.location;
     this.makeInitialSearch(specialty, location);
-    
   }
 
   makeInitialSearch(specialty: string, location: string) {
@@ -122,9 +126,24 @@ export class SearchResultsComponent implements OnInit {
 
         marker.addListener("click", () => {
           this.showDoctorDetails(doctor);
+          this.hoveredMarkerDoctor = null;
+        });
+
+        marker.content?.addEventListener("mouseenter", () => {
+          this.hoveredMarkerDoctor = doctor;
+        });
+
+        marker.content?.addEventListener("mouseleave", () => {
+          this.hoveredMarkerDoctor = null;
         });
 
         this.markers.push(marker);
+        const doctorMarkers = this.doctorMarkersMap.get(doctor);
+        if (doctorMarkers) {
+          doctorMarkers.push(marker);
+        } else {
+          this.doctorMarkersMap.set(doctor, [marker]);
+        }
       }
     }
   }
@@ -136,9 +155,58 @@ export class SearchResultsComponent implements OnInit {
 
   showDoctorDetails(doctor: DoctorSearchResult) {
     this.selectedDoctor = doctor;
+    this.doctorMarkersMap.forEach((_, doctor) => {
+      this.resetDoctorMarkersIcons(doctor);
+    });
+    this.transformDoctorMarkersIcons(doctor);
   }
 
   onCloseDoctorDetails() {
     this.selectedDoctor = null;
+    this.doctorMarkersMap.forEach((_, doctor) => {
+      this.resetDoctorMarkersIcons(doctor);
+    });
+  }
+
+  onDoctorHover(doctor: DoctorSearchResult) {
+    this.transformDoctorMarkersIcons(doctor);
+  }
+
+  onDoctorLeave(doctor: DoctorSearchResult) {
+    if (this.selectedDoctor === doctor) return;
+
+    this.resetDoctorMarkersIcons(doctor);
+  }
+
+  transformDoctorMarkersIcons(doctor: DoctorSearchResult) {
+    const doctorMarkers = this.doctorMarkersMap.get(doctor);
+    if (doctorMarkers) {
+      doctorMarkers.forEach((marker) => {
+        const range = document.createRange();
+        const fragment = range.createContextualFragment(doctor.photoUrl ? `
+          <div class="symbol symbol-circle symbol-60px min-w-60px doctor-map-marker" style="cursor: pointer;">
+            <img src="${doctor.photoUrl}" alt="${doctor.firstName}" style="width: 60px;height: 60px;border-radius: 50%;overflow: hidden;">
+          </div>
+        ` : `
+          <div class="symbol symbol-circle symbol-60px min-w-60px doctor-map-marker" style="cursor: pointer;">
+            <div class="symbol-label fw-semibold text-primary fs-2x bg-light-${this.utilsService.getBootstrapClass(doctor.firstName)} text-${this.utilsService.getBootstrapClass(doctor.firstName)}">
+              ${doctor.firstName[0]}
+            </div>
+          </div>
+        `);
+        marker.content = fragment;
+        marker.zIndex = doctor === this.selectedDoctor ? 101 : 100;
+      });
+    }
+  }
+
+  resetDoctorMarkersIcons(doctor: DoctorSearchResult) {
+    const doctorMarkers = this.doctorMarkersMap.get(doctor);
+    if (doctorMarkers) {
+      doctorMarkers.forEach((marker) => {
+        marker.content = null;
+        marker.zIndex = 0;
+      });
+    }
   }
 }

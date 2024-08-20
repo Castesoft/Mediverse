@@ -24,16 +24,18 @@
             </div>
           </div>
         </div>
-        <div class="text-gray-600 fs-4 text-end">
-          <div class="fw-semibold mb-1 fs-3">
-            <span class="fw-bold text-gray-800 me-1">Plan Pro</span>
+        @if (accountService.hasRole(['Doctor'])) {
+          <div class="text-gray-600 fs-4 text-end">
+            <div class="fw-semibold mb-1 fs-3">
+              <span class="fw-bold text-gray-800 me-1">Plan Pro</span>
+            </div>
+            <div class="fw-semibold mb-1">
+              <span class="fw-bold text-gray-800 me-1">$199.99</span>Al Mes
+            </div>
+            <div class="fw-semibold fs-6 mb-2">Siguiente cobro el 23 Ene, 2025</div>
+            <a routerLink="/account/billing" class="fw-semibold">Ver Facturación</a>
           </div>
-          <div class="fw-semibold mb-1">
-            <span class="fw-bold text-gray-800 me-1">$199.99</span>Al Mes
-          </div>
-          <div class="fw-semibold fs-6 mb-2">Siguiente cobro el 23 Ene, 2025</div>
-          <a routerLink="/account/billing" class="fw-semibold">Ver Facturación</a>
-        </div>
+        }
       </div>
 
       <!-- REQUERIMOS SU ATENCION -->

@@ -26,7 +26,7 @@
   [style.border-bottom-right-radius.px]="isInputGroupSpan() ? 0 : null"
   [typeaheadScrollable]="true"
   [typeaheadOptionsInScrollableView]="7"
-  [adaptivePosition]="true"
+  [adaptivePosition]="adaptivePosition()"
   (typeaheadOnSelect)="onSelect.emit($event)"
   (typeaheadLoading)="onLoading.emit($event)"
   (typeaheadOnBlur)="onBlur.emit($event)"

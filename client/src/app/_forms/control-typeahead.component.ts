@@ -33,6 +33,7 @@ export class ControlTypeaheadComponent {
   errors = input<{ [key: string]: string }>({});
   isInputGroupSpan = input<boolean>(false);
   isTypeaheadAsync = input<boolean>(false);
+  adaptivePosition = input<boolean>(true);
   hideIsOptional = input<boolean>(false);
   hideBorder = input<boolean>(false);
   isReadonly = input<boolean>(false);

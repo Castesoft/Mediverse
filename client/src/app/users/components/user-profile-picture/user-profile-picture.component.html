@@ -18,7 +18,7 @@
         <img [src]="photoUrl()" [alt]="firstName()" class="w-100" />
     } @else {
         <div
-            [class]="'symbol-label fw-semibold text-primary bg-light-' + getBootstrapClass(firstName()) + ' text-' + getBootstrapClass(firstName())"
+            [class]="'symbol-label fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(firstName()) + ' text-' + utilsService.getBootstrapClass(firstName())"
             [class.fs-3]="size() === 'sm'"
             [class.fs-2x]="size() === 'md' || size() === 'md2' || size() === 'lg'"
         >

@@ -20,6 +20,7 @@
               [isTypeaheadAsync]="false"
               formControlName="specialty"
               [typeaheadOptions]="specialties"
+              [adaptivePosition]="false"
               (onBlur)="onSpecialtyTypeaheadSelect($event)"
               controlTypeahead
           ></div>
@@ -41,6 +42,7 @@
               class="col"
               formControlName="location"
               [typeaheadOptions]="autocompleteResults"
+              [adaptivePosition]="false"
               controlTypeahead
           ></div>
         </div>
