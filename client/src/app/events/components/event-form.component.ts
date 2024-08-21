@@ -12,11 +12,9 @@ import {
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { Address } from 'src/app/_models/address';
 import { Event, CreateForm, EditForm, DetailForm } from 'src/app/_models/event';
 import { BadRequest, FormUse, Role, View } from 'src/app/_models/types';
 import { User } from 'src/app/_models/user';
-import { AddressesService } from 'src/app/_services/addresses.service';
 import { FormsService } from 'src/app/_services/forms.service';
 import { GuidService } from 'src/app/_services/guid.service';
 import { IconsService } from 'src/app/_services/icons.service';
@@ -28,7 +26,6 @@ import { EventsService } from 'src/app/_services/events.service';
 import { UsersService } from 'src/app/_services/users.service';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { calcDateDiff } from 'src/app/_utils/util';
-import { AddressesListSelectComponent } from 'src/app/addresses/components/addresses-catalog.component';
 import { UserCardCompactComponent } from 'src/app/users/components/user-card-compact.component';
 import { UserFormComponent } from 'src/app/users/components/user-form.component';
 import { ServicesService } from 'src/app/_services/services.service';
@@ -41,6 +38,7 @@ import {
 } from 'src/app/users/components/users-catalog.component';
 import { createId } from '@paralleldrive/cuid2';
 import {PatientSelectTypeaheadComponent} from "src/app/_shared/components/patient-select-typeahead.component";
+import { Address, AddressesService } from 'src/app/addresses/addresses.config';
 
 @Component({
   host: { class: 'pb-3' },
@@ -389,13 +387,13 @@ import {PatientSelectTypeaheadComponent} from "src/app/_shared/components/patien
               Seleccione la localización
             </span>
             </ng-template>
-            <div
+            <!-- <div
               addressesListSelect
               [mode]="'select'"
               [key]="selectClinicKey"
               [view]="'page'"
               [type]="'Clinic'"
-            ></div>
+            ></div> -->
           </mat-step>
         </mat-stepper>
       </form>
@@ -431,7 +429,7 @@ import {PatientSelectTypeaheadComponent} from "src/app/_shared/components/patien
     CurrencyPipe,
     UsersCatalogComponent,
     UsersListSelectComponent,
-    AddressesListSelectComponent,
+    // AddressesListSelectComponent,
     PatientSelectTypeaheadComponent,
   ],
 })
@@ -482,7 +480,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   patient?: User;
   service?: Service;
   nurses?: User[];
-  clinic?: Address;
+  address?: Address;
 
   constructor() {
     this.selectPatientKey = this.guid.gen();
@@ -552,15 +550,15 @@ export class EventFormComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.addressesService.selected$(this.selectClinicKey).subscribe({
-      next: (clinic) => {
-        this.clinic = clinic;
-        if (clinic) {
-          this.serviceAccordion()?.close();
-          this.form.group.get('clinicId')!.setValue(clinic.id);
-        }
-      },
-    });
+    // this.addressesService.selected$(this.selectClinicKey).subscribe({
+    //   next: (clinic) => {
+    //     this.address = clinic;
+    //     if (clinic) {
+    //       this.serviceAccordion()?.close();
+    //       this.form.group.get('clinicId')!.setValue(clinic.id);
+    //     }
+    //   },
+    // });
 
     this.usersService.multipleSelected$(this.selectNursesKey).subscribe({
       next: (nurses) => {

@@ -1,13 +1,15 @@
-import { KeyValuePipe } from "@angular/common";
-import { Component, model } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { CommonModule, KeyValuePipe } from "@angular/common";
+import { Component, effect, model } from "@angular/core";
+import { AbstractControl, FormControl } from "@angular/forms";
+import { ControlErrors } from "src/app/_forms/form";
 
 @Component({
-  host: { class: 'fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback', },
-  selector: 'div[invalidFeedback]',
+  host: { class: '', },
+  selector: 'invalid-feedback, div[invalidFeedback]',
   template: `
 @for(error of control().errors | keyvalue; track $index) {
   @if(submitted() && control().invalid) {
+    <div class="invalid-feedback d-block">
       @if (!errors()[error.key]) {
         @switch(error.key) {
           @case('required') {
@@ -31,14 +33,14 @@ import { FormControl } from "@angular/forms";
           @case('max') {
             Deber ser menor o igual a {{ control().errors?.['max'].max }}.
           }
-          @case('notEqual') {
-            Las contraseñas no coinciden.
+          @case('nameExists') {
+            El nombre ya existe.
           }
-          @case('termsAndConditions') {
-            Debes aceptar los términos y condiciones para continuar.
+          @case('controlNumberExists') {
+            El número de control ya existe.
           }
-          @case('same') {
-            {{ control().errors?.['same'] }}
+          @case('maxDate') {
+            La fecha debe ser menor o igual a {{ control().errors?.['maxDate'].maxDate | date: 'dd/MM/yyyy' }}.
           }
           @default {
             Error desconocido.
@@ -47,14 +49,21 @@ import { FormControl } from "@angular/forms";
       } @else {
         {{ errors()[error.key] }}
       }
+    </div>
   }
 }
   `,
   standalone: true,
-  imports: [ KeyValuePipe ],
+  imports: [ KeyValuePipe, CommonModule, ],
 })
 export class InvalidFeedbackComponent {
-  errors = model.required<{ [key: string]: string }>({});
+  errors = model.required<ControlErrors>({});
   submitted = model.required<boolean>();
-  control = model.required<FormControl<any>>();
+  control = model.required<FormControl<any> | AbstractControl<any, any>>();
+
+  constructor() {
+    effect(() => {
+      // console.log(this.control());
+    })
+  }
 }

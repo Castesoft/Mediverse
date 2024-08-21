@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { AbstractControl, FormControl } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 
 @Injectable({
@@ -66,11 +66,14 @@ export class FormsService {
    * @returns {boolean} - Returns `true` if the FormControl is optional (i.e., it does not
    * have the 'required' validator or has no validators at all), otherwise returns `false`.
    */
-  isOptional = (control: FormControl): boolean => {
-    if (control.validator !== null) {
+  isOptional = (control: AbstractControl<any,any> | FormControl, hide: boolean = false): boolean => {
+    if (hide) return false;
+
+    if (control.validator) {
       const validatorResponse = control.validator({} as FormControl);
       return !(validatorResponse && validatorResponse["required"]);
     }
+
     return true;
   };
 }

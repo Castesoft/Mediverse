@@ -1,65 +1,57 @@
-import {
-  Component,
-  inject,
-  input,
-  OnChanges,
-  OnInit,
-  output,
-  SimpleChanges,
-  ViewEncapsulation,
-} from '@angular/core';
-import { CatalogMode, Column, SortOptions } from 'src/app/_models/types';
-import {
-  faSort,
-  faSortDown,
-  faSortUp,
-} from '@fortawesome/free-solid-svg-icons';
-import { EnvService } from 'src/app/_services/env.service';
-import { IconsService } from 'src/app/_services/icons.service';
-import { NgClass } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { GuidService } from 'src/app/_services/guid.service';
+import { Component, effect, inject, input, model, OnInit, output, ViewEncapsulation } from "@angular/core";
+import { CatalogMode, Column, SortOptions } from "src/app/_models/types";
+import { faSort, faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
+import { EnvService } from "src/app/_services/env.service";
+import { IconsService } from "src/app/_services/icons.service";
+import { NgClass } from "@angular/common";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { createId } from "@paralleldrive/cuid2";
+import { FormsModule } from "@angular/forms";
+import { EntityParams } from "src/app/_forms/form";
 
 @Component({
-  selector: 'thead[tableHeader]',
-  templateUrl: './table-header.component.html',
+  selector: "thead[tableHeader]",
+  templateUrl: "./table-header.component.html",
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [ NgClass, FontAwesomeModule ]
+  imports: [NgClass, FontAwesomeModule, FormsModule]
 })
-export class TableHeaderComponent implements OnInit, OnChanges {
+export class TableHeaderComponent implements OnInit {
   private devService = inject(EnvService);
   icons = inject(IconsService);
-  private guid = inject(GuidService);
 
   // inputs
   // required
   columns = input.required<Column[]>();
+  params = input.required<EntityParams<any> | any | undefined>();
   mode = input.required<CatalogMode>();
   show = input<boolean>(true);
+  disableFirstCellPadding = input<boolean>(false);
+
+  selected = model(false);
 
   // optional
   sortable = input<boolean>(true);
   showActions = input<boolean>(true);
-  params = input<any>();
 
   // outputs
   onParamsChange = output<SortOptions>();
   onSelectAll = output<boolean>();
 
   isDev = false;
-  cuid: string;
-  constructor() {
-    this.cuid = this.guid.gen();
-    // console.log('cuid', this.cuid);
-  }
+  guid = createId();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // console.log('changes', changes);
+  constructor() {
+    effect(() => {});
   }
 
   ngOnInit(): void {
     this.devService.mode$.subscribe({ next: mode => this.isDev = mode });
+  }
+
+  selectAllItems(event: Event) {
+    const input = event.target as EventTarget as HTMLInputElement;
+    this.onSelectAll.emit(input.checked);
   }
 
   getIcon(columnName: string) {
@@ -75,16 +67,5 @@ export class TableHeaderComponent implements OnInit, OnChanges {
     }
   }
 
-  selectAllItems(event: Event) {
-    const input = event.target as EventTarget as HTMLInputElement;
-    this.onSelectAll.emit(input.checked);
-  }
-
-  onClick = (name: string) => {
-    if (name === this.params().sort && !this.params().isSortAscending) {
-      this.onParamsChange.emit(new SortOptions(undefined));
-    } else {
-      this.onParamsChange.emit(new SortOptions(name, !this.params().isSortAscending));
-    }
-  };
+  onClick = (name: string) => this.onParamsChange.emit(new SortOptions(name, !this.params().isSortAscending));
 }

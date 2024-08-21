@@ -1,85 +1,228 @@
-import { Component, OnInit, Input, inject, input, OnDestroy } from "@angular/core";
-import { Addresses, CatalogMode, Column, View } from "src/app/_models/types";
-import { IconsService } from "src/app/_services/icons.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { CdkModule } from "src/app/_shared/cdk.module";
-import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { DatePipe, DecimalPipe, NgClass } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Address, AddressParams } from "src/app/_models/address";
-import { Subscription } from "rxjs";
-import { GuidService } from "src/app/_services/guid.service";
-import { AddressesService } from "src/app/_services/addresses.service";
-import { AddressTableCellComponent, } from "src/app/addresses/components/address-table-cell.component";
+import { CommonModule } from '@angular/common';
+import {
+  Component, InputSignal,
+  OnDestroy,
+  OnInit,
+  effect,
+  inject,
+  input
+} from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { createId } from '@paralleldrive/cuid2';
+import { Subject, takeUntil } from 'rxjs';
+import { ControlsModule } from 'src/app/_forms/controls.module';
+import {
+  CatalogMode,
+  ITableMenu,
+  TableMenu,
+  TableRow,
+  View,
+} from 'src/app/_models/types';
+import { EnvService } from 'src/app/_services/env.service';
+import { IconsService } from 'src/app/_services/icons.service';
+import { CdkModule } from 'src/app/_shared/cdk.module';
+import { MaterialModule } from 'src/app/_shared/material.module';
+import { TableModule } from 'src/app/_shared/table/table.module';
+import {
+  Address,
+  AddressParams,
+  AddressesService,
+} from 'src/app/addresses/addresses.config';
 
 @Component({
-  host: { class: '', },
-  selector: 'td[addressTableData]',
+  selector: 'div[addressesTableMenu]',
+  host: { class: '' },
   template: `
-      <div class="d-flex">
-        <a [routerLink]="[]" class="symbol symbol-50px">
-          <span class="symbol-label" style="background-image:url({{item() ? item().photoUrl : 'media/misc/image.png'}});"></span>
-        </a>
-        <div class="ms-5">
-          <a [routerLink]="[]" (click)="service.clickLink(type(), item().id, item(), key(), 'detail', view())" class="text-gray-800 text-hover-primary fs-5 fw-bold mb-1">{{ item().name }}</a>
-          <div class="text-muted fs-7 fw-bold">{{ item().description }}</div>
-        </div>
-      </div>
+    <div class="dropdown-menu d-block" cdkMenu>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary['Clinic'].catalogRoute + '/' + item().id"
+        (click)="
+          service.clickLink(item(), key(), 'detail', 'page');
+          $event.preventDefault()
+        "
+      >
+        Ver {{ service.dictionary['Clinic'].singular }}
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary['Clinic'].catalogRoute + '/' + item().id"
+        (click)="
+          $event.preventDefault();
+          service.clickLink(item(), key(), 'detail', 'modal')
+        "
+      >
+        Abrir {{ service.dictionary['Clinic'].singular }} en pantalla modal
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [routerLink]="[service.dictionary['Clinic'].catalogRoute, item().id, 'editar']"
+      >
+        Editar
+      </a>
+      <button
+        cdkMenuItem
+        class="dropdown-item px-3 text-danger"
+        (click)="service.delete$(item(), 'Clinic')"
+      >
+        Eliminar
+      </button>
+    </div>
   `,
   standalone: true,
-  imports: [ RouterModule, ],
+  imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class AddressTableDataComponent {
-  service = inject(AddressesService);
+export class AddressesTableMenuComponent
+  extends TableMenu<AddressesService>
+  implements OnInit, ITableMenu<Address>
+{
+  item: InputSignal<Address> = input.required();
+  key: InputSignal<string> = input.required();
 
-  item = input.required<Address>();
-  type = input.required<Addresses>();
-  key = input.required<string>();
-  view = input.required<View>();
+  constructor() {
+    super(AddressesService);
+  }
+
+  ngOnInit(): void {}
 }
 
 @Component({
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_addresses', },
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable' },
   selector: 'table[addressesTable]',
+  template: `
+    <thead
+      tableHeader
+      [columns]="service.columns['Clinic']"
+      [params]="params"
+      (onParamsChange)="service.onSortOptionsChange(key(), $event)"
+      [mode]="mode()"
+      (selectedChange)="service.onSelectAll(key(), mode(), $event)"
+      [selected]="(service.areAllSelected(key()) | async)!"
+    ></thead>
+    <tbody class="list" id="leal-tables-body">
+      @for (item of data(); track item.id; let idx = $index) {
+        <tr
+          class="hover-actions-trigger btn-reveal-trigger position-static"
+          [cdkContextMenuTriggerFor]="context_menu"
+        >
+          <td
+            tableCheckCell
+            [isCompact]="isCompact()"
+            [idx]="idx"
+            [dictionary]="service.dictionary['Clinic']"
+            [(selected)]="item.isSelected"
+            (click)="service.onSelect(key(), mode(), item)"
+          ></td>
+
+          <td
+            class="name align-middle white-space-nowrap px-0 py-0"
+            [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+          >
+            <div class="d-flex align-items-center justify-content-start px-0">
+              <a
+                [routerLink]="[service.dictionary['Clinic'].catalogRoute, item.id]"
+                [href]="[service.dictionary['Clinic'].catalogRoute, item.id]"
+                class="fw-semibold text-primary"
+                >{{ item.name }}</a
+              >
+            </div>
+          </td>
+
+          @for (
+            address of row.getItems([
+              'street',
+              'exteriorNumber',
+              'interiorNumber',
+              'neighborhood',
+              'zipcode',
+              'city',
+              'state',
+              'country',
+              'nursesCount',
+              'isMain',
+            ]);
+            let idx = $index;
+            track idx
+          ) {
+            <td
+              tableCell
+              [item]="address.item"
+              [isCompact]="isCompact()"
+              [value]="item[address.item.key]"
+            ></td>
+          }
+
+          <td
+            tableMenuCell
+            [item]="item"
+            [contextMenu]="context_menu"
+            [isCompact]="isCompact()"
+          ></td>
+          <ng-template #context_menu>
+            <div addressesTableMenu [item]="item" [key]="key()"></div>
+          </ng-template>
+        </tr>
+      }
+    </tbody>
+  `,
   standalone: true,
-  templateUrl: './addresses-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, AddressTableCellComponent, DatePipe,
-    MaterialModule, CdkModule, AddressTableDataComponent,
+  imports: [
+    TableModule,
+    ControlsModule,
+    RouterModule,
+    FontAwesomeModule,
+    CdkModule,
+    MaterialModule,
+    CommonModule,
+    AddressesTableMenuComponent,
   ],
 })
 export class AddressesTableComponent implements OnInit, OnDestroy {
+  private ngUnsubscribe = new Subject<void>();
   service = inject(AddressesService);
   icons = inject(IconsService);
+  dev = inject(EnvService);
 
-  @Input() data: Address[] = [];
-  key = input.required<string>();
+  data = input.required<Address[]>();
+  isCompact = input.required<boolean>();
   mode = input.required<CatalogMode>();
-  showHeaders = input<boolean>(true);
-  type = input.required<Addresses>();
+  key = input.required<string>();
   view = input.required<View>();
 
   sortAscending = false;
-  columns?: Column[];
   devMode = false;
   params!: AddressParams;
+  cuid = createId();
+  selected = false;
+  row: TableRow<Address> = new TableRow<Address>(new Address());
 
-  subscriptions: Subscription[] = [];
-
-  cuid: string;
-  constructor(guid: GuidService) {
-    this.cuid = guid.gen();
+  constructor() {
+    effect(() => {
+      this.params = new AddressParams(this.key());
+      this.service.param$(this.key(), this.mode()).subscribe({
+        next: (params) => {
+          this.params = params;
+        },
+      });
+    });
   }
 
   ngOnInit(): void {
-    this.columns = this.service.columnDictionary.get(this.type());
-    const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
-    this.subscriptions.push(paramsSubscription);
+    this.subscribeToDevMode();
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
+
+  private subscribeToDevMode = () => {
+    this.dev.mode$.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (devMode) => (this.devMode = devMode),
+    });
+  };
 }

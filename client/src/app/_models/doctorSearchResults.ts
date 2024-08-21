@@ -1,8 +1,8 @@
 import { HttpParams } from '@angular/common/http';
-import { Address } from './address';
 import { Specialty } from './specialty';
 import { getPaginationHeaders } from '../_utils/util';
 import { PaymentMethodType } from './paymentMethodType';
+import { Address } from 'src/app/addresses/addresses.config';
 
 export interface DoctorSearchResults {
     doctors: DoctorSearchResult[];

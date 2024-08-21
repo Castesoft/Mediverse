@@ -7,7 +7,7 @@ import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
 import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
-import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, Role, SortOptions, View } from "src/app/_models/types";
+import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, Role, SortOptions, View } from "src/app/_models/types";
 import { FilterForm, Event, EventParams, EventSummary } from "src/app/_models/event";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
@@ -38,7 +38,7 @@ export class EventsService {
   private catalogModalRef: BsModalRef<EventsCatalogModalComponent> = new BsModalRef<EventsCatalogModalComponent>();
   hideCatalogModal = () => this.catalogModalRef.hide();
 
-  naming: NamingSubjectType = {
+  naming: NamingSubject = {
     singular: "cita", plural: "citas", pluralTitlecase: "Citas", singularTitlecase: "Cita",
     catalogRoute: "/home/events", createRoute: "/home/events/create",
     title: "Citas", undefinedArticle: "una", definedArticle: "la", undefinedArticlePlural: "unas", definedArticlePlural: "las",

@@ -6,7 +6,7 @@ import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
-import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, SortOptions, View } from "src/app/_models/types";
+import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, SortOptions, View } from "src/app/_models/types";
 import { FilterForm, Product, ProductParams, ProductSummary } from "src/app/_models/product";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
@@ -36,7 +36,7 @@ export class ProductsService {
   private catalogModalRef: BsModalRef<ProductsCatalogModalComponent> = new BsModalRef<ProductsCatalogModalComponent>();
   hideCatalogModal = () => this.catalogModalRef.hide();
 
-  naming: NamingSubjectType = {
+  naming: NamingSubject = {
     singular: "producto",
     plural: "productos",
     pluralTitlecase: "Productos",

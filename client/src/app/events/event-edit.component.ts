@@ -11,14 +11,13 @@ import {Service} from "../_models/service";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {IconsService} from "../_services/icons.service";
 import {ClinicSummaryCardComponent} from "../clinics/clinic-summary-card.component";
-import {Address} from "../_models/address";
-import {AddressesService} from "../_services/addresses.service";
 import {NurseSummaryCardComponent} from "../nurses/nurse-summary-card.component";
 import {UsersService} from "../_services/users.service";
 import {User} from "../_models/user";
 import {Subject, takeUntil} from "rxjs";
 import {PatientSummaryCardComponent} from "../patients/patient-summary-card.component";
 import {Product} from "../_models/product";
+import { Address, AddressesService } from "src/app/addresses/addresses.config";
 
 @Component({
   selector: 'div[eventEditView]',
@@ -40,7 +39,7 @@ import {Product} from "../_models/product";
 })
 export class EventEditComponent implements OnInit {
   private servicesService = inject(ServicesService);
-  private clinicsService = inject(AddressesService);
+  private addressesService = inject(AddressesService);
   private ngUnsubscribe = new Subject<void>();
   private usersService = inject(UsersService);
   icons = inject(IconsService);
@@ -58,7 +57,7 @@ export class EventEditComponent implements OnInit {
   service?: Service;
   selectServiceKey = createId();
 
-  clinic?: Address;
+  address?: Address;
   selectClinicKey = createId();
 
   nurses?: User[];
@@ -79,8 +78,8 @@ export class EventEditComponent implements OnInit {
     }
 
     if (this.item().clinic) {
-      this.clinic = this.item().clinic;
-      this.clinicsService.setSelected$(this.selectClinicKey, this.item().clinic!);
+      this.address = this.item().clinic;
+      // this.addressesService.setSelected$(this.selectClinicKey, this.item().clinic!);
     }
 
     if (this.item().nurses) {
@@ -163,9 +162,9 @@ export class EventEditComponent implements OnInit {
   }
 
   private subscribeToSelectedClinic = () => {
-    this.clinicsService.selected$(this.selectClinicKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((clinic) => {
-      this.clinic = clinic;
-    });
+    // this.addressesService.selected$(this.selectClinicKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((clinic) => {
+    //   this.address = clinic;
+    // });
   }
 
   showServiceSelectModal = () => {

@@ -1,89 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
-  faAngleDoubleLeft,
-  faAngleDoubleRight,
-  faAngleDown,
-  faAngleLeft,
-  faAngleRight,
-  faAngleUp,
-  faArrowDownWideShort,
-  faArrowsRotate,
-  faArrowUpWideShort,
-  faCalendar,
-  faCalendarDays,
-  faCheck,
-  faChevronDown,
-  faChevronLeft,
-  faChevronRight,
-  faClock,
-  faCow,
-  faDna,
-  faEarthAmericas,
-  faEllipsisH,
-  faFileExport,
-  faHandHoldingHeart,
-  faHandsHoldingChild,
-  faArrowUpRightFromSquare,
-  faSignOut,
-  faFilter,
-  faFilterCircleDollar,
-  faFilterCircleXmark,
-  faFileContract,
-  faFileSignature,
-  faSignInAlt,
-  faHome,
-  faHorseHead,
-  faHospital,
-  faLocationDot,
-  faMinus,
-  faMoneyBills,
-  faNotesMedical,
-  faPencil,
-  faPenToSquare,
-  faPersonBreastfeeding,
-  faPersonCane,
-  faPlus,
-  faSearch,
-  faSliders,
-  faSort,
-  faSortDown,
-  faSortUp,
-  faTimes,
-  faTrashCan,
-  faTriangleExclamation,
-  faUser,
-  faUsers,
-  faUserAlt,
-  faWeightHanging,
-  faWeightScale,
-  faWheatAwn,
-  faCogs,
-  faCircleInfo,
-  faCog,
-  faList,
-  faMars,
-  faMoneyBill1Wave,
-  faTableCellsLarge,
-  faTrademark,
-  faVectorSquare,
-  faVenus,
-  faClockRotateLeft,
-  faLink,
-  faCaretRight, faCaretLeft, faCaretDown,
-  faCircle, faCaretUp,
-  faSave,
-  faTableList,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  faClipboard, faEdit, faEye, faNoteSticky, faCalendar as faRegCalendar,
-  faUser as farUser,
-  faFileZipper as farFileZipper,
-  faImage as farImage, faWindowRestore,
-} from '@fortawesome/free-regular-svg-icons';
-import {faCircleQuestion} from "@fortawesome/free-regular-svg-icons/faCircleQuestion";
+  faAngleDoubleLeft, faFileImport, faAngleDoubleRight, faAngleDown, faAngleLeft, faAngleRight, faAngleUp, faArrowDownWideShort, faArrowsRotate, faArrowUpRightFromSquare, faArrowUpWideShort, faCalendar, faCalendarDays, faCancel, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faCircle, faCircleInfo, faClock, faClockRotateLeft, faCog, faCogs, faCow, faDna, faEarthAmericas, faEllipsisH, faFileContract, faFileExport, faFileSignature, faFilter, faFilterCircleDollar, faFilterCircleXmark, faHandHoldingHeart, faHandsHoldingChild, faHome, faHorseHead, faHospital, faInfoCircle, faLink, faList, faLocationDot, faMars, faMinus, faMoneyBill1Wave, faMoneyBills, faNotesMedical, faPencil, faPenToSquare, faPersonBreastfeeding, faPersonCane, faPlus, faSave, faSearch, faSignInAlt, faSignOut, faSliders, faSort, faSortDown, faSortUp, faTableCellsLarge, faTableList, faTimes, faTrademark, faTrashCan, faTriangleExclamation, faUser, faUserAlt, faUsers, faVectorSquare, faVenus, faWeightHanging, faWeightScale, faWheatAwn, faXmark
+} from "@fortawesome/free-solid-svg-icons";
+import { faCalendar as faRegCalendar, faTrashCan as faRegTrashCan, faCircleQuestion as faRegCircleQuestion, faClipboard, faEdit, faEye, faFileZipper as farFileZipper, faIdCard as faRegIdCard, faImage as farImage, faNoteSticky, faUser as farUser, faWindowRestore } from "@fortawesome/free-regular-svg-icons";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root"
 })
 export class IconsService {
   constructor() {}
@@ -104,6 +26,7 @@ export class IconsService {
   faCalendar = faCalendar;
   faRegCalendar = faRegCalendar;
   faSearch = faSearch;
+  faCancel = faCancel;
   faAngleLeft = faAngleLeft;
   faAngleRight = faAngleRight;
   faClock = faClock;
@@ -155,7 +78,7 @@ export class IconsService {
   faMars = faMars;
   faList = faList;
   faTableCellsLarge = faTableCellsLarge;
-  faMoneyBill1Wave = faMoneyBill1Wave
+  faMoneyBill1Wave = faMoneyBill1Wave;
   faTrademark = faTrademark;
   faVectorSquare = faVectorSquare;
   faClockRotateLeft = faClockRotateLeft;
@@ -172,8 +95,12 @@ export class IconsService {
   faFilterCircleXmark = faFilterCircleXmark;
   faFileContract = faFileContract;
   faFileSignature = faFileSignature;
-  faRegCircleQuestion = faCircleQuestion;
   faWindowRestore = faWindowRestore;
+  faRegCircleQuestion = faRegCircleQuestion;
   faTableList = faTableList;
-
+  faRegIdCard = faRegIdCard;
+  faInfoCircle = faInfoCircle;
+  faRegTrashCan = faRegTrashCan;
+  faFileImport = faFileImport;
+  faXmark = faXmark;
 }

@@ -6,7 +6,7 @@ import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
-import { Column, LoadingTypes, NamingSubjectType, SortOptions, View } from "src/app/_models/types";
+import { Column, LoadingTypes, NamingSubject, SortOptions, View } from "src/app/_models/types";
 import { Order, OrderParams } from "src/app/_models/order";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
@@ -24,7 +24,7 @@ export class OrdersService {
 
   baseUrl = `${environment.apiUrl}orders/`;
 
-  naming: NamingSubjectType = {
+  naming: NamingSubject = {
     singular: "pedido",
     plural: "pedidos",
     pluralTitlecase: "Pedidos",

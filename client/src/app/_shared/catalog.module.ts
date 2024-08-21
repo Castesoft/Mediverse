@@ -1,5 +1,5 @@
 import { Component, input, NgModule } from '@angular/core';
-import { CatalogMode, NamingSubjectType } from 'src/app/_models/types';
+import { CatalogMode, NamingSubject } from 'src/app/_models/types';
 
 @Component({
   host: { class: 'mb-4' },
@@ -24,7 +24,7 @@ import { CatalogMode, NamingSubjectType } from 'src/app/_models/types';
 })
 export class CatalogTitleComponent {
   mode = input.required<CatalogMode>();
-  naming = input.required<NamingSubjectType>();
+  naming = input.required<NamingSubject>();
 }
 
 @NgModule({

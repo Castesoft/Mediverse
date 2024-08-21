@@ -6,7 +6,7 @@ import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
-import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, Role, SortOptions, View } from "src/app/_models/types";
+import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, Role, SortOptions, View } from "src/app/_models/types";
 import { FilterForm, Service, ServiceParams } from "src/app/_models/service";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
@@ -36,7 +36,7 @@ export class ServicesService {
   private catalogModalRef: BsModalRef<ServicesCatalogModalComponent> = new BsModalRef<ServicesCatalogModalComponent>();
   hideCatalogModal = () => this.catalogModalRef.hide();
 
-  naming: NamingSubjectType = {
+  naming: NamingSubject = {
     singular: "servicio", plural: "servicios", pluralTitlecase: "Servicios", singularTitlecase: "Servicio",
     catalogRoute: "/home/services", createRoute: "/home/services/create",
     title: "Servicios", undefinedArticle: "uno", definedArticle: "lo", undefinedArticlePlural: "unos", definedArticlePlural: "los",
