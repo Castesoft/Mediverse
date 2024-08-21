@@ -200,4 +200,11 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }
+
+    public Task<List<MedicalInsuranceCompanyDto>> GetMedicalInsuranceCompaniesAsync()
+    {
+        return context.MedicalInsuranceCompanies
+            .ProjectTo<MedicalInsuranceCompanyDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 }

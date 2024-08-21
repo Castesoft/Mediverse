@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using MainService.Models.Entities;
 
@@ -14,6 +15,26 @@ public static partial class SeedData
         "Patient",
         "Doctor",
         "Nurse",
+    ];
+
+    public static readonly IEnumerable<MedicalInsuranceCompany> medicalInsuranceCompanies =
+    [
+        new MedicalInsuranceCompany { Name = "AXA Seguros", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "axa_seguros_ergezf" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/axa_seguros_ergezf.png" } }},
+        new MedicalInsuranceCompany { Name = "GNP Seguros", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "gnp_seguros_xpttil" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/gnp_seguros_xpttil.png" } }},
+        new MedicalInsuranceCompany { Name = "Aseguradora Interacciones", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "aseguradora_interacciones_drezf3" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/aseguradora_interacciones_drezf3.png" } }},
+        new MedicalInsuranceCompany { Name = "Seguros Banorte", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "seguros_banorte_fsrra6" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/seguros_banorte_fsrra6.png" } }},
+        new MedicalInsuranceCompany { Name = "Seguros Monterrey New York Life", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "seguros_monterrey_uzj3ui" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198863/seguros_monterrey_uzj3ui.png" } }},
+        new MedicalInsuranceCompany { Name = "Mapfre México", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "mapfre_mexico_cmg4u2" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/mapfre_mexico_cmg4u2.png" } }},
+        new MedicalInsuranceCompany { Name = "Metlife", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "metlife_hzbave" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/metlife_hzbave.png" } }},
+        new MedicalInsuranceCompany { Name = "Seguros Atlas", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "seguros_atlas_jo69el" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/seguros_atlas_jo69el.png" } }},
+        new MedicalInsuranceCompany { Name = "RSA", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "rsa_xfjykh" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/rsa_xfjykh.png" } }},
+        new MedicalInsuranceCompany { Name = "Bupa Seguros", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "bupa_seguros_qru9sa" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/bupa_seguros_qru9sa.png" } }},
+        new MedicalInsuranceCompany { Name = "Seguros Multiva", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "seguros_multiva_qmcj0e" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/seguros_multiva_qmcj0e.png" } }},
+        new MedicalInsuranceCompany { Name = "Seguros Inbursa", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "seguros_inbursa_en5tbk" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/seguros_inbursa_en5tbk.png" } }},
+        new MedicalInsuranceCompany { Name = "Allianz", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "allianz_azpevk" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/allianz_azpevk.png" } }},
+        new MedicalInsuranceCompany { Name = "La Latino Seguros", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "la_latino_seguros_kxisgu" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/la_latino_seguros_kxisgu.png" } }},
+        new MedicalInsuranceCompany { Name = "Seguros BX+", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "seguros_bx_vjbqpz" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198862/seguros_bx_vjbqpz.png" } }},
+        new MedicalInsuranceCompany { Name = "Plan Seguro", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "plan_seguro_w6ehun" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/plan_seguro_w6ehun.png" } }}
     ];
 
     public static readonly IEnumerable<PaymentMethodType> paymentMethodTypes =

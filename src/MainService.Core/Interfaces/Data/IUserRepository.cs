@@ -22,4 +22,5 @@ public interface IUserRepository
     Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user);
     Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync();
     Task<List<SpecialtyDto>> GetSpecialtiesAsync();
+    Task<List<MedicalInsuranceCompanyDto>> GetMedicalInsuranceCompaniesAsync();
 }

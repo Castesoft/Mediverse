@@ -1,0 +1,80 @@
+<div class="card mb-5 mb-xl-10">
+  <div class="card-header">
+    <div class="card-title">
+      <h3>Mis Seguros</h3>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row gx-9 gy-6">
+      @for (insurance of accountService.userMedicalInsuranceCompanies(); track $index) {
+      <div class="col-xl-6" data-kt-billing-element="address">
+        <div
+          class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
+        >
+          <div class="d-flex flex-column py-2 w-100">
+            <div class="d-flex align-items-center justify-content-between py-2">
+                <img src="{{ insurance?.photoUrl }}" alt="{{ insurance?.name }}" class="h-50px mb-3" />
+                <div>
+                    <button
+                        class="btn btn-sm btn-light btn-active-light-primary me-3"
+                        data-kt-billing-action="address-delete"
+                        [disabled]="insurance?.isMain"
+                        (click)="deleteInsurance(insurance?.id!)"
+                        >
+                        <span class="indicator-label">Eliminar</span>
+                        <span class="indicator-progress"
+                            >Please wait...
+                            <span
+                            class="spinner-border spinner-border-sm align-middle ms-2"
+                            ></span
+                        ></span>
+                    </button>
+                    <button
+                        class="btn btn-sm btn-light btn-active-light-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#kt_modal_new_address"
+                        (click)="openEditInsuranceModal(insurance)"
+                        >
+                        Editar
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex align-items-center fs-5 fw-bold mb-2">
+              {{ insurance?.name }}
+              @if (insurance?.isMain) {
+                <span class="badge badge-light-success fs-7 ms-2"
+                    >Principal</span
+                >
+              }
+            </div>
+            <div class="fs-6 fw-semibold text-gray-600">
+                No. Póliza: {{ insurance?.policyNumber }}
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+      <div class="col-xl-6">
+        <div
+          class="notice d-flex bg-light-primary rounded border-primary border border-dashed flex-stack h-xl-100 mb-10 p-6"
+        >
+          <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+            <div class="mb-3 mb-md-0 fw-semibold">
+              <h4 class="text-gray-900 fw-bold">Agregar un nueva póliza</h4>
+              <div class="fs-6 text-gray-700 pe-7">
+                Puede agregar pólizas de seguros adicionales
+              </div>
+            </div>
+            <a
+              (click)="openAddInsuranceModal()"
+              class="btn btn-primary px-6 align-self-center text-nowrap"
+              data-bs-toggle="modal"
+              data-bs-target="#kt_modal_new_address"
+              >Nueva Póliza</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

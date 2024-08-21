@@ -35,6 +35,7 @@ public class AppUser : IdentityUser<int>
     public UserPhoto UserPhoto { get; set; }
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
     public ICollection<AppUserPermission> UserPermissions { get; set; } = [];
+    public ICollection<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
 
     // User Billing Information Properties
     public ICollection<UserPaymentMethod> UserPaymentMethods { get; set; } = [];

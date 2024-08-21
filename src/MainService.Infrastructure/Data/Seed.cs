@@ -110,6 +110,13 @@ public static class Seed
         return [];
     }
 
+    private static async Task SeedMedicalInsuranceCompaniesAsync(DataContext context)
+    {
+        if (await context.MedicalInsuranceCompanies.AnyAsync()) return;
+        await context.MedicalInsuranceCompanies.AddRangeAsync(SeedData.medicalInsuranceCompanies.ToArray());
+        await context.SaveChangesAsync();
+    }
+
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
         IPermissionManager permissionManager)
     {
@@ -149,6 +156,7 @@ public static class Seed
         await SeedServicesAsync(context);
         List<Specialty> specialties = await SeedSpecialtiesAsync(context);
         List<PaymentMethodType> paymentMethodTypes = await SeedPaymentMethodTypesAsync(context);
+        await SeedMedicalInsuranceCompaniesAsync(context);
         await SeedMexicoStates(context);
         
         if (await userManager.Users.AnyAsync()) return;
@@ -279,7 +287,6 @@ public static class Seed
 
         foreach (var user in doctorsForSeeding)
         {
-            // aqui seria lo de especialidades
             user.UserMedicalLicenses.Add(Utils.CreateUserMedicalLicense(specialties));
             user.DoctorPaymentMethodTypes.AddRange(Utils.CreateDoctorPaymentMethodTypes(paymentMethodTypes));
             

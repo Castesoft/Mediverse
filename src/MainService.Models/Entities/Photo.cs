@@ -11,6 +11,7 @@ public class Photo : BaseEntity
     public ProductPhoto ProductPhoto { get; set; }
     public ServicePhoto ServicePhoto { get; set; }
     public DoctorSignature DoctorSignature { get; set; }
+    public MedicalInsuranceCompanyPhoto MedicalInsuranceCompanyPhoto { get; set; }
 
     public Photo(){}
 

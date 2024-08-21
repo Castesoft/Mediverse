@@ -56,7 +56,7 @@ export class LoginForm {
   imports: [ RouterModule, ControlsModule, JsonPipe, MaterialModule ],
 })
 export class SignInBasicFormComponent implements OnInit, AfterViewInit {
-  private accountService = inject(AccountService);
+  accountService = inject(AccountService);
   private router = inject(Router);
   route = inject(ActivatedRoute);
   utils = inject(UtilsService);
