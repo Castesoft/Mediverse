@@ -50,7 +50,7 @@ public class AppUser : IdentityUser<int>
     public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
     public ICollection<NurseEvent> NurseEvents { get; set; } = [];
     public ICollection<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
-    public ICollection<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];    
+    public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];    
 
     // Navigation properties
     public List<DoctorService> DoctorServices { get; set; } = [];

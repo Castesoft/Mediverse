@@ -42,6 +42,7 @@ public class MappingProfiles : Profile
         CreateMap<ProductCreateDto, Product>();
 
         CreateMap<AppUser, AccountDto>()
+            .ForMember(dest => dest.MedicalLicenses, opt => opt.MapFrom(src => src.UserMedicalLicenses))
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
@@ -52,6 +53,16 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.State))
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.City))
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street));
+
+        CreateMap<UserMedicalLicense, UserMedicalLicenseDto>()
+            .ForMember(dest => dest.SpecialtyId, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId))
+            .ForMember(dest => dest.SpecialtyName, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
+            .ForMember(dest => dest.Document, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseDocument.Document))
+            .ForMember(dest => dest.SpecialtyLicense, opt => opt.MapFrom(src => src.MedicalLicense.SpecialtyLicense))
+            .ForMember(dest => dest.LicenseNumber, opt => opt.MapFrom(src => src.MedicalLicense.LicenseNumber))
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMain));
+
+        CreateMap<Document, DocumentDto>();
 
         CreateMap<Google.Apis.Auth.GoogleJsonWebSignature.Payload, AppUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))

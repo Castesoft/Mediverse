@@ -50,7 +50,7 @@ public class AccountController(
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> LoginAsync([FromBody]LoginDto request)
+    public async Task<ActionResult<AccountDto>> LoginAsync([FromBody]LoginDto request)
     {
         AppUser user = await userManager.FindByEmailAsync(request.Email);
 
@@ -65,9 +65,7 @@ public class AccountController(
             return Ok(new { RequiresTwoFactor = true });
         }
 
-        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
-
-        itemToReturn.Token = await tokenService.CreateToken(user);
+        AccountDto itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
         return Ok(itemToReturn);
     }

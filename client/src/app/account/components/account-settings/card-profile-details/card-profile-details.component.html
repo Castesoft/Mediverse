@@ -12,7 +12,7 @@
                 @if (photoUrl) {
                   <img [src]="photoUrl" class="mw-100 mh-100 rounded" alt="photo" />
                 } @else {
-                  <app-user-profile-picture 
+                  <app-user-profile-picture
                     [firstName]="userForProfilePicture.firstName"
                     [photoUrl]="userForProfilePicture.photoUrl ?? ''"
                     shape="square" size="md2"
@@ -33,7 +33,7 @@
                   <span class="path2"></span>
                 </i>
               </span>
-              <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" 
+              <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove"
                 data-bs-toggle="tooltip" title="Remove avatar" (click)="removeAvatar()">
                 <i class="ki-duotone ki-cross fs-2">
                   <span class="path1"></span>
@@ -108,6 +108,42 @@
             ></div>
           </div>
         </div>
+        <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6">
+            <span class="">Cédula profesional</span>
+          </label>
+          <div class="col-lg-8 fv-row fv-plugins-icon-container">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="LicenseNumber"
+                type="text"
+                [placeholder]="''"
+                [submitted]="submitted"
+              ></div>
+            <div
+              class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
+            ></div>
+          </div>
+        </div>
+        <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6">
+            <span class="">Cédula de especialidad</span>
+          </label>
+          <div class="col-lg-8 fv-row fv-plugins-icon-container">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="SpecialtyLicense"
+                type="text"
+                [placeholder]="''"
+                [submitted]="submitted"
+              ></div>
+            <div
+              class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
+            ></div>
+          </div>
+        </div>
 
         @if (accountService.hasRole(['Doctor'])) {
           <div class="row mb-6">
@@ -128,7 +164,7 @@
                 ></div>
             </div>
           </div>
-  
+
           <!-- <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-semibold fs-6"
               >Subespecialidad</label
@@ -147,7 +183,7 @@
                 ></div>
             </div>
           </div> -->
-  
+
           <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-semibold fs-6"
               >Cédula/Certificación</label
@@ -167,7 +203,7 @@
                 ></div>
             </div>
           </div>
-  
+
           <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-semibold fs-6"
               >Métodos de pago aceptados</label

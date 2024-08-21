@@ -1,31 +1,7 @@
-﻿namespace MainService.Models.Entities;
-
-/// <summary>
-/// Representa una licencia médica que incluye tanto la cédula profesional como la cédula de especialidad.
-/// </summary>
-/// <remarks>
-/// <para>
-/// La cédula profesional es un documento oficial emitido por la Secretaría de Educación Pública (SEP) que certifica que un médico ha completado sus estudios de licenciatura en medicina
-/// y ha cumplido con todos los requisitos legales para ejercer la profesión en México. Este documento es necesario para que el médico pueda ejercer legalmente en todo el país.
-/// </para>
-/// <para>
-/// Adicionalmente, la clase también maneja la cédula de especialidad, que es emitida para aquellos médicos que han completado un programa de especialización
-/// y les permite ejercer en su área específica de especialización.
-/// </para>
-/// <para>
-/// La clase MedicalLicense encapsula ambos tipos de cédulas (profesional y de especialidad) junto con la documentación relacionada, asegurando que
-/// la información relevante sobre las licencias médicas se gestione de manera centralizada.
-/// </para>
-/// </remarks>
-public class MedicalLicense : BaseEntity
+namespace MainService.Core.DTOs.User;
+public class UserMedicalLicenseDto
 {
-    public MedicalLicense() {}
-    public MedicalLicense(int specialtyId) => MedicalLicenseSpecialty = new (specialtyId);
-    public MedicalLicense(int specialtyId, string documentPublicId, string documentUrl) {
-        MedicalLicenseSpecialty = new (specialtyId);
-        MedicalLicenseDocument = new (documentPublicId, documentUrl);
-    }
-
+    public bool IsMain { get; set; }
     /// <summary>
     /// Cédula Profesional
     /// </summary>
@@ -36,7 +12,6 @@ public class MedicalLicense : BaseEntity
     /// <para><strong>Función:</strong> Autoriza al médico para ejercer la medicina en general en todo México.</para>
     /// </remarks>
     public string LicenseNumber { get; set; }
-
     /// <summary>
     /// Cédula de Especialidad
     /// </summary>
@@ -48,7 +23,6 @@ public class MedicalLicense : BaseEntity
     /// <para><strong>Nota:</strong> Cada médico tiene una cédula de especialidad única, incluso si comparten la misma área de especialización, como psiquiatría.</para>
     /// </remarks>
     public string SpecialtyLicense { get; set; }
-
     /// <summary>
     /// Documento asociado a la cédula profesional o de especialidad.
     /// </summary>
@@ -62,7 +36,7 @@ public class MedicalLicense : BaseEntity
     /// que pueda ser verificada por instituciones y organizaciones que necesiten confirmar la validez de la licencia médica.
     /// </para>
     /// </remarks>
-    public MedicalLicenseDocument MedicalLicenseDocument { get; set; }
-    public MedicalLicenseSpecialty MedicalLicenseSpecialty { get; set; }
-    public ICollection<MedicalLicenseSubSpecialty> MedicalLicenseSubSpecialties { get; set; } = [];
+    public DocumentDto Document { get; set; }
+    public int SpecialtyId { get; set; }
+    public string SpecialtyName { get; set; }
 }

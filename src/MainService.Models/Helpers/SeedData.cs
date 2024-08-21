@@ -1371,6 +1371,15 @@ public static partial class SeedData
             return cities[random.Next(cities.Length)];
         }
 
+        public static readonly MedicalLicenseDocument medicalLicenseDocument = new()
+        {
+            Document = new() {
+                Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1724262123/Mediverse/C%C3%A9dula%20Profesional%20%28Desarrollo%29/Formato_C%C3%A9dula_Profesional_M%C3%A9dica_falso_r3igrb.pdf",
+                Size = 350000,
+                PublicId = "Formato_Cédula_Profesional_Médica_falso_r3igrb"
+            }
+        };
+
     [GeneratedRegex("[áàâä]")]
     private static partial Regex MyRegex();
     [GeneratedRegex("[ñ]")]

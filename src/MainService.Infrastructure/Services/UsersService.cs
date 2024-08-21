@@ -37,18 +37,22 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
                 .ThenInclude(x => x.MedicalLicense)
                 .ThenInclude(x => x.MedicalLicenseSpecialty)
                 .ThenInclude(x => x.Specialty)
+            .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense)
+                    .ThenInclude(x => x.MedicalLicenseDocument)
+                        .ThenInclude(x => x.Document)
             .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
             .Include(x => x.DoctorPaymentMethodTypes).ThenInclude(x => x.PaymentMethodType)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
-        var accountToReturn = mapper.Map<AppUser, AccountDto>(user);
+        AccountDto itemToReturn = mapper.Map<AppUser, AccountDto>(user);
 
-        accountToReturn.LinkedEmail = !string.IsNullOrEmpty(user.PasswordHash);
-        accountToReturn.LinkedGoogle = userManager.GetLoginsAsync(user).Result.Any(x => x.LoginProvider == "GOOGLE");
+        itemToReturn.LinkedEmail = !string.IsNullOrEmpty(user.PasswordHash);
+        itemToReturn.LinkedGoogle = userManager.GetLoginsAsync(user).Result.Any(x => x.LoginProvider == "GOOGLE");
 
-        accountToReturn.Token = await tokenService.CreateToken(user);
+        itemToReturn.Token = await tokenService.CreateToken(user);
 
-        return accountToReturn;
+        return itemToReturn;
     }
 
     private async Task<bool> DeleteUserPhotoAsync(AppUser user)

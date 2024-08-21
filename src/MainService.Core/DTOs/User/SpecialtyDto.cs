@@ -1,8 +1,6 @@
-namespace MainService.Core.DTOs.User
+namespace MainService.Core.DTOs.User;
+public class SpecialtyDto
 {
-    public class SpecialtyDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

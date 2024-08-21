@@ -21,11 +21,12 @@ public class AccountDto
     public bool LinkedGoogle { get; set; }
     public bool TwoFactorEnabled { get; set; }
     public int SpecialtyId { get; set; }
-    public ICollection<PaymentMethodTypeDto> PaymentMethodTypes { get; set; }
+    public List<PaymentMethodTypeDto> PaymentMethodTypes { get; set; } = [];
     public string Country { get; set; } = "México";
     public string State { get; set; }
     public string City { get; set; }
     public string Address { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public DateTime CreatedAt { get; set; }
+    public List<UserMedicalLicenseDto> MedicalLicenses { get; set; } = [];
 }

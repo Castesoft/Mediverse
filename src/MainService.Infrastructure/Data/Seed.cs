@@ -82,18 +82,32 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedSpecialtiesAsync(DataContext context)
+    private static async Task<List<Specialty>> SeedSpecialtiesAsync(DataContext context)
     {
-        if (await context.Specialties.AnyAsync()) return;
-        await context.Specialties.AddRangeAsync(SeedDataSpecialties.specialties.ToArray());
-        await context.SaveChangesAsync();
+        if (!await context.Specialties.AnyAsync()) {
+            await context.Specialties.AddRangeAsync(SeedDataSpecialties.specialties.ToArray());
+            await context.SaveChangesAsync();
+
+            return await context.Specialties
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        return [];
     }
 
-    private static async Task SeedPaymentMethodTypesAsync(DataContext context)
+    private static async Task<List<PaymentMethodType>> SeedPaymentMethodTypesAsync(DataContext context)
     {
-        if (await context.PaymentMethodTypes.AnyAsync()) return;
-        await context.PaymentMethodTypes.AddRangeAsync(SeedData.paymentMethodTypes.ToArray());
-        await context.SaveChangesAsync();
+        if (!await context.PaymentMethodTypes.AnyAsync())
+        {
+            await context.PaymentMethodTypes.AddRangeAsync(SeedData.paymentMethodTypes.ToArray());
+            await context.SaveChangesAsync();
+
+            return await context.PaymentMethodTypes
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
     }
 
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
@@ -131,6 +145,12 @@ public static class Seed
 
     public static async Task SeedUsersAsync(UserManager<AppUser> userManager, DataContext context)
     {
+        await SeedProductsAsync(context);
+        await SeedServicesAsync(context);
+        List<Specialty> specialties = await SeedSpecialtiesAsync(context);
+        List<PaymentMethodType> paymentMethodTypes = await SeedPaymentMethodTypesAsync(context);
+        await SeedMexicoStates(context);
+        
         if (await userManager.Users.AnyAsync()) return;
 
         var admin = new AppUser
@@ -259,6 +279,10 @@ public static class Seed
 
         foreach (var user in doctorsForSeeding)
         {
+            // aqui seria lo de especialidades
+            user.UserMedicalLicenses.Add(Utils.CreateUserMedicalLicense(specialties));
+            user.DoctorPaymentMethodTypes.AddRange(Utils.CreateDoctorPaymentMethodTypes(paymentMethodTypes));
+            
             List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Doctor").ToList();
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
             if (!createUserResult.Succeeded) return;
@@ -299,12 +323,7 @@ public static class Seed
         context.DoctorPatients.AddRange(doctorPatientRelationships);
         await context.SaveChangesAsync();
 
-        await SeedProductsAsync(context);
-        await SeedServicesAsync(context);
         await SeedRandomDoctorData(context, userManager);
-        await SeedSpecialtiesAsync(context);
-        await SeedPaymentMethodTypesAsync(context);
-        await SeedMexicoStates(context);
     }
 
     private static async Task SeedProductsAsync(DataContext context)

@@ -30,6 +30,8 @@ export class CardProfileDetailsComponent {
     FirstName: [''],
     LastName: [''],
     PhoneNumber: [''],
+    LicenseNumber: [''],
+    SpecialtyLicense: [''],
     SpecialtyId: [''],
     // subspecialtyId: [''],
     file: [''],
