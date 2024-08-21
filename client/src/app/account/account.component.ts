@@ -12,6 +12,7 @@ import { AccountOverviewComponent } from './components/account-overview/account-
 import { AccountSettingsComponent } from './components/account-settings/account-settings.component';
 import { AccountBillingComponent } from './components/account-billing/account-billing.component';
 import { AccountPaymentsComponent } from './components/account-payments/account-payments.component';
+import { AccountInsurancesComponent } from './components/account-insurances/account-insurances.component';
 
 @Component({
   selector: 'account-main-route',
@@ -74,7 +75,8 @@ export const itemResolver: ResolveFn<Account | null> = (route, state) => {
         { path: '', component: AccountOverviewComponent, data: { breadcrumb: 'Mi Cuenta', }, title: 'Mi Cuenta',  },
         { path: 'settings', component: AccountSettingsComponent, data: { breadcrumb: 'Configuración', }, title: 'Configuración', },
         { path: 'billing', component: AccountBillingComponent, data: { breadcrumb: 'Facturación', }, title: 'Facturación', },
-        { path: 'payments', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', }
+        { path: 'payments', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', },
+        { path: 'insurances', component: AccountInsurancesComponent, data: { breadcrumb: 'Seguros', }, title: 'Seguros', }
       ],
     },
   ])],

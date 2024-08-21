@@ -243,5 +243,11 @@ public class MappingProfiles : Profile
 
         CreateMap<PaymentMethodType, PaymentMethodTypeDto>();
         CreateMap<Specialty, SpecialtyDto>();
+        CreateMap<MedicalInsuranceCompany, MedicalInsuranceCompanyDto>()
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyPhoto.Photo.Url));
+        CreateMap<UserMedicalInsuranceCompany, UserMedicalInsuranceCompanyDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyId))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo.Url))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.Name));
     }
 }

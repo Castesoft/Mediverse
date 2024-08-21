@@ -1090,6 +1090,123 @@ public class AccountController(
     }
 
     [Authorize]
+    [HttpGet("medical-insurance-companies-fields")]
+    public async Task<ActionResult<List<MedicalInsuranceCompanyDto>>> GetMedicalInsuranceCompaniesFields()
+    {
+        return await uow.UserRepository.GetMedicalInsuranceCompaniesAsync();
+    }
+
+    [Authorize]
+    [HttpGet("medical-insurance-companies")]
+    public async Task<ActionResult<List<UserMedicalInsuranceCompanyDto>>> GetMedicalInsuranceCompanies()
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.MedicalInsuranceCompany)
+                .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
+                .ThenInclude(x => x.Photo)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        return mapper.Map<List<UserMedicalInsuranceCompanyDto>>(user.UserMedicalInsuranceCompanies);
+    }
+
+    [Authorize]
+    [HttpPost("medical-insurance-company")]
+    public async Task<ActionResult<UserMedicalInsuranceCompanyDto>> AddMedicalInsuranceCompany(UserMedicalInsuranceCompanyCreateDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserMedicalInsuranceCompanies)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (user.UserMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == request.MedicalInsuranceCompanyId))
+            return BadRequest("Ya tienes esta compañía de seguro médico registrada.");
+
+        if (request.IsMain)
+        {
+            var mainMedicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.IsMain);
+            if (mainMedicalInsuranceCompany != null) mainMedicalInsuranceCompany.IsMain = false;
+        }
+
+        user.UserMedicalInsuranceCompanies.Add(new() {
+            UserId = userId,
+            MedicalInsuranceCompanyId = request.MedicalInsuranceCompanyId,
+            IsMain = request.IsMain,
+            PolicyNumber = request.PolicyNumber
+        });
+
+        if (!await uow.Complete()) return BadRequest("Error guardando la compañía de seguro médico.");
+
+        user = await userManager.Users
+            .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.MedicalInsuranceCompany)
+                .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
+                .ThenInclude(x => x.Photo)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        return mapper.Map<UserMedicalInsuranceCompanyDto>(user.UserMedicalInsuranceCompanies.Last());
+    }
+
+    [Authorize]
+    [HttpDelete("medical-insurance-company/{medicalInsuranceCompanyId}")]
+    public async Task<ActionResult> DeleteMedicalInsuranceCompany(int medicalInsuranceCompanyId)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserMedicalInsuranceCompanies)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        UserMedicalInsuranceCompany medicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId);
+        if (medicalInsuranceCompany == null) return NotFound($"La compañía de seguro médico con id {medicalInsuranceCompanyId} no existe.");
+
+        user.UserMedicalInsuranceCompanies.Remove(medicalInsuranceCompany);
+
+        if (!await uow.Complete()) return BadRequest("Error eliminando la compañía de seguro médico.");
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPut("medical-insurance-company/{medicalInsuranceCompanyId}")]
+    public async Task<ActionResult> UpdateMedicalInsuranceCompany(int medicalInsuranceCompanyId, UserMedicalInsuranceCompanyUpdateDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserMedicalInsuranceCompanies)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        UserMedicalInsuranceCompany medicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId);
+        if (medicalInsuranceCompany == null) return NotFound($"La compañía de seguro médico con id {medicalInsuranceCompanyId} no existe.");
+
+        if (request.IsMain)
+        {
+            var mainMedicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.IsMain);
+            if (mainMedicalInsuranceCompany != null) mainMedicalInsuranceCompany.IsMain = false;
+        }
+
+        medicalInsuranceCompany.IsMain = request.IsMain;
+        medicalInsuranceCompany.PolicyNumber = request.PolicyNumber;
+
+        if (!uow.HasChanges()) return Ok();
+        if (!await uow.Complete()) return BadRequest("Error actualizando la compañía de seguro médico.");
+
+        return Ok();
+    }
+
+    [Authorize]
     [HttpPut("email")]
     public async Task<ActionResult<AccountDto>> UpdateEmail([FromBody] EmailUpdateDto request)
     {

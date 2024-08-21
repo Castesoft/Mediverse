@@ -46,6 +46,8 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<State> States { get; set; }
     public DbSet<City> Cities { get; set; }
     public DbSet<Neighborhood> Neighborhoods { get; set; }
+    public DbSet<MedicalInsuranceCompany> MedicalInsuranceCompanies { get; set; }
+    public DbSet<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

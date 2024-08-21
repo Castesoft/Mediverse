@@ -51,7 +51,7 @@
         <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
       </span>
     </button>
-    @if (!requiresTwoFactor) {
+    @if (!requiresTwoFactor && accountService.current() === null) {
       <div class="text-center text-muted text-uppercase fw-bold mb-5">o</div>
       <div id="google-btn"></div>
     }

@@ -186,6 +186,9 @@ import { AccountService } from 'src/app/_services/account.service';
       <li class="nav-item mt-2">
         <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/payments']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Pagos</a>
       </li>
+      <li class="nav-item mt-2">
+        <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/insurances']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Seguros</a>
+      </li>
     </ul>
   `,
   standalone: true,

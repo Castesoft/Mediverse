@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
 import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billingDetails';
+import { MedicalInsuranceCompany, UserMedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,8 @@ export class AccountService {
   baseUrl = `${environment.apiUrl}account/`;
   current = signal<Account | null>(null);
   billingDetails = signal<BillingDetails | null>(null);
+  medicalInsuranceCompanies = signal<MedicalInsuranceCompany[] | null>(null);
+  userMedicalInsuranceCompanies = signal<UserMedicalInsuranceCompany[] | null>(null);
   roles = computed<Role[]>(() => {
 
     const user = this.current();
@@ -250,6 +253,74 @@ export class AccountService {
           userAddresses: addresses.sort((a, b) => a.isBilling ? -1 : 1),
           userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
         });
+      })
+    );
+  }
+
+  getMedicalInsuranceCompaniesFields() {
+    if (this.medicalInsuranceCompanies() !== null) return;
+
+    this.http.get<[]>(`${this.baseUrl}medical-insurance-companies-fields`).subscribe({
+      next: companies => {
+        this.medicalInsuranceCompanies.set(companies);
+      }
+    });
+  }
+
+  getUserMedicalInsuranceCompanies() {
+    if (this.userMedicalInsuranceCompanies() !== null) return;
+
+    this.http.get<UserMedicalInsuranceCompany[]>(`${this.baseUrl}medical-insurance-companies`).subscribe({
+      next: companies => {
+        this.userMedicalInsuranceCompanies.set(companies);
+      }
+    });
+  }
+
+  addMedicalInsurance(value: any) {
+    return this.http.post<UserMedicalInsuranceCompany>(`${this.baseUrl}medical-insurance-company`, value).pipe(
+      map(newInsurance => {
+        this.snackbarService.success('Póliza de seguro añadida correctamente');
+        if (newInsurance.isMain) {
+          const insurances = this.userMedicalInsuranceCompanies() || [];
+          insurances.forEach(i => i.isMain = false);
+          insurances.push(newInsurance as UserMedicalInsuranceCompany);
+          this.userMedicalInsuranceCompanies.set(insurances.sort((a, b) => a.isMain ? -1 : 1));
+        } else {
+          this.userMedicalInsuranceCompanies.set([...this.userMedicalInsuranceCompanies() || [], newInsurance as UserMedicalInsuranceCompany]);
+        }
+      })
+    );
+  }
+
+  deleteMedicalInsurance(id: number) {
+    return this.http.delete(`${this.baseUrl}medical-insurance-company/${id}`).pipe(
+      tap(() => {
+        this.snackbarService.success('Póliza de seguro eliminada correctamente');
+        this.userMedicalInsuranceCompanies.set(this.userMedicalInsuranceCompanies()?.filter(i => i.id !== id) || []);
+      })
+    );
+  }
+
+  updateMedicalInsurance(id:number, value: any) {
+    return this.http.put<UserMedicalInsuranceCompany>(`${this.baseUrl}medical-insurance-company/${id}`, value).pipe(
+      tap(_ => {
+        console.log(id)
+        console.log(value)
+        this.snackbarService.success('Póliza de seguro actualizada correctamente');
+        let insurances = this.userMedicalInsuranceCompanies() || [];
+        let modifiedInsurance = insurances.find(i => i.id === id);
+        if (value.IsMain) {
+          insurances.forEach(i => i.isMain = false);
+        }
+        insurances = insurances.map(i => i.id === id ? {
+          id: id,
+          name: modifiedInsurance!.name,
+          isMain: value.IsMain,
+          policyNumber: value.PolicyNumber,
+          photoUrl: modifiedInsurance!.photoUrl
+        } : i);
+        this.userMedicalInsuranceCompanies.set(insurances.sort((a, b) => a.isMain ? -1 : 1));
       })
     );
   }
