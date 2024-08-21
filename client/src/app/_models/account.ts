@@ -17,6 +17,7 @@ export class Account {
   sex!: string;
   token!: string;
   photoUrl?: string;
+  bannerUrl?: string;
   mainSpecialty!: string;
   linkedEmail!: boolean;
   linkedGoogle!: boolean;

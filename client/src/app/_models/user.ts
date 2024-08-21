@@ -175,6 +175,7 @@ export class CreateForm {
       email: new FormControl(''),
       phoneNumber: new FormControl(''),
       sex: new FormControl(''),
+      recommendedBy: new FormControl(''),
     });
   }
 

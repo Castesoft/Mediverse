@@ -476,6 +476,49 @@ public class AccountController(
         return accountDto;
     }
 
+    [Authorize]
+    [HttpPut("doctor-banner")]
+    public async Task<ActionResult<AccountDto>> SetDoctorBannerPhotoAsync(IFormFile file)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .Include(x => x.DoctorBannerPhoto)
+                .ThenInclude(x => x.Photo)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+        
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+        if (!user.UserRoles.Any(x => x.Role.Name == "Doctor")) return BadRequest("No tienes permisos para realizar esta acción.");
+
+        Photo bannerPhoto = user.DoctorBannerPhoto?.Photo;
+        if (bannerPhoto != null)
+        {
+            if (!await photosService.DeleteAsync(bannerPhoto)) return BadRequest("Error eliminando la foto de portada.");
+        }
+
+        ImageUploadParams imageUploadParams = new() {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/DoctorBannerPhoto",
+        };
+
+        var result = await cloudinaryService.Upload(file, imageUploadParams);
+
+        if (result.Error != null) return BadRequest(result.Error.Message);
+
+        user.DoctorBannerPhoto = new() {
+            Photo = new() { Url = result.SecureUrl.AbsoluteUri, PublicId = result.PublicId },
+            UserId = userId
+        };
+
+        if (!await uow.Complete()) return BadRequest("Error guardando la foto.");
+
+        var accountDto = await usersService.GenerateAccountDtoAsync(userId);
+
+        return accountDto;
+    }
+
     [AllowAnonymous]
     [HttpGet("request-password-reset-token/{email}")]
     public async Task<ActionResult<AccountDto>> RequestPasswordResetTokenWithEmailAsync([FromRoute] string email)
@@ -1200,6 +1243,54 @@ public class AccountController(
 
         if (!uow.HasChanges()) return Ok();
         if (!await uow.Complete()) return BadRequest("Error actualizando la compañía de seguro médico.");
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpGet("doctor-medical-insurance-companies")]
+    public async Task<ActionResult<List<MedicalInsuranceCompanyDto>>> GetDoctorMedicalInsuranceCompanies()
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.DoctorMedicalInsuranceCompanies)
+                .ThenInclude(x => x.MedicalInsuranceCompany)
+                .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
+                .ThenInclude(x => x.Photo)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        return mapper.Map<List<MedicalInsuranceCompanyDto>>(user.DoctorMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany).ToList());
+    }
+
+    [Authorize]
+    [HttpPost("doctor-medical-insurance-company/{medicalInsuranceCompanyId}")]
+    public async Task<ActionResult> ToggleDoctorMedicalInsuranceCompany(int medicalInsuranceCompanyId)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.DoctorMedicalInsuranceCompanies)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (user.DoctorMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId))
+        {
+            DoctorMedicalInsuranceCompany doctorMedicalInsuranceCompany = user.DoctorMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId);
+            user.DoctorMedicalInsuranceCompanies.Remove(doctorMedicalInsuranceCompany);
+        }
+        else
+        {
+            user.DoctorMedicalInsuranceCompanies.Add(new() {
+                UserId = userId,
+                MedicalInsuranceCompanyId = medicalInsuranceCompanyId
+            });
+        }
+
+        if (!await uow.Complete()) return BadRequest("Error actualizando la compañía de seguro médico del doctor.");
 
         return Ok();
     }

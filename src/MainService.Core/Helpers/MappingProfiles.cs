@@ -47,6 +47,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.BannerUrl, opt => opt.MapFrom(src => src.DoctorBannerPhoto.Photo.Url))
             .ForMember(dest => dest.MainSpecialty, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
             .ForMember(dest => dest.SpecialtyId, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense.MedicalLicenseSpecialty.Specialty.Id))
             .ForMember(dest => dest.PaymentMethodTypes, opt => opt.MapFrom(src => src.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodType)))

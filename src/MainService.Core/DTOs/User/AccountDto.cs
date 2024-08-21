@@ -16,6 +16,7 @@ public class AccountDto
     public bool IsPhoneNumberVerified { get; set; }
     public string Token { get; set; }
     public string PhotoUrl { get; set; }
+    public string BannerUrl { get; set; }
     public string MainSpecialty { get; set; }
     public bool LinkedEmail { get; set; }
     public bool LinkedGoogle { get; set; }

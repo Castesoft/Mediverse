@@ -33,6 +33,7 @@ public class AppUser : IdentityUser<int>
 
     public ICollection<UserAddress> UserAddresses { get; set; } = [];
     public UserPhoto UserPhoto { get; set; }
+    public DoctorBannerPhoto DoctorBannerPhoto { get; set; }
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
     public ICollection<AppUserPermission> UserPermissions { get; set; } = [];
     public ICollection<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
@@ -51,7 +52,8 @@ public class AppUser : IdentityUser<int>
     public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
     public ICollection<NurseEvent> NurseEvents { get; set; } = [];
     public ICollection<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
-    public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];    
+    public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];
+    public ICollection<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
 
     // Navigation properties
     public List<DoctorService> DoctorServices { get; set; } = [];

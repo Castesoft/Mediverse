@@ -4,5 +4,6 @@ namespace MainService.Models.Entities
     {
         public MedicalInsuranceCompanyPhoto MedicalInsuranceCompanyPhoto { get; set; }
         public ICollection<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
+        public ICollection<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
     }
 }

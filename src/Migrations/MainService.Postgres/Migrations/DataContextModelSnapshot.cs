@@ -365,6 +365,25 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("ClinicNurses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "PhotoId");
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorBannerPhoto");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -414,6 +433,21 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorLinks");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicalInsuranceCompanyId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "MedicalInsuranceCompanyId");
+
+                    b.HasIndex("MedicalInsuranceCompanyId");
+
+                    b.ToTable("DoctorMedicalInsuranceCompany");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
@@ -1781,6 +1815,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Nurse");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Photo", "Photo")
+                        .WithOne("DoctorBannerPhoto")
+                        .HasForeignKey("MainService.Models.Entities.DoctorBannerPhoto", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithOne("DoctorBannerPhoto")
+                        .HasForeignKey("MainService.Models.Entities.DoctorBannerPhoto", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photo");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Address", "Clinic")
@@ -1836,6 +1889,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Link");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalInsuranceCompany", "MedicalInsuranceCompany")
+                        .WithMany("DoctorMedicalInsuranceCompanies")
+                        .HasForeignKey("MedicalInsuranceCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("DoctorMedicalInsuranceCompanies")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalInsuranceCompany");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
@@ -2569,11 +2641,15 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Navigation("ClinicNurses");
 
+                    b.Navigation("DoctorBannerPhoto");
+
                     b.Navigation("DoctorClinics");
 
                     b.Navigation("DoctorEvents");
 
                     b.Navigation("DoctorLinks");
+
+                    b.Navigation("DoctorMedicalInsuranceCompanies");
 
                     b.Navigation("DoctorNurses");
 
@@ -2656,6 +2732,8 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
                 {
+                    b.Navigation("DoctorMedicalInsuranceCompanies");
+
                     b.Navigation("MedicalInsuranceCompanyPhoto");
 
                     b.Navigation("UserMedicalInsuranceCompanies");
@@ -2705,6 +2783,8 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>
                 {
+                    b.Navigation("DoctorBannerPhoto");
+
                     b.Navigation("DoctorSignature");
 
                     b.Navigation("MedicalInsuranceCompanyPhoto");

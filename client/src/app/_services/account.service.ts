@@ -1,4 +1,4 @@
-import { Observable, map, of, tap } from "rxjs";
+import { Observable, catchError, map, of, tap } from "rxjs";
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
@@ -19,6 +19,7 @@ export class AccountService {
   billingDetails = signal<BillingDetails | null>(null);
   medicalInsuranceCompanies = signal<MedicalInsuranceCompany[] | null>(null);
   userMedicalInsuranceCompanies = signal<UserMedicalInsuranceCompany[] | null>(null);
+  doctorMedicalInsuranceCompanies = signal<MedicalInsuranceCompany[] | null>(null);
   roles = computed<Role[]>(() => {
 
     const user = this.current();
@@ -321,6 +322,41 @@ export class AccountService {
           photoUrl: modifiedInsurance!.photoUrl
         } : i);
         this.userMedicalInsuranceCompanies.set(insurances.sort((a, b) => a.isMain ? -1 : 1));
+      })
+    );
+  }
+
+  getDoctorMedicalInsuranceCompanies() {
+    if (this.doctorMedicalInsuranceCompanies() !== null) return;
+
+    this.http.get<UserMedicalInsuranceCompany[]>(`${this.baseUrl}doctor-medical-insurance-companies`).subscribe({
+      next: companies => {
+        this.doctorMedicalInsuranceCompanies.set(companies);
+      }
+    });
+  }
+
+  toggleDoctorMedicalInsuranceCompany(insuranceId: number, checked: boolean) {
+    return this.http.post(`${this.baseUrl}doctor-medical-insurance-company/${insuranceId}`, {}).pipe(
+      tap(() => {
+        let companies = this.doctorMedicalInsuranceCompanies() || [];
+        const selectedInsurance = this.medicalInsuranceCompanies()?.find(company => company.id == insuranceId)!;
+        companies = checked ? [...companies, selectedInsurance] : companies.filter(c => c.id !== insuranceId);
+        this.doctorMedicalInsuranceCompanies.set(companies);
+      }),
+      catchError(_ => {
+        this.snackbarService.error('Error al actualizar la aseguradora afiliada');
+        return of(null);
+      })
+    );
+  }
+
+  setDoctorBanner(value: any) {
+    return this.http.put<Account>(`${this.baseUrl}doctor-banner`, value).pipe(
+      map(response => {
+        this.snackbarService.success('Banner actualizado correctamente');
+        this.setCurrentUser(response);
+        return response;
       })
     );
   }

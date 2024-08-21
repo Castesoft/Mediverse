@@ -78,3 +78,31 @@
     </div>
   </div>
 </div>
+
+@if (accountService.hasRole(['Doctor'])) {
+    <div class="card mb-5 mb-xl-10">
+        <div class="card-header">
+            <div class="card-title">
+                <h3>Seguros afiliados</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="fs-6 fw-semibold text-muted">Los seguros seleccionados aparecerán a los pacientes a la hora de agendar una cita.</div>
+            <div class="row gx-9 gy-6">
+                @for (insuranceCompany of accountService.medicalInsuranceCompanies(); track $index) {
+                    <div class="col-xl-6">
+                        <div class="d-flex flex-stack mt-5">
+                            <div class="me-5">
+                                <img src="{{ insuranceCompany?.photoUrl }}" alt="{{ insuranceCompany?.name }}" class="w-50px me-3" />
+                                <label class="fs-6 fw-semibold form-label">{{insuranceCompany.name}}</label>
+                            </div>
+                            <label class="form-check form-switch form-check-custom form-check-solid">
+                                <input class="form-check-input" type="checkbox" [checked]="doctorContainsCompany(insuranceCompany)" (change)="toggleDoctorMedicalInsuranceCompany($event, insuranceCompany.id)"  />
+                            </label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

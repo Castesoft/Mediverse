@@ -8,6 +8,7 @@ public class Photo : BaseEntity
     public int Size { get; set; }
 
     public UserPhoto UserPhoto { get; set; }
+    public DoctorBannerPhoto DoctorBannerPhoto { get; set; }
     public ProductPhoto ProductPhoto { get; set; }
     public ServicePhoto ServicePhoto { get; set; }
     public DoctorSignature DoctorSignature { get; set; }

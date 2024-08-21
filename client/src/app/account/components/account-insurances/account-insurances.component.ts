@@ -15,7 +15,9 @@ export class AccountInsurancesComponent implements OnInit {
   accountService = inject(AccountService);
 
   ngOnInit(): void {
+    this.accountService.getMedicalInsuranceCompaniesFields();
     this.accountService.getUserMedicalInsuranceCompanies();
+    this.accountService.getDoctorMedicalInsuranceCompanies();
   }
 
   openAddInsuranceModal() {
@@ -38,5 +40,17 @@ export class AccountInsurancesComponent implements OnInit {
 
   deleteInsurance(insuranceId: number) {
     this.accountService.deleteMedicalInsurance(insuranceId).subscribe();
+  }
+
+  toggleDoctorMedicalInsuranceCompany(e: any, insuranceId: number) {
+    this.accountService.toggleDoctorMedicalInsuranceCompany(insuranceId, e.target.checked).subscribe();
+  }
+
+  doctorContainsCompany(insuranceCompany: any) {
+    if (!this.accountService.doctorMedicalInsuranceCompanies()) {
+      return false;
+    }
+
+    return this.accountService.doctorMedicalInsuranceCompanies()!.some((company: any) => company.id === insuranceCompany.id);
   }
 }
