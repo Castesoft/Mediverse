@@ -1,11 +1,60 @@
-import { NgModule } from "@angular/core";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { TableLoadingPlaceholderComponent } from "src/app/_shared/table/table-loading-placeholder.component";
-import { TablePagerComponent } from "src/app/_shared/table/table-pager.component";
-import { TableWrapperComponent } from "src/app/_shared/table/table-wrapper.component";
+import { NgModule } from '@angular/core';
+import { Entity } from 'src/app/_forms/form';
+import { FormUse, View, CatalogMode } from 'src/app/_models/types';
+import { TableHeaderComponent } from 'src/app/_shared/table/table-header.component';
+import { TableLoadingPlaceholderComponent } from 'src/app/_shared/table/table-loading-placeholder.component';
+import {
+  TableCellComponent,
+  TableCheckCellComponent,
+  TableMenuCellComponent,
+} from 'src/app/_shared/table/table-menu.component';
+import { TablePagerComponent } from 'src/app/_shared/table/table-pager.component';
+import { TableWrapperComponent } from 'src/app/_shared/table/table-wrapper.component';
 
 @NgModule({
-  imports: [TableWrapperComponent, TableHeaderComponent, TablePagerComponent, TableLoadingPlaceholderComponent,],
-  exports: [TableWrapperComponent, TableHeaderComponent, TablePagerComponent, TableLoadingPlaceholderComponent,],
+  imports: [
+    TableWrapperComponent,
+    TableHeaderComponent,
+    TableMenuCellComponent,
+    TableCellComponent,
+    TablePagerComponent,
+    TableCheckCellComponent,
+    TableLoadingPlaceholderComponent,
+  ],
+  exports: [
+    TableWrapperComponent,
+    TableHeaderComponent,
+    TableMenuCellComponent,
+    TableCellComponent,
+    TablePagerComponent,
+    TableCheckCellComponent,
+    TableLoadingPlaceholderComponent,
+  ],
 })
 export class TableModule {}
+
+export class DetailModal<T extends Entity> {
+  id!: number;
+  use!: FormUse;
+  title?: string;
+  key!: string;
+  item!: T;
+  view: View = 'modal';
+}
+
+export class FilterModal {
+  formId!: string;
+  key!: string;
+  title?: string;
+  item = undefined;
+  use: FormUse = 'filter';
+  view: View = 'modal';
+}
+
+export class CatalogModal {
+  key!: string;
+  isCompact = true;
+  mode!: CatalogMode;
+  view: View = 'modal';
+  title?: string;
+}

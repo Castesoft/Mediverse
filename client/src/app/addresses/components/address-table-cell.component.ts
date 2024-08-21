@@ -1,8 +1,7 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Address } from 'src/app/_models/address';
 import { Addresses } from 'src/app/_models/types';
-import { AddressesService } from 'src/app/_services/addresses.service';
+import { Address, AddressesService } from 'src/app/addresses/addresses.config';
 
 @Component({
   host: { class: 'd-flex align-items-center' },
@@ -44,8 +43,8 @@ export class AddressTableCellComponent implements OnInit {
   routerLink?: string;
 
   ngOnInit(): void {
-    this.routerLink = `${
-      this.service.namingDictionary.get(this.type())!.catalogRoute
-    }/${this.address().id}`;
+    // this.routerLink = `${
+    //   this.service.namingDictionary.get(this.type())!.catalogRoute
+    // }/${this.address().id}`;
   }
 }

@@ -11,7 +11,7 @@ import {
   Column,
   FormUse,
   LoadingTypes,
-  NamingSubjectType,
+  NamingSubject,
   Role,
   SortOptions,
   View
@@ -52,7 +52,7 @@ export class UsersService {
   hideCatalogModal = () => this.catalogModalRef.hide();
 
   // init to role 'male' and 'female' for the naming subject type
-  namingDictionary = new Map<Role, NamingSubjectType>([
+  namingDictionary = new Map<Role, NamingSubject>([
     ["Admin", {
       singular: "admin",
       plural: "admins",

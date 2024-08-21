@@ -6,7 +6,7 @@ import { BadRequest, Role } from "src/app/_models/types";
 import { User, UserSummary } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
-import { Address } from "./address";
+import { Address } from "src/app/addresses/addresses.config";
 
 const subject = 'event';
 

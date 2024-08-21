@@ -2,8 +2,7 @@ import {CurrencyPipe, DecimalPipe} from "@angular/common";
 import {Component, inject, input, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
 import {Addresses, Role, View} from "src/app/_models/types";
-import {Address} from "src/app/_models/address";
-import {AddressesService} from "src/app/_services/addresses.service";
+import { Address, AddressesService } from "src/app/addresses/addresses.config";
 
 @Component({
   host: { class: 'card', },
@@ -23,7 +22,7 @@ import {AddressesService} from "src/app/_services/addresses.service";
             class="bg-success position-absolute border border-4 border-body h-15px w-15px rounded-circle translate-middle start-100 top-100 ms-n3 mt-n3">
             </div>
         </div>
-        <a [routerLink]="[]" (click)="service.clickLink(type(), address.id, address, key(), 'detail', view())"
+        <a [routerLink]="[]" (click)="service.clickLink(address, key(), 'detail', view())"
            class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">
           {{ address.name }}
         </a>
@@ -59,12 +58,12 @@ export class AddressCardCompactComponent implements OnInit {
   address?: Address;
 
   ngOnInit(): void {
-    this.service.selected$(this.key()).subscribe({
-      next: address => {
-        console.log(address)
-        this.address = address;
-      }
-    })
+    // this.service.selected$(this.key()).subscribe({
+    //   next: address => {
+    //     console.log(address)
+    //     this.address = address;
+    //   }
+    // })
 
   }
 }

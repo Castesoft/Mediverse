@@ -1,10 +1,9 @@
 import {Component, inject, input, model, OnInit} from "@angular/core";
-import {Address} from "../_models/address";
 import {RouterLink} from "@angular/router";
 import {Subject} from "rxjs";
-import {AddressesService} from "../_services/addresses.service";
-import {IconsService} from "../_services/icons.service";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import { IconsService } from "src/app/_services/icons.service";
+import { Address, AddressesService } from "src/app/addresses/addresses.config";
 
 @Component({
   selector: 'div[clinicSummaryCard]',
@@ -16,7 +15,7 @@ import {FaIconComponent} from "@fortawesome/angular-fontawesome";
   ]
 })
 export class ClinicSummaryCardComponent implements OnInit {
-  private clinicsService = inject(AddressesService);
+  private addressesService = inject(AddressesService);
   private ngUnsubscribe = new Subject<void>();
   icons = inject(IconsService);
 
@@ -30,11 +29,11 @@ export class ClinicSummaryCardComponent implements OnInit {
   }
 
   private subscribeToSelectedClinic = (key: string) => {
-    this.clinicsService.selected$(key).subscribe((clinic) => {
-      if (clinic) {
-        this.item.set(clinic);
-      }
-    });
+    // this.clinicsService.selected$(key).subscribe((clinic) => {
+    //   if (clinic) {
+    //     this.item.set(clinic);
+    //   }
+    // });
   }
 
   generateMapsUrl(address: Address): string {

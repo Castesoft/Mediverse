@@ -3,9 +3,10 @@ import { AbstractControl, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
 import { debounceTime, finalize, map, of, switchMap, take } from 'rxjs';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { Range } from 'src/app/_models/date-range';
-import { PaginatedResult } from 'src/app/_models/pagination';
+import { PaginatedResponse, PaginatedResult } from 'src/app/_models/pagination';
 import { AccountService } from 'src/app/_services/account.service';
 import { Identifiable } from 'src/app/_models/types';
+import { Entity } from 'src/app/_forms/form';
 
 export const getItemsByKey = <T extends Identifiable>(key: string, cache: Map<string, Map<string, PaginatedResult<T[]>>>): T[] => {
   const items: T[] = [];
@@ -151,6 +152,21 @@ export function matchValues(matchTo: string): ValidatorFn {
   };
 }
 
+export function getPaginatedResponse<T extends Entity>(
+  url: string,
+  params: HttpParams,
+  http: HttpClient
+) {
+  return http.get<T[]>(url, { observe: "response", params }).pipe(
+    map(response => {
+      const result: T[] = response.body!.map((item) => {
+        return { ...item, isSelected: false };
+      });
+      return new PaginatedResponse<T>(result, JSON.parse(response.headers.get("Pagination")!));
+    })
+  );
+}
+
 export function getPaginatedResult<T>(
   url: string,
   params: HttpParams,
@@ -272,4 +288,16 @@ export const cleanStringAndCreateRoute = (str: string) => {
 
 export const calcDateDiff = (dateFrom: Date, dateTo: Date) => {
   return Math.floor((Date.UTC(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()) - Date.UTC(dateTo.getFullYear(), dateTo.getMonth(), dateTo.getDate()) ) /(1000 * 60 * 60 * 24));
+}
+
+export function omitKeys<T extends object, K extends keyof T>(obj: T, keysToOmit: K[]): Omit<T, K> {
+  const result = {} as Omit<T, K>;
+
+  for (const key in obj) {
+      if (obj.hasOwnProperty(key) && !keysToOmit.includes(key as unknown as K)) {
+          (result as any)[key] = obj[key];
+      }
+  }
+
+  return result;
 }

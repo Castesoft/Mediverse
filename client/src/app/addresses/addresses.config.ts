@@ -1,70 +1,227 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, NgModule, OnInit } from "@angular/core";
-import { ActivatedRoute, ResolveFn, Router, RouterModule } from "@angular/router";
-import { Account } from "src/app/_models/account";
-import { Address } from "src/app/_models/address";
-import { Addresses, CatalogMode, FormUse, Sections, View } from "src/app/_models/types";
-import { AccountService } from "src/app/_services/account.service";
-import { AddressesService } from "src/app/_services/addresses.service";
-import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
-import { CompactTableService } from "src/app/_services/compact-table.service";
-import { GuidService } from "src/app/_services/guid.service";
-import { LayoutModule } from "src/app/_shared/layout.module";
-import { AddressesCatalogComponent } from "src/app/addresses/components/addresses-catalog.component";
-import { AddressDetailComponent, AddressEditComponent, AddressNewComponent } from "src/app/addresses/views";
+import { CommonModule } from '@angular/common';
+import { HttpParams } from '@angular/common/http';
+import { Component, inject, Injectable, NgModule, OnInit } from '@angular/core';
+import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from '@angular/router';
+import { createId } from '@paralleldrive/cuid2';
+import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
+import { Entity, EntityParams, Form, IParams, SelectItem } from 'src/app/_forms/form';
+import { Addresses, CatalogMode, FormUse, NamingSubject, Sections, View } from 'src/app/_models/types';
+import { CompactTableService } from 'src/app/_services/compact-table.service';
+import { EnvService } from 'src/app/_services/env.service';
+import { ServiceHelper } from 'src/app/_services/serviceHelper';
+// import { BreadcrumbsModule } from 'src/app/_utils/breadcrumbs.module';
+import { AddressesCatalogComponent } from 'src/app/addresses/components/addresses-catalog.component';
+import { AddressDetailModalComponent, AddressesFilterModalComponent, AddressesCatalogModalComponent } from 'src/app/addresses/modals';
+import { AddressDetailComponent } from 'src/app/addresses/views';
+
+
+export class AddressForm extends Form<Address> {}
+export class AddressesFilterForm<U extends EntityParams<U>> extends Form<U> {}
+
+export class Address extends Entity {
+  street: string = '';
+  exteriorNumber: string = '';
+  interiorNumber: string = '';
+  neighborhood: string = '';
+  city: string = '';
+  state: string = '';
+  country: string = '';
+  zipcode: string = '';
+  photoUrl: string = '';
+  latitude: number = 0;
+  longitude: number = 0;
+  type: Addresses = 'Clinic';
+
+  nursesCount = 0;
+  isMain = false;
+
+  constructor() {
+    super();
+  }
+}
+
+export class AddressParams extends EntityParams<Address> implements IParams {
+  street: string = '';
+  exteriorNumber: string = '';
+  interiorNumber: string = '';
+  neighborhood: string = '';
+  city: string = '';
+  state: string = '';
+  country: string = '';
+  zipcode: string = '';
+  photoUrl: string = '';
+  latitude: number = 0;
+  longitude: number = 0;
+  type: Addresses = 'Clinic';
+
+  constructor(key: string) {
+    super(key);
+  }
+
+  get httpParams(): HttpParams {
+    let params = super.getHttpParams();
+
+    const existingKeys = params.keys();
+
+    for (const key in this) {
+      if (Object.prototype.hasOwnProperty.call(this, key)) {
+        if (existingKeys.includes(key)) {
+          continue;
+        }
+
+        const value = (this as Record<string, any>)[key];
+
+        if (Array.isArray(value)) {
+          const joinedValues = this.isSelectItemArray(value)
+            ? value.map((item: SelectItem) => item.value).join(',')
+            : (value as string[]).join(',');
+          if (joinedValues) params = params.append(key, joinedValues);
+        } else if (value !== undefined && value !== null && value !== '') {
+          params = params.append(key, value.toString());
+        }
+      }
+    }
+
+    return params;
+  }
+
+  private isSelectItemArray(array: any[]): array is SelectItem[] {
+    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AddressesService extends ServiceHelper<
+  Address,
+  AddressParams,
+  AddressesFilterForm<AddressParams>,
+  Addresses
+> {
+  constructor() {
+    super(AddressParams, 'addresses', {
+      Account: new NamingSubject('dirección', 'direcciones', 'Direcciones', 'femenine', ''),
+      Clinic: new NamingSubject('clínica', 'clínicas', 'Clínicas', 'femenine', ''),
+    }, {
+      Account: [
+        { name: 'name', label: 'Dirección' },
+        { name: 'street', label: 'Calle' },
+        { name: 'exteriorNumber', label: 'Número exterior' },
+        { name: 'interiorNumber', label: 'Número interior' },
+        { name: 'neighborhood', label: 'Colonia' },
+        { name: 'city', label: 'Ciudad' },
+        { name: 'state', label: 'Estado' },
+        { name: 'country', label: 'País' },
+        { name: 'zipcode', label: 'Código postal' },
+        { name: 'photoUrl', label: 'URL de la foto' },
+        { name: 'latitude', label: 'Latitud' },
+        { name: 'longitude', label: 'Longitud' },
+        { name: 'type', label: 'Tipo' },
+        { name: 'nursesCount', label: 'Número de enfermeras' },
+        { name: 'isMain', label: 'Principal' },
+      ],
+      Clinic: [
+        { name: 'name', label: 'Clínica' },
+        { name: 'street', label: 'Calle' },
+        { name: 'exteriorNumber', label: 'Número exterior' },
+        { name: 'interiorNumber', label: 'Número interior' },
+        { name: 'neighborhood', label: 'Colonia' },
+        { name: 'zipcode', label: 'Código postal' },
+        { name: 'city', label: 'Ciudad' },
+        { name: 'state', label: 'Estado' },
+        { name: 'country', label: 'País' },
+        { name: 'nursesCount', label: 'Número de enfermeras' },
+        { name: 'isMain', label: 'Principal' },
+      ],
+    },
+  );
+  }
+
+  private detailModalRef: BsModalRef<AddressDetailModalComponent> = new BsModalRef<AddressDetailModalComponent>();
+  hideDetailModal = () => this.detailModalRef.hide();
+  private filterModalRef: BsModalRef<AddressesFilterModalComponent> = new BsModalRef<AddressesFilterModalComponent>();
+  hideFilterModal = () => this.filterModalRef.hide();
+  private catalogModalRef: BsModalRef<AddressesCatalogModalComponent> = new BsModalRef<AddressesCatalogModalComponent>();
+  hideCatalogModal = () => this.catalogModalRef.hide();
+
+  showCatalogModal = (event: MouseEvent, key: string, mode: CatalogMode, view: View): void => {
+    this.catalogModalRef = this.bsModalService.show(AddressesCatalogModalComponent,
+      { class: "modal-dialog-centered modal-xl", initialState: { mode: mode, key: key, view: view } });
+  };
+
+  showFiltersModal = (key: string, title = "Filtros"): void => {
+    this.filterModalRef = this.bsModalService.show(AddressesFilterModalComponent,
+      { class: "modal-dialog-centered", initialState: { key: key, title: title } });
+  };
+
+  clickLink = (item: Address | undefined = undefined, key: string | undefined = undefined,
+    use: FormUse = "detail", view: View) => {
+
+  if (view === "modal") {
+    this.detailModalRef = this.bsModalService.show(AddressDetailModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { item: item, use: use, key: key, title: undefined, view: "modal" }} as ModalOptions<AddressDetailModalComponent>);
+  } else {
+    this.bsModalService.hide();
+    switch (use) {
+      case "create":
+        this.router.navigate([this.dictionary['Clinic'].createRoute]);
+        break;
+      case "edit":
+        this.router.navigate([`${this.dictionary['Clinic'].catalogRoute}/${item?.id}/editar`]);
+        break;
+      case "detail":
+        this.router.navigate([`${this.dictionary['Clinic'].catalogRoute}/${item?.id}`]);
+        break;
+      }
+    }
+  };
+}
+
 
 @Component({
   selector: 'addresses-route',
-  template: `<router-outlet></router-outlet>`,
+  template: `
+  <router-outlet></router-outlet>
+  `,
 })
-export class AddressesComponent implements OnInit {
-  accountService = inject(AccountService);
-  breadcrumbService = inject(BreadcrumbService);
-
-  account: Account | null = null;
-  label?: string;
-
-  ngOnInit(): void {
-    this.account = this.accountService.current();
-    this.breadcrumbService.breadcrumb$.subscribe({
-      next: breadcrumb => {
-        this.label = breadcrumb;
-      }
-    });
-  }
+export class AddressesComponent {
+  dev = inject(EnvService);
 }
 
 @Component({
   selector: 'addresses-catalog-route',
   template: `
-  <div card>
-    <div
-      addressesCatalog
-      [mode]="mode"
-      [key]="key"
-      [view]="view"
-      [type]="type"
-    ></div>
-  </div>
+  <!-- <nav breadcrumbs>
+      <li item [section]="'admin'"></li>
+      <li item [section]="'maintenance'"></li>
+      <li active [label]="label"></li>
+    </nav> -->
+  <div
+    addressesCatalog
+    [mode]="mode"
+    [key]="key"
+    [view]="view"
+    [isCompact]="isCompact"
+  ></div>
   `,
   standalone: true,
-  imports: [RouterModule, AddressesCatalogComponent, LayoutModule,],
+  imports: [RouterModule, AddressesCatalogComponent, ],
 })
-class CatalogComponent implements OnInit {
+export class CatalogComponent implements OnInit {
   service = inject(AddressesService);
   compact = inject(CompactTableService);
-  guid = inject(GuidService);
+  router = inject(Router);
 
   isCompact = false;
   view: View = 'page';
   mode: CatalogMode = 'view';
-  key = this.guid.gen();
+  key = this.router.url;
   section: Sections = 'addresses';
-  type: Addresses = 'Account';
-  label: string;
+  label = this.service.dictionary['Clinic'].pluralTitlecase;
 
   constructor() {
-    this.label = this.service.namingDictionary.get(this.type)!.title;
   }
 
   ngOnInit(): void {
@@ -75,33 +232,30 @@ class CatalogComponent implements OnInit {
 @Component({
   selector: 'address-detail-route',
   template: `
+  <!-- <nav breadcrumbs>
+      <li item [section]="'admin'"></li>
+      <li item [section]="'maintenance'"></li>
+      <li item [section]="'addresses'"></li>
+      @if(label){<li active [label]="label"></li>}
+    </nav> -->
+
     @if (id && item) {
-      <div
-        addressDetailView
-        [id]="id"
-        [use]="use"
-        [view]="view"
-        [item]="item"
-        [key]="key"
-        [type]="type"
-      ></div>
+      <div addressDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>
     }
   `,
   standalone: true,
-  imports: [RouterModule, AddressDetailComponent, LayoutModule,],
+  imports: [RouterModule, AddressDetailComponent,],
 })
-class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   item?: Address;
-  id?: number;
+  id: number = 0;
   use: FormUse = 'detail';
   view: View = 'page';
-  label?: string;
-  key?: string;
-  section: Sections = 'addresses';
-  type: Addresses = 'Account';
+  label: string = '';
+  key = createId();
 
   ngOnInit(): void {
     this.route.paramMap.subscribe({
@@ -112,7 +266,7 @@ class DetailComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.name;
+        if (this.item) this.label = this.item.id.toString();
       },
     });
     const navigation = this.router.getCurrentNavigation();
@@ -122,34 +276,28 @@ class DetailComponent implements OnInit {
 @Component({
   selector: 'address-edit-route',
   template: `
+  <!-- <nav breadcrumbs>
+    <li item [section]="'admin'"></li>
+      <li item [section]="'maintenance'"></li>
+      <li item [section]="'addresses'"></li>
+      @if(label){<li active [label]="label"></li>}
+    </nav> -->
       @if (id && item) {
-        <div card>
-          <div
-            addressEditView
-            [id]="id"
-            [use]="use"
-            [view]="view"
-            [key]="key"
-            [item]="item"
-            [type]="type"
-          ></div>
-        </div>
+        <div addressDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>
       }
   `,
   standalone: true,
-  imports: [AddressEditComponent, RouterModule, LayoutModule,],
+  imports: [AddressDetailComponent, RouterModule,],
 })
-class EditComponent implements OnInit {
+export class EditComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   item?: Address;
-  id?: number;
+  id: number = 0;
   use: FormUse = 'edit';
   view: View = 'page';
-  label?: string;
-  key = undefined;
-  section: Sections = 'addresses';
-  type: Addresses = 'Account';
+  label: string = '';
+  key = createId();
 
   ngOnInit(): void {
     this.route.paramMap.subscribe({
@@ -160,7 +308,7 @@ class EditComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.name;
+        if (this.item) this.label = this.item.id.toString();
       },
     });
   }
@@ -168,60 +316,49 @@ class EditComponent implements OnInit {
 
 @Component({
   selector: 'address-new-route',
-  template: `<div addressNewView [use]="use" [view]="view" [type]="type"
-  ></div>`,
+  template: `
+  <!-- <nav breadcrumbs>
+      <li item [section]="'admin'"></li>
+      <li item [section]="'maintenance'"></li>
+      <li item [section]="'addresses'"></li>
+      <li active [label]="'Crear'"></li>
+    </nav> -->
+
+  <div addressDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>`
+  ,
   standalone: true,
-  imports: [AddressNewComponent, RouterModule, LayoutModule,],
+  imports: [AddressDetailComponent, RouterModule,],
 })
-class NewComponent {
+export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  type: Addresses = 'Account';
+  item = undefined;
+  key = createId();
 }
 
-export const addressResolver: ResolveFn<Address | null> = (route, state) => {
+export const itemResolver: ResolveFn<Address | null> = (route, state) => {
   const service = inject(AddressesService);
   const id = +route.paramMap.get('id')!;
-  return service.getById(id, 'Account');
+  return service.getById(id);
 };
-
-export const addressTitleDetailResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(AddressesService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Account').subscribe();
-  const address = service.getCurrent();
-  if (!address) return 'Detalle de dirección';
-  const title = `Detalle de dirección - ${address.name}`;
-  return title;
-}
-
-export const addressTitleEditResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(AddressesService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Account').subscribe();
-  const address = service.getCurrent();
-  if (!address) return 'Editar dirección';
-  const title = `Editar dirección - ${address.name}`;
-  return title;
-}
 
 @NgModule({
   imports: [RouterModule.forChild([
     {
-      path: '', title: 'Dirección', data: { breadcrumb: 'Dirección', },
+      path: '', title: 'Células', data: { breadcrumb: 'Células', },
       component: AddressesComponent, runGuardsAndResolvers: 'always',
       children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de direcciones', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'create', component: NewComponent, title: 'Crear nueva dirección', data: { breadcrumb: 'Nueva', }, },
+        { path: '', component: CatalogComponent, title: 'Catálogo de células', data: { breadcrumb: 'Catálogo', }, },
+        { path: 'nuevo', component: NewComponent, title: 'Crear nuevo célula', data: { breadcrumb: 'Nuevo', }, },
         {
-          path: ':id', title: addressTitleDetailResolver, data: { breadcrumb: 'Detalle', },
+          path: ':id', data: { breadcrumb: 'Detalle', },
           component: DetailComponent,
-          resolve: { item: addressResolver },
+          resolve: { item: itemResolver },
         },
         {
-          path: ':id/edit', title: addressTitleEditResolver, data: { breadcrumb: 'Editar', },
+          path: ':id/editar', data: { breadcrumb: 'Editar', },
           component: EditComponent,
-          resolve: { item: addressResolver },
+          resolve: { item: itemResolver },
         },
       ],
     },
@@ -234,229 +371,6 @@ export class AddressesRoutingModule { }
   declarations: [
     AddressesComponent,
   ],
-  imports: [ CommonModule, AddressesRoutingModule, LayoutModule, ]
+  imports: [ CommonModule, AddressesRoutingModule, ]
 })
 export class AddressesModule { }
-
-// clinics
-
-@Component({
-  selector: 'clinics-route',
-  template: `<router-outlet></router-outlet>`,
-})
-export class ClinicsComponent implements OnInit {
-  accountService = inject(AccountService);
-  breadcrumbService = inject(BreadcrumbService);
-
-  account: Account | null = null;
-  label?: string;
-
-  ngOnInit(): void {
-    this.account = this.accountService.current();
-    this.breadcrumbService.breadcrumb$.subscribe({
-      next: breadcrumb => {
-        this.label = breadcrumb;
-      }
-    });
-  }
-}
-
-@Component({
-  selector: 'clinics-catalog-route',
-  template: `
-  <div card>
-    <div
-      addressesCatalog
-      [mode]="mode"
-      [key]="key"
-      [view]="view"
-      [type]="type"
-    ></div>
-  </div>
-  `,
-  standalone: true,
-  imports: [RouterModule, AddressesCatalogComponent, LayoutModule,],
-})
-class ClinicsCatalogComponent implements OnInit {
-  service = inject(AddressesService);
-  compact = inject(CompactTableService);
-  guid = inject(GuidService);
-
-  isCompact = false;
-  view: View = 'page';
-  mode: CatalogMode = 'view';
-  key = this.guid.gen();
-  section: Sections = 'clinics';
-  type: Addresses = 'Clinic';
-  label: string;
-
-  constructor() {
-    this.label = this.service.namingDictionary.get(this.type)!.title;
-  }
-
-  ngOnInit(): void {
-    this.compact.mode$.subscribe({ next: (mode) => (this.isCompact = mode) });
-  }
-}
-
-@Component({
-  selector: 'nurse-detail-route',
-  template: `
-    @if (id && item) {
-      <div
-        addressDetailView
-        [id]="id"
-        [use]="use"
-        [view]="view"
-        [item]="item"
-        [key]="key"
-        [type]="type"
-      ></div>
-    }
-  `,
-  standalone: true,
-  imports: [RouterModule, AddressDetailComponent, LayoutModule,],
-})
-class ClinicDetailComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-
-  item?: Address;
-  id?: number;
-  use: FormUse = 'detail';
-  view: View = 'page';
-  label?: string;
-  key?: string;
-  section: Sections = 'clinics';
-  type: Addresses = 'Clinic';
-
-  ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
-    this.route.data.subscribe({
-      next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.name;
-      },
-    });
-    const navigation = this.router.getCurrentNavigation();
-    this.key = navigation?.extras?.state?.['key'];
-  }
-}
-@Component({
-  selector: 'nurse-edit-route',
-  template: `
-      @if (id && item) {
-        <div
-          addressEditView
-          [id]="id"
-          [use]="use"
-          [view]="view"
-          [key]="key"
-          [item]="item"
-          [type]="type"
-        ></div>
-      }
-  `,
-  standalone: true,
-  imports: [AddressEditComponent, RouterModule, LayoutModule,],
-})
-class ClinicEditComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-
-  item?: Address;
-  id?: number;
-  use: FormUse = 'edit';
-  view: View = 'page';
-  label?: string;
-  key = undefined;
-  section: Sections = 'clinics';
-  type: Addresses = 'Clinic';
-
-  ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
-    this.route.data.subscribe({
-      next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.name;
-      },
-    });
-  }
-}
-
-@Component({
-  selector: 'nurse-new-route',
-  template: `<div addressNewView [use]="use" [view]="view" [type]="type"
-  ></div>`,
-  standalone: true,
-  imports: [AddressNewComponent, RouterModule, LayoutModule,],
-})
-class ClinicNewComponent {
-  use: FormUse = 'create';
-  view: View = 'page';
-  type: Addresses = 'Clinic';
-}
-
-export const clinicResolver: ResolveFn<Address | null> = (route, state) => {
-  const service = inject(AddressesService);
-  const id = +route.paramMap.get('id')!;
-  return service.getById(id, 'Clinic');
-};
-
-export const clinicTitleDetailResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(AddressesService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Clinic').subscribe();
-  const address = service.getCurrent();
-  if (!address) return 'Detalle de clínica';
-  const title = `Detalle de clínica - ${address.name}`;
-  return title;
-}
-
-export const clinicTitleEditResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(AddressesService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Clinic').subscribe();
-  const address = service.getCurrent();
-  if (!address) return 'Editar clínica';
-  const title = `Editar clínica - ${address.name}`;
-  return title;
-}
-
-@NgModule({
-  imports: [RouterModule.forChild([
-    {
-      path: '', title: 'Clínicas', data: { breadcrumb: 'Clínicas', },
-      component: ClinicsComponent, runGuardsAndResolvers: 'always',
-      children: [
-        { path: '', component: ClinicsCatalogComponent, title: 'Catálogo de clínicas', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'create', component: ClinicNewComponent, title: 'Crear nuevo clínica', data: { breadcrumb: 'Nueva', }, },
-        {
-          path: ':id', title: clinicTitleDetailResolver, data: { breadcrumb: 'Detalle', },
-          component: ClinicDetailComponent,
-          resolve: { item: clinicResolver },
-        },
-        {
-          path: ':id/edit', title: clinicTitleEditResolver, data: { breadcrumb: 'Editar', },
-          component: ClinicEditComponent,
-          resolve: { item: clinicResolver },
-        },
-      ],
-    },
-  ])],
-  exports: [RouterModule]
-})
-export class ClinicsRoutingModule { }
-
-@NgModule({
-  declarations: [ ClinicsComponent, ],
-  imports: [ CommonModule, ClinicsRoutingModule, LayoutModule, ]
-})
-export class ClinicsModule { }

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import {NamingSubjectType} from "src/app/_models/types";
+import {NamingSubject} from "src/app/_models/types";
 import { FormsService } from 'src/app/_services/forms.service';
 import { IconsService } from 'src/app/_services/icons.service';
 
@@ -28,7 +28,7 @@ export class SearchTextComponent implements ControlValueAccessor, OnInit {
   placeholder = model<string>('Encontrar...');
   autofocus = input<boolean>(false);
   formText = input<string>();
-  naming = input<NamingSubjectType>();
+  naming = input<NamingSubject>();
 
   get control(): FormControl { return this.ngControl.control as FormControl; }
   get controlName(): string { return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName'; }

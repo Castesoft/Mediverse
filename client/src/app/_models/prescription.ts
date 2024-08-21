@@ -3,11 +3,11 @@ import { getPaginationHeaders } from '../_utils/util';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrescriptionsService } from '../_services/prescriptions.service';
 import { createId } from '@paralleldrive/cuid2';
-import { Address } from './address';
 import { User } from './user';
 import { BadRequest } from './types';
 import { Product } from './product';
 import { Event } from './event';
+import { Address } from 'src/app/addresses/addresses.config';
 
 const subject = 'prescription';
 

@@ -1,7 +1,7 @@
 import {Component, HostBinding, inject, input, model, NgModule, OnInit} from "@angular/core";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import { Account } from "src/app/_models/account";
-import {NamingSubjectType} from "src/app/_models/types";
+import {NamingSubject} from "src/app/_models/types";
 import { AsideComponent } from "src/app/_shared/layout/aside.component";
 import { HeaderSearchComponent } from "src/app/_shared/layout/header-search.component";
 import { HeaderComponent } from "src/app/_shared/layout/header.component";
@@ -331,7 +331,7 @@ export class ExportBtnComponent {}
   imports: [],
 })
 export class CreateBtnComponent {
-  naming = input.required<NamingSubjectType>();
+  naming = input.required<NamingSubject>();
 }
 
 @Component({

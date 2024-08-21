@@ -1,95 +1,27 @@
-import { Component, inject, OnInit, viewChild } from "@angular/core";
-import { Addresses, CatalogMode, FormUse, Role, View } from "src/app/_models/types";
-import { Address } from "src/app/_models/address";
-import { AddressesService } from "src/app/_services/addresses.service";
-import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
+import { Component } from "@angular/core";
+import { DetailModal, FilterModal, CatalogModal } from "src/app/_shared/table/table.module";
 import { AddressesCatalogComponent } from "src/app/addresses/components/addresses-catalog.component";
 import { AddressesFilterFormComponent } from "src/app/addresses/components/addresses-filter-form.component";
-import { AddressDetailComponent, AddressEditComponent, AddressNewComponent } from "src/app/addresses/views";
+import { Address } from "src/app/addresses/addresses.config";
+import { AddressDetailComponent } from "src/app/addresses/views";
+import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 
 @Component({
-  selector: 'address-edit-modal',
+  selector: 'address-detail-modal',
   template: `
     <div modalContent>
       @if (title) {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div
-          addressEditView
-          [id]="id"
-          [use]="use"
-          [view]="'modal'"
-          [key]="undefined"
-          [item]="item"
-          [type]="type"
-        ></div>
-      </div>
-    </div>
-  `,
-  standalone: true,
-  imports: [AddressEditComponent, ModalWrapperModule],
-})
-export class AddressEditModalComponent {
-  id!: number;
-  use!: FormUse;
-  title?: string;
-  item!: Address;
-  type!: Addresses;
-}
-
-@Component({
-  selector: 'address-edit-modal',
-  template: `
-    <div modalContent>
-      @if (title) {
-        <div modalHeader [title]="title"></div>
-      }
-      <div modalBody>
-        <div
-          addressDetailView
-          [id]="id"
-          [use]="use"
-          [view]="'modal'"
-          [key]="key"
-          [item]="item"
-          [type]="type"
-        ></div>
+        <div addressDetail [id]="id" [use]="use" [view]="view" [key]="key" [item]="item"></div>
       </div>
     </div>
   `,
   standalone: true,
   imports: [AddressDetailComponent, ModalWrapperModule],
 })
-export class AddressDetailModalComponent {
-  id!: number;
-  use!: FormUse;
-  title?: string;
-  key!: string;
-  item!: Address;
-  type!: Addresses;
-}
-
-@Component({
-  selector: 'address-new-modal',
-  template: `
-    <div modalContent>
-      @if (title) {
-        <div modalHeader [title]="title"></div>
-      }
-      <div modalBody>
-        <div addressNewView [use]="use" [view]="'modal'" [type]="type"></div>
-      </div>
-    </div>
-  `,
-  standalone: true,
-  imports: [AddressNewComponent, ModalWrapperModule],
-})
-export class AddressNewModalComponent {
-  use!: FormUse;
-  title?: string;
-  type!: Addresses;
-}
+export class AddressDetailModalComponent extends DetailModal<Address> {}
 
 @Component({
   selector: 'addresses-filter-modal',
@@ -99,37 +31,14 @@ export class AddressNewModalComponent {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div filterForm [key]="key" [formId]="formId" [type]="type"></div>
+        <div addressesFilterForm [formId]="formId" [toggle]="false" [key]="key" [item]="item" [use]="use" [view]="view" [role]="'inline'" [mode]="'view'"></div>
       </div>
-      <div
-        modalFooterFilters
-        [formId]="formId"
-        (onReset)="onReset()"
-        (onSubmit)="onSubmit()"
-      ></div>
     </div>
   `,
   standalone: true,
   imports: [AddressesFilterFormComponent, ModalWrapperModule],
 })
-export class AddressesFilterModalComponent implements OnInit {
-  service = inject(AddressesService);
-
-  formId!: string;
-  key!: string;
-  type!: Addresses;
-  title?: string;
-
-  form = viewChild.required(AddressesFilterFormComponent);
-
-  onReset = () =>
-    this.form()!.service.resetForm(this.key, this.form()!.form);
-  onSubmit = () => this.form()!.onSubmit();
-
-  ngOnInit(): void {
-    this.formId = this.form().form.id;
-  }
-}
+export class AddressesFilterModalComponent extends FilterModal {}
 
 @Component({
   selector: 'addresses-catalog-modal',
@@ -144,9 +53,9 @@ export class AddressesFilterModalComponent implements OnInit {
             addressesCatalog
             class="modal-body py-3 px-4"
             [mode]="mode"
-            [type]="type"
             [key]="key"
             [view]="view"
+            [isCompact]="isCompact"
           ></div>
         </div>
       </div>
@@ -155,11 +64,4 @@ export class AddressesFilterModalComponent implements OnInit {
   standalone: true,
   imports: [AddressesCatalogComponent, ModalWrapperModule],
 })
-export class AddressesCatalogModalComponent {
-  key!: string;
-  type!: Addresses;
-  isCompact = true;
-  mode!: CatalogMode;
-  view: View = 'modal';
-  title?: string;
-}
+export class AddressesCatalogModalComponent extends CatalogModal {}

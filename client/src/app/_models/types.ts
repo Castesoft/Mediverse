@@ -1,5 +1,10 @@
 import {HttpErrorResponse} from "@angular/common/http";
+import { inject, InputSignal } from "@angular/core";
 import {FormGroup} from "@angular/forms";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Entity } from "src/app/_forms/form";
+import { EnvService } from "src/app/_services/env.service";
+import { IconsService } from "src/app/_services/icons.service";
 
 export interface Column {
     name: string;
@@ -101,7 +106,7 @@ export interface MultiselectOption {
   name: string;
 }
 
-export type FormUse = 'create' | 'edit' | 'detail';
+export type FormUse = 'create' | 'edit' | 'detail' | 'filter';
 
 export type AdminSections = 'records' | 'sales' | 'animals' | 'males' | 'females' | 'donors' | 'recipients' | 'illegitimates' | 'embryos' | 'semen' | 'straws' | 'relocations' | 'weighings' | 'treatments' | 'feedings';
 
@@ -115,19 +120,42 @@ export type CatalogMode = 'view' | 'select' | 'multiselect' | 'readonly';
 
 export type LoadingTypes = 'current' | 'all' | string;
 
-export type NamingSubjectType = {
+export type ArticleSex = 'masculine' | 'femenine';
+
+export class NamingSubject {
   singular: string;
   plural: string;
+  articleSex: ArticleSex;
+  title: string;
+
   singularTitlecase: string;
   pluralTitlecase: string;
+
   createRoute: string;
   catalogRoute: string;
-  title: string;
+
   undefinedArticle: string;
   definedArticle: string;
   undefinedArticlePlural: string;
   definedArticlePlural: string;
-  articleSex: 'masculine' | 'feminine';
+
+  constructor(singular: string, plural: string, title: string, articleSex: ArticleSex, baseUrl: string) {
+    this.singular = singular;
+    this.plural = plural;
+    this.title = title;
+
+    this.singularTitlecase = singular.charAt(0).toUpperCase() + singular.slice(1);
+    this.pluralTitlecase = plural.charAt(0).toUpperCase() + plural.slice(1);
+
+    this.createRoute = `${baseUrl}/${singular.toLowerCase()}/create`;
+    this.catalogRoute = `${baseUrl}/${plural.toLowerCase()}`;
+
+    this.undefinedArticle = articleSex === 'masculine' ? 'un' : 'una';
+    this.definedArticle = articleSex === 'masculine' ? 'el' : 'la';
+    this.undefinedArticlePlural = articleSex === 'masculine' ? 'unos' : 'unas';
+    this.definedArticlePlural = articleSex === 'masculine' ? 'los' : 'las';
+    this.articleSex = articleSex;
+  }
 };
 
 export type Section = {
@@ -188,3 +216,84 @@ export class BadRequest {
 export type FormControlStyles = 'solid' | 'normal';
 
 export type Addresses = 'Account' | 'Clinic';
+
+export class TableMenu<T> {
+  protected matSnackBar = inject(MatSnackBar);
+  dev = inject(EnvService);
+  icons = inject(IconsService);
+
+  service: T;
+
+  constructor(serviceToken: new (...args: any[]) => T) {
+    this.service = inject(serviceToken);
+  }
+}
+
+export interface ITableMenu<T extends Entity> {
+  item: InputSignal<T>;
+  key: InputSignal<string>;
+}
+
+export class TableRow<T extends Entity> {
+  items: { [K in keyof T]: TableCellItem<T[K], K> };
+
+  constructor(entity: T) {
+    this.items = {} as { [K in keyof T]: TableCellItem<T[K], K> };
+
+    for (const key of Object.keys(entity) as Array<keyof T>) {
+      this.items[key] = new TableCellItem(key, entity[key]);
+    }
+  }
+
+  getItems(keys?: (keyof T)[]): { item: TableCellItem<T[keyof T], keyof T> }[] {
+    if (!keys) {
+      return Object.keys(this.items).map(key => {
+        return { item: this.items[key as keyof T] };
+      });
+    } else {
+      return keys.map(key => {
+        return { item: this.items[key] };
+      });
+    }
+  }
+}
+
+export class TableCellItem<TValue, TKey extends keyof any> {
+  key: TKey;
+  type: string;
+  justification: TableCellItemJustification = "start";
+  isLink = false;
+  url?: string;
+
+  constructor(key: TKey, type: TValue) {
+    this.key = key;
+    this.type = typeof type;
+
+    switch(typeof type) {
+      case "string":
+        this.justification = "start";
+        break;
+      case "number":
+        this.justification = "end";
+        break;
+      case "boolean":
+        this.justification = "center";
+        break;
+      default:
+        this.justification = "start";
+        break;
+    }
+  }
+}
+
+export type TableCellItemJustification = "start" | "center" | "end";
+
+export class MedicineType {
+  name = '';
+  code = '';
+
+  constructor(name: string, code: string) {
+    this.name = name;
+    this.code = code;
+  }
+}

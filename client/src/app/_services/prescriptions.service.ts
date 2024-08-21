@@ -3,7 +3,7 @@ import { environment } from "src/environments/environment";
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { Event, FilterForm } from "src/app/_models/event";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubjectType, SortOptions, View } from '../_models/types';
+import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, SortOptions, View } from '../_models/types';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 import { Modal } from '../_models/modal';
@@ -37,11 +37,11 @@ export class PrescriptionsService {
   // private catalogModalRef: BsModalRef<PrescriptionsCatalogModalComponent> = new BsModalRef<PrescriptionsCatalogModalComponent>();
   // hideCatalogModal = () => this.catalogModalRef.hide();
 
-  naming: NamingSubjectType = {
+  naming: NamingSubject = {
     singular: "receta", plural: "recetas", pluralTitlecase: "Recetas", singularTitlecase: "Receta",
     catalogRoute: "/home/prescriptions", createRoute: "/home/prescriptions/create",
     title: "Recetas", undefinedArticle: "una", definedArticle: "la", undefinedArticlePlural: "unas", definedArticlePlural: "las",
-    articleSex: 'feminine',
+    articleSex: 'femenine',
   };
 
   columns: Column[] = [
