@@ -21,6 +21,8 @@ import { authGuard } from './_guards/auth.guard';
 import { anonymousGuard } from './_guards/anonymous.guard';
 import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import { environment } from 'src/environments/environment';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { UseOfCookiesModalComponent } from './auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -28,15 +30,38 @@ import { environment } from 'src/environments/environment';
   template: `
     <router-outlet></router-outlet>
     <div scrolltop></div>
+
+    @if (cookiesAccepted === 'false') {
+      <div class="fixed-bottom bg-dark text-white text-center p-8 shadow-lg" style="z-index: 100; width: 30%; bottom: 30px; left: 30px; border-radius: 10px;">
+        <p class="fs-6 m-0">
+          Este sitio web utiliza cookies para mejorar la experiencia de usuario. Al continuar utilizando esta página estás aceptando nuestras políticas de <a
+            (click)="openUseOfCookiesModal()"
+            class="text-muted text-hover-primary"
+            style="cursor: pointer"
+            >Uso de cookies</a>
+        </p>
+        <button class="btn btn-small btn-primary mt-2" (click)="accept()">Aceptar</button>
+      </div>
+    }
   `,
   standalone: true,
   imports: [RouterOutlet, MaterialModule],
 })
 export class AppComponent implements OnInit {
+  private bsModalService = inject(BsModalService);
   private accountService = inject(AccountService);
   private breadcrumb = inject(BreadcrumbService);
 
+  cookiesAccepted = 'true';
+
   ngOnInit(): void {
+    this.cookiesAccepted = localStorage.getItem('cookiesAccepted') || '';
+    if (!this.cookiesAccepted) {
+      localStorage.setItem('cookiesAccepted', 'false');
+      this.cookiesAccepted = 'false';
+    }
+
+
     this.setCurrentUser();
     this.breadcrumb.init();
 
@@ -52,6 +77,15 @@ export class AppComponent implements OnInit {
       }
     });
 
+  }
+
+  accept() {
+    localStorage.setItem('cookiesAccepted', 'true');
+    this.cookiesAccepted = 'true';
+  }
+
+  openUseOfCookiesModal() {
+    this.bsModalService.show(UseOfCookiesModalComponent);
   }
 
   setCurrentUser() {
