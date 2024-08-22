@@ -36,7 +36,7 @@ export class ProductsService {
   private catalogModalRef: BsModalRef<ProductsCatalogModalComponent> = new BsModalRef<ProductsCatalogModalComponent>();
   hideCatalogModal = () => this.catalogModalRef.hide();
 
-  naming: NamingSubject = {
+  naming = {
     singular: "producto",
     plural: "productos",
     pluralTitlecase: "Productos",
@@ -49,7 +49,7 @@ export class ProductsService {
     undefinedArticlePlural: "unos",
     definedArticlePlural: "los",
     articleSex: 'masculine',
-  };
+  } as NamingSubject;
 
   columns: Column[] = [
     { label: "Nombre", name: "name", options: { justify: 'center' } },

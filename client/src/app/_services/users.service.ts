@@ -54,6 +54,7 @@ export class UsersService {
   // init to role 'male' and 'female' for the naming subject type
   namingDictionary = new Map<Role, NamingSubject>([
     ["Admin", {
+      subject: "admin",
       singular: "admin",
       plural: "admins",
       pluralTitlecase: "Admins",
@@ -66,8 +67,9 @@ export class UsersService {
       undefinedArticlePlural: "unas",
       definedArticlePlural: "las",
       articleSex: 'masculine',
-    }],
+    } as NamingSubject],
     ["Staff", {
+      subject: "staff",
       singular: "staff",
       plural: "staff",
       pluralTitlecase: "Staff",
@@ -80,8 +82,9 @@ export class UsersService {
       undefinedArticlePlural: "unos",
       definedArticlePlural: "los",
       articleSex: "masculine",
-    }],
+    } as NamingSubject],
     ["Doctor", {
+      subject: "doctor",
       singular: "doctor",
       plural: "doctores",
       pluralTitlecase: "Doctores",
@@ -94,8 +97,9 @@ export class UsersService {
       undefinedArticlePlural: "unos",
       definedArticlePlural: "los",
       articleSex: "masculine",
-    }],
+    } as NamingSubject],
     ["Nurse", {
+      subject: "nurse",
       singular: "especialista",
       plural: "especialistas",
       pluralTitlecase: "Especialistas",
@@ -108,7 +112,7 @@ export class UsersService {
       undefinedArticlePlural: "unos",
       definedArticlePlural: "los",
       articleSex: "masculine",
-    }],
+    } as NamingSubject],
     ["Patient", {
       singular: "paciente",
       plural: "pacientes",
@@ -122,7 +126,7 @@ export class UsersService {
       undefinedArticlePlural: "unos",
       definedArticlePlural: "los",
       articleSex: "masculine",
-    }],
+    } as NamingSubject],
   ]);
 
   columnDictionary = new Map<Role, Column[]>([

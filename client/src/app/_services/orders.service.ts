@@ -37,7 +37,7 @@ export class OrdersService {
     undefinedArticlePlural: "unos",
     definedArticlePlural: "los",
     articleSex: 'masculine',
-  };
+  } as NamingSubject;
 
   columns: Column[] = [
     { label: "Fecha", name: "createdAt" },

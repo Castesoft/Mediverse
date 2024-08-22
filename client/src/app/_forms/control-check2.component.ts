@@ -14,31 +14,29 @@ import { CommonModule } from '@angular/common';
   host: { class: 'fw-semibold mb-0 w-100' },
   selector: 'div[controlCheck2]',
   template: `
-      <div class="d-flex align-items-center gap-2">
-        @if (control().showLabel) {
-          <label controlLabel [(control)]="control">
-            <input
-              inputComponent
-              [(control)]="control"
-              [formControl]="$any(control().formControl)"
-            />
-          </label>
-        }
-      </div>
+    <div class="form-check form-check-custom form-check-solid">
+      @if (control().showLabel) {
+        <input
+        inputComponent
+        [(control)]="control"
+        [formControl]="$any(control().formControl)"
+        />
+        <label controlLabel [(control)]="control"></label>
+      }
+    </div>
     @if (control().formControl.errors) {
-      <div
-        invalidFeedback
-        [errors]="control().errors"
-        [control]="control().formControl"
-        [submitted]="control().submitted"
-      ></div>
-    }
-    @if (control().helperText) {
-      <div
-        helpBlock
-        [controlName]="control().name"
-        [formText]="control().helperText"
-      ></div>
+    <div
+      invalidFeedback
+      [errors]="control().errors"
+      [control]="control().formControl"
+      [submitted]="control().submitted"
+    ></div>
+    } @if (control().helperText) {
+    <div
+      helpBlock
+      [controlName]="control().name"
+      [formText]="control().helperText"
+    ></div>
     }
   `,
   standalone: true,

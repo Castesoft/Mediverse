@@ -41,7 +41,7 @@ export class ServicesService {
     catalogRoute: "/home/services", createRoute: "/home/services/create",
     title: "Servicios", undefinedArticle: "uno", definedArticle: "lo", undefinedArticlePlural: "unos", definedArticlePlural: "los",
     articleSex: 'masculine',
-  };
+  } as NamingSubject;
 
   columns: Column[] = [
     { label: "Nombre", name: "name", options: { justify: 'center' } },

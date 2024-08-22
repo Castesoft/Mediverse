@@ -27,32 +27,35 @@ export class InputComponent {
   constructor() {
     effect(() => {
       this.service.mode$.subscribe({ next: validation => this.control.set(this.control().setValidation(validation)) });
+
+      if (this.control().type === 'chips' || this.control().type === 'search') { return ''; }
+      
+      if (this.control().type === 'search') { return 'form-control search-input search'; }
+      if (this.control().submitted && this.control().formControl.invalid) {
+        return this.baseClass + ' is-invalid';
+      }
+      else if (this.control().submitted && this.control().formControl.valid) {
+        return this.baseClass + ' is-valid';
+      }
+
+      switch (this.control().style) {
+        case 'solid':
+          this.baseClass = `${this.baseClass} form-control-solid`;
+          break;
+        case 'normal':
+          // this.baseClass = 'form-control mb-3 mb-lg-0';
+          break;
+      }
+
+      if (this.control().type === 'check') {
+        this.baseClass = 'form-check-input';
+      }
+
+      return this.baseClass;
     })
   }
 
   @HostBinding('class') get class() {
-    if (this.control().type === 'chips' || this.control().type === 'search') { return ''; }
-    if (this.control().type === 'search') { return 'form-control search-input search'; }
-    if (this.control().submitted && this.control().formControl.invalid) {
-      return this.baseClass + ' is-invalid';
-    }
-    else if (this.control().submitted && this.control().formControl.valid) {
-      return this.baseClass + ' is-valid';
-    }
-
-    switch (this.control().style) {
-      case 'solid':
-        this.baseClass = `${this.baseClass} form-control-solid`;
-        break;
-      case 'normal':
-        // this.baseClass = 'form-control mb-3 mb-lg-0';
-        break;
-    }
-
-    if (this.control().type === 'check') {
-      this.baseClass = 'form-check-input';
-    }
-
     return this.baseClass;
   }
 

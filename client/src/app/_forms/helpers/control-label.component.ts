@@ -17,9 +17,6 @@ import { FormsService } from "src/app/_services/forms.service";
     @if (control().isNew) {
     <span newBadge></span>
     }
-    @if(isCheck) {
-      <ng-content></ng-content>
-    }
   `,
   standalone: true,
   imports: [ OptionalSpanComponent, NewBadgeComponent, CommonModule, ],
@@ -30,7 +27,6 @@ export class ControlLabelComponent {
   control = model.required<Control<Date | string | boolean>>();
 
   baseClass = '';
-  isCheck = false;
 
   @HostBinding('class') get class() {
     return this.baseClass;
@@ -42,8 +38,6 @@ export class ControlLabelComponent {
 
   constructor() {
     effect(() => {
-      this.control().type === 'check' ? this.isCheck = true : this.isCheck = false;
-
       if (this.control().orientation === 'inline') {
         this.baseClass = 'col-form-label fw-semibold fs-6 text-nowrap';
       } else {
@@ -51,7 +45,7 @@ export class ControlLabelComponent {
       }
 
       if (this.control().type === 'check') {
-        this.baseClass = 'form-check form-check-custom form-check-solid';
+        this.baseClass = 'form-check-label';
       }
 
       return this.baseClass;

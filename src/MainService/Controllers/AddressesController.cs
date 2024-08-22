@@ -85,31 +85,27 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service, Use
     }
 
     [HttpPost("clinic")]
-    public async Task<ActionResult<AddressDto>> CreateAsync([FromBody] ClinicCreateDto request)
+    public async Task<ActionResult<AddressDto>> CreateClinicAsync([FromBody] ClinicCreateDto request)
     {
-        var doctor = await userManager.Users
+        AppUser doctor = await userManager.Users
             .Include(x => x.DoctorClinics)
                 .ThenInclude(x => x.Clinic)
             .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
         
         if (request.IsMain)
-        {
             foreach (var item in doctor.DoctorClinics)
-            {
                 item.IsMain = false;
-            }
-        }
         
-        var clinic = mapper.Map<Address>(request);
+        Address clinic = mapper.Map<Address>(request);
 
         doctor.DoctorClinics.Add(new(clinic, request.IsMain));
 
-        var updateResult = await userManager.UpdateAsync(doctor);
+        IdentityResult updateResult = await userManager.UpdateAsync(doctor);
 
         if (!updateResult.Succeeded) return BadRequest($"Error al agregar la clínica de {doctor.FirstName}.");
 
-        var clinicToReturn = await uow.AddressRepository.GetDtoByIdAsync(clinic.Id);
+        var itemToReturn = await uow.AddressRepository.GetDtoByIdAsync(clinic.Id);
 
-        return Ok(clinicToReturn);
+        return itemToReturn;
     }
 }

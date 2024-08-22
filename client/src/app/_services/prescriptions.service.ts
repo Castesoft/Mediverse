@@ -42,7 +42,7 @@ export class PrescriptionsService {
     catalogRoute: "/home/prescriptions", createRoute: "/home/prescriptions/create",
     title: "Recetas", undefinedArticle: "una", definedArticle: "la", undefinedArticlePlural: "unas", definedArticlePlural: "las",
     articleSex: 'femenine',
-  };
+  } as NamingSubject;
 
   columns: Column[] = [
     { label: "Paciente", name: "patient", options: { justify: 'center' } },
