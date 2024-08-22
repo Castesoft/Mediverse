@@ -31,6 +31,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
     {
         var user = await userManager.Users
             .Include(x => x.UserPhoto).ThenInclude(x => x.Photo)
+            .Include(x => x.DoctorBannerPhoto).ThenInclude(x => x.Photo)
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
             .Include(x => x.UserPermissions).ThenInclude(x => x.Permission)
             .Include(x => x.UserMedicalLicenses)

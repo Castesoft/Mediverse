@@ -253,6 +253,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("RFC")
                         .HasColumnType("text");
 
+                    b.Property<string>("RecommendedBy")
+                        .HasColumnType("text");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 

@@ -28,6 +28,7 @@ public class AppUser : IdentityUser<int>
     public byte[] PhoneNumberVerificationCodeSalt { get; set; }
     public DateTime? PhoneNumberVerificationExpiryTime { get; set; }
     public string StripeCustomerId { get; set; }
+    public string RecommendedBy { get; set; }
 
     // Base account properties
 

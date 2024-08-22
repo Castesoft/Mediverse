@@ -24,4 +24,5 @@ public class PatientCreateDto
     [Phone(ErrorMessage = "El número de teléfono no es válido.")]
     [StringLength(20, MinimumLength = 8, ErrorMessage = "El número de teléfono debe tener entre 8 y 20 caracteres.")]
     public string PhoneNumber { get; set; }
+    public string RecommendedBy { get; set; }
 }

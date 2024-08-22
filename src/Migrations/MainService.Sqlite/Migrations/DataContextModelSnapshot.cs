@@ -240,6 +240,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("RFC")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("RecommendedBy")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
