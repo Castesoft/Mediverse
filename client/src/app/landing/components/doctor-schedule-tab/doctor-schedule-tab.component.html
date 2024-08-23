@@ -26,7 +26,11 @@
                                 <span class="fs-7 text-gray-500 text-uppercase">pm</span></div>
                             <a class="fs-5 fw-bold text-gray-800 text-hover-primary mb-2" >{{ day.available ? 'Disponible' : 'Ocupado' }}</a>
                         </div>
-                        <button routerLink="/auth" class="btn btn-bg-light btn-active-color-primary btn-sm" [disabled]="!day.available">Agendar</button>
+                        <button
+                            class="btn btn-bg-light btn-active-color-primary btn-sm" 
+                            [disabled]="!day.available"
+                            (click)="scheduleAppointment(selectedDay, day)"
+                        >Agendar</button>
                     </div>
                 }
             }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -10,11 +10,16 @@ import { RouterLink } from '@angular/router';
 })
 export class DoctorScheduleTabComponent {
 
+  onSelectSchedule = output<any>();
+
   selectedDay: any = null;
   schedule = [
     {
       day: "Lunes",
       dayNumber: 19,
+      month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -76,6 +81,9 @@ export class DoctorScheduleTabComponent {
     {
       day: "Martes",
       dayNumber: 20,
+       month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -137,6 +145,9 @@ export class DoctorScheduleTabComponent {
     {
       day: "Miércoles",
       dayNumber: 21,
+       month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -198,6 +209,9 @@ export class DoctorScheduleTabComponent {
     {
       day: "Jueves",
       dayNumber: 22,
+       month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -259,6 +273,9 @@ export class DoctorScheduleTabComponent {
     {
       day: "Viernes",
       dayNumber: 23,
+       month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -320,6 +337,9 @@ export class DoctorScheduleTabComponent {
     {
       day: "Sábado",
       dayNumber: 24,
+       month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -381,6 +401,9 @@ export class DoctorScheduleTabComponent {
     {
       day: "Domingo",
       dayNumber: 25,
+       month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -407,6 +430,9 @@ export class DoctorScheduleTabComponent {
     {
       day: "Lunes",
       dayNumber: 26,
+       month: 'Agosto',
+      monthNumber: 8,
+      year: 2024,
       availability: [
         {
           start: "08:00",
@@ -434,6 +460,10 @@ export class DoctorScheduleTabComponent {
 
   selectDay(day: any) {
     this.selectedDay = day;
+  }
+
+  scheduleAppointment(day: any, time: any) {
+    this.onSelectSchedule.emit({ day, time });
   }
 
   ngOnInit() {

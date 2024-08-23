@@ -677,6 +677,42 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("EventClinic");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.EventMedicalInsuranceCompany", b =>
+                {
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicalInsuranceCompanyId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EventId", "MedicalInsuranceCompanyId");
+
+                    b.HasIndex("EventId")
+                        .IsUnique();
+
+                    b.HasIndex("MedicalInsuranceCompanyId");
+
+                    b.ToTable("EventMedicalInsuranceCompany");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.EventPaymentMethodType", b =>
+                {
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentMethodTypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EventId", "PaymentMethodTypeId");
+
+                    b.HasIndex("EventId")
+                        .IsUnique();
+
+                    b.HasIndex("PaymentMethodTypeId");
+
+                    b.ToTable("EventPaymentMethodType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
                 {
                     b.Property<int>("EventId")
@@ -2103,6 +2139,44 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Event");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.EventMedicalInsuranceCompany", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Event", "Event")
+                        .WithOne("EventMedicalInsuranceCompany")
+                        .HasForeignKey("MainService.Models.Entities.EventMedicalInsuranceCompany", "EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalInsuranceCompany", "MedicalInsuranceCompany")
+                        .WithMany("EventMedicalInsuranceCompanies")
+                        .HasForeignKey("MedicalInsuranceCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("MedicalInsuranceCompany");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.EventPaymentMethodType", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Event", "Event")
+                        .WithOne("EventPaymentMethodType")
+                        .HasForeignKey("MainService.Models.Entities.EventPaymentMethodType", "EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.PaymentMethodType", "PaymentMethodType")
+                        .WithMany("EventPaymentMethodTypes")
+                        .HasForeignKey("PaymentMethodTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("PaymentMethodType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -2719,6 +2793,10 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("EventClinic");
 
+                    b.Navigation("EventMedicalInsuranceCompany");
+
+                    b.Navigation("EventPaymentMethodType");
+
                     b.Navigation("EventPrescriptions");
 
                     b.Navigation("EventService");
@@ -2736,6 +2814,8 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
                 {
                     b.Navigation("DoctorMedicalInsuranceCompanies");
+
+                    b.Navigation("EventMedicalInsuranceCompanies");
 
                     b.Navigation("MedicalInsuranceCompanyPhoto");
 
@@ -2777,6 +2857,8 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethodType", b =>
                 {
                     b.Navigation("DoctorPaymentMethodTypes");
+
+                    b.Navigation("EventPaymentMethodTypes");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>

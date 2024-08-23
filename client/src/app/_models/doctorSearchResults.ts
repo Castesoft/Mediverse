@@ -2,7 +2,9 @@ import { HttpParams } from '@angular/common/http';
 import { Specialty } from './specialty';
 import { getPaginationHeaders } from '../_utils/util';
 import { PaymentMethodType } from './paymentMethodType';
-import { Address } from 'src/app/addresses/addresses.config';
+import { MedicalInsuranceCompany } from './medicalInsuranceCompany';
+import { Service } from './service';
+import { Address } from '../addresses/addresses.config';
 
 export interface DoctorSearchResults {
     doctors: DoctorSearchResult[];
@@ -11,12 +13,15 @@ export interface DoctorSearchResults {
 }
 
 export interface DoctorSearchResult {
+    id: number;
     firstName: string;
     lastName: string;
     title: any;
     specialties: Specialty[];
     addresses: Address[];
     paymentMethods: PaymentMethodType[];
+    services: Service[];
+    medicalInsuranceCompanies: MedicalInsuranceCompany[];
     photoUrl: string;
     email: string;
     phoneNumber: string;

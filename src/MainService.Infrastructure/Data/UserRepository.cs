@@ -87,27 +87,34 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .ToListAsync();
     }
 
-    public async Task<bool> PatientExistsAsync(int id, ClaimsPrincipal user)
+    public async Task<bool> DoctorExistsAsync(int id, int doctorId)
     {
-        var userId = user.GetUserId();
+        return await context.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .Where(x => x.UserRoles.Any(x => x.Role.Name == "Doctor"))
+            .AnyAsync(x => x.Id == id);
+    }
 
+    public async Task<bool> PatientExistsAsync(int id, int doctorId)
+    {
         return await context.Users
             .Include(x => x.Doctors)
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"))
             .AnyAsync(x => x.Id == id
-                           && x.Doctors.Any(x => x.DoctorId == user.GetUserId()));
+                           && x.Doctors.Any(x => x.DoctorId == doctorId));
     }
 
-    public async Task<bool> NurseExistsAsync(int id, ClaimsPrincipal user)
+    public async Task<bool> NurseExistsAsync(int id, int doctorId)
     {
         return await context.Users
             .Include(x => x.NursesDoctor)
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .Where(x => x.UserRoles.Any(x => x.Role.Name == "Nurse"))
-            .AnyAsync(x => x.Id == id && x.NursesDoctor.Any(x => x.DoctorId == user.GetUserId()));
+            .AnyAsync(x => x.Id == id && x.NursesDoctor.Any(x => x.DoctorId == doctorId));
     }
 
     public async Task<UserDto> GetDtoByEmailAsync(string email)

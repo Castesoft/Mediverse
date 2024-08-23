@@ -13,8 +13,9 @@ public interface IUserRepository
     Task<AppUser> GetByIdAsync(int id);
     Task<UserDto> GetDtoByIdAsync(int id);
     Task<List<UserSummaryDto>> GetSummaryDtosAsync(UserParams param, ClaimsPrincipal user);
-    Task<bool> PatientExistsAsync(int id, ClaimsPrincipal user);
-    Task<bool> NurseExistsAsync(int id, ClaimsPrincipal user);
+    Task<bool> DoctorExistsAsync(int id, int doctorId);
+    Task<bool> PatientExistsAsync(int id, int doctorId);
+    Task<bool> NurseExistsAsync(int id, int doctorId);
     Task<UserDto> GetDtoByEmailAsync(string email);
     Task<AppUser> GetByIdAsNoTrackingAsync(int id);
     Task<List<AppUser>> GetAllAsync();

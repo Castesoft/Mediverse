@@ -1,10 +1,9 @@
 namespace MainService.Core.DTOs.User
 {
-    public class UserAddressDto
+    public class DoctorClinicDto
     {
         public int Id { get; set; }
         public bool IsMain { get; set; }
-        public bool IsBilling { get; set; }
         public string Street { get; set; }
         public string City { get; set; }
         public string State { get; set; }

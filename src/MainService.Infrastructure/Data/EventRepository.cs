@@ -105,6 +105,8 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.PatientEvent)
             .Include(x => x.NurseEvents)
             .Include(x => x.EventPrescriptions)
+            .Include(x => x.EventPaymentMethodType)
+            .Include(x => x.EventMedicalInsuranceCompany)
             .AsQueryable();
 
         if (param.DateFrom != DateTime.MinValue)

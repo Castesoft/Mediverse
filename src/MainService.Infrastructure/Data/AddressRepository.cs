@@ -38,11 +38,11 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
         => await context.Addresses
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<bool> ClinicExistsAsync(int id, ClaimsPrincipal user)
+    public async Task<bool> ClinicExistsAsync(int id, int doctorId)
     {
         return await context.Addresses
             .Include(x => x.DoctorClinic)
-            .AnyAsync(x => x.Id == id && x.DoctorClinic.DoctorId == user.GetUserId());
+            .AnyAsync(x => x.Id == id && x.DoctorClinic.DoctorId == doctorId);
     }
 
     public async Task<AddressDto> GetDtoByIdAsync(int id)

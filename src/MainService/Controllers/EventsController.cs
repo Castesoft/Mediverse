@@ -19,8 +19,7 @@ using Serilog;
 namespace MainService.Controllers;
 
 [Authorize]
-public class EventsController(IUnitOfWork uow, IEventsService service
-// , UserManager<AppUser> userManager, IMapper mapper
+public class EventsController(IUnitOfWork uow, IEventsService service, UserManager<AppUser> userManager//,  IMapper mapper
 )
     : BaseApiController
 {
@@ -107,26 +106,43 @@ public class EventsController(IUnitOfWork uow, IEventsService service
         // TODO: que cuando el rol del usuario de la peticion, cuando este es nurse, obtener el ID del doctor para 
         // la propiedad de Event de DoctorEvent
 
-        IEnumerable<int> nurseIds = request.NursesIds.Split(',')
-            .Select(s => int.TryParse(s, out var n) ? n : (int?)null)
-            .Where(n => n.HasValue)
-            .Select(n => n.Value);
-        
-        if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, User))
-            return BadRequest(
-                $"Paciente de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
+        var user = await uow.UserRepository.GetByIdAsync(User.GetUserId());
 
-        if (!await uow.AddressRepository.ClinicExistsAsync(request.ClinicId, User))
-            return BadRequest(
-                $"Clinica de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
+        var userRoles = await userManager.GetRolesAsync(user);
 
-        if (!await uow.ServiceRepository.ExistsAsync(request.ServiceId, User))
-            return BadRequest(
-                $"Tratamiento de ID {request.ServiceId} no fue encontrado o no existe para el doctor actual.");
+        IEnumerable<int> nurseIds = [];
+        int doctorId = 0;
+        if (userRoles.Contains("Doctor") && request.Role == "Doctor")
+        {
+            doctorId = user.Id;
+
+            if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, doctorId))
+                return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
+
+            nurseIds = request.NursesIds.Split(',')
+                .Select(s => int.TryParse(s, out var n) ? n : (int?)null)
+                .Where(n => n.HasValue)
+                .Select(n => n.Value);
+        }
+        else
+        {
+            // TODO: Si el paciente no existe para el doctor actual, agregarle el paciente al doctor del request
+
+            doctorId = request.DoctorId;
+        }
+
+        if (!await uow.UserRepository.DoctorExistsAsync(doctorId, doctorId))
+            return BadRequest($"Doctor de ID {doctorId} no fue encontrado o no existe para el doctor actual.");
+
+        if (!await uow.AddressRepository.ClinicExistsAsync(request.ClinicId, doctorId))
+            return BadRequest($"Clinica de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
+
+        if (!await uow.ServiceRepository.ExistsAsync(request.ServiceId, doctorId))
+            return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado o no existe para el doctor actual.");
 
         foreach (var nurseId in nurseIds)
         {
-            if (!await uow.UserRepository.NurseExistsAsync(nurseId, User))
+            if (!await uow.UserRepository.NurseExistsAsync(nurseId, doctorId))
                 return BadRequest($"Especialista de ID {nurseId} no fue encontrado o no existe para el doctor actual.");
         }
 
@@ -136,7 +152,9 @@ public class EventsController(IUnitOfWork uow, IEventsService service
             EventService = new(request.ServiceId),
             PatientEvent = new(request.PatientId),
             EventClinic = new(request.ClinicId),
-            DoctorEvent = new(User.GetUserId())
+            DoctorEvent = new(doctorId),
+            EventPaymentMethodType = new(request.PaymentMethodTypeId),
+            EventMedicalInsuranceCompany = request.MedicalInsuranceCompanyId > 0 ? new(request.MedicalInsuranceCompanyId) : null
         };
 
         uow.EventRepository.Add(item);

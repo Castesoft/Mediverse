@@ -71,10 +71,20 @@
             @if (selectedTab === 'general') {
                 <app-doctor-general-tab [doctor]="doctor()"></app-doctor-general-tab>
             } @else if (selectedTab === 'schedule') {
-                <app-doctor-schedule-tab></app-doctor-schedule-tab>
+                <app-doctor-schedule-tab (onSelectSchedule)="selectSchedule($event)"></app-doctor-schedule-tab>
             } @else if (selectedTab === 'reviews') {
                 <app-doctor-reviews-tab></app-doctor-reviews-tab>
             }
         </div>
     </div>
 </div>
+
+@if (isScheduling) {
+    <div class="schedule-modal">
+        <app-doctor-schedule 
+            (onClose)="onCloseDoctorSchedule()"
+            [doctor]="doctor()"
+            [selectedSchedule]="selectedSchedule"
+        ></app-doctor-schedule>
+    </div>
+}

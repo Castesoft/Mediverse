@@ -17,6 +17,14 @@
             }
         </div>
         <div class="d-flex flex-column gap-1">
+            <div class="fw-bold text-muted">Servicios ofrecidos</div>
+            @for (service of doctor()?.services; track $index) {
+                <div class="fw-bold fs-5">
+                    {{service.name}} - ${{service.price}}
+                </div>
+            }
+        </div>
+        <div class="d-flex flex-column gap-1">
             <div class="fw-bold text-muted">Métodos de pago</div>
             <div class="fw-bold fs-5">
                 @for (paymentMethod of doctor()?.paymentMethods; track $index) {

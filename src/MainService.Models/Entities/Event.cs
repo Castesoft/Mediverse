@@ -25,6 +25,8 @@ public class Event : BaseEntity
     public EventClinic EventClinic { get; set; }
     public DoctorEvent DoctorEvent { get; set; }
     public PatientEvent PatientEvent { get; set; }
+    public EventPaymentMethodType EventPaymentMethodType { get; set; }
+    public EventMedicalInsuranceCompany EventMedicalInsuranceCompany { get; set; }
     public ICollection<NurseEvent> NurseEvents { get; set; } = [];
     public ICollection<EventPrescription> EventPrescriptions { get; set; } = [];
     public DateTime DateFrom { get; set; } = DateTime.UtcNow;

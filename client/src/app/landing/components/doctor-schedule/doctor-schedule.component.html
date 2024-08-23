@@ -1,0 +1,201 @@
+<div class="card card-flush h-lg-100" style="width: 420px;" id="kt_contacts_main">
+    <div class="card-header pt-7" id="kt_chat_contacts_header">
+        <div class="card-title">
+            <i class="ki-duotone ki-badge fs-1 me-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+                <span class="path4"></span>
+                <span class="path5"></span>
+            </i>
+            <h2>Agendar cita</h2>
+        </div>
+        <div class="card-toolbar gap-3">
+            <i class="ki-duotone ki-cross fs-2" (click)="onClose.emit()" style="cursor: pointer;">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+            </i>
+        </div>
+    </div>
+    <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
+        @if (accountService.current()) {
+            <div class="stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid gap-10" id="kt_create_account_stepper">
+                <div class="stepper-nav">
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                        <div class="stepper-item" [class.completed]="form.get('doctorId')?.valid" data-kt-stepper-element="nav">
+                            <div class="stepper-wrapper">
+                                <div class="stepper-icon w-40px h-40px">
+                                    <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                                    <span class="stepper-number">1</span>
+                                </div>
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title">Especialista</h3>
+                                    <div class="stepper-desc fw-semibold">{{doctor()?.firstName}} {{doctor()?.lastName}}</div>
+                                    <div class="stepper-desc fw-semibold">{{doctor()?.specialties![0].name}}</div>
+                                </div>
+                            </div>
+                            <div class="stepper-line h-40px"></div>
+                        </div>
+                        <div class="stepper-item" 
+                            [class.completed]="form.get('startDate')?.valid &&
+                                form.get('endDate')?.valid &&
+                                form.get('startTime')?.valid &&
+                                form.get('endTime')?.valid"
+                            data-kt-stepper-element="nav"
+                        >
+                            <div class="stepper-wrapper">
+                                <div class="stepper-icon w-40px h-40px">
+                                    <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                                    <span class="stepper-number">2</span>
+                                </div>
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title">Fecha y hora</h3>
+                                    <div class="stepper-desc fw-semibold">{{selectedSchedule().day.day}} {{selectedSchedule().day.dayNumber}} de {{selectedSchedule().day.month}} del {{selectedSchedule().day.year}}</div>
+                                    <div class="stepper-desc fw-semibold">De las {{selectedSchedule().time.start}} a las {{selectedSchedule().time.end}}</div>
+                                </div>
+                            </div>
+                            <div class="stepper-line h-40px"></div>
+                        </div>
+                        <div class="stepper-item" [class.completed]="form.get('addressId')?.valid" data-kt-stepper-element="nav">
+                            <div class="stepper-wrapper">
+                                <div class="stepper-icon w-40px h-40px">
+                                    <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                                    <span class="stepper-number">3</span>
+                                </div>
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title">Dirección</h3>
+                                    @if (doctor()?.addresses!.length > 1) {
+                                        <div class="stepper-desc fw-semibold">Selecciona una dirección</div>
+                                        <div
+                                            class="fv-row fv-plugins-icon-container"
+                                            controlSelect
+                                            formControlName="clinicId"
+                                            [options]="doctor()?.addresses!"
+                                            [isAddress]="true"
+                                            [placeholder]="''"
+                                            [submitted]="submitted"
+                                            [errors]="{
+                                                required: 'La dirección es requerida.'
+                                            }"
+                                        ></div>
+                                    } @else {
+                                        <div class="stepper-desc fw-semibold">
+                                            {{doctor()?.addresses![0].street}}, {{doctor()?.addresses![0].city}}, {{doctor()?.addresses![0].state}}
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="stepper-line h-40px"></div>
+                        </div>
+                        <div class="stepper-item" [class.completed]="form.get('serviceId')?.valid" data-kt-stepper-element="nav">
+                            <div class="stepper-wrapper">
+                                <div class="stepper-icon w-40px h-40px">
+                                    <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                                    <span class="stepper-number">4</span>
+                                </div>
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title">Servicio</h3>
+                                    @if (doctor()?.services!.length > 1) {
+                                        <div class="stepper-desc fw-semibold">Selecciona el motivo de la cita</div>
+                                        <div
+                                            class="fv-row fv-plugins-icon-container"
+                                            controlSelect
+                                            formControlName="serviceId"
+                                            [showPrice]="true"
+                                            [options]="doctor()?.services!"
+                                            [placeholder]="''"
+                                            [submitted]="submitted"
+                                            [errors]="{
+                                                required: 'El servicio es requerido.'
+                                            }"
+                                        ></div>
+                                    } @else {
+                                        <div class="stepper-desc fw-semibold">{{doctor()?.services![0].name}}</div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="stepper-line h-40px"></div>
+                        </div>
+                        <div class="stepper-item" 
+                            [class.completed]="doctor()?.medicalInsuranceCompanies!.length > 0 ? form.get('medicalInsuranceCompanyId')?.valid : true" 
+                            data-kt-stepper-element="nav"
+                        >
+                            <div class="stepper-wrapper">
+                                <div class="stepper-icon w-40px h-40px">
+                                    <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                                    <span class="stepper-number">5</span>
+                                </div>
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title">Aseguradora</h3>
+                                    @if (doctor()?.medicalInsuranceCompanies!.length > 0) {
+                                        <div class="stepper-desc fw-semibold">Selecciona tu aseguradora</div>
+                                        <div
+                                            class="fv-row fv-plugins-icon-container"
+                                            controlSelect
+                                            formControlName="medicalInsuranceCompanyId"
+                                            [options]="doctor()?.medicalInsuranceCompanies!"
+                                            [placeholder]="''"
+                                            [submitted]="submitted"
+                                            [errors]="{
+                                                required: 'La aseguradora es requerida.'
+                                            }"
+                                        ></div>
+                                    } @else {
+                                        <div class="stepper-desc fw-semibold">
+                                            Este especialista no acepta aseguradoras
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="stepper-line h-40px"></div>
+                        </div>
+                        <div class="stepper-item" [class.completed]="form.get('paymentMethodTypeId')?.valid" data-kt-stepper-element="nav">
+                            <div class="stepper-wrapper">
+                                <div class="stepper-icon w-40px h-40px">
+                                    <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                                    <span class="stepper-number">6</span>
+                                </div>
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title">Método de pago</h3>
+                                    @if (doctor()?.paymentMethods!.length > 1) {
+                                        <div class="stepper-desc fw-semibold">Selecciona el método de pago</div>
+                                        <div
+                                            class="fv-row fv-plugins-icon-container"
+                                            controlSelect
+                                            formControlName="paymentMethodTypeId"
+                                            [options]="doctor()?.paymentMethods!"
+                                            [placeholder]="''"
+                                            [submitted]="submitted"
+                                            [errors]="{
+                                                required: 'El método de pago es requerido.'
+                                            }"
+                                        ></div>
+                                    } @else {
+                                        <div class="stepper-desc fw-semibold">{{doctor()?.paymentMethods![0].name}}</div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="stepper-line h-40px"></div>
+                        </div>
+                        <div class="stepper-item mark-completed" data-kt-stepper-element="nav">
+                            <div class="stepper-wrapper">
+                                <div class="stepper-icon w-40px h-40px">
+                                    <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                                    <span class="stepper-number">5</span>
+                                </div>
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title">Confirmar</h3>
+                                    <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de agendar</div>
+                                    <button type="submit" class="btn btn-success">Agendar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        } @else {
+            Inicia sesión
+        }
+    </div>
+</div>

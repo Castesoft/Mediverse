@@ -271,14 +271,18 @@ export class EventsService {
   }
 
   create(formData: any, role: Role, view: View, key: string): Observable<Event> {
-    return this.http.post<Event>(this.baseUrl, formData).pipe(
+    return this.http.post<Event>(this.baseUrl, {...formData, role}).pipe(
       tap(response => {
         // TODO
         this.loadPagedList(role, key, this.getParam(key)).pipe();
         this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
-        this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.patient?.fullName} fue creado exitosamente`);
+        if (role === "Patient") {
+          this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.doctor?.firstName} ${response?.doctor?.lastName} fue creado exitosamente`);
+        } else {
+          this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.patient?.fullName} fue creado exitosamente`);
+        }
         if (view === "modal") {
           this.hideNewModal();
         } else if (view === 'page') {

@@ -19,8 +19,8 @@ namespace MainService.Infrastructure.Data
                     .ThenInclude(x => x.MedicalLicense)
                     .ThenInclude(x => x.MedicalLicenseSpecialty)
                     .ThenInclude(x => x.Specialty)
-                .Include(x => x.UserAddresses)
-                    .ThenInclude(x => x.Address)
+                .Include(x => x.DoctorClinics)
+                    .ThenInclude(x => x.Clinic)
                 .AsQueryable();
 
             query = query.Where(x => x.UserMedicalLicenses.Count != 0);

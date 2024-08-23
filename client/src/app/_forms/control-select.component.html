@@ -20,13 +20,17 @@
     <option value="" disabled selected>{{placeholder}}</option>
   }
   @for(option of options; track $index) {
-    @if (option.value && option.name) {
+    @if (isAddress) {
+      <option value="{{option.id}}">
+        {{option.street}}, {{option.city}}, {{option.state}}
+      </option>
+    } @else if (option.value && option.name) {
       <option value="{{option.value}}">
         {{option.name}}
       </option>
     } @else if (option.id && option.name) {
       <option value="{{option.id}}">
-        {{option.name}}
+        {{option.name}} @if(showPrice && option.price) { - ${{option.price}} }
       </option>
     } @else if (option.name) {
       <option value="{{option.name}}">
