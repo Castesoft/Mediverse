@@ -101,8 +101,8 @@ export class AddressesService extends ServiceHelper<
 > {
   constructor() {
     super(AddressParams, 'addresses', {
-      Account: new NamingSubject('dirección', 'direcciones', 'Direcciones', 'femenine', ''),
-      Clinic: new NamingSubject('clínica', 'clínicas', 'Clínicas', 'femenine', ''),
+      Account: new NamingSubject('addresses','dirección', 'direcciones', 'Direcciones', 'femenine', 'account'),
+      Clinic: new NamingSubject('clinics','clínica', 'clínicas', 'Clínicas', 'femenine', 'home'),
     }, {
       Account: [
         { name: 'name', label: 'Dirección' },
@@ -349,7 +349,7 @@ export const itemResolver: ResolveFn<Address | null> = (route, state) => {
       component: AddressesComponent, runGuardsAndResolvers: 'always',
       children: [
         { path: '', component: CatalogComponent, title: 'Catálogo de células', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'nuevo', component: NewComponent, title: 'Crear nuevo célula', data: { breadcrumb: 'Nuevo', }, },
+        { path: 'create', component: NewComponent, title: 'Crear nuevo célula', data: { breadcrumb: 'Nuevo', }, },
         {
           path: ':id', data: { breadcrumb: 'Detalle', },
           component: DetailComponent,

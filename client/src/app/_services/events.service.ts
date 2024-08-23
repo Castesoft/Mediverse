@@ -43,7 +43,7 @@ export class EventsService {
     catalogRoute: "/home/events", createRoute: "/home/events/create",
     title: "Citas", undefinedArticle: "una", definedArticle: "la", undefinedArticlePlural: "unas", definedArticlePlural: "las",
     articleSex: 'masculine',
-  };
+  } as NamingSubject;
 
   private cacheMap: Map<string, Map<string, PaginatedResult<Event[]>>> = new Map<string, Map<string, PaginatedResult<Event[]>>>();
   private cacheExists = (key: string): boolean => this.cacheMap.has(key);

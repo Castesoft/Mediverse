@@ -123,6 +123,7 @@ export type LoadingTypes = 'current' | 'all' | string;
 export type ArticleSex = 'masculine' | 'femenine';
 
 export class NamingSubject {
+  subject: string;
   singular: string;
   plural: string;
   articleSex: ArticleSex;
@@ -138,23 +139,34 @@ export class NamingSubject {
   definedArticle: string;
   undefinedArticlePlural: string;
   definedArticlePlural: string;
+  baseUrl: string;
 
-  constructor(singular: string, plural: string, title: string, articleSex: ArticleSex, baseUrl: string) {
+  constructor(subject: string, singular: string, plural: string, title: string, articleSex: ArticleSex, baseUrl: string) {
+    this.subject = subject.toLowerCase();
     this.singular = singular;
     this.plural = plural;
     this.title = title;
+    this.baseUrl = `/${baseUrl}/${this.subject}/`;
 
     this.singularTitlecase = singular.charAt(0).toUpperCase() + singular.slice(1);
     this.pluralTitlecase = plural.charAt(0).toUpperCase() + plural.slice(1);
 
-    this.createRoute = `${baseUrl}/${singular.toLowerCase()}/create`;
-    this.catalogRoute = `${baseUrl}/${plural.toLowerCase()}`;
+    this.createRoute = `${this.baseUrl}create`;
+    this.catalogRoute = `${this.baseUrl}`;
 
     this.undefinedArticle = articleSex === 'masculine' ? 'un' : 'una';
     this.definedArticle = articleSex === 'masculine' ? 'el' : 'la';
     this.undefinedArticlePlural = articleSex === 'masculine' ? 'unos' : 'unas';
     this.definedArticlePlural = articleSex === 'masculine' ? 'los' : 'las';
     this.articleSex = articleSex;
+  }
+
+  editRoute(id: number): string {
+    return `${this.baseUrl}${id}/edit`;
+  }
+
+  detailRoute(id: number): string {
+    return `${this.baseUrl}${id}`;
   }
 };
 

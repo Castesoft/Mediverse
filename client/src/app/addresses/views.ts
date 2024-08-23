@@ -6,6 +6,7 @@ import { Validators } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Address, AddressForm, AddressesService } from "src/app/addresses/addresses.config";
 import { CommonModule } from "@angular/common";
+import { omitKeys } from "src/app/_utils/util";
 
 @Component({
   selector: "[addressForm]",
@@ -117,12 +118,14 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
 
   create() {
     if (this.form.submittable) {
-      this.service.create(this.form.value).subscribe({
+      this.service.create(
+        omitKeys(this.form.value,
+          ['id', 'createdAt', 'enabled', 'visible', 'isSelected',
+            'longitude', 'latitude', 'nursesCount', 'photoUrl']
+        ), 'clinic'
+      ).subscribe({
         next: item => this.form.submitted = false,
         error: (error: BadRequest) => this.form.error = error });
-
-      console.log(this.form);
-
     }
   }
 

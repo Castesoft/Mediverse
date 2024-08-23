@@ -433,8 +433,8 @@ export class ServiceHelper<
     );
   }
 
-  create(model: any): Observable<T> {
-    return this.http.post<T>(this.baseUrl, model).pipe(
+  create(model: any, route?: string): Observable<T> {
+    return this.http.post<T>(route ? `${this.baseUrl}${route}` : this.baseUrl, model).pipe(
       tap(response => {
         this.data.next([...this.data.value, response]);
       })
