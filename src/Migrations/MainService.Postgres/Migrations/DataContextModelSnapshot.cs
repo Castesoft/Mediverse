@@ -256,6 +256,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("RecommendedBy")
                         .HasColumnType("text");
 
+                    b.Property<bool>("RequireAnticipatedCardPayments")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 

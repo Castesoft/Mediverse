@@ -20,6 +20,7 @@ export interface DoctorSearchResult {
     specialties: Specialty[];
     addresses: Address[];
     paymentMethods: PaymentMethodType[];
+    requireAnticipatedCardPayments: boolean;
     services: Service[];
     medicalInsuranceCompanies: MedicalInsuranceCompany[];
     photoUrl: string;

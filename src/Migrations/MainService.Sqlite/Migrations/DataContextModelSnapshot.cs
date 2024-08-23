@@ -243,6 +243,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("RecommendedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("RequireAnticipatedCardPayments")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 

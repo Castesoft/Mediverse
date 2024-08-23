@@ -50,6 +50,29 @@ namespace MainService.Infrastructure.Services
             return customer.Id;
         }
 
+        public async Task<PaymentIntent> CreatePaymentIntentAsync(string customerId, string paymentMethodId, string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents)
+        {
+            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+
+            PaymentIntentCreateOptions options = new()
+            {
+                Amount = (long?)amountInCents,
+                Currency = "mxn",
+                Customer = customerId,
+                PaymentMethod = paymentMethodId,
+                Confirm = true,
+                OffSession = true,
+                // TransferData = new PaymentIntentTransferDataOptions
+                // {
+                //     Destination = doctorStripeAccountId,
+                // },
+                // ApplicationFeeAmount = (long?)commissionInCents,
+            };
+
+            var service = new PaymentIntentService();
+            return await service.CreateAsync(options);
+        }
+
         public async Task<bool> DeletePaymentMethodAsync(string paymentMethodId)
         {
             StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];

@@ -5,7 +5,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { ApplicationConfig, Component, importProvidersFrom, inject, isDevMode, OnInit } from '@angular/core';
 import {provideNativeDateAdapter} from "@angular/material/core";
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router, RouterOutlet } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import {FlatpickrModule} from "angularx-flatpickr";
 import { provideToastr } from 'ngx-toastr';
@@ -51,6 +51,8 @@ export class AppComponent implements OnInit {
   private bsModalService = inject(BsModalService);
   private accountService = inject(AccountService);
   private breadcrumb = inject(BreadcrumbService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   cookiesAccepted = 'true';
 
@@ -70,7 +72,12 @@ export class AppComponent implements OnInit {
       use_fedcm_for_prompt: true,
       callback: (resp: any) => {
         if (this.accountService.current() === null) {
-          this.accountService.loginWithSocialAuth('GOOGLE', resp.credential).subscribe();
+          this.accountService.loginWithSocialAuth('GOOGLE', resp.credential).subscribe({
+            next: () => {
+              if (this.route.snapshot.queryParams['noredirect']) return;
+              this.router.navigate(['/account']);
+            }
+          });
         } else {
           this.accountService.linkSocialAccount('GOOGLE', resp.credential).subscribe();
         }

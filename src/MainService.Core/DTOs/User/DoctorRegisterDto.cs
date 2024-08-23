@@ -56,6 +56,9 @@ public class DoctorRegisterDto
     public string AcceptedPaymentMethods { get; set; }
 
     [Required]
+    public bool RequireAnticipatedCardPayments { get; set; }
+
+    [Required]
     public bool SameAddress { get; set; }
 
     [Required]

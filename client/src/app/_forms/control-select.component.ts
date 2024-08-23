@@ -28,6 +28,7 @@ export class ControlSelectComponent implements ControlValueAccessor, AfterViewIn
   @Input() options: any[] = [];
   @Input() showPrice = false;
   @Input() isAddress = false;
+  @Input() isPaymentMethod = false;
 
   get control(): FormControl { return this.ngControl.control as FormControl; }
   get controlName(): string { return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName'; }

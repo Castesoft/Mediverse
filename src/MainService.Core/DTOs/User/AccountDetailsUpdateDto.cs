@@ -8,6 +8,7 @@ namespace MainService.Core.DTOs.User
         public string SpecialtyId { get; set; }
         // public int SubSpecialtyId { get; set; }
         public string AcceptedPaymentMethods { get; set; }
+        public bool RequireAnticipatedCardPayments { get; set; }
         public bool RemoveAvatar { get; set; } = false;
     }
 }

@@ -45,7 +45,6 @@ export class AccountService {
         if (response) {
           if (!response.requiresTwoFactor) {
             this.setCurrentUser(response);
-            this.router.navigate(['/account']);
             this.snackbarService.success(`Bienvenido ${response.firstName}!`);
           }
         }
@@ -59,7 +58,6 @@ export class AccountService {
       map(response => {
         if (response) {
           this.setCurrentUser(response);
-          this.router.navigate(['/account']);
           this.snackbarService.success(`Bienvenido ${response.firstName}!`);
         }
         return response;
@@ -72,7 +70,6 @@ export class AccountService {
       map(response => {
         if (response) {
           this.setCurrentUser(response);
-          this.router.navigate(['/account']);
           this.snackbarService.success(`Bienvenido ${response.firstName}!`);
         }
         return response;

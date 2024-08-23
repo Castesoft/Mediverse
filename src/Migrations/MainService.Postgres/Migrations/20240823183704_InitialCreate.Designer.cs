@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240822223059_InitialCreate")]
+    [Migration("20240823183704_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -258,6 +258,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("RecommendedBy")
                         .HasColumnType("text");
+
+                    b.Property<bool>("RequireAnticipatedCardPayments")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

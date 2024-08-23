@@ -1,5 +1,5 @@
 declare var google: any;
-import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JsonPipe } from '@angular/common';
@@ -71,6 +71,8 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   redirectUrl: string | null = "/account";
   requiresTwoFactor: boolean = false;
 
+  noRedirect = input<boolean>(false);
+
   constructor() {
     this.forms.mode$.subscribe({
       next: mode => {
@@ -89,6 +91,14 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getQueryParams();
+
+    if (this.noRedirect()) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { noredirect: 'true' },
+        queryParamsHandling: 'merge',
+      });
+    }
   }
 
   ngAfterViewInit() {
@@ -112,6 +122,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
             if (response.requiresTwoFactor) {
               this.requiresTwoFactor = true;
             } else {
+              if (this.noRedirect()) return;
               if (this.redirectUrl) {
                 this.router.navigate([this.redirectUrl]);
               } else {
@@ -123,6 +134,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
       } else {
         this.accountService.twoFactorLogin(this.form.group.get('email')?.value, this.form.group.get('twoFactorCode')?.value).subscribe({
           next: response => {
+            if (this.noRedirect()) return;
             if (this.redirectUrl) {
               this.router.navigate([this.redirectUrl]);
             } else {

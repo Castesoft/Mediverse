@@ -5,11 +5,12 @@ import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 import { AccountService } from 'src/app/_services/account.service';
 import { EventsService } from 'src/app/_services/events.service';
 import { MaterialModule } from 'src/app/_shared/material.module';
+import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';
 
 @Component({
   selector: 'app-doctor-schedule',
   standalone: true,
-  imports: [MaterialModule, ControlSelectComponent, ReactiveFormsModule],
+  imports: [MaterialModule, ControlSelectComponent, ReactiveFormsModule, SignInBasicFormComponent],
   templateUrl: './doctor-schedule.component.html',
   styleUrl: './doctor-schedule.component.scss'
 })
@@ -34,6 +35,7 @@ export class DoctorScheduleComponent implements OnInit {
     serviceId: [0, Validators.min(1)],
     medicalInsuranceCompanyId: [0],
     paymentMethodTypeId: [0, Validators.min(1)],
+    stripePaymentMethodId: [''],
   });
 
   constructor() {
@@ -80,7 +82,9 @@ export class DoctorScheduleComponent implements OnInit {
     })
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.accountService.getBillingDetails();
+  }
 
   onSubmit() {
     this.submitted = true;
@@ -89,8 +93,10 @@ export class DoctorScheduleComponent implements OnInit {
       return;
     }
 
-    console.log(this.form.value);
-    console.log(this.form.controls);
-    this.eventsService.create(this.form.value, 'Patient', 'inline', '').subscribe();
+    this.eventsService.create(this.form.value, 'Patient', 'inline', '').subscribe({
+      next: () => {
+        this.onClose.emit();
+      }
+    });
   }
 }

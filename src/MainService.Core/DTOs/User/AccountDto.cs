@@ -23,6 +23,7 @@ public class AccountDto
     public bool TwoFactorEnabled { get; set; }
     public int SpecialtyId { get; set; }
     public List<PaymentMethodTypeDto> PaymentMethodTypes { get; set; } = [];
+    public bool RequireAnticipatedCardPayments { get; set; }
     public string Country { get; set; } = "México";
     public string State { get; set; }
     public string City { get; set; }

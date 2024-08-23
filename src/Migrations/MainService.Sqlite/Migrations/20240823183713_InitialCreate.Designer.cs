@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainService.Sqlite.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240822223107_InitialCreate")]
+    [Migration("20240823183713_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -245,6 +245,9 @@ namespace MainService.Sqlite.Migrations
 
                     b.Property<string>("RecommendedBy")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("RequireAnticipatedCardPayments")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");

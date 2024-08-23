@@ -24,6 +24,7 @@ export class Account {
   twoFactorEnabled!: boolean;
   specialtyId!: string;
   paymentMethodTypes: PaymentMethodType[] = [];
+  requireAnticipatedCardPayments!: boolean;
   country!: string;
   state!: string;
   city!: string;

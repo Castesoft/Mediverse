@@ -81,6 +81,7 @@ namespace MainService.Sqlite.Migrations
                     LegalName = table.Column<string>(type: "TEXT", nullable: true),
                     Education = table.Column<string>(type: "TEXT", nullable: true),
                     Post = table.Column<string>(type: "TEXT", nullable: true),
+                    RequireAnticipatedCardPayments = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),

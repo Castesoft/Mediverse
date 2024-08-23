@@ -24,6 +24,7 @@ namespace MainService.Core.DTOs.Search
         public SpecialtyDto[] Specialties { get; set; }
         public DoctorClinicDto[] Addresses { get; set; }
         public PaymentMethodTypeDto[] PaymentMethods { get; set; }
+        public bool RequireAnticipatedCardPayments { get; set; }
         public ServiceDto[] Services { get; set; }
         public MedicalInsuranceCompanyDto[] MedicalInsuranceCompanies { get; set; }
         public string PhotoUrl { get; set; }

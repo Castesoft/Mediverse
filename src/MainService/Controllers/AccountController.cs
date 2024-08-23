@@ -924,6 +924,12 @@ public class AccountController(
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
+        if (user.UserPaymentMethods.Count == 0)
+        {
+            string customerId = await stripeService.CreateCustomerAsync(user.Email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
+            user.StripeCustomerId = customerId;
+        }
+
         if (request.IsMain)
         {
             var mainPaymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.IsMain);

@@ -36,6 +36,7 @@ export class CardProfileDetailsComponent {
     // subspecialtyId: [''],
     file: [''],
     AcceptedPaymentMethods: [''],
+    RequireAnticipatedCardPayments: [false],
     RemoveAvatar: [false]
   });
   photoFile: any;
@@ -90,6 +91,7 @@ export class CardProfileDetailsComponent {
     this.profileDetailsForm.get('PhoneNumber')?.setValue(this.accountService.current()?.phoneNumber!);
     this.profileDetailsForm.get('SpecialtyId')?.setValue(this.accountService.current()?.specialtyId!.toString()!);
     this.profileDetailsForm.get('AcceptedPaymentMethods')?.setValue(this.accountService.current()?.paymentMethodTypes!.map(x => x.id).join(',')!);
+    this.profileDetailsForm.get('RequireAnticipatedCardPayments')?.setValue(this.accountService.current()?.requireAnticipatedCardPayments!);
   }
 
   onCancel() {
@@ -105,6 +107,20 @@ export class CardProfileDetailsComponent {
     this.photoUrl = undefined;
     this.photoFile = undefined;
     this.profileDetailsForm.get('RemoveAvatar')?.setValue(true);
+  }
+
+  showRequireAnticipatedCardPaymentsField() {
+    if (this.profileDetailsForm.get('AcceptedPaymentMethods') === null) return false;
+    const paymentMethods = this.profileDetailsForm.get('AcceptedPaymentMethods')!.value as string;
+    return paymentMethods.split(',').includes('1') || paymentMethods.split(',').includes('2');
+  }
+
+  setValueAnticipatedCardPayments(e: any) {
+    if (e.target.checked) {
+      this.profileDetailsForm.get('RequireAnticipatedCardPayments')?.setValue(true);
+    } else {
+      this.profileDetailsForm.get('RequireAnticipatedCardPayments')?.setValue(false);
+    }
   }
 
   onSubmit() {

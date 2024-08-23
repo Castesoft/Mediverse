@@ -82,6 +82,7 @@ namespace MainService.Postgres.Migrations
                     LegalName = table.Column<string>(type: "text", nullable: true),
                     Education = table.Column<string>(type: "text", nullable: true),
                     Post = table.Column<string>(type: "text", nullable: true),
+                    RequireAnticipatedCardPayments = table.Column<bool>(type: "boolean", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),

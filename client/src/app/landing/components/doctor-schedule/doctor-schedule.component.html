@@ -38,10 +38,10 @@
                             <div class="stepper-line h-40px"></div>
                         </div>
                         <div class="stepper-item" 
-                            [class.completed]="form.get('startDate')?.valid &&
-                                form.get('endDate')?.valid &&
-                                form.get('startTime')?.valid &&
-                                form.get('endTime')?.valid"
+                            [class.completed]="form.get('dateFrom')?.valid &&
+                                form.get('dateTo')?.valid &&
+                                form.get('timeFrom')?.valid &&
+                                form.get('timeTo')?.valid"
                             data-kt-stepper-element="nav"
                         >
                             <div class="stepper-wrapper">
@@ -57,7 +57,7 @@
                             </div>
                             <div class="stepper-line h-40px"></div>
                         </div>
-                        <div class="stepper-item" [class.completed]="form.get('addressId')?.valid" data-kt-stepper-element="nav">
+                        <div class="stepper-item" [class.completed]="form.get('clinicId')?.valid" data-kt-stepper-element="nav">
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
                                     <i class="ki-duotone ki-check fs-2 stepper-check"></i>
@@ -184,18 +184,41 @@
                                     <i class="ki-duotone ki-check fs-2 stepper-check"></i>
                                     <span class="stepper-number">5</span>
                                 </div>
-                                <div class="stepper-label">
-                                    <h3 class="stepper-title">Confirmar</h3>
-                                    <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de agendar</div>
-                                    <button type="submit" class="btn btn-success">Agendar</button>
-                                </div>
+                                @if ((this.form.value.paymentMethodTypeId == 1 || this.form.value.paymentMethodTypeId == 2) && this.doctor()!.requireAnticipatedCardPayments) {
+                                    <div class="stepper-label">
+                                        <h3 class="stepper-title">Pagar y confirmar</h3>
+                                        <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de realizar el pago</div>
+
+                                        <div
+                                            class="fv-row fv-plugins-icon-container my-4"
+                                            controlSelect
+                                            formControlName="stripePaymentMethodId"
+                                            label="Selecciona tu método de pago"
+                                            [options]="accountService.billingDetails()?.userPaymentMethods!"
+                                            [isPaymentMethod]="true"
+                                            [placeholder]="''"
+                                            [submitted]="submitted"
+                                            [errors]="{
+                                                required: 'El método de pago es requerido.'
+                                            }"
+                                        ></div>
+
+                                        <button type="submit" class="btn btn-success">Pagar y agendar</button>
+                                    </div>
+                                } @else {
+                                    <div class="stepper-label">
+                                        <h3 class="stepper-title">Confirmar</h3>
+                                        <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de agendar</div>
+                                        <button type="submit" class="btn btn-success">Agendar</button>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
         } @else {
-            Inicia sesión
+            <div signInBasicForm [noRedirect]="true"></div>
         }
     </div>
 </div>

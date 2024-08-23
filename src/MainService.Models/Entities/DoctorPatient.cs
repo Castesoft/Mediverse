@@ -12,4 +12,5 @@ public class DoctorPatient
     public DoctorPatient() {}
 
     public DoctorPatient(int doctorId) => DoctorId = doctorId;
+    public DoctorPatient(int doctorId, int patientId) : this(doctorId) => PatientId = patientId;
 }

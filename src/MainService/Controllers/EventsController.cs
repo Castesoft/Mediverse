@@ -15,11 +15,13 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using MainService.Core.DTOs.Events;
 using Serilog;
+using MainService.Infrastructure.Services;
+using Stripe;
 
 namespace MainService.Controllers;
 
 [Authorize]
-public class EventsController(IUnitOfWork uow, IEventsService service, UserManager<AppUser> userManager//,  IMapper mapper
+public class EventsController(IUnitOfWork uow, IEventsService service, UserManager<AppUser> userManager, IEmailService emailService, IStripeService stripeService//,  IMapper mapper
 )
     : BaseApiController
 {
@@ -112,6 +114,13 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
 
         IEnumerable<int> nurseIds = [];
         int doctorId = 0;
+        AppUser doctor = null;
+
+        AppUser patient = await uow.UserRepository.GetByIdAsync(request.PatientId);
+        if (patient == null) return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado.");
+        Service service = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
+        if (service == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
+
         if (userRoles.Contains("Doctor") && request.Role == "Doctor")
         {
             doctorId = user.Id;
@@ -126,9 +135,22 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
         }
         else
         {
-            // TODO: Si el paciente no existe para el doctor actual, agregarle el paciente al doctor del request
-
             doctorId = request.DoctorId;
+            doctor = await uow.UserRepository.GetByIdAsync(request.DoctorId);
+            if (doctor == null) return BadRequest($"Doctor de ID {request.DoctorId} no fue encontrado.");
+
+            if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, doctorId))
+            {
+                doctor.Patients.Add(new DoctorPatient(request.DoctorId, request.PatientId));
+            }
+
+            if ((request.PaymentMethodTypeId == 1 || request.PaymentMethodTypeId == 2) && doctor.RequireAnticipatedCardPayments)
+            {
+                if (string.IsNullOrEmpty(request.StripePaymentMethodId))
+                    return BadRequest("StripePaymentMethodId es requerido para el pago anticipado.");
+
+                PaymentIntent payment = await stripeService.CreatePaymentIntentAsync(patient.StripeCustomerId, request.StripePaymentMethodId, doctor.StripeCustomerId, service.Price * 100, 5 * 100);
+            }
         }
 
         if (!await uow.UserRepository.DoctorExistsAsync(doctorId, doctorId))
@@ -146,7 +168,7 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
                 return BadRequest($"Especialista de ID {nurseId} no fue encontrado o no existe para el doctor actual.");
         }
 
-        Event item = new(request.AllDay, request.DateFrom, request.DateTo, request.TimeFrom, request.TimeTo)
+        Models.Entities.Event item = new(request.AllDay, request.DateFrom, request.DateTo, request.TimeFrom, request.TimeTo)
         {
             NurseEvents = nurseIds.Select(x => new NurseEvent(x)).ToList(),
             EventService = new(request.ServiceId),
@@ -160,6 +182,12 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
         uow.EventRepository.Add(item);
 
         if (!await uow.Complete()) return BadRequest($"Error al crear {subject}.");
+
+        string formattedDate = request.DateFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+        string emailSubject = $"Mediverse: Confirmación de tu cita!";
+        string htmlMessage =  emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName, formattedDate, request.TimeFrom + " - " + request.TimeTo, service.Name);
+
+        await emailService.SendMail(patient.Email, emailSubject, htmlMessage);
 
         var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
 

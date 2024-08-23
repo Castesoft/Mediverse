@@ -24,6 +24,10 @@
       <option value="{{option.id}}">
         {{option.street}}, {{option.city}}, {{option.state}}
       </option>
+    } @else if (isPaymentMethod) {
+      <option value="{{option.stripePaymentMethodId}}">
+        @if(option.isMain){(Principal)} {{option.last4}} {{option.expirationMonth}}/{{option.expirationYear}} - {{option.displayName}}
+      </option>
     } @else if (option.value && option.name) {
       <option value="{{option.value}}">
         {{option.name}}
@@ -41,6 +45,11 @@
         {{option}}
       </option>
     }
+  }
+  @if (isPaymentMethod) {
+    <option value="new">
+      Añade una nueva tarjeta
+    </option>
   }
 </select>
 

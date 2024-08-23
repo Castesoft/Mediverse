@@ -54,6 +54,7 @@ public class AppUser : IdentityUser<int>
     public ICollection<NurseEvent> NurseEvents { get; set; } = [];
     public ICollection<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
     public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];
+    public bool RequireAnticipatedCardPayments { get; set; }
     public ICollection<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
 
     // Navigation properties

@@ -52,4 +52,18 @@ export class AccountDetailsComponent {
       this.myForm.get('file')?.setValue(event.target.files[0]);
     }
   }
+
+  showRequireAnticipatedCardPaymentsField() {
+    if (this.myForm.get('AcceptedPaymentMethods') === null) return false;
+    const paymentMethods = this.myForm.get('AcceptedPaymentMethods')!.value as string;
+    return paymentMethods.split(',').includes('1') || paymentMethods.split(',').includes('2');
+  }
+
+  setValueAnticipatedCardPayments(e: any) {
+    if (e.target.checked) {
+      this.myForm.get('RequireAnticipatedCardPayments')?.setValue(true);
+    } else {
+      this.myForm.get('RequireAnticipatedCardPayments')?.setValue(false);
+    }
+  }
 }
