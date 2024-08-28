@@ -48,6 +48,8 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<Neighborhood> Neighborhoods { get; set; }
     public DbSet<MedicalInsuranceCompany> MedicalInsuranceCompanies { get; set; }
     public DbSet<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; }
+    public DbSet<WorkSchedule> WorkSchedules { get; set; }
+    public DbSet<DoctorWorkSchedule> DoctorWorkSchedules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

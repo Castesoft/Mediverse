@@ -13,6 +13,7 @@ import { AccountSettingsComponent } from './components/account-settings/account-
 import { AccountBillingComponent } from './components/account-billing/account-billing.component';
 import { AccountPaymentsComponent } from './components/account-payments/account-payments.component';
 import { AccountInsurancesComponent } from './components/account-insurances/account-insurances.component';
+import { AccountSchedulesComponent } from './components/account-schedules/account-schedules.component';
 
 @Component({
   selector: 'account-main-route',
@@ -76,7 +77,8 @@ export const itemResolver: ResolveFn<Account | null> = (route, state) => {
         { path: 'settings', component: AccountSettingsComponent, data: { breadcrumb: 'Configuración', }, title: 'Configuración', },
         { path: 'billing', component: AccountBillingComponent, data: { breadcrumb: 'Facturación', }, title: 'Facturación', },
         { path: 'payments', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', },
-        { path: 'insurances', component: AccountInsurancesComponent, data: { breadcrumb: 'Seguros', }, title: 'Seguros', }
+        { path: 'insurances', component: AccountInsurancesComponent, data: { breadcrumb: 'Seguros', }, title: 'Seguros', },
+        { path: 'schedules', component: AccountSchedulesComponent, data: { breadcrumb: 'Horarios', }, title: 'Horarios', },
       ],
     },
   ])],

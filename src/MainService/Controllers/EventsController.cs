@@ -118,8 +118,8 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
 
         AppUser patient = await uow.UserRepository.GetByIdAsync(request.PatientId);
         if (patient == null) return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado.");
-        Service service = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
-        if (service == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
+        Service doctorService = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
+        if (doctorService == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
 
         if (userRoles.Contains("Doctor") && request.Role == "Doctor")
         {
@@ -139,17 +139,29 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
             doctor = await uow.UserRepository.GetByIdAsync(request.DoctorId);
             if (doctor == null) return BadRequest($"Doctor de ID {request.DoctorId} no fue encontrado.");
 
-            if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, doctorId))
-            {
-                doctor.Patients.Add(new DoctorPatient(request.DoctorId, request.PatientId));
-            }
+            var isAvailable = await service.IsDoctorAvailableAsync(request.DoctorId, request.DateFrom, request.DateTo);
+            if (!isAvailable) return BadRequest("El doctor no está disponible en el horario seleccionado.");
 
             if ((request.PaymentMethodTypeId == 1 || request.PaymentMethodTypeId == 2) && doctor.RequireAnticipatedCardPayments)
             {
                 if (string.IsNullOrEmpty(request.StripePaymentMethodId))
                     return BadRequest("StripePaymentMethodId es requerido para el pago anticipado.");
 
-                PaymentIntent payment = await stripeService.CreatePaymentIntentAsync(patient.StripeCustomerId, request.StripePaymentMethodId, doctor.StripeCustomerId, service.Price * 100, 5 * 100);
+                if (string.IsNullOrEmpty(doctor.StripeConnectAccountId))
+                {
+                    Account account = await stripeService.CreateExpressAccountAsync(doctor);
+                    doctor.StripeConnectAccountId = account.Id;
+                }
+
+                PaymentIntent payment = await stripeService.CreatePaymentIntentAsync(patient.StripeCustomerId, request.StripePaymentMethodId, doctor.StripeConnectAccountId, doctorService.Price * 100, 5 * 100);
+
+                if (payment == null) return BadRequest("Error al procesar el pago.");
+                if (payment.Status != "succeeded") return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
+            }
+
+            if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, doctorId))
+            {
+                doctor.Patients.Add(new DoctorPatient(request.DoctorId, request.PatientId));
             }
         }
 
@@ -185,7 +197,7 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
 
         string formattedDate = request.DateFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
         string emailSubject = $"Mediverse: Confirmación de tu cita!";
-        string htmlMessage =  emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName, formattedDate, request.TimeFrom + " - " + request.TimeTo, service.Name);
+        string htmlMessage =  emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName, formattedDate, request.TimeFrom + " - " + request.TimeTo, doctorService.Name);
 
         await emailService.SendMail(patient.Email, emailSubject, htmlMessage);
 

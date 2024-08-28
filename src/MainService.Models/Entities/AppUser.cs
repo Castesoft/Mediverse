@@ -54,8 +54,10 @@ public class AppUser : IdentityUser<int>
     public ICollection<NurseEvent> NurseEvents { get; set; } = [];
     public ICollection<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
     public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];
+    public string StripeConnectAccountId { get; set; }
     public bool RequireAnticipatedCardPayments { get; set; }
     public ICollection<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
+    public ICollection<DoctorWorkSchedule> DoctorWorkSchedules { get; set; } = [];
 
     // Navigation properties
     public List<DoctorService> DoctorServices { get; set; } = [];

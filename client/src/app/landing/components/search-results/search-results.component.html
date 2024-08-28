@@ -83,7 +83,7 @@
         }
         @if (selectedDoctor) {
             <div class="doctor-details">
-                <app-doctor-details [doctor]="selectedDoctor" (onClose)="onCloseDoctorDetails()"></app-doctor-details>
+                <app-doctor-details [doctor]="selectedDoctor" (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
             </div>
         }
     </div>

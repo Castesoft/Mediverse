@@ -2,6 +2,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Role } from "src/app/_models/types";
 import { PaymentMethodType } from './paymentMethodType';
+import { WorkSchedule } from './workSchedule';
 
 export class Account {
   id!: number;
@@ -25,6 +26,7 @@ export class Account {
   specialtyId!: string;
   paymentMethodTypes: PaymentMethodType[] = [];
   requireAnticipatedCardPayments!: boolean;
+  workSchedules: WorkSchedule[] = [];
   country!: string;
   state!: string;
   city!: string;

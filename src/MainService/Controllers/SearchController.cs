@@ -1,4 +1,3 @@
-
 using MainService.Core.DTOs.Search;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -20,6 +19,44 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));
+
+        foreach (var doctor in pagedList)
+        {
+            doctor.DoctorAvailabilities = Enumerable.Range(0, 7)
+                .Select(i => DateTime.Now.AddDays(i))
+                .Select((date, index) => new DoctorAvailability
+                {
+                    Day = index == 0 ? "Hoy" : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("dddd", new System.Globalization.CultureInfo("es-ES"))),
+                    DayNumber = date.Day,
+                    Month = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("MMMM", new System.Globalization.CultureInfo("es-ES"))),
+                    MonthNumber = date.Month,
+                    Year = date.Year,
+                    Availability = [.. doctor.WorkSchedules
+                        .Where(ws => ws.DayOfWeek == (int)date.DayOfWeek)
+                        .Select(ws =>
+                        {
+                            var startTime = ws.StartTime.ToTimeSpan();
+                            var endTime = ws.EndTime.ToTimeSpan();
+                            var localDate = date.Date;
+                            var conflictingEvent = doctor.DoctorEvents.FirstOrDefault(e =>
+                                e.DateFrom.Date == localDate &&
+                                e.DateFrom.ToLocalTime().TimeOfDay < endTime &&
+                                e.DateTo.ToLocalTime().TimeOfDay > startTime);
+
+                            return new DoctorAvailabilityTime
+                            {
+                                Start = ws.StartTime.ToString("HH:mm"),
+                                End = ws.EndTime.ToString("HH:mm"),
+                                Available = conflictingEvent == null
+                            };
+                        })
+                        .OrderBy(ws => ws.Start)]
+                })
+                .ToArray();
+
+            doctor.WorkSchedules = [];
+            doctor.DoctorEvents = [];
+        }
 
         if (param.Latitude == null || param.Longitude == null)
         {

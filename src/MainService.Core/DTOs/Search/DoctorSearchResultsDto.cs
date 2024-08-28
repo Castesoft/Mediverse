@@ -25,8 +25,28 @@ namespace MainService.Core.DTOs.Search
         public DoctorClinicDto[] Addresses { get; set; }
         public PaymentMethodTypeDto[] PaymentMethods { get; set; }
         public bool RequireAnticipatedCardPayments { get; set; }
+        public WorkScheduleDto[] WorkSchedules { get; set; }
+        public Event[] DoctorEvents { get; set; }
+        public DoctorAvailability[] DoctorAvailabilities { get; set; }
         public ServiceDto[] Services { get; set; }
         public MedicalInsuranceCompanyDto[] MedicalInsuranceCompanies { get; set; }
         public string PhotoUrl { get; set; }
+    }
+
+    public class DoctorAvailability
+    {
+        public string Day { get; set; }
+        public int DayNumber { get; set; }
+        public string Month { get; set; }
+        public int MonthNumber { get; set; }
+        public int Year { get; set; }
+        public DoctorAvailabilityTime[] Availability { get; set; }
+    }
+
+    public class DoctorAvailabilityTime
+    {
+        public string Start { get; set; }
+        public string End { get; set; }
+        public bool Available { get; set; }
     }
 }

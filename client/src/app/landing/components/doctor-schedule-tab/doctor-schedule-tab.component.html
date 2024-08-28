@@ -22,8 +22,10 @@
                             [class.bg-danger]="!day.available"
                         ></div>
                         <div class="fw-semibold ms-5 text-gray-600">
-                            <div class="fs-5" [class.text-decoration-line-through]="!day.available">{{day.start}} - {{day.end}} 
-                                <span class="fs-7 text-gray-500 text-uppercase">pm</span></div>
+                            <div class="fs-5" [class.text-decoration-line-through]="!day.available">
+                                {{day.start}} <span class="fs-7 text-gray-500 text-uppercase">{{day.start.split(':')[0] < 12 ? 'AM' : 'PM'}}</span> -
+                                {{day.end}} <span class="fs-7 text-gray-500 text-uppercase">{{day.end.split(':')[0] < 12 ? 'AM' : 'PM'}}</span>
+                            </div>
                             <a class="fs-5 fw-bold text-gray-800 text-hover-primary mb-2" >{{ day.available ? 'Disponible' : 'Ocupado' }}</a>
                         </div>
                         <button

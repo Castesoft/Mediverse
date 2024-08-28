@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, input, Input, OnChanges, Renderer2, Self, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, input, Input, OnChanges, output, Renderer2, Self, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgClass, KeyValuePipe, TitleCasePipe } from '@angular/common';
 import { FormsService } from 'src/app/_services/forms.service';

@@ -23,7 +23,9 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.DoctorClinics.Select(x => x.Clinic)))
             .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodType)))
             .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.DoctorServices.Select(x => x.Service)))
-            .ForMember(dest => dest.MedicalInsuranceCompanies, opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)));
+            .ForMember(dest => dest.MedicalInsuranceCompanies, opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)))
+            .ForMember(dest => dest.WorkSchedules, opt => opt.MapFrom(src => src.DoctorWorkSchedules.Select(x => x.WorkSchedule)))
+            .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.DoctorEvents.Select(x => x.Event)));
 
         CreateMap<Address, DoctorClinicDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -64,7 +66,10 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.PaymentMethodTypes, opt => opt.MapFrom(src => src.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodType)))
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.State))
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.City))
-            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street));
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street))
+            .ForMember(dest => dest.WorkSchedules, opt => opt.MapFrom(src => src.DoctorWorkSchedules.Select(x => x.WorkSchedule)));
+
+        CreateMap<WorkSchedule, WorkScheduleDto>();
 
         CreateMap<UserMedicalLicense, UserMedicalLicenseDto>()
             .ForMember(dest => dest.SpecialtyId, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId))

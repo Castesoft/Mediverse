@@ -253,6 +253,9 @@ namespace MainService.Sqlite.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("StripeConnectAccountId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("StripeCustomerId")
                         .HasColumnType("TEXT");
 
@@ -586,6 +589,22 @@ namespace MainService.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorSignature");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WorkScheduleId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "WorkScheduleId");
+
+                    b.HasIndex("WorkScheduleId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorWorkSchedules");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
@@ -1623,6 +1642,35 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("UserTaxRegimes");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.WorkSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkSchedules");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -2066,6 +2114,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Signature");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("DoctorWorkSchedules")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.WorkSchedule", "WorkSchedule")
+                        .WithOne("DoctorWorkSchedule")
+                        .HasForeignKey("MainService.Models.Entities.DoctorWorkSchedule", "WorkScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkSchedule");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.EventClinic", b =>
@@ -2692,6 +2759,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("DoctorSignature");
 
+                    b.Navigation("DoctorWorkSchedules");
+
                     b.Navigation("Doctors");
 
                     b.Navigation("NurseEvents");
@@ -2886,6 +2955,11 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
                 {
                     b.Navigation("UserTaxRegime");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.WorkSchedule", b =>
+                {
+                    b.Navigation("DoctorWorkSchedule");
                 });
 #pragma warning restore 612, 618
         }

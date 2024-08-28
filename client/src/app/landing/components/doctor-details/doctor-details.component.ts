@@ -16,6 +16,7 @@ import { DoctorScheduleComponent } from '../doctor-schedule/doctor-schedule.comp
 export class DoctorDetailsComponent {
   doctor = input<DoctorSearchResult>();
   onClose = output();
+  onEventCreated = output();
 
   constructor() { 
     effect(() => {
@@ -29,9 +30,7 @@ export class DoctorDetailsComponent {
   isScheduling = false;
   selectedSchedule: any;
 
-  ngOnInit() {
-    console.log(this.doctor());
-  }
+  ngOnInit() {}
 
   selectTab(tab: string) {
     this.selectedTab = tab;
@@ -42,7 +41,10 @@ export class DoctorDetailsComponent {
     this.selectedSchedule = schedule;
   }
 
-  onCloseDoctorSchedule() {
+  onCloseDoctorSchedule(event: boolean) {
+    if (event) {
+      this.onEventCreated.emit();
+    }
     this.isScheduling = false;
   }
 }

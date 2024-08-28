@@ -24,4 +24,5 @@ public interface IUserRepository
     Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync();
     Task<List<SpecialtyDto>> GetSpecialtiesAsync();
     Task<List<MedicalInsuranceCompanyDto>> GetMedicalInsuranceCompaniesAsync();
+    Task<bool> DeleteDoctorWorkScheduleAsync(WorkSchedule workSchedule);
 }

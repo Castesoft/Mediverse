@@ -23,9 +23,25 @@ export interface DoctorSearchResult {
     requireAnticipatedCardPayments: boolean;
     services: Service[];
     medicalInsuranceCompanies: MedicalInsuranceCompany[];
+    doctorAvailabilities: DoctorAvailability[];
     photoUrl: string;
     email: string;
     phoneNumber: string;
+}
+
+export interface DoctorAvailability {
+    day: string;
+    dayNumber: number;
+    month: string;
+    monthNumber: number;
+    year: number;
+    availability: DoctorAvailabilityTime[];
+}
+
+interface DoctorAvailabilityTime {
+    start: string;
+    end: string;
+    available: boolean;
 }
 
 export class DoctorSearchResultParams {

@@ -242,6 +242,7 @@ public class AccountController(
             IsBilling = request.SameAddress ? true : false
         };
         user.UserAddresses.Add(mainAddress);
+        user.DoctorClinics.Add(new() {Clinic = mainAddress.Address, IsMain = true});
 
         if (!request.SameAddress)
         {
@@ -1483,6 +1484,55 @@ public class AccountController(
 
         if (uow.HasChanges()) {
             if (!await uow.Complete()) return BadRequest("Error actualizando la información del usuario.");
+        }
+
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(userId);
+
+        return itemToReturn;
+    }
+
+    [Authorize]
+    [HttpPost("work-schedule")]
+    public async Task<ActionResult<AccountDto>> UpdateWorkSchedule([FromBody] WorkScheduleUpdateDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users
+            .Include(x => x.DoctorWorkSchedules)
+                .ThenInclude(x => x.WorkSchedule)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        var workSchedulesToDelete = user.DoctorWorkSchedules.ToList();
+        foreach (var workSchedule in workSchedulesToDelete)
+        {
+            await uow.UserRepository.DeleteDoctorWorkScheduleAsync(workSchedule.WorkSchedule);
+            user.DoctorWorkSchedules.Remove(workSchedule);
+        }
+
+        if (request.WorkScheduleBlocks != null && request.WorkScheduleBlocks.Count > 0)
+        {
+            foreach (var block in request.WorkScheduleBlocks)
+            {
+                var parts = block.Split("-");
+                if (parts.Length != 3) continue;
+
+                if (TimeOnly.TryParse(parts[0], out var startTime) &&
+                    TimeOnly.TryParse(parts[1], out var endTime) &&
+                    int.TryParse(parts[2], out var dayOfWeek))
+                {
+                    user.DoctorWorkSchedules.Add(new() {
+                        UserId = userId,
+                        WorkSchedule = new() {
+                            StartTime = startTime,
+                            EndTime = endTime,
+                            DayOfWeek = dayOfWeek
+                        }
+                    });
+                }
+            }
+            if (!await uow.Complete()) return BadRequest("Error actualizando los horarios de trabajo.");
         }
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(userId);

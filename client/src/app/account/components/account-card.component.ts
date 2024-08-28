@@ -157,6 +157,11 @@ import { AccountService } from 'src/app/_services/account.service';
           <li class="nav-item mt-2">
             <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/insurances']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Seguros</a>
           </li>
+          @if (accountService.hasRole(["Doctor"])) {
+            <li class="nav-item mt-2">
+              <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/schedules']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Horarios</a>
+            </li>
+          }
         </ul>
       </div>
     </div>

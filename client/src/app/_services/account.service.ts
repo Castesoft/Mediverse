@@ -157,7 +157,7 @@ export class AccountService {
           paymentMethods.push(newPaymentMehod as UserPaymentMethod);
           this.billingDetails.set({
             userAddresses: this.billingDetails()?.userAddresses || [],
-            userPaymentMethods: paymentMethods.sort((a, b) => a.isMain ? -1 : 1)
+            userPaymentMethods: paymentMethods
           });
         } else {
           this.billingDetails.set({
@@ -165,6 +165,10 @@ export class AccountService {
             userPaymentMethods: [...this.billingDetails()?.userPaymentMethods || [], newPaymentMehod as UserPaymentMethod]
           });
         }
+      }),
+      catchError(_ => {
+        this.snackbarService.error('Error al añadir el método de pago');
+        return of(null);
       })
     );
   }
@@ -391,6 +395,16 @@ export class AccountService {
     return this.http.put<Account>(`${this.baseUrl}account-details`, value).pipe(
       map(response => {
         this.snackbarService.success('Detalles del perfil actualizados correctamente');
+        this.setCurrentUser(response);
+        return response;
+      })
+    );
+  }
+
+  updateWorkSchedule(value: any) {
+    return this.http.post<Account>(`${this.baseUrl}work-schedule`, { workScheduleBlocks: value}).pipe(
+      map(response => {
+        this.snackbarService.success('Horario de trabajo actualizado correctamente');
         this.setCurrentUser(response);
         return response;
       })

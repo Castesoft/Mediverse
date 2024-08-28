@@ -26,11 +26,11 @@ export class SearchService {
     );
   }
 
-  getSearchResults(params: DoctorSearchResultParams): Observable<PaginatedResult<DoctorSearchResults>> {
+  getSearchResults(params: DoctorSearchResultParams, options: {ignoreCache: boolean} = {ignoreCache: false}): Observable<PaginatedResult<DoctorSearchResults>> {
     this.searchResultsParams.set(params);
     const response: DoctorSearchResults = this.searchResultsCache.get(Object.values(params).join('-'));
 
-    if (response) {
+    if (response && !options.ignoreCache) {
       this.searchResults.set(response);
       return of({
         result: response,

@@ -29,6 +29,7 @@ export class SearchResultsComponent implements OnInit {
   specialty = '';
   location = '';
   locationName = '';
+  pageNumber = 1;
 
   selectedDoctor: DoctorSearchResult | null = null;
 
@@ -54,10 +55,12 @@ export class SearchResultsComponent implements OnInit {
     this.specialty = this.route.snapshot.queryParamMap.get('specialty') ?? '';
     this.location = this.route.snapshot.queryParamMap.get('location') ?? '';
     this.locationName = this.route.snapshot.queryParamMap.get('locationName') ?? '';
+    this.pageNumber = Number(this.route.snapshot.queryParamMap.get('pageNumber')) || 1;
     this.makeInitialSearch(this.specialty, this.location);
   }
 
   onPageChanged(page: number) {
+    this.pageNumber = page;
     this.isLoading = true;
     this.searchService.searchResultsParams.set({
       ...this.searchService.searchResultsParams(),
@@ -87,8 +90,9 @@ export class SearchResultsComponent implements OnInit {
 
   makeInitialSearch(specialty: string, location: string) {
     this.params = new DoctorSearchResultParams(specialty || '', location || '');
+    this.params.pageNumber = this.pageNumber;
 
-    this.searchService.getSearchResults(this.params).subscribe({
+    this.searchService.getSearchResults(this.params, {ignoreCache: true}).subscribe({
       next: (response) => {
         const { result, pagination } = response;
         if (result) {
@@ -99,13 +103,25 @@ export class SearchResultsComponent implements OnInit {
             this.map?.setCenter({ lat: 22.5799, lng: -103.1648 });
             this.map?.setZoom(6);
           }
+          console.log(result.doctors);
           if (result.doctors.length > 0) {
+            console.log(this.selectedDoctor);
+            if (this.selectedDoctor) {
+              const selectedDoctor = result.doctors.find(d => d.id === this.selectedDoctor?.id);
+              console.log(selectedDoctor);
+              if (selectedDoctor) {
+                this.onCloseDoctorDetails();
+                this.showDoctorDetails(selectedDoctor);
+              }
+            }
+
             for (const doctor of result.doctors) {
               this.showMarker(doctor);
             }
           } else {
             this.resetMarkers();
           }
+
         }
         this.pagination = pagination;
         this.isLoading = false;
@@ -208,5 +224,9 @@ export class SearchResultsComponent implements OnInit {
         marker.zIndex = 0;
       });
     }
+  }
+
+  onEventCreated() {
+    this.makeInitialSearch(this.specialty, this.location);
   }
 }

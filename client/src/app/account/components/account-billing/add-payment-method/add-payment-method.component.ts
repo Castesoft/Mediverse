@@ -1,7 +1,7 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Stripe, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, loadStripe } from '@stripe/stripe-js';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
@@ -17,7 +17,8 @@ import { environment } from 'src/environments/environment';
 export class AddPaymentMethodComponent implements OnInit {
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
-
+  private bsModalService = inject(BsModalService);
+  
   bsModalRef = inject(BsModalRef);
   title?: string;
 
@@ -29,7 +30,7 @@ export class AddPaymentMethodComponent implements OnInit {
   cardExpiry?: StripeCardExpiryElement;
   cardCvc?: StripeCardCvcElement;
   cardErrors: any;
-  
+
   submitted = false;
   paymentMethodForm = this.fb.group({
     DisplayName             : [ '', [Validators.required] ],

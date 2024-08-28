@@ -11,7 +11,7 @@
             <h2>Agendar cita</h2>
         </div>
         <div class="card-toolbar gap-3">
-            <i class="ki-duotone ki-cross fs-2" (click)="onClose.emit()" style="cursor: pointer;">
+            <i class="ki-duotone ki-cross fs-2" (click)="onClose.emit(false)" style="cursor: pointer;">
                 <span class="path1"></span>
                 <span class="path2"></span>
                 <span class="path3"></span>
@@ -111,7 +111,7 @@
                                             }"
                                         ></div>
                                     } @else {
-                                        <div class="stepper-desc fw-semibold">{{doctor()?.services![0].name}}</div>
+                                        <div class="stepper-desc fw-semibold">{{doctor()?.services![0].name}} - ${{doctor()?.services![0].price}}</div>
                                     }
                                 </div>
                             </div>
@@ -196,11 +196,12 @@
                                             label="Selecciona tu método de pago"
                                             [options]="accountService.billingDetails()?.userPaymentMethods!"
                                             [isPaymentMethod]="true"
-                                            [placeholder]="''"
+                                            [placeholder]="'Seleccione un método de pago'"
                                             [submitted]="submitted"
                                             [errors]="{
                                                 required: 'El método de pago es requerido.'
                                             }"
+                                            (change)="onChangePaymentMethod($event)"
                                         ></div>
 
                                         <button type="submit" class="btn btn-success">Pagar y agendar</button>

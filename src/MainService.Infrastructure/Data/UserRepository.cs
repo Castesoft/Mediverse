@@ -212,4 +212,10 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .ProjectTo<MedicalInsuranceCompanyDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }
+
+    public async Task<bool> DeleteDoctorWorkScheduleAsync(WorkSchedule workSchedule)
+    {
+        context.WorkSchedules.Remove(workSchedule);
+        return await context.SaveChangesAsync() > 0;
+    }
 }
