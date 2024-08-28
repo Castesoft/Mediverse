@@ -417,6 +417,7 @@ export class AccountService {
   }
 
   logout() {
+    // TODO: reset state information about user/paymentMethods/addresses... etc
     localStorage.removeItem('user');
     this.current.set(null);
     this.router.navigate(['/auth/sign-in']);

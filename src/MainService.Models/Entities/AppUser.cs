@@ -40,7 +40,7 @@ public class AppUser : IdentityUser<int>
     public ICollection<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
 
     // User Billing Information Properties
-    public ICollection<UserPaymentMethod> UserPaymentMethods { get; set; } = [];
+    public List<UserPaymentMethod> UserPaymentMethods { get; set; } = [];
     public string RFC { get; set; }
     public string CURP { get; set; }
     public string CommercialName { get; set; }
