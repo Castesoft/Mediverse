@@ -9,6 +9,7 @@ import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
 import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billingDetails';
 import { MedicalInsuranceCompany, UserMedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
+import { Payment } from '../_models/payment';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class AccountService {
   medicalInsuranceCompanies = signal<MedicalInsuranceCompany[] | null>(null);
   userMedicalInsuranceCompanies = signal<UserMedicalInsuranceCompany[] | null>(null);
   doctorMedicalInsuranceCompanies = signal<MedicalInsuranceCompany[] | null>(null);
+  userPaymentHistory = signal<Payment[] | null>(null);
   roles = computed<Role[]>(() => {
 
     const user = this.current();
@@ -352,6 +354,14 @@ export class AccountService {
     );
   }
 
+  getPaymentHistory() {
+    return this.http.get<Payment[]>(`${this.baseUrl}payment-history`).pipe(
+      tap(payments => {
+        this.userPaymentHistory.set(payments);
+      })
+    );
+  }
+
   setDoctorBanner(value: any) {
     return this.http.put<Account>(`${this.baseUrl}doctor-banner`, value).pipe(
       map(response => {
@@ -417,9 +427,11 @@ export class AccountService {
   }
 
   logout() {
-    // TODO: reset state information about user/paymentMethods/addresses... etc
     localStorage.removeItem('user');
     this.current.set(null);
+    this.billingDetails.set(null);
+    this.userMedicalInsuranceCompanies.set(null);
+    this.doctorMedicalInsuranceCompanies.set(null);
     this.router.navigate(['/auth/sign-in']);
   }
 

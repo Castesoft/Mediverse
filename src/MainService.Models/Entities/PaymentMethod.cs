@@ -17,4 +17,5 @@ public class PaymentMethod : BaseEntity
     public string StripePaymentMethodId { get; set; }
 
     public UserPaymentMethod UserPaymentMethod { get; set; }
+    public ICollection<PaymentPaymentMethod> PaymentPaymentMethods { get; set; } = [];
 }

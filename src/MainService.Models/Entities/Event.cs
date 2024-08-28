@@ -74,7 +74,24 @@
         public string StripePaymentIntent { get; set; }
         
         public EventPayment EventPayment { get; set; }
+        public PaymentPaymentMethod PaymentPaymentMethod { get; set; }
         public PaymentPaymentMethodType PaymentPaymentMethodType { get; set; }
+    }
+
+    public class PaymentPaymentMethod
+    {
+        public PaymentPaymentMethod() {}
+
+        public PaymentPaymentMethod(int paymentId, int paymentMethodId)
+        {
+            PaymentId = paymentId;
+            PaymentMethodId = paymentMethodId;
+        }
+        
+        public int PaymentId { get; set; }
+        public int PaymentMethodId { get; set; }
+        public Payment Payment { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
     }
 
     public class PaymentPaymentMethodType

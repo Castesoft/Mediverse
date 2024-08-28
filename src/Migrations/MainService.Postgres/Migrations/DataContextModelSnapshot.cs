@@ -1240,6 +1240,24 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("PaymentMethodTypes");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethod", b =>
+                {
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PaymentId", "PaymentMethodId");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("PaymentPaymentMethod");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethodType", b =>
                 {
                     b.Property<int>("PaymentId")
@@ -2620,6 +2638,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Prescription");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethod", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Payment", "Payment")
+                        .WithOne("PaymentPaymentMethod")
+                        .HasForeignKey("MainService.Models.Entities.PaymentPaymentMethod", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("PaymentPaymentMethods")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("PaymentMethod");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethodType", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Payment", "Payment")
@@ -3093,11 +3130,15 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Navigation("EventPayment");
 
+                    b.Navigation("PaymentPaymentMethod");
+
                     b.Navigation("PaymentPaymentMethodType");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>
                 {
+                    b.Navigation("PaymentPaymentMethods");
+
                     b.Navigation("UserPaymentMethod");
                 });
 

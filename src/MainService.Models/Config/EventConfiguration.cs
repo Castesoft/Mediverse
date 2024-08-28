@@ -4,6 +4,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config
 {
+    public class PaymentPaymentMethodConfiguration : IEntityTypeConfiguration<PaymentPaymentMethod>
+    {
+        public void Configure(EntityTypeBuilder<PaymentPaymentMethod> builder)
+        {
+            builder.HasKey(x => new { x.PaymentId, x.PaymentMethodId });
+
+            builder
+                .HasOne(x => x.Payment)
+                .WithOne(x => x.PaymentPaymentMethod)
+                .HasForeignKey<PaymentPaymentMethod>(x => x.PaymentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .HasOne(x => x.PaymentMethod)
+                .WithMany(x => x.PaymentPaymentMethods)
+                .HasForeignKey(x => x.PaymentMethodId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
     public class EventPaymentStatusConfiguration : IEntityTypeConfiguration<EventPaymentStatus>
     {
         public void Configure(EntityTypeBuilder<EventPaymentStatus> builder)

@@ -1162,6 +1162,30 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentPaymentMethod",
+                columns: table => new
+                {
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentPaymentMethod", x => new { x.PaymentId, x.PaymentMethodId });
+                    table.ForeignKey(
+                        name: "FK_PaymentPaymentMethod_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PaymentPaymentMethod_Payments_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PaymentPaymentMethodTypes",
                 columns: table => new
                 {
@@ -2124,6 +2148,17 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentPaymentMethod_PaymentId",
+                table: "PaymentPaymentMethod",
+                column: "PaymentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentPaymentMethod_PaymentMethodId",
+                table: "PaymentPaymentMethod",
+                column: "PaymentMethodId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentPaymentMethodTypes_PaymentId",
                 table: "PaymentPaymentMethodTypes",
                 column: "PaymentId",
@@ -2348,6 +2383,9 @@ namespace MainService.Sqlite.Migrations
 
             migrationBuilder.DropTable(
                 name: "PatientPrescription");
+
+            migrationBuilder.DropTable(
+                name: "PaymentPaymentMethod");
 
             migrationBuilder.DropTable(
                 name: "PaymentPaymentMethodTypes");

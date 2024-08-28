@@ -62,33 +62,13 @@
             </tr>
           </thead>
           <tbody class="fw-semibold text-gray-600">
-            <tr>
-              <td>Nov 01, 2020</td>
-              <td>
-                <a href="#">Invoice for Ocrober 2024</a>
+            @for (payment of accountService.userPaymentHistory(); track payment.id) {
+              <tr>
+                <td>{{ payment.paymentDate | date }}</td>
+                <td>
+                <a href="#">{{ payment.paymentMethodType.name }} @if (payment.paymentMethod) { {{ payment.paymentMethod.last4 }} }</a>
               </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Oct 08, 2020</td>
-              <td>
-                <a href="#">Invoice for September 2024</a>
-              </td>
-              <td>$98.03</td>
+              <td>{{ payment.amount | currency }}</td>
               <td>
                 <a
                   href="#"
@@ -102,109 +82,9 @@
                   class="btn btn-sm btn-light btn-active-light-primary"
                   >View</a
                 >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 24, 2020</td>
-              <td>Paypal</td>
-              <td>$35.07</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Aug 01, 2020</td>
-              <td>
-                <a href="#">Invoice for July 2024</a>
-              </td>
-              <td>$142.80</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jul 01, 2020</td>
-              <td>
-                <a href="#">Invoice for June 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jun 17, 2020</td>
-              <td>Paypal</td>
-              <td>$523.09</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>Jun 01, 2020</td>
-              <td>
-                <a href="#">Invoice for May 2024</a>
-              </td>
-              <td>$123.79</td>
-              <td>
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >PDF</a
-                >
-              </td>
-              <td class="text-right">
-                <a
-                  href="#"
-                  class="btn btn-sm btn-light btn-active-light-primary"
-                  >View</a
-                >
-              </td>
-            </tr>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>

@@ -1,5 +1,14 @@
+import { UserPaymentMethod } from './billingDetails';
+import { PaymentMethodType } from './paymentMethodType';
 import { Service } from "./service";
 
+export interface Payment {
+  id: number
+  amount: number
+  paymentMethod: UserPaymentMethod
+  paymentMethodType: PaymentMethodType
+  paymentDate: Date
+}
 export interface PaymentBilling {
   services: Service[];
   paymentMethod: PaymentMethod;

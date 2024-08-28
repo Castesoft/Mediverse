@@ -43,7 +43,84 @@ namespace MainService.Models.Helpers
             return userPaymentMethod;
         }
     }
-    
+
+    public static partial class SeedEventPayments
+    {
+        private static readonly Random random = new();
+
+        private static PaymentMethodType GetRandomPaymentMethodType()
+        {
+            var paymentMethods = SeedData.paymentMethodTypes.ToList();
+            return paymentMethods[random.Next(paymentMethods.Count)];
+        }
+
+        // 50/50 que un servicio vaya a tener al menos un pago
+        // si si fue pagado, 1-3 pagos
+        // para cada uno de los pagos, seleccionar aleatoriamente el tipo de pago
+        // 50/50 si el total de los pagos es igual al total del servicio/evento
+
+        // code review
+        // asignar el EventPaymentStatus adecuado
+
+        // cuando el pago sea con tarjeta ..... en el seeding los usuarios ya tienen métodos de pago (crédito/débito)?
+        
+        public static List<EventPayment> GetEventPayments(Event @event, AppUser user)
+        {
+            var hasPayment = random.Next(0, 2) > 0;
+
+            if (!hasPayment) return [];
+
+            var paymentCount = random.Next(1, 4);
+            var totalAmount = @event.EventService.Service.Price;
+            var remainingAmount = totalAmount;
+            var payments = new List<EventPayment>();
+
+            for (int i = 0; i < paymentCount; i++)
+            {
+                var isLastPayment = i == paymentCount - 1;
+                var paymentAmount = isLastPayment
+                    ? random.NextDouble() < 0.5 ? remainingAmount : random.Next(1, (int)remainingAmount)
+                    : random.Next(1, (int)remainingAmount);
+                var paymentMethodType = GetRandomPaymentMethodType();
+
+                var payment = new EventPayment
+                {
+                    Payment = new() {
+                        Amount = paymentAmount,
+                        PaymentPaymentMethodType = new() {
+                            PaymentMethodTypeId = paymentMethodType.Id
+                        }
+                    }
+                };
+
+                if (paymentMethodType.Name == "Tarjeta de Crédito" || paymentMethodType.Name == "Tarjeta de Débito")
+                {
+                    payment.Payment.PaymentPaymentMethod = new() {
+                        PaymentMethodId = user.UserPaymentMethods.ElementAt(random.Next(user.UserPaymentMethods.Count)).PaymentMethodId
+                    };
+                }
+
+                payments.Add(payment);
+                remainingAmount -= paymentAmount;
+            }
+
+            return payments;
+        }
+
+        public static PaymentStatus GetPaymentStatus(Event @event)
+        {
+            if (@event.EventPayments.Count == 0) return SeedData.paymentStatuses.First(x => x.Name == "Pendiente");
+
+            var totalPayments = @event.EventPayments.Sum(x => x.Payment.Amount);
+            var totalService = @event.EventService.Service.Price;
+
+            if (totalPayments == totalService) return SeedData.paymentStatuses.First(x => x.Name == "Pagado");
+            if (totalPayments > 0) return SeedData.paymentStatuses.First(x => x.Name == "Parcialmente Pagado");
+
+            return SeedData.paymentStatuses.First(x => x.Name == "Pendiente");
+        }
+    }
+
     public static partial class SeedData
     {
         private static readonly Random random = new();

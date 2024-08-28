@@ -45,6 +45,13 @@ public class MappingProfiles : Profile
         CreateMap<PatientCreateDto, AppUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 
+        CreateMap<Payment, PaymentDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+            .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentPaymentMethod.PaymentMethod))
+            .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.PaymentPaymentMethodType.PaymentMethodType));
+
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
         CreateMap<DateTime?, DateTime?>().ConvertUsing(d => d.HasValue

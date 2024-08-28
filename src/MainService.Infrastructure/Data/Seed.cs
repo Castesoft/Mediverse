@@ -504,36 +504,26 @@ public static class Seed
     {
         for (int i = 2; i < Random.Next(2, 11); i++)
         {
-            var newPatientEvent = CreatePatientEvent(doctor, doctorServices);
+            var newPatientEvent = CreatePatientEvent(doctor, doctorServices, patient);
             AddNursesToEvent(newPatientEvent, doctorNurses);
             AddPrescriptionsToEvent(newPatientEvent, doctorProducts, patient, doctor);
             patient.PatientEvents.Add(newPatientEvent);
         }
     }
 
-    private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices)
+    private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices, AppUser patient)
     {
         if (doctorServices == null || doctorServices.Count == 0)
         {
             throw new ArgumentException("Doctor services list cannot be null or empty", nameof(doctorServices));
         }
 
-        var eventDate = DateGenerator.GenerateRandomDate(2024, 7);
+        var eventDate = DateGenerator.GenerateRandomDate(DateTime.UtcNow.Year, DateTime.UtcNow.Month);
 
         Service selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
 
         var isMainClinic = Random.Next(0, 2) > 0;
         var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
-
-        // 50/50 que un servicio vaya a tener al menos un pago
-        // si si fue pagado, 1-3 pagos
-        // para cada uno de los pagos, seleccionar aleatoriamente el tipo de pago
-        // 50/50 si el total de los pagos es igual al total del servicio/evento
-
-        // code review
-        // asignar el EventPaymentStatus adecuado
-
-        // cuando el pago sea con tarjeta ..... en el seeding los usuarios ya tienen métodos de pago (crédito/débito)?
 
         PatientEvent newPatientEvent = new() {
             Event = new() {
@@ -542,6 +532,12 @@ public static class Seed
                 DateTo = eventDate.AddHours(1).ToUniversalTime(),
                 EventService = new(selectedService),
             }
+        };
+
+        newPatientEvent.Event.EventPayments = SeedEventPayments.GetEventPayments(newPatientEvent.Event, patient);
+        newPatientEvent.Event.EventPaymentStatus = new()
+        {
+            PaymentStatus = SeedEventPayments.GetPaymentStatus(newPatientEvent.Event)
         };
 
         if (randomClinic != null) newPatientEvent.Event.EventClinic = new (randomClinic);
