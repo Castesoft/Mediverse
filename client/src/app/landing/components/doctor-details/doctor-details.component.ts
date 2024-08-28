@@ -15,6 +15,7 @@ import { DoctorScheduleComponent } from '../doctor-schedule/doctor-schedule.comp
 })
 export class DoctorDetailsComponent {
   doctor = input<DoctorSearchResult>();
+  startingTab = input<string>();
   onClose = output();
   onEventCreated = output();
 
@@ -30,7 +31,9 @@ export class DoctorDetailsComponent {
   isScheduling = false;
   selectedSchedule: any;
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.selectedTab = this.startingTab() ?? 'general';
+  }
 
   selectTab(tab: string) {
     this.selectedTab = tab;

@@ -10,6 +10,7 @@ import { MaterialModule } from 'src/app/_shared/material.module';
 import { AddPaymentMethodComponent } from 'src/app/account/components/account-billing/add-payment-method/add-payment-method.component';
 import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';
 import { DoctorScheduleTabComponent } from '../doctor-schedule-tab/doctor-schedule-tab.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-doctor-schedule',
@@ -22,6 +23,8 @@ export class DoctorScheduleComponent implements OnInit {
   private bsModalService = inject(BsModalService);
   private fb = inject(FormBuilder);
   private eventsService = inject(EventsService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   accountService = inject(AccountService);
 
   onClose = output<boolean>();
@@ -127,6 +130,11 @@ export class DoctorScheduleComponent implements OnInit {
 
     this.eventsService.create(this.form.value, 'Patient', 'inline', '').subscribe({
       next: () => {
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { day: this.selectedSchedule()?.day.dayNumber },
+          queryParamsHandling: 'merge',
+        });
         this.onClose.emit(true);
       },
       error: () => {

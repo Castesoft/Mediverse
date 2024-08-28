@@ -1,4 +1,3 @@
-
 <div class="h-100 d-flex">
     <div class="d-flex flex-column position-relative" style="width: 33%;">
         @if (!isLoading) {
@@ -81,9 +80,9 @@
                 <span class="text-gray-800 fw-bold fs-4">Buscando especialistas...</span>
             </div>
         }
-        @if (selectedDoctor) {
+        @if (selectedDoctor()) {
             <div class="doctor-details">
-                <app-doctor-details [doctor]="selectedDoctor" (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
+                <app-doctor-details [doctor]="selectedDoctor() ?? undefined" [startingTab]="startingTab" (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
             </div>
         }
     </div>

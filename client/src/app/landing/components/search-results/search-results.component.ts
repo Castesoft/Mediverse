@@ -1,5 +1,5 @@
 /// <reference types="@types/google.maps" />
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DoctorSearchResult, DoctorSearchResultParams } from 'src/app/_models/doctorSearchResults';
 import { Pagination } from 'src/app/_models/pagination';
@@ -31,7 +31,8 @@ export class SearchResultsComponent implements OnInit {
   locationName = '';
   pageNumber = 1;
 
-  selectedDoctor: DoctorSearchResult | null = null;
+  selectedDoctor = signal<DoctorSearchResult | null>(null);
+  startingTab = 'general';
 
   map: google.maps.Map | undefined;
   markers: google.maps.marker.AdvancedMarkerElement[] = [];
@@ -103,15 +104,18 @@ export class SearchResultsComponent implements OnInit {
             this.map?.setCenter({ lat: 22.5799, lng: -103.1648 });
             this.map?.setZoom(6);
           }
-          console.log(result.doctors);
           if (result.doctors.length > 0) {
-            console.log(this.selectedDoctor);
             if (this.selectedDoctor) {
-              const selectedDoctor = result.doctors.find(d => d.id === this.selectedDoctor?.id);
-              console.log(selectedDoctor);
+              const selectedDoctor = result.doctors.find(d => d.id === this.selectedDoctor()?.id);
               if (selectedDoctor) {
                 this.onCloseDoctorDetails();
-                this.showDoctorDetails(selectedDoctor);
+                this.startingTab = 'schedule';
+                setTimeout(() => {
+                  this.showDoctorDetails(selectedDoctor);
+                }, 10);
+                setTimeout(() => {
+                  this.startingTab = 'general';
+                }, 100);
               }
             }
 
@@ -170,7 +174,7 @@ export class SearchResultsComponent implements OnInit {
   }
 
   showDoctorDetails(doctor: DoctorSearchResult) {
-    this.selectedDoctor = doctor;
+    this.selectedDoctor.set(doctor);
     this.doctorMarkersMap.forEach((_, doctor) => {
       this.resetDoctorMarkersIcons(doctor);
     });
@@ -178,7 +182,7 @@ export class SearchResultsComponent implements OnInit {
   }
 
   onCloseDoctorDetails() {
-    this.selectedDoctor = null;
+    this.selectedDoctor.set(null);
     this.doctorMarkersMap.forEach((_, doctor) => {
       this.resetDoctorMarkersIcons(doctor);
     });
@@ -189,7 +193,7 @@ export class SearchResultsComponent implements OnInit {
   }
 
   onDoctorLeave(doctor: DoctorSearchResult) {
-    if (this.selectedDoctor === doctor) return;
+    if (this.selectedDoctor() === doctor) return;
 
     this.resetDoctorMarkersIcons(doctor);
   }
@@ -211,7 +215,7 @@ export class SearchResultsComponent implements OnInit {
           </div>
         `);
         marker.content = fragment;
-        marker.zIndex = doctor === this.selectedDoctor ? 101 : 100;
+        marker.zIndex = doctor === this.selectedDoctor() ? 101 : 100;
       });
     }
   }
