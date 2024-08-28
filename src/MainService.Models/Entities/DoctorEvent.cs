@@ -5,6 +5,7 @@ public class DoctorEvent
     public DoctorEvent() {}
     
     public DoctorEvent(int doctorId) => DoctorId = doctorId;
+    public DoctorEvent(AppUser doctor) => Doctor = doctor;
     
     public int DoctorId { get; set; }
     public int EventId { get; set; }

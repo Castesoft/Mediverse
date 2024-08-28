@@ -50,6 +50,11 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; }
     public DbSet<WorkSchedule> WorkSchedules { get; set; }
     public DbSet<DoctorWorkSchedule> DoctorWorkSchedules { get; set; }
+    public DbSet<EventPaymentStatus> EventPaymentStatuses { get; set; }
+    public DbSet<PaymentStatus> PaymentStatuses { get; set; }
+    public DbSet<Payment> Payments { get; set; }
+    public DbSet<PaymentPaymentMethodType> PaymentPaymentMethodTypes { get; set; }
+    public DbSet<EventPayment> EventPayments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

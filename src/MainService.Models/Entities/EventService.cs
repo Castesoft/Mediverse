@@ -5,6 +5,7 @@ public class EventService
     public EventService() {}
     
     public EventService(int serviceId) => ServiceId = serviceId;
+    public EventService(Service service) => Service = service;
     
     public int EventId { get; set; }
     public int ServiceId { get; set; }

@@ -117,6 +117,20 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
+    private static async Task<List<PaymentStatus>> SeedPaymentStatusesAsync(DataContext context)
+    {
+        if (!await context.PaymentStatuses.AnyAsync())
+        {
+            await context.PaymentStatuses.AddRangeAsync(SeedData.paymentStatuses);
+            await context.SaveChangesAsync();
+
+            return await context.PaymentStatuses
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
         IPermissionManager permissionManager)
     {
@@ -157,6 +171,7 @@ public static class Seed
         List<Specialty> specialties = await SeedSpecialtiesAsync(context);
         List<PaymentMethodType> paymentMethodTypes = await SeedPaymentMethodTypesAsync(context);
         await SeedMedicalInsuranceCompaniesAsync(context);
+        List<PaymentStatus> paymentStatuses = await SeedPaymentStatusesAsync(context);
         await SeedMexicoStates(context);
         
         if (await userManager.Users.AnyAsync()) return;
@@ -505,31 +520,31 @@ public static class Seed
 
         var eventDate = DateGenerator.GenerateRandomDate(2024, 7);
 
-        var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
+        Service selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
 
         var isMainClinic = Random.Next(0, 2) > 0;
         var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
 
-        var newPatientEvent = new PatientEvent
-        {
-            Event = new Event
-            {
-                DoctorEvent = new DoctorEvent { Doctor = doctor },
-                NurseEvents = new List<NurseEvent>(),
-                EventPrescriptions = new List<EventPrescription>(),
+        // 50/50 que un servicio vaya a tener al menos un pago
+        // si si fue pagado, 1-3 pagos
+        // para cada uno de los pagos, seleccionar aleatoriamente el tipo de pago
+        // 50/50 si el total de los pagos es igual al total del servicio/evento
+
+        // code review
+        // asignar el EventPaymentStatus adecuado
+
+        // cuando el pago sea con tarjeta ..... en el seeding los usuarios ya tienen métodos de pago (crédito/débito)?
+
+        PatientEvent newPatientEvent = new() {
+            Event = new() {
+                DoctorEvent = new(doctor),
                 DateFrom = eventDate.ToUniversalTime(),
                 DateTo = eventDate.AddHours(1).ToUniversalTime(),
-                EventService = new EventService
-                {
-                    Service = selectedService
-                }
+                EventService = new(selectedService),
             }
         };
 
-        if (randomClinic != null)
-        {
-            newPatientEvent.Event.EventClinic = new EventClinic { Clinic = randomClinic };
-        }
+        if (randomClinic != null) newPatientEvent.Event.EventClinic = new (randomClinic);
 
         return newPatientEvent;
     }

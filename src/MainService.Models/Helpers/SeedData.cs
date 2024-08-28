@@ -37,6 +37,21 @@ public static partial class SeedData
         new MedicalInsuranceCompany { Name = "Plan Seguro", MedicalInsuranceCompanyPhoto = new() { Photo = new() { PublicId = "plan_seguro_w6ehun" , Url = "https://res.cloudinary.com/dzzbpajio/image/upload/v1724198861/plan_seguro_w6ehun.png" } }}
     ];
 
+    public static readonly IEnumerable<PaymentStatus> paymentStatuses = [
+        new ("Pagado", "#28a745", "El pago ha sido completado con éxito."),
+        new ("Parcialmente Pagado", "#ffc107", "El pago ha sido parcialmente completado."),
+        new ("Reembolsado", "#dc3545", "El pago ha sido reembolsado."),
+        new ("Pendiente", "#007bff", "El pago está pendiente de confirmación."),
+        new ("Cancelado", "#6c757d", "El pago ha sido cancelado."),
+        new ("Fallido", "#dc3545", "El pago ha fallado."),
+        new ("Procesando", "#17a2b8", "El pago está siendo procesado."),
+        new ("Enviado", "#28a745", "El pago ha sido enviado."),
+        new ("Entregado", "#28a745", "El pago ha sido entregado."),
+        new ("Completado", "#28a745", "El pago ha sido completado."),
+        new ("En Espera", "#ffc107", "El pago está en espera."),
+        new ("En Proceso", "#17a2b8", "El pago está en proceso."),
+    ];
+
     public static readonly IEnumerable<PaymentMethodType> paymentMethodTypes =
     [
         new PaymentMethodType { Name = "Tarjeta de Crédito" },
