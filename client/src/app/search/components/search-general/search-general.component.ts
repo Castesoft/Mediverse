@@ -25,7 +25,7 @@ export class SearchGeneralComponent implements OnInit {
   selectedLocation = input('');
   selectedPlaceId = input('');
   disabled = input(false);
-  onSearch = output<{specialty: string, location: string}>();
+  onSearch = output<{specialty: string, location: string, locationName: string}>();
   onSetSpecialistsQuantity = output<number>();
 
   private autocompleteService: any;

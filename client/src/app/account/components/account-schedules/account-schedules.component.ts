@@ -37,6 +37,20 @@ export class AccountSchedulesComponent implements OnInit, OnDestroy {
 
     this.globalMouseUpListener = this.onGlobalMouseUp.bind(this);
     document.addEventListener('mouseup', this.globalMouseUpListener);
+
+    if (this.accountService.current()!.workScheduleSettings) {
+      if (this.accountService.current()!.workScheduleSettings!.startTime) {
+        this.startTime = this.accountService.current()!.workScheduleSettings!.startTime!.split(':')[0] + ':' + this.accountService.current()!.workScheduleSettings!.startTime!.split(':')[1];
+      }
+      if (this.accountService.current()!.workScheduleSettings!.endTime) {
+        this.endTime = this.accountService.current()!.workScheduleSettings!.endTime!.split(':')[0] + ':' + this.accountService.current()!.workScheduleSettings!.endTime!.split(':')[1];
+      }
+      if (this.accountService.current()!.workScheduleSettings!.minutesPerBlock) {
+        this.minutesPerBlock = this.accountService.current()!.workScheduleSettings!.minutesPerBlock!;
+      }
+      this.updateSchedule();
+      this.setWorkSchedules();
+    }
   }
 
   ngOnDestroy() {
@@ -160,7 +174,7 @@ export class AccountSchedulesComponent implements OnInit, OnDestroy {
 
   updateWorkSchedule() {
     const blocks = Array.from(this.selectedBlocks);
-    this.accountService.updateWorkSchedule(blocks).subscribe(() => {
+    this.accountService.updateWorkSchedule(blocks, this.startTime, this.endTime, this.minutesPerBlock).subscribe(() => {
       this.updateSchedule();
       this.setWorkSchedules();
     });

@@ -1,6 +1,6 @@
 /// <reference types="@types/google.maps" />
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DoctorSearchResult, DoctorSearchResultParams } from 'src/app/_models/doctorSearchResults';
 import { Pagination } from 'src/app/_models/pagination';
 import { SearchService } from 'src/app/_services/search.service';
@@ -10,20 +10,24 @@ import { UserProfilePictureComponent } from "../../../users/components/user-prof
 import { DoctorDetailsComponent } from '../doctor-details/doctor-details.component';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { CommonModule } from '@angular/common';
+import { AccountService } from 'src/app/_services/account.service';
+import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.component';
+import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 @Component({
   selector: 'app-search-results',
   standalone: true,
-  imports: [TablePagerComponent, SearchGeneralComponent, UserProfilePictureComponent, UserProfilePictureComponent, RouterLink, DoctorDetailsComponent,
-    CommonModule,
-  ],
+  imports: [TablePagerComponent, SearchGeneralComponent, UserProfilePictureComponent, DoctorDetailsComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule],
+  providers: [ BsDropdownDirective, ],
   templateUrl: './search-results.component.html',
   styleUrl: './search-results.component.scss'
 })
 export class SearchResultsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private utilsService = inject(UtilsService);
   searchService = inject(SearchService);
+  accountService = inject(AccountService);
 
   params!: DoctorSearchResultParams;
   pagination?: Pagination;
@@ -71,6 +75,14 @@ export class SearchResultsComponent implements OnInit {
       ...this.searchService.searchResultsParams(),
       pageNumber: page
     });
+    
+    // Update query params with the new page number
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { pageNumber: page },
+      queryParamsHandling: 'merge'
+    });
+
     this.searchService.getSearchResults(this.searchService.searchResultsParams()).subscribe({
       next: (response) => {
         const { result, pagination } = response;
@@ -86,10 +98,31 @@ export class SearchResultsComponent implements OnInit {
     });
   }
 
-  onSearch(event: {specialty: string, location: string}) {
+  onSearch(event: {specialty: string, location: string, locationName: string}) {
     this.resetMarkers();
     const specialty = event.specialty;
     const location = event.location;
+    const locationName = event.locationName;
+
+    this.specialty = specialty;
+    this.location = location;
+    this.locationName = locationName;
+
+    // Reset page number to 1 when performing a new search
+    this.pageNumber = 1;
+    
+    // Update query params, including the page number
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { 
+        specialty, 
+        location,
+        locationName,
+        pageNumber: this.pageNumber 
+      },
+      queryParamsHandling: 'merge'
+    });
+
     this.makeInitialSearch(specialty, location);
   }
 

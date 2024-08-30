@@ -134,6 +134,7 @@
                                             class="fv-row fv-plugins-icon-container"
                                             controlSelect
                                             formControlName="medicalInsuranceCompanyId"
+                                            [isInsurance]="true"
                                             [options]="doctor()?.medicalInsuranceCompanies!"
                                             [placeholder]="''"
                                             [submitted]="submitted"

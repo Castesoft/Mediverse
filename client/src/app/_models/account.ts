@@ -27,6 +27,7 @@ export class Account {
   paymentMethodTypes: PaymentMethodType[] = [];
   requireAnticipatedCardPayments!: boolean;
   workSchedules: WorkSchedule[] = [];
+  workScheduleSettings?: WorkScheduleSettings;
   country!: string;
   state!: string;
   city!: string;
@@ -38,6 +39,12 @@ export class Account {
 
   roles: Role[] = [];
   permissions: string[] = [];
+}
+
+export class WorkScheduleSettings {
+  startTime?: string;
+  endTime?: string;
+  minutesPerBlock?: number;
 }
 
 export const genders = [

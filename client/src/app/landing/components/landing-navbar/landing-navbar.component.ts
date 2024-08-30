@@ -2,11 +2,14 @@ import { Component, inject, HostListener, Input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
+import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.component';
+import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 @Component({
   selector: 'app-landing-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule, UserDropdownComponent, BsDropdownModule],
+  providers: [ BsDropdownDirective, ],
   template: `
     <nav
       class="navbar navbar-expand-lg fixed-top"
@@ -22,12 +25,6 @@ import { AccountService } from 'src/app/_services/account.service';
     >
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" routerLink="/">
-          <!-- <img
-            [src]="(hideBackground || isLightBackground) ? 'media/logos/logo-default-dark.svg' : 'media/logos/logo-default.svg'"
-            alt="Logo"
-            height="30"
-            class="d-inline-block align-text-top"
-          /> -->
           <img
             [src]="(hideBackground || isLightBackground) ? 'media/logos/logo-compact.svg' : 'media/logos/logo-compact.svg'"
             alt="Logo"
@@ -43,8 +40,9 @@ import { AccountService } from 'src/app/_services/account.service';
             <a routerLink="/pricing" routerLinkActive="active" class="nav-link">Precios</a>
           </div>
           @if (isLoggedIn()) {
-            <a routerLink="/account" class="btn btn-light-primary me-3">Entrar</a>
-            <button (click)="logout()" class="btn" [ngClass]="(hideBackground || isLightBackground) ? 'btn-outline-primary' : 'btn-outline-light'">Cerrar sesión</button>
+            <div class="position-relative">
+              <div userDropdown dropdown triggers="hover" placement="bottom right" class="pt-2"></div>
+            </div>
           } @else {
             <a routerLink="/auth/sign-in" class="btn btn-light-primary me-3">Iniciar sesión</a>
             <a routerLink="/auth/sign-up" class="btn btn-primary">Registrarse</a>
@@ -76,9 +74,6 @@ import { AccountService } from 'src/app/_services/account.service';
     .navbar-brand {
       color: var(--nav-link-color);
     }
-    .btn-outline-light:hover {
-      color: #000000;
-    }
   `]
 })
 export class LandingNavbarComponent {
@@ -94,9 +89,5 @@ export class LandingNavbarComponent {
 
   isLoggedIn(): boolean {
     return this.accountService.current() !== null;
-  }
-
-  logout(): void {
-    this.accountService.logout();
   }
 }

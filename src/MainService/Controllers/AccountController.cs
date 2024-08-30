@@ -1529,6 +1529,8 @@ public class AccountController(
         var user = await userManager.Users
             .Include(x => x.DoctorWorkSchedules)
                 .ThenInclude(x => x.WorkSchedule)
+            .Include(x => x.DoctorWorkScheduleSettings)
+                .ThenInclude(x => x.WorkScheduleSettings)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1561,6 +1563,33 @@ public class AccountController(
                     });
                 }
             }
+            if (!await uow.Complete()) return BadRequest("Error actualizando los horarios de trabajo.");
+        }
+
+        if (request.StartTime != null && request.EndTime != null && request.MinutesPerBlock != 0)
+        {
+            if (user.DoctorWorkScheduleSettings != null)
+            {
+                await uow.UserRepository.DeleteDoctorWorkScheduleSettingsAsync(user.DoctorWorkScheduleSettings.WorkScheduleSettings);
+                user.DoctorWorkScheduleSettings = null;
+            }
+
+            WorkScheduleSettings workScheduleSettings = new()
+            {
+                StartTime = TimeOnly.Parse(request.StartTime).ToTimeSpan(),
+                EndTime = TimeOnly.Parse(request.EndTime).ToTimeSpan(),
+                MinutesPerBlock = request.MinutesPerBlock
+            };
+
+            user.DoctorWorkScheduleSettings = new()
+            {
+                UserId = userId,
+                WorkScheduleSettings = workScheduleSettings
+            };
+        }
+
+        if (uow.HasChanges())
+        {
             if (!await uow.Complete()) return BadRequest("Error actualizando los horarios de trabajo.");
         }
 

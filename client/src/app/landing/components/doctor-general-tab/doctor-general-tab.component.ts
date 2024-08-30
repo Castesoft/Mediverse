@@ -13,6 +13,7 @@ import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 export class DoctorGeneralTabComponent {
   doctor = input<DoctorSearchResult>();
   showAllServices = signal(false);
+  showAllInsurances = signal(false);
 
   visibleServices = computed(() => {
     if (this.showAllServices()) {
@@ -21,8 +22,19 @@ export class DoctorGeneralTabComponent {
     return (this.doctor()?.services || []).slice(0, 5);
   });
 
+  visibleInsurances = computed(() => {
+    if (this.showAllInsurances()) {
+      return this.doctor()?.medicalInsuranceCompanies || [];
+    }
+    return (this.doctor()?.medicalInsuranceCompanies || []).slice(0, 5);
+  });
+
   toggleServices() {
     this.showAllServices.update(value => !value);
+  }
+
+  toggleInsurances() {
+    this.showAllInsurances.update(value => !value);
   }
 
   getPaymentIcon(methodName: string): string {

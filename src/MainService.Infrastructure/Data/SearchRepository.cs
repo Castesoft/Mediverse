@@ -29,6 +29,8 @@ namespace MainService.Infrastructure.Data
                     .ThenInclude(x => x.Review)
                     .ThenInclude(x => x.UserReview)
                     .ThenInclude(x => x.User)
+                .Include(x => x.DoctorMedicalInsuranceCompanies)
+                    .ThenInclude(x => x.MedicalInsuranceCompany)
                 .AsQueryable();
 
             query = query.Where(x => x.UserMedicalLicenses.Count != 0);
@@ -47,13 +49,21 @@ namespace MainService.Infrastructure.Data
                 param.Longitude = longitude;
                 double radiusInKm = 50.0;
 
-                query = query.Where(x => x.UserAddresses.Any(a => 
+                query = query.Where(x => x.DoctorClinics.Any(a => 
                     6371 * Math.Acos(
-                        Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Address.Latitude / 180) *
-                        Math.Cos(Math.PI * (double)a.Address.Longitude / 180 - Math.PI * longitude / 180) +
-                        Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Address.Latitude / 180)
+                        Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude / 180) *
+                        Math.Cos(Math.PI * (double)a.Clinic.Longitude / 180 - Math.PI * longitude / 180) +
+                        Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
                     ) <= radiusInKm
                 ));
+
+                query = query.OrderBy(x => x.DoctorClinics
+                    .Min(a => 6371 * Math.Acos(
+                        Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude / 180) *
+                        Math.Cos(Math.PI * (double)a.Clinic.Longitude / 180 - Math.PI * longitude / 180) +
+                        Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
+                    ))
+                );
             }
 
             return await PagedList<DoctorSearchResultDto>.CreateAsync(
@@ -77,6 +87,8 @@ namespace MainService.Infrastructure.Data
                     .ThenInclude(x => x.Review)
                     .ThenInclude(x => x.UserReview)
                     .ThenInclude(x => x.User)
+                .Include(x => x.DoctorMedicalInsuranceCompanies)
+                    .ThenInclude(x => x.MedicalInsuranceCompany)
                 .Where(x => x.Id == id)
                 .AsQueryable();
 

@@ -623,6 +623,24 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("DoctorWorkSchedules");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorWorkScheduleSettings", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WorkScheduleSettingsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "WorkScheduleSettingsId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("WorkScheduleSettingsId");
+
+                    b.ToTable("DoctorWorkScheduleSettings");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
                     b.Property<int>("Id")
@@ -1857,6 +1875,35 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("WorkSchedules");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.WorkScheduleSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MinutesPerBlock")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkScheduleSettings");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -2338,6 +2385,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("User");
 
                     b.Navigation("WorkSchedule");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorWorkScheduleSettings", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithOne("DoctorWorkScheduleSettings")
+                        .HasForeignKey("MainService.Models.Entities.DoctorWorkScheduleSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.WorkScheduleSettings", "WorkScheduleSettings")
+                        .WithMany()
+                        .HasForeignKey("WorkScheduleSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkScheduleSettings");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.EventClinic", b =>
@@ -3060,6 +3126,8 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("DoctorServices");
 
                     b.Navigation("DoctorSignature");
+
+                    b.Navigation("DoctorWorkScheduleSettings");
 
                     b.Navigation("DoctorWorkSchedules");
 

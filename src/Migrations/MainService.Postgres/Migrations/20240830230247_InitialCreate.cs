@@ -518,6 +518,24 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "WorkScheduleSettings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StartTime = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    MinutesPerBlock = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkScheduleSettings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -1919,6 +1937,30 @@ namespace MainService.Postgres.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "DoctorWorkScheduleSettings",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    WorkScheduleSettingsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorWorkScheduleSettings", x => new { x.UserId, x.WorkScheduleSettingsId });
+                    table.ForeignKey(
+                        name: "FK_DoctorWorkScheduleSettings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorWorkScheduleSettings_WorkScheduleSettings_WorkSchedul~",
+                        column: x => x.WorkScheduleSettingsId,
+                        principalTable: "WorkScheduleSettings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AppRolePermission_PermissionId",
                 table: "AppRolePermission",
@@ -2075,6 +2117,17 @@ namespace MainService.Postgres.Migrations
                 table: "DoctorWorkSchedules",
                 column: "WorkScheduleId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorWorkScheduleSettings_UserId",
+                table: "DoctorWorkScheduleSettings",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorWorkScheduleSettings_WorkScheduleSettingsId",
+                table: "DoctorWorkScheduleSettings",
+                column: "WorkScheduleSettingsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventClinic_ClinicId",
@@ -2418,6 +2471,9 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorWorkSchedules");
 
             migrationBuilder.DropTable(
+                name: "DoctorWorkScheduleSettings");
+
+            migrationBuilder.DropTable(
                 name: "EventClinic");
 
             migrationBuilder.DropTable(
@@ -2533,6 +2589,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "WorkSchedules");
+
+            migrationBuilder.DropTable(
+                name: "WorkScheduleSettings");
 
             migrationBuilder.DropTable(
                 name: "PaymentStatuses");

@@ -80,22 +80,11 @@
 </div>
 
 @if (isScheduling) {
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-backdrop fade show" (click)="onCloseDoctorSchedule(false)"></div>
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Agendar Cita</h5>
-                    <button type="button" class="btn-close" (click)="onCloseDoctorSchedule(false)"></button>
-                </div>
-                <div class="modal-body">
-                    <app-doctor-schedule 
-                        (onClose)="onCloseDoctorSchedule($event)"
-                        [doctor]="doctor()"
-                        [selectedSchedule]="selectedSchedule"
-                    ></app-doctor-schedule>
-                </div>
-            </div>
-        </div>
+    <div class="schedule-modal">
+        <app-doctor-schedule 
+            (onClose)="onCloseDoctorSchedule($event)"
+            [doctor]="doctor()"
+            [selectedSchedule]="selectedSchedule"
+        ></app-doctor-schedule>
     </div>
 }

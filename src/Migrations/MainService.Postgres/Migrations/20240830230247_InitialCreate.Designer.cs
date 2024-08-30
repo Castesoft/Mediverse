@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240829165121_InitialCreate")]
+    [Migration("20240830230247_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -639,6 +639,24 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("DoctorWorkSchedules");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorWorkScheduleSettings", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WorkScheduleSettingsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "WorkScheduleSettingsId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("WorkScheduleSettingsId");
+
+                    b.ToTable("DoctorWorkScheduleSettings");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
@@ -1919,6 +1937,37 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("WorkSchedules");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.WorkScheduleSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("interval");
+
+                    b.Property<int>("MinutesPerBlock")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("interval");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkScheduleSettings");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -2404,6 +2453,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("User");
 
                     b.Navigation("WorkSchedule");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorWorkScheduleSettings", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithOne("DoctorWorkScheduleSettings")
+                        .HasForeignKey("MainService.Models.Entities.DoctorWorkScheduleSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.WorkScheduleSettings", "WorkScheduleSettings")
+                        .WithMany()
+                        .HasForeignKey("WorkScheduleSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkScheduleSettings");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.EventClinic", b =>
@@ -3126,6 +3194,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("DoctorServices");
 
                     b.Navigation("DoctorSignature");
+
+                    b.Navigation("DoctorWorkScheduleSettings");
 
                     b.Navigation("DoctorWorkSchedules");
 

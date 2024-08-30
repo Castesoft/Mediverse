@@ -58,6 +58,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<DoctorReview> DoctorReviews { get; set; }
     public DbSet<UserReview> UserReviews { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<WorkScheduleSettings> WorkScheduleSettings { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

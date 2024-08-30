@@ -219,6 +219,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> DeleteDoctorWorkScheduleSettingsAsync(WorkScheduleSettings workScheduleSettings)
+    {
+        context.WorkScheduleSettings.Remove(workScheduleSettings);
+        return await context.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> AddReviewAsync(Review review)
     {
         await context.Reviews.AddAsync(review);

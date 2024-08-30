@@ -80,5 +80,32 @@
             </div>
         </div>
         <div class="separator my-10"></div>
+
+        <div class="mb-7">
+            <h5 class="text-muted mb-3">Compañías de seguros médicos</h5>
+            <div class="d-flex flex-wrap gap-2">
+                @if (visibleInsurances().length === 0) {
+                    <span class="fs-6 py-2 px-3">
+                        <i class="ki-duotone ki-shield-tick fs-5 me-1">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        Este especialista no acepta aseguradoras
+                    </span>
+                }
+                @for (insurance of visibleInsurances(); track $index) {
+                    <div class="d-flex align-items-center bg-light-info rounded p-2">
+                        <img [src]="insurance.photoUrl" [alt]="insurance.name" class="h-20px me-2">
+                        <span class="fs-6">{{insurance.name}}</span>
+                    </div>
+                }
+            </div>
+            @if (doctor()?.medicalInsuranceCompanies!.length > 5) {
+                <button class="btn btn-sm btn-light-primary mt-4" (click)="toggleInsurances()">
+                    {{ showAllInsurances() ? 'Mostrar menos' : 'Mostrar más' }}
+                </button>
+            }
+        </div>
+        <div class="separator my-10"></div>
     </div>
 </div>

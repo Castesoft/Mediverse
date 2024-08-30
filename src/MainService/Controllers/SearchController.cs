@@ -51,6 +51,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                                 Available = conflictingEvent == null
                             };
                         })
+                        .Where(ws => TimeSpan.Parse(ws.Start) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
                         .OrderBy(ws => ws.Start)]
                 })
                 .ToArray();
@@ -110,6 +111,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                                 Available = conflictingEvent == null
                             };
                         })
+                        .Where(ws => TimeSpan.Parse(ws.Start) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
                         .OrderBy(ws => ws.Start)]
                 })
                 .ToArray();

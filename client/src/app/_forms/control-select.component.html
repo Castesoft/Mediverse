@@ -19,6 +19,9 @@
   @if (placeholder) {
     <option value="" disabled selected>{{placeholder}}</option>
   }
+  @if (isInsurance) {
+    <option value="0" selected>Cita sin aseguradora</option>
+  }
   @for(option of options; track $index) {
     @if (isAddress) {
       <option value="{{option.id}}">

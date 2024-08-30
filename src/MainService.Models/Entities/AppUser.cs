@@ -59,6 +59,7 @@ public class AppUser : IdentityUser<int>
     public bool RequireAnticipatedCardPayments { get; set; }
     public ICollection<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
     public List<DoctorWorkSchedule> DoctorWorkSchedules { get; set; } = [];
+    public DoctorWorkScheduleSettings DoctorWorkScheduleSettings { get; set; }
     public List<DoctorReview> DoctorReviews { get; set; } = [];
 
     // Navigation properties

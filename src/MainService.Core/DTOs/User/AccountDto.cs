@@ -32,4 +32,5 @@ public class AccountDto
     public DateTime CreatedAt { get; set; }
     public List<UserMedicalLicenseDto> MedicalLicenses { get; set; } = [];
     public List<WorkScheduleDto> WorkSchedules { get; set; } = [];
+    public WorkScheduleSettingsDto WorkScheduleSettings { get; set; }
 }

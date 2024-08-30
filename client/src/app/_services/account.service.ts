@@ -412,8 +412,8 @@ export class AccountService {
     );
   }
 
-  updateWorkSchedule(value: any) {
-    return this.http.post<Account>(`${this.baseUrl}work-schedule`, { workScheduleBlocks: value}).pipe(
+  updateWorkSchedule(workScheduleBlocks: any, startTime: string, endTime: string, minutesPerBlock: number) {
+    return this.http.post<Account>(`${this.baseUrl}work-schedule`, { workScheduleBlocks, startTime, endTime, minutesPerBlock }).pipe(
       map(response => {
         this.snackbarService.success('Horario de trabajo actualizado correctamente');
         this.setCurrentUser(response);
