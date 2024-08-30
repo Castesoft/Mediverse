@@ -21,6 +21,8 @@ public class EventsService(IUnitOfWork uow) : IEventsService
 
     public async Task<bool> IsDoctorAvailableAsync(int doctorId, DateTime dateFrom, DateTime dateTo)
     {
+        await Task.Delay(0);
+        
         // TODO: Implementar la lógica para verificar si el doctor está disponible en el horario seleccionado
         return true;
     }
