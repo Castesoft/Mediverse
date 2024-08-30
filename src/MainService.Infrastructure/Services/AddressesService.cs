@@ -1,3 +1,4 @@
+using MainService.Core.DTOs.Addresses;
 using MainService.Core.Interfaces.Services;
 using MainService.Models.Entities;
 
@@ -17,5 +18,12 @@ public class AddressesService(IUnitOfWork uow) : IAddressesService
         if (!await uow.Complete()) return false;
         
         return true;
+    }
+
+    public async Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode)
+    {
+        await Task.Delay(0);
+
+        return [];
     }
 } 

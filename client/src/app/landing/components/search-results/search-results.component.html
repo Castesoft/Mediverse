@@ -2,9 +2,11 @@
     <div class="d-flex flex-column position-relative" style="width: 33%;">
         @if (!isLoading) {
             <div class="container">
-                <h1 class="text-gray-800 fw-bold my-3 text-center">Mediverse</h1>
+                <h1 class="text-gray-800 fw-bold my-3 text-center">
+                  <a routerLink="/">Mediverse</a>
+                </h1>
                 <div class="py-3">
-                    <app-search-general 
+                    <app-search-general
                         [compact]="true"
                         (onSearch)="onSearch($event)"
                         [selectedSpecialty]="specialty"
@@ -15,8 +17,11 @@
                 </div>
 
                 <div class="d-flex flex-wrap flex-stack mb-1">
-                    <h3 class="text-gray-800 fw-bold my-2">Mis Resultados 
-                    <span class="fs-6 text-gray-500 fw-semibold ms-1">({{searchService.searchResults()?.doctors!.length}})</span></h3>
+                    <h3 class="text-gray-800 fw-bold my-2">Mis Resultados
+                      @if(pagination) {
+                    <span class="fs-6 text-gray-500 fw-semibold ms-1">({{pagination.totalItems | number}})</span>
+                      }
+                    </h3>
                 </div>
             </div>
 

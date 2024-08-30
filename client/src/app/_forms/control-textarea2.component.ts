@@ -27,7 +27,6 @@ import { FormsService } from "src/app/_services/forms.service";
     <textarea
       [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"
   [attr.aria-label]="control().label + ' input'"
-  [class.form-control-solid]="control().style === 'solid'"
       [formControl]="$any(control().formControl)"
       [autocomplete]="'off'" [spellcheck]="'false'" [id]="control().id"
       [ngClass]="{
@@ -35,7 +34,7 @@ import { FormsService } from "src/app/_services/forms.service";
       'is-valid': control().submitted && control().formControl.valid,
     }"
       [readonly]="control().isReadonly"
-      class="form-control fs-6"
+      class="form-control text-body fs-8"
     >
 </textarea>
 

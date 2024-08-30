@@ -1,12 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 
 @Component({
   selector: 'app-doctor-general-tab',
   standalone: true,
-  imports: [],
+  imports: [
+    CommonModule,
+  ],
   templateUrl: './doctor-general-tab.component.html',
-  styleUrls: ['./doctor-general-tab.component.scss']
 })
 export class DoctorGeneralTabComponent {
   doctor = input<DoctorSearchResult>();

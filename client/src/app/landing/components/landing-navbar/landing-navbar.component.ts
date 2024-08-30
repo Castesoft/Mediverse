@@ -21,14 +21,20 @@ import { AccountService } from 'src/app/_services/account.service';
       style="transition: all 0.3s ease; height: 80px"
     >
       <div class="container">
-        <a class="navbar-brand" routerLink="/">
+        <a class="navbar-brand d-flex align-items-center" routerLink="/">
+          <!-- <img
+            [src]="(hideBackground || isLightBackground) ? 'media/logos/logo-default-dark.svg' : 'media/logos/logo-default.svg'"
+            alt="Logo"
+            height="30"
+            class="d-inline-block align-text-top"
+          /> -->
           <img
-            [src]="(hideBackground || isLightBackground) ? 'assets/media/logos/default-dark.svg' : 'assets/media/logos/default.svg'"
+            [src]="(hideBackground || isLightBackground) ? 'media/logos/logo-compact.svg' : 'media/logos/logo-compact.svg'"
             alt="Logo"
             height="30"
             class="d-inline-block align-text-top"
           />
-          Mediverse
+          <span class="ms-2">Mediverse</span>
         </a>
         <div class="d-flex align-items-center">
           <div class="nav-links me-4">

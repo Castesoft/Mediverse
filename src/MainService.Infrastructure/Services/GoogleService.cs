@@ -2,6 +2,7 @@ using Google.Apis.Auth;
 using MainService.Core.DTOs.Google;
 using MainService.Core.Interfaces.Services;
 using MainService.Core.Settings;
+using MainService.Models.Entities;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -35,6 +36,8 @@ namespace MainService.Infrastructure.Services
 
             return (null, null);
         }
+
+        public string GetAddressText(Address item) => $"{item.Street}, {item.City}, {item.State}, {item.Zipcode}";
 
         public async Task<GooglePlacesDetailsResult> GetLocationByPlaceIdAsync(string placeId)
         {

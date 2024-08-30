@@ -33,6 +33,7 @@ export class SearchGeneralComponent implements OnInit {
   autocompleteResults: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   specialties: any[] = [];
 
+  // TODO: ver forma de poder buscar ('por doctor')
   form = this.fb.group({
     specialty: [''],
     specialtyId: [''],
@@ -40,9 +41,9 @@ export class SearchGeneralComponent implements OnInit {
     placeId: ['']
   });
 
-  constructor() { 
+  constructor() {
   }
-  
+
   async ngOnInit() {
     if (this.selectedSpecialty()) {
       this.form.get('specialty')?.setValue(this.selectedSpecialty());

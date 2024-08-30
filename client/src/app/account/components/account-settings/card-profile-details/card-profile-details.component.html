@@ -108,44 +108,45 @@
             ></div>
           </div>
         </div>
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-semibold fs-6">
-            <span class="">Cédula profesional</span>
-          </label>
-          <div class="col-lg-8 fv-row fv-plugins-icon-container">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="LicenseNumber"
-                type="text"
-                [placeholder]="''"
-                [submitted]="submitted"
-              ></div>
-            <div
-              class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
-            ></div>
-          </div>
-        </div>
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-semibold fs-6">
-            <span class="">Cédula de especialidad</span>
-          </label>
-          <div class="col-lg-8 fv-row fv-plugins-icon-container">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="SpecialtyLicense"
-                type="text"
-                [placeholder]="''"
-                [submitted]="submitted"
-              ></div>
-            <div
-              class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
-            ></div>
-          </div>
-        </div>
 
         @if (accountService.hasRole(['Doctor'])) {
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-semibold fs-6">
+              <span class="">Cédula profesional</span>
+            </label>
+            <div class="col-lg-8 fv-row fv-plugins-icon-container">
+              <div
+                  class="fv-row fv-plugins-icon-container"
+                  inputControl
+                  formControlName="LicenseNumber"
+                  type="text"
+                  [placeholder]="''"
+                  [submitted]="submitted"
+                ></div>
+              <div
+                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
+              ></div>
+            </div>
+          </div>
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-semibold fs-6">
+              <span class="">Cédula de especialidad</span>
+            </label>
+            <div class="col-lg-8 fv-row fv-plugins-icon-container">
+              <div
+                  class="fv-row fv-plugins-icon-container"
+                  inputControl
+                  formControlName="SpecialtyLicense"
+                  type="text"
+                  [placeholder]="''"
+                  [submitted]="submitted"
+                ></div>
+              <div
+                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
+              ></div>
+            </div>
+          </div>
+
           <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-semibold fs-6"
               >Especialidad</label

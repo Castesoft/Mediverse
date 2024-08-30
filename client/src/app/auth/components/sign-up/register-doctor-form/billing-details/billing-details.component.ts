@@ -87,7 +87,7 @@ export class BillingDetailsComponent implements OnInit {
   }
 
   private updateBillingValidators(sameaddress: boolean): void {
-    const billingControls = ['BillingState', 'BillingCity', 'BillingAddress', 'BillingZipCode'];
+    const billingControls = ['BillingState', 'BillingCity', 'BillingAddress', 'BillingZipcode'];
 
     if (sameaddress) {
       billingControls.forEach(control => {

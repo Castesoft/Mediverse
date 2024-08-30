@@ -236,7 +236,7 @@ public class AccountController(
                 State = request.State,
                 City = request.City,
                 Street = request.Address,
-                Zipcode = request.ZipCode,
+                Zipcode = request.Zipcode,
             },
             IsMain = true,
             IsBilling = request.SameAddress ? true : false
@@ -254,7 +254,7 @@ public class AccountController(
                     State = request.BillingState,
                     City = request.BillingCity,
                     Street = request.BillingAddress,
-                    Zipcode = request.BillingZipCode,
+                    Zipcode = request.BillingZipcode,
                 },
                 IsMain = false,
                 IsBilling = true
@@ -1043,8 +1043,7 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
-        string fullAddress = $"{request.Address}, {request.City}, {request.State}, {request.ZipCode}";
-        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(fullAddress);
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
 
         user.UserAddresses.Add(new() {
             UserId = userId,
@@ -1054,8 +1053,8 @@ public class AccountController(
             {
                 State = request.State,
                 City = request.City,
-                Street = request.Address,
-                Zipcode = request.ZipCode,
+                Street = request.Street,
+                Zipcode = request.Zipcode,
                 Latitude = latitude,
                 Longitude = longitude
             }
@@ -1119,15 +1118,15 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
-        string fullAddress = $"{request.Address}, {request.City}, {request.State}, {request.ZipCode}";
+        string fullAddress = $"{request.Street}, {request.City}, {request.State}, {request.Zipcode}";
         var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(fullAddress);
 
         address.IsMain = request.IsMain;
         address.IsBilling = request.IsBilling;
         address.Address.State = request.State;
         address.Address.City = request.City;
-        address.Address.Street = request.Address;
-        address.Address.Zipcode = request.ZipCode;
+        address.Address.Street = request.Street;
+        address.Address.Zipcode = request.Zipcode;
         address.Address.Latitude = latitude;
         address.Address.Longitude = longitude;
 
@@ -1392,6 +1391,7 @@ public class AccountController(
     public async Task<ActionResult<AccountDto>> UpdateAccountDetails([FromForm] IFormFile photo, [FromForm] IFormFile file, [FromForm] string json)
     {
         int userId = User.GetUserId();
+        var roles = User.GetRoles();
 
         var request = JsonSerializer.Deserialize<AccountDetailsUpdateDto>(json);
 
@@ -1412,37 +1412,16 @@ public class AccountController(
 
         mapper.Map<AccountDetailsUpdateDto, AppUser>(request, user);
 
-        MedicalLicense prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
-        if (prevMedicalLicense == null || prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
+        // only if the claims principal has a role of doctor
+        if (roles.Contains("Doctor"))
         {
-            if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
-
-            if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
-                return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
-
-            var uploadResult = await cloudinaryService.Upload(file, new() {
-                File = new FileDescription(file.FileName, file.OpenReadStream()),
-                Folder = "Mediverse/DoctorMedicalLicenses",
-            });
-            if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
-
-            if (prevMedicalLicense != null)
+            MedicalLicense prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
+            if (prevMedicalLicense == null || prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
             {
-                var deletionResult = await cloudinaryService.Delete(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
-                if (deletionResult.Error != null)
-                    return BadRequest("Error eliminando la prueba de especialidad anterior.");
-            }
+                if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
 
-            user.UserMedicalLicenses.Clear();
-
-            user.UserMedicalLicenses.Add(new (int.Parse(request.SpecialtyId), uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
-        }
-        else
-        {
-            if (file != null && file.Length > 0)
-            {
-                var medicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == int.Parse(request.SpecialtyId));
-                if (medicalLicense == null) return BadRequest("No se ha encontrado la prueba de especialidad.");
+                if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
+                    return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
 
                 var uploadResult = await cloudinaryService.Upload(file, new() {
                     File = new FileDescription(file.FileName, file.OpenReadStream()),
@@ -1450,61 +1429,85 @@ public class AccountController(
                 });
                 if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
-                var previousMedicalLicenseDocument = medicalLicense.MedicalLicense.MedicalLicenseDocument;
-                var prevDocumentDeleteResult = await cloudinaryService.Delete(previousMedicalLicenseDocument.Document.PublicId);
-                if (prevDocumentDeleteResult.Error != null) return BadRequest("Error eliminando la prueba de especialidad anterior.");
-
-                medicalLicense.MedicalLicense.MedicalLicenseDocument = new(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
-            }
-        }
-
-        if (!string.IsNullOrEmpty(request.AcceptedPaymentMethods))
-        {
-            List<int> acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
-            var userPaymentMethodTypes = user.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodTypeId).ToList();
-            if (!userPaymentMethodTypes.All(acceptedPaymentMethods.Contains) || !acceptedPaymentMethods.All(userPaymentMethodTypes.Contains)) {
-                user.DoctorPaymentMethodTypes.Clear();
-
-                foreach (var paymentMethodTypeId in acceptedPaymentMethods)
+                if (prevMedicalLicense != null)
                 {
-                    var paymentMethodType = new DoctorPaymentMethodType
+                    var deletionResult = await cloudinaryService.Delete(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
+                    if (deletionResult.Error != null)
+                        return BadRequest("Error eliminando la prueba de especialidad anterior.");
+                }
+
+                user.UserMedicalLicenses.Clear();
+
+                user.UserMedicalLicenses.Add(new (int.Parse(request.SpecialtyId), uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
+            }
+            else
+            {
+                if (file != null && file.Length > 0)
+                {
+                    var medicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == int.Parse(request.SpecialtyId));
+                    if (medicalLicense == null) return BadRequest("No se ha encontrado la prueba de especialidad.");
+
+                    var uploadResult = await cloudinaryService.Upload(file, new() {
+                        File = new FileDescription(file.FileName, file.OpenReadStream()),
+                        Folder = "Mediverse/DoctorMedicalLicenses",
+                    });
+                    if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+
+                    var previousMedicalLicenseDocument = medicalLicense.MedicalLicense.MedicalLicenseDocument;
+                    var prevDocumentDeleteResult = await cloudinaryService.Delete(previousMedicalLicenseDocument.Document.PublicId);
+                    if (prevDocumentDeleteResult.Error != null) return BadRequest("Error eliminando la prueba de especialidad anterior.");
+
+                    medicalLicense.MedicalLicense.MedicalLicenseDocument = new(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(request.AcceptedPaymentMethods))
+            {
+                List<int> acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
+                var userPaymentMethodTypes = user.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodTypeId).ToList();
+                if (!userPaymentMethodTypes.All(acceptedPaymentMethods.Contains) || !acceptedPaymentMethods.All(userPaymentMethodTypes.Contains)) {
+                    user.DoctorPaymentMethodTypes.Clear();
+
+                    foreach (var paymentMethodTypeId in acceptedPaymentMethods)
                     {
-                        DoctorId = user.Id,
-                        PaymentMethodTypeId = paymentMethodTypeId
-                    };
-                    user.DoctorPaymentMethodTypes.Add(paymentMethodType);
+                        var paymentMethodType = new DoctorPaymentMethodType
+                        {
+                            DoctorId = user.Id,
+                            PaymentMethodTypeId = paymentMethodTypeId
+                        };
+                        user.DoctorPaymentMethodTypes.Add(paymentMethodType);
+                    }
                 }
             }
         }
 
-        if (photo != null)
+        if (user.UserPhoto != null)
         {
-            ImageUploadParams imageUploadParams = new() {
-                File = new FileDescription(photo.FileName, photo.OpenReadStream()),
-                Folder = "Mediverse/UserPhoto",
-                Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
-            };
-
-            var result = await cloudinaryService.Upload(photo, imageUploadParams);
-
-            if (result.Error != null) return BadRequest(result.Error.Message);
-
-            if (user.UserPhoto != null)
-            {
-                if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
-                    return BadRequest("Error eliminando la foto anterior.");
+            if (request.RemoveAvatar) {
+                if (!await photosService.DeleteAsync(user.UserPhoto.Photo)) return BadRequest("Error eliminando la foto.");
             }
-
-            Photo newPhoto = new(result, userId);
-
-            uow.PhotoRepository.Add(newPhoto);
-        }
-
-        if (request.RemoveAvatar) {
-            if (user.UserPhoto != null)
+        } else {
+            if (photo != null)
             {
-                if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
-                    return BadRequest("Error eliminando la foto.");
+                ImageUploadParams imageUploadParams = new() {
+                    File = new FileDescription(photo.FileName, photo.OpenReadStream()),
+                    Folder = "Mediverse/UserPhoto",
+                    Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
+                };
+
+                var result = await cloudinaryService.Upload(photo, imageUploadParams);
+
+                if (result.Error != null) return BadRequest(result.Error.Message);
+
+                if (user.UserPhoto != null)
+                {
+                    if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
+                        return BadRequest("Error eliminando la foto anterior.");
+                }
+
+                Photo newPhoto = new(result, userId);
+
+                uow.PhotoRepository.Add(newPhoto);
             }
         }
 

@@ -1,0 +1,69 @@
+<!-- {{ control().formControl.value | json }} -->
+
+@if (control().orientation === 'inline') {
+  <div class="d-flex align-items-center gap-2">
+    @if (control().showLabel) {
+      <label [for]="control().id"
+             class="form-label fw-semibold fs-8 ps-0 text-nowrap">
+        {{ control().label }}
+        {{ control().required ? '*' : null }}
+        @if (control().optional && (service.isOptional(control().formControl) || !control().isReadonly)) {
+          <span optionalSpan></span>
+        }
+        @if (control().isNew) {
+          <span newBadge></span>
+        }
+      </label>
+    }
+    <div class="input-group">
+      @if(control().showCodeSpan && !!control().formControl.value?.code) {
+        <span class="input-group-text">{{ control().formControl.value?.code }}</span>
+      }
+      <select
+        [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"
+        [attr.aria-label]="control().label + ' input'"
+        [id]="control().id"
+        [disabled]="control().disabled"
+        [(ngModel)]="control().formControl.value"
+        (ngModelChange)="optionChanged($event)"
+        [ngClass]="{
+              'is-invalid': control().submitted && control().formControl.invalid,
+              'is-valid': control().submitted && control().formControl.valid
+            }"
+        class="form-select fs-8 text-body"
+      >
+
+      <option selected [value]="control().formControl.value">{{control().formControl.value?.name}}</option>
+
+      @if(control().options.length > 0) {
+        @for (option of control().options; let idx = $index; track idx;) {
+          @if(control().formControl.value?.code !== option.code) {
+            <option [value]="option | json">
+              @if((control().formControl.value?.code !== option.code) && control().showCodeSpan) {
+                ({{option.code}})
+              }
+              {{ option.name }}
+            </option>
+          }
+        }
+      }
+      </select>
+    </div>
+  </div>
+}
+
+@if (control().formControl.errors) {
+  <div invalidFeedback
+       [errors]="control().errors"
+       [control]="control().formControl"
+       [submitted]="control().submitted">
+  </div>
+}
+@if (control().helperText) {
+  <div helpBlock
+       [controlName]="control().name"
+       [formText]="control().helperText"></div>
+}
+
+<!-- <p>{{control().formControl.value | json}}</p> -->
+<!-- <code class="json">{{control().options | json}}</code> -->

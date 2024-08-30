@@ -68,7 +68,7 @@ namespace MainService.Models.Helpers
         {
             var hasPayment = random.Next(0, 2) > 0;
 
-            if (!hasPayment) return [];
+            if (!hasPayment) return new List<EventPayment>();
 
             var paymentCount = random.Next(1, 4);
             var totalAmount = @event.EventService.Service.Price;
@@ -85,9 +85,11 @@ namespace MainService.Models.Helpers
 
                 var payment = new EventPayment
                 {
-                    Payment = new() {
+                    Payment = new()
+                    {
                         Amount = paymentAmount,
-                        PaymentPaymentMethodType = new() {
+                        PaymentPaymentMethodType = new()
+                        {
                             PaymentMethodTypeId = paymentMethodType.Id
                         }
                     }
@@ -95,9 +97,18 @@ namespace MainService.Models.Helpers
 
                 if (paymentMethodType.Name == "Tarjeta de Crédito" || paymentMethodType.Name == "Tarjeta de Débito")
                 {
-                    payment.Payment.PaymentPaymentMethod = new() {
-                        PaymentMethodId = user.UserPaymentMethods.ElementAt(random.Next(user.UserPaymentMethods.Count)).PaymentMethodId
-                    };
+                    if (user.UserPaymentMethods.Any()) // Verificar si hay métodos de pago disponibles
+                    {
+                        payment.Payment.PaymentPaymentMethod = new()
+                        {
+                            PaymentMethodId = user.UserPaymentMethods.ElementAt(random.Next(user.UserPaymentMethods.Count)).PaymentMethodId
+                        };
+                    }
+                    else
+                    {
+                        // Manejar el caso en el que no haya métodos de pago disponibles
+                        payment.Payment.PaymentPaymentMethod = null; // o alguna lógica alternativa
+                    }
                 }
 
                 payments.Add(payment);
@@ -106,6 +117,7 @@ namespace MainService.Models.Helpers
 
             return payments;
         }
+
 
         public static PaymentStatus GetPaymentStatus(Event @event)
         {
