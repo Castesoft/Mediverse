@@ -3,6 +3,7 @@ import { Component, inject, NgModule, OnInit } from '@angular/core';
 import { ResolveFn, RouterModule } from '@angular/router';
 import { LayoutModule } from '../_shared/layout.module';
 import { SearchGeneralComponent } from './components/search-general/search-general.component';
+import { HomeSearchComponent } from './components/home-search/home-search.component';
 
 @Component({
     selector: 'search-route',
@@ -46,7 +47,7 @@ import { SearchGeneralComponent } from './components/search-general/search-gener
         path: '', title: 'Búsqueda', data: { breadcrumb: 'Búsqueda', },
         component: SearchComponent, runGuardsAndResolvers: 'always',
         children: [
-          { path: '', component: SearchGeneralComponent, title: 'Búsqueda de especialista', data: { breadcrumb: 'Especialista', }, },
+          { path: '', component: HomeSearchComponent, title: 'Búsqueda de especialista', data: { breadcrumb: 'Especialista', }, },
         //   { path: 'create', component: PrescriptionNewComponent, title: 'Crear nueva receta', data: { breadcrumb: 'Nuevo', }, },
         //   {
         //     path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },

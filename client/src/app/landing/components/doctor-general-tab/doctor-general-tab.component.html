@@ -1,40 +1,84 @@
 <div class="tab-pane fade show active" id="kt_contact_view_general" role="tabpanel">
-    <div class="d-flex flex-column gap-5 mt-7">
-        <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">Especialidad</div>
-            <div class="fw-bold fs-5">{{doctor()?.specialties![0].name}}</div>
+    <div class="py-5">
+        <div class="mb-7">
+            <h5 class="text-muted mb-3">Especialidad</h5>
+            <p class="fs-5 fw-bold">{{doctor()?.specialties![0].name}}</p>
         </div>
-        <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">{{doctor()?.addresses && doctor()?.addresses!.length > 1 ? 'Direcciones' : 'Dirección'}}</div>
+        <div class="separator my-10"></div>
+
+        <div class="mb-7">
+            <h5 class="text-muted mb-3">{{doctor()?.addresses && doctor()?.addresses!.length > 1 ? 'Direcciones' : 'Dirección'}}</h5>
+            @if (doctor()?.addresses?.length === 0) {
+                <span class="fs-6 py-2 px-3">
+                    <i class="ki-duotone ki-geolocation fs-5 me-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                    No se han agregado direcciones
+                </span>
+            }
             @for (address of doctor()?.addresses; track $index) {
-                <div class="fw-bold fs-5">
-                    <i class="ki-duotone ki-geolocation fs-4 text-gray-500">
+                <p class="fs-5 mb-2">
+                    <i class="ki-duotone ki-geolocation fs-4 text-primary me-2">
                         <span class="path1"></span>
                         <span class="path2"></span>
                     </i>
                     {{address.street}}, {{address.city}}, {{address.state}}
-                </div>
+                </p>
             }
         </div>
-        <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">Servicios ofrecidos</div>
-            @for (service of doctor()?.services; track $index) {
-                <div class="fw-bold fs-5">
-                    {{service.name}} - ${{service.price}}
-                </div>
+        <div class="separator my-10"></div>
+
+        <div class="mb-7">
+            <h5 class="text-muted mb-3">Servicios ofrecidos</h5>
+            <div class="d-flex flex-column gap-2">
+                @if (visibleServices().length === 0) {
+                    <span class="fs-6 py-2 px-3">
+                        <i class="ki-duotone ki-payment fs-5 me-1">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        No se han agregado servicios
+                    </span>
+                }
+                @for (service of visibleServices(); track $index) {
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light gap-3">
+                        <span class="fs-5 fw-semibold">{{service.name}}</span>
+                        <span class="fs-5 fw-bold badge bg-light-primary text-primary">${{service.price}}</span>
+                    </div>
+                }
+            </div>
+            @if (doctor()?.services!.length > 5) {
+                <button class="btn btn-sm btn-light-primary mt-4" (click)="toggleServices()">
+                    {{ showAllServices() ? 'Mostrar menos' : 'Mostrar más' }}
+                </button>
             }
         </div>
-        <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">Métodos de pago</div>
-            <div class="fw-bold fs-5">
+        <div class="separator my-10"></div>
+
+        <div class="mb-7">
+            <h5 class="text-muted mb-3">Métodos de pago</h5>
+            <div class="d-flex flex-wrap gap-2">
+                @if (doctor()?.paymentMethods?.length === 0) {
+                    <span class="fs-6 py-2 px-3">
+                        <i class="ki-duotone ki-payment fs-5 me-1">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        No se han agregado métodos de pago
+                    </span>
+                }
                 @for (paymentMethod of doctor()?.paymentMethods; track $index) {
-                    {{paymentMethod.name}}@if ($index < doctor()?.paymentMethods!.length - 1) {,}
+                    <span class="badge bg-light-info text-info fs-6 py-2 px-3">
+                        <i [class]="getPaymentIcon(paymentMethod.name)" class="fs-5 me-1">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        {{paymentMethod.name}}
+                    </span>
                 }
             </div>
         </div>
-        <div class="d-flex flex-column gap-1">
-            <div class="fw-bold text-muted">Sobre {{doctor()?.firstName}}</div>
-            <p>{{doctor()?.firstName}} {{doctor()?.lastName}} es un médico especialista en {{doctor()?.specialties![0].name}} con más de 10 años de experiencia en el campo de la medicina. Ha trabajado en varios hospitales y clínicas en todo el país y ha tratado a miles de pacientes con éxito. {{doctor()?.firstName}} es conocido por su enfoque amigable y compasivo para tratar a sus pacientes y siempre se asegura de que sus pacientes se sientan cómodos y bien atendidos. {{doctor()?.firstName}} es un médico altamente calificado y ha recibido numerosos premios y reconocimientos por su excelente trabajo en el campo de la medicina.</p>
-        </div>
+        <div class="separator my-10"></div>
     </div>
 </div>

@@ -1,12 +1,6 @@
 <div class="h-100 d-flex">
     <div class="d-flex flex-column position-relative" style="width: 33%;">
         @if (!isLoading) {
-            <!-- <div class="d-flex">
-                <span class="navbar-brand mb-0 h1">Mediverse</span>
-                <button routerLink="/auth" class="btn btn-success me-2" type="button">
-                    Iniciar sesión
-                </button>
-            </div> -->
             <div class="container">
                 <h1 class="text-gray-800 fw-bold my-3 text-center">Mediverse</h1>
                 <div class="py-3">
@@ -16,6 +10,7 @@
                         [selectedSpecialty]="specialty"
                         [selectedPlaceId]="location"
                         [selectedLocation]="locationName"
+                        [disabled]="isLoading"
                     ></app-search-general>
                 </div>
 
@@ -72,14 +67,26 @@
                     }
                 </div>
             } @else {
-                No hay resultados
+                <div class="d-flex flex-column align-items-center justify-content-center pb-6 container">
+                    <i class="ki-duotone ki-search-list fs-5x text-gray-400 mb-5">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                    <h3 class="text-gray-800 fw-bold mb-3">No se encontraron resultados</h3>
+                    <p class="text-gray-600 text-center mb-5">Intenta ajustar tus criterios de búsqueda o explorar otras especialidades.</p>
+                </div>
             }
         } @else {
-            <div class="d-flex flex-center flex-column">
-                <div class="spinner spinner-primary spinner-center mb-5"></div>
-                <span class="text-gray-800 fw-bold fs-4">Buscando especialistas...</span>
+            <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <h4 class="text-gray-800 fw-bold mb-2">Buscando especialistas</h4>
+                <p class="text-gray-600">Por favor, espere un momento...</p>
             </div>
         }
+
         @if (selectedDoctor()) {
             <div class="doctor-details">
                 <app-doctor-details [doctor]="selectedDoctor() ?? undefined" [startingTab]="startingTab" (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>

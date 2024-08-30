@@ -25,6 +25,10 @@ namespace MainService.Infrastructure.Data
                     .ThenInclude(x => x.WorkSchedule)
                 .Include(x => x.DoctorEvents)
                     .ThenInclude(x => x.Event)
+                .Include(x => x.DoctorReviews)
+                    .ThenInclude(x => x.Review)
+                    .ThenInclude(x => x.UserReview)
+                    .ThenInclude(x => x.User)
                 .AsQueryable();
 
             query = query.Where(x => x.UserMedicalLicenses.Count != 0);
@@ -56,5 +60,28 @@ namespace MainService.Infrastructure.Data
                 query.AsNoTracking().ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider),
                 param.PageNumber, param.PageSize);
         }
+        public async Task<DoctorSearchResultDto> GetDoctorByIdAsync(int id)
+        {
+            var query = context.Users
+                .Include(x => x.UserMedicalLicenses)
+                    .ThenInclude(x => x.MedicalLicense)
+                    .ThenInclude(x => x.MedicalLicenseSpecialty)
+                    .ThenInclude(x => x.Specialty)
+                .Include(x => x.DoctorClinics)
+                    .ThenInclude(x => x.Clinic)
+                .Include(x => x.DoctorWorkSchedules)
+                    .ThenInclude(x => x.WorkSchedule)
+                .Include(x => x.DoctorEvents)
+                    .ThenInclude(x => x.Event)
+                .Include(x => x.DoctorReviews)
+                    .ThenInclude(x => x.Review)
+                    .ThenInclude(x => x.UserReview)
+                    .ThenInclude(x => x.User)
+                .Where(x => x.Id == id)
+                .AsQueryable();
+
+            return await query.AsNoTracking().ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
+        }
     }
+
 }

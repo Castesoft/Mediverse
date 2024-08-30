@@ -556,6 +556,22 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("DoctorProducts");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorReview", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReviewId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DoctorId", "ReviewId");
+
+                    b.HasIndex("ReviewId")
+                        .IsUnique();
+
+                    b.ToTable("DoctorReviews");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
                 {
                     b.Property<int>("DoctorId")
@@ -653,6 +669,15 @@ namespace MainService.Sqlite.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsSatisfactionSurveyCompleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSatisfactionSurveyEmailSent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsServiceRecommended")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
@@ -1467,6 +1492,32 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("ProductPhoto");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -1740,6 +1791,22 @@ namespace MainService.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("UserPhotos");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.UserReview", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReviewId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "ReviewId");
+
+                    b.HasIndex("ReviewId")
+                        .IsUnique();
+
+                    b.ToTable("UserReviews");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserTaxRegime", b =>
@@ -2195,6 +2262,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DoctorReview", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorReviews")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Review", "Review")
+                        .WithOne("DoctorReview")
+                        .HasForeignKey("MainService.Models.Entities.DoctorReview", "ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
@@ -2842,6 +2928,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserReview", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Review", "Review")
+                        .WithOne("UserReview")
+                        .HasForeignKey("MainService.Models.Entities.UserReview", "ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("UserReviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Review");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserTaxRegime", b =>
                 {
                     b.HasOne("MainService.Models.Entities.TaxRegime", "TaxRegime")
@@ -2950,6 +3055,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("DoctorProducts");
 
+                    b.Navigation("DoctorReviews");
+
                     b.Navigation("DoctorServices");
 
                     b.Navigation("DoctorSignature");
@@ -2981,6 +3088,8 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("UserPermissions");
 
                     b.Navigation("UserPhoto");
+
+                    b.Navigation("UserReviews");
 
                     b.Navigation("UserRoles");
 
@@ -3137,6 +3246,13 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("PrescriptionItems");
 
                     b.Navigation("ProductPhotos");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Review", b =>
+                {
+                    b.Navigation("DoctorReview");
+
+                    b.Navigation("UserReview");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Service", b =>

@@ -304,6 +304,7 @@ public static class Seed
         {
             user.UserMedicalLicenses.Add(Utils.CreateUserMedicalLicense(specialties));
             user.DoctorPaymentMethodTypes.AddRange(Utils.CreateDoctorPaymentMethodTypes(paymentMethodTypes));
+            user.DoctorWorkSchedules.AddRange(Utils.CreateDoctorWorkSchedules());
             
             List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Doctor").ToList();
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");

@@ -24,9 +24,18 @@ export interface DoctorSearchResult {
     services: Service[];
     medicalInsuranceCompanies: MedicalInsuranceCompany[];
     doctorAvailabilities: DoctorAvailability[];
+    reviews: DoctorReview[];
     photoUrl: string;
     email: string;
     phoneNumber: string;
+}
+
+export interface DoctorReview {
+    rating: number;
+    comment: string;
+    userName: string;
+    userPhotoUrl: string;
+    createdAt: Date;
 }
 
 export interface DoctorAvailability {

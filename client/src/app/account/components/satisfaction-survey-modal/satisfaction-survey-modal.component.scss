@@ -1,0 +1,12 @@
+.rating .btn.active {
+    background-color: var(--kt-primary);
+    color: var(--kt-primary-inverse);
+  }
+  
+  .rating .btn.active .ki-star .path1:before {
+    color: var(--kt-primary-inverse);
+  }
+  
+  .rating .btn.active .ki-star .path2:before {
+    color: var(--kt-primary-inverse);
+  }

@@ -14,6 +14,9 @@ import { AccountBillingComponent } from './components/account-billing/account-bi
 import { AccountPaymentsComponent } from './components/account-payments/account-payments.component';
 import { AccountInsurancesComponent } from './components/account-insurances/account-insurances.component';
 import { AccountSchedulesComponent } from './components/account-schedules/account-schedules.component';
+import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { SatisfactionSurveyModalComponent } from './components/satisfaction-survey-modal/satisfaction-survey-modal.component';
 
 @Component({
   selector: 'account-main-route',
@@ -48,13 +51,40 @@ import { AccountSchedulesComponent } from './components/account-schedules/accoun
   </div>`,
 })
 export class AccountComponent implements OnInit {
+  private bsModalService = inject(BsModalService);
   accountService = inject(AccountService);
   breadcrumbService = inject(BreadcrumbService);
 
   account: Account | null = null;
   label?: string;
+  satisfactionSurveys: SatisfactionSurvey[] = [];
 
   ngOnInit(): void {
+    this.accountService.getSatisfactionSurveys().subscribe({
+      next: surveys => {
+        this.satisfactionSurveys = surveys;
+
+        if (this.satisfactionSurveys.length > 0) {
+        this.bsModalService.show(SatisfactionSurveyModalComponent, {
+          initialState: {
+            satisfactionSurvey: this.satisfactionSurveys[0],
+          },
+        });
+
+        this.bsModalService.onHide.subscribe(() => {
+          this.satisfactionSurveys.shift();
+          if (this.satisfactionSurveys.length > 0) {
+            this.bsModalService.show(SatisfactionSurveyModalComponent, {
+              initialState: {
+                satisfactionSurvey: this.satisfactionSurveys[0],
+              },
+            });
+            }
+          });
+        }
+      }
+    });
+
     this.account = this.accountService.current();
     this.breadcrumbService.breadcrumb$.subscribe({
       next: breadcrumb => {

@@ -10,6 +10,7 @@ import { SnackbarService } from './snackbar.service';
 import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billingDetails';
 import { MedicalInsuranceCompany, UserMedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
 import { Payment } from '../_models/payment';
+import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 
 @Injectable({
   providedIn: 'root',
@@ -421,6 +422,23 @@ export class AccountService {
     );
   }
 
+  getSatisfactionSurveys() {
+    return this.http.get<SatisfactionSurvey[]>(`${this.baseUrl}satisfaction-surveys`);
+  }
+
+  submitReview(value: any) {
+    return this.http.post<SatisfactionSurvey>(`${this.baseUrl}review`, value).pipe(
+      map(response => {
+        this.snackbarService.success('Revisión enviada correctamente');
+        return response;
+      })
+    );
+  }
+
+  skipSatisfactionSurvey(eventId: number) {
+    return this.http.post(`${this.baseUrl}review/skip/${eventId}`, {});
+  }
+
   setCurrentUser(user: Account) {
     localStorage.setItem('user', JSON.stringify(user));
     this.current.set(user);
@@ -432,7 +450,7 @@ export class AccountService {
     this.billingDetails.set(null);
     this.userMedicalInsuranceCompanies.set(null);
     this.doctorMedicalInsuranceCompanies.set(null);
-    this.router.navigate(['/auth/sign-in']);
+    this.router.navigate(['/']);
   }
 
   update(value: any) {

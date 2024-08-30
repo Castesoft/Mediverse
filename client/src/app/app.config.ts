@@ -112,7 +112,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter([
       {
         path: '',
-        loadChildren: () => import('./landing/landing.config').then(m => m.LadingModule),
+        loadChildren: () => import('./landing/landing.config').then(m => m.LandingModule),
       },
       {
         path: 'auth',

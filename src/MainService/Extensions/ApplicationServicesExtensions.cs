@@ -23,6 +23,8 @@ public static class ApplicationServicesExtensions
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+        services.AddHostedService<CronJobsService>();
+
         // Services
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsersService, UsersService>();

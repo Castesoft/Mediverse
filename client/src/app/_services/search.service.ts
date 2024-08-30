@@ -3,7 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { SearchFields } from '../_models/searchFields';
 import { Observable, of, tap } from 'rxjs';
-import { DoctorSearchResultParams, DoctorSearchResultParamsToHttpParams, DoctorSearchResults } from '../_models/doctorSearchResults';
+import { DoctorSearchResult, DoctorSearchResultParams, DoctorSearchResultParamsToHttpParams, DoctorSearchResults } from '../_models/doctorSearchResults';
 import { getPaginatedResult } from '../_utils/util';
 import { PaginatedResult, Pagination } from '../_models/pagination';
 
@@ -47,5 +47,9 @@ export class SearchService {
         if (results.pagination) this.searchResultsPagination.set(results.pagination);
       })
     );
+  }
+
+  getDoctorById(id: number): Observable<DoctorSearchResult> {
+    return this.http.get<DoctorSearchResult>(`${this.baseUrl}${id}`);
   }
 }

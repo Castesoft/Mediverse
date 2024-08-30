@@ -55,7 +55,9 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PaymentPaymentMethodType> PaymentPaymentMethodTypes { get; set; }
     public DbSet<EventPayment> EventPayments { get; set; }
-
+    public DbSet<DoctorReview> DoctorReviews { get; set; }
+    public DbSet<UserReview> UserReviews { get; set; }
+    public DbSet<Review> Reviews { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

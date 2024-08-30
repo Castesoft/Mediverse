@@ -38,6 +38,7 @@ public class AppUser : IdentityUser<int>
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
     public ICollection<AppUserPermission> UserPermissions { get; set; } = [];
     public ICollection<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
+    public List<UserReview> UserReviews { get; set; } = [];
 
     // User Billing Information Properties
     public List<UserPaymentMethod> UserPaymentMethods { get; set; } = [];
@@ -57,7 +58,8 @@ public class AppUser : IdentityUser<int>
     public string StripeConnectAccountId { get; set; }
     public bool RequireAnticipatedCardPayments { get; set; }
     public ICollection<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
-    public ICollection<DoctorWorkSchedule> DoctorWorkSchedules { get; set; } = [];
+    public List<DoctorWorkSchedule> DoctorWorkSchedules { get; set; } = [];
+    public List<DoctorReview> DoctorReviews { get; set; } = [];
 
     // Navigation properties
     public List<DoctorService> DoctorServices { get; set; } = [];

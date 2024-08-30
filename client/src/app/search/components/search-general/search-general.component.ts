@@ -24,13 +24,14 @@ export class SearchGeneralComponent implements OnInit {
   selectedSpecialty = input('');
   selectedLocation = input('');
   selectedPlaceId = input('');
+  disabled = input(false);
   onSearch = output<{specialty: string, location: string}>();
+  onSetSpecialistsQuantity = output<number>();
 
   private autocompleteService: any;
   haveSelected = false;
   autocompleteResults: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   specialties: any[] = [];
-  specialistsQuantity = 0;
 
   form = this.fb.group({
     specialty: [''],
@@ -56,7 +57,7 @@ export class SearchGeneralComponent implements OnInit {
 
     this.searchService.getSearchFields().subscribe({
       next: () => {
-        this.specialistsQuantity = this.searchService.fields()?.specialistsQuantity || 0;
+        this.onSetSpecialistsQuantity.emit(this.searchService.fields()?.specialistsQuantity || 0);
         this.specialties = this.searchService.fields()?.specialties || [];
       }
     });

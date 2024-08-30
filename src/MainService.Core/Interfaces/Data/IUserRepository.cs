@@ -25,4 +25,5 @@ public interface IUserRepository
     Task<List<SpecialtyDto>> GetSpecialtiesAsync();
     Task<List<MedicalInsuranceCompanyDto>> GetMedicalInsuranceCompaniesAsync();
     Task<bool> DeleteDoctorWorkScheduleAsync(WorkSchedule workSchedule);
+    Task<bool> AddReviewAsync(Review review);
 }

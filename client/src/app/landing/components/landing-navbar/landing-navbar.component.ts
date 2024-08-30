@@ -1,0 +1,96 @@
+import { Component, inject, HostListener, Input } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AccountService } from 'src/app/_services/account.service';
+
+@Component({
+  selector: 'app-landing-navbar',
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive, CommonModule],
+  template: `
+    <nav
+      class="navbar navbar-expand-lg fixed-top"
+      [ngClass]="{
+        'bg-transparent': !hideBackground && !isLightBackground,
+        'bg-white shadow-sm': hideBackground || isLightBackground
+      }"
+      [style.--nav-link-color]="(hideBackground || isLightBackground) ? '#000000' : '#ffffff'"
+      [style.--nav-link-hover-color]="'#0aa0f3'"
+      [style.--nav-link-active-color]="(hideBackground || isLightBackground) ? '#0aa0f3' : '#ffffff'"
+      [style.--nav-link-active-bg]="(hideBackground || isLightBackground) ? 'transparent' : 'rgba(255, 255, 255, 0.1)'"
+      style="transition: all 0.3s ease; height: 80px"
+    >
+      <div class="container">
+        <a class="navbar-brand" routerLink="/">
+          <img
+            [src]="(hideBackground || isLightBackground) ? 'assets/media/logos/default-dark.svg' : 'assets/media/logos/default.svg'"
+            alt="Logo"
+            height="30"
+            class="d-inline-block align-text-top"
+          />
+          Mediverse
+        </a>
+        <div class="d-flex align-items-center">
+          <div class="nav-links me-4">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
+            <a routerLink="/services" routerLinkActive="active" class="nav-link">Servicios</a>
+            <a routerLink="/pricing" routerLinkActive="active" class="nav-link">Precios</a>
+          </div>
+          @if (isLoggedIn()) {
+            <a routerLink="/account" class="btn btn-light-primary me-3">Entrar</a>
+            <button (click)="logout()" class="btn" [ngClass]="(hideBackground || isLightBackground) ? 'btn-outline-primary' : 'btn-outline-light'">Cerrar sesión</button>
+          } @else {
+            <a routerLink="/auth/sign-in" class="btn btn-light-primary me-3">Iniciar sesión</a>
+            <a routerLink="/auth/sign-up" class="btn btn-primary">Registrarse</a>
+          }
+        </div>
+      </div>
+    </nav>
+  `,
+  styles: [`
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-link {
+      color: var(--nav-link-color);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: var(--nav-link-hover-color);
+    }
+    .nav-link.active {
+      color: var(--nav-link-active-color);
+      background-color: var(--nav-link-active-bg);
+    }
+    .navbar-brand {
+      color: var(--nav-link-color);
+    }
+    .btn-outline-light:hover {
+      color: #000000;
+    }
+  `]
+})
+export class LandingNavbarComponent {
+  @Input() isLightBackground = false;
+
+  accountService = inject(AccountService);
+  hideBackground = false;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.hideBackground = window.pageYOffset > 50;
+  }
+
+  isLoggedIn(): boolean {
+    return this.accountService.current() !== null;
+  }
+
+  logout(): void {
+    this.accountService.logout();
+  }
+}

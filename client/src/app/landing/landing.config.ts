@@ -1,67 +1,56 @@
+import { Component, NgModule } from '@angular/core';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, NgModule, OnInit } from '@angular/core';
-import { ResolveFn, RouterModule } from '@angular/router';
 import { LayoutModule } from '../_shared/layout.module';
 import { LandingComponent } from './components/landing.component';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
+import { ServicesComponent } from './components/services/services.component';
+import { PricingComponent } from './components/pricing/pricing.component';
+import { LandingNavbarComponent } from './components/landing-navbar/landing-navbar.component';
+import { DoctorProfileComponent } from './components/doctor-profile/doctor-profile.component';
 
 @Component({
     selector: 'landing-route',
     template: `
-      <router-outlet></router-outlet>`,
-  })
-  export class LadingRouterComponent implements OnInit {
-    ngOnInit(): void { }
-  }
+        <app-landing-navbar *ngIf="showNavbar" [isLightBackground]="isLightBackground"></app-landing-navbar>
+        <router-outlet></router-outlet>
+    `,
+    standalone: true,
+    imports: [CommonModule, RouterModule, LandingNavbarComponent]
+})
+export class LandingRouterComponent {
+    showNavbar = true;
+    isLightBackground = false;
 
-// export const itemResolver: ResolveFn<Prescription | null> = (route, state) => {
-//     const prescription = inject(PrescriptionsService);
-//     const id = +route.paramMap.get('id')!;
-//     const edited = route.queryParamMap.get('edited');
-//     return prescription.getById(id, { noCache: edited ? true : false });
-//   };
-  
-//   export const titleDetailResolver: ResolveFn<string> = (route, state) => {
-//     const prescription = inject(PrescriptionsService);
-//     const id = +route.paramMap.get('id')!;
-//     prescription.getById(id).subscribe();
-//     const item = prescription.getCurrent();
-//     if (!item) return 'Detalle de receta';
-//     const title = `Detalle de receta - ${item.id}`;
-//     return title;
-//   }
-  
-//   export const titleEditResolver: ResolveFn<string> = (route, state) => {
-//     const prescription = inject(PrescriptionsService);
-//     const id = +route.paramMap.get('id')!;
-//     prescription.getById(id).subscribe();
-//     const item = prescription.getCurrent();
-//     if (!item) return 'Editar receta';
-//     const title = `Editar receta - ${item.id}`;
-//     return title;
-//   }
+    constructor(private router: Router) {
+        this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+                this.showNavbar = !event.url.includes('/search');
+                this.isLightBackground = event.url.includes('/services') || event.url.includes('/pricing') || event.url.includes('/doctor');
+            }
+        });
+    }
+}
 
 @NgModule({
     imports: [RouterModule.forChild([
-      {
-        path: '', title: 'Mediverse', data: { breadcrumb: 'Landing', },
-        component: LadingRouterComponent, runGuardsAndResolvers: 'always',
-        children: [
-          { path: '', component: LandingComponent, title: 'Mediverse', data: { breadcrumb: 'Landing', }, },
-          { path: 'search', component: SearchResultsComponent, title: 'Especialistas', data: { breadcrumb: 'Landing', }, },
-        ],
-      },
+        {
+            path: '', 
+            component: LandingRouterComponent,
+            children: [
+                { path: '', component: LandingComponent, title: 'Mediverse', data: { breadcrumb: 'Landing' } },
+                { path: 'search', component: SearchResultsComponent, title: 'Especialistas', data: { breadcrumb: 'Landing' } },
+                { path: 'services', component: ServicesComponent, title: 'Servicios', data: { breadcrumb: 'Servicios' } },
+                { path: 'pricing', component: PricingComponent, title: 'Precios', data: { breadcrumb: 'Precios' } },
+                { path: 'doctor/:id', component: DoctorProfileComponent, title: 'Perfil del Doctor', data: { breadcrumb: 'Perfil del Doctor' } },
+            ],
+        },
     ])],
     exports: [RouterModule]
-  })
-  export class LadingRoutingModule {
-  }
+})
+export class LandingRoutingModule {}
 
 @NgModule({
-    declarations: [
-      LadingRouterComponent,
-    ],
-    imports: [CommonModule, LadingRoutingModule, LayoutModule,]
-  })
-  export class LadingModule {
-  }
+    imports: [CommonModule, LandingRoutingModule, LayoutModule]
+})
+export class LandingModule {}

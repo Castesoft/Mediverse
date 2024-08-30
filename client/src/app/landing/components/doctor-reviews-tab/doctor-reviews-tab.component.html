@@ -1,30 +1,42 @@
 <div class="tab-pane fade show active" id="kt_contact_view_activity" role="tabpanel">
     <div class="overflow-y-auto" style="flex: 1;">
-        @for (review of reviews; track $index) {
-            <div class="d-flex flex-column py-6 doctor-search-result">
-                <div class="d-flex gap-3">
-                    <app-user-profile-picture
-                        [firstName]="review.name"
-                        [photoUrl]="''"
-                        size="sm"
-                    ></app-user-profile-picture>
-                    <div class="d-flex flex-column justify-content-center">
-                        <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{review.name}}</a>
-                        <div>
-                            @for (star of convertToStars(review.rating); track $index) {
-                                <i class="ki-duotone ki-star fs-4" [class.text-gray-500]="star === 0" [class.text-warning]="star === 1">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                </i>
-                            }
+        @if (reviews().length === 0) {
+            <div class="text-center py-10">
+                <i class="ki-duotone ki-message-text-2 fs-3x text-muted mb-5">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                <h3 class="fs-2 fw-bold text-gray-800 mb-1">No hay reseñas aún</h3>
+                <div class="fs-6 text-muted">Este doctor aún no tiene reseñas.</div>
+            </div>
+        } @else {
+            @for (review of reviews(); track $index) {
+                <div class="d-flex flex-column py-6 doctor-search-result">
+                    <div class="d-flex gap-3">
+                        <app-user-profile-picture
+                            [firstName]="review.userName"
+                            [photoUrl]="review.userPhotoUrl"
+                            size="sm"
+                        ></app-user-profile-picture>
+                        <div class="d-flex flex-column justify-content-center">
+                            <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{review.userName}}</a>
+                            <div>
+                                @for (star of convertToStars(review.rating); track $index) {
+                                    <i class="ki-duotone ki-star fs-4" [class.text-gray-500]="star === 0" [class.text-warning]="star === 1">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                }
+                            </div>
                         </div>
                     </div>
+                    <div class="fw-semibold text-gray-500 pt-3">
+                        {{review.comment}}
+                    </div>
                 </div>
-                <div class="fw-semibold text-gray-500 pt-3">
-                    {{review.review}}
-                </div>
-            </div>
-            <div class="separator separator-dashed"></div>
+                <div class="separator separator-dashed"></div>
+            }
         }
     </div>
 </div>

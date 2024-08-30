@@ -101,6 +101,53 @@ public class EmailService : IEmailService
             """;
     }
 
+    public string CreateSatisfactionSurveyEmail(AppUser doctor, AppUser patient, Event @event)
+    {
+        return $$"""
+        <html>
+          <body>
+            <style>html,body { padding: 0; margin:0; }</style>
+            <div style="font-family:Arial,Helvetica,sans-serif; line-height: 1.5; font-weight: normal; font-size: 15px; color: #2F3044; min-height: 100%; margin:0; padding:0; width:100%; background-color:#edf2f7">
+              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin:0 auto; padding:0; max-width:600px">
+                <tbody>
+                  <tr>
+                    <td align="center" valign="center" style="text-align:center; padding: 40px">
+                      <a href="https://keenthemes.com" rel="noopener" target="_blank">
+                        <img alt="Logo" src="assets/media/logos/mail.svg" />
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="left" valign="center">
+                      <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                        <!--begin:Email content-->
+                        <div style="padding-bottom: 30px; font-size: 17px;">
+                          <strong>¡Cuentanos sobre tu experiencia!</strong>
+                        </div>
+                        <div style="padding-bottom: 20px">Expecialista: {{doctor.FirstName}} {{doctor.LastName}}</div>
+                        <div style="padding-bottom: 20px">Fecha: {{@event.DateFrom.ToLocalTime()}}</div>
+                        <div style="padding-bottom: 40px">Servicio: {{@event.EventService.Service.Name}}</div>
+                        <a href="https://localhost:4400/account" rel="noopener" target="_blank">Clic aquí para completar la encuesta</a>.
+                        <!--end:Email content-->
+                        <div style="padding-bottom: 10px">Si alguna de esta información es incorrecta, por favor contacta a tu especialista.
+                        <tr>
+                          <td align="center" valign="center" style="font-size: 13px; text-align:center;padding: 20px; color: #6d6e7c;">
+                            <p>Dirección de mediverse, MX.</p>
+                            <p>Copyright &copy; 
+                            <a href="https://mediverse.com" rel="noopener" target="_blank">Mediverse</a>.</p>
+                          </td>
+                        </tr></br></div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </body>
+        </html>
+        """;
+    }
+
     public string CreateVerifyEmailAddressEmailForRegister(AppUser user, string verificationUrl, string verificationCode)
     {
         // string cssFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "email-styles", "styles.css");

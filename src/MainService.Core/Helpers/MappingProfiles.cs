@@ -25,7 +25,15 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.DoctorServices.Select(x => x.Service)))
             .ForMember(dest => dest.MedicalInsuranceCompanies, opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)))
             .ForMember(dest => dest.WorkSchedules, opt => opt.MapFrom(src => src.DoctorWorkSchedules.Select(x => x.WorkSchedule)))
-            .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.DoctorEvents.Select(x => x.Event)));
+            .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.DoctorEvents.Select(x => x.Event)))
+            .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.DoctorReviews.Select(x => x.Review)));
+
+        CreateMap<Review, DoctorReviewDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserReview.User.FirstName + " " + src.UserReview.User.LastName))
+            .ForMember(dest => dest.UserPhotoUrl, opt => opt.MapFrom(src => src.UserReview.User.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
         CreateMap<Address, DoctorClinicDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -35,6 +43,13 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
             .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
             .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode));
+
+        CreateMap<Event, SatisfactionSurveyDto>()
+            .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.DoctorEvent.Doctor.FirstName + " " + src.DoctorEvent.Doctor.LastName))
+            .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.EventService.Service.Name))
+            .ForMember(dest => dest.DateFrom, opt => opt.MapFrom(src => src.DateFrom))
+            .ForMember(dest => dest.DateTo, opt => opt.MapFrom(src => src.DateTo));
 
         CreateMap<Address, AddressDto>()
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))

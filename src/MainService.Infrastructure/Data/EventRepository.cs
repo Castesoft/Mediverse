@@ -81,6 +81,8 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
     {
         var item = await context.Events
             .Include(x => x.PatientEvent)
+            .Include(x => x.DoctorEvent)
+                .ThenInclude(x => x.Doctor)
             .SingleOrDefaultAsync(x => x.Id == id);
 
         return item;
@@ -126,5 +128,16 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         return await PagedList<EventDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<EventDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
+    }
+
+    public async Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId)
+    {
+        return await context.Events
+            .Where(x => x.PatientEvent.PatientId == userId && x.IsSatisfactionSurveyEmailSent == true && x.IsSatisfactionSurveyCompleted == false)
+            .Include(x => x.DoctorEvent)
+                .ThenInclude(x => x.Doctor)
+            .Include(x => x.EventService)
+                .ThenInclude(x => x.Service)
+            .ToListAsync();
     }
 }

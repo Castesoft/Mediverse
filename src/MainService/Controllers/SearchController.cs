@@ -3,13 +3,14 @@ using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
+using MainService.Models.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MainService.Controllers;
 
-public class SearchController(IUnitOfWork uow, IUsersService usersService
+public class SearchController(IUnitOfWork uow, IUsersService usersService, UserManager<AppUser> userManager
 // ,IMapper mapper, 
-// UserManager<AppUser> userManager
 ) : BaseApiController
 {
     [HttpGet]
@@ -74,6 +75,49 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService
                 Longitude = (double)param.Longitude,
             };
         }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<DoctorSearchResultDto>> GetDoctorByIdAsync(int id)
+    {
+        var doctor = await uow.SearchRepository.GetDoctorByIdAsync(id);
+
+        doctor.DoctorAvailabilities = Enumerable.Range(0, 7)
+                .Select(i => DateTime.Now.AddDays(i))
+                .Select((date, index) => new DoctorAvailability
+                {
+                    Day = index == 0 ? "Hoy" : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("dddd", new System.Globalization.CultureInfo("es-ES"))),
+                    DayNumber = date.Day,
+                    Month = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("MMMM", new System.Globalization.CultureInfo("es-ES"))),
+                    MonthNumber = date.Month,
+                    Year = date.Year,
+                    Availability = [.. doctor.WorkSchedules
+                        .Where(ws => ws.DayOfWeek == (int)date.DayOfWeek)
+                        .Select(ws =>
+                        {
+                            var startTime = ws.StartTime.ToTimeSpan();
+                            var endTime = ws.EndTime.ToTimeSpan();
+                            var localDate = date.Date;
+                            var conflictingEvent = doctor.DoctorEvents.FirstOrDefault(e =>
+                                e.DateFrom.Date == localDate &&
+                                e.DateFrom.ToLocalTime().TimeOfDay < endTime &&
+                                e.DateTo.ToLocalTime().TimeOfDay > startTime);
+
+                            return new DoctorAvailabilityTime
+                            {
+                                Start = ws.StartTime.ToString("HH:mm"),
+                                End = ws.EndTime.ToString("HH:mm"),
+                                Available = conflictingEvent == null
+                            };
+                        })
+                        .OrderBy(ws => ws.Start)]
+                })
+                .ToArray();
+
+        doctor.WorkSchedules = [];
+        doctor.DoctorEvents = [];
+
+        return doctor;
     }
 
     [HttpGet("fields")]

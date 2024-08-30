@@ -30,6 +30,7 @@ namespace MainService.Core.DTOs.Search
         public DoctorAvailability[] DoctorAvailabilities { get; set; }
         public ServiceDto[] Services { get; set; }
         public MedicalInsuranceCompanyDto[] MedicalInsuranceCompanies { get; set; }
+        public DoctorReviewDto[] Reviews { get; set; }
         public string PhotoUrl { get; set; }
     }
 

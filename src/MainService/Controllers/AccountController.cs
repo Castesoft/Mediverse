@@ -1565,4 +1565,76 @@ public class AccountController(
 
         return itemToReturn;
     }
+
+    [Authorize]
+    [HttpGet("satisfaction-surveys")]
+    public async Task<ActionResult<List<SatisfactionSurveyDto>>> GetSatisfactionSurveys()
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        var events = await uow.EventRepository.GetPendingSatisfactionSurveysAsync(userId);
+
+        return mapper.Map<List<SatisfactionSurveyDto>>(events);
+    }
+
+    [Authorize]
+    [HttpPost("review")]
+    public async Task<ActionResult> SubmitReview([FromBody] ReviewCreateDto request)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        Event patientEvent = await uow.EventRepository.GetByIdAsync(request.EventId);
+        if (patientEvent == null) return NotFound($"El evento con id {request.EventId} no existe.");
+
+        patientEvent.IsServiceRecommended = request.IsServiceRecommended;
+
+        var review = new Review
+        {
+            Rating = request.Rating,
+            Content = request.Comment,
+            DoctorReview = new() {
+                DoctorId = patientEvent.DoctorEvent.Doctor.Id,
+            },
+            UserReview = new() {
+                UserId = userId,
+            }
+        };
+
+        patientEvent.IsSatisfactionSurveyCompleted = true;
+
+        await uow.UserRepository.AddReviewAsync(review);
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest("Error creando la revisión.");
+        }
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPost("review/skip/{eventId}")]
+    public async Task<ActionResult> SkipReview([FromRoute] int eventId)
+    {
+        int userId = User.GetUserId();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        Event patientEvent = await uow.EventRepository.GetByIdAsync(eventId);
+        if (patientEvent == null) return NotFound($"El evento con id {eventId} no existe.");
+
+        patientEvent.IsSatisfactionSurveyCompleted = true;
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest("Error omitiendo la revisión.");
+        }
+
+        return Ok();
+    }
 }

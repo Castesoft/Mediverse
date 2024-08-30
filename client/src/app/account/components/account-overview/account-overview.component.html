@@ -16,6 +16,7 @@
         <span class="fw-bold fs-6 text-gray-800">{{ account.fullName }}</span>
       </div>
     </div>
+    @if (accountService.hasRole(["Doctor"])) {
     <div class="row mb-7">
       <label class="col-lg-4 fw-semibold text-muted">Especialidad</label>
       <div class="col-lg-8 fv-row">
@@ -24,6 +25,7 @@
         }}</span>
       </div>
     </div>
+    }
     <div class="row mb-7">
       <label class="col-lg-4 fw-semibold text-muted"
         >Celular

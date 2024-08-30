@@ -1,4 +1,5 @@
-import { Component, input, output, effect } from '@angular/core';
+import { Component, input, output, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 import { UserProfilePictureComponent } from "../../../users/components/user-profile-picture/user-profile-picture.component";
 import { DoctorGeneralTabComponent } from '../doctor-general-tab/doctor-general-tab.component';
@@ -14,6 +15,7 @@ import { DoctorScheduleComponent } from '../doctor-schedule/doctor-schedule.comp
   styleUrl: './doctor-details.component.scss'
 })
 export class DoctorDetailsComponent {
+  private router = inject(Router);
   doctor = input<DoctorSearchResult>();
   startingTab = input<string>();
   onClose = output();
@@ -45,9 +47,15 @@ export class DoctorDetailsComponent {
   }
 
   onCloseDoctorSchedule(event: boolean) {
-    if (event) {
-      this.onEventCreated.emit();
-    }
     this.isScheduling = false;
+    if (event) {
+      // Handle successful scheduling (e.g., show a success message)
+    }
+  }
+
+  navigateToDoctorProfile() {
+    if (this.doctor()) {
+      this.router.navigate(['/doctor', this.doctor()!.id]);
+    }
   }
 }

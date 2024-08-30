@@ -23,6 +23,9 @@
 
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
+        public bool IsServiceRecommended { get; set; } = false;
+        public bool IsSatisfactionSurveyEmailSent { get; set; } = false;
+        public bool IsSatisfactionSurveyCompleted { get; set; } = false;
 
         /// <summary>
         /// Pagado, Parcialmente Pagado, Reembolsado, Pendiente... etc

@@ -145,6 +145,9 @@ namespace MainService.Postgres.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DateFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsServiceRecommended = table.Column<bool>(type: "boolean", nullable: false),
+                    IsSatisfactionSurveyEmailSent = table.Column<bool>(type: "boolean", nullable: false),
+                    IsSatisfactionSurveyCompleted = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -399,6 +402,23 @@ namespace MainService.Postgres.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1611,6 +1631,54 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorReviews",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ReviewId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorReviews", x => new { x.DoctorId, x.ReviewId });
+                    table.ForeignKey(
+                        name: "FK_DoctorReviews_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorReviews_Reviews_ReviewId",
+                        column: x => x.ReviewId,
+                        principalTable: "Reviews",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserReviews",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ReviewId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserReviews", x => new { x.UserId, x.ReviewId });
+                    table.ForeignKey(
+                        name: "FK_UserReviews_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserReviews_Reviews_ReviewId",
+                        column: x => x.ReviewId,
+                        principalTable: "Reviews",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DoctorServices",
                 columns: table => new
                 {
@@ -1979,6 +2047,12 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_DoctorReviews_ReviewId",
+                table: "DoctorReviews",
+                column: "ReviewId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DoctorServices_ServiceId",
                 table: "DoctorServices",
                 column: "ServiceId",
@@ -2256,6 +2330,12 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserReviews_ReviewId",
+                table: "UserReviews",
+                column: "ReviewId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserTaxRegimes_TaxRegimeId",
                 table: "UserTaxRegimes",
                 column: "TaxRegimeId",
@@ -2324,6 +2404,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "DoctorProducts");
+
+            migrationBuilder.DropTable(
+                name: "DoctorReviews");
 
             migrationBuilder.DropTable(
                 name: "DoctorServices");
@@ -2431,6 +2514,9 @@ namespace MainService.Postgres.Migrations
                 name: "UserPhotos");
 
             migrationBuilder.DropTable(
+                name: "UserReviews");
+
+            migrationBuilder.DropTable(
                 name: "UserTaxRegimes");
 
             migrationBuilder.DropTable(
@@ -2504,6 +2590,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "Photos");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -218,4 +218,10 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         context.WorkSchedules.Remove(workSchedule);
         return await context.SaveChangesAsync() > 0;
     }
+
+    public async Task<bool> AddReviewAsync(Review review)
+    {
+        await context.Reviews.AddAsync(review);
+        return await context.SaveChangesAsync() > 0;
+    }
 }
