@@ -27,9 +27,30 @@
             </i>
             <a class="text-muted text-hover-primary">{{ doctor!.phoneNumber }}</a>
           </div>
-          <button class="btn btn-primary mt-3" (click)="selectTab('schedule')">
-            Agendar Cita
-          </button>
+          <div class="d-flex justify-content-center gap-2 mt-3">
+            <button class="btn btn-primary d-flex align-items-center" (click)="selectTab('schedule')">
+              <i class="ki-duotone ki-calendar-add fs-2 me-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+                <span class="path4"></span>
+                <span class="path5"></span>
+                <span class="path6"></span>
+              </i>
+              Agendar Cita
+            </button>
+            <button class="btn btn-outline-primary d-flex align-items-center" (click)="openShareModal()">
+              <i class="ki-duotone ki-share fs-2 me-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+                <span class="path4"></span>
+                <span class="path5"></span>
+                <span class="path6"></span>
+              </i>
+              Compartir
+            </button>
+          </div>
         </div>
       </div>
     </div>

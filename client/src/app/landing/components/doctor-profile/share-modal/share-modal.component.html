@@ -1,0 +1,36 @@
+<div class="modal-header">
+  <h5 class="modal-title">Compartir perfil de {{ doctor!.firstName }} {{ doctor!.lastName }}</h5>
+  <button type="button" class="btn-close" (click)="bsModalRef.hide()" aria-label="Cerrar"></button>
+</div>
+<div class="modal-body">
+  <div class="d-flex justify-content-around">
+    <button class="btn btn-icon btn-light-info" (click)="shareProfile('twitter')" aria-label="Compartir en Twitter">
+      <i class="ki-duotone ki-twitter fs-1">
+        <span class="path1"></span>
+        <span class="path2"></span>
+      </i>
+    </button>
+    <button class="btn btn-icon btn-light-success" (click)="shareProfile('whatsapp')" aria-label="Compartir en WhatsApp">
+      <i class="ki-duotone ki-whatsapp fs-1">
+        <span class="path1"></span>
+        <span class="path2"></span>
+      </i>
+    </button>
+    <button class="btn btn-icon btn-light-warning" (click)="shareProfile('email')" aria-label="Compartir por correo electrónico">
+      <i class="ki-duotone ki-sms fs-1">
+        <span class="path1"></span>
+        <span class="path2"></span>
+      </i>
+    </button>
+  </div>
+  <div class="mt-4">
+    <label class="form-label">Enlace del perfil</label>
+    <div class="input-group">
+      <input type="text" class="form-control" [value]="shareUrl" readonly #shareUrlInput>
+      <button class="btn btn-primary" (click)="copyShareUrl(shareUrlInput)">Copiar</button>
+    </div>
+    @if (copyFeedback) {
+      <div class="text-success mt-2">{{ copyFeedback }}</div>
+    }
+  </div>
+</div>

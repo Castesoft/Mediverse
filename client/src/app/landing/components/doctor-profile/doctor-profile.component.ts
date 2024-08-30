@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import { DoctorGeneralTabComponent } from '../doctor-general-tab/doctor-general-tab.component';
@@ -7,6 +7,8 @@ import { DoctorReviewsTabComponent } from '../doctor-reviews-tab/doctor-reviews-
 import { DoctorScheduleTabComponent } from '../doctor-schedule-tab/doctor-schedule-tab.component';
 import { DoctorScheduleComponent } from '../doctor-schedule/doctor-schedule.component';
 import { SearchService } from 'src/app/_services/search.service';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { ShareModalComponent } from './share-modal/share-modal.component'; // You'll need to create this component
 
 @Component({
   selector: 'app-doctor-profile',
@@ -22,12 +24,17 @@ import { SearchService } from 'src/app/_services/search.service';
 })
 export class DoctorProfileComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private searchService = inject(SearchService);
+  private bsModalService = inject(BsModalService);
 
   doctor: DoctorSearchResult | null = null;
   activeTab = 'general';
   isScheduling = false;
   selectedSchedule: any;
+
+  isShareModalOpen = false;
+  shareUrl = '';
 
   ngOnInit() {
     const doctorId = this.route.snapshot.paramMap.get('id');
@@ -39,10 +46,24 @@ export class DoctorProfileComponent implements OnInit {
         } 
       );
     }
+    this.shareUrl = window.location.href;
+
+    // Get the active tab from query params
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.activeTab = params['tab'];
+      }
+    });
   }
 
   selectTab(tab: string) {
     this.activeTab = tab;
+    // Update the URL with the new tab
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab },
+      queryParamsHandling: 'merge'
+    });
   }
 
   selectSchedule(schedule: any) {
@@ -55,5 +76,47 @@ export class DoctorProfileComponent implements OnInit {
     if (event) {
       // Handle successful scheduling (e.g., show a success message)
     }
+  }
+
+  openShareModal() {
+    this.bsModalService.show(ShareModalComponent, {
+      initialState: {
+        doctor: this.doctor,
+        shareUrl: this.shareUrl
+      }
+    });
+  }
+
+  closeShareModal() {
+    this.isShareModalOpen = false;
+  }
+
+  shareProfile(platform: string) {
+    const doctorName = `Dr. ${this.doctor!.firstName} ${this.doctor!.lastName}`;
+    const specialty = this.doctor!.specialties[0].name;
+    const text = `¡Descubre a un excelente especialista en ${specialty}! Te recomiendo al ${doctorName}. Su experiencia y atención son excepcionales. Agenda tu cita fácilmente a través de Mediverse y cuida tu salud con lo mejor.`;
+    let url = '';
+
+    switch (platform) {
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(this.shareUrl)}`;
+        break;
+      case 'whatsapp':
+        url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + this.shareUrl)}`;
+        break;
+      case 'email':
+        const subject = `Te recomiendo a un excelente especialista en ${specialty}: ${doctorName}`;
+        url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text + '\n\nMás información y agenda tu cita: ' + this.shareUrl)}`;
+        break;
+    }
+
+    window.open(url, '_blank');
+  }
+
+  copyShareUrl(input: HTMLInputElement) {
+    input.select();
+    document.execCommand('copy');
+    input.setSelectionRange(0, 0);
+    // You can add a toast notification here to inform the user that the URL has been copied
   }
 }
