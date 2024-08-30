@@ -15,12 +15,11 @@ using AutoMapper;
 namespace MainService.Controllers;
 
 [Authorize]
-public class AddressesController(IUnitOfWork uow, IAddressesService service, UserManager<AppUser> userManager, IMapper mapper) : BaseApiController
+public class AddressesController(IUnitOfWork uow, IAddressesService service, UserManager<AppUser> userManager, IMapper mapper, IGoogleService googleService) : BaseApiController
 {
     private static readonly string subject = "dirección";
     private static readonly string subjectArticle = "La";
 
-        
     public async Task<ActionResult<PagedList<AddressDto>>> GetPagedListAsync([FromQuery] AddressParams param)
     {
         var pagedList = await uow.AddressRepository.GetPagedListAsync(param, User);
@@ -96,7 +95,11 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service, Use
             foreach (var item in doctor.DoctorClinics)
                 item.IsMain = false;
         
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
+
         Address clinic = mapper.Map<Address>(request);
+
+        clinic.Longitude = longitude; clinic.Latitude = latitude;
 
         doctor.DoctorClinics.Add(new(clinic, request.IsMain));
 
@@ -108,4 +111,37 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service, Use
 
         return itemToReturn;
     }
+
+    [HttpPut("clinic")]
+    public async Task<ActionResult<AddressDto>> UpdateClinicAsync([FromBody] ClinicUpdateDto request)
+    {
+        AppUser doctor = await userManager.Users
+            .Include(x => x.DoctorClinics)
+                .ThenInclude(x => x.Clinic)
+            .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
+        
+        if (request.IsMain)
+            foreach (var item in doctor.DoctorClinics)
+                item.IsMain = false;
+        
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
+
+        Address clinic = mapper.Map<Address>(request);
+
+        request.Longitude = longitude; request.Latitude = latitude;
+
+        doctor.DoctorClinics.Add(new(clinic, request.IsMain));
+
+        IdentityResult updateResult = await userManager.UpdateAsync(doctor);
+
+        if (!updateResult.Succeeded) return BadRequest($"Error al agregar la clínica de {doctor.FirstName}.");
+
+        var itemToReturn = await uow.AddressRepository.GetDtoByIdAsync(clinic.Id);
+
+        return itemToReturn;
+    }
+
+    [HttpGet("zipcodes/{zipcode}")]
+    public async Task<ActionResult<List<ZipcodeAddressOption>>> GetZipcodeAddressOptionsAsync([FromRoute]string zipcode) =>
+        await service.GetZipcodeAddressOptionsAsync(zipcode);
 }

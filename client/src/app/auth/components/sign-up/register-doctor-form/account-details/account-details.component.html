@@ -1,5 +1,5 @@
 <form
-    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" 
+    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
     novalidate="novalidate"
     id="kt_sign_up_form"
     [formGroup]="myForm">
@@ -8,6 +8,18 @@
             Detalles de Cuenta
         </h1>
     </div>
+
+    <!--
+    codigo postal
+    colonia
+    ciudad
+    estado
+    pais
+
+    calle
+    numero exterior
+    numero interior
+    -->
 
     <div class="row mb-5">
         <div class="col-xl-6">
@@ -47,8 +59,8 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 inputControl
-                formControlName="Address"
-                [label]="'Dirección'"
+                formControlName="Street"
+                [label]="'Calle'"
                 [type]="'text'"
                 [placeholder]="''"
                 [submitted]="submitted()"
@@ -61,7 +73,7 @@
             <div
                 class="fv-row fv-plugins-icon-container"
                 inputControl
-                formControlName="ZipCode"
+                formControlName="Zipcode"
                 [label]="'Código postal'"
                 [type]="'tel'"
                 [placeholder]="''"

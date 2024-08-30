@@ -6,7 +6,7 @@ import { Validators } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Address, AddressForm, AddressesService } from "src/app/addresses/addresses.config";
 import { CommonModule } from "@angular/common";
-import { omitKeys } from "src/app/_utils/util";
+import { omitKeys, stateOptions } from "src/app/_utils/util";
 
 @Component({
   selector: "[addressForm]",
@@ -53,7 +53,7 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
       exteriorNumber: new Control("text", "Número exterior", "exteriorNumber", { validators: [ Validators.required] }),
       isMain: new Control("check", "Principal", "isMain"),
       nursesCount: new Control("number", "Número de enfermeras", "nursesCount", { validators: [ Validators.required] }),
-      state: new Control("text", "Estado", "state", { validators: [ Validators.required] }),
+      state: new Control("text", "Estado", "state", { validators: [ Validators.required], options: stateOptions }),
       street: new Control("text", "Calle", "street", { validators: [ Validators.required] }),
       zipcode: new Control("text", "Código postal", "zipcode", { validators: [ Validators.required] }),
       interiorNumber: new Control("text", "Número interior", "interiorNumber"),
@@ -118,12 +118,13 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
 
   create() {
     if (this.form.submittable) {
-      this.service.create(
-        omitKeys(this.form.value,
-          ['id', 'createdAt', 'enabled', 'visible', 'isSelected',
-            'longitude', 'latitude', 'nursesCount', 'photoUrl']
-        ), 'clinic'
-      ).subscribe({
+      const value =
+      omitKeys(this.form.value,
+        ['id', 'createdAt', 'enabled', 'visible', 'isSelected',
+          'longitude', 'latitude', 'nursesCount', 'photoUrl']
+      );
+      value.isMain = false;
+      this.service.create(value, 'clinic').subscribe({
         next: item => this.form.submitted = false,
         error: (error: BadRequest) => this.form.error = error });
     }
@@ -131,7 +132,13 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
 
   update() {
     if (this.form.submittable) {
-      this.service.update(+this.form.value.id, this.form.value).subscribe({
+      const value =
+      omitKeys(this.form.value,
+        ['id', 'createdAt', 'enabled', 'visible', 'isSelected',
+          'longitude', 'latitude', 'nursesCount', 'photoUrl']
+      );
+      value.isMain = false;
+      this.service.update(+this.form.value.id, value).subscribe({
         next: () => this.form.submitted = false,
         error: (error: BadRequest) => this.form.error = error
       });

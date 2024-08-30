@@ -72,8 +72,8 @@ export class SignUpComponent {
     accountDetailsForm: this.fb.group({
       State                           : [ '', [Validators.required] ],
       City                            : [ '', [Validators.required] ],
-      Address                         : [ '', [Validators.required] ],
-      ZipCode                         : [ '', [Validators.required] ],
+      Street                         : [ '', [Validators.required] ],
+      Zipcode                         : [ '', [Validators.required] ],
       SpecialtyId                     : [ '', [Validators.required] ],
       // services                        : [ '', [Validators.required] ],
       certification                   : [ '', [Validators.required] ],
@@ -86,7 +86,7 @@ export class SignUpComponent {
       BillingState            : [ '' ],
       BillingCity             : [ '' ],
       BillingAddress          : [ '' ],
-      BillingZipCode          : [ '' ],
+      BillingZipcode          : [ '' ],
       DisplayName             : [ '', [Validators.required] ],
       StripePaymentMethodId   : [ '' ],
       Last4                   : [ '' ],
@@ -168,8 +168,8 @@ export class SignUpComponent {
       if (this.doctorForm.get('billingDetailsForm.SameAddress')?.value) {
         this.doctorForm.get('billingDetailsForm.BillingState')?.setValue(this.doctorForm.get('accountDetailsForm.State')?.value);
         this.doctorForm.get('billingDetailsForm.BillingCity')?.setValue(this.doctorForm.get('accountDetailsForm.City')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingAddress')?.setValue(this.doctorForm.get('accountDetailsForm.Address')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingZipCode')?.setValue(this.doctorForm.get('accountDetailsForm.ZipCode')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingAddress')?.setValue(this.doctorForm.get('accountDetailsForm.Street')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingZipcode')?.setValue(this.doctorForm.get('accountDetailsForm.Zipcode')?.value);
       }
 
       const jsonData = JSON.stringify({

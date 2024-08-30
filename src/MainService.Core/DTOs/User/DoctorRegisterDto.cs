@@ -47,7 +47,7 @@ public class DoctorRegisterDto
     public string Address { get; set; }
 
     [Required]
-    public string ZipCode { get; set; }
+    public string Zipcode { get; set; }
 
     [Required]
     public string SpecialtyId { get; set; }
@@ -71,7 +71,7 @@ public class DoctorRegisterDto
     public string BillingAddress { get; set; }
 
     [Required]
-    public string BillingZipCode { get; set; }
+    public string BillingZipcode { get; set; }
 
     [Required]
     public string DisplayName { get; set; }

@@ -4,7 +4,7 @@ import { Component, inject, Injectable, NgModule, OnInit } from '@angular/core';
 import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
-import { Entity, EntityParams, Form, IParams, SelectItem } from 'src/app/_forms/form';
+import { Entity, EntityParams, Form, IParams, SelectOption } from 'src/app/_forms/form';
 import { Addresses, CatalogMode, FormUse, NamingSubject, Sections, View } from 'src/app/_models/types';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { EnvService } from 'src/app/_services/env.service';
@@ -73,7 +73,7 @@ export class AddressParams extends EntityParams<Address> implements IParams {
 
         if (Array.isArray(value)) {
           const joinedValues = this.isSelectItemArray(value)
-            ? value.map((item: SelectItem) => item.value).join(',')
+            ? value.map((item: SelectOption) => item.name).join(',')
             : (value as string[]).join(',');
           if (joinedValues) params = params.append(key, joinedValues);
         } else if (value !== undefined && value !== null && value !== '') {
@@ -85,7 +85,7 @@ export class AddressParams extends EntityParams<Address> implements IParams {
     return params;
   }
 
-  private isSelectItemArray(array: any[]): array is SelectItem[] {
+  private isSelectItemArray(array: any[]): array is SelectOption[] {
     return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }

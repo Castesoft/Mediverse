@@ -30,6 +30,7 @@ import { ControlSearchTextComponent } from 'src/app/_forms/control-search-text.c
 import { ControlSearchDateComponent } from 'src/app/_forms/control-search-date.component';
 import { ControlTypeahead2Component } from 'src/app/_forms/control-typeahead2.component';
 import { ControlCheck2Component } from 'src/app/_forms/control-check2.component';
+import { ControlSelect2Component } from 'src/app/_forms/control-select-2.component';
 
 @NgModule({
   imports: [
@@ -46,6 +47,7 @@ import { ControlCheck2Component } from 'src/app/_forms/control-check2.component'
     ControlMultiselectComponent,
     ControlPasswordComponent,
     ControlSelectComponent,
+    ControlSelect2Component,
     ControlSwitchComponent,
     ControlTextareaComponent,
     ControlTypeaheadComponent,
@@ -86,6 +88,7 @@ import { ControlCheck2Component } from 'src/app/_forms/control-check2.component'
     ControlMultiselectComponent,
     ControlPasswordComponent,
     ControlSelectComponent,
+    ControlSelect2Component,
     ControlSwitchComponent,
     ControlTextareaComponent,
     ControlTypeaheadComponent,

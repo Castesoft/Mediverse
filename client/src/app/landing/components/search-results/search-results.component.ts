@@ -9,11 +9,14 @@ import { SearchGeneralComponent } from 'src/app/search/components/search-general
 import { UserProfilePictureComponent } from "../../../users/components/user-profile-picture/user-profile-picture.component";
 import { DoctorDetailsComponent } from '../doctor-details/doctor-details.component';
 import { UtilsService } from 'src/app/_services/utils.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-search-results',
   standalone: true,
-  imports: [TablePagerComponent, SearchGeneralComponent, UserProfilePictureComponent, UserProfilePictureComponent, RouterLink, DoctorDetailsComponent],
+  imports: [TablePagerComponent, SearchGeneralComponent, UserProfilePictureComponent, UserProfilePictureComponent, RouterLink, DoctorDetailsComponent,
+    CommonModule,
+  ],
   templateUrl: './search-results.component.html',
   styleUrl: './search-results.component.scss'
 })
@@ -53,6 +56,7 @@ export class SearchResultsComponent implements OnInit {
       mapId: "8aab1a49ed502607"
     });
 
+    // TODO: agregar número de página
     this.specialty = this.route.snapshot.queryParamMap.get('specialty') ?? '';
     this.location = this.route.snapshot.queryParamMap.get('location') ?? '';
     this.locationName = this.route.snapshot.queryParamMap.get('locationName') ?? '';

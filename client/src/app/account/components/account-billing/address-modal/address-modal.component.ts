@@ -30,7 +30,7 @@ export class AddressModalComponent implements OnInit {
   addressForm = this.fb.group({
     State                   : [ '', [Validators.required] ],
     City                    : [ '', [Validators.required] ],
-    Address                 : [ '', [Validators.required] ],
+    Street                 : [ '', [Validators.required] ],
     ZipCode                 : [ '', [Validators.required] ],
     IsBilling               : [ false ],
     IsMain                  : [ false ]
@@ -50,7 +50,7 @@ export class AddressModalComponent implements OnInit {
     if (this.type === 'edit' && this.address) {
       this.addressForm.get('State')?.setValue(this.address.state);
       this.addressForm.get('City')?.setValue(this.address.city);
-      this.addressForm.get('Address')?.setValue(this.address.street);
+      this.addressForm.get('Street')?.setValue(this.address.street);
       this.addressForm.get('ZipCode')?.setValue(this.address.zipcode);
       this.addressForm.get('IsBilling')?.setValue(this.address.isBilling);
       if (this.address.isBilling) {

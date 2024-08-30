@@ -4,7 +4,7 @@
     }
     <div modalBody>
       <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
-                
+
         <div class="row mb-5">
             <div class="col-xl-6">
                 <div
@@ -21,7 +21,7 @@
                     }"
                 ></div>
             </div>
-    
+
             <div class="col-xl-6">
                 <div
                     class="fv-row fv-plugins-icon-container"
@@ -43,7 +43,7 @@
                 <div
                     class="fv-row fv-plugins-icon-container"
                     inputControl
-                    formControlName="Address"
+                    formControlName="Street"
                     [label]="'Dirección'"
                     [type]="'text'"
                     [placeholder]="''"
@@ -68,7 +68,7 @@
                 ></div>
             </div>
         </div>
-  
+
           <div class="d-flex flex-stack mt-5">
               <div class="me-5">
                   <label class="fs-6 fw-semibold form-label">¿Usar esta dirección como dirección de facturación?</label>
@@ -78,15 +78,15 @@
                   <input class="form-check-input" type="checkbox" formControlName="IsBilling"  />
               </label>
           </div>
-  
+
           <div class="text-center pt-15">
-            <button 
-                type="reset" id="kt_modal_new_card_cancel" class="btn btn-light me-3" 
+            <button
+                type="reset" id="kt_modal_new_card_cancel" class="btn btn-light me-3"
                 (click)="bsModalRef.hide()" [disabled]="submitted">
                 Cancelar
             </button>
-            <button 
-                type="submit" id="kt_modal_new_card_submit" class="btn btn-primary" 
+            <button
+                type="submit" id="kt_modal_new_card_submit" class="btn btn-primary"
                 style="width: 96px;" [disabled]="submitted"
             >
                 @if (!submitted) {
@@ -96,8 +96,7 @@
                 }
             </button>
           </div>
-  
+
       </form>
     </div>
   </div>
-  

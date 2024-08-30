@@ -30,6 +30,26 @@ export class DateRange {
   end: Date | null = null;
 }
 
+export class SelectOption {
+  id = 0;
+  code: string = '';
+  name: string = '';
+
+  constructor(opts?: { code?: string, name?: string, id?: number }) {
+    this.code = opts?.code || '';
+    this.name = opts?.name || '';
+    this.id = opts?.id || 0;
+
+    if (!this.code) {
+      this.code = this.name;
+    }
+
+    if (!this.name) {
+      this.name = this.code;
+    }
+  }
+}
+
 export class EntityParams<T> {
   pageNumber = 1;
   pageSize = 10;
@@ -46,6 +66,7 @@ export class EntityParams<T> {
   constructor(key: string) {
     this.key = key;
   }
+
   // constructor(key: string, props?: { [K in keyof T]?: T[K] }) {
   //   this.key = key;
 
@@ -88,14 +109,14 @@ export class EntityParams<T> {
     return Object.keys(this).map(key => {
       const value = (this as any)[key];
       if (Array.isArray(value)) {
-        if (value.length > 0 && typeof value[0] === 'string') {
-          return value.join(',');
-        } else if (value.length > 0 && typeof value[0] === 'object' && 'key' in value[0] && 'value' in value[0]) {
-          return (value as SelectItem[]).map(item => item.value).join(',');
+        if (value.length > 0 && typeof value[0] === "string") {
+          return value.join(",");
+        } else if (value.length > 0 && typeof value[0] === "object" && "key" in value[0] && "value" in value[0]) {
+          return (value as SelectOption[]).map(item => item.code).join(",");
         }
       }
       return value;
-    }).join('_');
+    }).join("_");
   }
 }
 
@@ -125,33 +146,30 @@ export class TypeaheadOptions implements ITypeaheadOptions {
   }
 }
 
-export type SelectItem = { key: string, value: string };
-
 export type InputTypes =
   "text"
-  | 'bull'
-  | 'donor'
-  | 'textarea'
-  | 'check'
-  | 'boolean'
-  | 'slideToggle'
-  | 'multiselect'
-  | 'dateRange'
-  | 'searchDate'
-  | 'chips'
-  | 'select'
+  | "textarea"
+  | "boolean"
+  | "slideToggle"
+  | "multiselect"
+  | "dateRange"
+  | "searchDate"
+  | "chips"
+  | "select"
   | "number"
   | "email"
   | "password"
   | "date"
   | "time"
   | "datetime-local"
+  | 'check'
   | "month"
   | "week"
   | "url"
   | "tel"
   | "search"
   | "hidden"
+  | "select2"
   | "color";
 
 export type ControlErrors = { [key: string]: string };
@@ -211,7 +229,7 @@ export interface IControl<TValue> {
   name: string;
   placeholder?: string;
   value: TValue | null;
-  options: SelectItem[];
+  options: SelectOption[];
   disabled: boolean;
   validators: ValidatorFn[];
   asyncValidators: AsyncValidatorFn[];
@@ -231,15 +249,20 @@ export interface IControl<TValue> {
   orientation?: ControlOrientation;
   typeahead: ITypeaheadOptions;
   isGroupSpan: boolean;
-  style: FormControlStyles;
+  showCodeSpan: boolean;
+
   get required(): boolean;
+
   setValidation(validation: boolean): Control<TValue>;
-  setOptions(options: SelectItem[], columns: Column[]): Control<TValue>;
+
+  setOptions(options: SelectOption[], columns: Column[]): Control<TValue>;
+
   setValue(value: TValue): Control<TValue>;
+
   setValidators(validators: ValidatorFn[]): Control<TValue>;
+
   setAsyncValidators(asyncValidators: AsyncValidatorFn[]): Control<TValue>;
 
-  // extension methods
   setTypeaheadOptions(options: string[]): Control<TValue>;
 }
 
@@ -249,7 +272,7 @@ export class Control<TValue> implements IControl<TValue | null> {
   name: string;
   placeholder?: string;
   value: TValue | null = null;
-  options: SelectItem[] = [];
+  options: SelectOption[] = [];
   disabled = false;
   hidden = false;
   validators: ValidatorFn[] = [];
@@ -257,7 +280,7 @@ export class Control<TValue> implements IControl<TValue | null> {
   helperText?: string;
   isReadonly = false;
   id: string;
-  use: FormUse = 'detail';
+  use: FormUse = "detail";
   submitted = false;
   touched = false;
   formControl: AbstractControl<TValue | null, TValue | null>;
@@ -266,10 +289,12 @@ export class Control<TValue> implements IControl<TValue | null> {
   optional = false;
   isNew = false;
   errors: ControlErrors = {};
-  orientation?: ControlOrientation = 'block';
+  orientation?: ControlOrientation = "block";
   validation = false;
   typeahead: ITypeaheadOptions = new TypeaheadOptions();
   isGroupSpan = false;
+  useOptionAsValue = false;
+  showCodeSpan = true;
 
   constructor(
     type: InputTypes,
@@ -284,7 +309,7 @@ export class Control<TValue> implements IControl<TValue | null> {
       placeholder?: string;
       value?: TValue;
       helperText?: string;
-      options?: SelectItem[];
+      options?: SelectOption[];
       submitted?: boolean;
       touched?: boolean;
       orientation?: ControlOrientation;
@@ -295,14 +320,19 @@ export class Control<TValue> implements IControl<TValue | null> {
       disabled?: boolean;
       validators?: ValidatorFn[];
       asyncValidators?: AsyncValidatorFn[];
-      style?: FormControlStyles;
-    },
+      useOptionAsValue?: boolean;
+      showCodeSpan?: boolean;
+      formControl?: AbstractControl<TValue | null, TValue | null>;
+    }
   ) {
     this.type = type;
     this.label = label;
     this.name = name;
     this.id = `${name}Control${createId()}`;
-    this.formControl = new FormControl<TValue>({ value: opts?.value || (null as unknown as TValue), disabled: opts?.disabled || false });
+    this.formControl = new FormControl<TValue>({
+      value: opts?.value || (null as unknown as TValue),
+      disabled: opts?.disabled || false
+    });
 
     if (opts) {
       this.placeholder = opts.placeholder || undefined;
@@ -315,14 +345,19 @@ export class Control<TValue> implements IControl<TValue | null> {
       this.isReadonly = opts.isReadonly || false;
       this.id = opts.id || this.id;
       this.touched = opts.touched || false;
-      this.orientation = opts.orientation || 'block';
+      this.orientation = opts.orientation || "block";
       this.submitted = opts.submitted || false;
-      this.showLabel = opts.showLabel || true;
+      if (opts.showLabel !== undefined) {
+        this.showLabel = opts.showLabel;
+      }
+      if (opts.showCodeSpan !== undefined) {
+        this.showCodeSpan = opts.showCodeSpan;
+      }
       this.hidden = opts.hidden || false;
       this.optional = opts.optional || false;
       this.isNew = opts.isNew || false;
       this.errors = opts.errors || {};
-      this.style = opts.style || 'solid';
+      this.useOptionAsValue = opts.useOptionAsValue || false;
       if (opts.typeahead) {
         this.typeahead = opts.typeahead;
       }
@@ -330,17 +365,17 @@ export class Control<TValue> implements IControl<TValue | null> {
     }
   }
 
-  setOptions(options: SelectItem[] = [], columns: Column[] = [], isTypeahead = false): Control<TValue> {
+  setOptions(options: SelectOption[] = [], columns: Column[] = [], isTypeahead = false): Control<TValue> {
     if (columns.length > 0) {
       this.options = columns.map(column => {
-        return { key: column.name, value: column.label };
+        return { code: column.name, value: column.label, name: column.name, id: 0 };
       });
-      this.setValue(this.options[0].key as TValue);
+      this.setValue(this.options[0] as TValue);
     } else {
       this.options = options;
       if (isTypeahead) {
         this.typeahead = new TypeaheadOptions({
-          ...this.typeahead, options: options.map(option => option.value)
+          ...this.typeahead, options: options.map(option => option.name)
         });
       }
     }
@@ -348,6 +383,7 @@ export class Control<TValue> implements IControl<TValue | null> {
   }
 
   setValue(value: TValue): Control<TValue> {
+
     this.value = value;
     this.formControl.setValue(value);
     this.formControl.updateValueAndValidity({ emitEvent: true });
