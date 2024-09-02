@@ -37,7 +37,7 @@ namespace MainService.Infrastructure.Services
             return (null, null);
         }
 
-        public string GetAddressText(Address item) => $"{item.Street}, {item.City}, {item.State}, {item.Zipcode}";
+        public string GetAddressText(Address item) => $"{item.Street} {item.ExteriorNumber}, {item.Neighborhood}, {item.City}, {item.State}, {item.Zipcode}";
 
         public async Task<GooglePlacesDetailsResult> GetLocationByPlaceIdAsync(string placeId)
         {

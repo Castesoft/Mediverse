@@ -56,6 +56,9 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
             .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count));
 
+        CreateMap<UserAddressCreateDto, Address>();
+        CreateMap<UserAddressUpdateDto, Address>();
+
         CreateMap<ClinicCreateDto, Address>();
 
         CreateMap<PatientCreateDto, AppUser>()
@@ -140,7 +143,10 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.Address.State))
             .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Address.Country))
-            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Address.Zipcode));
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Address.Zipcode))
+            .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Address.Neighborhood))
+            .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.Address.ExteriorNumber))
+            .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.Address.InteriorNumber));
 
         CreateMap<EventClinic, AddressDto>();
         CreateMap<EventService, ServiceDto>();

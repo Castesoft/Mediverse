@@ -204,7 +204,7 @@
                 }
               </div>
               <div class="fs-6 fw-semibold text-gray-600">
-                {{address?.street}}
+                {{address?.street}} {{address?.exteriorNumber}}, {{address?.neighborhood}}
                 <br />
                 {{address?.zipcode}} {{address?.city}}
                 <br />
@@ -216,7 +216,7 @@
                 class="btn btn-sm btn-light btn-active-light-primary me-3"
                 data-kt-billing-action="address-delete"
                 [disabled]="address?.isBilling"
-                (click)="deleteAddress(address?.addressId!)"
+                (click)="deleteAddress(address?.id!)"
               >
                 <span class="indicator-label">Eliminar</span>
                 <span class="indicator-progress"

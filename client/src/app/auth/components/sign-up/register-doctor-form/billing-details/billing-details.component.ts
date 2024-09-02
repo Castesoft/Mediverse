@@ -4,6 +4,8 @@ import { StripeCardNumberElement, Stripe, StripeCardExpiryElement, StripeCardCvc
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
+import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
+import { AddressesService } from 'src/app/_services/addresses.service';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { environment } from 'src/environments/environment';
 @Component({
@@ -16,6 +18,7 @@ import { environment } from 'src/environments/environment';
 export class BillingDetailsComponent implements OnInit {
   public controlContainer = inject(ControlContainer);
   private utilsService = inject(UtilsService);
+  private addressesService = inject(AddressesService);
   @ViewChild('cardNumber') cardNumberElement!: ElementRef;
   @ViewChild('cardExpiry') cardExpiryElement!: ElementRef;
   @ViewChild('cardCvc') cardCvcElement!: ElementRef;
@@ -34,6 +37,8 @@ export class BillingDetailsComponent implements OnInit {
     if (!selectedState) return [];
     return this.utilsService.cities(selectedState);
   }
+
+  neighborhoods: ZipcodeAddressOption[] = [];
 
   ngOnInit() {
     this.myForm = <FormGroup>this.controlContainer.control;
@@ -82,8 +87,36 @@ export class BillingDetailsComponent implements OnInit {
     this.updateBillingValidators(this.myForm.get('SameAddress')?.value);
   }
 
-  unselectCity() {
-    this.myForm.get('BillingCity')?.setValue('');
+  enterZipcode(event: any) {
+    const zipcode = event.target.value;
+    if (zipcode.length === 5) {
+      this.searchZipcodes(zipcode);
+    } else if (zipcode.length < 5) {
+      this.neighborhoods = [];
+    } else {
+      event.target.value = zipcode.slice(0, 5);
+    }
+  }
+
+  searchZipcodes(zipcode: string) {
+    this.addressesService.getAddressesByZipcode(zipcode).subscribe(addresses => {
+      this.neighborhoods = addresses.map((address: ZipcodeAddressOption) => {
+        return {
+          ...address,
+          value: address.neighborhood,
+          name: address.neighborhood
+        }
+      });
+    });
+  }
+
+  onNeighborhoodChange(event: any) {
+    const neighborhood = event.target.value;
+    const selectedNeighborhood = this.neighborhoods.find(n => n.neighborhood === neighborhood);
+    if (selectedNeighborhood) {
+      this.myForm.get('BillingCity')?.setValue(selectedNeighborhood.city);
+      this.myForm.get('BillingState')?.setValue(selectedNeighborhood.state);
+    }
   }
 
   private updateBillingValidators(sameaddress: boolean): void {

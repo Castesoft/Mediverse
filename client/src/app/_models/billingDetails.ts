@@ -4,7 +4,7 @@ export interface BillingDetails {
 }
 
 export interface UserAddress {
-  addressId: number;
+  id: number;
   isMain: boolean;
   isBilling: boolean;
   street: string;
@@ -12,6 +12,16 @@ export interface UserAddress {
   state: string;
   country: any;
   zipcode: string;
+  neighborhood: string;
+  exteriorNumber: string;
+  interiorNumber: string;
+}
+
+export interface ZipcodeAddressOption {
+  neighborhood: string;
+  city: string;
+  state: string;
+  settlement: string;
 }
 
 export interface UserPaymentMethod {

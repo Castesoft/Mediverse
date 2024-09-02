@@ -44,10 +44,17 @@ public class DoctorRegisterDto
     public string City { get; set; }
 
     [Required]
-    public string Address { get; set; }
+    public string Street { get; set; }
 
     [Required]
     public string Zipcode { get; set; }
+
+    [Required]
+    public string Neighborhood { get; set; }
+
+    [Required]
+    public string ExteriorNumber { get; set; }
+    public string InteriorNumber { get; set; }
 
     [Required]
     public string SpecialtyId { get; set; }
@@ -72,6 +79,13 @@ public class DoctorRegisterDto
 
     [Required]
     public string BillingZipcode { get; set; }
+
+    [Required]
+    public string BillingNeighborhood { get; set; }
+
+    [Required]
+    public string BillingExteriorNumber { get; set; }
+    public string BillingInteriorNumber { get; set; }
 
     [Required]
     public string DisplayName { get; set; }

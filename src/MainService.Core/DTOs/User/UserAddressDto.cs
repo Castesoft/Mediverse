@@ -12,6 +12,9 @@ namespace MainService.Core.DTOs.User
         public string State { get; set; }
         public string Country { get; set; }
         public string Zipcode { get; set; }
+        public string Neighborhood { get; set; }
+        public string ExteriorNumber { get; set; }
+        public string InteriorNumber { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
@@ -26,7 +29,7 @@ namespace MainService.Core.DTOs.User
 
         public string InteriorNumber { get; set; }
 
-        // [Required(ErrorMessage = "El número exterior es requerido.")]
+        [Required(ErrorMessage = "El número exterior es requerido.")]
         public string ExteriorNumber { get; set; }
 
         public string Neighborhood { get; set; }
@@ -37,7 +40,7 @@ namespace MainService.Core.DTOs.User
         [Required(ErrorMessage = "El estado es requerido.")]
         public string State { get; set; }
 
-        // [Required(ErrorMessage = "El país es requerido.")]
+        [Required(ErrorMessage = "El país es requerido.")]
         public string Country { get; set; }
 
         [Required(ErrorMessage = "El código postal es requerido.")]

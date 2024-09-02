@@ -235,12 +235,21 @@ public class AccountController(
             {
                 State = request.State,
                 City = request.City,
-                Street = request.Address,
+                Street = request.Street,
                 Zipcode = request.Zipcode,
+                Neighborhood = request.Neighborhood,
+                ExteriorNumber = request.ExteriorNumber,
+                InteriorNumber = request.InteriorNumber,
+                Country = "México"
             },
             IsMain = true,
             IsBilling = request.SameAddress ? true : false
         };
+
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mainAddress.Address));
+        mainAddress.Address.Latitude = latitude;
+        mainAddress.Address.Longitude = longitude;
+
         user.UserAddresses.Add(mainAddress);
         user.DoctorClinics.Add(new() {Clinic = mainAddress.Address, IsMain = true});
 
@@ -255,10 +264,17 @@ public class AccountController(
                     City = request.BillingCity,
                     Street = request.BillingAddress,
                     Zipcode = request.BillingZipcode,
+                    Neighborhood = request.BillingNeighborhood,
+                    ExteriorNumber = request.BillingExteriorNumber,
+                    InteriorNumber = request.BillingInteriorNumber,
+                    Country = "México"
                 },
                 IsMain = false,
                 IsBilling = true
             };
+            (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(billingAddress.Address));
+            billingAddress.Address.Latitude = latitude;
+            billingAddress.Address.Longitude = longitude;
             user.UserAddresses.Add(billingAddress);
         }
 
@@ -1051,6 +1067,10 @@ public class AccountController(
             IsBilling = request.IsBilling,
             Address = new()
             {
+                Neighborhood = request.Neighborhood,
+                ExteriorNumber = request.ExteriorNumber,
+                InteriorNumber = request.InteriorNumber,
+                Country = request.Country,
                 State = request.State,
                 City = request.City,
                 Street = request.Street,
@@ -1118,8 +1138,7 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
-        string fullAddress = $"{request.Street}, {request.City}, {request.State}, {request.Zipcode}";
-        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(fullAddress);
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
 
         address.IsMain = request.IsMain;
         address.IsBilling = request.IsBilling;
@@ -1129,6 +1148,9 @@ public class AccountController(
         address.Address.Zipcode = request.Zipcode;
         address.Address.Latitude = latitude;
         address.Address.Longitude = longitude;
+        address.Address.Neighborhood = request.Neighborhood;
+        address.Address.ExteriorNumber = request.ExteriorNumber;
+        address.Address.InteriorNumber = request.InteriorNumber;
 
         if (!uow.HasChanges()) return Ok();
         if (!await uow.Complete()) return BadRequest("Error actualizando la dirección.");

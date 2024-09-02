@@ -229,7 +229,7 @@ export class AccountService {
       tap(() => {
         this.snackbarService.success('Dirección eliminada correctamente');
         this.billingDetails.set({
-          userAddresses: this.billingDetails()?.userAddresses?.filter(a => a.addressId !== id) || [],
+          userAddresses: this.billingDetails()?.userAddresses?.filter(a => a.id !== id) || [],
           userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
         });
       })
@@ -244,15 +244,18 @@ export class AccountService {
         if (value.IsBilling) {
           addresses.forEach(a => a.isBilling = false);
         }
-        addresses = addresses.map(a => a.addressId === id ? {
-          addressId: id,
+        addresses = addresses.map(a => a.id === id ? {
+          id: id,
           isMain: value.IsMain,
           isBilling: value.IsBilling,
-          street: value.Address,
+          street: value.Street,
           city: value.City,
           state: value.State,
           country: value.Country,
-          zipcode: value.ZipCode
+          zipcode: value.Zipcode,
+          neighborhood: value.Neighborhood,
+          exteriorNumber: value.ExteriorNumber,
+          interiorNumber: value.InteriorNumber
         } : a);
         this.billingDetails.set({
           userAddresses: addresses.sort((a, b) => a.isBilling ? -1 : 1),

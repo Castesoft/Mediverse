@@ -22,8 +22,6 @@ public class AddressesService(IUnitOfWork uow) : IAddressesService
 
     public async Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode)
     {
-        await Task.Delay(0);
-
-        return [];
+        return await uow.AddressRepository.GetZipcodeAddressOptionsAsync(zipcode);
     }
 } 

@@ -141,6 +141,7 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service, Use
         return itemToReturn;
     }
 
+    [AllowAnonymous]
     [HttpGet("zipcodes/{zipcode}")]
     public async Task<ActionResult<List<ZipcodeAddressOption>>> GetZipcodeAddressOptionsAsync([FromRoute]string zipcode) =>
         await service.GetZipcodeAddressOptionsAsync(zipcode);

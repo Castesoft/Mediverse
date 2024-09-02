@@ -74,6 +74,9 @@ export class SignUpComponent {
       City                            : [ '', [Validators.required] ],
       Street                         : [ '', [Validators.required] ],
       Zipcode                         : [ '', [Validators.required] ],
+      Neighborhood                    : [ '', [Validators.required] ],
+      ExteriorNumber                  : [ '', [Validators.required] ],
+      InteriorNumber                  : [ '' ],
       SpecialtyId                     : [ '', [Validators.required] ],
       // services                        : [ '', [Validators.required] ],
       certification                   : [ '', [Validators.required] ],
@@ -87,6 +90,9 @@ export class SignUpComponent {
       BillingCity             : [ '' ],
       BillingAddress          : [ '' ],
       BillingZipcode          : [ '' ],
+      BillingNeighborhood     : [ '' ],
+      BillingExteriorNumber   : [ '' ],
+      BillingInteriorNumber   : [ '' ],
       DisplayName             : [ '', [Validators.required] ],
       StripePaymentMethodId   : [ '' ],
       Last4                   : [ '' ],
@@ -170,6 +176,9 @@ export class SignUpComponent {
         this.doctorForm.get('billingDetailsForm.BillingCity')?.setValue(this.doctorForm.get('accountDetailsForm.City')?.value);
         this.doctorForm.get('billingDetailsForm.BillingAddress')?.setValue(this.doctorForm.get('accountDetailsForm.Street')?.value);
         this.doctorForm.get('billingDetailsForm.BillingZipcode')?.setValue(this.doctorForm.get('accountDetailsForm.Zipcode')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingNeighborhood')?.setValue(this.doctorForm.get('accountDetailsForm.Neighborhood')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingExteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.ExteriorNumber')?.value);
+        this.doctorForm.get('billingDetailsForm.BillingInteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.InteriorNumber')?.value);
       }
 
       const jsonData = JSON.stringify({

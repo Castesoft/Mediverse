@@ -150,4 +150,21 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
             query.AsNoTracking().ProjectTo<AddressDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
     }
+
+    public async Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode)
+    {
+        return await context.Neighborhoods
+            .Include(x => x.CityNeighborhood.City)
+            .Include(x => x.CityNeighborhood.City.StateCity.State)
+            .AsNoTracking()
+            .Where(x => x.Zipcode == zipcode)
+            .Select(x => new ZipcodeAddressOption
+            {
+                Neighborhood = x.Name,
+                City = x.CityNeighborhood.City.Name,
+                State = x.CityNeighborhood.City.StateCity.State.Name,
+                Settlement = x.Settlement
+            })
+            .ToListAsync();
+    }
 }

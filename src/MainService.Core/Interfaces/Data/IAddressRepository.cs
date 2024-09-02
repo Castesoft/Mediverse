@@ -16,4 +16,5 @@ void Add(Address item);
     Task<List<Address>> GetAllAsync();
     Task<List<AddressDto>> GetAllDtoAsync(AddressParams param);
     Task<PagedList<AddressDto>> GetPagedListAsync(AddressParams param, ClaimsPrincipal user);
+    Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode);
 }

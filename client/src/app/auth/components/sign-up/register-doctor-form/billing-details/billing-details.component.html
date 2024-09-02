@@ -19,53 +19,6 @@
 
     @if (myForm.get('SameAddress')?.value !== true) {
         <div class="row mb-5">
-            <div class="col-xl-6">
-                <div
-                    class="fv-row fv-plugins-icon-container"
-                    controlSelect
-                    formControlName="BillingState"
-                    [label]="'Estado'"
-                    [options]="states"
-                    [placeholder]="''"
-                    [submitted]="submitted()"
-                    (change)="unselectCity()"
-                    [errors]="{
-                        required: 'El estado es requerido.'
-                    }"
-                ></div>
-            </div>
-
-            <div class="col-xl-6">
-                <div
-                    class="fv-row fv-plugins-icon-container"
-                    controlSelect
-                    formControlName="BillingCity"
-                    [label]="'Ciudad'"
-                    [options]="citiesList"
-                    [placeholder]="''"
-                    [submitted]="submitted()"
-                    [errors]="{
-                        required: 'La ciudad es requerida.'
-                    }"
-                ></div>
-            </div>
-        </div>
-
-        <div class="row mb-5">
-            <div class="col-xl-8">
-                <div
-                    class="fv-row fv-plugins-icon-container"
-                    inputControl
-                    formControlName="BillingAddress"
-                    [label]="'Dirección'"
-                    [type]="'text'"
-                    [placeholder]="''"
-                    [submitted]="submitted()"
-                    [errors]="{
-                        required: 'La dirección es requerida.'
-                    }"
-                ></div>
-            </div>
             <div class="col-xl-4">
                 <div
                     class="fv-row fv-plugins-icon-container"
@@ -75,9 +28,100 @@
                     [type]="'tel'"
                     [placeholder]="''"
                     [submitted]="submitted()"
+                    (input)="enterZipcode($event)"
                     [errors]="{
                         required: 'El código postal es requerido.'
                     }"
+                ></div>
+            </div>
+    
+            <div class="col-xl-8">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    controlSelect
+                    formControlName="BillingNeighborhood"
+                    [label]="'Colonia'"
+                    [options]="neighborhoods"
+                    [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
+                    [submitted]="submitted()"
+                    (change)="onNeighborhoodChange($event)"
+                    [errors]="{
+                        required: 'La colonia es requerida.'
+                    }"
+                ></div>
+            </div>
+        </div>
+    
+        <div class="row mb-5">
+            <div class="col-xl-6">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="BillingCity"
+                    [label]="'Ciudad'"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    [isReadonly]="true"
+                    [errors]="{
+                        required: 'La ciudad es requerida.'
+                    }"
+                ></div>
+            </div>
+    
+            <div class="col-xl-6">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="BillingState"
+                    [label]="'Estado'"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    [isReadonly]="true"
+                    [errors]="{
+                        required: 'El estado es requerido.'
+                    }"
+                ></div>
+            </div>
+        </div>
+    
+        <div class="row mb-5">
+            <div class="col-xl-6">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="BillingAddress"
+                    [label]="'Calle'"
+                    [type]="'text'"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    [errors]="{
+                        required: 'La calle es requerida.'
+                    }"
+                ></div>
+            </div>
+            <div class="col-xl-3">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="BillingExteriorNumber"
+                    [label]="'No. ext.'"
+                    [type]="'tel'"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
+                    [errors]="{
+                        required: 'El número exterior es requerido.'
+                    }"
+                ></div>
+            </div>
+            <div class="col-xl-3">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="BillingInteriorNumber"
+                    [label]="'No. int.'"
+                    [type]="'tel'"
+                    [placeholder]="''"
+                    [submitted]="submitted()"
                 ></div>
             </div>
         </div>

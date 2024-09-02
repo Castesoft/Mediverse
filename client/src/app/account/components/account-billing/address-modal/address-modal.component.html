@@ -6,18 +6,51 @@
       <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
 
         <div class="row mb-5">
-            <div class="col-xl-6">
+            <div class="col-xl-4">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="Zipcode"
+                    [label]="'Código postal'"
+                    [type]="'tel'"
+                    [placeholder]="''"
+                    [submitted]="submitted"
+                    (input)="enterZipcode($event)"
+                    [errors]="{
+                        required: 'El código postal es requerido.'
+                    }"
+                ></div>
+            </div>
+
+            <div class="col-xl-8">
                 <div
                     class="fv-row fv-plugins-icon-container"
                     controlSelect
-                    formControlName="State"
-                    [label]="'Estado'"
-                    [options]="states"
+                    formControlName="Neighborhood"
+                    [label]="'Colonia'"
+                    [options]="neighborhoods"
+                    [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
+                    [submitted]="submitted"
+                    (change)="onNeighborhoodChange($event)"
+                    [errors]="{
+                        required: 'La colonia es requerida.'
+                    }"
+                ></div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-xl-6">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="City"
+                    [label]="'Ciudad'"
                     [placeholder]="''"
                     [submitted]="submitted"
-                    (change)="unselectCity()"
+                    [isReadonly]="true"
                     [errors]="{
-                        required: 'El estado es requerido.'
+                        required: 'La ciudad es requerida.'
                     }"
                 ></div>
             </div>
@@ -25,46 +58,57 @@
             <div class="col-xl-6">
                 <div
                     class="fv-row fv-plugins-icon-container"
-                    controlSelect
-                    formControlName="City"
-                    [label]="'Ciudad'"
-                    [options]="citiesList"
+                    inputControl
+                    formControlName="State"
+                    [label]="'Estado'"
                     [placeholder]="''"
                     [submitted]="submitted"
+                    [isReadonly]="true"
                     [errors]="{
-                        required: 'La ciudad es requerida.'
+                        required: 'El estado es requerido.'
                     }"
                 ></div>
             </div>
         </div>
     
         <div class="row mb-5">
-            <div class="col-xl-8">
+            <div class="col-xl-6">
                 <div
                     class="fv-row fv-plugins-icon-container"
                     inputControl
                     formControlName="Street"
-                    [label]="'Dirección'"
+                    [label]="'Calle'"
                     [type]="'text'"
                     [placeholder]="''"
                     [submitted]="submitted"
                     [errors]="{
-                        required: 'La dirección es requerida.'
+                        required: 'La calle es requerida.'
                     }"
                 ></div>
             </div>
-            <div class="col-xl-4">
+            <div class="col-xl-3">
                 <div
                     class="fv-row fv-plugins-icon-container"
                     inputControl
-                    formControlName="ZipCode"
-                    [label]="'Código postal'"
+                    formControlName="ExteriorNumber"
+                    [label]="'No. ext.'"
                     [type]="'tel'"
                     [placeholder]="''"
                     [submitted]="submitted"
                     [errors]="{
-                        required: 'El código postal es requerido.'
+                        required: 'El número exterior es requerido.'
                     }"
+                ></div>
+            </div>
+            <div class="col-xl-3">
+                <div
+                    class="fv-row fv-plugins-icon-container"
+                    inputControl
+                    formControlName="InteriorNumber"
+                    [label]="'No. int.'"
+                    [type]="'tel'"
+                    [placeholder]="''"
+                    [submitted]="submitted"
                 ></div>
             </div>
         </div>
@@ -82,14 +126,14 @@
           <div class="text-center pt-15">
             <button
                 type="reset" id="kt_modal_new_card_cancel" class="btn btn-light me-3"
-                (click)="bsModalRef.hide()" [disabled]="submitted">
+                (click)="bsModalRef.hide()" [disabled]="isLoading">
                 Cancelar
             </button>
             <button
                 type="submit" id="kt_modal_new_card_submit" class="btn btn-primary"
-                style="width: 96px;" [disabled]="submitted"
+                style="width: 96px;" [disabled]="isLoading"
             >
-                @if (!submitted) {
+                @if (!isLoading) {
                     <span class="indicator-label">Guardar</span>
                 } @else {
                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
