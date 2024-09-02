@@ -22,11 +22,13 @@ namespace MainService.Models.Helpers
             PaymentMethod paymentMethod = GetRandomPaymentMethod();
 
             List<UserPaymentMethod> userPaymentMethod = [];
-            
-            for(int i = 0; i < random.Next(2, 6); i++)
+
+            for (int i = 0; i < random.Next(2, 6); i++)
             {
-                userPaymentMethod.Add(new() {
-                    PaymentMethod = new() {
+                userPaymentMethod.Add(new()
+                {
+                    PaymentMethod = new()
+                    {
                         DisplayName = $"{user.FirstName} {user.LastName}".ToUpper(),
                         Brand = paymentMethod.Brand,
                         Country = "MX",
@@ -39,7 +41,7 @@ namespace MainService.Models.Helpers
             }
 
             userPaymentMethod[random.Next(userPaymentMethod.Count)].IsMain = true;
-            
+
             return userPaymentMethod;
         }
     }
@@ -63,7 +65,7 @@ namespace MainService.Models.Helpers
         // asignar el EventPaymentStatus adecuado
 
         // cuando el pago sea con tarjeta ..... en el seeding los usuarios ya tienen métodos de pago (crédito/débito)?
-        
+
         public static List<EventPayment> GetEventPayments(Event @event, AppUser user)
         {
             var hasPayment = random.Next(0, 2) > 0;
@@ -79,8 +81,9 @@ namespace MainService.Models.Helpers
             {
                 var isLastPayment = i == paymentCount - 1;
                 var paymentAmount = isLastPayment
-                    ? random.NextDouble() < 0.5 ? remainingAmount : random.Next(1, (int)remainingAmount)
-                    : random.Next(1, (int)remainingAmount);
+                    ? remainingAmount // En el último pago, asignar todo el monto restante
+                    : random.Next(1, (int)remainingAmount); // Asegurarse de que el valor mínimo sea menor que el valor máximo
+
                 var paymentMethodType = GetRandomPaymentMethodType();
 
                 var payment = new EventPayment
@@ -136,7 +139,7 @@ namespace MainService.Models.Helpers
     public static partial class SeedData
     {
         private static readonly Random random = new();
-        
+
         public static readonly IEnumerable<string> roles =
         [
             "Admin",
@@ -625,7 +628,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "T01234",
             },
         };
-        
+
         public static readonly IEnumerable<Service> services =
         [
             new("Consulta general para diagnóstico y tratamiento de enfermedades comunes",
@@ -690,27 +693,27 @@ namespace MainService.Models.Helpers
         ];
 
         public static string GenerateMexicanPhoneNumber()
+        {
+            Random random = new();
+            string areaCode = GenerateMexicanAreaCode();
+            string phoneNumber = areaCode;
+
+            int remainingLength = 10 - phoneNumber.Length;
+
+            for (int i = 0; i < remainingLength; i++)
             {
-                Random random = new();
-                string areaCode = GenerateMexicanAreaCode();
-                string phoneNumber = areaCode;
-
-                int remainingLength = 10 - phoneNumber.Length;
-
-                for (int i = 0; i < remainingLength; i++)
-                {
-                    phoneNumber += random.Next(0, 10).ToString();
-                }
-
-                return phoneNumber;
+                phoneNumber += random.Next(0, 10).ToString();
             }
 
-            public static string GenerateMexicanAreaCode()
-            {
-                Random random = new();
+            return phoneNumber;
+        }
 
-                string[] areaCodes = [
-                    /* Monterrey */ "81", /* Guadalajara */ "33", /* Ciudad de México */ "55", /* Puebla */ "222", /* Tijuana */ "664",
+        public static string GenerateMexicanAreaCode()
+        {
+            Random random = new();
+
+            string[] areaCodes = [
+                /* Monterrey */ "81", /* Guadalajara */ "33", /* Ciudad de México */ "55", /* Puebla */ "222", /* Tijuana */ "664",
                     /* León */ "477", /* Juárez */ "656", /* Torreón */ "871", /* Querétaro */ "442", /* Mérida */ "999", /* Mexicali */ "686",
                     /* Aguascalientes */ "449", /* Cuernavaca */ "777", /* Saltillo */ "844", /* Chihuahua */ "614", /* Morelia */ "443",
                     /* Veracruz */ "229", /* Tampico */ "833", /* Tuxtla Gutiérrez */ "961", /* Oaxaca */ "951", /* Culiacán */ "667",
@@ -718,25 +721,25 @@ namespace MainService.Models.Helpers
                     /* La Paz */ "612",
                 ];
 
-                return areaCodes[random.Next(areaCodes.Length)];
-            }
+            return areaCodes[random.Next(areaCodes.Length)];
+        }
 
-            public static string ReplaceSpecialChars(string input)
-            {
-                input = MyRegex1().Replace(input, "n");
-                input = MyRegex().Replace(input, "a");
-                input = MyRegex2().Replace(input, "e");
-                input = MyRegex3().Replace(input, "i");
-                input = MyRegex4().Replace(input, "o");
-                input = MyRegex5().Replace(input, "u");
-                input = MyRegex6().Replace(input, "c");
-                return input;
-            }
+        public static string ReplaceSpecialChars(string input)
+        {
+            input = MyRegex1().Replace(input, "n");
+            input = MyRegex().Replace(input, "a");
+            input = MyRegex2().Replace(input, "e");
+            input = MyRegex3().Replace(input, "i");
+            input = MyRegex4().Replace(input, "o");
+            input = MyRegex5().Replace(input, "u");
+            input = MyRegex6().Replace(input, "c");
+            return input;
+        }
 
-            public static Photo GetRandomProfilePicture(string sex)
-            {
-                List<Photo> malePhotos = [
-                    new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730539/TraceTrust/SeedData/Profile%20pictures/R_az6eso.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
+        public static Photo GetRandomProfilePicture(string sex)
+        {
+            List<Photo> malePhotos = [
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730539/TraceTrust/SeedData/Profile%20pictures/R_az6eso.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730500/TraceTrust/SeedData/Profile%20pictures/aNWjR7MB_400x400_dmxq0i.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730491/TraceTrust/SeedData/Profile%20pictures/312e53eb2c71a023b7de3d1ea989a2c8_wgc0yu.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730486/TraceTrust/SeedData/Profile%20pictures/OIP_zb9ytk.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
@@ -763,8 +766,8 @@ namespace MainService.Models.Helpers
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689804193/TraceTrust/SeedData/Profile%20pictures/unnamed_gd52u0.jpg", Name = "Male photo", PublicId = "public id", Size = 1 },
                 ];
 
-                List<Photo> femalePhotos = [
-                    new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730527/TraceTrust/SeedData/Profile%20pictures/de64801f0275c1ab2ea5a9e2bb3ce7bc_h3ayls.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
+            List<Photo> femalePhotos = [
+                new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730527/TraceTrust/SeedData/Profile%20pictures/de64801f0275c1ab2ea5a9e2bb3ce7bc_h3ayls.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730510/TraceTrust/SeedData/Profile%20pictures/ukxi7n1rojh21_y76zhr.webp", Name = "Female photo", PublicId = "public id", Size = 1 },
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730503/TraceTrust/SeedData/Profile%20pictures/sarah-parmenter_fxwaf5.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689730483/TraceTrust/SeedData/Profile%20pictures/b3c9dfa78c7a93bbd84f9c8fcbcc2a0e_jmdg8j.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
@@ -791,143 +794,143 @@ namespace MainService.Models.Helpers
                     new() { Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1689805086/TraceTrust/SeedData/Profile%20pictures/R_b08yyj.jpg", Name = "Female photo", PublicId = "public id", Size = 1 },
                 ];
 
-                Random random = new();
+            Random random = new();
 
-                if (sex == "Masculino")
-                {
-                    int randomIndex = random.Next(malePhotos.Count);
-                    return malePhotos[randomIndex];
-                }
-                else if (sex == "Femenino")
-                {
-                    int randomIndex = random.Next(femalePhotos.Count);
-                    return femalePhotos[randomIndex];
-                }
-
-                return null;
+            if (sex == "Masculino")
+            {
+                int randomIndex = random.Next(malePhotos.Count);
+                return malePhotos[randomIndex];
+            }
+            else if (sex == "Femenino")
+            {
+                int randomIndex = random.Next(femalePhotos.Count);
+                return femalePhotos[randomIndex];
             }
 
-            public static string GetRandomFirstName(string sex)
-            {
-                Random random = new();
+            return null;
+        }
 
-                string[] maleNames = [
-                    "Juan", "José", "Antonio", "Francisco", "Jesús", "Manuel", "Miguel", "Pedro", "Alejandro", "Jorge", "Rafael",
+        public static string GetRandomFirstName(string sex)
+        {
+            Random random = new();
+
+            string[] maleNames = [
+                "Juan", "José", "Antonio", "Francisco", "Jesús", "Manuel", "Miguel", "Pedro", "Alejandro", "Jorge", "Rafael",
                     "Fernando", "Roberto", "Sergio", "Eduardo", "Julio", "Ricardo", "Carlos", "Raúl", "Enrique", "Ramón", "Gabriel",
                     "Mario", "Luis", "Alberto", "Arturo", "Hugo", "Gerardo", "Guillermo", "Oscar", "Felipe", "Mauricio", "Rubén",
                     "Alfredo", "Ignacio", "Cesar", "Gustavo", "Salvador", "Victor", "Adrian", "Ernesto", "Isaac", "Diego", "Javier", "Rodrigo",
                     "Pablo", "Daniel", "Armando",
                 ];
 
-                string[] femaleNames = [
-                    "María", "Carmen", "Josefa", "Ana", "Isabel", "Francisca", "Dolores", "Teresa", "Pilar", "Laura", "Juana",
+            string[] femaleNames = [
+                "María", "Carmen", "Josefa", "Ana", "Isabel", "Francisca", "Dolores", "Teresa", "Pilar", "Laura", "Juana",
                     "Lucía", "Elena", "Sofía", "Paula", "Marina", "Irene", "Inés", "Patricia", "Rosa", "Marta", "Beatriz",
                     "Sara", "Lourdes", "Cristina", "Susana", "Alicia", "Luisa", "Silvia", "Rocio", "Gloria", "Alejandra", "Gabriela",
                     "Guadalupe", "Adriana", "Graciela", "Fernanda", "Cecilia", "Alma", "Clara", "Martha", "Yolanda", "Estela", "Miriam", "Olga",
                     "Verónica", "Magdalena", "Angélica", "Mónica", "Elisa",
                 ];
 
-                if (sex == "Masculino")
-                {
-                    return maleNames[random.Next(maleNames.Length)];
-                }
-                return femaleNames[random.Next(femaleNames.Length)];
+            if (sex == "Masculino")
+            {
+                return maleNames[random.Next(maleNames.Length)];
+            }
+            return femaleNames[random.Next(femaleNames.Length)];
+        }
+
+        public static DateOnly GenerateRandomDateOfBirth(int minYear, int maxYear)
+        {
+            Random random = new();
+
+            int year = random.Next(minYear, maxYear + 1);
+            int month = random.Next(1, 13);
+            int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
+
+            return new DateOnly(year, month, day);
+        }
+
+        public static DateTime GenerateRandomDateTime(int minYear)
+        {
+            Random random = new();
+
+            DateTime yesterday = DateTime.UtcNow.AddDays(-1);
+            int maxYear = yesterday.Year;
+
+            int year = random.Next(minYear, maxYear + 1);
+
+            int month = (year == maxYear) ? random.Next(1, yesterday.Month + 1) : random.Next(1, 13);
+            int day;
+            if (year == maxYear && month == yesterday.Month)
+            {
+                day = random.Next(1, yesterday.Day + 1);
+            }
+            else
+            {
+                int daysInMonth = DateTime.DaysInMonth(year, month);
+                day = random.Next(1, daysInMonth + 1);
             }
 
-            public static DateOnly GenerateRandomDateOfBirth(int minYear, int maxYear)
-            {
-                Random random = new();
+            int hour = random.Next(0, 24);
+            int minute = random.Next(0, 60);
+            int second = random.Next(0, 60);
 
-                int year = random.Next(minYear, maxYear + 1);
-                int month = random.Next(1, 13);
-                int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
+            return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
+        }
 
-                return new DateOnly(year, month, day);
-            }
+        public static string GetRandomSex()
+        {
+            Random random = new();
+            string[] sexes = ["Masculino", "Femenino"];
 
-            public static DateTime GenerateRandomDateTime(int minYear)
-            {
-                Random random = new();
+            return sexes[random.Next(sexes.Length)];
+        }
 
-                DateTime yesterday = DateTime.UtcNow.AddDays(-1);
-                int maxYear = yesterday.Year;
+        public static string GetRandomLastName()
+        {
+            Random random = new();
 
-                int year = random.Next(minYear, maxYear + 1);
-
-                int month = (year == maxYear) ? random.Next(1, yesterday.Month + 1) : random.Next(1, 13);
-                int day;
-                if (year == maxYear && month == yesterday.Month)
-                {
-                    day = random.Next(1, yesterday.Day + 1);
-                }
-                else
-                {
-                    int daysInMonth = DateTime.DaysInMonth(year, month);
-                    day = random.Next(1, daysInMonth + 1);
-                }
-
-                int hour = random.Next(0, 24);
-                int minute = random.Next(0, 60);
-                int second = random.Next(0, 60);
-
-                return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
-            }
-
-            public static string GetRandomSex()
-            {
-                Random random = new();
-                string[] sexes = ["Masculino", "Femenino"];
-
-                return sexes[random.Next(sexes.Length)];
-            }
-
-            public static string GetRandomLastName()
-            {
-                Random random = new();
-
-                string[] lastNames = [
-                    "García", "Martínez", "Rodríguez", "Hernández", "López", "González", "Pérez", "Sánchez", "Ramírez", "Torres", "Flores",
+            string[] lastNames = [
+                "García", "Martínez", "Rodríguez", "Hernández", "López", "González", "Pérez", "Sánchez", "Ramírez", "Torres", "Flores",
                     "Rivera", "Gómez", "Díaz", "Reyes", "Morales", "Cruz", "Ortiz", "Gutiérrez", "Chávez", "Ramos", "Guzmán", "Ruiz",
                     "Alvarez", "Moreno", "Mendoza", "Castillo", "Jiménez", "Rojas", "Vargas", "Romero", "Silva", "Muñoz", "Aguilar", "Paredes",
                     "Cervantes", "Luna", "Medina", "Navarro", "Campos", "Arias", "Juárez", "Mireles", "Escobar", "Ponce", "Carrillo", "Castañeda",
                     "Aguirre", "Núñez", "Vega", "Rangel", "Salazar", "Zamora", "Solís", "Peña",
                 ];
 
-                return lastNames[random.Next(lastNames.Length)];
-            }
+            return lastNames[random.Next(lastNames.Length)];
+        }
 
-            public static string GetRandomEmailDomain()
-            {
-                var random = new Random();
+        public static string GetRandomEmailDomain()
+        {
+            var random = new Random();
 
-                string[] emailDomains = [
-                    "gmail", "hotmail", "yahoo", "outlook", "icloud", "aol", "protonmail", "zoho", "yandex", "tutanota", "mail", "gmx",
+            string[] emailDomains = [
+                "gmail", "hotmail", "yahoo", "outlook", "icloud", "aol", "protonmail", "zoho", "yandex", "tutanota", "mail", "gmx",
                     "mailfence", "fastmail", "mail", "mail2world", "hushmail", "runbox", "countermail", "mailbox", "mailinator", "guerrillamail", "temp-mail", "10minutemail",
                     "maildrop", "mailnesia", "mailinator",
                 ];
 
-                return emailDomains[random.Next(emailDomains.Length)];
-            }
+            return emailDomains[random.Next(emailDomains.Length)];
+        }
 
-            public static string GetRandomMedicalSpecialty()
-            {
-                Random random = new();
+        public static string GetRandomMedicalSpecialty()
+        {
+            Random random = new();
 
-                string[] specialties = [
-                    "Cardiología", "Dermatología", "Endocrinología", "Gastroenterología", "Geriatría", "Ginecología", "Hematología", "Infectología",
+            string[] specialties = [
+                "Cardiología", "Dermatología", "Endocrinología", "Gastroenterología", "Geriatría", "Ginecología", "Hematología", "Infectología",
                     "Medicina deportiva", "Medicina interna", "Nefrología", "Neumología", "Neurología", "Nutriología", "Oftalmología", "Oncología",
                     "Ortopedia", "Otorrinolaringología", "Pediatría", "Psiquiatría", "Reumatología", "Traumatología", "Urología",
                 ];
 
-                return specialties[random.Next(specialties.Length)];
-            }
+            return specialties[random.Next(specialties.Length)];
+        }
 
-            public static string GetRandomMedicalJobPosts()
-            {
-                Random random = new();
+        public static string GetRandomMedicalJobPosts()
+        {
+            Random random = new();
 
-                string[] jobPosts = [
-                    "Médico general", "Médico especialista en cardiología", "Médico especialista en dermatología", "Médico especialista en endocrinología",
+            string[] jobPosts = [
+                "Médico general", "Médico especialista en cardiología", "Médico especialista en dermatología", "Médico especialista en endocrinología",
                     "Médico especialista en gastroenterología", "Médico especialista en geriatría", "Médico especialista en ginecología",
                     "Médico especialista en hematología", "Médico especialista en infectología", "Médico especialista en medicina deportiva",
                     "Médico especialista en medicina interna", "Médico especialista en nefrología", "Médico especialista en neumología",
@@ -937,67 +940,67 @@ namespace MainService.Models.Helpers
                     "Médico especialista en traumatología", "Médico especialista en urología",
                 ];
 
-                return jobPosts[random.Next(jobPosts.Length)];
-            }
+            return jobPosts[random.Next(jobPosts.Length)];
+        }
 
-            public static string ConstructFullEmailAddress(string firstName, string lastName, string emailDomain, int index)
+        public static string ConstructFullEmailAddress(string firstName, string lastName, string emailDomain, int index)
+        {
+            return $@"{ReplaceSpecialChars(firstName)}.{ReplaceSpecialChars(lastName)}.demo{index}@{emailDomain}.com".ToLower();
+        }
+
+        public static List<AppUser> GenerateUsersForSeeding(int quantity, Roles role)
+        {
+            Random random = new();
+            List<AppUser> users = [];
+
+            for (int i = 0; i < quantity; i++)
             {
-                return $@"{ReplaceSpecialChars(firstName)}.{ReplaceSpecialChars(lastName)}.demo{index}@{emailDomain}.com".ToLower();
-            }
+                string sex = GetRandomSex();
+                string firstName = GetRandomFirstName(sex);
+                string lastName = GetRandomLastName();
+                string email = ConstructFullEmailAddress(firstName, lastName, GetRandomEmailDomain(), i);
+                string userName = email;
 
-            public static List<AppUser> GenerateUsersForSeeding(int quantity, Roles role)
-            {
-                Random random = new();
-                List<AppUser> users = [];
-
-                for (int i = 0; i < quantity; i++)
+                AppUser user = new()
                 {
-                    string sex = GetRandomSex();
-                    string firstName = GetRandomFirstName(sex);
-                    string lastName = GetRandomLastName();
-                    string email = ConstructFullEmailAddress(firstName, lastName, GetRandomEmailDomain(), i);
-                    string userName = email;
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = userName,
+                    PhoneNumber = GenerateMexicanPhoneNumber(),
+                    PhoneNumberCountryCode = "+52",
+                    CreatedAt = GenerateRandomDateTime(2013),
+                    DateOfBirth = GenerateRandomDateOfBirth(1960, 2005),
+                    Sex = sex,
+                    UserAddresses = GenerateUserAddresses(),
+                };
 
-                    AppUser user = new()
-                    {
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Email = email,
-                        UserName = userName,
-                        PhoneNumber = GenerateMexicanPhoneNumber(),
-                        PhoneNumberCountryCode = "+52",
-                        CreatedAt = GenerateRandomDateTime(2013),
-                        DateOfBirth = GenerateRandomDateOfBirth(1960, 2005),
-                        Sex = sex,
-                        UserAddresses = GenerateUserAddresses(),
-                    };
+                user.UserPaymentMethods.AddRange(StripePaymentMethods.GetUserPaymentMethods(user));
 
-                    user.UserPaymentMethods.AddRange(StripePaymentMethods.GetUserPaymentMethods(user));
-
-                    if (role == Roles.Nurse || role == Roles.Doctor)
-                    {
-                        user.Post = GetRandomMedicalJobPosts();
-                        user.Education = GetRandomMedicalSpecialty();
-                    }
-
-                    if (role == Roles.Doctor)
-                    {
-                        user.DoctorClinics = GenerateDoctorClinics();
-                    }
-
-                    if (random.Next(2) == 0)
-                        user.UserPhoto = new() { Photo = GetRandomProfilePicture(sex) };
-
-                    users.Add(user);
+                if (role == Roles.Nurse || role == Roles.Doctor)
+                {
+                    user.Post = GetRandomMedicalJobPosts();
+                    user.Education = GetRandomMedicalSpecialty();
                 }
 
-                return users;
+                if (role == Roles.Doctor)
+                {
+                    user.DoctorClinics = GenerateDoctorClinics();
+                }
+
+                if (random.Next(2) == 0)
+                    user.UserPhoto = new() { Photo = GetRandomProfilePicture(sex) };
+
+                users.Add(user);
             }
 
-            public static List<Address> GetAddresses() 
-            {
-                return [
-                    new() {
+            return users;
+        }
+
+        public static List<Address> GetAddresses()
+        {
+            return [
+                new() {
                         Zipcode = "64020",
                         ExteriorNumber = "702",
                         InteriorNumber = "",
@@ -1325,101 +1328,101 @@ namespace MainService.Models.Helpers
                         Longitude = -100.4888874,
                     },
                 ];
+        }
+
+        public static List<UserAddress> GenerateUserAddresses()
+        {
+            List<UserAddress> userAddresses = [];
+            int numberOfAddresses = random.Next(1, 4);
+
+            var addresses = GetAddresses();
+
+            for (int i = 0; i < numberOfAddresses; i++)
+            {
+                if (addresses.Count == 0) break;
+                int addressIndex = random.Next(addresses.Count);
+                userAddresses.Add(new() { Address = addresses[addressIndex] });
+                addresses.RemoveAt(addressIndex);
             }
 
-            public static List<UserAddress> GenerateUserAddresses()
+            userAddresses.First().IsMain = true;
+
+            return userAddresses;
+        }
+
+        public static List<DoctorClinic> GenerateDoctorClinics()
+        {
+            List<DoctorClinic> doctorClinics = [];
+            int count = random.Next(1, 4);
+
+            var clinics = GetAddresses();
+
+            foreach (var item in clinics)
             {
-                List<UserAddress> userAddresses = [];
-                int numberOfAddresses = random.Next(1, 4);
-
-                var addresses = GetAddresses();
-
-                for (int i = 0; i < numberOfAddresses; i++)
-                {
-                    if (addresses.Count == 0) break;
-                    int addressIndex = random.Next(addresses.Count);
-                    userAddresses.Add(new () { Address = addresses[addressIndex] });
-                    addresses.RemoveAt(addressIndex);
-                }
-
-                userAddresses.First().IsMain = true;
-
-                return userAddresses;
+                item.Name = GetRandomClinicName();
+                item.Description = GetRandomClinicDescription();
             }
 
-            public static List<DoctorClinic> GenerateDoctorClinics()
+            for (int i = 0; i < count; i++)
             {
-                List<DoctorClinic> doctorClinics = [];
-                int count = random.Next(1, 4);
-
-                var clinics = GetAddresses();
-
-                foreach (var item in clinics)
-                {
-                    item.Name = GetRandomClinicName();
-                    item.Description = GetRandomClinicDescription();
-                }
-
-                for (int i = 0; i < count; i++)
-                {
-                    if (clinics.Count == 0) break;
-                    int addressIndex = random.Next(clinics.Count);
-                    doctorClinics.Add(new () { Clinic = clinics[addressIndex] });
-                    clinics.RemoveAt(addressIndex);
-                }
-
-
-                doctorClinics.First().IsMain = true;
-
-                return doctorClinics;
+                if (clinics.Count == 0) break;
+                int addressIndex = random.Next(clinics.Count);
+                doctorClinics.Add(new() { Clinic = clinics[addressIndex] });
+                clinics.RemoveAt(addressIndex);
             }
 
-            public static Address GenerateRandomAddress()
-            {
-                
-                return new Address
-                {
-                    Zipcode = random.Next(10000, 99999).ToString(),
-                    ExteriorNumber = random.Next(1, 1000).ToString(),
-                    Street = GetRandomStreet(),
-                    Neighborhood = GetRandomNeighborhood(),
-                    City = GetRandomCity(),
-                    State = "Nuevo León",
-                    Notes = GetRandomHowToArriveNotes(),
-                    Country = "Mexico",
-                };
-            }
 
-            public static string GetRandomState()
+            doctorClinics.First().IsMain = true;
+
+            return doctorClinics;
+        }
+
+        public static Address GenerateRandomAddress()
+        {
+
+            return new Address
             {
-                string[] state = [
-                    "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", 
-                    "Ciudad de México", "Coahuila", "Colima", "Durango", "Guanajuato", "Guerrero", 
-                    "Hidalgo", "Jalisco", "México", "Michoacán", "Morelos", "Nayarit", 
-                    "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", 
+                Zipcode = random.Next(10000, 99999).ToString(),
+                ExteriorNumber = random.Next(1, 1000).ToString(),
+                Street = GetRandomStreet(),
+                Neighborhood = GetRandomNeighborhood(),
+                City = GetRandomCity(),
+                State = "Nuevo León",
+                Notes = GetRandomHowToArriveNotes(),
+                Country = "Mexico",
+            };
+        }
+
+        public static string GetRandomState()
+        {
+            string[] state = [
+                "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua",
+                    "Ciudad de México", "Coahuila", "Colima", "Durango", "Guanajuato", "Guerrero",
+                    "Hidalgo", "Jalisco", "México", "Michoacán", "Morelos", "Nayarit",
+                    "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí",
                     "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"
-                ];
+            ];
 
-                return state[random.Next(state.Length)];
-            }
+            return state[random.Next(state.Length)];
+        }
 
-            public static string GetRandomClinicName()
-            {
-                string[] data = [
-                    "Clínica Médica", "Hospital", "Centro de Salud", "Consultorio Médico", "Clínica de Especialidades", "Centro Médico",
+        public static string GetRandomClinicName()
+        {
+            string[] data = [
+                "Clínica Médica", "Hospital", "Centro de Salud", "Consultorio Médico", "Clínica de Especialidades", "Centro Médico",
                     "Hospital General", "Hospital de Especialidades", "Hospital Pediátrico", "Hospital Materno Infantil", "Hospital de la Mujer",
                     "Hospital de la Niñez", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer",
                     "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad",
                     "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer",
                 ];
 
-                return data[random.Next(data.Length)];
-            }
+            return data[random.Next(data.Length)];
+        }
 
-            public static string GetRandomClinicDescription()
-            {
-                string[] data = [
-                    "Clínica especializada en medicina general y familiar. Atención de urgencias, consultas médicas y estudios de laboratorio.",
+        public static string GetRandomClinicDescription()
+        {
+            string[] data = [
+                "Clínica especializada en medicina general y familiar. Atención de urgencias, consultas médicas y estudios de laboratorio.",
                     "Hospital de especialidades médicas. Consultas con médicos especialistas en diversas áreas de la medicina.",
                     "Centro de salud con atención médica integral. Consultas médicas, estudios de laboratorio y farmacia.",
                     "Consultorio médico con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
@@ -1441,30 +1444,30 @@ namespace MainService.Models.Helpers
                     "Hospital de la mujer con atención de urgencias y consultas médicas. Médicos generales y especialistas.",
                 ];
 
-                return data[random.Next(data.Length)];
-            }
+            return data[random.Next(data.Length)];
+        }
 
-            public static string GetRandomNeighborhood()
-            {
-                string[] neightborhood = [
-                    "Condesa", "Polanco", "Santa Fe", "Coyoacán", "San Ángel", "Zona Rosa", 
-                    "Roma", "Del Valle", "Nápoles", "Juárez", "Tlatelolco", "Pedregal", 
-                    "Chapultepec", "Lomas de Chapultepec", "La Roma", "Lindavista", "Zapopan", "Tlaquepaque", 
-                    "Providencia", "Centro Histórico (CDMX)", "Centro Histórico (Puebla)", 
-                    "San Pedro Garza García", "Monterrey Centro", "Barrio Antiguo", "Guadalupe Inn", "Anzures", "Santa María la Ribera", 
+        public static string GetRandomNeighborhood()
+        {
+            string[] neightborhood = [
+                "Condesa", "Polanco", "Santa Fe", "Coyoacán", "San Ángel", "Zona Rosa",
+                    "Roma", "Del Valle", "Nápoles", "Juárez", "Tlatelolco", "Pedregal",
+                    "Chapultepec", "Lomas de Chapultepec", "La Roma", "Lindavista", "Zapopan", "Tlaquepaque",
+                    "Providencia", "Centro Histórico (CDMX)", "Centro Histórico (Puebla)",
+                    "San Pedro Garza García", "Monterrey Centro", "Barrio Antiguo", "Guadalupe Inn", "Anzures", "Santa María la Ribera",
                     "San Rafael", "Escandón", "Narvarte", "Balcones de Galerías", "Miravalle", "Bosques de las Lomas",
                     "San Jerónimo", "Aguacaliente", "Tecamachalco", "Hacienda del Valle", "San Nicolás", "Valle Oriente",
-                    "Fundadores", "Obispado", "Paseo de las Mitras", "Las Cumbres", "Vista Hermosa", "Jardines del Pedregal", 
+                    "Fundadores", "Obispado", "Paseo de las Mitras", "Las Cumbres", "Vista Hermosa", "Jardines del Pedregal",
                     "Lomas Verdes", "Bosque Real", "Santa Úrsula", "Cuajimalpa", "Mixcoac", "Churubusco"
-                ];
+            ];
 
-                return neightborhood[random.Next(neightborhood.Length)];
-            }
+            return neightborhood[random.Next(neightborhood.Length)];
+        }
 
-            public static string GetRandomStreet()
-            {
-                string[] street = [
-                    "Avenida Revolución", "Calle Hidalgo", "Paseo de la Reforma",
+        public static string GetRandomStreet()
+        {
+            string[] street = [
+                "Avenida Revolución", "Calle Hidalgo", "Paseo de la Reforma",
                     "Avenida Juárez", "Avenida Universidad", "Calle Independencia",
                     "Avenida Insurgentes", "Calle Morelos", "Avenida Patriotismo",
                     "Calle Zaragoza", "Avenida de los Insurgentes", "Calle Libertad",
@@ -1481,15 +1484,15 @@ namespace MainService.Models.Helpers
                     "Avenida Canal de Miramontes", "Calle Dr. José María Vertiz", "Avenida Río Mixcoac",
                     "Calle Miguel Hidalgo", "Avenida Periférico", "Calle Benito Juárez",
                     "Avenida Ermita Iztapalapa", "Calle Venustiano Carranza"
-                ];
+            ];
 
-                return street[random.Next(street.Length)];
-            }
+            return street[random.Next(street.Length)];
+        }
 
-            public static string GetRandomHowToArriveNotes()
-            {
-                string[] notes = [
-                    "Ubicado cerca de la plaza central, fácilmente identificable por la gran fuente al frente. Accesible vía líneas de autobús 5, 12 y 21.",
+        public static string GetRandomHowToArriveNotes()
+        {
+            string[] notes = [
+                "Ubicado cerca de la plaza central, fácilmente identificable por la gran fuente al frente. Accesible vía líneas de autobús 5, 12 y 21.",
                     "Adyacente al parque de la ciudad. Busque un edificio azul con puerta roja. Estacionamiento disponible en la parte trasera.",
                     "A tres cuadras de la estación principal de tren, gire a la izquierda en la librería y es el segundo edificio a la derecha.",
                     "Frente a la antigua catedral. La dirección está en una casa amarilla con techo verde, al lado de un pequeño café.",
@@ -1519,33 +1522,34 @@ namespace MainService.Models.Helpers
                     "En la colonia moderna, cerca de la torre de oficinas. Busque un edificio con una entrada de vidrio y un lobby amplio.",
                     "A tres cuadras del cine, en una zona con muchas tiendas. La dirección está al lado de una heladería famosa.",
                     "Cerca del centro de convenciones, en una calle con palmeras. El edificio tiene una fachada de piedra y balcones de hierro."
-                ];
+            ];
 
-                return notes[random.Next(notes.Length)];
-            }
+            return notes[random.Next(notes.Length)];
+        }
 
-            public static string GetRandomCity()
-            {
-                string[] cities = [
-                    "Mexico City", "Guadalajara", "Monterrey", "Puebla", "Toluca", "Tijuana", "León", "Ciudad Juárez", "Torreón", 
-                    "San Luis Potosí", "Querétaro", "Mérida", "Mexicali", "Aguascalientes", "Tampico", "Cuernavaca", "Acapulco", "Chihuahua", 
-                    "Morelia", "Saltillo", "Veracruz", "Villahermosa", "Reynosa", "Hermosillo", "Culiacán", "Guanajuato", "Durango", 
-                    "Oaxaca", "Zacatecas", "Tuxtla Gutiérrez", "Ensenada", "Valle de Bravo", "Nuevo Laredo", "Campeche", "La Paz", "Cancún", 
-                    "Playa del Carmen", "Cozumel", "Puerto Vallarta", "Los Cabos", "Mazatlán", "Irapuato", "Tlaxcala", "Xalapa", "Celaya", 
+        public static string GetRandomCity()
+        {
+            string[] cities = [
+                "Mexico City", "Guadalajara", "Monterrey", "Puebla", "Toluca", "Tijuana", "León", "Ciudad Juárez", "Torreón",
+                    "San Luis Potosí", "Querétaro", "Mérida", "Mexicali", "Aguascalientes", "Tampico", "Cuernavaca", "Acapulco", "Chihuahua",
+                    "Morelia", "Saltillo", "Veracruz", "Villahermosa", "Reynosa", "Hermosillo", "Culiacán", "Guanajuato", "Durango",
+                    "Oaxaca", "Zacatecas", "Tuxtla Gutiérrez", "Ensenada", "Valle de Bravo", "Nuevo Laredo", "Campeche", "La Paz", "Cancún",
+                    "Playa del Carmen", "Cozumel", "Puerto Vallarta", "Los Cabos", "Mazatlán", "Irapuato", "Tlaxcala", "Xalapa", "Celaya",
                     "Pachuca", "Orizaba", "Matamoros", "San Cristóbal de las Casas", "Loreto", "San Miguel de Allende"
-                ];
+            ];
 
-                return cities[random.Next(cities.Length)];
-            }
+            return cities[random.Next(cities.Length)];
+        }
 
-            public static readonly MedicalLicenseDocument medicalLicenseDocument = new()
+        public static readonly MedicalLicenseDocument medicalLicenseDocument = new()
+        {
+            Document = new()
             {
-                Document = new() {
-                    Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1724262123/Mediverse/C%C3%A9dula%20Profesional%20%28Desarrollo%29/Formato_C%C3%A9dula_Profesional_M%C3%A9dica_falso_r3igrb.pdf",
-                    Size = 350000,
-                    PublicId = "Formato_Cédula_Profesional_Médica_falso_r3igrb"
-                }
-            };
+                Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1724262123/Mediverse/C%C3%A9dula%20Profesional%20%28Desarrollo%29/Formato_C%C3%A9dula_Profesional_M%C3%A9dica_falso_r3igrb.pdf",
+                Size = 350000,
+                PublicId = "Formato_Cédula_Profesional_Médica_falso_r3igrb"
+            }
+        };
 
         [GeneratedRegex("[áàâä]")]
         private static partial Regex MyRegex();
