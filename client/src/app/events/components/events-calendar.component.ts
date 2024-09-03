@@ -28,7 +28,6 @@ import { ButtonsModule } from "ngx-bootstrap/buttons";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 import esLocale from '@fullcalendar/core/locales/es';
 import { AccountService } from 'src/app/_services/account.service';
-import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
   host: { class: 'pb-6' },
@@ -57,7 +56,6 @@ import { UtilsService } from 'src/app/_services/utils.service';
   ],
 })
 export class EventsCalendarComponent implements OnInit, OnDestroy {
-  private utilsService = inject(UtilsService);
   accountService = inject(AccountService);
   router = inject(Router);
   service = inject(EventsService);
@@ -80,6 +78,10 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     this.params = new EventParams(this.key());
 
     this.service.setParam$(this.key(), this.params);
+
+    if (this.calendarView === 'calendar') {
+      this.params.isCalendarView = true;
+    }
 
     this.service
       .param$(this.key())

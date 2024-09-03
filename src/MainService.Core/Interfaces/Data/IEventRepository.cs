@@ -17,5 +17,6 @@ public interface IEventRepository
     Task<List<Event>> GetAllAsync();
     Task<List<EventDto>> GetAllDtoAsync(EventParams param);
     Task<PagedList<EventDto>> GetPagedListAsync(EventParams param, ClaimsPrincipal user);
+    Task<List<EventDto>> GetAllDtoAsync(EventParams param, ClaimsPrincipal user);
     Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId);
 }

@@ -43,6 +43,7 @@ export class EventParams {
   dateTo?: Date;
   sort = 'createdAt';
   isSortAscending = false;
+  isCalendarView = false;
   role?: Role;
   key?: string;
 
@@ -75,6 +76,7 @@ export class EventParams {
     if (this.pageSize) {
       params = params.append('pageSize', this.pageSize.toString());
     }
+    if (this.isCalendarView) params = params.append('isCalendarView', this.isCalendarView);
 
     if (this.sex) params = params.append('sex', this.sex);
 

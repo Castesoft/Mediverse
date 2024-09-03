@@ -49,7 +49,7 @@ export class DoctorDetailsComponent {
   onCloseDoctorSchedule(event: boolean) {
     this.isScheduling = false;
     if (event) {
-      // Handle successful scheduling (e.g., show a success message)
+      this.onEventCreated.emit();
     }
   }
 

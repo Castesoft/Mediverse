@@ -41,14 +41,13 @@ export class DoctorProfileComponent implements OnInit {
     if (doctorId) {
       this.searchService.getDoctorById(+doctorId).subscribe(
         doctor => {
-            console.log(doctor);
             this.doctor = doctor
-        } 
+        }
       );
     }
+
     this.shareUrl = window.location.href;
 
-    // Get the active tab from query params
     this.route.queryParams.subscribe(params => {
       if (params['tab']) {
         this.activeTab = params['tab'];
@@ -58,7 +57,6 @@ export class DoctorProfileComponent implements OnInit {
 
   selectTab(tab: string) {
     this.activeTab = tab;
-    // Update the URL with the new tab
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: tab },
@@ -74,7 +72,14 @@ export class DoctorProfileComponent implements OnInit {
   onCloseDoctorSchedule(event: boolean) {
     this.isScheduling = false;
     if (event) {
-      // Handle successful scheduling (e.g., show a success message)
+      setTimeout(() => {
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { day: this.selectedSchedule.day.dayNumber },
+          queryParamsHandling: 'merge'
+        })
+        location.reload();
+      }, 10);
     }
   }
 

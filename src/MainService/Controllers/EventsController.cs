@@ -31,6 +31,12 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
 
     public async Task<ActionResult<PagedList<EventDto>>> GetPagedListAsync([FromQuery] EventParams param)
     {
+        if (param.IsCalendarView)
+        {
+            var list = await uow.EventRepository.GetAllDtoAsync(param, User);
+            return Ok(list);
+        }
+
         var pagedList = await uow.EventRepository.GetPagedListAsync(param, User);
         
         if (pagedList == null) return NotFound($"{subjectArticle} {subject} no fue encontrada.");

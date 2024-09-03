@@ -130,6 +130,29 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             param.PageNumber, param.PageSize);
     }
 
+    public async Task<List<EventDto>> GetAllDtoAsync(EventParams param, ClaimsPrincipal user)
+    {
+        var query = context.Events
+            .Include(x => x.EventService)
+            .Include(x => x.EventClinic)
+            .Include(x => x.DoctorEvent)
+            .Include(x => x.PatientEvent)
+            .Include(x => x.NurseEvents)
+            .Include(x => x.EventPrescriptions)
+            .Include(x => x.EventPaymentMethodType)
+            .Include(x => x.EventMedicalInsuranceCompany)
+            .AsQueryable();
+
+        IEnumerable<string> roles = user.GetRoles();
+
+        if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
+        else if (roles.Contains("Nurse")) query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == user.GetUserId()));
+        else if (roles.Contains("Patient")) query = query.Where(x => x.PatientEvent.PatientId == user.GetUserId());
+        else return null;
+
+        return await query.AsNoTracking().ProjectTo<EventDto>(mapper.ConfigurationProvider).ToListAsync();
+    }
+
     public async Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId)
     {
         return await context.Events

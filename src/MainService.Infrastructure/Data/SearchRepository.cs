@@ -37,7 +37,10 @@ namespace MainService.Infrastructure.Data
 
             if (!string.IsNullOrEmpty(param.Specialty))
             {
-                query = query.Where(x => x.UserMedicalLicenses.Any(y => y.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name == param.Specialty));
+                query = query.Where(x => 
+                    x.UserMedicalLicenses.Any(y => y.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name == param.Specialty) ||
+                    EF.Functions.ILike(x.FirstName + " " + x.LastName, $"%{param.Specialty}%")
+                );
             }
 
             if (!string.IsNullOrEmpty(param.Location))
