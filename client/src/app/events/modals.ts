@@ -5,7 +5,7 @@ import {EventsService} from "src/app/_services/events.service";
 import {LayoutModule} from "src/app/_shared/layout.module";
 import {ModalWrapperModule} from "src/app/_shared/modal-wrapper.module";
 import {EventFormComponent} from "src/app/events/components/event-form.component";
-import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
+import {EventsCatalogComponent} from "src/app/events/components/events-catalog/events-catalog.component";
 import {EventsFilterFormComponent} from "src/app/events/components/events-filter-form.component";
 import {EventDetailComponent} from "src/app/events/event-detail.component";
 import {EventEditComponent} from "./event-edit.component";

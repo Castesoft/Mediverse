@@ -18,14 +18,13 @@ import { EventsFilterMenuComponent } from 'src/app/events/components/events-filt
 import { EventsTableComponent } from 'src/app/events/components/events-table.component';
 import { EventsService } from 'src/app/_services/events.service';
 import { LayoutModule } from 'src/app/_shared/layout.module';
-import { Calendar, CalendarOptions, DateSelectArg, EventClickArg, } from '@fullcalendar/core';
+import { Calendar, CalendarOptions, DateSelectArg, DatesSetArg, EventClickArg, } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridDayPlugin from '@fullcalendar/timegrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import interactionPlugin, { DateClickArg, EventDragStopArg, } from '@fullcalendar/interaction';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { ButtonsModule } from "ngx-bootstrap/buttons";
-import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 import esLocale from '@fullcalendar/core/locales/es';
 import { AccountService } from 'src/app/_services/account.service';
 
@@ -50,7 +49,6 @@ import { AccountService } from 'src/app/_services/account.service';
     LayoutModule,
     FullCalendarModule,
     ButtonsModule,
-    EventsCatalogComponent,
     DatePipe,
     JsonPipe,
   ],
@@ -74,21 +72,42 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   loading = true;
   private ngUnsubscribe = new Subject<void>();
 
+  calendarOptions: CalendarOptions = {
+    plugins: [
+      dayGridPlugin,
+      interactionPlugin,
+      timeGridDayPlugin,
+      timeGridWeekPlugin,
+    ],
+    selectable: true,
+    editable: true,
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay',
+    },
+    dateClick: this.handleDateClick.bind(this),
+    eventClick: this.handleEventClick.bind(this),
+    eventDragStop: this.handleEventDragStop.bind(this),
+    select: this.handleSelect.bind(this),
+    datesSet: this.handleDatesSet.bind(this),
+    locale: esLocale,
+  };
+
+  eventsModel: any;
+  fullcalendar = viewChild.required<FullCalendarComponent>('fullcalendar');
+
   ngOnInit(): void {
     this.params = new EventParams(this.key());
 
     this.service.setParam$(this.key(), this.params);
 
-    if (this.calendarView === 'calendar') {
-      this.params.isCalendarView = true;
-    }
+    this.params.isCalendarView = true;
 
     this.service
       .param$(this.key())
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params) => {
-        console.log(params);
-
         this.params = params;
         this.loadData(params);
         this.form.patchValue(params);
@@ -104,27 +123,6 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
       .subscribe((loading) => (this.loading = loading));
 
     forwardRef(() => Calendar);
-
-    this.calendarOptions = {
-      plugins: [
-        dayGridPlugin,
-        interactionPlugin,
-        timeGridDayPlugin,
-        timeGridWeekPlugin,
-      ],
-      selectable: true,
-      editable: true,
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay',
-      },
-      dateClick: this.handleDateClick.bind(this),
-      eventClick: this.handleEventClick.bind(this),
-      eventDragStop: this.handleEventDragStop.bind(this),
-      select: this.handleSelect.bind(this),
-      locale: esLocale,
-    };
   }
 
   ngOnDestroy() {
@@ -181,10 +179,6 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     this.service.setParam$(this.key(), this.params);
     this.form.patchValue(this.params);
   }
-
-  calendarOptions?: CalendarOptions;
-  eventsModel: any;
-  fullcalendar = viewChild.required<FullCalendarComponent>('fullcalendar');
 
   handleDateClick(arg: DateClickArg) {
     this.service.clickLink(
@@ -254,6 +248,14 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
         end: yearMonth + '-10',
       },
     ];
+  }
+
+  handleDatesSet(arg: DatesSetArg) {
+    this.params.updateFromPartial({
+      dateFrom: arg.start,
+      dateTo: arg.end,
+    });
+    this.service.setParam$(this.key(), this.params);
   }
 
   protected readonly FormGroup = FormGroup;

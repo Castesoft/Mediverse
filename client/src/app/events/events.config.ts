@@ -8,13 +8,12 @@ import {EventsService} from "src/app/_services/events.service";
 import {Event} from "src/app/_models/event";
 import {GuidService} from "src/app/_services/guid.service";
 import {LayoutModule} from "src/app/_shared/layout.module";
-import {EventsCalendarComponent} from "src/app/events/components/events-calendar.component";
-import {EventsCatalogComponent} from "src/app/events/components/events-catalog.component";
 import {EventNewComponent} from "src/app/events/views";
 import {EventDetailComponent} from "src/app/events/event-detail.component";
 import {createId} from "@paralleldrive/cuid2";
 import {Subject, takeUntil} from "rxjs";
 import {EventEditComponent} from "./event-edit.component";
+import { EventsDisplayComponent } from './components/events-display/events-display.component';
 
 @Component({
   selector: 'events-route',
@@ -31,17 +30,16 @@ export class EventsComponent implements OnInit {
   selector: 'events-catalog-route',
   template: `
     <div card>
-      <div
-        eventsCalendar
-        [role]="role"
-        [mode]="mode"
+      <app-events-display
         [key]="key"
+        [mode]="mode"
         [view]="view"
-      ></div>
+        [role]="role"
+      ></app-events-display>
     </div>
   `,
   standalone: true,
-  imports: [RouterModule, EventsCatalogComponent, EventsCalendarComponent, LayoutModule,],
+  imports: [RouterModule, EventsDisplayComponent, LayoutModule],
 })
 export class CatalogComponent implements OnInit {
   service = inject(EventsService);

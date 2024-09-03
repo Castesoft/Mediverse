@@ -637,6 +637,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   private applyValidationsToForm(mode: boolean) {
     if (this.form) {
+      console.log(this.form)
       if (this.use() === 'create' && this.form instanceof CreateForm) {
         this.form.setValidators(mode);
       } else if (this.use() === 'edit' && this.form instanceof EditForm) {

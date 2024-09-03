@@ -143,6 +143,12 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.EventMedicalInsuranceCompany)
             .AsQueryable();
 
+        if (param.DateFrom != DateTime.MinValue)
+            query = query.Where(x => x.DateFrom >= param.DateFrom);
+
+        if (param.DateTo != DateTime.MaxValue)
+            query = query.Where(x => x.DateTo <= param.DateTo);
+
         IEnumerable<string> roles = user.GetRoles();
 
         if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
