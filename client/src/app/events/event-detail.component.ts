@@ -9,6 +9,8 @@ import {FormUse} from "src/app/_models/types";
 import {IconsService} from "../_services/icons.service";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EventServicesSummaryComponent } from 'src/app/events/components/event-services-summary.component';
+import { UserProfilePictureComponent } from '../users/components/user-profile-picture/user-profile-picture.component';
+import { PaymentsTableComponent } from '../_shared/components/payments-table/payments-table.component';
 
 @Component({
   selector: 'div[eventDetailView]',
@@ -17,7 +19,7 @@ import { EventServicesSummaryComponent } from 'src/app/events/components/event-s
   standalone: true,
   imports: [
     DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule,
-    EventServicesSummaryComponent,
+    EventServicesSummaryComponent, UserProfilePictureComponent, PaymentsTableComponent
   ]
 })
 export class EventDetailComponent implements OnInit {
@@ -41,16 +43,11 @@ export class EventDetailComponent implements OnInit {
 
   ngOnInit() {
     this.id = +this.route.snapshot.paramMap.get('id')!;
-    //
-    // if (this.item() && this.item()!.service) {
-    //   this.tax = this.item()!.service?.price * 0.16;
-    // }
-    //   this.total =
-    //     this.item().paymentBilling.services.reduce(
-    //       (acc: any, service: any) => acc + service.price,
-    //       0
-    //     ) + this.tax;
-    // }
+
+    if (this.item() && this.item()!.service) {
+      this.tax = this.item()!.service!.price * 0.16;
+      this.total = this.item()!.service!.price + this.tax;
+    }
   }
 
   onSelect(data: TabDirective): void {

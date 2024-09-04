@@ -1,14 +1,14 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Account } from 'src/app/_models/account';
 import { AccountService } from 'src/app/_services/account.service';
+import { PaymentsTableComponent } from 'src/app/_shared/components/payments-table/payments-table.component';
 import { LayoutModule } from 'src/app/_shared/layout.module';
 
 @Component({
   selector: 'app-account-payments',
   standalone: true,
-  imports: [LayoutModule, RouterModule, CurrencyPipe, DatePipe],
+  imports: [LayoutModule, RouterModule, PaymentsTableComponent],
   templateUrl: './account-payments.component.html',
   styleUrl: './account-payments.component.scss'
 })

@@ -7,6 +7,9 @@ import { User, UserSummary } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
 import { Address } from "src/app/addresses/addresses.config";
+import { PaymentMethodType } from './paymentMethodType';
+import { MedicalInsuranceCompany } from './medicalInsuranceCompany';
+import { Payment } from './payment';
 
 const subject = 'event';
 
@@ -22,6 +25,9 @@ export class Event {
   service?: Service;
   clinic?: Address;
   nurses?: User[];
+  paymentMethodType?: PaymentMethodType;
+  medicalInsuranceCompany?: MedicalInsuranceCompany;
+  payments?: Payment[];
 
   createdAt!: Date;
   isSelected = false;
@@ -192,10 +198,10 @@ export class CreateForm {
       serviceId: this.group.value.serviceId,
       clinicId: this.group.value.clinicId,
       allDay: this.group.value.dateTime.allDay,
-      dateFrom: this.group.value.dateTime.dateFrom,
-      dateTo: this.group.value.dateTime.dateTo,
-      timeFrom: this.group.value.dateTime.timeFrom,
-      timeTo: this.group.value.dateTime.timeTo,
+      dateFrom: new Date(this.group.value.dateTime.dateFrom),
+      dateTo: new Date(this.group.value.dateTime.dateTo),
+      timeFrom: this.group.value.dateTime.timeFrom === '' ? '00:00' : this.group.value.dateTime.timeFrom,
+      timeTo: this.group.value.dateTime.timeTo === '' ? '23:59' : this.group.value.dateTime.timeTo,
     };
   }
 
@@ -291,4 +297,8 @@ export class DetailForm {
       timeTo: new FormControl({ value: '', disabled: true }),
     });
   }
+}
+
+export class EventDoctorFields {
+  addresses!: Address[];
 }

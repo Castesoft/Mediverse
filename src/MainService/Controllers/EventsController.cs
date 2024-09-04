@@ -55,6 +55,16 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
     //     return data;
     // }
 
+    [HttpGet("doctor-fields")]
+    public async Task<ActionResult<EventDoctorFieldsDto>> GetDoctorFieldsAsync()
+    {
+        var item = await uow.EventRepository.GetDoctorFieldsDtoAsync(User);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} no fue encontrado.");
+
+        return item;
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<EventDto>> GetByIdAsync([FromRoute] int id)
     {
@@ -130,6 +140,7 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
         if (userRoles.Contains("Doctor") && request.Role == "Doctor")
         {
             doctorId = user.Id;
+            doctor = user;
 
             if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, doctorId))
                 return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
@@ -193,7 +204,7 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
             PatientEvent = new(request.PatientId),
             EventClinic = new(request.ClinicId),
             DoctorEvent = new(doctorId),
-            EventPaymentMethodType = new(request.PaymentMethodTypeId),
+            EventPaymentMethodType = request.PaymentMethodTypeId > 0 ? new(request.PaymentMethodTypeId) : null,
             EventMedicalInsuranceCompany = request.MedicalInsuranceCompanyId > 0 ? new(request.MedicalInsuranceCompanyId) : null
         };
 

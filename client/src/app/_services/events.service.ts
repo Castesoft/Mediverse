@@ -8,7 +8,7 @@ import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, 
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
 import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, Role, SortOptions, View } from "src/app/_models/types";
-import { FilterForm, Event, EventParams, EventSummary } from "src/app/_models/event";
+import { FilterForm, Event, EventParams, EventSummary, EventDoctorFields } from "src/app/_models/event";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
 import { EventDetailModalComponent, EventEditModalComponent, EventNewModalComponent, EventsCatalogModalComponent, EventsFilterModalComponent } from "src/app/events/modals";
@@ -546,5 +546,9 @@ export class EventsService {
     { label: "Cuenta", name: "hasAccount" },
     { label: "Fecha de nacimiento", name: "dateOfBirth" },
   ]
+
+  getDoctorFields = (): Observable<EventDoctorFields> => {
+    return this.http.get<EventDoctorFields>(`${this.baseUrl}doctor-fields`);
+  };
 
 }

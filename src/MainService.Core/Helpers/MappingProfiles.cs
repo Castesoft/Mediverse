@@ -170,7 +170,23 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DateFrom, opt => opt.MapFrom(src => src.DateFrom))
             .ForMember(dest => dest.DateTo, opt => opt.MapFrom(src => src.DateTo))
             .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.EventPaymentMethodType.PaymentMethodType))
-            .ForMember(dest => dest.MedicalInsuranceCompany, opt => opt.MapFrom(src => src.EventMedicalInsuranceCompany.MedicalInsuranceCompany));
+            .ForMember(dest => dest.MedicalInsuranceCompany, opt => opt.MapFrom(src => src.EventMedicalInsuranceCompany.MedicalInsuranceCompany))
+            .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => src.EventPayments.Select(x => x.Payment)));
+
+        CreateMap<AppUser, EventDoctorFieldsDto>()
+            .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.DoctorClinics));
+
+        CreateMap<DoctorClinic, UserAddressDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Clinic.Id))
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMain))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Clinic.Street))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Clinic.City))
+            .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.Clinic.State))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Clinic.Country))
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Clinic.Zipcode))
+            .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Clinic.Neighborhood))
+            .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.Clinic.ExteriorNumber))
+            .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.Clinic.InteriorNumber));
 
         CreateMap<Event, EventSummaryDto>()
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientEvent.Patient))

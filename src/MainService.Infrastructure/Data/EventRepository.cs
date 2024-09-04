@@ -109,6 +109,14 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.EventPrescriptions)
             .Include(x => x.EventPaymentMethodType)
             .Include(x => x.EventMedicalInsuranceCompany)
+            .Include(x => x.EventPayments)
+                .ThenInclude(x => x.Payment)
+                .ThenInclude(x => x.PaymentPaymentMethod)
+                .ThenInclude(x => x.PaymentMethod)
+            .Include(x => x.EventPayments)
+                .ThenInclude(x => x.Payment)
+                .ThenInclude(x => x.PaymentPaymentMethodType)
+                .ThenInclude(x => x.PaymentMethodType)
             .AsQueryable();
 
         if (param.DateFrom != DateTime.MinValue)
@@ -141,6 +149,14 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.EventPrescriptions)
             .Include(x => x.EventPaymentMethodType)
             .Include(x => x.EventMedicalInsuranceCompany)
+            .Include(x => x.EventPayments)
+                .ThenInclude(x => x.Payment)
+                .ThenInclude(x => x.PaymentPaymentMethod)
+                .ThenInclude(x => x.PaymentMethod)
+            .Include(x => x.EventPayments)
+                .ThenInclude(x => x.Payment)
+                .ThenInclude(x => x.PaymentPaymentMethodType)
+                .ThenInclude(x => x.PaymentMethodType)
             .AsQueryable();
 
         if (param.DateFrom != DateTime.MinValue)
@@ -168,5 +184,16 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.EventService)
                 .ThenInclude(x => x.Service)
             .ToListAsync();
+    }
+
+    public async Task<EventDoctorFieldsDto> GetDoctorFieldsDtoAsync(ClaimsPrincipal user)
+    {
+        var doctor = await context.Users
+            .Where(x => x.Id == user.GetUserId())
+            .Include(x => x.DoctorClinics)
+                .ThenInclude(x => x.Clinic)
+            .SingleOrDefaultAsync();
+
+        return mapper.Map<EventDoctorFieldsDto>(doctor);
     }
 }

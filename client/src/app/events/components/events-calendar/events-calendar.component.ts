@@ -52,6 +52,13 @@ import { AccountService } from 'src/app/_services/account.service';
     DatePipe,
     JsonPipe,
   ],
+  styles: `
+    .current-event {
+      border: 3px solid var(--bs-primary);
+      box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.3);
+      z-index: 1;
+    }
+  `
 })
 export class EventsCalendarComponent implements OnInit, OnDestroy {
   accountService = inject(AccountService);
@@ -92,6 +99,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     select: this.handleSelect.bind(this),
     datesSet: this.handleDatesSet.bind(this),
     locale: esLocale,
+    eventOverlap: false,
   };
 
   eventsModel: any;
@@ -130,11 +138,19 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  private getBgColorClass = (name: string): string => {
+  private getBgColorClass = (name: string, dateFrom: Date, dateTo: Date): string => {
     const colors = ['bg-primary', 'bg-info', 'bg-success', 'bg-warning'];
     const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const classIndex = asciiSum % colors.length;
-    return colors[classIndex];
+    const baseColor = colors[classIndex];
+  
+    const now = new Date();
+    if (dateFrom <= now && now <= dateTo) {
+      return `${baseColor} border-2 border-primary`;
+    } else if (dateTo < now) {
+      return `${baseColor} opacity-50`;
+    }
+    return baseColor;
   }
 
   private loadData(params: EventParams) {
@@ -152,7 +168,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
               start: event.dateFrom,
               end: event.dateTo,
               id: event.id,
-              bgColor: this.getBgColorClass(event.patient?.firstName || ''),
+              className: this.getBgColorClass(event.patient?.firstName || '', new Date(event.dateFrom), new Date(event.dateTo)),
             } as any;
           });
         }

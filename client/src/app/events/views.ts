@@ -2,7 +2,7 @@ import { Component, input, viewChild } from "@angular/core";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { Event } from "src/app/_models/event";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { EventFormComponent } from "src/app/events/components/event-form.component";
+import { EventFormComponent } from "src/app/events/components/event-form/event-form.component";
 
 @Component({
   selector: 'div[eventNewView]',

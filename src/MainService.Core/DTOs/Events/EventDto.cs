@@ -19,4 +19,5 @@ public class EventDto
     public DateTime DateTo { get; set; }
     public PaymentMethodTypeDto PaymentMethodType { get; set; }
     public MedicalInsuranceCompanyDto MedicalInsuranceCompany { get; set; }
+    public List<PaymentDto> Payments { get; set; }
 }
