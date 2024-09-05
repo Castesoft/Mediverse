@@ -5,3 +5,157 @@
 border-width-1px {
   border-width: 1px;
 }
+
+.prescription-pad {
+  background-color: #ffffff;
+  background-image: 
+    linear-gradient(90deg, rgba(200,200,200,.07) 1px, transparent 1px),
+    linear-gradient(rgba(200,200,200,.07) 1px, transparent 1px);
+  background-size: 25px 25px;
+  border: 1px solid #d4d4d4;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+  padding: 30px;
+  max-width: 1000px;
+  margin: 20px auto;
+  font-family: 'Courier New', monospace;
+  position: relative;
+}
+
+.prescription-pad::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.5);
+  z-index: 0;
+}
+
+.prescription-pad::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 48%, rgba(0,0,0,0.05) 50%, transparent 52%);
+  background-size: 10px 10px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.prescription-pad > * {
+  position: relative;
+  z-index: 1;
+}
+
+.prescription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+
+  .logo {
+    flex: 1;
+    img {
+      max-width: 150px;
+      height: auto;
+    }
+  }
+
+  .doctor-info {
+    flex: 2;
+    text-align: right;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+  }
+}
+
+.prescription-body {
+  .patient-info-container {
+    display: flex;
+    gap: 10px;
+  }
+
+  .patient-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    div {
+      flex: 1;
+    }
+  }
+
+  .prescription-date {
+    display: flex;
+    align-items: center;
+  }
+
+  label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+}
+
+.prescription-content {
+  position: relative;
+  margin-top: 30px;
+
+  .rx-symbol {
+    position: absolute;
+    top: -30px;
+    left: 0;
+    font-size: 48px;
+    font-weight: bold;
+    color: #444;
+  }
+}
+
+.prescription-notes {
+  margin-top: 20px;
+}
+
+.prescription-footer {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .doctor-signature {
+    min-width: 200px;
+    margin-left: auto;
+    text-align: center;
+
+    .doctor-signature-info {
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+    }
+
+    hr {
+      border-top: 1px solid #333;
+    }
+
+    p {
+      margin-top: 5px;
+    }
+  }
+}
+
+.form-actions {
+  margin-top: 20px;
+  text-align: right;
+
+  button {
+    margin-left: 10px;
+  }
+}

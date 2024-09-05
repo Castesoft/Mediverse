@@ -1,4 +1,3 @@
-
 <thead
 (onParamsChange)="service.onSortOptionsChange(key(), $event)"
 (onSelectAll)="service.selectAll(key(), $event)"
@@ -57,21 +56,61 @@ tableHeader
           </td>
         }
       }
-      <td userCell [role]="'Patient'" [user]="item.patient!"></td>
-      <td>{{ item.notes }}</td>
+      <td class="d-flex flex-grow-1">
+        <div class="symbol symbol-circle symbol-50px overflow-hidden me-3 flex-shrink-0">
+          <a>
+            <div class="symbol-label">
+              <app-user-profile-picture 
+                [firstName]="item.patient?.firstName ?? ''"
+                [photoUrl]="item.patient?.photoUrl ?? ''"
+              ></app-user-profile-picture>
+            </div>
+          </a>
+        </div>
+        <div class="d-flex flex-column flex-grow-1">
+          <a class="text-gray-800 text-hover-primary mb-1">{{ item.patient?.fullName }}</a>
+          <span class="d-flex align-items-center">
+            {{ item.notes }}
+            @if (item.isCollapsed) {
+              <i class="ki-duotone ki-down ms-2 fs-4"><span class="path1"></span><span class="path2"></span></i>
+            } @else {
+              <i class="ki-duotone ki-up ms-2 fs-4"><span class="path1"></span><span class="path2"></span></i>
+            }
+          </span>
+        </div>
+      </td>
       <td>{{ item.createdAt | date }}</td>
 
       <td class="text-end">
-        <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"
-           [cdkContextMenuTriggerFor]="context_menu"
-           [cdkMenuTriggerFor]="context_menu"
-           [id]="'dropdown' + item.patient + item.id"
-           type="button"
-           [attr.aria-controls]="'dropdown' + item.patient?.fullName + item.id"
-           (click)="stopPropagation($event)">
-          Opciones
-          <i class="ki-duotone ki-down fs-5 ms-1"></i>
-        </a>
+        <div class="d-flex justify-content-end">
+          <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+             [routerLink]="[service.naming.catalogRoute,item.id]"
+             tooltip="Ver detalles"
+             (click)="$event.stopPropagation()">
+            <i class="ki-duotone ki-eye fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+          </a>
+          <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+             [routerLink]="[service.naming.catalogRoute, item.id, 'edit']"
+             tooltip="Editar"
+             (click)="$event.stopPropagation()">
+            <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i>
+          </a>
+          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+                  (click)="deleteItem(item); $event.stopPropagation()"
+                  tooltip="Eliminar">
+            <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+          </button>
+          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+                  tooltip="Descargar"
+                  (click)="downloadPrescription(item); $event.stopPropagation()">
+            <i class="ki-duotone ki-cloud-download fs-2"><span class="path1"></span><span class="path2"></span></i>
+          </button>
+          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" 
+                  tooltip="Imprimir"
+                  (click)="$event.stopPropagation()">
+            <i class="ki-duotone ki-printer fs-2"><span class="path1"></span><span class="path2"></span></i>
+          </button>
+        </div>
       </td>
       <ng-template #context_menu>
         <div
@@ -87,6 +126,14 @@ tableHeader
             <a [routerLink]="[service.naming.catalogRoute, item.id, 'edit']"
                class="menu-link">Editar</a>
           </div>
+          <div cdkMenuItem
+               class="menu-item px-3">
+            <a class="menu-link">Descargar</a>
+          </div>
+          <div cdkMenuItem
+               class="menu-item px-3">
+            <a class="menu-link">Imprimir</a>
+          </div>
           <button cdkMenuItem
                   class="menu-item px-3 text-danger"
                   (click)="deleteItem(item)">
@@ -99,17 +146,14 @@ tableHeader
         <td colspan="100" style="padding: 0;">
             <div [collapse]="!item.isCollapsed" [id]="'collapseBasic' + item.id" [isAnimated]="true">
               <div class="p-4">
-                Diagnóstico: {{ item.notes }}
-
-                @if (item.items.length > 0) {
-                  <ul>
-                    @for (prescriptionItem of item.items; track $index) {
-                      <li>{{ prescriptionItem.name }} {{ prescriptionItem.dosage }}{{ prescriptionItem.unit }} | {{ prescriptionItem.instructions }} | {{ prescriptionItem.notes }}</li>
-                    }
-                  </ul>
-                } @else {
-                  <div>No se recetaron medicamentos</div>
-                }
+                <app-prescription-form
+                  [id]="null"
+                  [componentId]="'prescription-form-' + item.id"
+                  [use]="'detail'"
+                  [view]="'inline'"
+                  [key]="'detail'"
+                  [item]="item"
+                ></app-prescription-form>
               </div>
             </div>
         </td>

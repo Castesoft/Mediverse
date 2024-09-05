@@ -25,6 +25,7 @@ export class Account {
   twoFactorEnabled!: boolean;
   specialtyId!: string;
   paymentMethodTypes: PaymentMethodType[] = [];
+  medicalLicenses?: MedicalLicense[];
   requireAnticipatedCardPayments!: boolean;
   workSchedules: WorkSchedule[] = [];
   workScheduleSettings?: WorkScheduleSettings;
@@ -41,6 +42,24 @@ export class Account {
   permissions: string[] = [];
 }
 
+export interface MedicalLicense {
+  document: Document;
+  isMain: boolean;
+  licenseNumber: string;
+  specialtyLicense: string;
+  specialtyId: number;
+  specialtyName: string;
+}
+
+export interface Document {
+  url: string;
+  publicId: string;
+  size: number;
+  name: string;
+  description: string;
+  id: number;
+  createdAt: Date;
+}
 export class WorkScheduleSettings {
   startTime?: string;
   endTime?: string;

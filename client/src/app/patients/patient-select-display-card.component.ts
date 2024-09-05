@@ -22,6 +22,7 @@ export class PatientSelectDisplayCardComponent implements OnInit {
   title = input<string>();
   item = input<User>();
   key = input.required<string>();
+  inline = input<boolean>(false);
 
   ngOnInit(): void {}
 

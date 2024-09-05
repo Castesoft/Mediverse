@@ -1,140 +1,106 @@
-<form [formGroup]="formGroup">
-  <div class="d-flex flex-grow-1 justify-content-between align-items-end mb-4">
-    <div>
-      <p class="text-gray-900 fw-bold my-1 fs-2">
-        @if (use() === 'create') {
-          Nueva receta
-        } @else if (use() === 'edit') {
-          Editar receta
-        } @else if (use() === 'detail') {
-          Detalles de receta
-        }
+<form [formGroup]="formGroup" class="prescription-pad" [id]="componentId()">
+  <div class="prescription-header">
+    <div class="logo">
+      <img src="media/logos/logo-compact.svg" alt="Logo" />
+      <span class="ms-2 fs-3 fw-bold">Mediverse</span>
+    </div>
+    <div class="doctor-info">
+      <p class="fw-bold">
+        @if (accountService.current()?.sex === 'Masculino') {Dr.} @else {Dra.}
+        {{ accountService.current()?.firstName }} {{ accountService.current()?.lastName }}
       </p>
+      <p>{{ accountService.current()?.mainSpecialty }}</p>
     </div>
-  </div>
-  <div class="card">
-    <div class="p-5 pb-0">
-      <div class="text-muted">
-        Receta para
-      </div>
-      <tabset #memberTabs
-              [type]="'tabs'"
-              class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold no-border border-width-1px">
-        <tab (selectTab)="onTabActivated($event)"
-             [class.text-primary]="activeTab?.id === 'patient'"
-             heading="Paciente"
-             id="patient">
-        </tab>
-        <tab (selectTab)="onTabActivated($event)"
-             class="no-border"
-             heading="Cita"
-             id="appointment">
-        </tab>
-      </tabset>
-      <hr class="text-gray-400 m-0"/>
-    </div>
-
-    @switch (activeTab?.id) {
-      @default {
-        <div class="card-body p-6">
-          <div class="row row-cols-1 row-cols-md-2 align-items-center justify-content-center">
-            <div class="col">
-              @if (use() === 'create') {
-                <div [isDisabled]="false"
-                     [key]="selectedPatientKey"
-                     [label]="'Seleccionar paciente'"
-                     [user]="patient ?? null"
-                     [showCatalogButton]="false"
-                     patientSelectTypeahead></div>
-              }
-            </div>
-            <div class="col">
-              @if (patient) {
-                <div
-                  [item]="patient"
-                  [key]="selectedPatientKey"
-                  patientSelectDisplayCard></div>
-              }
-            </div>
-          </div>
-        </div>
-      }
-      @case ("appointment") {
-        <div class="card-body p-6">
-          <div class="row row-cols-1 row-cols-md-2 align-items-center">
-            <div class="col">
-              @if (use() === 'create') {
-                <div [isDisabled]="false"
-                     [item]="event ?? null"
-                     [label]="'Seleccionar cita'"
-                     [key]="selectedEventKey"
-                     [showCatalogButton]="false"
-                     eventSelectTypeahead></div>
-              }
-            </div>
-            <div class="col">
-              @if (event) {
-                <div
-                  [item]="event"
-                  [key]="selectedEventKey"
-                  class="flex-grow-1"
-                  eventSelectDisplayCard></div>
-              }
-              @if (!event && use() !== 'create') {
-                Esta receta no está asociada a una cita.
-              }
-            </div>
-          </div>
-        </div>
-      }
-    }
   </div>
 
-  <div class="row row-cols-1 row-cols-md-1 row-cols-xl-1 gx-4 mt-4">
-    <div class="col">
-      <div class="card px-0">
-        <div class="p-5 fw-bold">Diagnóstico</div>
-        <hr class="text-gray-400 m-0"/>
-        <div class="card-body p-6">
-          @if (use() !== 'detail') {
-            <div controlTextarea
-                 formControlName="notes"
-                 class="fw-semi-bold mb-0 w-100"
-                 [placeholder]="'Ingresa el diagnóstico aquí...'"
-                 [style]="'solid'"
-                 [rows]="6"
-                 [submitted]="formGroup.controls['notes'].touched || isSubmitted"></div>
-          } @else {
-            <pre style="font-family: var(--bs-body-font-family);">{{ item()!.notes }}</pre>
-          }
-        </div>
+  <div class="prescription-body">
+    <div class="patient-info-container">
+      <div class="patient-info">
+        <label>Paciente:</label>
+        @if (patient) {
+          <div class="d-flex align-items-center">
+            <div
+              [item]="patient"
+              [key]="selectedPatientKey"
+              [inline]="true"
+              patientSelectDisplayCard></div>
+              @if (use() === 'create') {
+                <i class="ki-duotone ki-pencil me-6 fs-4 cursor-pointer" (click)="patient = undefined">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+              }
+            </div>
+        } @else {
+          <div [isDisabled]="false"
+              [key]="selectedPatientKey"
+              [user]="patient ?? null"
+              [showCatalogButton]="false"
+              patientSelectTypeahead>
+          </div>
+        }
+      </div>
+  
+      <div class="prescription-date">
+        <p class="mb-0 me-2">{{ accountService.current()?.city }},</p>
+        <span>{{ currentDate | date:'dd/MM/yyyy' }}</span>
       </div>
     </div>
+
+    <div class="prescription-content">
+      <div class="rx-symbol">℞</div>
+      <div [data]="prescription.items"
+           [key]="selectedProductsKey"
+           [mode]="use() !== 'create' ? 'view' : 'edit'"
+           (onProductSelected)="selectProduct($event)"
+           (onProductDeleted)="deleteProduct($event)"
+           prescriptionProductsTable></div>
+    </div>
+
+    <div class="prescription-notes">
+      <label>Notas:</label>
+      <div controlTextarea
+           formControlName="notes"
+           [placeholder]="'Ingresa notas adicionales aquí...'"
+           [style]="'solid'"
+           [rows]="4"
+           [submitted]="formGroup.controls['notes'].touched || isSubmitted"></div>
+    </div>
   </div>
-  @if (prescription) {
-    <div [data]="prescription.items"
-         [key]="selectedProductsKey"
-         [mode]="use() !== 'create' ? 'view' : 'edit'"
-         (onProductSelected)="selectProduct($event)"
-         (onProductDeleted)="deleteProduct($event)"
-         prescriptionProductsTable></div>
-  }
-  <div class="d-flex flex-grow-1 justify-content-end align-items-center mt-6">
-    <button (click)="router.navigate(['/home/prescriptions'])"
-            class="btn btn-light me-5">
-      @if (use() !== 'detail') {
-        Cancelar
-      } @else {
-        Volver
-      }
-    </button>
-    @if (use() !== 'detail') {
-      <button
-        (click)="onSubmit()"
-        class="btn btn-primary">
-        Guardar receta
-      </button>
-    }
+
+  <div class="prescription-footer">
+    <div class="doctor-info">
+      <p class="mb-0">{{ accountService.current()?.address }}</p>
+      <p class="mb-0">{{ accountService.current()?.city }}, {{ accountService.current()?.state }}, {{ accountService.current()?.country }}</p>
+      <p class="mb-0">Tel: {{ accountService.current()?.phoneNumberCountryCode }} {{ accountService.current()?.phoneNumber }}</p>
+      <p class="mb-0">{{ accountService.current()?.email }}</p>
+    </div>
+    <div class="doctor-signature pt-5">
+      <hr>
+      <p>Firma del médico</p>
+      <div class="doctor-signature-info">
+        <p class="mb-0">Cédula Profesional: {{ accountService.current()?.medicalLicenses![0].licenseNumber }}</p>
+        <p class="mb-0">Cédula de Especialidad: {{ accountService.current()?.medicalLicenses![0].specialtyLicense }}</p>
+      </div>
+    </div>
   </div>
 
 </form>
+@if (use() === 'create' || use() === 'edit') {
+  <div class="form-actions">
+    <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light">
+      Cancelar
+    </button>
+    <button (click)="onSubmit()" class="btn btn-primary">
+      Guardar receta
+    </button>
+  </div>
+} @else {
+  @if (view() === 'page') {
+    <div class="form-actions">
+      <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light">
+        Volver
+      </button>
+    </div>
+  }
+}

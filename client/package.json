@@ -42,6 +42,8 @@
     "flatpickr": "^4.6.13",
     "fullcalendar": "^6.1.15",
     "fullcalendar-scheduler": "^6.1.15",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "ng-apexcharts": "^1.11.0",
     "ngx-bootstrap": "^18.0.2",
     "ngx-toastr": "^19.0.0",

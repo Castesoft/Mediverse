@@ -45,8 +45,8 @@ export class PrescriptionsService {
   } as NamingSubject;
 
   columns: Column[] = [
-    { label: "Paciente", name: "patient", options: { justify: 'center' } },
-    { label: "Diagnóstico", name: "notes" },
+    { label: "Receta", name: "patient", options: { justify: 'center' } },
+    // { label: "Diagnóstico", name: "notes" },
     // { label: "Medicamentos", name: "items" },
     { label: "Creado", name: "createdAt" },
   ];

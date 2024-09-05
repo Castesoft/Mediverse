@@ -15,12 +15,12 @@ export class PrescriptionEditComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  @HostBinding('class') get hostClass() {
-    if (this.view === 'page') {
-      return 'card';
-    }
-    else return '';
-  }
+  // @HostBinding('class') get hostClass() {
+  //   if (this.view === 'page') {
+  //     return 'card';
+  //   }
+  //   else return '';
+  // }
 
   // View Configuration
   use: FormUse = 'edit';

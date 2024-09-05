@@ -24,23 +24,23 @@ import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ControlTextareaComponent } from 'src/app/_forms/control-textarea.component';
 import { TabDirective, TabsetComponent } from "ngx-bootstrap/tabs";
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-prescription-form',
   standalone: true,
   imports: [
     ReactiveFormsModule, FaIconComponent, BootstrapModule,
     PatientSelectTypeaheadComponent, PatientSelectDisplayCardComponent, PrescriptionProductsTableComponent,
-    EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, ControlTextareaComponent
+    EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, ControlTextareaComponent, CommonModule
   ],
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss'
 })
 export class PrescriptionFormComponent implements OnInit, OnDestroy {
+  accountService = inject(AccountService);
   private prescriptionsService = inject(PrescriptionsService);
   private productsService = inject(ProductsService);
   private confirmService = inject(ConfirmService);
-  private accountService = inject(AccountService);
   private patientsService = inject(UsersService);
   private eventsService = inject(EventsService);
   private ngUnsubscribe = new Subject<void>();
@@ -55,6 +55,7 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   }
 
   id = input.required<number | null>();
+  componentId = input<string>();
   use = input.required<FormUse>();
   view = input.required<View>();
   key = input<string>();
@@ -91,6 +92,12 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   });
 
   @ViewChild("memberTabs", { static: false }) memberTabs?: TabsetComponent;
+
+  doctorName = 'John Doe';
+  doctorSpecialty = 'General Practitioner';
+  doctorAddress = '123 Medical St, City, Country';
+  doctorPhone = '(123) 456-7890';
+  currentDate = new Date();
 
   ngOnInit() {
     if (this.use() !== 'create' && this.item()) {

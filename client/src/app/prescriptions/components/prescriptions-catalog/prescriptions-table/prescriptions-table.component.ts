@@ -16,6 +16,10 @@ import { PrescriptionsService } from "src/app/_services/prescriptions.service";
 import {PrescriptionTableCellComponent, PrescriptionTableHasAccountCellComponent, PrescriptionTableSexCellComponent} from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component";
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
+import { PrescriptionFormComponent } from '../../prescription-form/prescription-form.component';
+import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_prescriptions', },
@@ -23,7 +27,8 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
   standalone: true,
   templateUrl: './prescriptions-table.component.html',
   imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, PrescriptionTableCellComponent, DatePipe,
-    PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent, MaterialModule, CdkModule, CurrencyPipe, UserTableCellComponent, BootstrapModule
+    PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent, MaterialModule, CdkModule, CurrencyPipe, UserTableCellComponent, BootstrapModule, PrescriptionFormComponent,
+    UserProfilePictureComponent
   ],
 })
 export class PrescriptionsTableComponent implements OnInit, OnDestroy {
@@ -72,5 +77,28 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
 
   stopPropagation(event: Event) {
     event.stopPropagation();
+  }
+
+  async downloadPrescription(item: Prescription) {
+    // Wait for Angular to update the view
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const prescriptionElement = document.getElementById(`prescription-form-${item.id}`);
+    
+    if (prescriptionElement) {
+      const canvas = await html2canvas(prescriptionElement);
+      const imgData = canvas.toDataURL('image/png');
+      
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`prescription-${item.id}.pdf`);
+    } else {
+      console.error('Prescription form element not found');
+    }
   }
 }
