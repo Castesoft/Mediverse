@@ -16,6 +16,15 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
     [HttpGet]
     public async Task<ActionResult<DoctorSearchResultsDto>> GetPagedListAsync([FromQuery] SearchParams param)
     {
+        if (User.Identity.IsAuthenticated)
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                param.PatientId = user.Id;
+            }
+        }
+
         var pagedList = await uow.SearchRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
@@ -58,6 +67,9 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
 
             doctor.WorkSchedules = [];
             doctor.DoctorEvents = [];
+
+            doctor.HasPatientInformationAccess = doctor.Patients.Any(p => p.PatientId == param.PatientId && p.HasPatientInformationAccess);
+            doctor.Patients = [];
         }
 
         if (param.Latitude == null || param.Longitude == null)

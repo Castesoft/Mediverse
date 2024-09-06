@@ -32,6 +32,8 @@ namespace MainService.Core.DTOs.Search
         public MedicalInsuranceCompanyDto[] MedicalInsuranceCompanies { get; set; }
         public DoctorReviewDto[] Reviews { get; set; }
         public string PhotoUrl { get; set; }
+        public DoctorPatient[] Patients { get; set; }
+        public bool HasPatientInformationAccess { get; set; }
     }
 
     public class DoctorAvailability

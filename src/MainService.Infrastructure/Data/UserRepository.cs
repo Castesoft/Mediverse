@@ -100,9 +100,6 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     {
         return await context.Users
             .Include(x => x.Doctors)
-            .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role)
-            .Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"))
             .AnyAsync(x => x.Id == id && x.Doctors.Any(x => x.DoctorId == doctorId));
     }
     public async Task<bool> NurseExistsAsync(int id, int doctorId)

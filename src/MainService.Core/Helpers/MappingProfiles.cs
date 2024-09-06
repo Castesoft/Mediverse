@@ -99,7 +99,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street))
             .ForMember(dest => dest.WorkSchedules, opt => opt.MapFrom(src => src.DoctorWorkSchedules.Select(x => x.WorkSchedule)))
             .ForMember(dest => dest.WorkScheduleSettings, opt => opt.MapFrom(src => src.DoctorWorkScheduleSettings.WorkScheduleSettings))
-            .ForMember(dest => dest.DoctorClinics, opt => opt.MapFrom(src => src.DoctorClinics.Select(x => x.Clinic)));
+            .ForMember(dest => dest.DoctorClinics, opt => opt.MapFrom(src => src.DoctorClinics.Select(x => x.Clinic)))
+            .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors.Select(x => x.Doctor)));
 
         CreateMap<WorkSchedule, WorkScheduleDto>();
         CreateMap<WorkScheduleSettings, WorkScheduleSettingsDto>();
@@ -260,6 +261,13 @@ public class MappingProfiles : Profile
         CreateMap<AppRole, RoleDto>();
         CreateMap<AppUser, DoctorDto>();
         CreateMap<AppPermission, PermissionDto>();
+
+        CreateMap<DoctorPatient, DoctorDto>()
+            .ForMember(dest => dest.Specialty, opt => opt.MapFrom(src => src.Doctor.UserMedicalLicenses.FirstOrDefault().MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
+            .ForMember(dest => dest.AccessGranted, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Doctor.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Doctor.LastName))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Doctor.UserPhoto.Photo.Url));
 
         CreateMap<AppUser, NurseDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))

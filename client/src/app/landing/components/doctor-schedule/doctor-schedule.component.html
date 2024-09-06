@@ -210,7 +210,20 @@
                                 } @else {
                                     <div class="stepper-label">
                                         <h3 class="stepper-title">Confirmar</h3>
-                                        <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de agendar</div>
+                                        <div class="stepper-desc fw-semibold mb-4">Confirma todos los datos seleccionados antes de agendar</div>
+                                        @if (!doctor()?.hasPatientInformationAccess) {
+                                            <div class="fv-row fv-plugins-icon-container">
+                                                <div controlCheck formControlName="hasPatientInformationAccess" [submitted]="submitted">
+                                                    <span class="form-check-label fw-semibold text-gray-700 fs-7">
+                                                        Doy mi consentimiento para que el especialista tenga acceso a mi información personal e historial clínico.
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        } @else {
+                                            <span class="form-check-label fw-semibold text-gray-700 fs-7 mb-4">
+                                                *Este especialista ya tiene acceso a tu información personal e historial clínico.
+                                            </span>
+                                        }
                                         <button type="submit" class="btn btn-success">Agendar</button>
                                     </div>
                                 }

@@ -11,11 +11,12 @@ import { AddPaymentMethodComponent } from 'src/app/account/components/account-bi
 import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';
 import { DoctorScheduleTabComponent } from '../doctor-schedule-tab/doctor-schedule-tab.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 
 @Component({
   selector: 'app-doctor-schedule',
   standalone: true,
-  imports: [MaterialModule, ControlSelectComponent, ReactiveFormsModule, SignInBasicFormComponent],
+  imports: [MaterialModule, ControlSelectComponent, ReactiveFormsModule, SignInBasicFormComponent, ControlCheckComponent],
   templateUrl: './doctor-schedule.component.html',
   styleUrl: './doctor-schedule.component.scss'
 })
@@ -44,6 +45,7 @@ export class DoctorScheduleComponent implements OnInit {
     medicalInsuranceCompanyId: [0],
     paymentMethodTypeId: [0, Validators.min(1)],
     stripePaymentMethodId: [''],
+    hasPatientInformationAccess: [false, Validators.requiredTrue],
   });
 
   constructor() {
@@ -84,6 +86,12 @@ export class DoctorScheduleComponent implements OnInit {
         if (this.doctor()!.paymentMethods.length === 1) {
           this.form.patchValue({
             paymentMethodTypeId: this.doctor()!.paymentMethods[0].id,
+          });
+        }
+
+        if (this.doctor()!.hasPatientInformationAccess) {
+          this.form.patchValue({
+            hasPatientInformationAccess: true,
           });
         }
       }

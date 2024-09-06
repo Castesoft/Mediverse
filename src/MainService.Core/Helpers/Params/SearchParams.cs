@@ -5,4 +5,5 @@ public class SearchParams : BaseParams
     public string Location { get; set; }
     public double? Latitude { get; set; } = null;
     public double? Longitude { get; set; } = null;
+    public int PatientId { get; set; } = 0;
 }

@@ -176,9 +176,19 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
                 if (payment.Status != "succeeded") return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
             }
 
-            if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, doctorId))
+            bool patientExists = await uow.UserRepository.PatientExistsAsync(user.Id, doctorId);
+            Console.WriteLine($"PatientExists: {patientExists}");
+            if (!patientExists)
             {
-                doctor.Patients.Add(new DoctorPatient(request.DoctorId, request.PatientId));
+                doctor.Patients.Add(new DoctorPatient(request.DoctorId, user.Id) { HasPatientInformationAccess = request.HasPatientInformationAccess });
+            }
+            else
+            {
+                var doctorPatient = doctor.Patients.FirstOrDefault(p => p.PatientId == user.Id);
+                if (doctorPatient != null)
+                {
+                    doctorPatient.HasPatientInformationAccess = request.HasPatientInformationAccess;
+                }
             }
         }
 

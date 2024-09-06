@@ -30,6 +30,7 @@ export class Account {
   workSchedules: WorkSchedule[] = [];
   workScheduleSettings?: WorkScheduleSettings;
   doctorClinics: DoctorClinic[] = [];
+  sharedDoctors: Doctor[] = [];
   country!: string;
   state!: string;
   city!: string;
@@ -41,6 +42,24 @@ export class Account {
 
   roles: Role[] = [];
   permissions: string[] = [];
+}
+
+export interface Doctor {
+  id: number;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  createdAt: Date;
+  lastActive: Date;
+  dateOfBirth: Date;
+  email: string;
+  username: string;
+  sex: string;
+  phoneNumber: string;
+  photoUrl: string;
+  age: number;
+  specialty: string;
+  accessGranted: Date;
 }
 
 export interface DoctorClinic {

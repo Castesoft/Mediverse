@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainService.Sqlite.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240905204644_InitialCreate")]
+    [Migration("20240906173429_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -507,6 +507,9 @@ namespace MainService.Sqlite.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("HasPatientInformationAccess")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "PatientId");
 

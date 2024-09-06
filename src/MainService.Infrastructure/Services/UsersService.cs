@@ -47,6 +47,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
             .Include(x => x.DoctorWorkSchedules).ThenInclude(x => x.WorkSchedule)
             .Include(x => x.DoctorWorkScheduleSettings).ThenInclude(x => x.WorkScheduleSettings)
             .Include(x => x.DoctorClinics).ThenInclude(x => x.Clinic).ThenInclude(x => x.ClinicLogo).ThenInclude(x => x.Photo)
+            .Include(x => x.Doctors).ThenInclude(x => x.Doctor).ThenInclude(x => x.UserMedicalLicenses).ThenInclude(x => x.MedicalLicense).ThenInclude(x => x.MedicalLicenseSpecialty).ThenInclude(x => x.Specialty)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         AccountDto itemToReturn = mapper.Map<AppUser, AccountDto>(user);
@@ -55,6 +56,11 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
         itemToReturn.LinkedGoogle = userManager.GetLoginsAsync(user).Result.Any(x => x.LoginProvider == "GOOGLE");
 
         itemToReturn.Token = await tokenService.CreateToken(user);
+
+        itemToReturn.SharedDoctors = user.Doctors
+            .Where(d => d.HasPatientInformationAccess)
+            .Select(mapper.Map<DoctorDto>)
+            .ToList();
 
         return itemToReturn;
     }

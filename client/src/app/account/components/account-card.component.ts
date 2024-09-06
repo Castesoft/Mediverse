@@ -146,6 +146,9 @@ import { AccountService } from 'src/app/_services/account.service';
             <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Generales</a>
           </li>
           <li class="nav-item mt-2">
+            <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/clinical-history']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Expediente Clínico</a>
+          </li>
+          <li class="nav-item mt-2">
             <a class="nav-link text-active-primary ms-0 me-10 py-5" [routerLink]="['/account/settings']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">Configuración</a>
           </li>
           <li class="nav-item mt-2">

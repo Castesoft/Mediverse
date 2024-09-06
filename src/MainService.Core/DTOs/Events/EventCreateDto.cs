@@ -34,5 +34,6 @@ namespace MainService.Core.DTOs.Events
         public int PaymentMethodTypeId { get; set; }
         public int MedicalInsuranceCompanyId { get; set; }
         public string StripePaymentMethodId { get; set; }
+        public bool HasPatientInformationAccess { get; set; }
     }
 }

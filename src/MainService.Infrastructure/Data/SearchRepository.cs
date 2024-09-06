@@ -31,6 +31,8 @@ namespace MainService.Infrastructure.Data
                     .ThenInclude(x => x.User)
                 .Include(x => x.DoctorMedicalInsuranceCompanies)
                     .ThenInclude(x => x.MedicalInsuranceCompany)
+                .Include(x => x.Patients)
+                    .ThenInclude(x => x.Patient)
                 .AsQueryable();
 
             query = query.Where(x => x.UserMedicalLicenses.Count != 0);
@@ -92,6 +94,8 @@ namespace MainService.Infrastructure.Data
                     .ThenInclude(x => x.User)
                 .Include(x => x.DoctorMedicalInsuranceCompanies)
                     .ThenInclude(x => x.MedicalInsuranceCompany)
+                .Include(x => x.Patients)
+                    .ThenInclude(x => x.Patient)
                 .Where(x => x.Id == id)
                 .AsQueryable();
 

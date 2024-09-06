@@ -17,6 +17,7 @@ import { AccountSchedulesComponent } from './components/account-schedules/accoun
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { SatisfactionSurveyModalComponent } from './components/satisfaction-survey-modal/satisfaction-survey-modal.component';
+import { AccountClinicalHistoryComponent } from './components/account-clinical-history/account-clinical-history.component';
 
 @Component({
   selector: 'account-main-route',
@@ -104,6 +105,7 @@ export const itemResolver: ResolveFn<Account | null> = (route, state) => {
     { path: '', component: AccountComponent, resolve: { item: itemResolver },
       children: [
         { path: '', component: AccountOverviewComponent, data: { breadcrumb: 'Mi Cuenta', }, title: 'Mi Cuenta',  },
+        { path: 'clinical-history', component: AccountClinicalHistoryComponent, data: { breadcrumb: 'Historial Clínico', }, title: 'Historial Clínico',  },
         { path: 'settings', component: AccountSettingsComponent, data: { breadcrumb: 'Configuración', }, title: 'Configuración', },
         { path: 'billing', component: AccountBillingComponent, data: { breadcrumb: 'Facturación', }, title: 'Facturación', },
         { path: 'payments', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', },

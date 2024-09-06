@@ -28,6 +28,7 @@ export interface DoctorSearchResult {
     photoUrl: string;
     email: string;
     phoneNumber: string;
+    hasPatientInformationAccess: boolean;
 }
 
 export interface DoctorReview {

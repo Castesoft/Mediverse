@@ -8,6 +8,7 @@ public class DoctorPatient
     public AppUser Patient { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool HasPatientInformationAccess { get; set; } = false;
 
     public DoctorPatient() {}
 

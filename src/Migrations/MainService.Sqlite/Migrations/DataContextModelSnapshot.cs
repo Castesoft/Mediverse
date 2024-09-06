@@ -505,6 +505,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("HasPatientInformationAccess")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("DoctorId", "PatientId");
 
                     b.HasIndex("PatientId");

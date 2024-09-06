@@ -520,6 +520,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("HasPatientInformationAccess")
+                        .HasColumnType("boolean");
+
                     b.HasKey("DoctorId", "PatientId");
 
                     b.HasIndex("PatientId");
