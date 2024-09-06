@@ -344,6 +344,25 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("CityNeighborhood");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AddressId", "PhotoId");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
+
+                    b.ToTable("ClinicLogo");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
                 {
                     b.Property<int>("NurseId")
@@ -2064,6 +2083,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Neighborhood");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Address")
+                        .WithOne("ClinicLogo")
+                        .HasForeignKey("MainService.Models.Entities.ClinicLogo", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Photo", "Photo")
+                        .WithOne("ClinicLogo")
+                        .HasForeignKey("MainService.Models.Entities.ClinicLogo", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Photo");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Address", "Clinic")
@@ -3070,6 +3108,8 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Address", b =>
                 {
+                    b.Navigation("ClinicLogo");
+
                     b.Navigation("ClinicNurses");
 
                     b.Navigation("DoctorClinic");
@@ -3279,6 +3319,8 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>
                 {
+                    b.Navigation("ClinicLogo");
+
                     b.Navigation("DoctorBannerPhoto");
 
                     b.Navigation("DoctorSignature");

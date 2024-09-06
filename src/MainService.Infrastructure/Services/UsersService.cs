@@ -46,6 +46,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
             .Include(x => x.DoctorPaymentMethodTypes).ThenInclude(x => x.PaymentMethodType)
             .Include(x => x.DoctorWorkSchedules).ThenInclude(x => x.WorkSchedule)
             .Include(x => x.DoctorWorkScheduleSettings).ThenInclude(x => x.WorkScheduleSettings)
+            .Include(x => x.DoctorClinics).ThenInclude(x => x.Clinic).ThenInclude(x => x.ClinicLogo).ThenInclude(x => x.Photo)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         AccountDto itemToReturn = mapper.Map<AppUser, AccountDto>(user);

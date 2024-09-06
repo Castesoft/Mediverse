@@ -22,6 +22,7 @@ namespace MainService.Models.Entities
         public string CrossStreet1 { get; set; }
         public string CrossStreet2 { get; set; }
 
+        public ClinicLogo ClinicLogo { get; set; }
         public DoctorClinic DoctorClinic { get; set; }
         public ICollection<EventClinic> EventClinics { get; set; } = [];
         public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];

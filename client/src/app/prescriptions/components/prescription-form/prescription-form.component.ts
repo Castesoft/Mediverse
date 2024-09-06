@@ -25,13 +25,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ControlTextareaComponent } from 'src/app/_forms/control-textarea.component';
 import { TabDirective, TabsetComponent } from "ngx-bootstrap/tabs";
 import { CommonModule } from '@angular/common';
+import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import { DoctorClinic } from 'src/app/_models/account';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { ClinicSelectorModalComponent } from '../clinic-selector-modal/clinic-selector-modal.component';
+
 @Component({
   selector: 'app-prescription-form',
   standalone: true,
   imports: [
     ReactiveFormsModule, FaIconComponent, BootstrapModule,
     PatientSelectTypeaheadComponent, PatientSelectDisplayCardComponent, PrescriptionProductsTableComponent,
-    EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, ControlTextareaComponent, CommonModule
+    EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, ControlTextareaComponent, CommonModule,
+    UserProfilePictureComponent,
+    TooltipModule
   ],
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss'
@@ -48,6 +56,7 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   icons = inject(IconsService);
   fb = inject(FormBuilder);
   router = inject(Router);
+  private bsModalService = inject(BsModalService);
 
   @HostBinding('class') get hostClass() {
     if (this.view() === 'page') return 'pt-9 pb-9';
@@ -63,6 +72,8 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   _key = createId();
 
   item = input<Prescription>();
+  mainClinic: DoctorClinic | undefined = undefined;
+  selectedClinic: DoctorClinic | undefined = undefined;
 
   prescription: Prescription = {
     id: 0,
@@ -71,7 +82,8 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
     items: [],
     isSelected: false,
     isCollapsed: true,
-    createdAt: new Date()
+    createdAt: new Date(),
+    logoUrl: ''
   }
 
   patient?: User;
@@ -100,6 +112,9 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   currentDate = new Date();
 
   ngOnInit() {
+    this.mainClinic = this.accountService.current()?.doctorClinics.find(x => x.isMain);
+    this.selectedClinic = this.mainClinic;
+
     if (this.use() !== 'create' && this.item()) {
       this.prescription = this.item()!;
       this.patient = this.item()?.patient;
@@ -276,5 +291,16 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  openClinicSelector() {
+    const clinicSelectorModalRef = this.bsModalService.show(ClinicSelectorModalComponent, {
+      initialState: {
+        title: 'Seleccionar Clínica',
+        onClinicSelected: (clinic: DoctorClinic) => {
+          this.selectedClinic = clinic;
+        }
+      },
+    });
   }
 }

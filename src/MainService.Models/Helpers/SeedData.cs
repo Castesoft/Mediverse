@@ -1361,6 +1361,13 @@ namespace MainService.Models.Helpers
             {
                 item.Name = GetRandomClinicName();
                 item.Description = GetRandomClinicDescription();
+                item.ClinicLogo = new()
+                {
+                    Photo = new()
+                    {
+                        Url = GetRandomClinicLogo(),
+                    }
+                };
             }
 
             for (int i = 0; i < count; i++)
@@ -1415,6 +1422,19 @@ namespace MainService.Models.Helpers
                     "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad",
                     "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer", "Hospital de la Tercera Edad", "Hospital de la Mujer",
                 ];
+
+            return data[random.Next(data.Length)];
+        }
+
+        public static string GetRandomClinicLogo()
+        {
+            string[] data = [
+                "https://upload.wikimedia.org/wikipedia/commons/0/02/LogoClinicaFirma.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/3/3e/Logo-Medway.jpg",
+                "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a61fcb2f-59fb-4c77-bdc1-3aaf3b16ac6a/d26f8p5-c468201e-d69b-4bab-bd5a-c988b35d1b73.jpg/v1/fill/w_600,h_621,q_75,strp/logo_clinica_veterinaria_by_rvr03_d26f8p5-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2E2MWZjYjJmLTU5ZmItNGM3Ny1iZGMxLTNhYWYzYjE2YWM2YVwvZDI2ZjhwNS1jNDY4MjAxZS1kNjliLTRiYWItYmQ1YS1jOTg4YjM1ZDFiNzMuanBnIiwiaGVpZ2h0IjoiPD02MjEiLCJ3aWR0aCI6Ijw9NjAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLndhdGVybWFyayJdLCJ3bWsiOnsicGF0aCI6Ilwvd21cL2E2MWZjYjJmLTU5ZmItNGM3Ny1iZGMxLTNhYWYzYjE2YWM2YVwvcnZyMDMtNC5wbmciLCJvcGFjaXR5Ijo5NSwicHJvcG9ydGlvbnMiOjAuNDUsImdyYXZpdHkiOiJjZW50ZXIifX0.ouPtKJlISqnzpfObqeYdbjnmfj-Gv2uBLiKsOmpPAKc",
+                "https://upload.wikimedia.org/wikipedia/commons/4/4a/Cl%C3%ADnica_Foios.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/a/a0/LOGO_clinica_holistica.jpg",
+            ];
 
             return data[random.Next(data.Length)];
         }

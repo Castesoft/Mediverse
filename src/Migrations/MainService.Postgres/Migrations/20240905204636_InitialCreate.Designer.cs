@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240830230247_InitialCreate")]
+    [Migration("20240905204636_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -360,6 +360,25 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("CityNeighborhood");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AddressId", "PhotoId");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
+
+                    b.ToTable("ClinicLogo");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
@@ -2132,6 +2151,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Neighborhood");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Address")
+                        .WithOne("ClinicLogo")
+                        .HasForeignKey("MainService.Models.Entities.ClinicLogo", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Photo", "Photo")
+                        .WithOne("ClinicLogo")
+                        .HasForeignKey("MainService.Models.Entities.ClinicLogo", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Photo");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Address", "Clinic")
@@ -3138,6 +3176,8 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Address", b =>
                 {
+                    b.Navigation("ClinicLogo");
+
                     b.Navigation("ClinicNurses");
 
                     b.Navigation("DoctorClinic");
@@ -3347,6 +3387,8 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>
                 {
+                    b.Navigation("ClinicLogo");
+
                     b.Navigation("DoctorBannerPhoto");
 
                     b.Navigation("DoctorSignature");

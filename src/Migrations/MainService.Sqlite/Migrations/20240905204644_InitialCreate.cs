@@ -1344,6 +1344,30 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClinicLogo",
+                columns: table => new
+                {
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicLogo", x => new { x.AddressId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_ClinicLogo_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClinicLogo_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DoctorBannerPhoto",
                 columns: table => new
                 {
@@ -2009,6 +2033,18 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClinicLogo_AddressId",
+                table: "ClinicLogo",
+                column: "AddressId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicLogo_PhotoId",
+                table: "ClinicLogo",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClinicNurses_ClinicId",
                 table: "ClinicNurses",
                 column: "ClinicId");
@@ -2417,6 +2453,9 @@ namespace MainService.Sqlite.Migrations
 
             migrationBuilder.DropTable(
                 name: "CityNeighborhood");
+
+            migrationBuilder.DropTable(
+                name: "ClinicLogo");
 
             migrationBuilder.DropTable(
                 name: "ClinicNurses");

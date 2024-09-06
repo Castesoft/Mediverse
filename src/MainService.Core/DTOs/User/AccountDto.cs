@@ -33,4 +33,5 @@ public class AccountDto
     public List<UserMedicalLicenseDto> MedicalLicenses { get; set; } = [];
     public List<WorkScheduleDto> WorkSchedules { get; set; } = [];
     public WorkScheduleSettingsDto WorkScheduleSettings { get; set; }
+    public DoctorClinicDto[] DoctorClinics { get; set; }
 }

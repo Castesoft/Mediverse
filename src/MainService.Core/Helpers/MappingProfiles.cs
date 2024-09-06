@@ -43,7 +43,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
             .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
-            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode));
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode))
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.ClinicLogo.Photo.Url));
 
         CreateMap<Event, SatisfactionSurveyDto>()
             .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id))
@@ -94,7 +95,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.City))
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street))
             .ForMember(dest => dest.WorkSchedules, opt => opt.MapFrom(src => src.DoctorWorkSchedules.Select(x => x.WorkSchedule)))
-            .ForMember(dest => dest.WorkScheduleSettings, opt => opt.MapFrom(src => src.DoctorWorkScheduleSettings.WorkScheduleSettings));
+            .ForMember(dest => dest.WorkScheduleSettings, opt => opt.MapFrom(src => src.DoctorWorkScheduleSettings.WorkScheduleSettings))
+            .ForMember(dest => dest.DoctorClinics, opt => opt.MapFrom(src => src.DoctorClinics.Select(x => x.Clinic)));
 
         CreateMap<WorkSchedule, WorkScheduleDto>();
         CreateMap<WorkScheduleSettings, WorkScheduleSettingsDto>();
@@ -198,7 +200,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorPrescription.Doctor))
             .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.EventPrescription.Event))
             .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
-            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems));
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url));
 
         CreateMap<PrescriptionUpdateDto, Prescription>()
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));

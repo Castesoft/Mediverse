@@ -21,6 +21,7 @@ export class Prescription {
   patient?: User;
   event?: Event;
   createdAt!: Date;
+  logoUrl!: string;
 
   isSelected = false;
   isCollapsed = true;

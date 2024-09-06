@@ -29,6 +29,7 @@ export class Account {
   requireAnticipatedCardPayments!: boolean;
   workSchedules: WorkSchedule[] = [];
   workScheduleSettings?: WorkScheduleSettings;
+  doctorClinics: DoctorClinic[] = [];
   country!: string;
   state!: string;
   city!: string;
@@ -40,6 +41,19 @@ export class Account {
 
   roles: Role[] = [];
   permissions: string[] = [];
+}
+
+export interface DoctorClinic {
+  id: number;
+  isMain: boolean;
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  zipcode: string;
+  latitude: number;
+  longitude: number;
+  logoUrl: string;
 }
 
 export interface MedicalLicense {

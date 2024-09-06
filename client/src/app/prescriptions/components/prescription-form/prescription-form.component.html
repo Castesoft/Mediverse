@@ -1,8 +1,11 @@
 <form [formGroup]="formGroup" class="prescription-pad" [id]="componentId()">
   <div class="prescription-header">
     <div class="logo">
-      <img src="media/logos/logo-compact.svg" alt="Logo" />
-      <span class="ms-2 fs-3 fw-bold">Mediverse</span>
+      @if (use() === 'create') {
+        <img [src]="selectedClinic?.logoUrl" alt="Logo" />
+      } @else {
+        <img [src]="item()?.logoUrl" alt="Logo" />
+      }
     </div>
     <div class="doctor-info">
       <p class="fw-bold">
@@ -16,14 +19,24 @@
   <div class="prescription-body">
     <div class="patient-info-container">
       <div class="patient-info">
-        <label>Paciente:</label>
+        <p class="fw-bold mb-0 fs-6">Paciente:</p>
         @if (patient) {
           <div class="d-flex align-items-center">
-            <div
-              [item]="patient"
-              [key]="selectedPatientKey"
-              [inline]="true"
-              patientSelectDisplayCard></div>
+            <div class="d-flex flex-grow-1 justify-content-start align-items-center">
+              <a class="symbol symbol-50px symbol-circle">
+                <app-user-profile-picture 
+                  [firstName]="patient!.firstName"
+                  [photoUrl]="patient!.photoUrl ?? ''"
+                ></app-user-profile-picture>
+              </a>
+              <div class="ms-4 w-100">
+                <p class="mb-0 fs-6">
+                  
+                  <b class="mb-0 me-4">{{ patient!.fullName }}</b>
+                  {{ patient!.sex }} <span class="text-gray-300">|</span> {{ patient!.age }} años
+                </p>
+              </div>
+            </div>
               @if (use() === 'create') {
                 <i class="ki-duotone ki-pencil me-6 fs-4 cursor-pointer" (click)="patient = undefined">
                   <span class="path1"></span>
@@ -42,8 +55,13 @@
       </div>
   
       <div class="prescription-date">
-        <p class="mb-0 me-2">{{ accountService.current()?.city }},</p>
-        <span>{{ currentDate | date:'dd/MM/yyyy' }}</span>
+        <p class="mb-0">
+          @if (use() === 'create') {
+            {{ selectedClinic?.city }}, {{ currentDate | date:'dd/MM/yyyy' }}
+          } @else {
+            {{ item()?.clinic!.city }}, {{ item()?.createdAt | date:'dd/MM/yyyy' }}
+          }
+        </p>
       </div>
     </div>
 
@@ -70,14 +88,34 @@
 
   <div class="prescription-footer">
     <div class="doctor-info">
-      <p class="mb-0">{{ accountService.current()?.address }}</p>
-      <p class="mb-0">{{ accountService.current()?.city }}, {{ accountService.current()?.state }}, {{ accountService.current()?.country }}</p>
+      @if (use() === 'create') {
+        <div class="d-flex align-items-center">
+          <p class="mb-0 me-2">{{ selectedClinic?.street }}</p>
+          <i class="ki-duotone ki-pencil fs-6 cursor-pointer" 
+             (click)="openClinicSelector()"
+             [tooltip]="'Cambiar clinica'">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+        </div>
+      } @else {
+        <p class="mb-0">{{ item()?.clinic!.street }}</p>
+      }
+      <p class="mb-0">
+        @if (use() === 'create') {
+          {{ selectedClinic?.city }}, {{ selectedClinic?.state }}, {{ selectedClinic?.country }}
+        } @else {
+          {{ item()?.clinic!.city }}, {{ item()?.clinic!.state }}, {{ item()?.clinic!.country }}
+        }
+      </p>
       <p class="mb-0">Tel: {{ accountService.current()?.phoneNumberCountryCode }} {{ accountService.current()?.phoneNumber }}</p>
       <p class="mb-0">{{ accountService.current()?.email }}</p>
     </div>
     <div class="doctor-signature pt-5">
-      <hr>
-      <p>Firma del médico</p>
+      <div class="doctor-signature-line">
+        <hr>
+        <p>Firma del médico</p>
+      </div>
       <div class="doctor-signature-info">
         <p class="mb-0">Cédula Profesional: {{ accountService.current()?.medicalLicenses![0].licenseNumber }}</p>
         <p class="mb-0">Cédula de Especialidad: {{ accountService.current()?.medicalLicenses![0].specialtyLicense }}</p>

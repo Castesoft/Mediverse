@@ -80,23 +80,85 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
   }
 
   async downloadPrescription(item: Prescription) {
-    // Wait for Angular to update the view
-    await new Promise(resolve => setTimeout(resolve, 100));
+    item.isCollapsed = true;
+
+    await new Promise(resolve => setTimeout(resolve, 400));
 
     const prescriptionElement = document.getElementById(`prescription-form-${item.id}`);
     
     if (prescriptionElement) {
-      const canvas = await html2canvas(prescriptionElement);
+      const options = {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        logging: true,
+        letterRendering: true,
+        windowWidth: 1024,
+      };
+
+      const canvas = await html2canvas(prescriptionElement, options);
+      
+      const pdfWidth = 297;
+      const pdfHeight = 210;
+      const pdf = new jsPDF('l', 'mm', [pdfWidth, pdfHeight]);
+
       const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
       
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [canvas.width, canvas.height]
-      });
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      pdf.save(`prescription-${item.id}.pdf`);
+      pdf.save(`${item.patient!.fullName} - ${item.createdAt}.pdf`);
+    } else {
+      console.error('Prescription form element not found');
+    }
+  }
+
+  async printPrescription(item: Prescription) {
+    item.isCollapsed = true;
+
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    const prescriptionElement = document.getElementById(`prescription-form-${item.id}`);
+    
+    if (prescriptionElement) {
+      const options = {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        logging: true,
+        letterRendering: true,
+        windowWidth: 1024,
+      };
+
+      const canvas = await html2canvas(prescriptionElement, options);
+      const imgData = canvas.toDataURL('image/png');
+
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Imprimir Receta</title>
+              <style>
+                body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+                img { max-width: 100%; max-height: 100%; }
+              </style>
+            </head>
+            <body>
+              <img src="${imgData}" />
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        
+        printWindow.onload = () => {
+          printWindow.print();
+          printWindow.onafterprint = () => {
+            printWindow.close();
+          };
+        };
+      } else {
+        console.error('Unable to open print window');
+      }
     } else {
       console.error('Prescription form element not found');
     }

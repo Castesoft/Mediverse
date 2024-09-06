@@ -21,10 +21,16 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
     public async Task<PrescriptionDto> GetDtoByIdAsync(int id)
     {
         return await context.Prescriptions
-            .Include(x => x.DoctorPrescription).ThenInclude(x => x.Doctor)
-            .Include(x => x.PrescriptionItems).ThenInclude(x => x.Item)
-            .Include(x => x.EventPrescription).ThenInclude(x => x.Event).ThenInclude(x => x.EventClinic)
-            .ThenInclude(x => x.Clinic)
+            .Include(x => x.DoctorPrescription)
+                .ThenInclude(x => x.Doctor)
+            .Include(x => x.PrescriptionItems)
+                .ThenInclude(x => x.Item)
+            .Include(x => x.EventPrescription)
+                .ThenInclude(x => x.Event)
+                .ThenInclude(x => x.EventClinic)
+                .ThenInclude(x => x.Clinic)
+                .ThenInclude(x => x.ClinicLogo)
+                .ThenInclude(x => x.Photo)
             .Include(x => x.PatientPrescription).ThenInclude(x => x.Patient)
             .ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
@@ -51,6 +57,12 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
             .Include(x => x.PrescriptionItems)
             .Include(x => x.PrescriptionOrder)
             .ThenInclude(x => x.Order)
+            .Include(x => x.EventPrescription)
+            .ThenInclude(x => x.Event)
+            .ThenInclude(x => x.EventClinic)
+            .ThenInclude(x => x.Clinic)
+            .ThenInclude(x => x.ClinicLogo)
+            .ThenInclude(x => x.Photo)
             .AsQueryable();
 
         IEnumerable<string> roles = user.GetRoles();

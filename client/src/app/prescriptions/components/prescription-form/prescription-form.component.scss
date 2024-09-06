@@ -82,22 +82,18 @@ border-width-1px {
 
 .prescription-body {
   .patient-info-container {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
   }
 
   .patient-info {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
     align-items: center;
-    flex: 1;
-    div {
-      flex: 1;
-    }
   }
 
   .prescription-date {
-    display: flex;
-    align-items: center;
+    align-self: center;
   }
 
   label {
@@ -126,19 +122,20 @@ border-width-1px {
 
 .prescription-footer {
   margin-top: 40px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
 
   .doctor-signature {
-    min-width: 200px;
-    margin-left: auto;
     text-align: center;
+    
+    .doctor-signature-line {
+      width: 300px;
+      margin: 0 0 0 auto;
+    }
 
     .doctor-signature-info {
-      display: flex;
-      flex-direction: column;
-      align-items: end;
+      text-align: right;
     }
 
     hr {
