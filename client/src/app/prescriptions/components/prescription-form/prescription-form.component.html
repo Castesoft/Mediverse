@@ -2,9 +2,9 @@
   <div class="prescription-header">
     <div class="logo">
       @if (use() === 'create') {
-        <img [src]="selectedClinic?.logoUrl" alt="Logo" />
+        <img [src]="selectedClinic?.logoUrl ?? 'media/logos/logo-compact.svg'" alt="Logo" />
       } @else {
-        <img [src]="item()?.logoUrl" alt="Logo" />
+        <img [src]="item()?.logoUrl ?? 'media/logos/logo-compact.svg'" alt="Logo" />
       }
     </div>
     <div class="doctor-info">
@@ -90,7 +90,7 @@
     <div class="doctor-info">
       @if (use() === 'create') {
         <div class="d-flex align-items-center">
-          <p class="mb-0 me-2">{{ selectedClinic?.street }}</p>
+          <p class="mb-0 me-2">{{ selectedClinic?.street }} {{ selectedClinic?.exteriorNumber }}, {{ selectedClinic?.neighborhood }}</p> 
           <i class="ki-duotone ki-pencil fs-6 cursor-pointer" 
              (click)="openClinicSelector()"
              [tooltip]="'Cambiar clinica'">
@@ -99,7 +99,7 @@
           </i>
         </div>
       } @else {
-        <p class="mb-0">{{ item()?.clinic!.street }}</p>
+        <p class="mb-0">{{ item()?.clinic!.street }} {{ item()?.clinic!.exteriorNumber }}, {{ item()?.clinic!.neighborhood }}</p>
       }
       <p class="mb-0">
         @if (use() === 'create') {

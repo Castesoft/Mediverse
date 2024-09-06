@@ -47,6 +47,9 @@ export interface DoctorClinic {
   id: number;
   isMain: boolean;
   street: string;
+  neighborhood: string;
+  exteriorNumber: string;
+  interiorNumber: string;
   city: string;
   state: string;
   country: string;

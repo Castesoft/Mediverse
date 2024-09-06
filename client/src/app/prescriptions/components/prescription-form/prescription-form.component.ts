@@ -259,7 +259,8 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
             productId: item.itemId || null,
             quantity: item.quantity
           }
-        })
+        }),
+        clinicId: this.selectedClinic?.id || null
       };
 
       const doctorId = this.accountService.current()?.id;

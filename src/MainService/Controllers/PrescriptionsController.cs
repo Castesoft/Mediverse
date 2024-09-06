@@ -73,13 +73,24 @@ public class PrescriptionsController(
         if (patient == null) return NotFound("El paciente no existe");
 
         Event eventItem = null;
-
         if (request.EventId != null)
         {
             eventItem = await uow.EventRepository.GetByIdAsync(request.EventId.Value);
             if (eventItem == null) return NotFound("La cita no existe");
             if (eventItem.PatientEvent.PatientId != request.PatientId)
                 return BadRequest("La cita no corresponde al paciente");
+        } else {
+            if (request.ClinicId == null) return BadRequest("ClinicId is required");
+            var clinic = await uow.AddressRepository.GetByIdAsync(request.ClinicId.Value);
+            if (clinic == null) return NotFound("La clínica no existe");
+
+            eventItem = new Event
+            {
+                EventClinic = new EventClinic
+                {
+                    Clinic = clinic
+                }
+            };
         }
 
         var newPrescription = new Prescription
@@ -90,7 +101,7 @@ public class PrescriptionsController(
             },
             ExchangeAmount = request.ExchangeAmount ?? 1,
             PrescriptionItems = new List<PrescriptionItem>(),
-            Notes = request.Notes
+            Notes = request.Notes,
         };
 
         var foreignItems = new List<OrderItem>();

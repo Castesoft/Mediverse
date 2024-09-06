@@ -10,6 +10,9 @@ public class PrescriptionCreateDto
     public int PatientId { get; set; }
     
     public int? EventId { get; set; }
+
+    [Required(ErrorMessage = "ClinicId is required")]
+    public int? ClinicId { get; set; }
     public int? ExchangeAmount { get; set; }
     public string Notes { get; set; }
 }
