@@ -37,7 +37,7 @@
                 </p>
               </div>
             </div>
-              @if (use() === 'create') {
+              @if (use() === 'create' && !initialValues()?.patient) {
                 <i class="ki-duotone ki-pencil me-6 fs-4 cursor-pointer" (click)="patient = undefined">
                   <span class="path1"></span>
                   <span class="path2"></span>
@@ -91,12 +91,14 @@
       @if (use() === 'create') {
         <div class="d-flex align-items-center">
           <p class="mb-0 me-2">{{ selectedClinic?.street }} {{ selectedClinic?.exteriorNumber }}, {{ selectedClinic?.neighborhood }}</p> 
-          <i class="ki-duotone ki-pencil fs-6 cursor-pointer" 
-             (click)="openClinicSelector()"
-             [tooltip]="'Cambiar clinica'">
-            <span class="path1"></span>
-            <span class="path2"></span>
-          </i>
+          @if (!this.initialValues()!.clinicId) {
+            <i class="ki-duotone ki-pencil fs-6 cursor-pointer" 
+               (click)="openClinicSelector()"
+               [tooltip]="'Cambiar clinica'">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+          }
         </div>
       } @else {
         <p class="mb-0">{{ item()?.clinic!.street }} {{ item()?.clinic!.exteriorNumber }}, {{ item()?.clinic!.neighborhood }}</p>

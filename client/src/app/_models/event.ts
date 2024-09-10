@@ -10,6 +10,7 @@ import { Address } from "src/app/addresses/addresses.config";
 import { PaymentMethodType } from './paymentMethodType';
 import { MedicalInsuranceCompany } from './medicalInsuranceCompany';
 import { Payment } from './payment';
+import { Prescription } from './prescription';
 
 const subject = 'event';
 
@@ -28,7 +29,10 @@ export class Event {
   paymentMethodType?: PaymentMethodType;
   medicalInsuranceCompany?: MedicalInsuranceCompany;
   payments?: Payment[];
-
+  evolution?: string;
+  nextSteps?: string;
+  prescriptions?: Prescription[];
+  
   createdAt!: Date;
   isSelected = false;
 }

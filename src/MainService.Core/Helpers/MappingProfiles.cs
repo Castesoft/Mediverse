@@ -177,7 +177,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DateTo, opt => opt.MapFrom(src => src.DateTo))
             .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.EventPaymentMethodType.PaymentMethodType))
             .ForMember(dest => dest.MedicalInsuranceCompany, opt => opt.MapFrom(src => src.EventMedicalInsuranceCompany.MedicalInsuranceCompany))
-            .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => src.EventPayments.Select(x => x.Payment)));
+            .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => src.EventPayments.Select(x => x.Payment)))
+            .ForMember(dest => dest.Prescriptions, opt => opt.MapFrom(src => src.EventPrescriptions.Select(x => x.Prescription)));
 
         CreateMap<AppUser, EventDoctorFieldsDto>()
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.DoctorClinics));

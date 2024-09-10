@@ -1,7 +1,10 @@
-<div class="card">
-    <div class="card-header card-header-stretch border-bottom border-gray-200">
-      <div class="card-title">
-        <h3 class="fw-bold m-0">{{ title() }}</h3>
+
+<div [class.card]="view() === 'card'">
+    <div  [class]="view() === 'card' ? 'card-header card-header-stretch border-bottom border-gray-200' : ''">
+      <div [class]="view() === 'card' ? 'card-title' : ''">
+        @if (view() === 'card') {
+          <h3 class="fw-bold m-0">{{ title() }}</h3>
+        }
       </div>
       @if (showTabs()) {
         <div class="card-toolbar m-0">

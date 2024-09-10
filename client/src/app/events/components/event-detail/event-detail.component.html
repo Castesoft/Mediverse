@@ -1,0 +1,179 @@
+﻿@if (item()) {
+<div class="fs-6 d-flex flex-column">
+  @if (summaryMode) {
+    <app-event-summary [item]="item()" [summaryMode]="summaryMode"></app-event-summary>
+  } @else {
+    <div class="row">
+      <div class="col-3">
+        <app-event-summary [item]="item()" [summaryMode]="summaryMode" orientation="vertical"></app-event-summary>
+      </div>
+      <div class="col-9">
+        <div class="card mb-xl-8">
+          <div class="card-header card-header-stretch border-bottom border-gray-200">
+            <h3 class="card-title">
+              <span class="card-label fw-bolder text-gray-900 fs-2">
+                @if (activeTab === 'evolution') {
+                  Evolucion del paciente
+                } @else if (activeTab === 'recipes') {
+                  Recetas
+                } @else if (activeTab === 'nextSteps') {
+                  Próximos pasos
+                }
+              </span>
+            </h3>
+            <div class="card-toolbar m-0">
+              <ul
+              class="nav nav-stretch nav-line-tabs border-transparent"
+              role="tablist"
+              >
+              <li class="nav-item" role="presentation">
+                  <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeTab === 'evolution'" (click)="onSelectTab('evolution')">Evolución</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeTab === 'recipes'" (click)="onSelectTab('recipes')">Recetas</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;" [class.active]="activeTab === 'nextSteps'" (click)="onSelectTab('nextSteps')">Próximos pasos</a>
+              </li>
+              </ul>
+            </div>
+          </div>
+          <div class="separator mb-3 opacity-75"></div>
+          <div class="card-body">
+            <form [formGroup]="form" (ngSubmit)="onSave(activeTab)">
+              @if (activeTab === 'evolution') {
+                @if (isEvolutionEditing) {
+                  <quill-editor placeholder="Escribe aquí la evolución del paciente..." [trimOnValidation]="true" formControlName="evolution"></quill-editor>
+                  <button type="submit" class="btn btn-primary mt-3 float-end">Guardar</button>
+                } @else {
+                  <quill-editor placeholder="Escribe aquí la evolución del paciente..." [trimOnValidation]="true" formControlName="evolution"
+                    [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
+                  ></quill-editor>
+                  <button type="button" class="btn btn-primary mt-3 float-end" (click)="isEvolutionEditing = true">Editar</button>
+                }
+              } @else if (activeTab === 'recipes') {
+                @if (item()!.prescriptions && item()!.prescriptions!.length > 0) {
+                  <div tableWrapper>
+                    <table
+                      prescriptionsTable
+                      [data]="item()!.prescriptions ?? []"
+                      [mode]="'view'"
+                      [key]="'event-recipe'"
+                    ></table>
+                  </div>
+                } @else {
+                  <div class="text-center py-5">
+                    <i class="fas fa-prescription fa-3x text-muted mb-3"></i>
+                    <p class="fs-5 text-muted">Aún no existen recetas para esta cita.</p>
+                  </div>
+                }
+
+                <h2 class="mt-5 mb-3 text-gray-800">Nueva receta</h2>
+
+                <app-prescription-form
+                  [id]="null"
+                  [use]="'create'"
+                  [view]="'inline'"
+                  [key]="'event-recipe'"
+                  [initialValues]="{
+                    clinicId: item()!.clinic?.id,
+                    patient: item()!.patient,
+                    event: item()!
+                  }"
+                ></app-prescription-form>
+              } @else if (activeTab === 'nextSteps') {
+                @if (isNextStepsEditing) {
+                  <quill-editor placeholder="Escribe aquí los próximos pasos del paciente..." [trimOnValidation]="true" formControlName="nextSteps"></quill-editor>
+                  <button type="submit" class="btn btn-primary mt-3 float-end">Guardar</button>
+                } @else {
+                  <quill-editor placeholder="Escribe aquí los próximos pasos del paciente..." [trimOnValidation]="true" formControlName="nextSteps"
+                    [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
+                  ></quill-editor>
+                  <button type="button" class="btn btn-primary mt-3 float-end" (click)="isNextStepsEditing = true">Editar</button>
+                }
+              }
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="card mb-xl-8">
+    <div class="card-header card-header-stretch border-bottom border-gray-200">
+      <h3 class="card-title">
+        <span class="card-label fw-bolder text-gray-900 fs-2">Detalles</span>
+      </h3>
+      <div class="card-toolbar m-0">
+        <ul
+        class="nav nav-stretch nav-line-tabs border-transparent"
+        role="tablist"
+        >
+        <li class="nav-item" role="presentation">
+            <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeDetails === 'general'" (click)="onSelectDetails('general')">General</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeDetails === 'payments'" (click)="onSelectDetails('payments')">Pagos</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;" [class.active]="activeDetails === 'experts'" (click)="onSelectDetails('experts')">Especialistas</a>
+        </li>
+        </ul>
+      </div>
+    </div>
+    <div class="separator mb-3 opacity-75"></div>
+    <div class="card-body">
+      @if (activeDetails === 'general') {
+        <div class="row mb-6">
+          <div class="col-6">
+            <h5 class="text-gray-500 mb-3">Clínica</h5>
+            <div>
+              @if (item().clinic) {
+                {{ item().clinic?.name }}
+                <br>
+                {{ item().clinic?.street }} {{ item().clinic?.exteriorNumber }}, {{ item().clinic?.neighborhood }}
+              } @else {
+                Sin clínica asignada
+              }
+            </div>
+          </div>
+          <div class="col-6">
+            <h5 class="text-gray-500 mb-3">Aseguradora</h5>
+            <div>
+              @if (item().medicalInsuranceCompany) {
+                {{ item().medicalInsuranceCompany?.name }}
+              } @else {
+                Sin aseguradora
+              }
+            </div>
+          </div>
+        </div>
+
+        <h5 class="text-gray-500 mb-3">Servicios solicitados</h5>
+        @if (item()!.service) {
+          <div eventServicesSummary [item]="item()!.service!"></div>
+        }
+        <div class="row mt-2">
+          <div class="col">
+            <p class="fs-5 fw-bold mb-0">IVA (16%)</p>
+          </div>
+          <div class="col text-end fw-bolder">
+            {{ tax | currency : "MXN" }}
+          </div>
+        </div>
+        <div class="separator m-3 opacity-75"></div>
+        <div class="row mt-4">
+          <div class="col">
+            <p class="fs-5 fw-bold mb-3">Total</p>
+          </div>
+          <div class="col text-end fw-bolder">
+            {{ total | currency : "MXN" }}
+          </div>
+        </div>
+      } @else if (activeDetails === 'payments') {
+        <app-payments-table [title]="'Pagos'" [payments]="item()!.payments ?? []" [showTabs]="false" [view]="'inline'"></app-payments-table>
+      }
+    </div>
+  </div>
+</div>
+}

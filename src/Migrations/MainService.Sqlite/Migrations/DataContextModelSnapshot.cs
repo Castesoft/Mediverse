@@ -710,6 +710,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Evolution")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsSatisfactionSurveyCompleted")
                         .HasColumnType("INTEGER");
 
@@ -720,6 +723,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NextSteps")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

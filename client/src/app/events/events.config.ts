@@ -9,7 +9,7 @@ import {Event} from "src/app/_models/event";
 import {GuidService} from "src/app/_services/guid.service";
 import {LayoutModule} from "src/app/_shared/layout.module";
 import {EventNewComponent} from "src/app/events/views";
-import {EventDetailComponent} from "src/app/events/event-detail.component";
+import {EventDetailComponent} from "src/app/events/components/event-detail/event-detail.component";
 import {createId} from "@paralleldrive/cuid2";
 import {Subject, takeUntil} from "rxjs";
 import {EventEditComponent} from "./event-edit.component";

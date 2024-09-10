@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainService.Sqlite.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240906173429_InitialCreate")]
+    [Migration("20240909184756_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -713,6 +713,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Evolution")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsSatisfactionSurveyCompleted")
                         .HasColumnType("INTEGER");
 
@@ -723,6 +726,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NextSteps")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

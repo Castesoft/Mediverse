@@ -1,4 +1,5 @@
 ﻿using MainService.Core.DTOs.Addresses;
+using MainService.Core.DTOs.Prescription;
 using MainService.Core.DTOs.Services;
 using MainService.Core.DTOs.User;
 using MainService.Models.Entities;
@@ -19,5 +20,15 @@ public class EventDto
     public DateTime DateTo { get; set; }
     public PaymentMethodTypeDto PaymentMethodType { get; set; }
     public MedicalInsuranceCompanyDto MedicalInsuranceCompany { get; set; }
+    public List<PrescriptionDto> Prescriptions { get; set; }
     public List<PaymentDto> Payments { get; set; }
+    public string Evolution { get; set; }
+    public string NextSteps { get; set; }
+}
+
+public class EventUpdateDto
+{
+    public string Evolution { get; set; }
+    public string NextSteps { get; set; }
+
 }

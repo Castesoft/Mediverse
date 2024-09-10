@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240906173420_InitialCreate")]
+    [Migration("20240909184746_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -732,6 +732,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<string>("Evolution")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsSatisfactionSurveyCompleted")
                         .HasColumnType("boolean");
 
@@ -742,6 +745,9 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NextSteps")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

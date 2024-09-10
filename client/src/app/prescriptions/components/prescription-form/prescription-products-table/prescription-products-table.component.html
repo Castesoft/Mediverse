@@ -47,17 +47,9 @@
             <td>
               @if (mode() === 'edit') {
                 <div class="d-flex align-items-center">
-                  <button class="btn btn-sm btn-secondary me-4 quantity-btn"
-                          (click)="handleAmountChange(item, -1)">
-                    <fa-icon [icon]="icons.faMinus"></fa-icon>
-                  </button>
                   <input type="number"
                         [(ngModel)]="item.quantity"
                         class="form-control"/>
-                  <button class="btn btn-sm btn-secondary ms-4 quantity-btn"
-                          (click)="handleAmountChange(item, 1)">
-                    <fa-icon [icon]="icons.faPlus"></fa-icon>
-                  </button>
                 </div>
               } @else {
                 {{item.quantity}}

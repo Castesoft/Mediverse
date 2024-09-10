@@ -70,6 +70,7 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   key = input<string>();
   style = input<FormControlStyles>('solid');
   _key = createId();
+  initialValues = input<any>();
 
   item = input<Prescription>();
   mainClinic: DoctorClinic | undefined = undefined;
@@ -112,8 +113,20 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   currentDate = new Date();
 
   ngOnInit() {
-    this.mainClinic = this.accountService.current()?.doctorClinics.find(x => x.isMain);
-    this.selectedClinic = this.mainClinic;
+    if (this.initialValues() && this.initialValues()!.clinicId) {
+      this.selectedClinic = this.accountService.current()?.doctorClinics.find(x => x.id === this.initialValues()!.clinicId);
+    } else {
+      this.mainClinic = this.accountService.current()?.doctorClinics.find(x => x.isMain);
+      this.selectedClinic = this.mainClinic;
+    }
+
+    if (this.initialValues() && this.initialValues()!.patient) {
+      this.patient = this.initialValues()!.patient;
+    }
+
+    if (this.initialValues() && this.initialValues()!.event) {
+      this.event = this.initialValues()!.event;
+    }
 
     if (this.use() !== 'create' && this.item()) {
       this.prescription = this.item()!;
@@ -125,9 +138,15 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
     }
 
     if (this.use() !== 'detail') {
-      this.subscribeToSelectedPatient();
+      if (!this.initialValues() && !this.initialValues()!.patient) {
+        this.subscribeToSelectedPatient();
+      }
+
+      if (!this.initialValues() && !this.initialValues()!.event) {
+        this.subscribeToSelectedEvent();
+      }
+
       this.subscribeToSelectedProducts();
-      this.subscribeToSelectedEvent();
     }
   }
 
@@ -163,7 +182,6 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
       .pipe(skip(this.use() === 'edit' ? 1 : 0))
       .subscribe({
         next: (products) => {
-          console.log(products)
           if (products) {
             this.products = products;
             this.prescription.items = products.map((product): PrescriptionItem => {
@@ -257,7 +275,7 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
             dosage: item.dosage,
             notes: item.notes,
             productId: item.itemId || null,
-            quantity: item.quantity
+            quantity: item.quantity,
           }
         }),
         clinicId: this.selectedClinic?.id || null

@@ -41,6 +41,8 @@
         public ICollection<NurseEvent> NurseEvents { get; set; } = [];
         public ICollection<EventPrescription> EventPrescriptions { get; set; } = [];
         public ICollection<EventPayment> EventPayments { get; set; } = [];
+        public string Evolution { get; set; }
+        public string NextSteps { get; set; }
     }
 
     public class EventPaymentStatus

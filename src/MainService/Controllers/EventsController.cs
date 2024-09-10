@@ -232,4 +232,30 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
 
         return itemDto;
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<EventDto>> UpdateAsync([FromRoute] int id, [FromBody] EventUpdateDto request)
+    {
+        var item = await uow.EventRepository.GetByIdAsync(id);
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        if (request.Evolution != null)
+        {
+            item.Evolution = request.Evolution;
+        }
+
+        if (request.NextSteps != null)
+        {
+            item.NextSteps = request.NextSteps;
+        }
+
+        if (uow.HasChanges())
+        {
+            if (!await uow.Complete()) return BadRequest($"Error al actualizar {subject}.");
+        }
+
+        var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
+
+        return itemDto;
+    }
 }

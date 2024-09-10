@@ -551,4 +551,8 @@ export class EventsService {
     return this.http.get<EventDoctorFields>(`${this.baseUrl}doctor-fields`);
   };
 
+  updateEvent = (id: number, request: {evolution?: string, nextSteps?: string}): Observable<Event> => {
+    return this.http.put<Event>(`${this.baseUrl}${id}`, request);
+  };
+
 }

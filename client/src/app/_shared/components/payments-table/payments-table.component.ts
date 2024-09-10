@@ -13,4 +13,5 @@ export class PaymentsTableComponent {
   title = input.required<string>();
   payments = input.required<Payment[]>();
   showTabs = input.required<boolean>();
+  view = input<string>('card');
 }

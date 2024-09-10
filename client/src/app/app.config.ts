@@ -23,7 +23,7 @@ import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from 
 import { environment } from 'src/environments/environment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { UseOfCookiesModalComponent } from './auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
-
+import { QuillModule } from 'ngx-quill';
 @Component({
   selector: 'app-root',
   host: { class: 'h-100' },
@@ -145,6 +145,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       MaterialModule,
       BootstrapModule,
+      QuillModule.forRoot(),
       FlatpickrModule.forRoot(),
       ServiceWorkerModule.register('ngsw-worker.js', {
         enabled: !isDevMode(),
