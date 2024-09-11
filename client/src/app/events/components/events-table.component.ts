@@ -46,6 +46,7 @@ export class EventsTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    console.log(this.data);
     const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
     this.subscriptions.push(paramsSubscription);
   }

@@ -14,7 +14,7 @@ public class EventDto
     public AddressDto Clinic { get; set; }
     public DoctorDto Doctor { get; set; }
     public ServiceDto Service { get; set; }
-    public UserDto Patient { get; set; }
+    public PatientDto Patient { get; set; }
     public List<UserDto> Nurses { get; set; }
     public DateTime DateFrom { get; set; }
     public DateTime DateTo { get; set; }

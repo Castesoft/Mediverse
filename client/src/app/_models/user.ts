@@ -4,6 +4,9 @@ import {createId} from "@paralleldrive/cuid2";
 import {BadRequest, Role} from "src/app/_models/types";
 import {UsersService} from "src/app/_services/users.service";
 import {getPaginationHeaders} from "src/app/_utils/util";
+import { Payment } from './payment';
+import { UserMedicalInsuranceCompany } from './medicalInsuranceCompany';
+import { Event } from "./event";
 
 const subject = 'user';
 
@@ -47,7 +50,10 @@ export class User {
   post?: string;
   education?: string;
 
-
+  medicalInsuranceCompanies?: UserMedicalInsuranceCompany[];
+  doctorEvents?: Event[];
+  doctorPayments?: Payment[];
+  hasPatientInformationAccess = false;
 }
 
 export class UserParams {

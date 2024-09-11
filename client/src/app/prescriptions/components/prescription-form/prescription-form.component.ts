@@ -290,7 +290,11 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
 
       this.prescriptionsService.create(jsonPayload, doctorId).subscribe({
         next: (response) => {
-          this.router.navigate(['/home/prescriptions']);
+          if (this.initialValues() && this.initialValues()!.event) {
+            location.reload();
+          } else {
+            this.router.navigate(['/home/prescriptions']);
+          }
         },
         error: (error) => {
           console.error(error);

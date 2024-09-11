@@ -12,6 +12,7 @@ public interface IUserRepository
     void Delete(AppUser item);
     Task<AppUser> GetByIdAsync(int id);
     Task<UserDto> GetDtoByIdAsync(int id);
+    Task<PatientDto> GetPatientDtoByIdAsync(int id);
     Task<List<UserSummaryDto>> GetSummaryDtosAsync(UserParams param, ClaimsPrincipal user);
     Task<bool> DoctorExistsAsync(int id, int doctorId);
     Task<bool> PatientExistsAsync(int id, int doctorId);

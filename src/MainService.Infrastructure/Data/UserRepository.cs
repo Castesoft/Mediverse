@@ -46,6 +46,8 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<AppUser> GetByIdAsync(int id)
     {
         var item = await context.Users
+            .Include(x => x.Patients)
+                .ThenInclude(x => x.Patient)
             .SingleOrDefaultAsync(x => x.Id == id);
 
         return item;
@@ -55,7 +57,30 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     {
         var item = await context.Users
             .AsNoTracking()
+            .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.MedicalInsuranceCompany)
+            .Include(x => x.PatientEvents)
+                .ThenInclude(x => x.Event)
+                .ThenInclude(x => x.EventPayments)
+                .ThenInclude(x => x.Payment)
+                .ThenInclude(x => x.PaymentPaymentMethod)
+            .Include(x => x.PatientEvents)
+                .ThenInclude(x => x.Event)
+                .ThenInclude(x => x.EventPayments)
+                .ThenInclude(x => x.Payment)
+                .ThenInclude(x => x.PaymentPaymentMethodType)
+            .Include(x => x.Doctors)
             .ProjectTo<UserDto>(mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync(x => x.Id == id);
+
+        return item;
+    }
+
+    public async Task<PatientDto> GetPatientDtoByIdAsync(int id)
+    {
+        var item = await context.Users
+            .AsNoTracking()
+            .ProjectTo<PatientDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
 
         return item;

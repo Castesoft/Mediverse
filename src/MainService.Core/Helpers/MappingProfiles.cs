@@ -307,7 +307,11 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role)))
             .ForMember(dest => dest.Permissions,
                 opt => opt.MapFrom(src => src.UserPermissions.Select(x => x.Permission)))
-            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+            .ForMember(dest => dest.MedicalInsuranceCompanies, opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies))
+            .ForMember(dest => dest.DoctorPayments, opt => opt.MapFrom(src => src.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment))))
+            .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
+            .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors));
 
         // Registration mapping
         CreateMap<RegisterDto, AppUser>()

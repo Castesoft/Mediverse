@@ -113,4 +113,9 @@ export class EventDetailComponent implements OnInit {
     this.router.navigate(['/home/events', this.item().id]);
     this.modalService.hide();
   }
+
+  onAddNurse() {
+    // Implement the logic to add a new nurse to the event
+    console.log('Add nurse clicked');
+  }
 }

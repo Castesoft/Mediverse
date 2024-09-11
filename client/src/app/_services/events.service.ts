@@ -541,10 +541,10 @@ export class EventsService {
 
   columns: Column[] = [
     { label: "Paciente", name: "name", options: { justify: 'center' } },
+    // { label: "Fecha de nacimiento", name: "dateOfBirth" },
     { label: "Edad", name: "age" },
-    { label: "Sexo", name: "sex", options: { justify: 'end' } },
-    { label: "Cuenta", name: "hasAccount" },
-    { label: "Fecha de nacimiento", name: "dateOfBirth" },
+    { label: "Sexo", name: "sex" },
+    { label: "Fecha de la consulta", name: "createdAt" },
   ]
 
   getDoctorFields = (): Observable<EventDoctorFields> => {

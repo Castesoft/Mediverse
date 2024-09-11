@@ -31,6 +31,7 @@
               [firstName]="item().patient?.firstName ?? ''"
               [photoUrl]="item().patient?.photoUrl ?? ''"
               [shape]="'square'"
+              [size]="'lg'"
             ></app-user-profile-picture>
           </span>
         </div>
@@ -65,21 +66,23 @@
           </div>
           <div class="d-flex flex-grow">
             <div class="row w-100" [ngClass]="{'flex-column': orientation() === 'vertical'}">
-              <div [ngClass]="{'col-4': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
+              <div [ngClass]="{'col-6': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
                 <div class="fw-bold mt-5">Sexo</div>
                 <div class="text-gray-600 mb-0">
                   {{ item().patient?.sex }}
                 </div>
               </div>
-              <div [ngClass]="{'col-4': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
+              <div [ngClass]="{'col-6': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
                 <div class="fw-bold mt-5">Fecha de Nacimiento</div>
-                <div class="text-gray-600 mb-0"></div>
+                <div class="text-gray-600 mb-0">
+                  {{ item().patient?.dateOfBirth | date : "mediumDate" }}
+                </div>
               </div>
 
-              <div [ngClass]="{'col-4': orientation() === 'horizontal'}">
+              <!-- <div [ngClass]="{'col-4': orientation() === 'horizontal'}">
                 <div class="fw-bold mt-5">Dirección</div>
                 <div class="text-gray-600 mb-0"></div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>

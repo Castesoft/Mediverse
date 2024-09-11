@@ -44,6 +44,20 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     public async Task<ActionResult<UserDto>> GetByIdAsync([FromRoute]int id)
     {
         var item = await uow.UserRepository.GetDtoByIdAsync(id);
+        var patient = await uow.UserRepository.GetPatientDtoByIdAsync(id);
+
+        item.HasPatientInformationAccess = item.SharedDoctors.Any(x => x.DoctorId == User.GetUserId() && x.HasPatientInformationAccess);
+        item.SharedDoctors = [];
+
+        if (!item.HasPatientInformationAccess)
+        {
+            item.MedicalInsuranceCompanies = [];
+        }
+
+        foreach (var _event in item.DoctorEvents)
+        {
+            _event.Patient = patient;
+        }
 
         if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
 

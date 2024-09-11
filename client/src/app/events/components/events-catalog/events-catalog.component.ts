@@ -14,7 +14,7 @@ import { ControlsModule } from "src/app/_forms/controls.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { CatalogModule } from "src/app/_shared/catalog.module";
 import { EventsFilterMenuComponent } from "src/app/events/components/events-filter-menu.component";
-import { EventsTableComponent } from "src/app/events/components/events-table.component";
+import { EventsTableComponent } from "src/app/events/components/events-table/events-table.component";
 import { EventsService } from "src/app/_services/events.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
 

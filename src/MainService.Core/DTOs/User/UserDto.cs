@@ -1,3 +1,6 @@
+using MainService.Core.DTOs.Events;
+using MainService.Models.Entities;
+
 namespace MainService.Core.DTOs.User;
 public class UserDto : BaseUserDto
 {
@@ -23,4 +26,10 @@ public class UserDto : BaseUserDto
     public string State { get; set; }
     public string Country { get; set; }
     public string Zipcode { get; set; }
+
+    public List<EventDto> DoctorEvents { get; set; } = [];
+    public List<PaymentDto> DoctorPayments { get; set; } = [];
+    public List<UserMedicalInsuranceCompanyDto> MedicalInsuranceCompanies { get; set; } = [];
+    public List<DoctorPatient> SharedDoctors { get; set; } = [];
+    public bool HasPatientInformationAccess { get; set; }
 }
