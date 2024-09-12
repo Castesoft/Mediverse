@@ -119,6 +119,8 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
                 .ThenInclude(x => x.Payment)
                 .ThenInclude(x => x.PaymentPaymentMethodType)
                 .ThenInclude(x => x.PaymentMethodType)
+            .Include(x => x.EventPaymentStatus)
+                .ThenInclude(x => x.PaymentStatus)
             .AsQueryable();
 
         if (param.DateFrom != DateTime.MinValue)

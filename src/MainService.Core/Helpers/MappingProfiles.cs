@@ -178,7 +178,17 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.EventPaymentMethodType.PaymentMethodType))
             .ForMember(dest => dest.MedicalInsuranceCompany, opt => opt.MapFrom(src => src.EventMedicalInsuranceCompany.MedicalInsuranceCompany))
             .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => src.EventPayments.Select(x => x.Payment)))
-            .ForMember(dest => dest.Prescriptions, opt => opt.MapFrom(src => src.EventPrescriptions.Select(x => x.Prescription)));
+            .ForMember(dest => dest.Prescriptions, opt => opt.MapFrom(src => src.EventPrescriptions.Select(x => x.Prescription)))
+            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.EventPaymentStatus.PaymentStatus));
+
+        CreateMap<PaymentStatus, PaymentStatusDto>();
+
+        CreateMap<Prescription, EventPrescriptionDto>()
+            .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientPrescription.Patient))
+            .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorPrescription.Doctor))
+            .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url));
 
         CreateMap<AppUser, EventDoctorFieldsDto>()
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.DoctorClinics));
@@ -312,6 +322,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DoctorPayments, opt => opt.MapFrom(src => src.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment))))
             .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
             .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors));
+
+        CreateMap<DoctorPatient, DoctorPatientDto>();
 
         // Registration mapping
         CreateMap<RegisterDto, AppUser>()

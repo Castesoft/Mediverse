@@ -30,6 +30,6 @@ public class UserDto : BaseUserDto
     public List<EventDto> DoctorEvents { get; set; } = [];
     public List<PaymentDto> DoctorPayments { get; set; } = [];
     public List<UserMedicalInsuranceCompanyDto> MedicalInsuranceCompanies { get; set; } = [];
-    public List<DoctorPatient> SharedDoctors { get; set; } = [];
+    public List<DoctorPatientDto> SharedDoctors { get; set; } = [];
     public bool HasPatientInformationAccess { get; set; }
 }

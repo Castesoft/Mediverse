@@ -32,9 +32,15 @@ export class Event {
   evolution?: string;
   nextSteps?: string;
   prescriptions?: Prescription[];
-  
+  paymentStatus?: PaymentStatus;
+
   createdAt!: Date;
   isSelected = false;
+}
+
+export class PaymentStatus {
+  name!: string;
+  color!: string;
 }
 
 export class EventSummary {

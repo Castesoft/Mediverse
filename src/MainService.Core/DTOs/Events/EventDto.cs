@@ -20,10 +20,11 @@ public class EventDto
     public DateTime DateTo { get; set; }
     public PaymentMethodTypeDto PaymentMethodType { get; set; }
     public MedicalInsuranceCompanyDto MedicalInsuranceCompany { get; set; }
-    public List<PrescriptionDto> Prescriptions { get; set; }
+    public List<EventPrescriptionDto> Prescriptions { get; set; }
     public List<PaymentDto> Payments { get; set; }
     public string Evolution { get; set; }
     public string NextSteps { get; set; }
+    public PaymentStatusDto PaymentStatus { get; set; }
 }
 
 public class EventUpdateDto

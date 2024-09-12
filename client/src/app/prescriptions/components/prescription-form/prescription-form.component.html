@@ -91,7 +91,7 @@
       @if (use() === 'create') {
         <div class="d-flex align-items-center">
           <p class="mb-0 me-2">{{ selectedClinic?.street }} {{ selectedClinic?.exteriorNumber }}, {{ selectedClinic?.neighborhood }}</p> 
-          @if (!this.initialValues()!.clinicId) {
+          @if (!this.initialValues() || !this.initialValues()!.clinicId) {
             <i class="ki-duotone ki-pencil fs-6 cursor-pointer" 
                (click)="openClinicSelector()"
                [tooltip]="'Cambiar clinica'">

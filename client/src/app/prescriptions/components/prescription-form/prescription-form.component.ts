@@ -138,11 +138,11 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
     }
 
     if (this.use() !== 'detail') {
-      if (!this.initialValues() && !this.initialValues()!.patient) {
+      if (!this.initialValues() || !this.initialValues()!.patient) {
         this.subscribeToSelectedPatient();
       }
 
-      if (!this.initialValues() && !this.initialValues()!.event) {
+      if (!this.initialValues() || !this.initialValues()!.event) {
         this.subscribeToSelectedEvent();
       }
 

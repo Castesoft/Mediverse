@@ -31,7 +31,8 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
                 .ThenInclude(x => x.Clinic)
                 .ThenInclude(x => x.ClinicLogo)
                 .ThenInclude(x => x.Photo)
-            .Include(x => x.PatientPrescription).ThenInclude(x => x.Patient)
+            .Include(x => x.PatientPrescription)
+                .ThenInclude(x => x.Patient)
             .ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
     }

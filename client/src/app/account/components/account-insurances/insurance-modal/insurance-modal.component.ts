@@ -23,12 +23,14 @@ export class InsuranceModalComponent {
   type: 'add' | 'edit' = 'add';
   insurance: UserMedicalInsuranceCompany | null = null;
   companies: MedicalInsuranceCompany[] = [];
+  insuranceFile: File | null = null;
 
   submitted = false;
   insuranceForm = this.fb.group({
     MedicalInsuranceCompanyId     : [ '', [Validators.required] ],
     PolicyNumber                  : [ '', [Validators.required] ],
     IsMain                        : [ false, [Validators.required] ],
+    file                          : [ null, [Validators.required] ],
   });
 
   ngOnInit() {
@@ -41,6 +43,12 @@ export class InsuranceModalComponent {
       if (this.insurance.isMain) {
         this.insuranceForm.get('IsMain')?.disable();
       }
+    }
+  }
+
+  onFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.insuranceFile = event.target.files[0];
     }
   }
 

@@ -1,4 +1,4 @@
-import { DatePipe, DecimalPipe } from "@angular/common";
+import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
 import { Component, HostBinding, inject, input, OnInit, viewChild } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { FormUse, Role, View } from "src/app/_models/types";
@@ -56,31 +56,31 @@ export class UserNewComponent {
                 <div class="d-flex flex-wrap flex-center">
                   <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
                     <div class="fs-4 fw-bold text-gray-700">
-                      <span class="w-75px">6,900</span>
-                      <i class="ki-duotone ki-arrow-up fs-3 text-success">
+                      <span class="w-75px">{{ getEarnings() | currency }}</span>
+                      <!-- <i class="ki-duotone ki-arrow-up fs-3 text-success">
                         <span class="path1"></span>
                         <span class="path2"></span>
-                      </i>
+                      </i> -->
                     </div>
-                    <div class="fw-semibold text-muted">Earnings</div>
+                    <div class="fw-semibold text-muted">Ganancias</div>
                   </div>
                   <div class="border border-gray-300 border-dashed rounded py-3 px-3 mx-4 mb-3">
                     <div class="fs-4 fw-bold text-gray-700">
-                      <span class="w-50px">130</span>
-                      <i class="ki-duotone ki-arrow-down fs-3 text-danger">
+                      <span class="w-50px">{{ user.doctorEvents?.length }}</span>
+                      <!-- <i class="ki-duotone ki-arrow-down fs-3 text-danger">
                         <span class="path1"></span>
                         <span class="path2"></span>
-                      </i>
+                      </i> -->
                     </div>
                     <div class="fw-semibold text-muted">Citas</div>
                   </div>
                   <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
                     <div class="fs-4 fw-bold text-gray-700">
-                      <span class="w-50px">500</span>
-                      <i class="ki-duotone ki-arrow-up fs-3 text-success">
+                      <span class="w-50px">{{ getPendingPayments() | currency }}</span>
+                      <!-- <i class="ki-duotone ki-arrow-up fs-3 text-success">
                         <span class="path1"></span>
                         <span class="path2"></span>
-                      </i>
+                      </i> -->
                     </div>
                     <div class="fw-semibold text-muted">Por pagar</div>
                   </div>
@@ -89,7 +89,6 @@ export class UserNewComponent {
               <div class="separator separator-dashed my-3"></div>
               <div id="kt_customer_view_details" class="collapse show">
                 <div class="py-5 fs-6">
-                  <div class="badge badge-light-info d-inline">Premium user</div>
                   <div class="fw-bold mt-5">Correo</div>
                   <div class="text-gray-600">
                     <a href="#" class="text-gray-600 text-hover-primary">{{ user.email }}</a>
@@ -141,6 +140,7 @@ export class UserNewComponent {
                       [data]="user.doctorEvents"
                       [mode]="'view'"
                       [key]="'event-recipe'"
+                      [location]="'user-detail'"
                     ></table>
                   </div>
                 } @else {
@@ -230,7 +230,7 @@ export class UserNewComponent {
     }
   `],
   standalone: true,
-  imports: [UserFormComponent, RouterModule, DatePipe, DecimalPipe, UserProfilePictureComponent, PaymentsTableComponent, EventsTableComponent],
+  imports: [UserFormComponent, RouterModule, DatePipe, DecimalPipe, UserProfilePictureComponent, PaymentsTableComponent, EventsTableComponent, CurrencyPipe],
 })
 export class UserDetailComponent implements OnInit {
   accountService = inject(AccountService);
@@ -256,6 +256,14 @@ export class UserDetailComponent implements OnInit {
   }
 
   onSelectTab = (tab: string) => this.activeTab = tab;
+
+  getEarnings = () => this.user!.doctorPayments?.map(p => p.amount).reduce((a, b) => a + b, 0) ?? 0;
+
+  getPendingPayments = () => {
+    const total = this.user!.doctorEvents?.map(e => e.service?.price!).reduce((a, b) => a + b, 0) ?? 0;
+    const paid = this.user!.doctorPayments?.map(p => p.amount).reduce((a, b) => a + b, 0) ?? 0;
+    return total - paid;
+  };
 
 }
 
