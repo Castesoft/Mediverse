@@ -56,11 +56,21 @@ export class InsuranceModalComponent {
     this.submitted = true;
 
     if (!this.insuranceForm.valid) {
+      this.submitted = false;
       return;
     }
 
+    const jsonData = JSON.stringify(this.insuranceForm.value);
+
+    const formData = new FormData();
+    formData.append('json', jsonData);
+    if (this.insuranceFile) {
+      formData.append('file', this.insuranceFile);
+    }
+
     if (this.type === 'add') {
-      this.accountService.addMedicalInsurance(this.insuranceForm.value).subscribe({
+
+      this.accountService.addMedicalInsurance(formData).subscribe({
         next: () => {
           this.bsModalRef.hide();
           this.submitted = false;
@@ -72,7 +82,7 @@ export class InsuranceModalComponent {
     } else {
       if (!this.insurance) return;
       this.insuranceForm.get('IsMain')?.enable();
-      this.accountService.updateMedicalInsurance(this.insurance.id, this.insuranceForm.value).subscribe({
+      this.accountService.updateMedicalInsurance(this.insurance.id, formData).subscribe({
         next: () => {
           this.bsModalRef.hide();
           this.submitted = false;

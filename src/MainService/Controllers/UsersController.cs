@@ -25,6 +25,12 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     {
         var pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
 
+        foreach (var item in pagedList)
+        {
+            item.DoctorEvents = item.DoctorEvents.Where(e => e.Doctor.Id == User.GetUserId()).ToList();
+            item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();
+        }
+
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));
 
@@ -54,6 +60,9 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
             item.MedicalInsuranceCompanies = [];
         }
 
+        var doctorEvents = item.DoctorEvents.ToList();
+        item.DoctorEvents = doctorEvents.Where(e => e.Doctor.Id == User.GetUserId()).ToList();
+        item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();
         foreach (var _event in item.DoctorEvents)
         {
             _event.Patient = patient;

@@ -128,6 +128,9 @@ namespace MainService.Postgres.Migrations
                     Url = table.Column<string>(type: "text", nullable: true),
                     PublicId = table.Column<string>(type: "text", nullable: true),
                     Size = table.Column<int>(type: "integer", nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
+                    ThumbnailPublicId = table.Column<string>(type: "text", nullable: true),
+                    ThumbnailSize = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -941,6 +944,7 @@ namespace MainService.Postgres.Migrations
                 {
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false),
+                    DocumentId = table.Column<int>(type: "integer", nullable: true),
                     IsMain = table.Column<bool>(type: "boolean", nullable: false),
                     PolicyNumber = table.Column<string>(type: "text", nullable: true)
                 },
@@ -951,6 +955,12 @@ namespace MainService.Postgres.Migrations
                         name: "FK_UserMedicalInsuranceCompanies_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserMedicalInsuranceCompanies_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -2389,6 +2399,12 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserMedicalInsuranceCompanies_DocumentId",
+                table: "UserMedicalInsuranceCompanies",
+                column: "DocumentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserMedicalInsuranceCompanies_MedicalInsuranceCompanyId",
                 table: "UserMedicalInsuranceCompanies",
                 column: "MedicalInsuranceCompanyId");
@@ -2639,9 +2655,6 @@ namespace MainService.Postgres.Migrations
                 name: "PaymentStatuses");
 
             migrationBuilder.DropTable(
-                name: "Documents");
-
-            migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
@@ -2676,6 +2689,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "Addresses");
+
+            migrationBuilder.DropTable(
+                name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "MedicalInsuranceCompanies");

@@ -1,4 +1,4 @@
-import { Component, input, output, EventEmitter, inject } from '@angular/core';
+import { Component, input, output, EventEmitter, inject, effect } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DoctorAvailability, DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 
@@ -18,6 +18,16 @@ export class DoctorScheduleTabComponent {
   selectedDay: any = null;
   schedule: DoctorAvailability[] = [];
 
+  constructor() {
+    effect(() => {
+      this.updateSchedules();
+    });
+  }
+
+  ngOnInit() {
+    this.updateSchedules();
+  }
+
   selectDay(day: any) {
     this.selectedDay = day;
   }
@@ -26,16 +36,16 @@ export class DoctorScheduleTabComponent {
     this.onSelectSchedule.emit({ day, time });
   }
 
-  ngOnInit() {
+  updateSchedules() {
     this.schedule = this.doctor()?.doctorAvailabilities ?? [];
-    this.selectedDay = this.schedule.find(d => d.dayNumber === +this.route.snapshot.queryParams['day']);
-    if (!this.selectedDay) {
-      this.selectedDay = this.schedule[0];
-    } else {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { day: null },
-        queryParamsHandling: 'merge',
+      this.selectedDay = this.schedule.find(d => d.dayNumber === +this.route.snapshot.queryParams['day']);
+      if (!this.selectedDay) {
+        this.selectedDay = this.schedule[0];
+      } else {
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { day: null },
+          queryParamsHandling: 'merge',
       });
     }
   }

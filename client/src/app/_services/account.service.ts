@@ -56,6 +56,14 @@ export class AccountService {
     );
   }
 
+  updateCurrentUser() {
+    this.http.get<Account>(`${this.baseUrl}current`).subscribe({
+      next: user => {
+        this.setCurrentUser(user);
+      }
+    });
+  }
+
   twoFactorLogin(email: string, verificationCode: string) {
     return this.http.post<Account>(`${this.baseUrl}login-two-factor`, { email, verificationCode }, {withCredentials: true}).pipe(
       map(response => {
@@ -326,7 +334,8 @@ export class AccountService {
           name: modifiedInsurance!.name,
           isMain: value.IsMain,
           policyNumber: value.PolicyNumber,
-          photoUrl: modifiedInsurance!.photoUrl
+          photoUrl: modifiedInsurance!.photoUrl,
+          document: modifiedInsurance!.document
         } : i);
         this.userMedicalInsuranceCompanies.set(insurances.sort((a, b) => a.isMain ? -1 : 1));
       })

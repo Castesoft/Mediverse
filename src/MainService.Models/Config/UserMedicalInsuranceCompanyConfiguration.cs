@@ -18,5 +18,10 @@ public class UserMedicalInsuranceCompanyConfiguration : IEntityTypeConfiguration
             .WithMany(x => x.UserMedicalInsuranceCompanies)
             .HasForeignKey(x => x.MedicalInsuranceCompanyId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Document)
+            .WithOne(x => x.UserMedicalInsuranceCompany)
+            .HasForeignKey<UserMedicalInsuranceCompany>(x => x.DocumentId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

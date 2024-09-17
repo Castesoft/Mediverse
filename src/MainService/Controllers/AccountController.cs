@@ -70,6 +70,17 @@ public class AccountController(
         return Ok(itemToReturn);
     }
 
+    [Authorize]
+    [HttpGet("current")]
+    public async Task<ActionResult<AccountDto>> GetCurrentUserAsync()
+    {
+        int id = User.GetUserId();
+
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(id);
+
+        return itemToReturn;
+    }
+
     [HttpPost("login-two-factor")]
     public async Task<ActionResult<AccountDto>> LoginTwoFactorAsync([FromBody] TwoFactorLoginDto request)
     {
@@ -1202,6 +1213,8 @@ public class AccountController(
                 .ThenInclude(x => x.MedicalInsuranceCompany)
                 .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
                 .ThenInclude(x => x.Photo)
+            .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.Document)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1211,9 +1224,27 @@ public class AccountController(
 
     [Authorize]
     [HttpPost("medical-insurance-company")]
-    public async Task<ActionResult<UserMedicalInsuranceCompanyDto>> AddMedicalInsuranceCompany(UserMedicalInsuranceCompanyCreateDto request)
+    public async Task<ActionResult<UserMedicalInsuranceCompanyDto>> AddMedicalInsuranceCompany([FromForm] IFormFile file, [FromForm] string json)
     {
         int userId = User.GetUserId();
+
+        var request = JsonSerializer.Deserialize<UserMedicalInsuranceCompanyCreateDto>(json);
+
+        if (file == null || file.Length == 0) return BadRequest("No se ha enviado un documento.");
+
+        var uploadResult = await cloudinaryService.Upload(file, new() {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/UserMedicalInsuranceCompanies",
+        });
+        if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+
+        var uploadThumbnailResult = await cloudinaryService.Upload(file, new() {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/UserMedicalInsuranceCompanies/Thumbnails",
+            Format = "jpg",
+            Transformation = new Transformation().Page(1).Height(300).Width(400).Crop("fill").Gravity("north")
+        });
+        if (uploadThumbnailResult.Error != null) return BadRequest(uploadThumbnailResult.Error.Message);
 
         var user = await userManager.Users
             .Include(x => x.UserMedicalInsuranceCompanies)
@@ -1221,7 +1252,7 @@ public class AccountController(
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        if (user.UserMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == request.MedicalInsuranceCompanyId))
+        if (user.UserMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == int.Parse(request.MedicalInsuranceCompanyId)))
             return BadRequest("Ya tienes esta compañía de seguro médico registrada.");
 
         if (request.IsMain)
@@ -1232,9 +1263,16 @@ public class AccountController(
 
         user.UserMedicalInsuranceCompanies.Add(new() {
             UserId = userId,
-            MedicalInsuranceCompanyId = request.MedicalInsuranceCompanyId,
+            MedicalInsuranceCompanyId = int.Parse(request.MedicalInsuranceCompanyId),
             IsMain = request.IsMain,
-            PolicyNumber = request.PolicyNumber
+            PolicyNumber = request.PolicyNumber,
+            Document = new()
+            {
+                Url = uploadResult.SecureUrl.AbsoluteUri,
+                PublicId = uploadResult.PublicId,
+                ThumbnailUrl = uploadThumbnailResult.SecureUrl.AbsoluteUri,
+                ThumbnailPublicId = uploadThumbnailResult.PublicId
+            }
         });
 
         if (!await uow.Complete()) return BadRequest("Error guardando la compañía de seguro médico.");

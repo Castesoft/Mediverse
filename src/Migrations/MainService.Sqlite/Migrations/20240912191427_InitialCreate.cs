@@ -127,6 +127,9 @@ namespace MainService.Sqlite.Migrations
                     Url = table.Column<string>(type: "TEXT", nullable: true),
                     PublicId = table.Column<string>(type: "TEXT", nullable: true),
                     Size = table.Column<int>(type: "INTEGER", nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    ThumbnailPublicId = table.Column<string>(type: "TEXT", nullable: true),
+                    ThumbnailSize = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
@@ -940,6 +943,7 @@ namespace MainService.Sqlite.Migrations
                 {
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     MedicalInsuranceCompanyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DocumentId = table.Column<int>(type: "INTEGER", nullable: true),
                     IsMain = table.Column<bool>(type: "INTEGER", nullable: false),
                     PolicyNumber = table.Column<string>(type: "TEXT", nullable: true)
                 },
@@ -950,6 +954,12 @@ namespace MainService.Sqlite.Migrations
                         name: "FK_UserMedicalInsuranceCompanies_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserMedicalInsuranceCompanies_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -2388,6 +2398,12 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserMedicalInsuranceCompanies_DocumentId",
+                table: "UserMedicalInsuranceCompanies",
+                column: "DocumentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserMedicalInsuranceCompanies_MedicalInsuranceCompanyId",
                 table: "UserMedicalInsuranceCompanies",
                 column: "MedicalInsuranceCompanyId");
@@ -2638,9 +2654,6 @@ namespace MainService.Sqlite.Migrations
                 name: "PaymentStatuses");
 
             migrationBuilder.DropTable(
-                name: "Documents");
-
-            migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
@@ -2675,6 +2688,9 @@ namespace MainService.Sqlite.Migrations
 
             migrationBuilder.DropTable(
                 name: "Addresses");
+
+            migrationBuilder.DropTable(
+                name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "MedicalInsuranceCompanies");

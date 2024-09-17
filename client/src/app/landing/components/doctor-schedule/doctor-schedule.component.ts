@@ -12,6 +12,7 @@ import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-
 import { DoctorScheduleTabComponent } from '../doctor-schedule-tab/doctor-schedule-tab.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
+import { Event } from 'src/app/_models/event';
 
 @Component({
   selector: 'app-doctor-schedule',
@@ -138,6 +139,10 @@ export class DoctorScheduleComponent implements OnInit {
 
     this.eventsService.create(this.form.value, 'Patient', 'inline', '').subscribe({
       next: () => {
+        if (!this.doctor()!.hasPatientInformationAccess) {
+          this.accountService.updateCurrentUser();
+        }
+
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: { day: this.selectedSchedule()?.day.dayNumber },

@@ -684,6 +684,15 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int>("Size")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ThumbnailPublicId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ThumbnailSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Url")
                         .HasColumnType("TEXT");
 
@@ -1770,6 +1779,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int>("MedicalInsuranceCompanyId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("DocumentId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsMain")
                         .HasColumnType("INTEGER");
 
@@ -1777,6 +1789,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("UserId", "MedicalInsuranceCompanyId");
+
+                    b.HasIndex("DocumentId")
+                        .IsUnique();
 
                     b.HasIndex("MedicalInsuranceCompanyId");
 
@@ -2967,6 +2982,11 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalInsuranceCompany", b =>
                 {
+                    b.HasOne("MainService.Models.Entities.Document", "Document")
+                        .WithOne("UserMedicalInsuranceCompany")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalInsuranceCompany", "DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("MainService.Models.Entities.MedicalInsuranceCompany", "MedicalInsuranceCompany")
                         .WithMany("UserMedicalInsuranceCompanies")
                         .HasForeignKey("MedicalInsuranceCompanyId")
@@ -2978,6 +2998,8 @@ namespace MainService.Sqlite.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Document");
 
                     b.Navigation("MedicalInsuranceCompany");
 
@@ -3223,6 +3245,8 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
                     b.Navigation("MedicalLicenseDocument");
+
+                    b.Navigation("UserMedicalInsuranceCompany");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>

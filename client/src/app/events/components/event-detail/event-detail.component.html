@@ -180,7 +180,9 @@
                 <div class="card h-100 nurse-card">
                   <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                      <img [src]="nurse.photoUrl || 'assets/images/default-avatar.png'" class="rounded-circle nurse-avatar me-3" alt="{{ nurse.fullName }}">
+                      <div class="me-3">
+                        <app-user-profile-picture [firstName]="nurse.firstName" [photoUrl]="nurse.photoUrl || ''"></app-user-profile-picture>
+                      </div>
                       <div>
                         <h5 class="card-title mb-1">{{ nurse.fullName }}</h5>
                         <p class="card-text text-muted mb-0">

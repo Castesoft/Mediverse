@@ -13,7 +13,9 @@
         >
           <div class="d-flex flex-column py-2 w-100">
             <div class="d-flex align-items-center justify-content-between py-2">
-                <img src="{{ insurance?.photoUrl }}" alt="{{ insurance?.name }}" class="h-50px mb-3" />
+                <div class="d-flex align-items-center">
+                  <img src="{{ insurance?.photoUrl }}" alt="{{ insurance?.name }}" class="h-50px me-3" />
+                </div>
                 <div>
                     <button
                         class="btn btn-sm btn-light btn-active-light-primary me-3"
@@ -47,9 +49,19 @@
                 >
               }
             </div>
-            <div class="fs-6 fw-semibold text-gray-600">
+            <div class="fs-6 fw-semibold text-gray-600 mb-4">
                 No. Póliza: {{ insurance?.policyNumber }}
             </div>
+            @if (insurance?.document?.thumbnailUrl) {
+              <div class="mt-auto position-relative">
+                <a [href]="insurance.document.url" target="_blank" class="d-block thumbnail-link mx-auto">
+                  <img src="{{ insurance.document.thumbnailUrl }}" alt="Policy Document" class="thumbnail-img" />
+                  <div class="thumbnail-overlay">
+                    <i class="ki-duotone ki-eye fs-1 text-white"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                  </div>
+                </a>
+              </div>
+            }
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { Document } from "./document";
+
 export interface MedicalInsuranceCompany {
     id: number;
     name: string;
@@ -10,4 +12,5 @@ export interface UserMedicalInsuranceCompany {
     isMain: boolean;
     policyNumber: string;
     photoUrl: string;
+    document: Document;
 }

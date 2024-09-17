@@ -73,7 +73,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
             .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentPaymentMethod.PaymentMethod))
-            .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.PaymentPaymentMethodType.PaymentMethodType));
+            .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.PaymentPaymentMethodType.PaymentMethodType))
+            .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.EventPayment.Event.DoctorEvent.Doctor.Id));
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
@@ -356,6 +357,7 @@ public class MappingProfiles : Profile
         CreateMap<UserMedicalInsuranceCompany, UserMedicalInsuranceCompanyDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyId))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo.Url))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.Name));
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.Name))
+            .ForMember(dest => dest.Document, opt => opt.MapFrom(src => src.Document));
     }
 }

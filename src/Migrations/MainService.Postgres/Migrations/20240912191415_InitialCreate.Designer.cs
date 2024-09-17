@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240911232821_InitialCreate")]
+    [Migration("20240912191415_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -703,6 +703,15 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<int>("Size")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ThumbnailPublicId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ThumbnailSize")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasColumnType("text");
 
                     b.Property<string>("Url")
                         .HasColumnType("text");
@@ -1830,6 +1839,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("MedicalInsuranceCompanyId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("DocumentId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsMain")
                         .HasColumnType("boolean");
 
@@ -1837,6 +1849,9 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("UserId", "MedicalInsuranceCompanyId");
+
+                    b.HasIndex("DocumentId")
+                        .IsUnique();
 
                     b.HasIndex("MedicalInsuranceCompanyId");
 
@@ -3035,6 +3050,11 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalInsuranceCompany", b =>
                 {
+                    b.HasOne("MainService.Models.Entities.Document", "Document")
+                        .WithOne("UserMedicalInsuranceCompany")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalInsuranceCompany", "DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("MainService.Models.Entities.MedicalInsuranceCompany", "MedicalInsuranceCompany")
                         .WithMany("UserMedicalInsuranceCompanies")
                         .HasForeignKey("MedicalInsuranceCompanyId")
@@ -3046,6 +3066,8 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Document");
 
                     b.Navigation("MedicalInsuranceCompany");
 
@@ -3291,6 +3313,8 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
                     b.Navigation("MedicalLicenseDocument");
+
+                    b.Navigation("UserMedicalInsuranceCompany");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>

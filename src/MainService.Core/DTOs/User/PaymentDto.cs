@@ -7,5 +7,6 @@ namespace MainService.Core.DTOs.User
         public DateTime PaymentDate { get; set; }
         public UserPaymentMethodDto PaymentMethod { get; set; }
         public PaymentMethodTypeDto PaymentMethodType { get; set; }
+        public int DoctorId { get; set; }
     }
 }

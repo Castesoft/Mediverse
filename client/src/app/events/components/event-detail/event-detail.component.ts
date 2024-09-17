@@ -29,7 +29,7 @@ import { PrescriptionsTableComponent } from 'src/app/prescriptions/components/pr
   imports: [
     DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule,
     EventServicesSummaryComponent, UserProfilePictureComponent, PaymentsTableComponent, EventSummaryComponent, QuillModule, ReactiveFormsModule,
-    PrescriptionFormComponent, LayoutModule, PrescriptionsTableComponent
+    PrescriptionFormComponent, LayoutModule, PrescriptionsTableComponent, UserProfilePictureComponent
   ]
 })
 export class EventDetailComponent implements OnInit {
