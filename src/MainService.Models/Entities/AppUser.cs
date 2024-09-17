@@ -31,14 +31,14 @@ public class AppUser : IdentityUser<int>
     public string RecommendedBy { get; set; }
 
     // Base account properties
-
-    public ICollection<UserAddress> UserAddresses { get; set; } = [];
+    public List<UserAddress> UserAddresses { get; set; } = [];
     public UserPhoto UserPhoto { get; set; }
     public DoctorBannerPhoto DoctorBannerPhoto { get; set; }
-    public ICollection<AppUserRole> UserRoles { get; set; } = [];
-    public ICollection<AppUserPermission> UserPermissions { get; set; } = [];
-    public ICollection<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
+    public List<AppUserRole> UserRoles { get; set; } = [];
+    public List<AppUserPermission> UserPermissions { get; set; } = [];
+    public List<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
     public List<UserReview> UserReviews { get; set; } = [];
+    public UserMedicalRecord UserMedicalRecord { get; set; }
 
     // User Billing Information Properties
     public List<UserPaymentMethod> UserPaymentMethods { get; set; } = [];
@@ -46,18 +46,18 @@ public class AppUser : IdentityUser<int>
     public string CURP { get; set; }
     public string CommercialName { get; set; }
     public string LegalName { get; set; }
-    public ICollection<UserTaxRegime> UserTaxRegimes { get; set; } = [];
+    public List<UserTaxRegime> UserTaxRegimes { get; set; } = [];
 
     // Medical Properties
     public string Education { get; set; }
     public string Post { get; set; }
-    public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
-    public ICollection<NurseEvent> NurseEvents { get; set; } = [];
-    public ICollection<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
+    public List<ClinicNurse> ClinicNurses { get; set; } = [];
+    public List<NurseEvent> NurseEvents { get; set; } = [];
+    public List<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
     public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];
     public string StripeConnectAccountId { get; set; }
     public bool RequireAnticipatedCardPayments { get; set; }
-    public ICollection<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
+    public List<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
     public List<DoctorWorkSchedule> DoctorWorkSchedules { get; set; } = [];
     public DoctorWorkScheduleSettings DoctorWorkScheduleSettings { get; set; }
     public List<DoctorReview> DoctorReviews { get; set; } = [];
@@ -70,17 +70,17 @@ public class AppUser : IdentityUser<int>
     public List<DoctorNurse> NursesDoctor { get; set; } = [];
     
     public DoctorSignature DoctorSignature { get; set; }
-    public ICollection<PatientEvent> PatientEvents { get; set; } = [];
-    public ICollection<PatientPrescription> PatientPrescriptions { get; set; } = [];
-    public ICollection<DoctorPrescription> DoctorPrescriptions { get; set; } = [];
-    public ICollection<PatientOrder> PatientOrders { get; set; } = [];
-    public ICollection<DoctorOrder> DoctorOrders { get; set; } = [];
+    public List<PatientEvent> PatientEvents { get; set; } = [];
+    public List<PatientPrescription> PatientPrescriptions { get; set; } = [];
+    public List<DoctorPrescription> DoctorPrescriptions { get; set; } = [];
+    public List<PatientOrder> PatientOrders { get; set; } = [];
+    public List<DoctorOrder> DoctorOrders { get; set; } = [];
 
     // Doctor-Patient relationships
-    public ICollection<DoctorPatient> Doctors { get; set; } = [];
-    public ICollection<DoctorPatient> Patients { get; set; } = [];
-    public ICollection<DoctorEvent> DoctorEvents { get; set; } = [];
-    public ICollection<DoctorPhone> DoctorPhones { get; set; } = [];
-    public ICollection<DoctorLink> DoctorLinks { get; set; } = [];
-    public ICollection<DoctorClinic> DoctorClinics { get; set; } = [];
+    public List<DoctorPatient> Doctors { get; set; } = [];
+    public List<DoctorPatient> Patients { get; set; } = [];
+    public List<DoctorEvent> DoctorEvents { get; set; } = [];
+    public List<DoctorPhone> DoctorPhones { get; set; } = [];
+    public List<DoctorLink> DoctorLinks { get; set; } = [];
+    public List<DoctorClinic> DoctorClinics { get; set; } = [];
 }

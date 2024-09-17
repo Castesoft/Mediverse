@@ -378,6 +378,139 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("ClinicNurses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Companion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HomePhone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companions");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
+                {
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OccupationId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompanionId", "OccupationId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.ToTable("CompanionOccupations");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionRelativeType", b =>
+                {
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompanionId", "RelativeTypeId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.HasIndex("RelativeTypeId")
+                        .IsUnique();
+
+                    b.ToTable("CompanionRelativeTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ConsumptionLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConsumptionLevels");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Diseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
                 {
                     b.Property<int>("UserId")
@@ -701,6 +834,26 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("Documents");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.EducationLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EducationLevels");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -864,6 +1017,29 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("EventService");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FamilyMembers");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
                 {
                     b.Property<int>("Id")
@@ -888,6 +1064,26 @@ namespace MainService.Sqlite.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Link");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MaritalStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaritalStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
@@ -1007,6 +1203,329 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("MedicalLicenseSubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AttendedAlone")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BirthPlace")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CurrentAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CurrentLivingSituation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EconomicDependence")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HandDominance")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HomePhone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MobilePhone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PatientName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("UsesGlassesOrHearingAid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("YearsOfSchooling")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalRecords");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordColorBlindness", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ColorBlindnessId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPresent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "ColorBlindnessId");
+
+                    b.HasIndex("ColorBlindnessId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordCompanion", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "CompanionId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordCompanions");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalRecordDiseaseTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordDiseaseTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordDiseaseTypeId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordDiseaseTypeId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordDiseaseTypeDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EducationLevelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "EducationLevelId");
+
+                    b.HasIndex("EducationLevelId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordEducationLevels");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FamilyMember")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.ToTable("MedicalRecordFamilyDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "FamilyMemberId");
+
+                    b.HasIndex("FamilyMemberId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordFamilyMembers");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", b =>
+                {
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("FamilyMemberId", "RelativeTypeId");
+
+                    b.HasIndex("FamilyMemberId")
+                        .IsUnique();
+
+                    b.HasIndex("RelativeTypeId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordFamilyMemberRelativeTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordMaritalStatus", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaritalStatusId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "MaritalStatusId");
+
+                    b.HasIndex("MaritalStatusId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordMaritalStatuses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordOccupation", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OccupationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "OccupationId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.HasIndex("OccupationId");
+
+                    b.ToTable("MedicalRecordOccupations");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordPersonalDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MedicalRecordDiseaseTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordDiseaseTypeId");
+
+                    b.ToTable("MedicalRecordPersonalDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SubstanceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ConsumptionLevelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EndAge")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("StartAge")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "SubstanceId", "ConsumptionLevelId");
+
+                    b.HasIndex("ConsumptionLevelId");
+
+                    b.HasIndex("SubstanceId");
+
+                    b.ToTable("MedicalRecordSubstances");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Property<int>("Id")
@@ -1046,6 +1565,26 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("NurseEvent");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Occupations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
@@ -1547,6 +2086,26 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("ProductPhoto");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RelativeTypes");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -1726,6 +2285,26 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("SubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Substances");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
                 {
                     b.Property<int>("Id")
@@ -1814,6 +2393,25 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("MedicalLicenseId");
 
                     b.ToTable("UserMedicalLicenses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.UserMedicalRecord", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "MedicalRecordId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserMedicalRecords");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
@@ -2143,6 +2741,44 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Clinic");
 
                     b.Navigation("Nurse");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("CompanionOccupation")
+                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
+                        .WithOne("CompanionOccupation")
+                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("Occupation");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionRelativeType", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("CompanionRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithOne("CompanionRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("RelativeType");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
@@ -2677,6 +3313,227 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("SubSpecialty");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordColorBlindness", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.ColorBlindness", "ColorBlindness")
+                        .WithMany("MedicalRecordColorBlindnesses")
+                        .HasForeignKey("ColorBlindnessId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordColorBlindness")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordColorBlindness", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ColorBlindness");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordCompanion", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("MedicalRecordCompanion")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordCompanion", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordCompanion")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordCompanion", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordDiseaseTypeDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", "MedicalRecordDiseaseType")
+                        .WithOne("MedicalRecordDiseaseTypeDisease")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", "MedicalRecordDiseaseTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecordDiseaseType");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.EducationLevel", "EducationLevel")
+                        .WithMany("MedicalRecordEducationLevels")
+                        .HasForeignKey("EducationLevelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordEducationLevel")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordEducationLevel", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("EducationLevel");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.FamilyMember", "FamilyMember")
+                        .WithOne("MedicalRecordFamilyMember")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMember", "FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordFamilyMembers")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("FamilyMember");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.FamilyMember", "FamilyMember")
+                        .WithOne("MedicalRecordFamilyMemberRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithOne("MedicalRecordFamilyMemberRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("FamilyMember");
+
+                    b.Navigation("RelativeType");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordMaritalStatus", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MaritalStatus", "MaritalStatus")
+                        .WithMany("MedicalRecordMaritalStatuses")
+                        .HasForeignKey("MaritalStatusId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordMaritalStatus")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordMaritalStatus", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MaritalStatus");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordOccupation", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordOccupation")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordOccupation", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
+                        .WithMany("MedicalRecordOccupations")
+                        .HasForeignKey("OccupationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("Occupation");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordPersonalDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", null)
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("MedicalRecordDiseaseTypeId");
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.ConsumptionLevel", "ConsumptionLevel")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("ConsumptionLevelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Substance", "Substance")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("SubstanceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ConsumptionLevel");
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("Substance");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -3025,6 +3882,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserMedicalRecord", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("UserMedicalRecord")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalRecord", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithOne("UserMedicalRecord")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalRecord", "UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
                 {
                     b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
@@ -3222,6 +4098,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("UserMedicalLicenses");
 
+                    b.Navigation("UserMedicalRecord");
+
                     b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
@@ -3242,11 +4120,44 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("StateCity");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
+                {
+                    b.Navigation("MedicalRecordColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Companion", b =>
+                {
+                    b.Navigation("CompanionOccupation");
+
+                    b.Navigation("CompanionRelativeType");
+
+                    b.Navigation("MedicalRecordCompanion");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ConsumptionLevel", b =>
+                {
+                    b.Navigation("MedicalRecordSubstances");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
+                {
+                    b.Navigation("MedicalRecordDiseaseTypeDiseases");
+
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
                     b.Navigation("MedicalLicenseDocument");
 
                     b.Navigation("UserMedicalInsuranceCompany");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.EducationLevel", b =>
+                {
+                    b.Navigation("MedicalRecordEducationLevels");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>
@@ -3272,9 +4183,21 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("PatientEvent");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
+                {
+                    b.Navigation("MedicalRecordFamilyMember");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
                 {
                     b.Navigation("DoctorLink");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MaritalStatus", b =>
+                {
+                    b.Navigation("MedicalRecordMaritalStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
@@ -3297,9 +4220,46 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("MedicalLicenseSubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
+                {
+                    b.Navigation("MedicalRecordColorBlindness");
+
+                    b.Navigation("MedicalRecordCompanion");
+
+                    b.Navigation("MedicalRecordEducationLevel");
+
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordFamilyMembers");
+
+                    b.Navigation("MedicalRecordMaritalStatus");
+
+                    b.Navigation("MedicalRecordOccupation");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+
+                    b.Navigation("MedicalRecordSubstances");
+
+                    b.Navigation("UserMedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
+                {
+                    b.Navigation("MedicalRecordDiseaseTypeDisease");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Navigation("CityNeighborhood");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
+                {
+                    b.Navigation("CompanionOccupation");
+
+                    b.Navigation("MedicalRecordOccupations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
@@ -3391,6 +4351,13 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("ProductPhotos");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
+                {
+                    b.Navigation("CompanionRelativeType");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>
                 {
                     b.Navigation("DoctorReview");
@@ -3426,6 +4393,11 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
                 {
                     b.Navigation("SpecialitySubSpecialty");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
+                {
+                    b.Navigation("MedicalRecordSubstances");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>

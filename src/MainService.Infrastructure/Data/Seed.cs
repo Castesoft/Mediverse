@@ -110,6 +110,76 @@ public static class Seed
         return [];
     }
 
+    private static async Task<List<Occupation>> SeedOccupationsAsync(DataContext context)
+    {
+        if (!await context.Occupations.AnyAsync())
+        {
+            await context.Occupations.AddRangeAsync(SeedData.Occupations);
+            await context.SaveChangesAsync();
+
+            return await context.Occupations
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+    
+    private static async Task<List<MaritalStatus>> SeedMaritalStatusesAsync(DataContext context)
+    {
+        if (!await context.MaritalStatuses.AnyAsync())
+        {
+            await context.MaritalStatuses.AddRangeAsync(SeedData.MaritalStatuses);
+            await context.SaveChangesAsync();
+
+            return await context.MaritalStatuses
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+
+    private static async Task<List<ColorBlindness>> SeedColorBlindnessesAsync(DataContext context)
+    {
+        if (!await context.ColorBlindnesses.AnyAsync())
+        {
+            await context.ColorBlindnesses.AddRangeAsync(SeedData.ColorBlindnesses);
+            await context.SaveChangesAsync();
+
+            return await context.ColorBlindnesses
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+
+    private static async Task<List<EducationLevel>> SeedEducationLevelsAsync(DataContext context)
+    {
+        if (!await context.EducationLevels.AnyAsync())
+        {
+            await context.EducationLevels.AddRangeAsync(SeedData.EducationLevels);
+            await context.SaveChangesAsync();
+
+            return await context.EducationLevels
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+
+    private static async Task<List<RelativeType>> SeedRelativeTypesAsync(DataContext context)
+    {
+        if (!await context.RelativeTypes.AnyAsync())
+        {
+            await context.RelativeTypes.AddRangeAsync(SeedData.RelativeTypes);
+            await context.SaveChangesAsync();
+
+            return await context.RelativeTypes
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+
     private static async Task SeedMedicalInsuranceCompaniesAsync(DataContext context)
     {
         if (await context.MedicalInsuranceCompanies.AnyAsync()) return;
@@ -170,6 +240,11 @@ public static class Seed
         await SeedServicesAsync(context);
         List<Specialty> specialties = await SeedSpecialtiesAsync(context);
         List<PaymentMethodType> paymentMethodTypes = await SeedPaymentMethodTypesAsync(context);
+        List<EducationLevel> educationLevels = await SeedEducationLevelsAsync(context);
+        List<Occupation> occupations = await SeedOccupationsAsync(context);
+        List<MaritalStatus> maritalStatuses = await SeedMaritalStatusesAsync(context);
+        List<ColorBlindness> colorBlindnesses = await SeedColorBlindnessesAsync(context);
+        List<RelativeType> relativeTypes = await SeedRelativeTypesAsync(context);
         await SeedMedicalInsuranceCompaniesAsync(context);
         List<PaymentStatus> paymentStatuses = await SeedPaymentStatusesAsync(context);
         await SeedMexicoStates(context);

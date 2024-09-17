@@ -58,7 +58,33 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<DoctorReview> DoctorReviews { get; set; }
     public DbSet<UserReview> UserReviews { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<MedicalRecord> MedicalRecords { get; set; }
+    public DbSet<UserMedicalRecord> UserMedicalRecords { get; set; }
     public DbSet<WorkScheduleSettings> WorkScheduleSettings { get; set; }
+    public DbSet<EducationLevel> EducationLevels { get; set; }
+    public DbSet<MedicalRecordEducationLevel> MedicalRecordEducationLevels { get; set; }
+    public DbSet<Occupation> Occupations { get; set; }
+    public DbSet<MedicalRecordOccupation> MedicalRecordOccupations { get; set; }
+    public DbSet<Substance> Substances { get; set; }
+    public DbSet<ConsumptionLevel> ConsumptionLevels { get; set; }
+    public DbSet<MedicalRecordSubstance> MedicalRecordSubstances { get; set; }
+    public DbSet<Disease> Diseases { get; set; }
+    public DbSet<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; }
+    public DbSet<MedicalRecordDiseaseTypeDisease> MedicalRecordDiseaseTypeDiseases { get; set; }
+    public DbSet<MedicalRecordDiseaseType> MedicalRecordDiseaseTypes { get; set; }
+    public DbSet<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; }
+    public DbSet<Companion> Companions { get; set; }
+    public DbSet<MedicalRecordCompanion> MedicalRecordCompanions { get; set; }
+    public DbSet<CompanionRelativeType> CompanionRelativeTypes { get; set; }
+    public DbSet<CompanionOccupation> CompanionOccupations { get; set; }
+    public DbSet<MaritalStatus> MaritalStatuses { get; set; }
+    public DbSet<MedicalRecordMaritalStatus> MedicalRecordMaritalStatuses { get; set; }
+    public DbSet<ColorBlindness> ColorBlindnesses { get; set; }
+    public DbSet<MedicalRecordColorBlindness> MedicalRecordColorBlindnesses { get; set; }
+    public DbSet<FamilyMember> FamilyMembers { get; set; }
+    public DbSet<RelativeType> RelativeTypes { get; set; }
+    public DbSet<MedicalRecordFamilyMember> MedicalRecordFamilyMembers { get; set; }
+    public DbSet<MedicalRecordFamilyMemberRelativeType> MedicalRecordFamilyMemberRelativeTypes { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

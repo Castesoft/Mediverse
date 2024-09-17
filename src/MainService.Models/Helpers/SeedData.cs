@@ -6,6 +6,7 @@ namespace MainService.Models.Helpers
     public static class StripePaymentMethods
     {
         private static readonly Random random = new();
+
         private static readonly List<PaymentMethod> PaymentMethods = [
             new("Visa", "pm_card_visa"),
             new("Visa", "pm_card_visa_debit"),
@@ -147,6 +148,132 @@ namespace MainService.Models.Helpers
             "Patient",
             "Doctor",
             "Nurse",
+        ];
+
+        public static readonly List<Substance> Substances = [
+            new("Tabaco", "Sustancia comúnmente usada que puede causar adicción y afecta los pulmones y el sistema respiratorio."),
+            new("Alcohol", "Sustancia legal en muchos países que puede causar dependencia y afecta el hígado y el sistema nervioso."),
+            new("Marihuana", "Droga recreativa que afecta la percepción y la coordinación, legal en algunos países o estados."),
+            new("Cocaína", "Droga ilegal que estimula el sistema nervioso central, creando dependencia y afectando la salud cardiovascular."),
+            new("Inhalantes", "Sustancias químicas inhaladas que alteran el estado mental y pueden causar daño a los órganos internos."),
+            new("Cafeína", "Sustancia estimulante que se encuentra en bebidas como café y refrescos, puede causar dependencia leve."),
+            new("Otros (anfetaminas, metanfetaminas, heroína, cristal)", "Sustancias ilegales y altamente adictivas que afectan el sistema nervioso central y la salud en general.")
+        ];
+
+        public static readonly List<ConsumptionLevel> ConsumptionLevels = [
+            new("Único", "El paciente ha consumido la sustancia solo una vez."),
+            new("Leve", "El paciente consume la sustancia ocasionalmente, sin impacto significativo en la salud."),
+            new("Moderado", "El paciente consume la sustancia de forma regular, con algún impacto en la salud o comportamiento."),
+            new("Severo", "El paciente consume la sustancia con frecuencia, afectando gravemente su salud o vida cotidiana."),
+            new("Dependencia", "El paciente es dependiente de la sustancia y tiene dificultad para controlar su uso.")
+        ];
+
+        public static readonly List<Disease> Diseases = [
+            new("Cáncer", "Enfermedad que implica el crecimiento incontrolado de células anormales en el cuerpo."),
+            new("Diabetes", "Enfermedad que afecta la forma en que el cuerpo usa el azúcar en la sangre."),
+            new("Hipertensión", "Presión arterial elevada, una afección común que puede aumentar el riesgo de problemas cardiacos."),
+            new("Colesterol", "Altos niveles de colesterol en la sangre, lo que puede llevar a problemas de salud, como enfermedades cardíacas."),
+            new("Problemas cardiacos (infartos)", "Condiciones que afectan al corazón, como ataques cardíacos."),
+            new("Intervenciones quirúrgicas mayores", "Cirugías que involucran grandes procedimientos médicos."),
+            new("Alergias o asma", "Reacciones exageradas del sistema inmune a ciertos alérgenos o enfermedades respiratorias como el asma."),
+            new("Temblor", "Movimientos involuntarios, comúnmente en las manos u otras partes del cuerpo."),
+            new("Abortos (solo para mujeres)", "Pérdida del embarazo, puede ser espontánea o inducida."),
+            new("Trastornos alimenticios", "Condiciones relacionadas con comportamientos alimenticios anormales, como anorexia o bulimia."),
+            new("Sobrepeso o desnutrición", "Condiciones donde el peso corporal está fuera de los rangos saludables, ya sea por exceso o por falta de nutrientes."),
+            new("Psiquiátricos (depresión, ansiedad, bipolar, etc.)", "Trastornos mentales que afectan el estado de ánimo, el comportamiento y el pensamiento."),
+            new("Demencias (Parkinson, Alzheimer)", "Enfermedades que implican la pérdida progresiva de la memoria y otras funciones cognitivas."),
+            new("Problemas de memoria", "Dificultades para recordar información y eventos."),
+            new("Problemas de atención", "Dificultad para concentrarse o mantener la atención en actividades."),
+            new("Retraso mental, Síndrome de Down", "Condiciones que causan discapacidades intelectuales y de desarrollo."),
+            new("Otros (tiroides, gastrointestinales, ginecológicas, hepáticas, respiratorias, renales, etc.)", "Otras enfermedades que incluyen el sistema endocrino, digestivo, reproductivo, hepático, respiratorio o renal."),
+        ];
+
+        public static readonly List<MaritalStatus> MaritalStatuses = [
+            new("Soltero", "El paciente no ha contraído matrimonio y no está en una relación de pareja formal."),
+            new("Unión libre", "El paciente vive en pareja sin un vínculo matrimonial legal."),
+            new("Casado", "El paciente ha contraído matrimonio legalmente."),
+            new("Segundas nupcias", "El paciente está casado nuevamente después de un matrimonio anterior."),
+            new("Separado", "El paciente está separado de su cónyuge, pero no legalmente divorciado."),
+            new("Divorciado", "El paciente ha terminado legalmente un matrimonio anterior."),
+            new("Viudo", "El paciente ha perdido a su cónyuge por fallecimiento."),
+            new("Otro (especificar)", "El paciente tiene un estado civil distinto, que puede especificar.")
+        ];
+
+        public static readonly List<RelativeType> RelativeTypes = [
+            new("Pareja", "La persona es la pareja sentimental del paciente."),
+            new("Esposo", "La persona es el esposo del paciente."),
+            new("Esposa", "La persona es la esposa del paciente."),
+            new("Hijo", "La persona es el hijo varón del paciente."),
+            new("Hija", "La persona es la hija del paciente."),
+            new("Padre", "La persona es el padre del paciente."),
+            new("Madre", "La persona es la madre del paciente."),
+            new("Hermano", "La persona es el hermano del paciente."),
+            new("Hermana", "La persona es la hermana del paciente."),
+            new("Abuelo", "La persona es el abuelo del paciente."),
+            new("Abuela", "La persona es la abuela del paciente."),
+            new("Nieto", "La persona es el nieto del paciente."),
+            new("Nieta", "La persona es la nieta del paciente."),
+            new("Tío", "La persona es el tío del paciente."),
+            new("Tía", "La persona es la tía del paciente."),
+            new("Primo", "La persona es el primo del paciente."),
+            new("Prima", "La persona es la prima del paciente."),
+            new("Sobrino", "La persona es el sobrino del paciente."),
+            new("Sobrina", "La persona es la sobrina del paciente."),
+            new("Cuñado", "La persona es el cuñado del paciente."),
+            new("Cuñada", "La persona es la cuñada del paciente."),
+            new("Suegro", "La persona es el suegro del paciente."),
+            new("Suegra", "La persona es la suegra del paciente."),
+            new("Otro (especificar)", "La persona tiene una relación distinta con el paciente, y se puede especificar.")
+        ];
+
+        public static readonly List<Occupation> Occupations = [
+            new("Empleado", "El paciente trabaja como empleado en una empresa u organización."),
+            new("Empresario", "El paciente es dueño o dirige su propio negocio."),
+            new("Comerciante", "El paciente se dedica a la compra-venta de productos o servicios."),
+            new("Profesor", "El paciente trabaja en la docencia, en cualquier nivel educativo."),
+            new("Ingeniero", "El paciente es un profesional en alguna rama de la ingeniería."),
+            new("Médico", "El paciente ejerce como profesional de la salud en la medicina."),
+            new("Abogado", "El paciente trabaja como profesional en el área del derecho."),
+            new("Enfermero", "El paciente se dedica a la atención de pacientes como enfermero."),
+            new("Arquitecto", "El paciente trabaja como arquitecto en el diseño y construcción."),
+            new("Contador", "El paciente se dedica a la contabilidad y gestión financiera."),
+            new("Chofer", "El paciente trabaja como conductor, transportando personas o mercancías."),
+            new("Obrero", "El paciente realiza trabajos manuales o industriales."),
+            new("Agricultor", "El paciente se dedica a la producción agrícola."),
+            new("Ama de casa", "El paciente se dedica a las labores del hogar."),
+            new("Estudiante", "El paciente se encuentra estudiando de manera formal."),
+            new("Desempleado", "El paciente actualmente no tiene un empleo."),
+            new("Pensionado / Jubilado", "El paciente está retirado y recibe una pensión o jubilación."),
+            new("Otra (especificar)", "El paciente tiene una ocupación distinta a las listadas, y puede especificarla.")
+        ];
+
+        public static readonly List<EducationLevel> EducationLevels = [
+            new("Sin escolaridad", "El paciente no ha recibido educación formal."),
+            new("Primaria incompleta", "El paciente no ha terminado la educación primaria."),
+            new("Primaria completa", "El paciente ha completado la educación primaria."),
+            new("Secundaria incompleta", "El paciente no ha terminado la educación secundaria."),
+            new("Secundaria completa", "El paciente ha completado la educación secundaria."),
+            new("Preparatoria incompleta", "El paciente no ha terminado la educación preparatoria o equivalente."),
+            new("Preparatoria completa", "El paciente ha completado la educación preparatoria o equivalente."),
+            new("Técnico superior", "El paciente ha completado un nivel técnico superior, como una carrera técnica."),
+            new("Licenciatura incompleta", "El paciente no ha terminado la educación universitaria de nivel licenciatura."),
+            new("Licenciatura completa", "El paciente ha completado una licenciatura universitaria."),
+            new("Maestría incompleta", "El paciente no ha terminado estudios de posgrado a nivel de maestría."),
+            new("Maestría completa", "El paciente ha completado estudios de posgrado a nivel de maestría."),
+            new("Doctorado incompleto", "El paciente no ha terminado estudios de doctorado."),
+            new("Doctorado completo", "El paciente ha completado estudios de doctorado.")
+        ];
+
+        public static readonly List<ColorBlindness> ColorBlindnesses = [
+            new("Acromatopsia", "El paciente no puede ver colores, solo escala de grises."),
+            new("Monocromatismo", "El paciente solo puede ver un color o tonos de un solo color."),
+            new("Dicromatismo - Protanopia", "El paciente no puede ver colores rojos."),
+            new("Dicromatismo - Deuteranopia", "El paciente no puede ver colores verdes."),
+            new("Dicromatismo - Tritanopia", "El paciente no puede ver colores azules."),
+            new("Tricromatismo anómalo - Protanomalía", "El paciente tiene una percepción anormal del color rojo."),
+            new("Tricromatismo anómalo - Deuteranomalía", "El paciente tiene una percepción anormal del color verde."),
+            new("Tricromatismo anómalo - Tritanomalía", "El paciente tiene una percepción anormal del color azul."),
+            new("Otro (especificar)", "El paciente tiene una alteración de la visión de los colores distinta a las listadas, y puede especificarla.")
         ];
 
         public static readonly IEnumerable<MedicalInsuranceCompany> medicalInsuranceCompanies =

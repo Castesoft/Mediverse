@@ -5,81 +5,74 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MainService.Postgres.Migrations
+namespace MainService.Sqlite.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240912191415_InitialCreate")]
+    [Migration("20240917200136_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
             modelBuilder.Entity("MainService.Models.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("City")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CrossStreet1")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CrossStreet2")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ExteriorNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("InteriorNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<double?>("Latitude")
-                        .HasColumnType("double precision");
+                        .HasColumnType("REAL");
 
                     b.Property<double?>("Longitude")
-                        .HasColumnType("double precision");
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Neighborhood")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("State")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Street")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Zipcode")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -90,15 +83,13 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -109,21 +100,19 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -137,10 +126,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.AppRolePermission", b =>
                 {
                     b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PermissionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("RoleId", "PermissionId");
 
@@ -153,134 +142,132 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CURP")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CommercialName")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasMaxLength(100)
-                        .HasColumnType("date");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Education")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("EmailVerificationCodeHash")
-                        .HasColumnType("bytea");
+                        .HasColumnType("BLOB");
 
                     b.Property<byte[]>("EmailVerificationCodeSalt")
-                        .HasColumnType("bytea");
+                        .HasColumnType("BLOB");
 
                     b.Property<DateTime?>("EmailVerificationExpiryTime")
                         .HasMaxLength(100)
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastActive")
                         .HasMaxLength(100)
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LegalName")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PhoneNumberCountryCode")
                         .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
+                        .HasColumnType("TEXT");
 
                     b.Property<byte[]>("PhoneNumberVerificationCodeHash")
-                        .HasColumnType("bytea");
+                        .HasColumnType("BLOB");
 
                     b.Property<byte[]>("PhoneNumberVerificationCodeSalt")
-                        .HasColumnType("bytea");
+                        .HasColumnType("BLOB");
 
                     b.Property<DateTime?>("PhoneNumberVerificationExpiryTime")
                         .HasMaxLength(100)
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Post")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("RFC")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("RecommendedBy")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("RequireAnticipatedCardPayments")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Sex")
                         .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("StripeConnectAccountId")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("StripeCustomerId")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -297,10 +284,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.AppUserPermission", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PermissionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "PermissionId");
 
@@ -312,10 +299,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.AppUserRole", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -328,18 +315,16 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -349,10 +334,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.CityNeighborhood", b =>
                 {
                     b.Property<int>("CityId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("NeighborhoodId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("CityId", "NeighborhoodId");
 
@@ -365,10 +350,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
                 {
                     b.Property<int>("AddressId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("AddressId", "PhotoId");
 
@@ -384,10 +369,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
                 {
                     b.Property<int>("NurseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ClinicId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("NurseId", "ClinicId");
 
@@ -396,13 +381,146 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("ClinicNurses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Companion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HomePhone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companions");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
+                {
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OccupationId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompanionId", "OccupationId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.ToTable("CompanionOccupations");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionRelativeType", b =>
+                {
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompanionId", "RelativeTypeId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.HasIndex("RelativeTypeId")
+                        .IsUnique();
+
+                    b.ToTable("CompanionRelativeTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ConsumptionLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConsumptionLevels");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Diseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "PhotoId");
 
@@ -418,13 +536,13 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ClinicId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "ClinicId");
 
@@ -437,10 +555,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorEvent", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "EventId");
 
@@ -453,10 +571,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorLink", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("LinkId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "LinkId");
 
@@ -469,10 +587,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "MedicalInsuranceCompanyId");
 
@@ -484,10 +602,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("NurseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "NurseId");
 
@@ -499,10 +617,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorOrder", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "OrderId");
 
@@ -515,16 +633,16 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PatientId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("HasPatientInformationAccess")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "PatientId");
 
@@ -536,10 +654,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPaymentMethodType", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentMethodTypeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "PaymentMethodTypeId");
 
@@ -551,10 +669,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPhone", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PhoneId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "PhoneId");
 
@@ -567,10 +685,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPrescription", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "PrescriptionId");
 
@@ -583,10 +701,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorProduct", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "ProductId");
 
@@ -599,10 +717,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorReview", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ReviewId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "ReviewId");
 
@@ -615,10 +733,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "ServiceId");
 
@@ -631,10 +749,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorSignature", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SignatureId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("DoctorId", "SignatureId");
 
@@ -650,10 +768,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("WorkScheduleId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "WorkScheduleId");
 
@@ -666,10 +784,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkScheduleSettings", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("WorkScheduleSettingsId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "WorkScheduleSettingsId");
 
@@ -685,79 +803,95 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PublicId")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Size")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ThumbnailPublicId")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ThumbnailSize")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Documents");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.EducationLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EducationLevels");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DateFrom")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DateTo")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Evolution")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsSatisfactionSurveyCompleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsSatisfactionSurveyEmailSent")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsServiceRecommended")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NextSteps")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -767,10 +901,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventClinic", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ClinicId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("EventId", "ClinicId");
 
@@ -785,10 +919,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventMedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("EventId", "MedicalInsuranceCompanyId");
 
@@ -803,10 +937,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPayment", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("EventId", "PaymentId");
 
@@ -819,10 +953,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPaymentMethodType", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentMethodTypeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("EventId", "PaymentMethodTypeId");
 
@@ -837,10 +971,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPaymentStatus", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentStatusId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("EventId", "PaymentStatusId");
 
@@ -855,10 +989,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("EventId", "PrescriptionId");
 
@@ -871,10 +1005,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventService", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("EventId", "ServiceId");
 
@@ -886,50 +1020,89 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("EventService");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FamilyMembers");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SiteName")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Link");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MaritalStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaritalStatuses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -939,10 +1112,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompanyPhoto", b =>
                 {
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("MedicalInsuranceCompanyId", "PhotoId");
 
@@ -959,24 +1132,22 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LicenseNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SpecialtyLicense")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -986,10 +1157,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseDocument", b =>
                 {
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("DocumentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("MedicalLicenseId", "DocumentId");
 
@@ -1005,10 +1176,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSpecialty", b =>
                 {
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SpecialtyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("MedicalLicenseId", "SpecialtyId");
 
@@ -1023,10 +1194,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSubSpecialty", b =>
                 {
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SubSpecialtyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("MedicalLicenseId", "SubSpecialtyId");
 
@@ -1035,28 +1206,349 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("MedicalLicenseSubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AttendedAlone")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BirthPlace")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CurrentAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CurrentLivingSituation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EconomicDependence")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HandDominance")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HomePhone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MobilePhone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PatientName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("UsesGlassesOrHearingAid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("YearsOfSchooling")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalRecords");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordColorBlindness", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ColorBlindnessId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPresent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "ColorBlindnessId");
+
+                    b.HasIndex("ColorBlindnessId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordCompanion", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "CompanionId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordCompanions");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalRecordDiseaseTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordDiseaseTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordDiseaseTypeId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordDiseaseTypeId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordDiseaseTypeDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EducationLevelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "EducationLevelId");
+
+                    b.HasIndex("EducationLevelId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordEducationLevels");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FamilyMember")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.ToTable("MedicalRecordFamilyDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "FamilyMemberId");
+
+                    b.HasIndex("FamilyMemberId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordFamilyMembers");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", b =>
+                {
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("FamilyMemberId", "RelativeTypeId");
+
+                    b.HasIndex("FamilyMemberId")
+                        .IsUnique();
+
+                    b.HasIndex("RelativeTypeId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordFamilyMemberRelativeTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordMaritalStatus", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaritalStatusId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "MaritalStatusId");
+
+                    b.HasIndex("MaritalStatusId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordMaritalStatuses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordOccupation", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OccupationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "OccupationId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.HasIndex("OccupationId");
+
+                    b.ToTable("MedicalRecordOccupations");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordPersonalDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MedicalRecordDiseaseTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MedicalRecordId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordDiseaseTypeId");
+
+                    b.ToTable("MedicalRecordPersonalDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SubstanceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ConsumptionLevelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EndAge")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("StartAge")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MedicalRecordId", "SubstanceId", "ConsumptionLevelId");
+
+                    b.HasIndex("ConsumptionLevelId");
+
+                    b.HasIndex("SubstanceId");
+
+                    b.ToTable("MedicalRecordSubstances");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Settlement")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Zipcode")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1066,10 +1558,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.Property<int>("NurseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("NurseId", "EventId");
 
@@ -1078,50 +1570,68 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("NurseEvent");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Occupations");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<double>("AmountDue")
+                        .HasColumnType("REAL");
 
-                    b.Property<decimal>("AmountDue")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("AmountPaid")
-                        .HasColumnType("numeric");
+                    b.Property<double>("AmountPaid")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("DeliveryStatus")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("double precision");
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Subtotal")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Subtotal")
+                        .HasColumnType("REAL");
 
-                    b.Property<decimal>("Tax")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Tax")
+                        .HasColumnType("REAL");
 
-                    b.Property<decimal>("Total")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Total")
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -1131,10 +1641,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
                 {
                     b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("AddressId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("OrderId", "AddressId");
 
@@ -1149,31 +1659,31 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
                 {
                     b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ItemId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("double precision");
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Dosage")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Instructions")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("OrderId", "ItemId");
 
@@ -1185,10 +1695,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
                     b.Property<int>("PatientId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("EventId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PatientId", "EventId");
 
@@ -1201,10 +1711,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PatientOrder", b =>
                 {
                     b.Property<int>("PatientId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PatientId", "OrderId");
 
@@ -1217,10 +1727,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PatientPrescription", b =>
                 {
                     b.Property<int>("PatientId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PatientId", "PrescriptionId");
 
@@ -1234,24 +1744,22 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Amount")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("StripePaymentIntent")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1262,39 +1770,37 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Brand")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ExpirationMonth")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ExpirationYear")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Last4")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("StripePaymentMethodId")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1305,18 +1811,16 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1326,10 +1830,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethod", b =>
                 {
                     b.Property<int>("PaymentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PaymentId", "PaymentMethodId");
 
@@ -1344,10 +1848,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethodType", b =>
                 {
                     b.Property<int>("PaymentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentMethodTypeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PaymentId", "PaymentMethodTypeId");
 
@@ -1363,21 +1867,19 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Color")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1388,27 +1890,25 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CountryCode")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Extension")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1419,27 +1919,25 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PublicId")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Size")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1450,24 +1948,22 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ExchangeAmount")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1477,37 +1973,37 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("ItemId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Dosage")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Id")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Instructions")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("PrescriptionId", "ItemId");
 
@@ -1519,10 +2015,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
                 {
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PrescriptionId", "OrderId");
 
@@ -1539,40 +2035,38 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("double precision");
+                        .HasColumnType("REAL");
 
                     b.Property<int>("Dosage")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LotNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1582,10 +2076,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ProductPhoto", b =>
                 {
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("ProductId", "PhotoId");
 
@@ -1595,28 +2089,46 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("ProductPhoto");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RelativeTypes");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Content")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -1627,28 +2139,26 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("double precision");
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -1658,10 +2168,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ServicePhoto", b =>
                 {
                     b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("ServiceId", "PhotoId");
 
@@ -1674,10 +2184,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SpecialitySubSpecialty", b =>
                 {
                     b.Property<int>("SpecialtyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SubSpecialtyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("SpecialtyId", "SubSpecialtyId");
 
@@ -1691,18 +2201,16 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1712,10 +2220,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SpecialtyService", b =>
                 {
                     b.Property<int>("SpecialtyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("SpecialtyId", "ServiceId");
 
@@ -1728,18 +2236,16 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1749,10 +2255,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.StateCity", b =>
                 {
                     b.Property<int>("StateId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CityId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("StateId", "CityId");
 
@@ -1766,43 +2272,59 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("SubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Substances");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Code")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1812,16 +2334,16 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("AddressId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsBilling")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "AddressId");
 
@@ -1834,19 +2356,19 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("DocumentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PolicyNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserId", "MedicalInsuranceCompanyId");
 
@@ -1861,13 +2383,13 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalLicense", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "MedicalLicenseId");
 
@@ -1876,16 +2398,35 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("UserMedicalLicenses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserMedicalRecord", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "MedicalRecordId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserMedicalRecords");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "PaymentMethodId");
 
@@ -1898,10 +2439,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "PhotoId");
 
@@ -1917,10 +2458,10 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserReview", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ReviewId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "ReviewId");
 
@@ -1933,13 +2474,13 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserTaxRegime", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TaxRegimeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "TaxRegimeId");
 
@@ -1953,27 +2494,25 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("DayOfWeek")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time without time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time without time zone");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -1984,27 +2523,25 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("interval");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("MinutesPerBlock")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("interval");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -2015,18 +2552,16 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -2039,18 +2574,16 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -2062,16 +2595,16 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -2083,16 +2616,16 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -2211,6 +2744,44 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Clinic");
 
                     b.Navigation("Nurse");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("CompanionOccupation")
+                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
+                        .WithOne("CompanionOccupation")
+                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("Occupation");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionRelativeType", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("CompanionRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithOne("CompanionRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("RelativeType");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
@@ -2745,6 +3316,227 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("SubSpecialty");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordColorBlindness", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.ColorBlindness", "ColorBlindness")
+                        .WithMany("MedicalRecordColorBlindnesses")
+                        .HasForeignKey("ColorBlindnessId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordColorBlindness")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordColorBlindness", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ColorBlindness");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordCompanion", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("MedicalRecordCompanion")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordCompanion", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordCompanion")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordCompanion", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordDiseaseTypeDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", "MedicalRecordDiseaseType")
+                        .WithOne("MedicalRecordDiseaseTypeDisease")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", "MedicalRecordDiseaseTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecordDiseaseType");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.EducationLevel", "EducationLevel")
+                        .WithMany("MedicalRecordEducationLevels")
+                        .HasForeignKey("EducationLevelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordEducationLevel")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordEducationLevel", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("EducationLevel");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.FamilyMember", "FamilyMember")
+                        .WithOne("MedicalRecordFamilyMember")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMember", "FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordFamilyMembers")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("FamilyMember");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.FamilyMember", "FamilyMember")
+                        .WithOne("MedicalRecordFamilyMemberRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithOne("MedicalRecordFamilyMemberRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("FamilyMember");
+
+                    b.Navigation("RelativeType");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordMaritalStatus", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MaritalStatus", "MaritalStatus")
+                        .WithMany("MedicalRecordMaritalStatuses")
+                        .HasForeignKey("MaritalStatusId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordMaritalStatus")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordMaritalStatus", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MaritalStatus");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordOccupation", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordOccupation")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordOccupation", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
+                        .WithMany("MedicalRecordOccupations")
+                        .HasForeignKey("OccupationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("Occupation");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordPersonalDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", null)
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("MedicalRecordDiseaseTypeId");
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.ConsumptionLevel", "ConsumptionLevel")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("ConsumptionLevelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Substance", "Substance")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("SubstanceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ConsumptionLevel");
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("Substance");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -3093,6 +3885,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserMedicalRecord", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("UserMedicalRecord")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalRecord", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithOne("UserMedicalRecord")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalRecord", "UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
                 {
                     b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
@@ -3290,6 +4101,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("UserMedicalLicenses");
 
+                    b.Navigation("UserMedicalRecord");
+
                     b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
@@ -3310,11 +4123,44 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("StateCity");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
+                {
+                    b.Navigation("MedicalRecordColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Companion", b =>
+                {
+                    b.Navigation("CompanionOccupation");
+
+                    b.Navigation("CompanionRelativeType");
+
+                    b.Navigation("MedicalRecordCompanion");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ConsumptionLevel", b =>
+                {
+                    b.Navigation("MedicalRecordSubstances");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
+                {
+                    b.Navigation("MedicalRecordDiseaseTypeDiseases");
+
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
                     b.Navigation("MedicalLicenseDocument");
 
                     b.Navigation("UserMedicalInsuranceCompany");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.EducationLevel", b =>
+                {
+                    b.Navigation("MedicalRecordEducationLevels");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>
@@ -3340,9 +4186,21 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("PatientEvent");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
+                {
+                    b.Navigation("MedicalRecordFamilyMember");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
                 {
                     b.Navigation("DoctorLink");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MaritalStatus", b =>
+                {
+                    b.Navigation("MedicalRecordMaritalStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
@@ -3365,9 +4223,46 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("MedicalLicenseSubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
+                {
+                    b.Navigation("MedicalRecordColorBlindness");
+
+                    b.Navigation("MedicalRecordCompanion");
+
+                    b.Navigation("MedicalRecordEducationLevel");
+
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordFamilyMembers");
+
+                    b.Navigation("MedicalRecordMaritalStatus");
+
+                    b.Navigation("MedicalRecordOccupation");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+
+                    b.Navigation("MedicalRecordSubstances");
+
+                    b.Navigation("UserMedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
+                {
+                    b.Navigation("MedicalRecordDiseaseTypeDisease");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Navigation("CityNeighborhood");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
+                {
+                    b.Navigation("CompanionOccupation");
+
+                    b.Navigation("MedicalRecordOccupations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
@@ -3459,6 +4354,13 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("ProductPhotos");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
+                {
+                    b.Navigation("CompanionRelativeType");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>
                 {
                     b.Navigation("DoctorReview");
@@ -3494,6 +4396,11 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
                 {
                     b.Navigation("SpecialitySubSpecialty");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
+                {
+                    b.Navigation("MedicalRecordSubstances");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>

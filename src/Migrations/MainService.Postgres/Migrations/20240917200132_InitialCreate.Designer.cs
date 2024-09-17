@@ -5,74 +5,81 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MainService.Sqlite.Migrations
+namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240912191427_InitialCreate")]
+    [Migration("20240917200132_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("MainService.Models.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("City")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Country")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CrossStreet1")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("CrossStreet2")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ExteriorNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("InteriorNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<double?>("Latitude")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double precision");
 
                     b.Property<double?>("Longitude")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Neighborhood")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("State")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Street")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Zipcode")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -83,13 +90,15 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -100,19 +109,21 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -126,10 +137,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.AppRolePermission", b =>
                 {
                     b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PermissionId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("RoleId", "PermissionId");
 
@@ -142,132 +153,134 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("CURP")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("CommercialName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("date");
 
                     b.Property<string>("Education")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<byte[]>("EmailVerificationCodeHash")
-                        .HasColumnType("BLOB");
+                        .HasColumnType("bytea");
 
                     b.Property<byte[]>("EmailVerificationCodeSalt")
-                        .HasColumnType("BLOB");
+                        .HasColumnType("bytea");
 
                     b.Property<DateTime?>("EmailVerificationExpiryTime")
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("LastActive")
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("LegalName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PhoneNumberCountryCode")
                         .HasMaxLength(5)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(5)");
 
                     b.Property<byte[]>("PhoneNumberVerificationCodeHash")
-                        .HasColumnType("BLOB");
+                        .HasColumnType("bytea");
 
                     b.Property<byte[]>("PhoneNumberVerificationCodeSalt")
-                        .HasColumnType("BLOB");
+                        .HasColumnType("bytea");
 
                     b.Property<DateTime?>("PhoneNumberVerificationExpiryTime")
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Post")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("RFC")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("RecommendedBy")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("RequireAnticipatedCardPayments")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Sex")
                         .HasMaxLength(10)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("StripeConnectAccountId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("StripeCustomerId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -284,10 +297,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.AppUserPermission", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PermissionId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "PermissionId");
 
@@ -299,10 +312,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.AppUserRole", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -315,16 +328,18 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -334,10 +349,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.CityNeighborhood", b =>
                 {
                     b.Property<int>("CityId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("NeighborhoodId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("CityId", "NeighborhoodId");
 
@@ -350,10 +365,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
                 {
                     b.Property<int>("AddressId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("AddressId", "PhotoId");
 
@@ -369,10 +384,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
                 {
                     b.Property<int>("NurseId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ClinicId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("NurseId", "ClinicId");
 
@@ -381,13 +396,154 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("ClinicNurses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Companion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HomePhone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companions");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
+                {
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OccupationId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CompanionId", "OccupationId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.ToTable("CompanionOccupations");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionRelativeType", b =>
+                {
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CompanionId", "RelativeTypeId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.HasIndex("RelativeTypeId")
+                        .IsUnique();
+
+                    b.ToTable("CompanionRelativeTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ConsumptionLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConsumptionLevels");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Diseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "PhotoId");
 
@@ -403,13 +559,13 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorClinic", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ClinicId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("DoctorId", "ClinicId");
 
@@ -422,10 +578,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorEvent", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "EventId");
 
@@ -438,10 +594,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorLink", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("LinkId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "LinkId");
 
@@ -454,10 +610,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "MedicalInsuranceCompanyId");
 
@@ -469,10 +625,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("NurseId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "NurseId");
 
@@ -484,10 +640,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorOrder", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "OrderId");
 
@@ -500,16 +656,16 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PatientId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("HasPatientInformationAccess")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("DoctorId", "PatientId");
 
@@ -521,10 +677,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPaymentMethodType", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodTypeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "PaymentMethodTypeId");
 
@@ -536,10 +692,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPhone", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PhoneId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "PhoneId");
 
@@ -552,10 +708,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorPrescription", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "PrescriptionId");
 
@@ -568,10 +724,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorProduct", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "ProductId");
 
@@ -584,10 +740,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorReview", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ReviewId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "ReviewId");
 
@@ -600,10 +756,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorService", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ServiceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "ServiceId");
 
@@ -616,10 +772,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorSignature", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SignatureId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("DoctorId", "SignatureId");
 
@@ -635,10 +791,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("WorkScheduleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "WorkScheduleId");
 
@@ -651,10 +807,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkScheduleSettings", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("WorkScheduleSettingsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "WorkScheduleSettingsId");
 
@@ -670,75 +826,101 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("PublicId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Size")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ThumbnailPublicId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("ThumbnailSize")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Url")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Documents");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.EducationLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EducationLevels");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateFrom")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateTo")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Evolution")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsSatisfactionSurveyCompleted")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsSatisfactionSurveyEmailSent")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsServiceRecommended")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("NextSteps")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -748,10 +930,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventClinic", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ClinicId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "ClinicId");
 
@@ -766,10 +948,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventMedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "MedicalInsuranceCompanyId");
 
@@ -784,10 +966,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPayment", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "PaymentId");
 
@@ -800,10 +982,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPaymentMethodType", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodTypeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "PaymentMethodTypeId");
 
@@ -818,10 +1000,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPaymentStatus", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentStatusId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "PaymentStatusId");
 
@@ -836,10 +1018,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "PrescriptionId");
 
@@ -852,10 +1034,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.EventService", b =>
                 {
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ServiceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("EventId", "ServiceId");
 
@@ -867,46 +1049,97 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("EventService");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FamilyMembers");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("SiteName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Url")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Link");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MaritalStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaritalStatuses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -916,10 +1149,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompanyPhoto", b =>
                 {
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("MedicalInsuranceCompanyId", "PhotoId");
 
@@ -936,22 +1169,24 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("LicenseNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("SpecialtyLicense")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -961,10 +1196,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseDocument", b =>
                 {
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("DocumentId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("MedicalLicenseId", "DocumentId");
 
@@ -980,10 +1215,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSpecialty", b =>
                 {
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SpecialtyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("MedicalLicenseId", "SpecialtyId");
 
@@ -998,10 +1233,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicenseSubSpecialty", b =>
                 {
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SubSpecialtyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("MedicalLicenseId", "SubSpecialtyId");
 
@@ -1010,26 +1245,355 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("MedicalLicenseSubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("AttendedAlone")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("BirthPlace")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CurrentAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CurrentLivingSituation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EconomicDependence")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HandDominance")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HomePhone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MobilePhone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PatientName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("UsesGlassesOrHearingAid")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("YearsOfSchooling")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalRecords");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordColorBlindness", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ColorBlindnessId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsPresent")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("text");
+
+                    b.HasKey("MedicalRecordId", "ColorBlindnessId");
+
+                    b.HasIndex("ColorBlindnessId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordCompanion", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CompanionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MedicalRecordId", "CompanionId");
+
+                    b.HasIndex("CompanionId")
+                        .IsUnique();
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordCompanions");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalRecordDiseaseTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordDiseaseTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MedicalRecordDiseaseTypeId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordDiseaseTypeId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordDiseaseTypeDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EducationLevelId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MedicalRecordId", "EducationLevelId");
+
+                    b.HasIndex("EducationLevelId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordEducationLevels");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FamilyMember")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("text");
+
+                    b.HasKey("MedicalRecordId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.ToTable("MedicalRecordFamilyDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MedicalRecordId", "FamilyMemberId");
+
+                    b.HasIndex("FamilyMemberId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordFamilyMembers");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", b =>
+                {
+                    b.Property<int>("FamilyMemberId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("FamilyMemberId", "RelativeTypeId");
+
+                    b.HasIndex("FamilyMemberId")
+                        .IsUnique();
+
+                    b.HasIndex("RelativeTypeId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordFamilyMemberRelativeTypes");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordMaritalStatus", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaritalStatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("text");
+
+                    b.HasKey("MedicalRecordId", "MaritalStatusId");
+
+                    b.HasIndex("MaritalStatusId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecordMaritalStatuses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordOccupation", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OccupationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("text");
+
+                    b.HasKey("MedicalRecordId", "OccupationId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.HasIndex("OccupationId");
+
+                    b.ToTable("MedicalRecordOccupations");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordPersonalDisease", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MedicalRecordDiseaseTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("text");
+
+                    b.HasKey("MedicalRecordId", "DiseaseId");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordDiseaseTypeId");
+
+                    b.ToTable("MedicalRecordPersonalDiseases");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
+                {
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SubstanceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConsumptionLevelId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EndAge")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StartAge")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MedicalRecordId", "SubstanceId", "ConsumptionLevelId");
+
+                    b.HasIndex("ConsumptionLevelId");
+
+                    b.HasIndex("SubstanceId");
+
+                    b.ToTable("MedicalRecordSubstances");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Settlement")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Zipcode")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1039,10 +1603,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.Property<int>("NurseId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("NurseId", "EventId");
 
@@ -1051,48 +1615,72 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("NurseEvent");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Occupations");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
-                    b.Property<double>("AmountDue")
-                        .HasColumnType("REAL");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("AmountPaid")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("AmountDue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeliveryStatus")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
-                    b.Property<double>("Subtotal")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("Tax")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("Total")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -1102,10 +1690,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
                 {
                     b.Property<int>("OrderId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("AddressId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("OrderId", "AddressId");
 
@@ -1120,31 +1708,31 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
                 {
                     b.Property<int>("OrderId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Dosage")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Instructions")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("OrderId", "ItemId");
 
@@ -1156,10 +1744,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
                 {
                     b.Property<int>("PatientId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("PatientId", "EventId");
 
@@ -1172,10 +1760,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PatientOrder", b =>
                 {
                     b.Property<int>("PatientId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("PatientId", "OrderId");
 
@@ -1188,10 +1776,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PatientPrescription", b =>
                 {
                     b.Property<int>("PatientId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("PatientId", "PrescriptionId");
 
@@ -1205,22 +1793,24 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("REAL");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("StripePaymentIntent")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1231,37 +1821,39 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Brand")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Country")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("ExpirationMonth")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ExpirationYear")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Last4")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("StripePaymentMethodId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1272,16 +1864,18 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1291,10 +1885,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethod", b =>
                 {
                     b.Property<int>("PaymentId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("PaymentId", "PaymentMethodId");
 
@@ -1309,10 +1903,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethodType", b =>
                 {
                     b.Property<int>("PaymentId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodTypeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("PaymentId", "PaymentMethodTypeId");
 
@@ -1328,19 +1922,21 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1351,25 +1947,27 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CountryCode")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Extension")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1380,25 +1978,27 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("PublicId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Size")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1409,22 +2009,24 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("ExchangeAmount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1434,37 +2036,37 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("ItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Dosage")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Id")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Instructions")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("PrescriptionId", "ItemId");
 
@@ -1476,10 +2078,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
                 {
                     b.Property<int>("PrescriptionId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("PrescriptionId", "OrderId");
 
@@ -1496,38 +2098,40 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double precision");
 
                     b.Property<int>("Dosage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LotNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Manufacturer")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1537,10 +2141,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ProductPhoto", b =>
                 {
                     b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("ProductId", "PhotoId");
 
@@ -1550,26 +2154,50 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("ProductPhoto");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RelativeTypes");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1580,26 +2208,28 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<double>("Discount")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -1609,10 +2239,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.ServicePhoto", b =>
                 {
                     b.Property<int>("ServiceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("ServiceId", "PhotoId");
 
@@ -1625,10 +2255,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SpecialitySubSpecialty", b =>
                 {
                     b.Property<int>("SpecialtyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SubSpecialtyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("SpecialtyId", "SubSpecialtyId");
 
@@ -1642,16 +2272,18 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1661,10 +2293,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SpecialtyService", b =>
                 {
                     b.Property<int>("SpecialtyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ServiceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("SpecialtyId", "ServiceId");
 
@@ -1677,16 +2309,18 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1696,10 +2330,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.StateCity", b =>
                 {
                     b.Property<int>("StateId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("CityId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("StateId", "CityId");
 
@@ -1713,39 +2347,65 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("SubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Substances");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Code")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1755,16 +2415,16 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("AddressId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsBilling")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("UserId", "AddressId");
 
@@ -1777,19 +2437,19 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalInsuranceCompany", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("DocumentId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PolicyNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "MedicalInsuranceCompanyId");
 
@@ -1804,13 +2464,13 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalLicense", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("MedicalLicenseId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("UserId", "MedicalLicenseId");
 
@@ -1819,16 +2479,35 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("UserMedicalLicenses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserMedicalRecord", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "MedicalRecordId");
+
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserMedicalRecords");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("UserId", "PaymentMethodId");
 
@@ -1841,10 +2520,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PhotoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "PhotoId");
 
@@ -1860,10 +2539,10 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserReview", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ReviewId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "ReviewId");
 
@@ -1876,13 +2555,13 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserTaxRegime", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TaxRegimeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsMain")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("UserId", "TaxRegimeId");
 
@@ -1896,25 +2575,27 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("DayOfWeek")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("time without time zone");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("time without time zone");
 
                     b.HasKey("Id");
 
@@ -1925,25 +2606,27 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("interval");
 
                     b.Property<int>("MinutesPerBlock")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("interval");
 
                     b.HasKey("Id");
 
@@ -1954,16 +2637,18 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1976,16 +2661,18 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1997,16 +2684,16 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -2018,16 +2705,16 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -2146,6 +2833,44 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Clinic");
 
                     b.Navigation("Nurse");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("CompanionOccupation")
+                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
+                        .WithOne("CompanionOccupation")
+                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("Occupation");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.CompanionRelativeType", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("CompanionRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithOne("CompanionRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("RelativeType");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorBannerPhoto", b =>
@@ -2680,6 +3405,227 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("SubSpecialty");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordColorBlindness", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.ColorBlindness", "ColorBlindness")
+                        .WithMany("MedicalRecordColorBlindnesses")
+                        .HasForeignKey("ColorBlindnessId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordColorBlindness")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordColorBlindness", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ColorBlindness");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordCompanion", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Companion", "Companion")
+                        .WithOne("MedicalRecordCompanion")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordCompanion", "CompanionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordCompanion")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordCompanion", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Companion");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordDiseaseTypeDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", "MedicalRecordDiseaseType")
+                        .WithOne("MedicalRecordDiseaseTypeDisease")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", "MedicalRecordDiseaseTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecordDiseaseType");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.EducationLevel", "EducationLevel")
+                        .WithMany("MedicalRecordEducationLevels")
+                        .HasForeignKey("EducationLevelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordEducationLevel")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordEducationLevel", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("EducationLevel");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.FamilyMember", "FamilyMember")
+                        .WithOne("MedicalRecordFamilyMember")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMember", "FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordFamilyMembers")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("FamilyMember");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.FamilyMember", "FamilyMember")
+                        .WithOne("MedicalRecordFamilyMemberRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithOne("MedicalRecordFamilyMemberRelativeType")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("FamilyMember");
+
+                    b.Navigation("RelativeType");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordMaritalStatus", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MaritalStatus", "MaritalStatus")
+                        .WithMany("MedicalRecordMaritalStatuses")
+                        .HasForeignKey("MaritalStatusId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordMaritalStatus")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordMaritalStatus", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MaritalStatus");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordOccupation", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("MedicalRecordOccupation")
+                        .HasForeignKey("MainService.Models.Entities.MedicalRecordOccupation", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
+                        .WithMany("MedicalRecordOccupations")
+                        .HasForeignKey("OccupationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("Occupation");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordPersonalDisease", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", null)
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("MedicalRecordDiseaseTypeId");
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordPersonalDiseases")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.ConsumptionLevel", "ConsumptionLevel")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("ConsumptionLevelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Substance", "Substance")
+                        .WithMany("MedicalRecordSubstances")
+                        .HasForeignKey("SubstanceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ConsumptionLevel");
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("Substance");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -3028,6 +3974,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserMedicalRecord", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
+                        .WithOne("UserMedicalRecord")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalRecord", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithOne("UserMedicalRecord")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalRecord", "UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
                 {
                     b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
@@ -3225,6 +4190,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("UserMedicalLicenses");
 
+                    b.Navigation("UserMedicalRecord");
+
                     b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
@@ -3245,11 +4212,44 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("StateCity");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
+                {
+                    b.Navigation("MedicalRecordColorBlindnesses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Companion", b =>
+                {
+                    b.Navigation("CompanionOccupation");
+
+                    b.Navigation("CompanionRelativeType");
+
+                    b.Navigation("MedicalRecordCompanion");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ConsumptionLevel", b =>
+                {
+                    b.Navigation("MedicalRecordSubstances");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
+                {
+                    b.Navigation("MedicalRecordDiseaseTypeDiseases");
+
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
                     b.Navigation("MedicalLicenseDocument");
 
                     b.Navigation("UserMedicalInsuranceCompany");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.EducationLevel", b =>
+                {
+                    b.Navigation("MedicalRecordEducationLevels");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>
@@ -3275,9 +4275,21 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("PatientEvent");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
+                {
+                    b.Navigation("MedicalRecordFamilyMember");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
                 {
                     b.Navigation("DoctorLink");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MaritalStatus", b =>
+                {
+                    b.Navigation("MedicalRecordMaritalStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompany", b =>
@@ -3300,9 +4312,46 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("MedicalLicenseSubSpecialties");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
+                {
+                    b.Navigation("MedicalRecordColorBlindness");
+
+                    b.Navigation("MedicalRecordCompanion");
+
+                    b.Navigation("MedicalRecordEducationLevel");
+
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordFamilyMembers");
+
+                    b.Navigation("MedicalRecordMaritalStatus");
+
+                    b.Navigation("MedicalRecordOccupation");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+
+                    b.Navigation("MedicalRecordSubstances");
+
+                    b.Navigation("UserMedicalRecord");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
+                {
+                    b.Navigation("MedicalRecordDiseaseTypeDisease");
+
+                    b.Navigation("MedicalRecordPersonalDiseases");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Navigation("CityNeighborhood");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
+                {
+                    b.Navigation("CompanionOccupation");
+
+                    b.Navigation("MedicalRecordOccupations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
@@ -3394,6 +4443,13 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("ProductPhotos");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
+                {
+                    b.Navigation("CompanionRelativeType");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>
                 {
                     b.Navigation("DoctorReview");
@@ -3429,6 +4485,11 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
                 {
                     b.Navigation("SpecialitySubSpecialty");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
+                {
+                    b.Navigation("MedicalRecordSubstances");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
