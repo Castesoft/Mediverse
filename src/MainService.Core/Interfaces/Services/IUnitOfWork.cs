@@ -3,6 +3,13 @@ using MainService.Core.Interfaces.Data;
 namespace MainService.Core.Interfaces.Services;
 public interface IUnitOfWork
 {
+    IDiseaseRepository DiseaseRepository { get; }
+    ISubstanceRepository SubstanceRepository { get; }
+    IOccupationRepository OccupationRepository { get; }
+    IMaritalStatusRepository MaritalStatusRepository { get; }
+    IColorBlindnessRepository ColorBlindnessRepository { get; }
+    IRelativeTypeRepository RelativeTypeRepository { get; }
+    IConsumptionLevelRepository ConsumptionLevelRepository { get; }
     IProductRepository ProductRepository { get; }
     IServiceRepository ServiceRepository { get; }
     IPhotoRepository PhotoRepository { get; }

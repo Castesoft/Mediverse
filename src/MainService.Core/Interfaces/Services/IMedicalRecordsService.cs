@@ -1,0 +1,36 @@
+namespace MainService.Core.Interfaces.Services
+{
+    public interface IColorBlindnessesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
+    public interface IConsumptionLevelsService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+    public interface IDiseasesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
+    public interface IMaritalStatusesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
+    public interface IOccupationsService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
+    public interface IRelativeTypesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
+    public interface ISubstancesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+}

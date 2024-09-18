@@ -1,14 +1,14 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { inject } from "@angular/core";
+import { inject, signal } from "@angular/core";
 import { AbstractControl, AsyncValidatorFn } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BehaviorSubject, Observable, of, tap, map, switchMap, catchError, debounceTime, take, finalize } from "rxjs";
-import { Entity, EntityParams, Form, IParams } from "src/app/_forms/form";
+import { Entity, EntityParams, IParams, SelectOption, Form } from "src/app/_forms/form";
 import { Modal } from "src/app/_models/modal";
 import { Pagination, PaginatedResponse, Item } from "src/app/_models/pagination";
-import { NamingSubject, Column, SortOptions, CatalogMode } from "src/app/_models/types";
+import { CatalogMode, Column, NamingSubject, SortOptions } from "src/app/_models/types";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getPaginatedResponse } from "src/app/_utils/util";
 import { environment } from "src/environments/environment";
@@ -17,6 +17,7 @@ export class ParamRecord<T extends Entity, U extends EntityParams<U>> {
   entries: Record<string, U> = {};
 
   constructor(private paramConstructor: new (key: string) => U) {}
+  // constructor(private paramConstructor: new (key: string, props?: { [K in keyof U]?: U[K] }) => U) {}
 
   add(key: string): ParamRecord<T, U> {
     if (this.hasKey(key)) return this;
@@ -299,6 +300,8 @@ export class ServiceHelper<
   data = new BehaviorSubject<T[]>([]);
   data$ = this.data.asObservable();
 
+  options = signal<SelectOption[]>([]);
+
   params = new BehaviorSubject<ParamRecord<T, U>>(new ParamRecord<T,U>(this.paramsConstructor));
   params$ = this.params.asObservable();
 
@@ -419,6 +422,19 @@ export class ServiceHelper<
         return response;
       })
     );
+  }
+
+  getOptions(): Observable<SelectOption[]> {
+    if (this.options().length > 0) {
+      return of(this.options());
+    }
+
+    return this.http.get<SelectOption[]>(`${this.baseUrl}options`).pipe(
+      map(response => {
+        this.options.set(response);
+        return response;
+      })
+    )
   }
 
   getById(id: number): Observable<T> {
