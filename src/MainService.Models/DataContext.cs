@@ -70,8 +70,6 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<MedicalRecordSubstance> MedicalRecordSubstances { get; set; }
     public DbSet<Disease> Diseases { get; set; }
     public DbSet<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; }
-    public DbSet<MedicalRecordDiseaseTypeDisease> MedicalRecordDiseaseTypeDiseases { get; set; }
-    public DbSet<MedicalRecordDiseaseType> MedicalRecordDiseaseTypes { get; set; }
     public DbSet<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; }
     public DbSet<Companion> Companions { get; set; }
     public DbSet<MedicalRecordCompanion> MedicalRecordCompanions { get; set; }

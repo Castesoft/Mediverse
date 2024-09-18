@@ -4,24 +4,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config
 {
-    public class MedicalRecordDiseaseTypeDiseaseConfiguration : IEntityTypeConfiguration<MedicalRecordDiseaseTypeDisease>
-    {
-        public void Configure(EntityTypeBuilder<MedicalRecordDiseaseTypeDisease> builder)
-        {
-            builder.HasKey(x => new { x.MedicalRecordDiseaseTypeId, x.DiseaseId });
-
-            builder.HasOne(x => x.MedicalRecordDiseaseType)
-                .WithOne(x => x.MedicalRecordDiseaseTypeDisease)
-                .HasForeignKey<MedicalRecordDiseaseTypeDisease>(x => x.MedicalRecordDiseaseTypeId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(x => x.Disease)
-                .WithMany(x => x.MedicalRecordDiseaseTypeDiseases)
-                .HasForeignKey(x => x.DiseaseId)
-                .OnDelete(DeleteBehavior.NoAction);
-        }
-    }
-
     public class MedicalRecordSubstanceConfiguration : IEntityTypeConfiguration<MedicalRecordSubstance>
     {
         public void Configure(EntityTypeBuilder<MedicalRecordSubstance> builder)
@@ -93,9 +75,9 @@ namespace MainService.Models.Config
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.Occupation)
-                .WithOne(x => x.CompanionOccupation)
-                .HasForeignKey<CompanionOccupation>(x => x.CompanionId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(x => x.CompanionOccupations)
+                .HasForeignKey(x => x.OccupationId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 

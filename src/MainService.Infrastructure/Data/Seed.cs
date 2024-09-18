@@ -180,6 +180,47 @@ public static class Seed
         return [];
     }
 
+    private static async Task<List<Disease>> SeedDiseasesAsync(DataContext context)
+    {
+        if (!await context.Diseases.AnyAsync())
+        {
+            await context.Diseases.AddRangeAsync(SeedData.Diseases);
+            await context.SaveChangesAsync();
+
+            return await context.Diseases
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+
+    private static async Task<List<Substance>> SeedSubstancesAsync(DataContext context)
+    {
+        if (!await context.Substances.AnyAsync())
+        {
+            await context.Substances.AddRangeAsync(SeedData.Substances);
+            await context.SaveChangesAsync();
+
+            return await context.Substances
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
+
+    private static async Task<List<ConsumptionLevel>> SeedConsumptionLevelsAsync(DataContext context)
+    {
+        if (!await context.ConsumptionLevels.AnyAsync())
+        {
+            await context.ConsumptionLevels.AddRangeAsync(SeedData.ConsumptionLevels);
+            await context.SaveChangesAsync();
+
+            return await context.ConsumptionLevels
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        return [];
+    }
     private static async Task SeedMedicalInsuranceCompaniesAsync(DataContext context)
     {
         if (await context.MedicalInsuranceCompanies.AnyAsync()) return;
@@ -245,6 +286,9 @@ public static class Seed
         List<MaritalStatus> maritalStatuses = await SeedMaritalStatusesAsync(context);
         List<ColorBlindness> colorBlindnesses = await SeedColorBlindnessesAsync(context);
         List<RelativeType> relativeTypes = await SeedRelativeTypesAsync(context);
+        List<Disease> diseases = await SeedDiseasesAsync(context);
+        List<Substance> substances = await SeedSubstancesAsync(context);
+        List<ConsumptionLevel> consumptionLevels = await SeedConsumptionLevelsAsync(context);
         await SeedMedicalInsuranceCompaniesAsync(context);
         List<PaymentStatus> paymentStatuses = await SeedPaymentStatusesAsync(context);
         await SeedMexicoStates(context);
@@ -422,6 +466,8 @@ public static class Seed
         await context.SaveChangesAsync();
 
         await SeedRandomDoctorData(context, userManager);
+        await SeedMedicalRecordsAsync(context, userManager, educationLevels, occupations, maritalStatuses, colorBlindnesses,
+            relativeTypes, diseases, substances, consumptionLevels);
     }
 
     private static async Task SeedProductsAsync(DataContext context)
@@ -573,6 +619,206 @@ public static class Seed
                 SeedPatientEventsAsync(doctor, patient, doctorNurses, doctorProducts, doctorServices);
             }
         }
+    }
+
+    private static async Task SeedMedicalRecordsAsync(DataContext context, UserManager<AppUser> userManager, List<EducationLevel> educationLevels, 
+        List<Occupation> occupations, List<MaritalStatus> maritalStatuses, List<ColorBlindness> colorBlindnesses, List<RelativeType> relativeTypes,
+        List<Disease> diseases, List<Substance> substances, List<ConsumptionLevel> consumptionLevels)
+    {
+        var users = await userManager.Users.ToListAsync();
+        var mexicoStates = await context.States.ToListAsync();
+
+        foreach (var user in users)
+        {
+            if (await context.UserMedicalRecords.AnyAsync(umr => umr.UserId == user.Id))
+            {
+                continue;
+            }
+
+            MedicalRecord medicalRecord = new()
+            {
+                PatientName = $"{user.FirstName} {user.LastName}",
+                Age = Random.Shared.Next(18, 101),
+                Sex = user.Sex,
+                BirthPlace = mexicoStates[Random.Shared.Next(mexicoStates.Count)].Name,
+                BirthDate = user.DateOfBirth.ToDateTime(TimeOnly.MinValue).ToUniversalTime(),
+                YearsOfSchooling = Random.Shared.Next(6, 22),
+                HandDominance = Random.Shared.Next(2) == 0 ? "Diestro" : "Zurdo",
+                CurrentLivingSituation = GetRandomLivingSituation(),
+                CurrentAddress = user.UserAddresses.FirstOrDefault(ua => ua.IsMain)?.Address?.Street ?? "No especificado",
+                HomePhone = SeedData.GenerateMexicanPhoneNumber(),
+                MobilePhone = user.PhoneNumber,
+                Email = user.Email,
+                AttendedAlone = Random.Shared.Next(2) == 0,
+                EconomicDependence = GetRandomEconomicDependence(),
+                UsesGlassesOrHearingAid = Random.Shared.Next(2) == 0,
+                Comments = "Comentarios iniciales del paciente.",
+                MedicalRecordEducationLevel = new()
+                {
+                    EducationLevelId = educationLevels[Random.Shared.Next(educationLevels.Count)].Id,
+                },
+                MedicalRecordOccupation = new()
+                {
+                    OccupationId = occupations[Random.Shared.Next(occupations.Count)].Id,
+                },
+                MedicalRecordMaritalStatus = new()
+                {
+                    MaritalStatusId = maritalStatuses[Random.Shared.Next(maritalStatuses.Count)].Id,
+                },
+                MedicalRecordColorBlindness = new()
+                {
+                    ColorBlindnessId = colorBlindnesses[Random.Shared.Next(colorBlindnesses.Count)].Id,
+                    IsPresent = Random.Shared.Next(2) == 0,
+                }
+            };
+
+            for (int i = 0; i < Random.Shared.Next(1, 6); i++)
+            {
+                medicalRecord.MedicalRecordFamilyMembers.Add(new()
+                {
+                    FamilyMember = new()
+                    {
+                        Name = GetRandomName(),
+                        Age = Random.Shared.Next(1, 90),
+                        MedicalRecordFamilyMemberRelativeType = new()
+                        {
+                            RelativeTypeId = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id
+                        }
+                    }
+                });
+            }
+
+            if (!medicalRecord.AttendedAlone)
+            {
+                var randomOccupation = occupations[Random.Shared.Next(occupations.Count)];
+
+                medicalRecord.MedicalRecordCompanion = new()
+                {
+                    Companion = new()
+                    {
+                        Name = GetRandomName(),
+                        Age = Random.Shared.Next(18, 80),
+                        Sex = Random.Shared.Next(2) == 0 ? "Male" : "Female",
+                        Address = GetRandomAddress(),
+                        HomePhone = SeedData.GenerateMexicanPhoneNumber(),
+                        PhoneNumber = SeedData.GenerateMexicanPhoneNumber(),
+                        Email = $"{SeedData.GetRandomFirstName("").ToLower()}.{SeedData.GetRandomLastName().ToLower()}@{SeedData.GetRandomEmailDomain()}.com",
+                        CompanionRelativeType = new()
+                        {
+                            RelativeTypeId = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id
+                        },
+                        CompanionOccupation = new()
+                        {
+                            OccupationId = randomOccupation.Id
+                        }
+                    }
+                };
+            }
+
+            var usedPersonalDiseaseIds = new HashSet<int>();
+            var usedFamilyDiseaseIds = new HashSet<int>();
+
+            for (int i = 0; i < Random.Shared.Next(0, 5); i++)
+            {
+                if (usedPersonalDiseaseIds.Count >= diseases.Count) break;
+
+                int diseaseId;
+                do
+                {
+                    diseaseId = diseases[Random.Shared.Next(diseases.Count)].Id;
+                } while (usedPersonalDiseaseIds.Contains(diseaseId));
+
+                usedPersonalDiseaseIds.Add(diseaseId);
+                medicalRecord.MedicalRecordPersonalDiseases.Add(new()
+                {
+                    DiseaseId = diseaseId,
+                    Description = "Descripción de la enfermedad personal."
+                    
+                });
+            }
+
+            for (int i = 0; i < Random.Shared.Next(0, 5); i++)
+            {
+                if (usedFamilyDiseaseIds.Count >= diseases.Count) break;
+
+                int diseaseId;
+                do
+                {
+                    diseaseId = diseases[Random.Shared.Next(diseases.Count)].Id;
+                } while (usedFamilyDiseaseIds.Contains(diseaseId));
+
+                usedFamilyDiseaseIds.Add(diseaseId);
+                medicalRecord.MedicalRecordFamilyDiseases.Add(new()
+                {
+                    DiseaseId = diseaseId,
+                    FamilyMember = GetRandomFamilyMember(),
+                    Description = "Descripción de la enfermedad familiar."
+                });
+            }
+
+            var usedSubstances = new HashSet<(int SubstanceId, int ConsumptionLevelId)>();
+
+            for (int i = 0; i < Random.Shared.Next(0, 4); i++)
+            {
+                if (usedSubstances.Count >= substances.Count * consumptionLevels.Count) break;
+
+                int substanceId, consumptionLevelId;
+                do
+                {
+                    substanceId = substances[Random.Shared.Next(substances.Count)].Id;
+                    consumptionLevelId = consumptionLevels[Random.Shared.Next(consumptionLevels.Count)].Id;
+                } while (usedSubstances.Contains((substanceId, consumptionLevelId)));
+
+                usedSubstances.Add((substanceId, consumptionLevelId));
+
+                medicalRecord.MedicalRecordSubstances.Add(new()
+                {
+                    SubstanceId = substanceId,
+                    ConsumptionLevelId = consumptionLevelId,
+                    StartAge = Random.Shared.Next(12, 30),
+                    EndAge = Random.Shared.Next(30, 60),
+                    IsCurrent = Random.Shared.Next(2) == 0
+                });
+            }
+
+            context.MedicalRecords.Add(medicalRecord);
+
+            context.UserMedicalRecords.Add(new()
+            {
+                UserId = user.Id,
+                MedicalRecord = medicalRecord
+            });
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static string GetRandomLivingSituation()
+    {
+        string[] livingSituations = ["Solo", "Con familia", "Con compañeros de piso", "En un hogar de ancianos", "Otro"];
+        return livingSituations[Random.Shared.Next(livingSituations.Length)];
+    }
+
+    private static string GetRandomEconomicDependence()
+    {
+        string[] dependencies = ["Independiente", "Dependiente de familia", "Asistencia gubernamental", "Otro"];
+        return dependencies[Random.Shared.Next(dependencies.Length)];
+    }
+
+    private static string GetRandomName()
+    {
+        return $"{SeedData.GetRandomFirstName("")} {SeedData.GetRandomLastName()}";
+    }
+
+    private static string GetRandomAddress()
+    {
+        return $"{SeedData.GetRandomStreet()} {Random.Shared.Next(100, 9999)}, {SeedData.GetRandomCity()}";
+    }
+
+    private static string GetRandomFamilyMember()
+    {
+        string[] familyMembers = ["Madre", "Padre", "Hermano", "Hermana", "Abuelo", "Abuela", "Tío", "Tía", "Primo", "Prima"];
+        return familyMembers[Random.Shared.Next(familyMembers.Length)];
     }
 
     private static void SeedPatientEventsAsync(AppUser doctor, AppUser patient,

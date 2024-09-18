@@ -449,6 +449,8 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("CompanionId")
                         .IsUnique();
 
+                    b.HasIndex("OccupationId");
+
                     b.ToTable("CompanionOccupations");
                 });
 
@@ -1314,44 +1316,6 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("MedicalRecordCompanions");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MedicalRecordDiseaseTypes");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
-                {
-                    b.Property<int>("MedicalRecordDiseaseTypeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DiseaseId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("MedicalRecordDiseaseTypeId", "DiseaseId");
-
-                    b.HasIndex("DiseaseId");
-
-                    b.HasIndex("MedicalRecordDiseaseTypeId")
-                        .IsUnique();
-
-                    b.ToTable("MedicalRecordDiseaseTypeDiseases");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
                 {
                     b.Property<int>("MedicalRecordId")
@@ -1479,8 +1443,8 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int>("DiseaseId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("MedicalRecordDiseaseTypeId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Other")
                         .HasColumnType("TEXT");
@@ -1488,8 +1452,6 @@ namespace MainService.Sqlite.Migrations
                     b.HasKey("MedicalRecordId", "DiseaseId");
 
                     b.HasIndex("DiseaseId");
-
-                    b.HasIndex("MedicalRecordDiseaseTypeId");
 
                     b.ToTable("MedicalRecordPersonalDiseases");
                 });
@@ -2752,9 +2714,9 @@ namespace MainService.Sqlite.Migrations
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
-                        .WithOne("CompanionOccupation")
-                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("CompanionOccupations")
+                        .HasForeignKey("OccupationId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Companion");
@@ -3351,25 +3313,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("MedicalRecord");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
-                        .WithMany("MedicalRecordDiseaseTypeDiseases")
-                        .HasForeignKey("DiseaseId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", "MedicalRecordDiseaseType")
-                        .WithOne("MedicalRecordDiseaseTypeDisease")
-                        .HasForeignKey("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", "MedicalRecordDiseaseTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Disease");
-
-                    b.Navigation("MedicalRecordDiseaseType");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
                 {
                     b.HasOne("MainService.Models.Entities.EducationLevel", "EducationLevel")
@@ -3491,10 +3434,6 @@ namespace MainService.Sqlite.Migrations
                         .HasForeignKey("DiseaseId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", null)
-                        .WithMany("MedicalRecordPersonalDiseases")
-                        .HasForeignKey("MedicalRecordDiseaseTypeId");
 
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithMany("MedicalRecordPersonalDiseases")
@@ -4141,8 +4080,6 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
                 {
-                    b.Navigation("MedicalRecordDiseaseTypeDiseases");
-
                     b.Navigation("MedicalRecordFamilyDiseases");
 
                     b.Navigation("MedicalRecordPersonalDiseases");
@@ -4243,13 +4180,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("UserMedicalRecord");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
-                {
-                    b.Navigation("MedicalRecordDiseaseTypeDisease");
-
-                    b.Navigation("MedicalRecordPersonalDiseases");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Navigation("CityNeighborhood");
@@ -4257,7 +4187,7 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
                 {
-                    b.Navigation("CompanionOccupation");
+                    b.Navigation("CompanionOccupations");
 
                     b.Navigation("MedicalRecordOccupations");
                 });

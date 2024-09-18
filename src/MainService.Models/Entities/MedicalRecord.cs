@@ -93,7 +93,7 @@ namespace MainService.Models.Entities
         }
         
         public List<MedicalRecordOccupation> MedicalRecordOccupations { get; set; } = [];
-        public CompanionOccupation CompanionOccupation { get; set; }
+        public List<CompanionOccupation> CompanionOccupations { get; set; } = [];
     }
 
     public class MedicalRecordMaritalStatus
@@ -219,6 +219,7 @@ namespace MainService.Models.Entities
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; }
         public int DiseaseId { get; set; } public Disease Disease { get; set; }
 
+        public string Description { get; set; }
         public string Other { get; set; }
     }
 
@@ -229,26 +230,6 @@ namespace MainService.Models.Entities
         public string FamilyMember { get; set; }
         public string Description { get; set; }
         public string Other { get; set; }
-    }
-
-    public class MedicalRecordDiseaseType : BaseEntity
-    {
-        public MedicalRecordDiseaseType() { }
-        public MedicalRecordDiseaseType(string name) => Name = name;
-        public MedicalRecordDiseaseType(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
-
-        public List<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; } = [];
-        public MedicalRecordDiseaseTypeDisease MedicalRecordDiseaseTypeDisease { get; set; }
-    }
-
-    public class MedicalRecordDiseaseTypeDisease
-    {
-        public int MedicalRecordDiseaseTypeId { get; set; } public MedicalRecordDiseaseType MedicalRecordDiseaseType { get; set; }
-        public int DiseaseId { get; set; } public Disease Disease { get; set; }
     }
 
     public class Disease : BaseEntity
@@ -263,7 +244,6 @@ namespace MainService.Models.Entities
 
         public List<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; } = [];
         public List<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; } = [];
-        public List<MedicalRecordDiseaseTypeDisease> MedicalRecordDiseaseTypeDiseases { get; set; } = [];
     }
 
     public class ConsumptionLevel : BaseEntity
