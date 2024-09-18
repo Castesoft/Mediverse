@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240917200132_InitialCreate")]
+    [Migration("20240918002814_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -470,6 +470,8 @@ namespace MainService.Postgres.Migrations
 
                     b.HasIndex("CompanionId")
                         .IsUnique();
+
+                    b.HasIndex("OccupationId");
 
                     b.ToTable("CompanionOccupations");
                 });
@@ -1358,46 +1360,6 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("MedicalRecordCompanions");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MedicalRecordDiseaseTypes");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
-                {
-                    b.Property<int>("MedicalRecordDiseaseTypeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DiseaseId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("MedicalRecordDiseaseTypeId", "DiseaseId");
-
-                    b.HasIndex("DiseaseId");
-
-                    b.HasIndex("MedicalRecordDiseaseTypeId")
-                        .IsUnique();
-
-                    b.ToTable("MedicalRecordDiseaseTypeDiseases");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
                 {
                     b.Property<int>("MedicalRecordId")
@@ -1525,8 +1487,8 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("DiseaseId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MedicalRecordDiseaseTypeId")
-                        .HasColumnType("integer");
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
                     b.Property<string>("Other")
                         .HasColumnType("text");
@@ -1534,8 +1496,6 @@ namespace MainService.Postgres.Migrations
                     b.HasKey("MedicalRecordId", "DiseaseId");
 
                     b.HasIndex("DiseaseId");
-
-                    b.HasIndex("MedicalRecordDiseaseTypeId");
 
                     b.ToTable("MedicalRecordPersonalDiseases");
                 });
@@ -2844,9 +2804,9 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
-                        .WithOne("CompanionOccupation")
-                        .HasForeignKey("MainService.Models.Entities.CompanionOccupation", "CompanionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("CompanionOccupations")
+                        .HasForeignKey("OccupationId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Companion");
@@ -3443,25 +3403,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("MedicalRecord");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Disease", "Disease")
-                        .WithMany("MedicalRecordDiseaseTypeDiseases")
-                        .HasForeignKey("DiseaseId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", "MedicalRecordDiseaseType")
-                        .WithOne("MedicalRecordDiseaseTypeDisease")
-                        .HasForeignKey("MainService.Models.Entities.MedicalRecordDiseaseTypeDisease", "MedicalRecordDiseaseTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Disease");
-
-                    b.Navigation("MedicalRecordDiseaseType");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordEducationLevel", b =>
                 {
                     b.HasOne("MainService.Models.Entities.EducationLevel", "EducationLevel")
@@ -3583,10 +3524,6 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("DiseaseId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.MedicalRecordDiseaseType", null)
-                        .WithMany("MedicalRecordPersonalDiseases")
-                        .HasForeignKey("MedicalRecordDiseaseTypeId");
 
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithMany("MedicalRecordPersonalDiseases")
@@ -4233,8 +4170,6 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
                 {
-                    b.Navigation("MedicalRecordDiseaseTypeDiseases");
-
                     b.Navigation("MedicalRecordFamilyDiseases");
 
                     b.Navigation("MedicalRecordPersonalDiseases");
@@ -4335,13 +4270,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("UserMedicalRecord");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.MedicalRecordDiseaseType", b =>
-                {
-                    b.Navigation("MedicalRecordDiseaseTypeDisease");
-
-                    b.Navigation("MedicalRecordPersonalDiseases");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
                 {
                     b.Navigation("CityNeighborhood");
@@ -4349,7 +4277,7 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
                 {
-                    b.Navigation("CompanionOccupation");
+                    b.Navigation("CompanionOccupations");
 
                     b.Navigation("MedicalRecordOccupations");
                 });
