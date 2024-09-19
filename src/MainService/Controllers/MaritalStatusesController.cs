@@ -1,18 +1,17 @@
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using MainService.Extensions;
-using MainService.Core.Helpers.Pagination;
-using MainService.Core.DTOs;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.DTOs;
+using MainService.Core.Helpers.Pagination;
+using MainService.Extensions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Entities;
 
 namespace MainService.Controllers;
-
 public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMaritalStatusesService service) : BaseApiController
 {
-    private static readonly string EntityName = "estatus marital";
+    private static readonly string EntityName = "Estado Civil";
     
     [HttpGet]
     public async Task<ActionResult<PagedList<MaritalStatusDto>>> GetPagedListAsync([FromQuery] MaritalStatusParams param)
@@ -52,7 +51,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     [HttpGet("all")]
     public async Task<ActionResult<List<MaritalStatusDto>>> GetAllAsync()
     {
-        var data = await uow.MaritalStatusRepository.GetAllAsNoTrackingAsync();
+        var data = await uow.MaritalStatusRepository.GetAllDtosAsync();
 
         if (data.Count == 0) return NoContent();
 
@@ -60,23 +59,14 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     }
 
     [HttpGet("nameexists")]
-    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name, [FromQuery] int? id)
-    {
-        var item = await uow.MaritalStatusRepository.FindDtoByNameAsync(name);
-
-        if (item == null)
-        {
-            return false;
-        }
-
-        return !id.HasValue || item.Id != id.Value;
-    }
+    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name) =>
+        await uow.MaritalStatusRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
     public async Task<ActionResult<MaritalStatusDto>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.MaritalStatusRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+            return BadRequest($"La {EntityName} con ID {id} no existe.");
 
         return await uow.MaritalStatusRepository.GetDtoByIdAsync(id);
     }
@@ -84,10 +74,10 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     [HttpPost]
     public async Task<ActionResult<MaritalStatusDto>> AddAsync([FromBody] MaritalStatusCreateDto request)
     {
-        if (!await uow.MaritalStatusRepository.NameUniqueAsync(request.Name))
+        if (!await uow.MaritalStatusRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
-        if (!await uow.MaritalStatusRepository.CodeUniqueAsync(request.Code))
+        if (!await uow.MaritalStatusRepository.ExistsByCodeAsync(request.Code))
             return BadRequest($"El código {request.Code} ya existe.");
 
         MaritalStatus itemToAdd = new();
@@ -121,8 +111,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync([FromRoute] int id)
     {
-        if (!await uow.MaritalStatusRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+        if (!await uow.MaritalStatusRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
         if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
 
@@ -136,8 +125,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
 
         foreach (var id in idList)
         {
-            if (!await uow.MaritalStatusRepository.ExistsByIdAsync(id))
-                return BadRequest($"{EntityName} con ID {id} no existe.");
+            if (!await uow.MaritalStatusRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
             if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
         }
@@ -146,10 +134,10 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     }
 
     [HttpGet("xlsx")]
-    public async Task<ActionResult> ExportToExcelAsync([FromQuery] MaritalStatusParams param)
+    public async Task<ActionResult> ExportExcelAsync([FromQuery] MaritalStatusParams param)
     {
-        var cattles = await uow.MaritalStatusRepository.GetPagedListAsync(param, true);
-        var cattlesToExport = mapper.Map<List<MaritalStatusDto>>(cattles);
+        PagedList<MaritalStatusDto> data = await uow.MaritalStatusRepository.GetPagedListAsync(param, true);
+        List<MaritalStatusDto> dataToExport = mapper.Map<List<MaritalStatusDto>>(data);
 
         using (var package = new ExcelPackage())
         {
@@ -161,7 +149,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
             worksheet.Cells["D1"].Value = "Creado Por";
             worksheet.Cells["E1"].Value = "Nombre Anterior";
 
-            worksheet.Cells["A2"].LoadFromCollection(cattlesToExport, PrintHeaders: false);
+            worksheet.Cells["A2"].LoadFromCollection(dataToExport, PrintHeaders: false);
 
             var stream = new MemoryStream();
 
@@ -170,7 +158,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
             var content = stream.ToArray();
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             var currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var fileName = $"cattles_{currentDateTime}.xlsx";
+            var fileName = $"{EntityName}_{currentDateTime}.xlsx";
 
             return File(content, contentType, fileName);
         }

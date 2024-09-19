@@ -1,18 +1,17 @@
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using MainService.Extensions;
-using MainService.Core.Helpers.Pagination;
-using MainService.Core.DTOs;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.DTOs;
+using MainService.Core.Helpers.Pagination;
+using MainService.Extensions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Entities;
 
 namespace MainService.Controllers;
-
 public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorBlindnessesService service) : BaseApiController
 {
-    private static readonly string EntityName = "ceguera de color";
+    private static readonly string EntityName = "Tipo de Daltonismo";
     
     [HttpGet]
     public async Task<ActionResult<PagedList<ColorBlindnessDto>>> GetPagedListAsync([FromQuery] ColorBlindnessParams param)
@@ -52,7 +51,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     [HttpGet("all")]
     public async Task<ActionResult<List<ColorBlindnessDto>>> GetAllAsync()
     {
-        var data = await uow.ColorBlindnessRepository.GetAllAsNoTrackingAsync();
+        var data = await uow.ColorBlindnessRepository.GetAllDtosAsync();
 
         if (data.Count == 0) return NoContent();
 
@@ -60,23 +59,14 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     }
 
     [HttpGet("nameexists")]
-    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name, [FromQuery] int? id)
-    {
-        var item = await uow.ColorBlindnessRepository.FindDtoByNameAsync(name);
-
-        if (item == null)
-        {
-            return false;
-        }
-
-        return !id.HasValue || item.Id != id.Value;
-    }
+    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name) =>
+        await uow.ColorBlindnessRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ColorBlindnessDto>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.ColorBlindnessRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+            return BadRequest($"La {EntityName} con ID {id} no existe.");
 
         return await uow.ColorBlindnessRepository.GetDtoByIdAsync(id);
     }
@@ -84,10 +74,10 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     [HttpPost]
     public async Task<ActionResult<ColorBlindnessDto>> AddAsync([FromBody] ColorBlindnessCreateDto request)
     {
-        if (!await uow.ColorBlindnessRepository.NameUniqueAsync(request.Name))
+        if (!await uow.ColorBlindnessRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
-        if (!await uow.ColorBlindnessRepository.CodeUniqueAsync(request.Code))
+        if (!await uow.ColorBlindnessRepository.ExistsByCodeAsync(request.Code))
             return BadRequest($"El código {request.Code} ya existe.");
 
         ColorBlindness itemToAdd = new();
@@ -121,8 +111,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync([FromRoute] int id)
     {
-        if (!await uow.ColorBlindnessRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+        if (!await uow.ColorBlindnessRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
         if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
 
@@ -136,8 +125,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
 
         foreach (var id in idList)
         {
-            if (!await uow.ColorBlindnessRepository.ExistsByIdAsync(id))
-                return BadRequest($"{EntityName} con ID {id} no existe.");
+            if (!await uow.ColorBlindnessRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
             if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
         }
@@ -146,10 +134,10 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     }
 
     [HttpGet("xlsx")]
-    public async Task<ActionResult> ExportToExcelAsync([FromQuery] ColorBlindnessParams param)
+    public async Task<ActionResult> ExportExcelAsync([FromQuery] ColorBlindnessParams param)
     {
-        var cattles = await uow.ColorBlindnessRepository.GetPagedListAsync(param, true);
-        var cattlesToExport = mapper.Map<List<ColorBlindnessDto>>(cattles);
+        PagedList<ColorBlindnessDto> data = await uow.ColorBlindnessRepository.GetPagedListAsync(param, true);
+        List<ColorBlindnessDto> dataToExport = mapper.Map<List<ColorBlindnessDto>>(data);
 
         using (var package = new ExcelPackage())
         {
@@ -161,7 +149,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
             worksheet.Cells["D1"].Value = "Creado Por";
             worksheet.Cells["E1"].Value = "Nombre Anterior";
 
-            worksheet.Cells["A2"].LoadFromCollection(cattlesToExport, PrintHeaders: false);
+            worksheet.Cells["A2"].LoadFromCollection(dataToExport, PrintHeaders: false);
 
             var stream = new MemoryStream();
 
@@ -170,7 +158,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
             var content = stream.ToArray();
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             var currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var fileName = $"cattles_{currentDateTime}.xlsx";
+            var fileName = $"{EntityName}_{currentDateTime}.xlsx";
 
             return File(content, contentType, fileName);
         }

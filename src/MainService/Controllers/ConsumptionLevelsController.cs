@@ -1,18 +1,17 @@
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using MainService.Extensions;
-using MainService.Core.Helpers.Pagination;
-using MainService.Core.DTOs;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.DTOs;
+using MainService.Core.Helpers.Pagination;
+using MainService.Extensions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Entities;
 
 namespace MainService.Controllers;
-
 public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsumptionLevelsService service) : BaseApiController
 {
-    private static readonly string EntityName = "ceguera de color";
+    private static readonly string EntityName = "Nivel de Consumo";
     
     [HttpGet]
     public async Task<ActionResult<PagedList<ConsumptionLevelDto>>> GetPagedListAsync([FromQuery] ConsumptionLevelParams param)
@@ -52,7 +51,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     [HttpGet("all")]
     public async Task<ActionResult<List<ConsumptionLevelDto>>> GetAllAsync()
     {
-        var data = await uow.ConsumptionLevelRepository.GetAllAsNoTrackingAsync();
+        var data = await uow.ConsumptionLevelRepository.GetAllDtosAsync();
 
         if (data.Count == 0) return NoContent();
 
@@ -60,23 +59,14 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     }
 
     [HttpGet("nameexists")]
-    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name, [FromQuery] int? id)
-    {
-        var item = await uow.ConsumptionLevelRepository.FindDtoByNameAsync(name);
-
-        if (item == null)
-        {
-            return false;
-        }
-
-        return !id.HasValue || item.Id != id.Value;
-    }
+    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name) =>
+        await uow.ConsumptionLevelRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ConsumptionLevelDto>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.ConsumptionLevelRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+            return BadRequest($"La {EntityName} con ID {id} no existe.");
 
         return await uow.ConsumptionLevelRepository.GetDtoByIdAsync(id);
     }
@@ -84,10 +74,10 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     [HttpPost]
     public async Task<ActionResult<ConsumptionLevelDto>> AddAsync([FromBody] ConsumptionLevelCreateDto request)
     {
-        if (!await uow.ConsumptionLevelRepository.NameUniqueAsync(request.Name))
+        if (!await uow.ConsumptionLevelRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
-        if (!await uow.ConsumptionLevelRepository.CodeUniqueAsync(request.Code))
+        if (!await uow.ConsumptionLevelRepository.ExistsByCodeAsync(request.Code))
             return BadRequest($"El código {request.Code} ya existe.");
 
         ConsumptionLevel itemToAdd = new();
@@ -121,8 +111,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync([FromRoute] int id)
     {
-        if (!await uow.ConsumptionLevelRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+        if (!await uow.ConsumptionLevelRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
         if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
 
@@ -136,8 +125,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
 
         foreach (var id in idList)
         {
-            if (!await uow.ConsumptionLevelRepository.ExistsByIdAsync(id))
-                return BadRequest($"{EntityName} con ID {id} no existe.");
+            if (!await uow.ConsumptionLevelRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
             if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
         }
@@ -146,10 +134,10 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     }
 
     [HttpGet("xlsx")]
-    public async Task<ActionResult> ExportToExcelAsync([FromQuery] ConsumptionLevelParams param)
+    public async Task<ActionResult> ExportExcelAsync([FromQuery] ConsumptionLevelParams param)
     {
-        var cattles = await uow.ConsumptionLevelRepository.GetPagedListAsync(param, true);
-        var cattlesToExport = mapper.Map<List<ConsumptionLevelDto>>(cattles);
+        PagedList<ConsumptionLevelDto> data = await uow.ConsumptionLevelRepository.GetPagedListAsync(param, true);
+        List<ConsumptionLevelDto> dataToExport = mapper.Map<List<ConsumptionLevelDto>>(data);
 
         using (var package = new ExcelPackage())
         {
@@ -161,7 +149,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
             worksheet.Cells["D1"].Value = "Creado Por";
             worksheet.Cells["E1"].Value = "Nombre Anterior";
 
-            worksheet.Cells["A2"].LoadFromCollection(cattlesToExport, PrintHeaders: false);
+            worksheet.Cells["A2"].LoadFromCollection(dataToExport, PrintHeaders: false);
 
             var stream = new MemoryStream();
 
@@ -170,7 +158,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
             var content = stream.ToArray();
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             var currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var fileName = $"cattles_{currentDateTime}.xlsx";
+            var fileName = $"{EntityName}_{currentDateTime}.xlsx";
 
             return File(content, contentType, fileName);
         }

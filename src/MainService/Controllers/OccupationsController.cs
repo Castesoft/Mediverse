@@ -1,18 +1,17 @@
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using MainService.Extensions;
-using MainService.Core.Helpers.Pagination;
-using MainService.Core.DTOs;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.DTOs;
+using MainService.Core.Helpers.Pagination;
+using MainService.Extensions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Entities;
 
 namespace MainService.Controllers;
-
 public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupationsService service) : BaseApiController
 {
-    private static readonly string EntityName = "ocupación";
+    private static readonly string EntityName = "Ocupación";
     
     [HttpGet]
     public async Task<ActionResult<PagedList<OccupationDto>>> GetPagedListAsync([FromQuery] OccupationParams param)
@@ -52,7 +51,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     [HttpGet("all")]
     public async Task<ActionResult<List<OccupationDto>>> GetAllAsync()
     {
-        var data = await uow.OccupationRepository.GetAllAsNoTrackingAsync();
+        var data = await uow.OccupationRepository.GetAllDtosAsync();
 
         if (data.Count == 0) return NoContent();
 
@@ -60,23 +59,14 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     }
 
     [HttpGet("nameexists")]
-    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name, [FromQuery] int? id)
-    {
-        var item = await uow.OccupationRepository.FindDtoByNameAsync(name);
-
-        if (item == null)
-        {
-            return false;
-        }
-
-        return !id.HasValue || item.Id != id.Value;
-    }
+    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name) =>
+        await uow.OccupationRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
     public async Task<ActionResult<OccupationDto>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.OccupationRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+            return BadRequest($"La {EntityName} con ID {id} no existe.");
 
         return await uow.OccupationRepository.GetDtoByIdAsync(id);
     }
@@ -84,10 +74,10 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     [HttpPost]
     public async Task<ActionResult<OccupationDto>> AddAsync([FromBody] OccupationCreateDto request)
     {
-        if (!await uow.OccupationRepository.NameUniqueAsync(request.Name))
+        if (!await uow.OccupationRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
-        if (!await uow.OccupationRepository.CodeUniqueAsync(request.Code))
+        if (!await uow.OccupationRepository.ExistsByCodeAsync(request.Code))
             return BadRequest($"El código {request.Code} ya existe.");
 
         Occupation itemToAdd = new();
@@ -121,8 +111,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync([FromRoute] int id)
     {
-        if (!await uow.OccupationRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+        if (!await uow.OccupationRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
         if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
 
@@ -136,8 +125,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
 
         foreach (var id in idList)
         {
-            if (!await uow.OccupationRepository.ExistsByIdAsync(id))
-                return BadRequest($"{EntityName} con ID {id} no existe.");
+            if (!await uow.OccupationRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
             if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
         }
@@ -146,10 +134,10 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     }
 
     [HttpGet("xlsx")]
-    public async Task<ActionResult> ExportToExcelAsync([FromQuery] OccupationParams param)
+    public async Task<ActionResult> ExportExcelAsync([FromQuery] OccupationParams param)
     {
-        var cattles = await uow.OccupationRepository.GetPagedListAsync(param, true);
-        var cattlesToExport = mapper.Map<List<OccupationDto>>(cattles);
+        PagedList<OccupationDto> data = await uow.OccupationRepository.GetPagedListAsync(param, true);
+        List<OccupationDto> dataToExport = mapper.Map<List<OccupationDto>>(data);
 
         using (var package = new ExcelPackage())
         {
@@ -161,7 +149,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
             worksheet.Cells["D1"].Value = "Creado Por";
             worksheet.Cells["E1"].Value = "Nombre Anterior";
 
-            worksheet.Cells["A2"].LoadFromCollection(cattlesToExport, PrintHeaders: false);
+            worksheet.Cells["A2"].LoadFromCollection(dataToExport, PrintHeaders: false);
 
             var stream = new MemoryStream();
 
@@ -170,7 +158,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
             var content = stream.ToArray();
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             var currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var fileName = $"cattles_{currentDateTime}.xlsx";
+            var fileName = $"{EntityName}_{currentDateTime}.xlsx";
 
             return File(content, contentType, fileName);
         }

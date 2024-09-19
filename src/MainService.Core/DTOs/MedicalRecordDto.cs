@@ -70,21 +70,21 @@ namespace MainService.Core.DTOs
     public class RelativeTypeDto : BaseCodeEntity {}
     public class ConsumptionLevelDto : BaseCodeEntity {}
 
-    public class DiseaseUpdateDto : BaseCodeEntity {}
-    public class SubstanceUpdateDto : BaseCodeEntity {}
-    public class OccupationUpdateDto : BaseCodeEntity {}
-    public class MaritalStatusUpdateDto : BaseCodeEntity {}
-    public class ColorBlindnessUpdateDto : BaseCodeEntity {}
-    public class RelativeTypeUpdateDto : BaseCodeEntity {}
-    public class ConsumptionLevelUpdateDto : BaseCodeEntity {}
+    public class DiseaseUpdateDto : BaseCodeManageDto {}
+    public class SubstanceUpdateDto : BaseCodeManageDto {}
+    public class OccupationUpdateDto : BaseCodeManageDto {}
+    public class MaritalStatusUpdateDto : BaseCodeManageDto {}
+    public class ColorBlindnessUpdateDto : BaseCodeManageDto {}
+    public class RelativeTypeUpdateDto : BaseCodeManageDto {}
+    public class ConsumptionLevelUpdateDto : BaseCodeManageDto {}
 
-    public class DiseaseCreateDto : BaseCodeEntity {}
-    public class SubstanceCreateDto : BaseCodeEntity {}
-    public class OccupationCreateDto : BaseCodeEntity {}
-    public class MaritalStatusCreateDto : BaseCodeEntity {}
-    public class ColorBlindnessCreateDto : BaseCodeEntity {}
-    public class RelativeTypeCreateDto : BaseCodeEntity {}
-    public class ConsumptionLevelCreateDto : BaseCodeEntity {}
+    public class DiseaseCreateDto : BaseCodeManageDto {}
+    public class SubstanceCreateDto : BaseCodeManageDto {}
+    public class OccupationCreateDto : BaseCodeManageDto {}
+    public class MaritalStatusCreateDto : BaseCodeManageDto {}
+    public class ColorBlindnessCreateDto : BaseCodeManageDto {}
+    public class RelativeTypeCreateDto : BaseCodeManageDto {}
+    public class ConsumptionLevelCreateDto : BaseCodeManageDto {}
 
     public class DiseaseParams : BaseCodeParams {}
     public class SubstanceParams : BaseCodeParams {}

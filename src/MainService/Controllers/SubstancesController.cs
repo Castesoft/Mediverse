@@ -1,18 +1,17 @@
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using MainService.Extensions;
-using MainService.Core.Helpers.Pagination;
-using MainService.Core.DTOs;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.DTOs;
+using MainService.Core.Helpers.Pagination;
+using MainService.Extensions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Entities;
 
 namespace MainService.Controllers;
-
 public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesService service) : BaseApiController
 {
-    private static readonly string EntityName = "sustancia";
+    private static readonly string EntityName = "Sustancia";
     
     [HttpGet]
     public async Task<ActionResult<PagedList<SubstanceDto>>> GetPagedListAsync([FromQuery] SubstanceParams param)
@@ -52,7 +51,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     [HttpGet("all")]
     public async Task<ActionResult<List<SubstanceDto>>> GetAllAsync()
     {
-        var data = await uow.SubstanceRepository.GetAllAsNoTrackingAsync();
+        var data = await uow.SubstanceRepository.GetAllDtosAsync();
 
         if (data.Count == 0) return NoContent();
 
@@ -60,23 +59,14 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     }
 
     [HttpGet("nameexists")]
-    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name, [FromQuery] int? id)
-    {
-        var item = await uow.SubstanceRepository.FindDtoByNameAsync(name);
-
-        if (item == null)
-        {
-            return false;
-        }
-
-        return !id.HasValue || item.Id != id.Value;
-    }
+    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name) =>
+        await uow.SubstanceRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
     public async Task<ActionResult<SubstanceDto>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.SubstanceRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+            return BadRequest($"La {EntityName} con ID {id} no existe.");
 
         return await uow.SubstanceRepository.GetDtoByIdAsync(id);
     }
@@ -84,10 +74,10 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     [HttpPost]
     public async Task<ActionResult<SubstanceDto>> AddAsync([FromBody] SubstanceCreateDto request)
     {
-        if (!await uow.SubstanceRepository.NameUniqueAsync(request.Name))
+        if (!await uow.SubstanceRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
-        if (!await uow.SubstanceRepository.CodeUniqueAsync(request.Code))
+        if (!await uow.SubstanceRepository.ExistsByCodeAsync(request.Code))
             return BadRequest($"El código {request.Code} ya existe.");
 
         Substance itemToAdd = new();
@@ -121,8 +111,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync([FromRoute] int id)
     {
-        if (!await uow.SubstanceRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+        if (!await uow.SubstanceRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
         if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
 
@@ -136,8 +125,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
 
         foreach (var id in idList)
         {
-            if (!await uow.SubstanceRepository.ExistsByIdAsync(id))
-                return BadRequest($"{EntityName} con ID {id} no existe.");
+            if (!await uow.SubstanceRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
             if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
         }
@@ -146,10 +134,10 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     }
 
     [HttpGet("xlsx")]
-    public async Task<ActionResult> ExportToExcelAsync([FromQuery] SubstanceParams param)
+    public async Task<ActionResult> ExportExcelAsync([FromQuery] SubstanceParams param)
     {
-        var cattles = await uow.SubstanceRepository.GetPagedListAsync(param, true);
-        var cattlesToExport = mapper.Map<List<SubstanceDto>>(cattles);
+        PagedList<SubstanceDto> data = await uow.SubstanceRepository.GetPagedListAsync(param, true);
+        List<SubstanceDto> dataToExport = mapper.Map<List<SubstanceDto>>(data);
 
         using (var package = new ExcelPackage())
         {
@@ -161,7 +149,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
             worksheet.Cells["D1"].Value = "Creado Por";
             worksheet.Cells["E1"].Value = "Nombre Anterior";
 
-            worksheet.Cells["A2"].LoadFromCollection(cattlesToExport, PrintHeaders: false);
+            worksheet.Cells["A2"].LoadFromCollection(dataToExport, PrintHeaders: false);
 
             var stream = new MemoryStream();
 
@@ -170,7 +158,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
             var content = stream.ToArray();
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             var currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var fileName = $"cattles_{currentDateTime}.xlsx";
+            var fileName = $"{EntityName}_{currentDateTime}.xlsx";
 
             return File(content, contentType, fileName);
         }

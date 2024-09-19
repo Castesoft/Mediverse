@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MainService.Models.Entities.Aggregate
 {
     public class BaseCodeEntity
@@ -66,12 +68,14 @@ namespace MainService.Models.Entities.Aggregate
         }
         public DateTime DateFrom { get; set; } = DateTime.MinValue;
         public DateTime DateTo { get; set; } = DateTime.MaxValue;
-        public string Sort { get; set; }
+        public OptionDto Sort { get; set; }
         public bool IsSortAscending { get; set; }
         public string Code { get; set; }
         public int CodeNumber { get; set; }
         public string Description { get; set; }
         public string Name { get; set; }
+        public string Color { get; set; }
+        public string LastName { get; set; }
         private string _search;
         public string Search
         {
@@ -79,4 +83,25 @@ namespace MainService.Models.Entities.Aggregate
             set => _search = value.ToLower();
         }
     }
+
+    public class BaseCodeManageDto {
+        [Required(ErrorMessage = "El nombre es requerido.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "El nombre debe tener entre 3 y 50 caracteres.")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "El código es requerido.")]
+        [StringLength(10, MinimumLength = 1, ErrorMessage = "El código debe tener entre 1 y 10 caracteres.")]
+        public string Code { get; set; }
+
+        public int CodeNumber { get; set; }
+
+        [Required(ErrorMessage = "La descripción es requerida.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "La descripción debe tener entre 3 y 100 caracteres.")]
+        public string Description { get; set; }
+        public string Color { get; set; }
+        public string LastName { get; set; }
+        public bool Enabled { get; set; }
+        public bool Visible { get; set; }
+    }
+
 }

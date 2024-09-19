@@ -1,18 +1,17 @@
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using MainService.Extensions;
-using MainService.Core.Helpers.Pagination;
-using MainService.Core.DTOs;
 using MainService.Core.Interfaces.Services;
+using MainService.Core.DTOs;
+using MainService.Core.Helpers.Pagination;
+using MainService.Extensions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Entities;
 
 namespace MainService.Controllers;
-
 public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeTypesService service) : BaseApiController
 {
-    private static readonly string EntityName = "tipo de familiar";
+    private static readonly string EntityName = "Tipo de Pariente";
     
     [HttpGet]
     public async Task<ActionResult<PagedList<RelativeTypeDto>>> GetPagedListAsync([FromQuery] RelativeTypeParams param)
@@ -52,7 +51,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     [HttpGet("all")]
     public async Task<ActionResult<List<RelativeTypeDto>>> GetAllAsync()
     {
-        var data = await uow.RelativeTypeRepository.GetAllAsNoTrackingAsync();
+        var data = await uow.RelativeTypeRepository.GetAllDtosAsync();
 
         if (data.Count == 0) return NoContent();
 
@@ -60,23 +59,14 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     }
 
     [HttpGet("nameexists")]
-    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name, [FromQuery] int? id)
-    {
-        var item = await uow.RelativeTypeRepository.FindDtoByNameAsync(name);
-
-        if (item == null)
-        {
-            return false;
-        }
-
-        return !id.HasValue || item.Id != id.Value;
-    }
+    public async Task<ActionResult<bool>> CheckNameExistsAsync([FromQuery] string name) =>
+        await uow.RelativeTypeRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
     public async Task<ActionResult<RelativeTypeDto>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.RelativeTypeRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+            return BadRequest($"La {EntityName} con ID {id} no existe.");
 
         return await uow.RelativeTypeRepository.GetDtoByIdAsync(id);
     }
@@ -84,10 +74,10 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     [HttpPost]
     public async Task<ActionResult<RelativeTypeDto>> AddAsync([FromBody] RelativeTypeCreateDto request)
     {
-        if (!await uow.RelativeTypeRepository.NameUniqueAsync(request.Name))
+        if (!await uow.RelativeTypeRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
-        if (!await uow.RelativeTypeRepository.CodeUniqueAsync(request.Code))
+        if (!await uow.RelativeTypeRepository.ExistsByCodeAsync(request.Code))
             return BadRequest($"El código {request.Code} ya existe.");
 
         RelativeType itemToAdd = new();
@@ -121,8 +111,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync([FromRoute] int id)
     {
-        if (!await uow.RelativeTypeRepository.ExistsByIdAsync(id))
-            return BadRequest($"{EntityName} con ID {id} no existe.");
+        if (!await uow.RelativeTypeRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
         if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
 
@@ -136,8 +125,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
 
         foreach (var id in idList)
         {
-            if (!await uow.RelativeTypeRepository.ExistsByIdAsync(id))
-                return BadRequest($"{EntityName} con ID {id} no existe.");
+            if (!await uow.RelativeTypeRepository.ExistsByIdAsync(id)) return BadRequest($"{EntityName} con ID {id} no existe.");
 
             if (!await service.DeleteByIdAsync(id)) return BadRequest($"Error al eliminar {EntityName} con ID {id}.");
         }
@@ -146,10 +134,10 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     }
 
     [HttpGet("xlsx")]
-    public async Task<ActionResult> ExportToExcelAsync([FromQuery] RelativeTypeParams param)
+    public async Task<ActionResult> ExportExcelAsync([FromQuery] RelativeTypeParams param)
     {
-        var cattles = await uow.RelativeTypeRepository.GetPagedListAsync(param, true);
-        var cattlesToExport = mapper.Map<List<RelativeTypeDto>>(cattles);
+        PagedList<RelativeTypeDto> data = await uow.RelativeTypeRepository.GetPagedListAsync(param, true);
+        List<RelativeTypeDto> dataToExport = mapper.Map<List<RelativeTypeDto>>(data);
 
         using (var package = new ExcelPackage())
         {
@@ -161,7 +149,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
             worksheet.Cells["D1"].Value = "Creado Por";
             worksheet.Cells["E1"].Value = "Nombre Anterior";
 
-            worksheet.Cells["A2"].LoadFromCollection(cattlesToExport, PrintHeaders: false);
+            worksheet.Cells["A2"].LoadFromCollection(dataToExport, PrintHeaders: false);
 
             var stream = new MemoryStream();
 
@@ -170,7 +158,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
             var content = stream.ToArray();
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             var currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var fileName = $"cattles_{currentDateTime}.xlsx";
+            var fileName = $"{EntityName}_{currentDateTime}.xlsx";
 
             return File(content, contentType, fileName);
         }

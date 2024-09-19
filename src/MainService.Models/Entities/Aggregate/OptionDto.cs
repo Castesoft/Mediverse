@@ -28,4 +28,6 @@ public class OptionDto
     public int Id { get; set; } = 0;
     public string Code { get; set; }
     public string Name { get; set; }
+    public bool Enabled { get; set; } = true;
+    public bool Visible { get; set; } = true;
 }

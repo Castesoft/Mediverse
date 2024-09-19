@@ -10,6 +10,13 @@ namespace MainService.Infrastructure.Services;
 public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService googleService) : IUnitOfWork
 {
     public IProductRepository ProductRepository => new ProductRepository(context, mapper);
+    public IDiseaseRepository DiseaseRepository => new DiseaseRepository(context, mapper);
+    public ISubstanceRepository SubstanceRepository => new SubstanceRepository(context, mapper);
+    public IOccupationRepository OccupationRepository => new OccupationRepository(context, mapper);
+    public IMaritalStatusRepository MaritalStatusRepository => new MaritalStatusRepository(context, mapper);
+    public IColorBlindnessRepository ColorBlindnessRepository => new ColorBlindnessRepository(context, mapper);
+    public IRelativeTypeRepository RelativeTypeRepository => new RelativeTypeRepository(context, mapper);
+    public IConsumptionLevelRepository ConsumptionLevelRepository => new ConsumptionLevelRepository(context, mapper);
     public IServiceRepository ServiceRepository => new ServiceRepository(context, mapper);
     public IPhotoRepository PhotoRepository => new PhotoRepository(context, mapper);
     public IUserRepository UserRepository => new UserRepository(context, mapper);
