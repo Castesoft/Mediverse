@@ -13,13 +13,23 @@ const orderStatusBadgeColorMap: { [key in OrderStatus]: string } = {
 };
 
 const orderDeliveryStatusMap: { [key in OrderDeliveryStatus]: string } = {
+  pending: 'Pendiente de aprobación',
   processing: 'Procesando',
   inprogress: 'En progreso',
   delivered: 'Entregado',
   cancelled: 'Cancelado'
 };
 
+const orderDeliveryStatusIndexMap: { [key in OrderDeliveryStatus]: number } = {
+  pending: 0,
+  processing: 1,
+  inprogress: 2,
+  delivered: 3,
+  cancelled: 4
+};
+
 const orderDeliveryStatusBadgeColorMap: { [key in OrderDeliveryStatus]: string } = {
+  pending: 'warning',
   processing: 'info',
   inprogress: 'primary',
   delivered: 'success',
@@ -44,4 +54,5 @@ export const parseOrderDeliveryStatusBadgeColor = (str: OrderDeliveryStatus) => 
 export const reverseParseOrderStatus = (str: string): OrderStatus => reverseOrderStatusMap[str] || str as OrderStatus;
 export const parseOrderStatusBadgeColor = (str: OrderStatus) => orderStatusBadgeColorMap[str] || 'primary';
 export const parseOrderDeliveryStatus = (str: OrderDeliveryStatus) => orderDeliveryStatusMap[str] || str;
+export const parseOrderDeliveryStatusIndex = (str: OrderDeliveryStatus) => orderDeliveryStatusIndexMap[str] || 0;
 export const parseOrderStatus = (str: OrderStatus) => orderStatusMap[str] || str;

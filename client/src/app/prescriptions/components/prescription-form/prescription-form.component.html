@@ -58,8 +58,10 @@
         <p class="mb-0">
           @if (use() === 'create') {
             {{ selectedClinic?.city }}, {{ currentDate | date:'dd/MM/yyyy' }}
-          } @else {
+          } @else if (item()?.clinic) {
             {{ item()?.clinic!.city }}, {{ item()?.createdAt | date:'dd/MM/yyyy' }}
+          } @else {
+            {{ currentDate | date:'dd/MM/yyyy' }}
           }
         </p>
       </div>
@@ -101,13 +103,21 @@
           }
         </div>
       } @else {
-        <p class="mb-0">{{ item()?.clinic!.street }} {{ item()?.clinic!.exteriorNumber }}, {{ item()?.clinic!.neighborhood }}</p>
+        @if (item()?.clinic) {
+          <p class="mb-0 me-2">{{ item()?.clinic!.street }} {{ item()?.clinic!.exteriorNumber }}, {{ item()?.clinic!.neighborhood }}</p> 
+        } @else {
+          <p class="mb-0 me-2">Clinica no especificada</p> 
+        }
       }
       <p class="mb-0">
         @if (use() === 'create') {
           {{ selectedClinic?.city }}, {{ selectedClinic?.state }}, {{ selectedClinic?.country }}
         } @else {
-          {{ item()?.clinic!.city }}, {{ item()?.clinic!.state }}, {{ item()?.clinic!.country }}
+          @if (item()?.clinic) {
+            {{ item()?.clinic!.city }}, {{ item()?.clinic!.state }}, {{ item()?.clinic!.country }}
+          } @else {
+            Clinica no especificada
+          }
         }
       </p>
       <p class="mb-0">Tel: {{ accountService.current()?.phoneNumberCountryCode }} {{ accountService.current()?.phoneNumber }}</p>

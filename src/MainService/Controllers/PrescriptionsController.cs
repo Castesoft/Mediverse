@@ -167,7 +167,6 @@ public class PrescriptionsController(
             };
 
             var patientAddress = patient.UserAddresses.FirstOrDefault(x => x.IsMain);
-
             if (patientAddress != null)
             {
                 order.OrderAddress = new OrderAddress
@@ -186,7 +185,7 @@ public class PrescriptionsController(
         return await uow.PrescriptionRepository.GetDtoByIdAsync(newPrescription.Id);
     }
 
-    private Order CreateOrder(List<OrderItem> orderItems)
+    private static Order CreateOrder(List<OrderItem> orderItems)
     {
         var order = new Order
         {
@@ -200,18 +199,19 @@ public class PrescriptionsController(
             PatientOrder = null,
             DoctorOrder = null,
             OrderAddress = null,
-            OrderItems = new List<OrderItem>(),
+            OrderItems = [],
             Status = OrderStatus.Pending,
-            DeliveryStatus = OrderDeliveryStatus.Processing
+            DeliveryStatus = OrderDeliveryStatus.Pending
         };
 
         foreach (var orderItem in orderItems)
         {
             order.OrderItems.Add(orderItem);
-            order.Subtotal += orderItem.Price * orderItem.Quantity;
-            order.Tax += order.Subtotal * (decimal)0.16;
-            order.Total = order.Subtotal + order.Tax;
+            order.Subtotal += orderItem.Item.Price * orderItem.Quantity;
         }
+
+        order.Tax = order.Subtotal * (decimal)0.16;
+        order.Total = order.Subtotal + order.Tax;
 
         return order;
     }

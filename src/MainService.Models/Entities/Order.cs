@@ -18,7 +18,7 @@ public class Order : BaseEntity
     public OrderAddress OrderAddress { get; set; }
     public List<OrderItem> OrderItems { get; set; } = [];
     public OrderStatus Status { get; set; } = OrderStatus.Pending;
-    public OrderDeliveryStatus DeliveryStatus { get; set; } = OrderDeliveryStatus.Processing;
+    public OrderDeliveryStatus DeliveryStatus { get; set; } = OrderDeliveryStatus.Pending;
 }
 
 public enum OrderStatus
@@ -30,6 +30,7 @@ public enum OrderStatus
 
 public enum OrderDeliveryStatus
 {
+    [EnumMember(Value = "pending")] Pending,
     [EnumMember(Value = "processing")] Processing,
     [EnumMember(Value = "inprogress")] InProgress,
     [EnumMember(Value = "delivered")] Delivered,

@@ -6,12 +6,18 @@
     <div class="fs-1 fw-regular text-gray-1000">
       Pedido creado el
       <span class="fw-bold">{{ item().createdAt | date: 'dd/MM/yyyy' }}</span>
-      <a class="btn btn-light-primary ms-4"
-         [routerLink]="['edit']">
-        Editar
-        <fa-icon [icon]="icons.faPencil"
-                 class="ms-2"></fa-icon>
-      </a>
+      @if (item().deliveryStatus == 'pending') {
+        <a class="btn btn-success ms-4" (click)="approve()">
+          Aprobar
+        </a>
+      } @else {
+        <a class="btn btn-light-primary ms-4"
+           [routerLink]="['edit']">
+          Editar
+          <fa-icon [icon]="icons.faPencil"
+                   class="ms-2"></fa-icon>
+        </a>
+      }
     </div>
   </div>
 
@@ -38,10 +44,11 @@
         <div class="card-body p-0">
           <div class="steps">
             <ul class="steps-list">
-              <li class="steps-list-item completed"><span>1</span>Pedido recibido</li>
-              <li class="steps-list-item completed"><span>2</span>Preparando el pedido</li>
-              <li class="steps-list-item"><span>3</span>En tránsito</li>
-              <li class="steps-list-item"><span>4</span>Entregado</li>
+              <li class="steps-list-item" [class.completed]="deliveryStatusIndex() >= 0"><span>1</span>Pendiente de aprobación</li>
+              <li class="steps-list-item" [class.completed]="deliveryStatusIndex() >= 1"><span>2</span>Pedido recibido</li>
+              <li class="steps-list-item" [class.completed]="deliveryStatusIndex() >= 2"><span>3</span>Preparando el pedido</li>
+              <li class="steps-list-item" [class.completed]="deliveryStatusIndex() >= 3"><span>4</span>En tránsito</li>
+              <li class="steps-list-item" [class.completed]="deliveryStatusIndex() >= 4"><span>5</span>Entregado</li>
             </ul>
           </div>
           <div class="row pt-8 pb-8 h-100">

@@ -419,4 +419,8 @@ export class OrdersService {
     return items.filter((item) => item.isSelected).map((item) => item.id).join(",") || "";
   };
 
+  approve(id: number) {
+    return this.http.put<Order>(`${this.baseUrl}${id}/approve`, {});
+  }
+
 }

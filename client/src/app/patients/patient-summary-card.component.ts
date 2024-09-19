@@ -5,6 +5,7 @@ import {User} from "../_models/user";
 import {UsersService} from "../_services/users.service";
 import {Subject, takeUntil} from "rxjs";
 import { UserProfilePictureComponent } from "../users/components/user-profile-picture/user-profile-picture.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'div[patientSummaryCard]',
@@ -19,6 +20,7 @@ import { UserProfilePictureComponent } from "../users/components/user-profile-pi
 export class PatientSummaryCardComponent implements OnInit {
   private ngUnsubscribe = new Subject<void>();
   private usersService = inject(UsersService);
+  private router = inject(Router);
 
   key = input.required<string>();
   item = model.required<User>();
@@ -51,5 +53,9 @@ export class PatientSummaryCardComponent implements OnInit {
     // Call to the service that generates a new photo URL
     // Here it's just a simulated async call returning a URL
     return 'https://i.pravatar.cc/300?' + new Date().getTime();
+  }
+
+  goToPatient() {
+    this.router.navigate(['/home/patients', this.item().id]);
   }
 }

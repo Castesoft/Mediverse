@@ -57,6 +57,21 @@ public class OrdersController(IUnitOfWork uow
         return await uow.OrderRepository.GetDtoByIdAsync(id);
     }
 
+    [HttpPut("{id}/approve")]
+    public async Task<ActionResult<OrderDto>> ApproveAsync([FromRoute] int id)
+    {
+        var order = await uow.OrderRepository.GetByIdAsync(id);
+
+        if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
+        
+        order.Status = OrderStatus.Completed;
+        order.DeliveryStatus = OrderDeliveryStatus.Processing;
+
+        if (!await uow.Complete()) return BadRequest($"Error al aprobar {subjectArticle} {subject} con ID {id}.");
+
+        return await uow.OrderRepository.GetDtoByIdAsync(id);
+    }
+
     private T GetEnumFromMemberValue<T>(string value) where T : Enum
     {
         var type = typeof(T);

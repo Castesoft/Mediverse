@@ -22,6 +22,7 @@ export class Prescription {
   event?: Event;
   createdAt!: Date;
   logoUrl!: string;
+  orderId?: number;
 
   isSelected = false;
   isCollapsed = true;

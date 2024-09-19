@@ -217,7 +217,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.EventPrescription.Event))
             .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
-            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url));
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url))
+            .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.PrescriptionOrder != null ? src.PrescriptionOrder.Order.Id : 0));
 
         CreateMap<PrescriptionUpdateDto, Prescription>()
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));

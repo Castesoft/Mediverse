@@ -12,6 +12,7 @@
           }
         </div>
         <div class="col-6 text-end px-0">
+          <button class="btn btn-sm btn-light-primary" (click)="goToPatient()">Ver paciente</button>
         </div>
       </div>
     </div>
@@ -84,7 +85,6 @@
                       <i class="ki-duotone ki-down fs-4"></i>
                     </span>
             </button>
-            <button class="btn btn-sm btn-light-primary">Editar</button>
           </div>
 
           <div
@@ -102,7 +102,7 @@
                 </div>
               </div>
               <div>
-                <div class="fw-bold mt-5">Sexo</div>
+                <div class="fw-bold mt-5">Fecha de nacimiento</div>
                 <div class="text-gray-600 mb-0">
                   {{ item().dateOfBirth | date : "shortDate" }}
                 </div>

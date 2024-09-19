@@ -27,7 +27,7 @@ export class Order {
 }
 
 export type OrderStatus = 'pending' | 'completed' | 'cancelled';
-export type OrderDeliveryStatus = 'processing' | 'inprogress' | 'delivered' | 'cancelled';
+export type OrderDeliveryStatus = 'pending' | 'processing' | 'inprogress' | 'delivered' | 'cancelled';
 
 export class OrderParams {
   pageNumber = 1;

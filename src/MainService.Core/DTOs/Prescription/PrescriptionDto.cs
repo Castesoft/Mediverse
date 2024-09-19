@@ -16,4 +16,5 @@ public class PrescriptionDto
     public EventDto Event { get; set; }
     public List<PrescriptionItemDto> Items { get; set; } = [];
     public string LogoUrl { get; set; }
+    public int OrderId { get; set; }
 }

@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from "@angular/core";
+import { Component, input, effect } from "@angular/core";
 import { OrderDeliveryStatus } from "src/app/_models/order";
 import { parseOrderDeliveryStatus, parseOrderDeliveryStatusBadgeColor } from "src/app/orders/orders-util";
 
@@ -14,16 +14,18 @@ import { parseOrderDeliveryStatus, parseOrderDeliveryStatusBadgeColor } from "sr
   </span>`,
   standalone: true,
 })
-export class OrdersDeliveryStatusBadgeComponent implements OnInit {
+export class OrdersDeliveryStatusBadgeComponent {
   status = input<OrderDeliveryStatus>();
   size = input<'sm' | 'lg'>();
 
   parsedStatus: string = '';
   statusClass: string = '';
 
-  ngOnInit(): void {
-    this.parsedStatus = parseOrderDeliveryStatus(this.status()!);
-    this.statusClass = parseOrderDeliveryStatusBadgeColor(this.status()!);
+  constructor() {
+    effect(() => {
+      this.parsedStatus = parseOrderDeliveryStatus(this.status()!);
+      this.statusClass = parseOrderDeliveryStatusBadgeColor(this.status()!);
+    });
   }
 }
 

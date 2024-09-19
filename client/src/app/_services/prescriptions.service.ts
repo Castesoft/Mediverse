@@ -217,10 +217,9 @@ export class PrescriptionsService {
     );
   }
 
-  create(formData: any, doctorId: number): Observable<Event> {
-    console.log('formData', formData);
+  create(formData: any, doctorId: number): Observable<Prescription> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<Event>(`${this.baseUrl}${doctorId}`, formData, { headers }).pipe(
+    return this.http.post<Prescription>(`${this.baseUrl}${doctorId}`, formData, { headers }).pipe(
       tap(response => {
         return response;
       })
