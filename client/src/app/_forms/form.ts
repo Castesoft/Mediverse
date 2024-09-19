@@ -35,10 +35,8 @@ export class SelectOption {
   code: string = '';
   name: string = '';
 
-  constructor(opts?: { code?: string, name?: string, id?: number }) {
-    this.code = opts?.code || '';
-    this.name = opts?.name || '';
-    this.id = opts?.id || 0;
+  constructor(init?: Partial<SelectOption>, obj?: any) {
+    Object.assign(this, init);
 
     if (!this.code) {
       this.code = this.name;
@@ -47,7 +45,20 @@ export class SelectOption {
     if (!this.name) {
       this.name = this.code;
     }
+
+    if (obj) {
+      this.id = obj.id;
+      this.code = obj.code;
+      this.name = obj.name;
+    }
   }
+}
+
+export function isSelectOption(obj: any): obj is SelectOption {
+  return obj && typeof obj === 'object' &&
+         typeof obj.id === 'number' &&
+         typeof obj.code === 'string' &&
+         typeof obj.name === 'string';
 }
 
 export class EntityParams<T> {

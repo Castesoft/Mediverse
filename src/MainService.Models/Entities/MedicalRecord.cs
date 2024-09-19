@@ -1,3 +1,5 @@
+using MainService.Models.Entities.Aggregate;
+
 namespace MainService.Models.Entities
 {
     public class UserMedicalRecord
@@ -60,7 +62,7 @@ namespace MainService.Models.Entities
         public int EducationLevelId { get; set; } public EducationLevel EducationLevel { get; set; }
     }
 
-    public class EducationLevel : BaseEntity
+    public class EducationLevel : BaseCodeEntity
     {
         public EducationLevel() { }
         public EducationLevel(string name) => Name = name;
@@ -82,7 +84,7 @@ namespace MainService.Models.Entities
         public string Other { get; set; }
     }
 
-    public class Occupation : BaseEntity
+    public class Occupation : BaseCodeEntity
     {
         public Occupation() { }
         public Occupation(string name) => Name = name;
@@ -104,7 +106,7 @@ namespace MainService.Models.Entities
         public string Other { get; set; }
     }
 
-    public class MaritalStatus : BaseEntity
+    public class MaritalStatus : BaseCodeEntity
     {
         public MaritalStatus() { }
         public MaritalStatus(string name) => Name = name;
@@ -125,7 +127,7 @@ namespace MainService.Models.Entities
         public bool IsPresent { get; set; }
     }
 
-    public class ColorBlindness : BaseEntity
+    public class ColorBlindness : BaseCodeEntity
     {
         public ColorBlindness() { }
         public ColorBlindness(string name) => Name = name;
@@ -143,7 +145,7 @@ namespace MainService.Models.Entities
         public int FamilyMemberId { get; set; } public FamilyMember FamilyMember { get; set; }
     }
 
-    public class FamilyMember : BaseEntity
+    public class FamilyMember : BaseCodeEntity
     {
         public FamilyMember() { }
         public FamilyMember(string name) => Name = name;
@@ -165,7 +167,7 @@ namespace MainService.Models.Entities
         public int RelativeTypeId { get; set; } public RelativeType RelativeType { get; set; }
     }
 
-    public class RelativeType : BaseEntity
+    public class RelativeType : BaseCodeEntity
     {
         public RelativeType() { }
         public RelativeType(string name) => Name = name;
@@ -195,7 +197,7 @@ namespace MainService.Models.Entities
         public int OccupationId { get; set; } public Occupation Occupation { get; set; }
     }
 
-    public class Companion : BaseEntity
+    public class Companion : BaseCodeEntity
     {
         public Companion() { }
         
@@ -232,7 +234,27 @@ namespace MainService.Models.Entities
         public string Other { get; set; }
     }
 
-    public class Disease : BaseEntity
+    public class MedicalRecordDiseaseType : BaseCodeEntity
+    {
+        public MedicalRecordDiseaseType() { }
+        public MedicalRecordDiseaseType(string name) => Name = name;
+        public MedicalRecordDiseaseType(string name, string description)
+        {
+            Name = name;
+            Description = description;
+        }
+
+        public List<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; } = [];
+        public MedicalRecordDiseaseTypeDisease MedicalRecordDiseaseTypeDisease { get; set; }
+    }
+
+    public class MedicalRecordDiseaseTypeDisease
+    {
+        public int MedicalRecordDiseaseTypeId { get; set; } public MedicalRecordDiseaseType MedicalRecordDiseaseType { get; set; }
+        public int DiseaseId { get; set; } public Disease Disease { get; set; }
+    }
+
+    public class Disease : BaseCodeEntity
     {
         public Disease() { }
         public Disease(string name) => Name = name;
@@ -246,7 +268,7 @@ namespace MainService.Models.Entities
         public List<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; } = [];
     }
 
-    public class ConsumptionLevel : BaseEntity
+    public class ConsumptionLevel : BaseCodeEntity
     {
         public ConsumptionLevel() { }
         public ConsumptionLevel(string name) => Name = name;
@@ -271,7 +293,7 @@ namespace MainService.Models.Entities
         public string Other { get; set; }
     }
 
-    public class Substance : BaseEntity {
+    public class Substance : BaseCodeEntity {
         public Substance() { }
         public Substance(string name) => Name = name;
         public Substance(string name, string description) {

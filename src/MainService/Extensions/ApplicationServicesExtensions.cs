@@ -27,6 +27,15 @@ public static class ApplicationServicesExtensions
 
         // Services
         services.AddScoped<ITokenService, TokenService>();
+
+        services.AddScoped<IDiseasesService, DiseasesService>();
+        services.AddScoped<ISubstancesService, SubstancesService>();
+        services.AddScoped<IOccupationsService, OccupationsService>();
+        services.AddScoped<IMaritalStatusesService, MaritalStatusesService>();
+        services.AddScoped<IColorBlindnessesService, ColorBlindnessesService>();
+        services.AddScoped<IRelativeTypesService, RelativeTypesService>();
+        services.AddScoped<IConsumptionLevelsService, ConsumptionLevelsService>();
+        
         services.AddScoped<IUsersService, UsersService>();
         services.AddScoped<IAddressesService, AddressesService>();
         services.AddScoped<IServicesService, ServicesService>();

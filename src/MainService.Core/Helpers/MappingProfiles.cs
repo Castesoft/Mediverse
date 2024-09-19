@@ -360,5 +360,14 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo.Url))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.Name))
             .ForMember(dest => dest.Document, opt => opt.MapFrom(src => src.Document));
+
+        CreateMap<Disease, DiseaseDto>();
+        CreateMap<Substance, SubstanceDto>();
+        CreateMap<ConsumptionLevel, ConsumptionLevelDto>();
+        CreateMap<Occupation, OccupationDto>();
+        CreateMap<MaritalStatus, MaritalStatusDto>();
+        CreateMap<ColorBlindness, ColorBlindnessDto>();
+        CreateMap<RelativeType, RelativeTypeDto>();
+
     }
 }
