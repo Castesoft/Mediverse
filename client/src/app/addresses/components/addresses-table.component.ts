@@ -111,7 +111,6 @@ export class AddressesTableMenuComponent
         >
           <td
             tableCheckCell
-            [isCompact]="isCompact()"
             [idx]="idx"
             [dictionary]="service.dictionary['Clinic']"
             [(selected)]="item.isSelected"
@@ -120,7 +119,6 @@ export class AddressesTableMenuComponent
 
           <td
             class="name align-middle white-space-nowrap px-0 py-0"
-            [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
           >
             <div class="d-flex align-items-center justify-content-start px-0">
               <a
@@ -151,7 +149,6 @@ export class AddressesTableMenuComponent
             <td
               tableCell
               [item]="address.item"
-              [isCompact]="isCompact()"
               [value]="item[address.item.key]"
             ></td>
           }
@@ -160,7 +157,6 @@ export class AddressesTableMenuComponent
             tableMenuCell
             [item]="item"
             [contextMenu]="context_menu"
-            [isCompact]="isCompact()"
           ></td>
           <ng-template #context_menu>
             <div addressesTableMenu [item]="item" [key]="key()"></div>
@@ -188,7 +184,6 @@ export class AddressesTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<Address[]>();
-  isCompact = input.required<boolean>();
   mode = input.required<CatalogMode>();
   key = input.required<string>();
   view = input.required<View>();

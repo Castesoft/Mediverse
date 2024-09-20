@@ -22,7 +22,7 @@ export class InputComponent {
   control = model.required<Control<string | SelectOption | SelectOption[]>>();
 
   validation = false;
-  baseClass = 'form-control text-body fs-8';
+  baseClass = 'form-control text-body ';
 
   constructor() {
     effect(() => {

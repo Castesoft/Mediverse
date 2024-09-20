@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
-import { Entity } from 'src/app/_forms/form';
-import { FormUse, View, CatalogMode } from 'src/app/_models/types';
+import { FormUse, View, CatalogMode, Entity } from 'src/app/_models/types';
 import { TableHeaderComponent } from 'src/app/_shared/table/table-header.component';
 import { TableLoadingPlaceholderComponent } from 'src/app/_shared/table/table-loading-placeholder.component';
 import {
+  TableCell2Component,
   TableCellComponent,
   TableCheckCellComponent,
   TableMenuCellComponent,
@@ -14,6 +14,7 @@ import { TableWrapperComponent } from 'src/app/_shared/table/table-wrapper.compo
 @NgModule({
   imports: [
     TableWrapperComponent,
+    TableCell2Component,
     TableHeaderComponent,
     TableMenuCellComponent,
     TableCellComponent,
@@ -23,6 +24,7 @@ import { TableWrapperComponent } from 'src/app/_shared/table/table-wrapper.compo
   ],
   exports: [
     TableWrapperComponent,
+    TableCell2Component,
     TableHeaderComponent,
     TableMenuCellComponent,
     TableCellComponent,
@@ -53,7 +55,6 @@ export class FilterModal {
 
 export class CatalogModal {
   key!: string;
-  isCompact = true;
   mode!: CatalogMode;
   view: View = 'modal';
   title?: string;

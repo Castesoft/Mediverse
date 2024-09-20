@@ -1,28 +1,49 @@
 import { Component, effect, inject, input, InputSignal, model, OnInit } from "@angular/core";
 import { BadRequest, FormUse, View } from "src/app/_models/types";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { Control, FormActions, FormComponent } from "src/app/_forms/form";
+import { Control, FormActions, FormComponent, FormGroupActions } from "src/app/_forms/form";
 import { Validators } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { Address, AddressForm, AddressesService } from "src/app/addresses/addresses.config";
+import { Address, AddressesService } from "src/app/addresses/addresses.config";
 import { CommonModule } from "@angular/common";
 import { omitKeys, stateOptions } from "src/app/_utils/util";
+import { FormGroup2, FormInfo } from "src/app/_forms/form2";
+import { AddressParam } from "@stripe/stripe-js";
+import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
 
 @Component({
   selector: "[addressForm]",
   template: `
-  <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
+  <form [id]="form.id" (ngSubmit)="onSubmit()">
   <div container [type]="'card'">
     @if (form.error) {
       <div errorsAlert [error]="form.error"></div>
     }
-    <div formBuilder [controls]="form.getControls(['street'])" [rows]="1"></div>
-    <div formBuilder [controls]="form.getControls(['exteriorNumber', 'interiorNumber', 'zipcode'])" [rows]="3"></div>
-    <div formBuilder [controls]="form.getControls(['neighborhood', 'city'])" [rows]="2"></div>
-    <div formBuilder [controls]="form.getControls(['state', 'country'])" [rows]="2"></div>
-    <div formBuilder [controls]="form.getControls(['isMain'])" [rows]="2"></div>
-    <div formBuilder [controls]="form.getControls(['name'])" [rows]="1"></div>
-    <div formBuilder [controls]="form.getControls(['description'])" [rows]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.street,
+    ]" [cols]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.exteriorNumber,
+      form.controls.interiorNumber,
+      form.controls.zipcode,
+    ]" [cols]="3"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.neighborhood,
+      form.controls.city,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.state,
+      form.controls.country,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.isMain,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.name,
+    ]" [cols]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.description,
+    ]" [cols]="1"></div>
   </div>
 
   @if(use() !== 'detail') {
@@ -34,65 +55,57 @@ import { omitKeys, stateOptions } from "src/app/_utils/util";
 
   `,
   standalone: true,
-  imports: [ CommonModule, RouterModule, ControlsModule, ]
+  imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
-export class AddressFormComponent extends FormComponent<AddressesService> implements OnInit, FormActions<Address, AddressForm> {
+export class AddressFormComponent extends FormComponent<AddressesService> implements OnInit, FormGroupActions<Address, FormGroup2<Address>> {
   item: InputSignal<Address | undefined> = input.required();
   use: InputSignal<FormUse> = input.required();
   view: InputSignal<View> = input.required();
   key: InputSignal<string> = input.required();
 
-  form: AddressForm;
+  info: FormInfo<Address> = {
+    city: { label: 'Ciudad', placeholder: 'Ciudad', type: 'text', },
+    country: { label: 'País', placeholder: 'País', type: 'text', },
+    createdAt: { label: 'Creado', placeholder: 'Creado', type: 'date', isDisabled: true, },
+    description: { label: 'Descripción', placeholder: 'Descripción', type: 'textarea', },
+    enabled: { label: 'Habilitado', type: 'slideToggle', placeholder: 'Habilitado', },
+    id: { label: 'Dirección', placeholder: 'Dirección', type: 'number', isDisabled: true },
+    isSelected: { label: 'Seleccionado', placeholder: 'Seleccionado', type: 'slideToggle' },
+    name: { label: 'Nombre', placeholder: 'Nombre', type: 'text' },
+    visible: { label: 'Visible', type: 'slideToggle' },
+    exteriorNumber: { label: 'Número exterior', placeholder: 'Número exterior', type: 'text' },
+    interiorNumber: { label: 'Número interior', placeholder: 'Número interior', type: 'text' },
+    isMain: { label: 'Principal', type: 'slideToggle' },
+    zipcode: { label: 'Código postal', placeholder: 'Código postal', type: 'text' },
+    neighborhood: { label: 'Colonia', placeholder: 'Colonia', type: 'text' },
+    state: { label: 'Estado', placeholder: 'Estado', type: 'select', },
+    street: { label: 'Calle', placeholder: 'Calle', type: 'text' },
+  } as FormInfo<Address>;
+
+  form: FormGroup2<Address> = new FormGroup2<Address>(Address, new Address(), this.info);
 
   constructor() {
     super(AddressesService);
 
-    this.form = new AddressForm({
-      city: new Control("text", "Ciudad", "city", { validators: [ Validators.required] }),
-      country: new Control("text", "País", "country", { validators: [ Validators.required] }),
-      exteriorNumber: new Control("text", "Número exterior", "exteriorNumber", { validators: [ Validators.required] }),
-      isMain: new Control("check", "Principal", "isMain"),
-      nursesCount: new Control("number", "Número de enfermeras", "nursesCount", { validators: [ Validators.required] }),
-      state: new Control("text", "Estado", "state", { validators: [ Validators.required], options: stateOptions }),
-      street: new Control("text", "Calle", "street", { validators: [ Validators.required] }),
-      zipcode: new Control("text", "Código postal", "zipcode", { validators: [ Validators.required] }),
-      interiorNumber: new Control("text", "Número interior", "interiorNumber"),
-      latitude: new Control("text", "Latitud", "latitude"),
-      longitude: new Control("text", "Longitud", "longitude"),
-      neighborhood: new Control("text", "Colonia", "neighborhood"),
-      photoUrl: new Control("text", "URL de la foto", "photoUrl"),
-      type: new Control("text", "Tipo", "type"),
-
-      description: new Control("textarea", "Descripción", "description"),
-      id: new Control("number", "Célula", "id", { disabled: true }),
-      createdAt: new Control("date", "Fecha de creación", "dateCreated", { disabled: true, hidden: true }),
-      name: new Control("text", "Nombre", "name", { validators: [ Validators.required] }),
-      enabled: new Control("text", "Habilitado", "enabled", { hidden: true }),
-      visible: new Control("text", "Visible", "visible", { hidden: true }),
-      isSelected: new Control("text", "Seleccionado", "isSelected"),
-    }, { orientation: 'block', style: 'solid'});
-
     effect(() => {
-      this.form.setUse(this.use());
-
       const value = this.item();
 
       if (value) {
-        this.form.patch(this.use(), {
-          ...value
-        });
+        this.form = new FormGroup2<Address>(Address, value, this.info, { orientation: 'inline' });
+
       }
+
+      this.form.setUse(this.use());
     });
   }
 
   ngOnInit(): void {
     this.formsService.mode$.subscribe({ next: validation => {
-      this.form.setValidation(validation)
+      this.form.validation = validation;
     } });
   }
 
   onSubmit() {
-    this.form.onSubmit();
     this.form.submitted = true;
     console.log(this.form);
     switch (this.use()) {
@@ -114,17 +127,9 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
     }
   }
 
-  fillForm = () => this.use() === 'create' && this.form.patchWithSample();
-
   create() {
     if (this.form.submittable) {
-      const value =
-      omitKeys(this.form.value,
-        ['id', 'createdAt', 'enabled', 'visible', 'isSelected',
-          'longitude', 'latitude', 'nursesCount', 'photoUrl']
-      );
-      value.isMain = false;
-      this.service.create(value, 'clinic').subscribe({
+      this.service.create(this.form.getRawValue(), 'clinic').subscribe({
         next: item => this.form.submitted = false,
         error: (error: BadRequest) => this.form.error = error });
     }
@@ -132,13 +137,7 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
 
   update() {
     if (this.form.submittable) {
-      const value =
-      omitKeys(this.form.value,
-        ['id', 'createdAt', 'enabled', 'visible', 'isSelected',
-          'longitude', 'latitude', 'nursesCount', 'photoUrl']
-      );
-      value.isMain = false;
-      this.service.update(+this.form.value.id, value).subscribe({
+      this.service.update(+this.form.getRawValue().id!, this.form.getRawValue()).subscribe({
         next: () => this.form.submitted = false,
         error: (error: BadRequest) => this.form.error = error
       });

@@ -39,9 +39,9 @@ export class ControlLabelComponent {
   constructor() {
     effect(() => {
       if (this.control().orientation === 'inline') {
-        this.baseClass = 'col-form-label fw-semibold fs-6 text-nowrap';
+        this.baseClass = 'col-form-label fw-semibold  text-nowrap';
       } else {
-        this.baseClass = 'form-label fw-semibold fs-6';
+        this.baseClass = 'form-label fw-semibold ';
       }
 
       if (this.control().type === 'check') {

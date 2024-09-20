@@ -4,7 +4,7 @@
   <div class="d-flex align-items-center gap-2">
     @if (control().showLabel) {
       <label [for]="control().id"
-             class="form-label fw-semibold fs-8 ps-0 text-nowrap">
+             class="form-label fw-semibold  ps-0 text-nowrap">
         {{ control().label }}
         {{ control().required ? '*' : null }}
         @if (control().optional && (service.isOptional(control().formControl) || !control().isReadonly)) {
@@ -30,7 +30,7 @@
               'is-invalid': control().submitted && control().formControl.invalid,
               'is-valid': control().submitted && control().formControl.valid
             }"
-        class="form-select fs-8 text-body"
+        class="form-select  text-body"
       >
 
       <option selected [value]="control().formControl.value">{{control().formControl.value?.name}}</option>

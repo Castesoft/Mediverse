@@ -1,3 +1,31 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Define a dark theme
+$dark-theme: mat.m2-define-dark-theme((
+ color: (
+   primary: mat.m2-define-palette(mat.$m2-blue-grey-palette),
+   accent: mat.m2-define-palette(mat.$m2-blue-grey-palette),
+ ),
+  typography: mat.m2-define-typography-config(),
+  density: 0,
+));
+
+// Define a light theme
+$light-theme: mat.m2-define-light-theme((
+ color: (
+   primary: mat.m2-define-palette(mat.$m2-indigo-palette),
+   accent: mat.m2-define-palette(mat.$m2-indigo-palette),
+ ),
+));
+
+@include mat.all-component-themes($light-theme);
+
+.dark-theme {
+  @include mat.all-component-themes($dark-theme);
+}
+
 /* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
 // body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -27,7 +55,7 @@ html {
     color: white !important;
     font-size: 1.1rem !important;
   }
-  
+
   .mat-mdc-button.mat-mdc-snack-bar-action {
     color: white !important;
     font-size: 1rem !important;
@@ -43,7 +71,7 @@ html {
     color: white !important;
     font-size: 1.1rem !important;
   }
-  
+
   .mat-mdc-button.mat-mdc-snack-bar-action {
     color: white !important;
     font-size: 1rem !important;

@@ -19,7 +19,7 @@ import { MaterialModule } from 'src/app/_shared/material.module';
     @if (control().orientation === 'inline') {
       <div class="d-flex align-items-center gap-2">
         <mat-slide-toggle [formControl]="$any(control().formControl)" [id]="control().id">
-          <span class="col-form-label fw-semibold fs-8 text-nowrap">{{control().label}}</span>
+          <span class="col-form-label fw-semibold  text-nowrap">{{control().label}}</span>
         </mat-slide-toggle>
       </div>
     } @else {

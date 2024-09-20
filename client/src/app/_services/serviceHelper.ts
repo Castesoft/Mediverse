@@ -5,10 +5,11 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BehaviorSubject, Observable, of, tap, map, switchMap, catchError, debounceTime, take, finalize } from "rxjs";
-import { Entity, EntityParams, IParams, SelectOption, Form } from "src/app/_forms/form";
+import { SelectOption } from "src/app/_forms/form";
+import { FormGroup2 } from "src/app/_forms/form2";
 import { Modal } from "src/app/_models/modal";
 import { Pagination, PaginatedResponse, Item } from "src/app/_models/pagination";
-import { CatalogMode, Column, NamingSubject, SortOptions } from "src/app/_models/types";
+import { CatalogMode, Column, Entity, EntityParams, IParams, NamingSubject, SortOptions } from "src/app/_models/types";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getPaginatedResponse } from "src/app/_utils/util";
 import { environment } from "src/environments/environment";
@@ -284,7 +285,7 @@ export class Cache<T extends Entity, U extends EntityParams<U>> {
 export class ServiceHelper<
   T extends Entity,
   U extends EntityParams<U> & IParams,
-  V extends Form<U>,
+  V extends FormGroup2<U>,
   K extends string
 > {
   protected http = inject(HttpClient);

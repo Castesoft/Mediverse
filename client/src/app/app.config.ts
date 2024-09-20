@@ -130,7 +130,11 @@ export const appConfig: ApplicationConfig = {
           {
             path: 'home',
             loadChildren: () => import('./home/home.config').then(x => x.HomeModule),
-          }
+          },
+          {
+            path: 'admin',
+            loadChildren: () => import('./admin/admin.config').then(x => x.AdminModule),
+          },
         ]
       },
     ]),

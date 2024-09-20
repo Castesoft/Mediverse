@@ -9,10 +9,8 @@ import { EventsService } from 'src/app/_services/events.service';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { AddPaymentMethodComponent } from 'src/app/account/components/account-billing/add-payment-method/add-payment-method.component';
 import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';
-import { DoctorScheduleTabComponent } from '../doctor-schedule-tab/doctor-schedule-tab.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
-import { Event } from 'src/app/_models/event';
 
 @Component({
   selector: 'app-doctor-schedule',

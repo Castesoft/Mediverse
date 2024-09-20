@@ -5,8 +5,8 @@ import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { Range } from 'src/app/_models/date-range';
 import { PaginatedResponse, PaginatedResult } from 'src/app/_models/pagination';
 import { AccountService } from 'src/app/_services/account.service';
-import { Identifiable } from 'src/app/_models/types';
-import { Entity, SelectOption } from 'src/app/_forms/form';
+import { Entity, Identifiable } from 'src/app/_models/types';
+import { SelectOption } from 'src/app/_forms/form';
 
 export const getItemsByKey = <T extends Identifiable>(key: string, cache: Map<string, Map<string, PaginatedResult<T[]>>>): T[] => {
   const items: T[] = [];
@@ -371,3 +371,37 @@ export const stateOptions: SelectOption[] = [
   new SelectOption({ name: "Yucatán"}),
   new SelectOption({ name: "Zacatecas"}),
 ];
+
+export function buildHttpParams(
+  obj: any,
+  parentKey?: string,
+  params: HttpParams = new HttpParams()
+): HttpParams {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      const paramKey = parentKey ? `${parentKey}.${key}` : key;
+
+      if (
+        value !== null &&
+        value !== undefined &&
+        !(typeof value === 'string' && value.trim() === '')
+      ) {
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            value.forEach((element: any, index: number) => {
+              params = buildHttpParams(element, `${paramKey}[${index}]`, params);
+            });
+          }
+        } else if (typeof value === 'object' && !(value instanceof Date)) {
+          params = buildHttpParams(value, paramKey, params);
+        } else {
+          params = params.append(paramKey, value.toString());
+        }
+      }
+    }
+  }
+  return params;
+}
+
+

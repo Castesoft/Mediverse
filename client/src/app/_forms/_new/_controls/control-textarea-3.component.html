@@ -1,0 +1,39 @@
+@if (control().showLabel) {
+  <label [for]="control().id" class="form-label fw-semibold ">
+    {{ control().label }}
+    {{ control().required ? '*' : null }}
+    @if (control().optional) {
+      @if (service.isOptional(control()) || !control().isReadonly) {
+        <span optionalSpan></span>
+      }
+    }
+    @if (control().isNew) {
+      <span newBadge></span>
+    }
+  </label>
+}
+<textarea
+  [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"
+  [attr.aria-label]="control().label + ' input'"
+  [formControl]="$any(control())"
+  [id]="control().id"
+  [ngClass]="{
+        'is-invalid': parent().submitted && control().invalid,
+        'is-valid': parent().submitted && control().valid,
+      }"
+  [readonly]="control().isReadonly"
+  [spellcheck]="'false'"
+  class="form-control text-body "
+>
+  </textarea>
+
+  @if (control().errors) {
+    <div invalidFeedback3
+         [errors]="control().validationErrors"
+         [control]="control()"
+         [submitted]="control().submitted">
+    </div>
+  }
+  @if (control().helperText) {
+    <div helpBlock3 [(control)]="control"></div>
+  }

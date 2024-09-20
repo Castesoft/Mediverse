@@ -4,8 +4,9 @@ import { Component, inject, Injectable, NgModule, OnInit } from '@angular/core';
 import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
-import { Entity, EntityParams, Form, IParams, SelectOption } from 'src/app/_forms/form';
-import { Addresses, CatalogMode, FormUse, NamingSubject, Sections, View } from 'src/app/_models/types';
+import { SelectOption } from 'src/app/_forms/form';
+import { Columns, FormGroup2 } from 'src/app/_forms/form2';
+import { Addresses, CatalogMode, Entity, EntityParams, FormUse, IParams, NamingSubject, Sections, View } from 'src/app/_models/types';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { EnvService } from 'src/app/_services/env.service';
 import { ServiceHelper } from 'src/app/_services/serviceHelper';
@@ -15,8 +16,29 @@ import { AddressDetailModalComponent, AddressesFilterModalComponent, AddressesCa
 import { AddressDetailComponent } from 'src/app/addresses/views';
 
 
-export class AddressForm extends Form<Address> {}
-export class AddressesFilterForm<U extends EntityParams<U>> extends Form<U> {}
+export const sortOptions = Object.values({
+  city: new SelectOption({ id: 1, name: 'Ciudad', code: 'city' }),
+  country: new SelectOption({ id: 2, name: 'País', code: 'country' }),
+  createdAt: new SelectOption({ id: 3, name: 'Creado', code: 'createdAt' }),
+  description: new SelectOption({ id: 4, name: 'Descripción', code: 'description' }),
+  enabled: new SelectOption({ id: 5, name: 'Habilitado', code: 'enabled' }),
+  exteriorNumber: new SelectOption({ id: 6, name: 'Número exterior', code: 'exteriorNumber' }),
+  id: new SelectOption({ id: 7, name: 'ID', code: 'id' }),
+  interiorNumber: new SelectOption({ id: 8, name: 'Número interior', code: 'interiorNumber' }),
+  isMain: new SelectOption({ id: 9, name: 'Principal', code: 'isMain' }),
+  isSelected: new SelectOption({ id: 10, name: 'Seleccionado', code: 'isSelected' }),
+  latitude: new SelectOption({ id: 11, name: 'Latitud', code: 'latitude' }),
+  longitude: new SelectOption({ id: 12, name: 'Longitud', code: 'longitude' }),
+  name: new SelectOption({ id: 13, name: 'Nombre', code: 'name' }),
+  neighborhood: new SelectOption({ id: 14, name: 'Colonia', code: 'neighborhood' }),
+  nursesCount: new SelectOption({ id: 15, name: 'Número de enfermeras', code: 'nursesCount' }),
+  photoUrl: new SelectOption({ id: 16, name: 'URL de la foto', code: 'photoUrl' }),
+  state: new SelectOption({ id: 17, name: 'Estado', code: 'state' }),
+  street: new SelectOption({ id: 18, name: 'Calle', code: 'street' }),
+  type: new SelectOption({ id: 19, name: 'Tipo', code: 'type' }),
+  visible: new SelectOption({ id: 20, name: 'Visible', code: 'visible' }),
+  zipcode: new SelectOption({ id: 21, name: 'Código postal', code: 'zipcode' }),
+} as Columns<Address>);
 
 export class Address extends Entity {
   street: string = '';
@@ -96,7 +118,7 @@ export class AddressParams extends EntityParams<Address> implements IParams {
 export class AddressesService extends ServiceHelper<
   Address,
   AddressParams,
-  AddressesFilterForm<AddressParams>,
+  FormGroup2<AddressParams>,
   Addresses
 > {
   constructor() {
@@ -203,18 +225,15 @@ export class AddressesComponent {
     [mode]="mode"
     [key]="key"
     [view]="view"
-    [isCompact]="isCompact"
   ></div>
   `,
   standalone: true,
   imports: [RouterModule, AddressesCatalogComponent, ],
 })
-export class CatalogComponent implements OnInit {
+export class CatalogComponent {
   service = inject(AddressesService);
-  compact = inject(CompactTableService);
   router = inject(Router);
 
-  isCompact = false;
   view: View = 'page';
   mode: CatalogMode = 'view';
   key = this.router.url;
@@ -222,10 +241,6 @@ export class CatalogComponent implements OnInit {
   label = this.service.dictionary['Clinic'].pluralTitlecase;
 
   constructor() {
-  }
-
-  ngOnInit(): void {
-    this.compact.mode$.subscribe({ next: (mode) => (this.isCompact = mode) });
   }
 }
 

@@ -1,5 +1,4 @@
-import { Component, computed, Input, input, model } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, input, model } from '@angular/core';
 import { ControlChipsComponent } from 'src/app/_forms/control-chips.component';
 import { ControlDateRangeComponent } from 'src/app/_forms/control-date-range.component';
 import { ControlDateComponent } from 'src/app/_forms/control-date.component';
@@ -12,8 +11,9 @@ import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { ControlSelect2Component } from "src/app/_forms/control-select-2.component";
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { ControlTextarea2Component } from 'src/app/_forms/control-textarea2.component';
-import { ControlTypeahead2Component } from 'src/app/_forms/control-typeahead2.component';
-import { Control, EntityParams, ControlRows, Form } from 'src/app/_forms/form';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Control, ControlRows, Form } from 'src/app/_forms/form';
+import { EntityParams } from 'src/app/_models/types';
 
 @Component({
   selector: 'div[formBuilder]',
@@ -96,7 +96,7 @@ import { Control, EntityParams, ControlRows, Form } from 'src/app/_forms/form';
   `,
   standalone: true,
   imports: [ InputControlComponent, ControlDateComponent, ReactiveFormsModule, FormsModule, ControlsWrapperComponent, ControlsRowComponent,
-    ControlTextComponent, ControlSelect2Component, ControlTextarea2Component, ControlTypeahead2Component, ControlChipsComponent, ControlSlideComponent,
+    ControlTextComponent, ControlSelect2Component, ControlTextarea2Component, ControlChipsComponent, ControlSlideComponent,
     ControlSearchTextComponent, ControlSearchDateComponent, ControlDateRangeComponent, ControlSelectComponent,
   ],
 })

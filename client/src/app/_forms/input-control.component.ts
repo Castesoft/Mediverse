@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, inject, input, Input, OnInit, output, Renderer2, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
-import {FormControlStyles, InputTypes} from 'src/app/_models/types';
+import {FormControlStyles} from 'src/app/_models/types';
 import { NgClass } from '@angular/common';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
 import { PopoverProps } from 'src/app/_models/popover';
 import { FormsService } from 'src/app/_services/forms.service';
+import { InputTypes } from 'src/app/_forms/form';
 
 @Component({
   host: { class: 'd-flex flex-column fv-row', },

@@ -1,4 +1,4 @@
-import { Entity } from "src/app/_forms/form";
+import { Entity } from "src/app/_models/types";
 
 export class Item {
   id: number;

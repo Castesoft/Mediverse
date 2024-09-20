@@ -1,5 +1,5 @@
 import { Component, effect, inject, input, model, OnInit, output, ViewEncapsulation } from "@angular/core";
-import { CatalogMode, Column, SortOptions } from "src/app/_models/types";
+import { CatalogMode, Column, EntityParams, SortOptions } from "src/app/_models/types";
 import { faSort, faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { EnvService } from "src/app/_services/env.service";
 import { IconsService } from "src/app/_services/icons.service";
@@ -7,7 +7,6 @@ import { NgClass } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { createId } from "@paralleldrive/cuid2";
 import { FormsModule } from "@angular/forms";
-import { EntityParams } from "src/app/_forms/form";
 
 @Component({
   selector: "thead[tableHeader]",

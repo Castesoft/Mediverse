@@ -6,7 +6,7 @@
   <input matInput [matDatepicker]="picker" [formControl]="$any(control().formControl)" (click)="picker.open()"
     [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
     [autocomplete]="false" [spellcheck]="false" [id]="control().id" [readonly]="control().isReadonly"
-    class="form-control text-body fs-8" [ngClass]="{
+    class="form-control text-body " [ngClass]="{
       'is-invalid': control().submitted && control().formControl.invalid,
       'is-valid': control().submitted && control().formControl.valid,
     }" [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"
@@ -22,7 +22,7 @@
 <input [formControl]="$any(control().formControl)"
   [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder : ''"
   [autocomplete]="false" [spellcheck]="false" [id]="control().id" [readonly]="control().isReadonly"
-  class="form-control text-body fs-8" [ngClass]="{
+  class="form-control text-body " [ngClass]="{
   'is-invalid': control().submitted && control().formControl.invalid,
   'is-valid': control().submitted && control().formControl.valid,
 }" [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"

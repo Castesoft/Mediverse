@@ -1,0 +1,55 @@
+@if (control().showLabel) {
+  <label [for]="control().id"
+         class="form-label fw-semibold ">
+    {{ control().label }}
+    {{ control().required ? '*' : null }}
+    @if (control().optional) {
+      @if (service.isOptional(control()) || !control().isReadonly) {
+        <span optionalSpan></span>
+      }
+    }
+    @if (control().isNew) {
+      <span newBadge></span>
+    }
+  </label>
+}
+
+@for (option of control().selectOptions; let idx = $index; track idx) {
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      [readonly]="control().isReadonly"
+      [ngClass]="{
+        'is-invalid': parent().submitted && control().invalid,
+        'is-valid': parent().submitted && control().valid,
+      }"
+      type="radio"
+      (change)="handleValueChange(option)"
+      [disabled]="control().disabled"
+      [checked]="option === control().value"
+      [value]="option | json"
+      [id]="control().id + control().label"
+      [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"
+      [attr.aria-label]="control().label + ' input'"
+    >
+    <label class="form-check-label text-body "
+           [for]="option.id+option.name">
+      @if (control().showCodeSpan) {
+        ({{ option.code }})
+      }
+      {{ option.name }}
+    </label>
+  </div>
+}
+
+@if (control().errors) {
+  <div invalidFeedback3
+       [errors]="control().validationErrors"
+       [control]="control()"
+       [submitted]="control().submitted">
+  </div>
+}
+@if (control().helperText) {
+  <div helpBlock3
+       [(control)]="control"></div>
+}

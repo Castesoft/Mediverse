@@ -46,7 +46,7 @@ import { Address, AddressParams, AddressesService } from "src/app/addresses/addr
 </div>
 <div tableWrapper>
   @if(service.list$(key(), mode()) | async; as _list) {
-  <table addressesTable [mode]="mode()" [isCompact]="isCompact()" [data]="_list" [key]="key()" [view]="view()">
+  <table addressesTable [mode]="mode()" [data]="_list" [key]="key()" [view]="view()">
   </table>
   }
   @if(service.pagination$(key()) | async; as _pagination) {
@@ -70,7 +70,6 @@ export class AddressesCatalogComponent implements OnInit, OnDestroy {
   private router = inject(Router);
 
   animalId = input<number>();
-  isCompact = input.required<boolean>();
   mode = input.required<CatalogMode>();
   key = input.required<string>();
   view = input.required<View>();

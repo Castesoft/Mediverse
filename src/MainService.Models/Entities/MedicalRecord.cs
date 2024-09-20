@@ -65,12 +65,9 @@ namespace MainService.Models.Entities
     public class EducationLevel : BaseCodeEntity
     {
         public EducationLevel() { }
-        public EducationLevel(string name) => Name = name;
-        public EducationLevel(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public EducationLevel(string code) : base(code) { }
+        public EducationLevel(string code, string name) : base(code, name) { }
+        public EducationLevel(string code, string name, string description) : base(code, name, description) { }
         
         // Navigation Properties
         public List<MedicalRecordEducationLevel> MedicalRecordEducationLevels { get; set; } = [];
@@ -87,12 +84,9 @@ namespace MainService.Models.Entities
     public class Occupation : BaseCodeEntity
     {
         public Occupation() { }
-        public Occupation(string name) => Name = name;
-        public Occupation(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public Occupation(string code) : base(code) { }
+        public Occupation(string code, string name) : base(code, name) { }
+        public Occupation(string code, string name, string description) : base(code, name, description) { }
         
         public List<MedicalRecordOccupation> MedicalRecordOccupations { get; set; } = [];
         public List<CompanionOccupation> CompanionOccupations { get; set; } = [];
@@ -109,12 +103,9 @@ namespace MainService.Models.Entities
     public class MaritalStatus : BaseCodeEntity
     {
         public MaritalStatus() { }
-        public MaritalStatus(string name) => Name = name;
-        public MaritalStatus(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public MaritalStatus(string code) : base(code) { }
+        public MaritalStatus(string code, string name) : base(code, name) { }
+        public MaritalStatus(string code, string name, string description) : base(code, name, description) { }
         
         public List<MedicalRecordMaritalStatus> MedicalRecordMaritalStatuses { get; set; } = [];
     }
@@ -130,12 +121,9 @@ namespace MainService.Models.Entities
     public class ColorBlindness : BaseCodeEntity
     {
         public ColorBlindness() { }
-        public ColorBlindness(string name) => Name = name;
-        public ColorBlindness(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public ColorBlindness(string code) : base(code) { }
+        public ColorBlindness(string code, string name) : base(code, name) { }
+        public ColorBlindness(string code, string name, string description) : base(code, name, description) { }
         
         public List<MedicalRecordColorBlindness> MedicalRecordColorBlindnesses { get; set; } = [];
     }
@@ -170,12 +158,9 @@ namespace MainService.Models.Entities
     public class RelativeType : BaseCodeEntity
     {
         public RelativeType() { }
-        public RelativeType(string name) => Name = name;
-        public RelativeType(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public RelativeType(string code) : base(code) { }
+        public RelativeType(string code, string name) : base(code, name) { }
+        public RelativeType(string code, string name, string description) : base(code, name, description) { }
         
         public MedicalRecordFamilyMemberRelativeType MedicalRecordFamilyMemberRelativeType { get; set; }
         public CompanionRelativeType CompanionRelativeType { get; set; }
@@ -257,12 +242,9 @@ namespace MainService.Models.Entities
     public class Disease : BaseCodeEntity
     {
         public Disease() { }
-        public Disease(string name) => Name = name;
-        public Disease(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public Disease(string code) : base(code) { }
+        public Disease(string code, string name) : base(code, name) { }
+        public Disease(string code, string name, string description) : base(code, name, description) { }
 
         public List<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; } = [];
         public List<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; } = [];
@@ -271,12 +253,9 @@ namespace MainService.Models.Entities
     public class ConsumptionLevel : BaseCodeEntity
     {
         public ConsumptionLevel() { }
-        public ConsumptionLevel(string name) => Name = name;
-        public ConsumptionLevel(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        public ConsumptionLevel(string code) : base(code) { }
+        public ConsumptionLevel(string code, string name) : base(code, name) { }
+        public ConsumptionLevel(string code, string name, string description) : base(code, name, description) { }
 
         public List<MedicalRecordSubstance> MedicalRecordSubstances { get; set; }
     }
@@ -295,11 +274,9 @@ namespace MainService.Models.Entities
 
     public class Substance : BaseCodeEntity {
         public Substance() { }
-        public Substance(string name) => Name = name;
-        public Substance(string name, string description) {
-            Name = name;
-            Description = description;
-        }
+        public Substance(string code) : base(code) { }
+        public Substance(string code, string name) : base(code, name) { }
+        public Substance(string code, string name, string description) : base(code, name, description) { }
         
         public List<MedicalRecordSubstance> MedicalRecordSubstances { get; set; } = [];
     }

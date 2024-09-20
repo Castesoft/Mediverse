@@ -10,6 +10,7 @@ using MainService.Core.DTOs.Services;
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
 using MainService.Models.Entities;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.Helpers;
 
@@ -368,6 +369,14 @@ public class MappingProfiles : Profile
         CreateMap<MaritalStatus, MaritalStatusDto>();
         CreateMap<ColorBlindness, ColorBlindnessDto>();
         CreateMap<RelativeType, RelativeTypeDto>();
+
+        CreateMap<Disease, OptionDto>();
+        CreateMap<Substance, OptionDto>();
+        CreateMap<ConsumptionLevel, OptionDto>();
+        CreateMap<Occupation, OptionDto>();
+        CreateMap<MaritalStatus, OptionDto>();
+        CreateMap<ColorBlindness, OptionDto>();
+        CreateMap<RelativeType, OptionDto>();
 
     }
 }

@@ -17,7 +17,7 @@ import { AccountSchedulesComponent } from './components/account-schedules/accoun
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { SatisfactionSurveyModalComponent } from './components/satisfaction-survey-modal/satisfaction-survey-modal.component';
-import { AccountClinicalHistoryComponent } from './components/account-clinical-history/account-clinical-history.component';
+import { AccountClinicalHistoryComponent } from './components/account-clinical-history.component';
 
 @Component({
   selector: 'account-main-route',

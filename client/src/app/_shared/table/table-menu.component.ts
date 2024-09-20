@@ -12,8 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { createId } from '@paralleldrive/cuid2';
-import { Entity } from 'src/app/_forms/form';
-import { NamingSubject, TableCellItem } from 'src/app/_models/types';
+import { Entity, NamingSubject, TableCellItem } from 'src/app/_models/types';
 import { IconsService } from 'src/app/_services/icons.service';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
@@ -23,7 +22,7 @@ import { MaterialModule } from 'src/app/_shared/material.module';
   template: `
   @if(item().isLink) {
     <div class="d-flex align-items-center px-0" [ngClass]="linkClass">
-      <a [routerLink]="[item().url, value()]" [href]="[item().url, value()]" class="fw-semibold text-primary me-2">
+      <a [routerLink]="[item().baseUrl, value()]" [href]="[item().baseUrl, value()]" class="fw-semibold text-primary me-2">
         @if(item().key === 'id') {
           #
         }
@@ -38,7 +37,6 @@ import { MaterialModule } from 'src/app/_shared/material.module';
 })
 export class TableCellComponent {
   item = input.required<TableCellItem<any, any>>();
-  isCompact = input.required<boolean>();
   value = input.required<any>();
 
   linkClass = 'd-flex align-items-center px-0';
@@ -50,12 +48,6 @@ export class TableCellComponent {
 
   constructor() {
     effect(() => {
-      if (this.isCompact()) {
-        this.class = `${this.class}`;
-      } else {
-        this.class = `${this.class}`;
-      }
-
       switch (this.item().type) {
         case 'number':
           this.class = `${this.class} text-end`;
@@ -77,6 +69,108 @@ export class TableCellComponent {
     })
   }
 }
+
+@Component({
+  selector: 'td[tableCell2]',
+  template: `
+  <!-- {{ item() | json }} -->
+  <!-- {{value() | json}} -->
+
+  @if(item().isLink && item().key === 'id') {
+    <div class="d-flex align-items-center px-0" [ngClass]="linkClass">
+      <a [routerLink]="[item().baseUrl, value()]" [href]="[item().baseUrl, value()]" class="fw-semibold text-primary me-2">
+        @if(item().key === 'id') {
+          #
+        }
+        {{value() | number}}</a>
+    </div>
+  }@else if(item().isLink && item().type === 'code' && value()) {
+    <div class="d-flex align-items-center px-0" [ngClass]="linkClass">
+      <a [routerLink]="[item().baseUrl, value()!.id]" [href]="[item().baseUrl, value()!.id]" class="fw-semibold text-primary me-2">
+        @if(value()!.id !== 0) {#}
+        @if(value()!.code !== value()!.name) {({{ value()!.code}})}
+        {{value()!.name}}
+      </a>
+    </div>
+  }@else {
+    @if(value()) {
+      @switch(item().type) {
+        @case ('code') {
+          @if(value()!.id !== 0) {#}
+          @if(value()!.code !== value()!.name) {({{ value()!.code}})}
+          {{value()!.name}}
+        }
+        @case('date') {
+          {{ value() | date : "dd/MM/yyyy" : "" : "es-MX" }}
+        }
+        @case ('number') {
+          {{ value() | number }}
+        }
+        @case('currency') {
+          {{ value() | currency : 'MXN' : 'symbol' : '1.2-2' }}
+        }
+        @case('boolean') {
+          <div class="form-check mb-0 d-flex justify-content-center">
+            <input class="form-check-input"
+                   type="checkbox"
+                   [id]="guid"
+                   [checked]="value()"
+                   disabled />
+            <label class="form-check-label"
+                   [for]="guid"></label>
+          </div>
+        }
+        @default {
+          {{ value() }}
+        }
+      }
+      @if(item().unit) {
+        {{ item().unit }}
+      }
+    }
+  }
+  `,
+  standalone: true,
+  imports: [ RouterModule, CommonModule,],
+})
+export class TableCell2Component {
+  item = input.required<TableCellItem<any, any>>();
+  value = input.required<any>();
+  guid = createId();
+
+  linkClass = 'd-flex align-items-center px-0';
+  class = 'date align-middle white-space-nowrap text-start';
+
+  @HostBinding('class') get hostClass() {
+    return this.class;
+  }
+
+  constructor() {
+    effect(() => {
+      this.class = `${this.class} py-1 fs-8 pe-3 ps-1 border-none`;
+      switch (this.item().type) {
+        case 'number':
+          this.class = `${this.class} text-end`;
+          this.linkClass = `${this.linkClass} justify-content-end`;
+          break;
+        case 'date':
+          this.class = `${this.class} text-end`;
+          this.linkClass = `${this.linkClass} justify-content-end`;
+          break;
+        case 'string':
+          this.class = `${this.class} text-start`;
+          this.linkClass = `${this.linkClass} justify-content-start`;
+          break;
+      }
+
+      if (this.item().isLink) {
+        this.class = `name align-middle white-space-nowrap px-0 py-0`;
+      }
+
+    })
+  }
+}
+
 
 @Component({
   selector: 'td[tableMenuCell]',
@@ -101,7 +195,6 @@ export class TableMenuCellComponent {
   icons = inject(IconsService);
 
   contextMenu = input.required<TemplateRef<any>>();
-  isCompact = input.required<boolean>();
   item = input.required<Entity>();
 
   class =
@@ -113,9 +206,7 @@ export class TableMenuCellComponent {
 
   constructor() {
     effect(() => {
-      if (this.isCompact()) {
-        this.class = `${this.class} py-1 fs-6 pe-3 ps-1 border-none`;
-      }
+      this.class = `${this.class} py-1 fs-6 pe-3 ps-1 border-none`;
     });
   }
 }
@@ -137,7 +228,6 @@ export class TableMenuCellComponent {
   imports: [FormsModule],
 })
 export class TableCheckCellComponent {
-  isCompact = input.required<boolean>();
   idx = input.required<number>();
   dictionary = input.required<NamingSubject>();
 
@@ -152,9 +242,7 @@ export class TableCheckCellComponent {
 
   constructor() {
     effect(() => {
-      if (this.isCompact()) {
-        this.class = `${this.class} py-1 pe-3 ps-1 border-none`;
-      }
+      this.class = `${this.class} py-1 pe-3 ps-1 border-none`;
     });
   }
 }

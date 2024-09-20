@@ -55,7 +55,6 @@ export class AddressesFilterModalComponent extends FilterModal {}
             [mode]="mode"
             [key]="key"
             [view]="view"
-            [isCompact]="isCompact"
           ></div>
         </div>
       </div>

@@ -35,6 +35,13 @@ namespace MainService.Models.Entities.Aggregate
             Code = code;
             Description = text;
         }
+        
+        public BaseCodeEntity(string code, string name, string description)
+        {
+            Name = name;
+            Code = code;
+            Description = description;
+        }
 
         public BaseCodeEntity(string code, string text, bool visible)
         {

@@ -13,7 +13,7 @@ import { FormsService } from "src/app/_services/forms.service";
   selector: 'div[controlTextarea2]',
   template: `
       @if(control().showLabel) {
-<label [for]="control().id" class="form-label fw-semibold fs-8">
+<label [for]="control().id" class="form-label fw-semibold ">
   {{ control().label }}
   {{ control().required ? '*' : null}}
   @if(control().optional){@if (service.isOptional(control().formControl) || !control().isReadonly) {
@@ -34,7 +34,7 @@ import { FormsService } from "src/app/_services/forms.service";
       'is-valid': control().submitted && control().formControl.valid,
     }"
       [readonly]="control().isReadonly"
-      class="form-control text-body fs-8"
+      class="form-control text-body "
     >
 </textarea>
 

@@ -15,7 +15,7 @@
     [attr.aria-describedby]="formText() ? controlName+'helpBlock' : null"
     [attr.aria-label]="label + ' input'"
   >
-  <label [for]="id ? id : controlName" class="fw-semibold fs-6 mb-2"
+  <label [for]="id ? id : controlName" class="fw-semibold  mb-2"
          [class.required]="!service.isOptional(control) || isReadonly">
     {{ label }}
   </label>

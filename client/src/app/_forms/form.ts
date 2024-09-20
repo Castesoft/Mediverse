@@ -1,39 +1,21 @@
-import { HttpParams } from "@angular/common/http";
 import { inject, InputSignal } from "@angular/core";
-import { FormGroup, AbstractControl, FormControl, AsyncValidatorFn, ValidatorFn, Validators } from "@angular/forms";
+import { AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlOptions, FormControlState, FormGroup, ValidatorFn, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
 import { createId } from "@paralleldrive/cuid2";
 import { ToastrService } from "ngx-toastr";
-import { BadRequest, CatalogMode, Column, FormControlStyles, FormUse, View } from "src/app/_models/types";
+import { BadRequest, CatalogMode, Column, Entity, EntityParams, FormUse, IParams, Sex, View } from "src/app/_models/types";
 import { EnvService } from "src/app/_services/env.service";
 import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { getPaginationHeaders } from "src/app/_utils/util";
-
-export interface IParams {
-  get httpParams(): HttpParams;
-}
-
-export class Entity {
-  id = 0;
-  createdAt = new Date();
-  name = "";
-  description = "";
-  isSelected = false;
-  visible = true;
-  enabled = true;
-}
-
-export class DateRange {
-  start: Date | null = null;
-  end: Date | null = null;
-}
+import { FormGroup2 } from "src/app/_forms/form2";
 
 export class SelectOption {
   id = 0;
   code: string = '';
   name: string = '';
+  enabled: boolean = true;
+  visible: boolean = true;
 
   constructor(init?: Partial<SelectOption>, obj?: any) {
     Object.assign(this, init);
@@ -54,111 +36,28 @@ export class SelectOption {
   }
 }
 
-export function isSelectOption(obj: any): obj is SelectOption {
-  return obj && typeof obj === 'object' &&
-         typeof obj.id === 'number' &&
-         typeof obj.code === 'string' &&
-         typeof obj.name === 'string';
-}
-
-export class EntityParams<T> {
-  pageNumber = 1;
-  pageSize = 10;
-  search = "";
-  sort = "createdAt";
-  isSortAscending = true;
-  dateFrom?: Date;
-  dateTo?: Date;
-  name = "";
-  description = "";
-  key: string;
-  id = 0;
-
-  constructor(key: string) {
-    this.key = key;
-  }
-
-  // constructor(key: string, props?: { [K in keyof T]?: T[K] }) {
-  //   this.key = key;
-
-  //   if (props) {
-  //     for (const prop in props) {
-  //       (this as any)[prop] = props[prop as keyof T];
-  //     }
-  //   }
-  // }
-
-  protected value<U extends Entity>(template: { [K in keyof U]: U[K] }) {
-    const value = new EntityParams<U>(this.key);
-
-    for (const prop in template) {
-      (value as any)[prop] = (this as any)[prop];
-    }
-
-    return value;
-  }
-
-  protected getHttpParams(): HttpParams {
-    let params = getPaginationHeaders(this.pageNumber, this.pageSize);
-
-    if (this.search) params = params.append("search", this.search);
-    if (this.sort) params = params.append("sort", this.sort);
-    if (typeof this.isSortAscending !== "undefined") params = params.append("isSortAscending", this.isSortAscending);
-    if (this.dateFrom) params = params.append("dateFrom", this.dateFrom.toISOString());
-    if (this.dateTo) params = params.append("dateTo", this.dateTo.toISOString());
-    if (this.name) params = params.append("name", this.name);
-    if (this.description) params = params.append("description", this.description);
-
-    return params;
-  }
-
-  updateFromPartial(partial: Partial<T>) {
-    Object.assign(this, partial);
-  }
-
-  get paramsValue(): string {
-    return Object.keys(this).map(key => {
-      const value = (this as any)[key];
-      if (Array.isArray(value)) {
-        if (value.length > 0 && typeof value[0] === "string") {
-          return value.join(",");
-        } else if (value.length > 0 && typeof value[0] === "object" && "key" in value[0] && "value" in value[0]) {
-          return (value as SelectOption[]).map(item => item.code).join(",");
-        }
-      }
-      return value;
-    }).join("_");
-  }
-}
-
-export interface ITypeaheadOptions {
-  field: string;
-  options: string[];
-  scrollable: number;
-  limit: number;
-  async: boolean;
-}
-
-export class TypeaheadOptions implements ITypeaheadOptions {
-  field = '';
-  options: string[] = [];
-  scrollable = 10;
-  limit = 20;
-  async = false;
-
-  constructor(opts?: ITypeaheadOptions) {
-    if (opts) {
-      this.field = opts.field ? opts.field : '';
-      this.options = opts.options ? opts.options : [];
-      this.scrollable = opts.scrollable ? opts.scrollable : 10;
-      this.limit = opts.limit ? opts.limit : 20;
-      this.async = opts.async ? opts.async : false;
-    }
-  }
+export function isSelectOption(value: any): value is SelectOption {
+  return (
+    value &&
+    typeof value === 'object' &&
+    'id' in value &&
+    typeof value.id === 'number' &&
+    'code' in value &&
+    typeof value.code === 'string' &&
+    'name' in value &&
+    typeof value.name === 'string' &&
+    'enabled' in value &&
+    typeof value.enabled === 'boolean' &&
+    'visible' in value &&
+    typeof value.visible === 'boolean'
+  );
 }
 
 export type InputTypes =
   "text"
+  | "textMat"
+  | "bull"
+  | "donor"
   | "textarea"
   | "boolean"
   | "slideToggle"
@@ -166,28 +65,32 @@ export type InputTypes =
   | "dateRange"
   | "searchDate"
   | "chips"
+  | "selectMat"
   | "select"
+  | "numberMat"
   | "number"
   | "email"
   | "password"
   | "date"
+  | "check"
   | "time"
   | "datetime-local"
-  | 'check'
   | "month"
   | "week"
   | "url"
   | "tel"
+  | "file"
   | "search"
   | "hidden"
   | "select2"
-  | "color";
+  | "color"
+  | "radio";
 
 export type ControlErrors = { [key: string]: string };
 
 export type ControlRows = 1 | 2 | 3 | 4 | 5 | "responsive";
 
-export type ControlOrientation = 'inline' | 'block';
+export type ControlOrientation = "inline" | "block";
 
 export class FormComponent<T> {
   protected route = inject(ActivatedRoute);
@@ -205,6 +108,23 @@ export class FormComponent<T> {
   }
 }
 
+export interface FormGroupActions<T extends Entity, V extends FormGroup2<T>> {
+  item: InputSignal<T | undefined>;
+  use: InputSignal<FormUse>;
+  view: InputSignal<View>;
+  key: InputSignal<string>;
+
+  form: V;
+
+  onSubmit(): void;
+
+  onCancel(): void;
+
+  create(): void;
+
+  update(item: T): void;
+}
+
 export interface FormActions<T extends Entity, V extends Form<T>> {
   item: InputSignal<T | undefined>;
   use: InputSignal<FormUse>;
@@ -214,10 +134,29 @@ export interface FormActions<T extends Entity, V extends Form<T>> {
   form: V;
 
   onSubmit(): void;
+
   onCancel(): void;
+
   fillForm(): void;
+
   create(): void;
+
   update(item: T): void;
+}
+
+export interface FilterFormGroupActions<T extends Entity, U extends EntityParams<U> & IParams, V extends FormGroup2<U>> {
+  item: InputSignal<T | undefined>;
+  use: InputSignal<FormUse>;
+  view: InputSignal<View>;
+  key: InputSignal<string>;
+  mode: InputSignal<CatalogMode>;
+
+  params?: U;
+  form: V;
+
+  onSubmit(): void;
+
+  onCancel(): void;
 }
 
 export interface FilterFormActions<T extends Entity, U extends EntityParams<U> & IParams, V extends Form<U>> {
@@ -231,6 +170,7 @@ export interface FilterFormActions<T extends Entity, U extends EntityParams<U> &
   form: V;
 
   onSubmit(): void;
+
   onCancel(): void;
 }
 
@@ -258,7 +198,6 @@ export interface IControl<TValue> {
   errors: ControlErrors;
   validation: boolean;
   orientation?: ControlOrientation;
-  typeahead: ITypeaheadOptions;
   isGroupSpan: boolean;
   showCodeSpan: boolean;
 
@@ -273,8 +212,6 @@ export interface IControl<TValue> {
   setValidators(validators: ValidatorFn[]): Control<TValue>;
 
   setAsyncValidators(asyncValidators: AsyncValidatorFn[]): Control<TValue>;
-
-  setTypeaheadOptions(options: string[]): Control<TValue>;
 }
 
 export class Control<TValue> implements IControl<TValue | null> {
@@ -295,14 +232,12 @@ export class Control<TValue> implements IControl<TValue | null> {
   submitted = false;
   touched = false;
   formControl: AbstractControl<TValue | null, TValue | null>;
-  style: FormControlStyles = 'solid';
   showLabel = true;
   optional = false;
   isNew = false;
   errors: ControlErrors = {};
   orientation?: ControlOrientation = "block";
   validation = false;
-  typeahead: ITypeaheadOptions = new TypeaheadOptions();
   isGroupSpan = false;
   useOptionAsValue = false;
   showCodeSpan = true;
@@ -324,7 +259,6 @@ export class Control<TValue> implements IControl<TValue | null> {
       submitted?: boolean;
       touched?: boolean;
       orientation?: ControlOrientation;
-      typeahead?: ITypeaheadOptions;
       isGroupSpan?: boolean;
       id?: string;
       isReadonly?: boolean;
@@ -369,9 +303,6 @@ export class Control<TValue> implements IControl<TValue | null> {
       this.isNew = opts.isNew || false;
       this.errors = opts.errors || {};
       this.useOptionAsValue = opts.useOptionAsValue || false;
-      if (opts.typeahead) {
-        this.typeahead = opts.typeahead;
-      }
       this.isGroupSpan = opts.isGroupSpan || false;
     }
   }
@@ -379,16 +310,11 @@ export class Control<TValue> implements IControl<TValue | null> {
   setOptions(options: SelectOption[] = [], columns: Column[] = [], isTypeahead = false): Control<TValue> {
     if (columns.length > 0) {
       this.options = columns.map(column => {
-        return { code: column.name, value: column.label, name: column.name, id: 0 };
+        return { code: column.name, value: column.label, name: column.name, id: 0, enabled: true, visible: true };
       });
       this.setValue(this.options[0] as TValue);
     } else {
       this.options = options;
-      if (isTypeahead) {
-        this.typeahead = new TypeaheadOptions({
-          ...this.typeahead, options: options.map(option => option.name)
-        });
-      }
     }
     return this;
   }
@@ -430,11 +356,185 @@ export class Control<TValue> implements IControl<TValue | null> {
     return this;
   }
 
-  setTypeaheadOptions(options: string[]): Control<TValue> {
-    this.typeahead.options = options;
+}
+
+export class ControlBuilder<T extends string | number | Date | SelectOption | boolean> {
+  id: string = createId();
+
+  constructor(type: InputTypes, label: string, name: string, init?: Partial<ControlBuilder<T>>) {
+    Object.assign(this, init);
+
+    this.type = type;
+    this.label = label;
+    this.name = name;
+  }
+
+  formControl: AbstractControl<T | null, T | null> = new FormControl<T | null>(null);
+  type: InputTypes;
+  label: string;
+  name: string;
+  placeholder?: string;
+  value: T | null = null;
+  options: SelectOption[] = [];
+  disabled: boolean = false;
+  validators: ValidatorFn[] = [];
+  asyncValidators: AsyncValidatorFn[] = [];
+  helperText?: string;
+  isReadonly: boolean = false;
+  use: FormUse = 'detail';
+  submitted: boolean = false;
+  touched: boolean = false;
+  showLabel: boolean = true;
+  hidden: boolean = false;
+  optional: boolean = false;
+  isNew: boolean = false;
+  errors: ControlErrors = {};
+  validation: boolean = false;
+  orientation: ControlOrientation = 'block';
+  isGroupSpan: boolean = false;
+  showCodeSpan: boolean = true;
+
+  get required(): boolean {
+    return (this.validators.includes(Validators.required)) && (this.validation === true);
+  }
+
+  setValidation(validation: boolean): ControlBuilder<T> {
+    this.validation = validation;
+    if (validation) {
+      this.formControl.setValidators(this.validators);
+      this.formControl.setAsyncValidators(this.asyncValidators);
+    } else {
+      this.formControl.clearValidators();
+      this.formControl.clearAsyncValidators();
+    }
+    this.formControl.updateValueAndValidity({ emitEvent: true });
     return this;
   }
 
+  setOptions(options: SelectOption[], columns: Column[]): ControlBuilder<T> {
+    if (columns.length > 0) {
+      this.options = columns.map(column => {
+        return { code: column.name, value: column.label, name: column.name, id: 0, enabled: true, visible: true };
+      });
+      this.setValue(this.options[0] as T);
+    } else {
+      this.options = options;
+    }
+    return this;
+  }
+
+  setValue(value: T): ControlBuilder<T> {
+    this.value = value;
+    this.formControl.setValue(value);
+    this.formControl.updateValueAndValidity({ emitEvent: true });
+    return this;
+  }
+
+  setValidators(validators: ValidatorFn[]): ControlBuilder<T> {
+    this.formControl.setValidators(validators);
+    this.formControl.updateValueAndValidity({ emitEvent: true });
+    return this;
+  }
+
+  setAsyncValidators(asyncValidators: AsyncValidatorFn[]): ControlBuilder<T> {
+    this.formControl.setAsyncValidators(asyncValidators);
+    this.formControl.updateValueAndValidity({ emitEvent: true });
+    return this;
+  }
+}
+
+export class FormBuilder<T extends object> {
+  id: string = createId();
+
+  constructor(createInstance: new (init?: Partial<T>) => T, instance?: T, init?: Partial<FormBuilder<T>>) {
+    Object.assign(this, init);
+
+    this.controls = createTypedFormBuilder<T>(createInstance, instance);
+    this.group = createTypedFormGroup<T>(createInstance, instance);
+  }
+
+  controls: TypedFormBuilder<T>;
+  group: FormGroup<TypedForm<T>>;
+  error?: BadRequest;
+  submitted: boolean = false;
+  validation: boolean = true;
+  use: FormUse = 'detail';
+  isReadonly: boolean = false;
+  orientation?: ControlOrientation = 'block';
+  columns: Column[] = [];
+  loaded: boolean = false;
+
+  get submittable(): boolean {
+    if (this.validation) {
+      return this.group.valid;
+    } else {
+      return true;
+    }
+  }
+
+  get value(): T {
+    return this.group.value as any;
+  }
+
+  setValidation(validation: boolean): void {
+    this.validation = validation;
+    if (validation) {
+      for (const key in this.controls) {
+        let control = this.controls[key as keyof T];
+        // control.validation = validation;
+        // this.group.get(key)?.setValidators(control.validators);
+        // this.group.get(key)?.setAsyncValidators(control.asyncValidators);
+      }
+    } else {
+      this.group.clearValidators();
+      this.group.clearAsyncValidators();
+    }
+
+    this.group.updateValueAndValidity({ emitEvent: true });
+  }
+  setUse(use: FormUse): void {
+    this.use = use;
+    this.error = undefined;
+    if (use === "detail") {
+      this.group.disable({ emitEvent: false, onlySelf: true });
+      // for (const key in this.controls) this.controls[key].disabled = true;
+      this.isReadonly = true;
+    }
+    if (use === "edit" || use === "create") {
+      // for (const key in this.controls) this.controls[key].disabled = false;
+      this.group.enable({ emitEvent: false, onlySelf: true });
+      for (const key in this.controls) {
+        // if (this.controls[key as keyof T].disabled) this.group.get(key)?.disable({ emitEvent: false, onlySelf: true });
+      }
+      this.isReadonly = false;
+    }
+    this.setReadonlyToControls(this.isReadonly);
+  }
+
+  setReadonlyToControls(readonly: boolean): void {
+    for (const key in this.controls) {
+      // this.controls[key as keyof T].isReadonly = readonly;
+    }
+  }
+
+  onCancel(): void {
+    this.submitted = false;
+    this.group.reset({ emitEvent: false, onlySelf: true } as any);
+    this.group.markAsPristine({ emitEvent: false, onlySelf: true } as any);
+  }
+
+  reset(): void {
+    this.group.reset({ emitEvent: false, onlySelf: true } as any);
+    this.group.markAsPristine({ emitEvent: false, onlySelf: true } as any);
+  }
+
+  onSubmit(): void {
+    this.submitted = true;
+    // for (const key in this.controls) {
+    //   this.controls[key as keyof T].formControl = this.group.controls[key] as AbstractControl<T[keyof T] | null, T[keyof T] | null>;
+    //   this.controls[key as keyof T].submitted = true;
+    // }
+  }
 }
 
 export interface IForm<T extends Record<keyof T, any>> {
@@ -447,22 +547,31 @@ export interface IForm<T extends Record<keyof T, any>> {
   isReadonly: boolean;
   controlOrientation?: ControlOrientation;
   columns?: Column[];
+  loaded: boolean;
 
   get submittable(): boolean;
+
   get value(): { [K in keyof T]: T[K]; };
 
   controls: { [K in keyof T]: Control<T[K]> };
 
   getControl(key: keyof T): Control<T[keyof T]>;
+
   getControls(keys?: (keyof T)[]): { control: Control<T[keyof T]> }[];
+
   setValidation(validation: boolean): void;
+
   patchWithSample(): void;
+
   setUse(use: FormUse): void;
+
   setReadonlyToControls(readonly: boolean): void;
+
   onCancel(): void;
+
   reset(): void;
+
   patch(use: FormUse, value: { [K in keyof T]?: T[K] }): void;
-  setTypeaheadOptions(key: keyof T, options: string[]): this;
 }
 
 export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
@@ -471,18 +580,17 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
   error?: BadRequest;
   submitted = false;
   validation = true;
-  use: FormUse = 'detail';
+  use: FormUse = "detail";
   isReadonly = false;
   controls: { [K in keyof T]: Control<T[K]> };
-  controlOrientation?: ControlOrientation = 'inline';
+  controlOrientation?: ControlOrientation = "inline";
   columns?: Column[];
+  loaded = false;
 
   constructor(controls: { [K in keyof T]: Control<T[K]> }, opts?: {
     orientation?: ControlOrientation;
-    style?: FormControlStyles;
     columns?: Column[];
   }) {
-    // Initialize controls
     this.controls = controls;
 
     let formControls: { [K in keyof T]: AbstractControl<T[K] | null, T[K] | null> } = {} as any;
@@ -491,47 +599,32 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
       if (controls.hasOwnProperty(key)) {
         const control = controls[key as keyof T];
         formControls[key as keyof T] = new FormControl<T[keyof T] | null>(
-          { value: control.value, disabled: control.disabled } as any, // Note: `as any` used to avoid type error
+          { value: control.value, disabled: control.disabled } as any,
           control.validators,
           control.asyncValidators
         );
 
-        // Set the formControl property of each Control instance
         control.formControl = formControls[key as keyof T];
         if (opts) {
-          control.orientation = opts.orientation || 'block';
-          control.style = opts.style || 'solid';
+          control.orientation = opts.orientation || "block";
         }
 
       }
     }
     this.group = new FormGroup(formControls);
 
-    if (this.isEntityParamsType(controls) && opts?.columns && 'sort' in controls) {
+    if (this.isEntityParamsType(controls) && opts?.columns && "sort" in controls) {
       this.columns = opts.columns;
       const ctrls = controls as { [K in keyof EntityParams<T>]: Control<EntityParams<T>[K]> };
-      ctrls['sort'].setOptions([], opts.columns);
-      ctrls['sort'].value = opts.columns[0].label as any;
+      ctrls["sort"].setOptions([], opts.columns);
+      ctrls["sort"].value = opts.columns[0].label as any;
     }
 
-    // for(const key in this.group.controls) {
-    //   this.group.controls[key].valueChanges.subscribe({
-    //     next: (value) => {
-    //       console.log('value', value);
-
-    //       // this.controls[key as keyof T] = this.controls[key as keyof T].setValue(value);
-    //     }
-    //   });
-    // }
-  }
-  setTypeaheadOptions(key: keyof T, options: string[]): this {
-    this.controls[key].setTypeaheadOptions(options);
-    return this;
+    this.setUse(this.use);
   }
 
   private isEntityParamsType(controls: { [K in keyof T]: Control<T[K]> }): boolean {
-    // Replace 'pageNumber' with any unique property name from EntityParams
-    return 'pageNumber' in controls;
+    return "pageNumber" in controls;
   }
 
   get value(): T {
@@ -553,15 +646,11 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
   }
 
   patch(use: FormUse, value: { [K in keyof T]?: T[K] }): void {
-    if (use === 'create') this.reset();
+    if (use === "create") this.reset();
     else this.group.patchValue(value as any);
 
-    if (this.isEntityParamsType(this.controls) && this.columns && 'sort' in this.controls) {
-      // const ctrls = this.controls as { [K in keyof EntityParams<T>]: Control<EntityParams<T>[K]> };
-      // ctrls['sort'].setOptions([], opts.columns);
-      // ctrls['sort'].value = opts.columns[0].label as any;
-
-      this.group.get('sort')?.setValue(this.columns[0].label as any);
+    if (this.isEntityParamsType(this.controls) && this.columns && "sort" in this.controls) {
+      this.group.get("sort")?.setValue(this.columns[0].label as any);
     }
   }
 
@@ -584,7 +673,7 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
   setValidation(validation: boolean): void {
     this.validation = validation;
     if (validation) {
-      for(const key in this.controls) {
+      for (const key in this.controls) {
         let control = this.controls[key as keyof T];
         control.validation = validation;
         this.group.get(key)?.setValidators(control.validators);
@@ -595,7 +684,7 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
       this.group.clearAsyncValidators();
     }
 
-    this.group.updateValueAndValidity({ emitEvent: true});
+    this.group.updateValueAndValidity({ emitEvent: true });
   }
 
   patchWithSample(): void {
@@ -607,11 +696,13 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
     this.error = undefined;
     if (use === "detail") {
       this.group.disable({ emitEvent: false, onlySelf: true });
+      for (const key in this.controls) this.controls[key].disabled = true;
       this.isReadonly = true;
     }
     if (use === "edit" || use === "create") {
+      for (const key in this.controls) this.controls[key].disabled = false;
       this.group.enable({ emitEvent: false, onlySelf: true });
-      for(const key in this.controls) {
+      for (const key in this.controls) {
         if (this.controls[key as keyof T].disabled) this.group.get(key)?.disable({ emitEvent: false, onlySelf: true });
       }
       this.isReadonly = false;
@@ -624,6 +715,7 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
       this.controls[key as keyof T].isReadonly = readonly;
     }
   }
+
   onCancel(): void {
     this.submitted = false;
     this.group.reset({ emitEvent: false, onlySelf: true } as any);
@@ -637,12 +729,345 @@ export class Form<T extends Entity | EntityParams<T>> implements IForm<T> {
 
   onSubmit(): void {
     this.submitted = true;
-    for(const key in this.controls) {
-      // console.log('key', key);
-      // console.log('control', this.controls[key as keyof T]);
-      // console.log('formControl', this.group.controls[key]);
+    for (const key in this.controls) {
       this.controls[key as keyof T].formControl = this.group.controls[key] as AbstractControl<T[keyof T] | null, T[keyof T] | null>;
       this.controls[key as keyof T].submitted = true;
     }
+  }
+}
+
+type ControlType<T> = T extends string | number | Date | SelectOption | Sex
+  ? AbstractControl<T | null, T | null>
+  : T extends Array<infer U>
+  ? FormArray<FormGroup<TypedForm<U>>>
+  : T extends object
+  ? FormGroup<TypedForm<T>>
+  : never;
+
+type ControlTypeExtended<T> = T extends string | number | Date | SelectOption
+  ? FormControlExtended<T>
+  : T extends Array<infer U extends object>
+  ? FormArray<FormGroupExtended<U>>
+  : T extends object
+  ? FormGroupExtended<T>
+  : never;
+
+type ControlTypeBuilder<T> = T extends string | number | Date | SelectOption | Sex
+  ? ControlBuilder<T>
+  : T extends Array<infer U extends object>
+  ? Array<FormBuilder<U>>
+  : T extends object
+  ? FormBuilder<T>
+  : never;
+
+export type TypedForm<T> = {
+  [K in keyof T]: ControlType<T[K]>;
+};
+
+export type TypedFormBuilder<T> = {
+  [K in keyof T]: ControlTypeBuilder<T[K]>;
+};
+
+export type TypedFormExtended<T> = {
+  [K in keyof T]: ControlTypeExtended<T[K]>;
+};
+
+export class PersonForm extends FormBuilder<Person> {}
+
+export type TypedPersonForm = TypedFormBuilder<Person>;
+
+export type TypedPerson = TypedForm<Person>;
+
+export type PersonClassControls = {
+  name: AbstractControl<string | null, string | null>;
+  age: AbstractControl<number | null, number | null>;
+  dateOfBirth: AbstractControl<Date | null, Date | null>;
+  photo: FormGroup<{
+    url: AbstractControl<string | null, string | null>;
+    caption: AbstractControl<string | null, string | null>;
+  }>;
+  addresses: FormArray<FormGroup<{
+    street: AbstractControl<string | null, string | null>;
+    city: AbstractControl<string | null, string | null>;
+    state: AbstractControl<string | null, string | null>;
+    zip: AbstractControl<string | null, string | null>;
+  }>>;
+};
+
+export class Person {
+  name: string = '';
+  type = new SelectOption();
+  age: number = 0;
+  dateOfBirth: Date = new Date();
+  photo: Photo = new Photo();
+  addresses: Address[] = [];
+
+  constructor(init?: Partial<Person>) {
+    Object.assign(this, init);
+  }
+}
+
+export class Photo {
+  url: string = '';
+  caption: string = '';
+
+  constructor(init?: Partial<Photo>) {
+    Object.assign(this, init);
+  }
+}
+
+export class Address {
+  street: string = '';
+  city: string = '';
+  state: string = '';
+  zip: string = '';
+
+  constructor(init?: Partial<Address>) {
+    Object.assign(this, init);
+  }
+}
+
+export type ControlsOf<T> = {
+  [K in keyof T]: T[K] extends (infer U)[]
+    ? FormArray<FormGroup<ControlsOf<Partial<U>>>>
+    : AbstractControl<T[K] | null, T[K] | null>;
+};
+
+export type PersonControls = ControlsOf<Person>;
+
+export class FormArrayBuilder<T extends object> {
+  group: FormGroup<{ items: FormArray<FormGroup<ControlsOf<T>>> }>;
+
+  constructor(private createInstance: new (init?: Partial<T>) => T,
+    items: T[], size: number = 0) {
+
+    this.group = new FormGroup({
+      items: new FormArray<FormGroup<ControlsOf<T>>>([]),
+    });
+
+    for (let i = 0; i < size; i++) {
+      if (i < items.length) {
+        this.add(items[i]);
+      } else {
+        this.add(new this.createInstance());
+      }
+    }
+  }
+
+  private createFormControls(instance: T): { [K in keyof T]: FormControl<T[K] | null> } {
+    const result = {} as { [K in keyof T]: FormControl<T[K] | null> };
+
+    Object.keys(instance || {}).forEach((key) => {
+      const typedKey = key as keyof T;
+      const value = instance ? instance[typedKey] : null;
+      result[typedKey] = new FormControl<T[keyof T] | null>(value as T[keyof T] | null);
+    });
+
+    return result;
+  }
+
+  add(instance: T) {
+    const controls = this.createFormControls(instance);
+    // this.group.controls.items.push(new FormGroup<ControlsOf<T>>(controls as ControlsOf<T>));
+  }
+
+}
+
+
+export function createTypedFormGroup<T extends object>(createInstance: new (init?: Partial<T>) => T, instance?: T): FormGroup<TypedForm<T>> {
+  const formGroup = {} as { [K in keyof T]: any };
+
+  const model = instance || new createInstance();
+
+  Object.keys(model).forEach((key) => {
+    const typedKey = key as keyof T;
+    const value = model[typedKey];
+
+    if (Array.isArray(value)) {
+      // Create FormArray for arrays, each item can be a FormGroup
+      formGroup[typedKey] = new FormArray(
+        value.map(item => createTypedFormGroup(item.constructor as new (init?: Partial<T[keyof T]>) => T[keyof T], item)) // Explicitly use item.constructor as a class constructor
+      );
+    } else if (typeof value === 'object' && value !== null) {
+      // Recursively create FormGroup for nested objects
+      formGroup[typedKey] = createTypedFormGroup<typeof value>(value.constructor as new (init?: Partial<T[keyof T]>) => any, value);
+    } else {
+      // Create FormControl for simple fields
+      formGroup[typedKey] = new FormControl(value as T[keyof T] | null);
+    }
+  });
+
+  return new FormGroup(formGroup) as FormGroup<TypedForm<T>>;
+}
+
+export function createTypedFormGroupType<T extends object>(createInstance: new (init?: Partial<T>) => T, instance?: T): TypedForm<T> {
+  const formGroup = {} as { [K in keyof T]: any };
+
+  const model = instance || new createInstance();
+
+  Object.keys(model).forEach((key) => {
+    const typedKey = key as keyof T;
+    const value = model[typedKey];
+
+    if (Array.isArray(value)) {
+      // Create FormArray for arrays, each item can be a FormGroup
+      formGroup[typedKey] = new FormArray(
+        value.map(item => createTypedFormGroup(item.constructor as new (init?: Partial<T[keyof T]>) => T[keyof T], item)) // Explicitly use item.constructor as a class constructor
+      );
+    } else if (typeof value === 'object' && value !== null) {
+      // Recursively create FormGroup for nested objects
+      formGroup[typedKey] = createTypedFormGroup<typeof value>(value.constructor as new (init?: Partial<T[keyof T]>) => any, value);
+    } else {
+      // Create FormControl for simple fields
+      formGroup[typedKey] = new FormControl(value as T[keyof T] | null);
+    }
+  });
+
+  return new FormGroup(formGroup).controls as TypedForm<T>;
+}
+
+export function createTypedFormGroupExtended<T extends object>(createInstance: new (init?: Partial<T>) => T, instance?: T): TypedFormExtended<T> {
+  const formGroup = {} as { [K in keyof T]: any };
+
+  const model = instance || new createInstance();
+
+  Object.keys(model).forEach((key) => {
+    const typedKey = key as keyof T;
+    const value = model[typedKey];
+
+    if (Array.isArray(value)) {
+      formGroup[typedKey] = new FormArray(
+        value.map(item => createTypedFormGroup(item.constructor as new (init?: Partial<T[keyof T]>) => T[keyof T], item)) // Explicitly use item.constructor as a class constructor
+      );
+    } else if (typeof value === 'object' && value !== null) {
+      // Recursively create FormGroup for nested objects
+      formGroup[typedKey] = new FormGroupExtended(value.constructor as new (init?: Partial<T>) => any, value as any);
+    } else {
+      // Create FormControl for simple fields
+      formGroup[typedKey] = new FormControlExtended(value as any);
+    }
+  });
+
+  return formGroup as TypedFormExtended<T>;
+}
+
+export function createTypedFormBuilder<T extends object>(createInstance: new (init?: Partial<T>) => T, instance?: T): TypedFormBuilder<T> {
+  const formBuilder = {} as { [K in keyof T]: any };
+
+  const model = instance || new createInstance();
+
+  Object.keys(model).forEach((key) => {
+    const typedKey = key as keyof T;
+    const value = model[typedKey];
+
+    if (Array.isArray(value)) {
+      // For arrays, create an array of FormBuilder
+      formBuilder[typedKey] = value.map((item) => createTypedFormBuilder(item.constructor as new (init?: Partial<T[keyof T]>) => T[keyof T], item));
+    } else if (typeof value === 'object' && value !== null) {
+      // Recursively create FormBuilder for nested objects
+      formBuilder[typedKey] = createTypedFormBuilder<typeof value>(value.constructor as new (init?: Partial<T[keyof T]>) => any, value);
+    } else {
+      // Create ControlBuilder for simple fields
+      formBuilder[typedKey] = {
+        formControl: new FormControl(value as T[keyof T] | null),
+        // Define default settings for the control
+        type: 'text', // Modify this according to the type of input you want
+        label: key,
+        name: key,
+        placeholder: '',
+        value: value as T[keyof T] | null,
+        options: [],
+        disabled: false,
+        validators: [],
+        asyncValidators: [],
+        helperText: '',
+        isReadonly: false,
+        id: key,
+        use: 'edit',
+        submitted: false,
+        touched: false,
+        showLabel: true,
+        hidden: false,
+        optional: false,
+        isNew: false,
+        errors: {},
+        validation: true,
+        isGroupSpan: false,
+        showCodeSpan: false,
+        setValidation(validation: boolean) {
+          this.validation = validation;
+          return this;
+        },
+        setOptions(options: SelectOption[], columns: Column[]) {
+          this.options = options;
+          return this;
+        },
+        setValue(value: T[keyof T]) {
+          this.formControl.setValue(value);
+          return this;
+        },
+        setValidators(validators: ValidatorFn[]) {
+          this.validators = validators;
+          this.formControl.setValidators(validators);
+          return this;
+        },
+        setAsyncValidators(asyncValidators: AsyncValidatorFn[]) {
+          this.asyncValidators = asyncValidators;
+          this.formControl.setAsyncValidators(asyncValidators);
+          return this;
+        },
+        setTypeaheadOptions(options: string[]) {
+          this.typeahead = { options };
+          return this;
+        }
+      };
+    }
+  });
+
+  return formBuilder as TypedFormBuilder<T>;
+}
+
+export class FormGroupExtended<T extends object> extends FormGroup {
+  id: string = createId();
+  error?: BadRequest;
+  submitted: boolean = false;
+  validation: boolean = true;
+
+  override controls: TypedFormExtended<T>;
+
+  constructor(
+    createInstance: new (init?: Partial<T>) => T,
+    // controls: TypedForm<T>,
+    instance?: T,
+    validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
+    asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null,
+  ) {
+    super(
+      createTypedFormGroupType<T>(createInstance, instance),
+      // controls,
+      validatorOrOpts,
+      asyncValidator,
+    );
+
+    this.controls = createTypedFormGroupExtended<T>(createInstance, instance);
+  }
+
+}
+
+export class FormControlExtended<T extends string | number | boolean | Date | SelectOption> extends FormControl<T | null> {
+  id: string = createId();
+  label: string = '';
+  name: string = '';
+  type: InputTypes = 'text';
+
+  constructor(
+    value: FormControlState<T> | T,
+    validatorOrOpts?: ValidatorFn | ValidatorFn[] | FormControlOptions | null,
+    asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null,
+    init?: Partial<FormControlExtended<T>>
+  ) {
+    super(value, validatorOrOpts, asyncValidator);
+
+    Object.assign(this, init);
   }
 }

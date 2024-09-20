@@ -1,0 +1,88 @@
+<div [grid]="cols()"
+[orientation]="orientation()"
+controlsRow3>
+@for (control of controls(); let idx = $index; track idx) {
+@if (!control.hidden) {
+ <div controlsWrapper3>
+   <!-- {{control.control.label}} -->
+   @switch (control.type) {
+     @case ('select') {
+       <div controlSelect3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('selectMat') {
+       <div controlSelectMat3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('chips') {
+       <!-- <div controlChips
+            [(control)]="control"></div> -->
+     }
+     @case ('slideToggle') {
+       <div controlSlide3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('textarea') {
+       <div controlTextarea3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('textMat') {
+       <div controlTextMat3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('text') {
+       <div controlText3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('numberMat') {
+       <div controlTextMat3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('number') {
+       <div controlText3
+            [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('date') {
+       <div
+         controlDate3
+         [(control)]="controls()[idx]"
+       ></div>
+     }
+     @case ('dateRange') {
+      <div
+        controlDateRange3
+        [(control)]="controls()[idx]"
+      ></div>
+     }
+     @case ('radio') {
+        <div
+          controlRadio3
+          [(control)]="controls()[idx]"
+        ></div>
+      }
+     @case ('search') {
+       <div
+         controlSearchText3
+         [(control)]="controls()[idx]"
+       ></div>
+     }
+     <!-- @case('searchDate') {
+       <div
+         controlSearchDate
+         [(control)]="control"
+       ></div>
+     } -->
+   }
+ </div>
+}
+}
+<ng-content></ng-content>
+</div>
