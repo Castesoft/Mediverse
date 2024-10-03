@@ -7,6 +7,7 @@ public interface IUnitOfWork
     ISubstanceRepository SubstanceRepository { get; }
     IOccupationRepository OccupationRepository { get; }
     IMaritalStatusRepository MaritalStatusRepository { get; }
+    IEducationLevelRepository EducationLevelRepository { get; }
     IColorBlindnessRepository ColorBlindnessRepository { get; }
     IRelativeTypeRepository RelativeTypeRepository { get; }
     IConsumptionLevelRepository ConsumptionLevelRepository { get; }

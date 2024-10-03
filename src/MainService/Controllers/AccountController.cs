@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
 using System.Text.Json;
 using Twilio.TwiML.Voice;
+using MainService.Core.DTOs;
 
 namespace MainService.Controllers;
 public class AccountController(
@@ -24,7 +25,7 @@ public class AccountController(
     IMapper mapper, 
     ITokenService tokenService, 
     ICloudinaryService cloudinaryService,
-    IGoogleService googleService,
+    IGoogleService googleService, 
     IConfiguration configuration, 
     IEmailService emailService, 
     ITwoFactorAuthService twoFactorAuthService, 
@@ -1654,6 +1655,135 @@ public class AccountController(
         }
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(userId);
+
+        return itemToReturn;
+    }
+
+    [Authorize]
+    [HttpPut("medical-record")]
+    public async Task<ActionResult<MedicalRecordDto>> UpdateMedicalRecord([FromBody] MedicalRecordUpdateDto request)
+    {
+        int userId = User.GetUserId();
+
+    var user = await userManager.Users
+        .Include(u => u.UserMedicalRecord)
+            .ThenInclude(umr => umr.MedicalRecord)
+                .ThenInclude(mr => mr.MedicalRecordFamilyMembers)
+                    .ThenInclude(mrfm => mrfm.FamilyMember)
+                        .ThenInclude(fm => fm.MedicalRecordFamilyMemberRelativeType)
+        .Include(u => u.UserMedicalRecord)
+            .ThenInclude(umr => umr.MedicalRecord)
+                .ThenInclude(mr => mr.MedicalRecordPersonalDiseases)
+        .Include(u => u.UserMedicalRecord)
+            .ThenInclude(umr => umr.MedicalRecord)
+                .ThenInclude(mr => mr.MedicalRecordSubstances)
+        .Include(u => u.UserMedicalRecord)
+            .ThenInclude(umr => umr.MedicalRecord)
+                .ThenInclude(mr => mr.MedicalRecordFamilyDiseases)
+        .Include(u => u.UserMedicalRecord)
+            .ThenInclude(umr => umr.MedicalRecord)
+                .ThenInclude(mr => mr.MedicalRecordCompanion)
+                    .ThenInclude(mrc => mrc.Companion)
+        .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (user.UserMedicalRecord != null)
+        {
+            var existingUserMedicalRecord = user.UserMedicalRecord;
+
+            await uow.UserRepository.DeleteMedicalRecordAsync(existingUserMedicalRecord);
+        }
+
+        UserMedicalRecord newRecord = new ()
+        {
+            UserId = userId,
+            MedicalRecord = new () {
+                PatientName = request.Name,
+                Age = request.Age,
+                Sex = request.Sex,
+                BirthPlace = request.BirthPlace,
+                BirthDate = request.BirthDate,
+                YearsOfSchooling = request.YearsOfSchooling,
+                HandDominance = request.HandDominance,
+                CurrentLivingSituation = request.CurrentLivingSituation,
+                CurrentAddress = request.CurrentAddress,
+                HomePhone = request.HomePhone,
+                MobilePhone = request.MobilePhone,
+                Email = request.Email,
+                AttendedAlone = request.AttendedAlone,
+                EconomicDependence = request.EconomicDependence,
+                UsesGlassesOrHearingAid = request.UsesGlassesOrHearingAid,
+                Comments = request.Comments,
+
+                MedicalRecordEducationLevel = new () {
+                    EducationLevelId = request.EducationLevel.Id
+                },
+                MedicalRecordOccupation = new () {
+                    OccupationId = request.Occupation.Id
+                },
+                MedicalRecordMaritalStatus = new () {
+                    MaritalStatusId = request.MaritalStatus.Id
+                },
+                MedicalRecordColorBlindness = new () {
+                    ColorBlindnessId = request.ColorBlindness.Id
+                },
+                MedicalRecordFamilyMembers = request.FamilyStructure.Select(fm => new MedicalRecordFamilyMember {
+                    FamilyMember = new () {
+                        Name = fm.Name,
+                        Age = fm.Age,
+                        MedicalRecordFamilyMemberRelativeType = new () {
+                            RelativeTypeId = fm.RelativeType.Id
+                        }
+                    }
+                }).ToList(),
+                MedicalRecordPersonalDiseases = request.PersonalMedicalHistory.Select(pd => new MedicalRecordPersonalDisease {
+                    Description = pd.Description,
+                    DiseaseId = pd.Disease.Id
+                }).ToList(),
+                MedicalRecordSubstances = request.PersonalDrugHistory.Select(ps => new MedicalRecordSubstance {
+                    SubstanceId = ps.Substance.Id,
+                    ConsumptionLevelId = ps.ConsumptionLevel.Id,
+                    StartAge = ps.StartAge,
+                    EndAge = ps.EndAge,
+                    IsCurrent = ps.IsCurrent,
+                    Other = ps.Other
+                }).ToList(),
+                MedicalRecordFamilyDiseases = request.FamilyMedicalHistory.Select(fd => new MedicalRecordFamilyDisease {
+                    FamilyMember = fd.RelativeType.Name,
+                    Description = fd.Description,
+                    DiseaseId = fd.Disease.Id
+                }).ToList(),
+            }
+        };
+
+        if (request.AttendedAlone) {
+            newRecord.MedicalRecord.MedicalRecordCompanion = new () {
+                Companion = new () {
+                    Name = request.CompanionName,
+                    Age = request.CompanionAge,
+                    Sex = request.CompanionSex,
+                    Address = request.CompanionCurrentAddress,
+                    HomePhone = request.CompanionHomePhone,
+                    PhoneNumber = request.CompanionMobilePhone,
+                    Email = request.CompanionEmail,
+                    CompanionRelativeType = new () {
+                        RelativeTypeId = request.CompanionRelationship.Id
+                    },
+                    CompanionOccupation = new () {
+                        OccupationId = request.CompanionOccupation.Id
+                    }
+                }
+            };
+        }
+
+        user.UserMedicalRecord = newRecord;
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest("Error actualizando el historial clínico.");
+        }
+
+        var itemToReturn = mapper.Map<MedicalRecordDto>(newRecord.MedicalRecord);
 
         return itemToReturn;
     }

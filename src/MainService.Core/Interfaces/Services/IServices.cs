@@ -19,6 +19,11 @@ namespace MainService.Core.Interfaces.Services
         Task<bool> DeleteByIdAsync(int id);
     }
 
+    public interface IEducationLevelsService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
     public interface IOccupationsService
     {
         Task<bool> DeleteByIdAsync(int id);

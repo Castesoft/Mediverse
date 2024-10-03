@@ -11,6 +11,7 @@ import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billi
 import { MedicalInsuranceCompany, UserMedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
 import { Payment } from '../_models/payment';
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
+import { MedicalRecord } from '../account/components/account-clinical-history.component';
 
 @Injectable({
   providedIn: 'root',
@@ -429,6 +430,15 @@ export class AccountService {
       map(response => {
         this.snackbarService.success('Horario de trabajo actualizado correctamente');
         this.setCurrentUser(response);
+        return response;
+      })
+    );
+  }
+
+  updateMedicalRecord(value: any) {
+    return this.http.put<MedicalRecord>(`${this.baseUrl}medical-record`, value).pipe(
+      map(response => {
+        this.snackbarService.success('Historial clínico actualizado correctamente');
         return response;
       })
     );

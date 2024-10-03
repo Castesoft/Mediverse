@@ -255,6 +255,21 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> DeleteMedicalRecordAsync(UserMedicalRecord userMedicalRecord)
+    {
+        context.MedicalRecordFamilyMemberRelativeTypes.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers.Select(x => x.FamilyMember.MedicalRecordFamilyMemberRelativeType));
+        context.MedicalRecordFamilyMembers.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers);
+        context.MedicalRecordPersonalDiseases.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordPersonalDiseases);
+        context.MedicalRecordFamilyDiseases.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordFamilyDiseases);
+        context.MedicalRecordSubstances.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordSubstances);
+        if (userMedicalRecord.MedicalRecord.MedicalRecordCompanion != null) {
+            context.MedicalRecordCompanions.Remove(userMedicalRecord.MedicalRecord.MedicalRecordCompanion);
+        }
+        // context.MedicalRecords.Remove(userMedicalRecord.MedicalRecord);
+        context.UserMedicalRecords.Remove(userMedicalRecord);
+        return await context.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> AddReviewAsync(Review review)
     {
         await context.Reviews.AddAsync(review);

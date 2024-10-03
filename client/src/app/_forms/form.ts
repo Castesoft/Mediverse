@@ -84,7 +84,8 @@ export type InputTypes =
   | "hidden"
   | "select2"
   | "color"
-  | "radio";
+  | "radio"
+  | "array";
 
 export type ControlErrors = { [key: string]: string };
 

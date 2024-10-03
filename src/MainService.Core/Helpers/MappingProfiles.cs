@@ -367,6 +367,7 @@ public class MappingProfiles : Profile
         CreateMap<ConsumptionLevel, ConsumptionLevelDto>();
         CreateMap<Occupation, OccupationDto>();
         CreateMap<MaritalStatus, MaritalStatusDto>();
+        CreateMap<EducationLevel, EducationLevelDto>();
         CreateMap<ColorBlindness, ColorBlindnessDto>();
         CreateMap<RelativeType, RelativeTypeDto>();
 
@@ -375,6 +376,7 @@ public class MappingProfiles : Profile
         CreateMap<ConsumptionLevel, OptionDto>();
         CreateMap<Occupation, OptionDto>();
         CreateMap<MaritalStatus, OptionDto>();
+        CreateMap<EducationLevel, OptionDto>();
         CreateMap<ColorBlindness, OptionDto>();
         CreateMap<RelativeType, OptionDto>();
 

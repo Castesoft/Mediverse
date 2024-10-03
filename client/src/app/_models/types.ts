@@ -180,9 +180,11 @@ export type Sections =
 'admin' |
 'diseases' |
 'substances' |
+'consumptionLevels' |
 'relativeTypes' |
 'colorBlindnesses' |
 'maritalStatuses' |
+'educationLevels' |
 'occupations' |
 'utils' |
 'reports' |
@@ -218,9 +220,17 @@ export const sectionDictionary: SectionDictionary = {
     label: 'Estados civiles',
     route: '/admin/marital-statuses',
   },
+  educationLevels: {
+    label: 'Niveles de educación',
+    route: '/admin/education-levels',
+  },
   substances: {
     label: 'Sustancias',
     route: '/admin/substances',
+  },
+  consumptionLevels: {
+    label: 'Niveles de consumo',
+    route: '/admin/consumption-levels',
   },
   diseases: {
     label: 'Enfermedades',

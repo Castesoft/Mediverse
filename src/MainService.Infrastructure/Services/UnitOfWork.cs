@@ -14,6 +14,7 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public ISubstanceRepository SubstanceRepository => new SubstanceRepository(context, mapper);
     public IOccupationRepository OccupationRepository => new OccupationRepository(context, mapper);
     public IMaritalStatusRepository MaritalStatusRepository => new MaritalStatusRepository(context, mapper);
+    public IEducationLevelRepository EducationLevelRepository => new EducationLevelRepository(context, mapper);
     public IColorBlindnessRepository ColorBlindnessRepository => new ColorBlindnessRepository(context, mapper);
     public IRelativeTypeRepository RelativeTypeRepository => new RelativeTypeRepository(context, mapper);
     public IConsumptionLevelRepository ConsumptionLevelRepository => new ConsumptionLevelRepository(context, mapper);

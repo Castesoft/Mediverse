@@ -28,4 +28,5 @@ public interface IUserRepository
     Task<bool> DeleteDoctorWorkScheduleAsync(WorkSchedule workSchedule);
     Task<bool> DeleteDoctorWorkScheduleSettingsAsync(WorkScheduleSettings workScheduleSettings);
     Task<bool> AddReviewAsync(Review review);
+    Task<bool> DeleteMedicalRecordAsync(UserMedicalRecord userMedicalRecord);
 }

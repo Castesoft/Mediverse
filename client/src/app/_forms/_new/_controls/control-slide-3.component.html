@@ -1,12 +1,20 @@
 
-@if (control().orientation === 'inline') {
+@if (control().slideAlternateStyle) {
   <div class="d-flex align-items-center gap-2">
+    <span class="col-form-label fw-semibold  text-nowrap">{{control().label}}</span>
     <mat-slide-toggle [formControl]="$any(control())" [id]="control().id">
-      <span class="col-form-label fw-semibold  text-nowrap">{{control().label}}</span>
     </mat-slide-toggle>
   </div>
 } @else {
-  <mat-slide-toggle [formControlName]="control().name">{{control().label}}</mat-slide-toggle>
+  @if (control().orientation === 'inline') {
+    <div class="d-flex align-items-center gap-2">
+      <mat-slide-toggle [formControl]="$any(control())" [id]="control().id">
+        <span class="col-form-label fw-semibold  text-nowrap">{{control().label}}</span>
+      </mat-slide-toggle>
+    </div>
+  } @else {
+    <mat-slide-toggle [formControlName]="control().name">{{control().label}}</mat-slide-toggle>
+  }
 }
 
 @if (control().errors) {

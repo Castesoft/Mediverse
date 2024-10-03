@@ -27,6 +27,8 @@ type ControlInfo<T extends string | number | boolean | Date | DateRange | Select
   validationErrors: ControlErrors;
   columnOptions: ColumnOptions;
   unit: Units;
+  slideAlternateStyle: boolean;
+  validators: ValidatorFn[];
 }>;
 
 type ControlInfoMap<T> = T extends string
@@ -166,13 +168,14 @@ function createTypedFormGroup2<T extends object>(
       typeof value === 'boolean' ||
       value === null
     ) {
-      formGroup[typedKey] = new FormControl2(value as any | null);
+      const controlInfo = info && info[typedKey] as ControlInfo<any>;
+      const validators = controlInfo?.validators || [];
+      formGroup[typedKey] = new FormControl2(value as any | null, validators);
 
       // Apply FormInfo settings if provided
-      if (info && info[typedKey]) {
+      if (controlInfo) {
         const control = formGroup[typedKey] as FormControl2<any>;
-        const controlInfo = info[typedKey] as ControlInfo<any>;
-        Object.assign(control, controlInfo); // Assign settings from FormInfo
+        Object.assign(control, controlInfo);
 
         // Apply the global orientation if set in init
         if (init?.orientation) {
@@ -277,6 +280,7 @@ export class FormControl2<T extends string | number | boolean | Date | DateRange
   showCodeSpan = true;
   validationErrors: ControlErrors = {};
   isDisabled = false;
+  slideAlternateStyle = false;
 
   constructor(
     value: FormControlState<T> | T,

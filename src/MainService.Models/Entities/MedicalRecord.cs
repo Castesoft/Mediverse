@@ -49,9 +49,11 @@ namespace MainService.Models.Entities
 
 
         public List<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; } = [];
+        public List<MedicalRecordSubstance> MedicalRecordSubstances { get; set; } = [];
+
+        
         public List<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; } = [];
 
-        public List<MedicalRecordSubstance> MedicalRecordSubstances { get; set; } = [];
 
         public string Comments { get; set; }
     }

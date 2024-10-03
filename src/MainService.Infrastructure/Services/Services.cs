@@ -78,6 +78,21 @@ namespace MainService.Infrastructure.Services
         }
     }
 
+    public class EducationLevelsService(IUnitOfWork uow) : IEducationLevelsService {
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            EducationLevel itemToDelete = await uow.EducationLevelRepository.GetByIdAsync(id);
+
+            uow.EducationLevelRepository.Delete(itemToDelete);
+
+            if (!await uow.Complete()) return false;
+
+            return true;
+        }
+    }
+
+
+
     public class ColorBlindnessesService(IUnitOfWork uow) : IColorBlindnessesService {
         public async Task<bool> DeleteByIdAsync(int id)
         {
