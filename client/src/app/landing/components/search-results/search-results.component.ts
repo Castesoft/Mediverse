@@ -1,5 +1,5 @@
 /// <reference types="@types/google.maps" />
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DoctorSearchResult, DoctorSearchResultParams } from 'src/app/_models/doctorSearchResults';
 import { Pagination } from 'src/app/_models/pagination';
@@ -32,6 +32,9 @@ export class SearchResultsComponent implements OnInit {
   params!: DoctorSearchResultParams;
   pagination?: Pagination;
   isLoading = false;
+  isMobile = signal(false);
+  showMobileSearch = signal(false);
+  didSchedule = signal(false);
 
   specialty = '';
   location = '';
@@ -46,7 +49,14 @@ export class SearchResultsComponent implements OnInit {
   doctorMarkersMap = new Map<DoctorSearchResult, google.maps.marker.AdvancedMarkerElement[]>();
   hoveredMarkerDoctor: DoctorSearchResult | null = null;
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.isMobile.set(event.target.innerWidth <= 768);
+  }
+
   async ngOnInit() {
+    this.isMobile.set(window.innerWidth <= 768);
+
     this.isLoading = true;
     const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
     this.map = new Map(document.getElementById("map") as HTMLElement, {
@@ -123,6 +133,10 @@ export class SearchResultsComponent implements OnInit {
       queryParamsHandling: 'merge'
     });
 
+    if (this.isMobile()) {
+      this.showMobileSearch.set(true);
+    }
+
     this.makeInitialSearch(specialty, location);
   }
 
@@ -142,7 +156,7 @@ export class SearchResultsComponent implements OnInit {
             this.map?.setZoom(6);
           }
           if (result.doctors.length > 0) {
-            if (this.selectedDoctor) {
+            if (this.selectedDoctor && this.didSchedule()) {
               const selectedDoctor = result.doctors.find(d => d.id === this.selectedDoctor()?.id);
               if (selectedDoctor) {
                 this.onCloseDoctorDetails();
@@ -154,6 +168,7 @@ export class SearchResultsComponent implements OnInit {
                   this.startingTab = 'general';
                 }, 100);
               }
+              this.didSchedule.set(false);
             }
 
             for (const doctor of result.doctors) {
@@ -184,6 +199,9 @@ export class SearchResultsComponent implements OnInit {
         marker.addListener("click", () => {
           this.showDoctorDetails(doctor);
           this.hoveredMarkerDoctor = null;
+          if (this.isMobile() && this.selectedDoctor()) {
+            this.showMobileSearch.set(true);
+          }
         });
 
         marker.content?.addEventListener("mouseenter", () => {
@@ -216,6 +234,22 @@ export class SearchResultsComponent implements OnInit {
       this.resetDoctorMarkersIcons(doctor);
     });
     this.transformDoctorMarkersIcons(doctor);
+  }
+
+  showDoctorOnMap(doctor: DoctorSearchResult) {
+    this.selectedDoctor.set(doctor);
+    this.doctorMarkersMap.forEach((_, doctor) => {
+      this.resetDoctorMarkersIcons(doctor);
+    });
+    this.transformDoctorMarkersIcons(doctor);
+    this.centerMapOnDoctor(doctor);
+    this.showMobileSearch.set(false);
+  }
+
+  centerMapOnDoctor(doctor: DoctorSearchResult) {
+    const address = doctor.addresses[0];
+    this.map?.setCenter({ lat: address.latitude!, lng: address.longitude! });
+    this.map?.setZoom(12);
   }
 
   onCloseDoctorDetails() {
@@ -268,6 +302,7 @@ export class SearchResultsComponent implements OnInit {
   }
 
   onEventCreated() {
+    this.didSchedule.set(true);
     this.makeInitialSearch(this.specialty, this.location);
   }
 }

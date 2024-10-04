@@ -30,6 +30,7 @@ export class DoctorScheduleComponent implements OnInit {
   onClose = output<boolean>();
   selectedSchedule = input<any>();
   doctor = input<DoctorSearchResult>();
+  isMobile = input<boolean>();
   submitted = false;
 
   form = this.fb.group({

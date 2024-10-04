@@ -18,6 +18,7 @@ export class DoctorDetailsComponent {
   private router = inject(Router);
   doctor = input<DoctorSearchResult>();
   startingTab = input<string>();
+  isMobile = input<boolean>(false);
   onClose = output();
   onEventCreated = output();
 
