@@ -3,11 +3,15 @@ using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.DTOs
 {
-    public class MedicalRecordEducationLevelDto : BaseEntity {}
-    public class MedicalRecordOccupationDto : BaseEntity {}
-    public class MedicalRecordMaritalStatusDto : BaseEntity {}
-    public class MedicalRecordColorBlindnessDto : BaseEntity {}
-    public class MedicalRecordFamilyMemberDto : BaseEntity {}
+    public class MedicalRecordEducationLevelDto : BaseCodeEntity {}
+    public class MedicalRecordOccupationDto : BaseCodeEntity {}
+    public class MedicalRecordMaritalStatusDto : BaseCodeEntity {}
+    public class MedicalRecordColorBlindnessDto : BaseCodeEntity {}
+    public class MedicalRecordFamilyMemberDto {
+        public RelativeTypeDto RelativeType { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
     public class FamilyMemberDto : BaseEntity {
         public int Age { get; set; }
         public RelativeTypeDto RelativeType { get; set; }
@@ -40,28 +44,36 @@ namespace MainService.Core.DTOs
         public MedicalRecordOccupationDto Occupation { get; set; }
     }
 
-    public class MedicalRecordPersonalDiseaseDto : BaseEntity {}
-    public class MedicalRecordFamilyDiseaseDto : BaseEntity {
-        public string FamilyMember { get; set; }
+    public class MedicalRecordPersonalDiseaseDto {
+        public DiseaseDto Disease { get; set; }
+        public string Description { get; set; }
+    }
+    public class MedicalRecordFamilyDiseaseDto {
+        public DiseaseDto Disease { get; set; }
+        public string RelativeType { get; set; }
+        public string Description { get; set; }
     }
 
-    public class MedicalRecordSubstanceDto : BaseEntity {
+    public class MedicalRecordSubstanceDto {
+        public SubstanceDto Substance { get; set; }
         public ConsumptionLevelDto ConsumptionLevel { get; set; }
+        public int StartAge { get; set; }
+        public int EndAge { get; set; }
+        public bool IsCurrent { get; set; }
     }
     
-    public class MedicalRecordDto : BaseEntity
+    public class MedicalRecordDto
     {
         public MedicalRecordEducationLevelDto EducationLevel { get; set; }
         public MedicalRecordOccupationDto Occupation { get; set; }
-        public MedicalRecordColorBlindness MedicalRecordColorBlindness { get; set; }
+        public MedicalRecordColorBlindnessDto ColorBlindness { get; set; }
         public MedicalRecordMaritalStatusDto MaritalStatus { get; set; }
-        public List<MedicalRecordFamilyMemberDto> FamilyMembers { get; set; } = [];
-        public MedicalRecordCompanionDto Companion { get; set; }
-        public List<MedicalRecordPersonalDiseaseDto> PersonalDiseases { get; set; } = [];
-        public List<MedicalRecordFamilyDiseaseDto> FamilyDiseases { get; set; } = [];
-        public List<MedicalRecordSubstanceDto> Substances { get; set; } = [];
+        public List<MedicalRecordFamilyMemberDto> FamilyStructure { get; set; } = [];
+        public List<MedicalRecordPersonalDiseaseDto> PersonalMedicalHistory { get; set; } = [];
+        public List<MedicalRecordFamilyDiseaseDto> FamilyMedicalHistory { get; set; } = [];
+        public List<MedicalRecordSubstanceDto> PersonalDrugHistory { get; set; } = [];
 
-        public string PatientName { get; set; }
+        public string Name { get; set; }
         public int Age { get; set; }
         public string Sex { get; set; }
         public string BirthPlace { get; set; }
@@ -77,6 +89,16 @@ namespace MainService.Core.DTOs
         public string EconomicDependence { get; set; }
         public bool UsesGlassesOrHearingAid { get; set; }
         public string Comments { get; set; }
+
+        public string CompanionName { get; set; }
+        public int CompanionAge { get; set; }
+        public string CompanionSex { get; set; }
+        public RelativeTypeDto CompanionRelationship { get; set; }
+        public OccupationDto CompanionOccupation { get; set; }
+        public string CompanionCurrentAddress { get; set; }
+        public string CompanionHomePhone { get; set; }
+        public string CompanionMobilePhone { get; set; }
+        public string CompanionEmail { get; set; }
     }
 
     public class DiseaseDto : BaseCodeEntity {}

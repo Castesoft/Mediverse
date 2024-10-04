@@ -1660,6 +1660,17 @@ public class AccountController(
     }
 
     [Authorize]
+    [HttpGet("medical-record")]
+    public async Task<ActionResult<MedicalRecordDto>> GetMedicalRecord()
+    {
+        int userId = User.GetUserId();
+
+        var itemToReturn = await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
+
+        return itemToReturn;
+    }
+
+    [Authorize]
     [HttpPut("medical-record")]
     public async Task<ActionResult<MedicalRecordDto>> UpdateMedicalRecord([FromBody] MedicalRecordUpdateDto request)
     {
@@ -1684,6 +1695,14 @@ public class AccountController(
             .ThenInclude(umr => umr.MedicalRecord)
                 .ThenInclude(mr => mr.MedicalRecordCompanion)
                     .ThenInclude(mrc => mrc.Companion)
+                        .ThenInclude(mrc => mrc.CompanionRelativeType)
+                            .ThenInclude(mrc => mrc.RelativeType)
+        .Include(u => u.UserMedicalRecord)
+            .ThenInclude(umr => umr.MedicalRecord)
+                .ThenInclude(mr => mr.MedicalRecordCompanion)
+                    .ThenInclude(mrc => mrc.Companion)
+                        .ThenInclude(mrc => mrc.CompanionOccupation)
+                            .ThenInclude(mrc => mrc.Occupation)
         .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1725,9 +1744,6 @@ public class AccountController(
                 MedicalRecordMaritalStatus = new () {
                     MaritalStatusId = request.MaritalStatus.Id
                 },
-                MedicalRecordColorBlindness = new () {
-                    ColorBlindnessId = request.ColorBlindness.Id
-                },
                 MedicalRecordFamilyMembers = request.FamilyStructure.Select(fm => new MedicalRecordFamilyMember {
                     FamilyMember = new () {
                         Name = fm.Name,
@@ -1757,6 +1773,12 @@ public class AccountController(
             }
         };
 
+        if (request.ColorBlindness != null) {
+            newRecord.MedicalRecord.MedicalRecordColorBlindness = new () {
+                ColorBlindnessId = request.ColorBlindness.Id
+            };
+        }
+
         if (request.AttendedAlone) {
             newRecord.MedicalRecord.MedicalRecordCompanion = new () {
                 Companion = new () {
@@ -1783,7 +1805,7 @@ public class AccountController(
             if (!await uow.Complete()) return BadRequest("Error actualizando el historial clínico.");
         }
 
-        var itemToReturn = mapper.Map<MedicalRecordDto>(newRecord.MedicalRecord);
+        var itemToReturn = await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
 
         return itemToReturn;
     }

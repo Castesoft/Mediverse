@@ -380,5 +380,38 @@ public class MappingProfiles : Profile
         CreateMap<ColorBlindness, OptionDto>();
         CreateMap<RelativeType, OptionDto>();
 
+        CreateMap<MedicalRecord, MedicalRecordDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.PatientName))
+            .ForMember(dest => dest.EducationLevel, opt => opt.MapFrom(src => src.MedicalRecordEducationLevel.EducationLevel))
+            .ForMember(dest => dest.Occupation, opt => opt.MapFrom(src => src.MedicalRecordOccupation.Occupation))
+            .ForMember(dest => dest.ColorBlindness, opt => opt.MapFrom(src => src.MedicalRecordColorBlindness.ColorBlindness))
+            .ForMember(dest => dest.MaritalStatus, opt => opt.MapFrom(src => src.MedicalRecordMaritalStatus.MaritalStatus))
+            .ForMember(dest => dest.FamilyStructure, opt => opt.MapFrom(src => src.MedicalRecordFamilyMembers))
+            .ForMember(dest => dest.CompanionName, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.Name))
+            .ForMember(dest => dest.CompanionRelationship, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.CompanionRelativeType.RelativeType))
+            .ForMember(dest => dest.CompanionAge, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.Age))
+            .ForMember(dest => dest.CompanionSex, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.Sex))
+            .ForMember(dest => dest.CompanionOccupation, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.CompanionOccupation.Occupation))
+            .ForMember(dest => dest.CompanionCurrentAddress, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.Address))
+            .ForMember(dest => dest.CompanionHomePhone, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.HomePhone))
+            .ForMember(dest => dest.CompanionMobilePhone, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.PhoneNumber))
+            .ForMember(dest => dest.CompanionEmail, opt => opt.MapFrom(src => src.MedicalRecordCompanion.Companion.Email))
+            .ForMember(dest => dest.PersonalMedicalHistory, opt => opt.MapFrom(src => src.MedicalRecordPersonalDiseases))
+            .ForMember(dest => dest.FamilyMedicalHistory, opt => opt.MapFrom(src => src.MedicalRecordFamilyDiseases))
+            .ForMember(dest => dest.PersonalDrugHistory, opt => opt.MapFrom(src => src.MedicalRecordSubstances));
+
+        CreateMap<EducationLevel, MedicalRecordEducationLevelDto>();
+        CreateMap<Occupation, MedicalRecordOccupationDto>();
+        CreateMap<MaritalStatus, MedicalRecordMaritalStatusDto>();
+        CreateMap<ColorBlindness, MedicalRecordColorBlindnessDto>();
+        CreateMap<MedicalRecordFamilyMember, MedicalRecordFamilyMemberDto>()
+            .ForMember(dest => dest.RelativeType, opt => opt.MapFrom(src => src.FamilyMember.MedicalRecordFamilyMemberRelativeType.RelativeType))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FamilyMember.Name))
+            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.FamilyMember.Age));
+        CreateMap<MedicalRecordCompanion, MedicalRecordCompanionDto>();
+        CreateMap<MedicalRecordPersonalDisease, MedicalRecordPersonalDiseaseDto>();
+        CreateMap<MedicalRecordFamilyDisease, MedicalRecordFamilyDiseaseDto>()
+            .ForMember(dest => dest.RelativeType, opt => opt.MapFrom(src => src.FamilyMember));
+        CreateMap<MedicalRecordSubstance, MedicalRecordSubstanceDto>();
     }
 }

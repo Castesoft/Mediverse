@@ -29,4 +29,5 @@ public interface IUserRepository
     Task<bool> DeleteDoctorWorkScheduleSettingsAsync(WorkScheduleSettings workScheduleSettings);
     Task<bool> AddReviewAsync(Review review);
     Task<bool> DeleteMedicalRecordAsync(UserMedicalRecord userMedicalRecord);
+    Task<MedicalRecordDto> GetMedicalRecordDtoAsync(int userId);
 }

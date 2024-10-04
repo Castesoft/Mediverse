@@ -435,6 +435,10 @@ export class AccountService {
     );
   }
 
+  getMedicalRecord() {
+    return this.http.get<MedicalRecord>(`${this.baseUrl}medical-record`);
+  }
+
   updateMedicalRecord(value: any) {
     return this.http.put<MedicalRecord>(`${this.baseUrl}medical-record`, value).pipe(
       map(response => {
