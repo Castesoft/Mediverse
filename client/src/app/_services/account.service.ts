@@ -11,7 +11,8 @@ import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billi
 import { MedicalInsuranceCompany, UserMedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
 import { Payment } from '../_models/payment';
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
-import { MedicalRecord } from '../account/components/account-clinical-history.component';
+import { MedicalRecord } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
+
 
 @Injectable({
   providedIn: 'root',

@@ -7,13 +7,16 @@ import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
 import { BootstrapModule } from "src/app/_shared/bootstrap.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { BreadcrumbLinkComponent, LayoutModule } from "src/app/_shared/layout.module";
+import { UtilsService } from '../_services/utils.service';
 
 @Component({
   selector: 'home-route',
   template: `
     <div root>
       <div page>
-        <div aside></div>
+        @if (!utilsService.sidebarCollapsed()){
+          <div aside></div>
+        }
         <div wrapper>
           <div header></div>
           <div content>
@@ -53,6 +56,7 @@ import { BreadcrumbLinkComponent, LayoutModule } from "src/app/_shared/layout.mo
 export class HomeComponent implements OnInit {
   accountService = inject(AccountService);
   breadcrumbService = inject(BreadcrumbService);
+  utilsService = inject(UtilsService);
 
   account: Account | null = null;
   label?: string;

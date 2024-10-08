@@ -7,6 +7,7 @@ import {getPaginationHeaders} from "src/app/_utils/util";
 import { Payment } from './payment';
 import { UserMedicalInsuranceCompany } from './medicalInsuranceCompany';
 import { Event } from "./event";
+import { MedicalRecord } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 
 const subject = 'user';
 
@@ -53,6 +54,7 @@ export class User {
   medicalInsuranceCompanies?: UserMedicalInsuranceCompany[];
   doctorEvents?: Event[];
   doctorPayments?: Payment[];
+  medicalRecord?: MedicalRecord;
   hasPatientInformationAccess = false;
 }
 

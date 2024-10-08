@@ -93,23 +93,43 @@
           ></app-doctor-reviews-tab>
         </div>
         <div [hidden]="activeTab !== 'schedule'" class="row">
-          <div class="col-md-6">
+          <div [class.col-md-6]="!isMobile()" [class.col-12]="isMobile()">
             <app-doctor-schedule-tab
               [doctor]="doctor!"
               (onSelectSchedule)="selectSchedule($event)"
             ></app-doctor-schedule-tab>
           </div>
-          <div class="col-md-6">
-            @if (isScheduling) {
-                <app-doctor-schedule
-                    [doctor]="doctor!"
-                    [selectedSchedule]="selectedSchedule"
-                    (onClose)="onCloseDoctorSchedule($event)"
-                ></app-doctor-schedule>
-            }
-          </div>
+          @if (isScheduling && !isMobile()) {
+            <div class="col-md-6">
+              <app-doctor-schedule
+              [doctor]="doctor!"
+              [selectedSchedule]="selectedSchedule"
+              (onClose)="onCloseDoctorSchedule($event)"
+              [isMobile]="isMobile()"
+              ></app-doctor-schedule>
+            </div>
+          } 
         </div>
       </div>
+      
+      @if (isScheduling && isMobile()) {
+        <div [class.modal]="isMobile()" [class.d-block]="isMobile()" [class.position-fixed]="isMobile()" 
+             [style.top]="isMobile() ? '0' : 'auto'" [style.left]="isMobile() ? '0' : 'auto'"
+             [style.right]="isMobile() ? '0' : 'auto'" [style.bottom]="isMobile() ? '0' : 'auto'"
+             [style.z-index]="isMobile() ? '1050' : 'auto'" [style.background-color]="isMobile() ? 'rgba(0,0,0,0.5)' : 'transparent'">
+          <div [class.modal-dialog]="isMobile()" [class.modal-fullscreen]="isMobile()">
+            <div [class.modal-content]="isMobile()">
+              <app-doctor-schedule
+                [doctor]="doctor!"
+                [selectedSchedule]="selectedSchedule"
+                (onClose)="onCloseDoctorSchedule($event)"
+                [isMobile]="isMobile()"
+              ></app-doctor-schedule>
+            </div>
+          </div>
+        </div>
+      }
+
     </div>
   </div>
 </div>

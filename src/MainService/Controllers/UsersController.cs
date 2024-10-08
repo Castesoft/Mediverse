@@ -60,6 +60,10 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
             item.MedicalInsuranceCompanies = [];
         }
 
+        if (item.HasPatientInformationAccess) {
+            item.MedicalRecord = await uow.UserRepository.GetMedicalRecordDtoAsync(id);
+        }
+
         var doctorEvents = item.DoctorEvents.ToList();
         item.DoctorEvents = doctorEvents.Where(e => e.Doctor.Id == User.GetUserId()).ToList();
         item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();

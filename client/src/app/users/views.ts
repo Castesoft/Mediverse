@@ -9,6 +9,7 @@ import { UserFormComponent } from "src/app/users/components/user-form.component"
 import { UserProfilePictureComponent } from "./components/user-profile-picture/user-profile-picture.component";
 import { PaymentsTableComponent } from '../_shared/components/payments-table/payments-table.component';
 import { EventsTableComponent } from '../events/components/events-table/events-table.component';
+import { ClinicalHistoryFormComponent } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 
 @Component({
   selector: 'div[userNewView]',
@@ -151,7 +152,7 @@ export class UserNewComponent {
                 }
               } @else if (activeTab === 'clinical-history') {
                 @if (user.hasPatientInformationAccess) {
-
+                  <app-clinical-history-form [patientMedicalRecord]="user.medicalRecord"></app-clinical-history-form>
                 } @else {
                   <div class="text-center py-5">
                     <i class="ki-duotone ki-lock-2 fs-3x text-muted mb-3">
@@ -230,7 +231,7 @@ export class UserNewComponent {
     }
   `],
   standalone: true,
-  imports: [UserFormComponent, RouterModule, DatePipe, DecimalPipe, UserProfilePictureComponent, PaymentsTableComponent, EventsTableComponent, CurrencyPipe],
+  imports: [UserFormComponent, RouterModule, DatePipe, DecimalPipe, UserProfilePictureComponent, PaymentsTableComponent, EventsTableComponent, CurrencyPipe, ClinicalHistoryFormComponent],
 })
 export class UserDetailComponent implements OnInit {
   accountService = inject(AccountService);

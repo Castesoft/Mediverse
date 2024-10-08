@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
@@ -32,11 +32,20 @@ export class DoctorProfileComponent implements OnInit {
   activeTab = 'general';
   isScheduling = false;
   selectedSchedule: any;
+  
+  isMobile = signal(false);
 
   isShareModalOpen = false;
   shareUrl = '';
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.isMobile.set(event.target.innerWidth <= 768);
+  }
+
   ngOnInit() {
+    this.isMobile.set(window.innerWidth <= 768);
+
     const doctorId = this.route.snapshot.paramMap.get('id');
     if (doctorId) {
       this.searchService.getDoctorById(+doctorId).subscribe(

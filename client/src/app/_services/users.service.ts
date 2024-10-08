@@ -345,10 +345,10 @@ export class UsersService {
       );
   }
 
-  getById(id: number, role: Role): Observable<User> {
+  getById(id: number, role: Role, {cache}: {cache: boolean} = {cache: true}): Observable<User> {
     this.setLoading("current", true);
 
-    const found = this.findInCache(this.cacheMap, id);
+    const found = cache ? this.findInCache(this.cacheMap, id) : null;
 
     if (found) {
       this.current.next(found);

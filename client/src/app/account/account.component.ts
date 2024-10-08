@@ -17,14 +17,17 @@ import { AccountSchedulesComponent } from './components/account-schedules/accoun
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { SatisfactionSurveyModalComponent } from './components/satisfaction-survey-modal/satisfaction-survey-modal.component';
-import { AccountClinicalHistoryComponent } from './components/account-clinical-history.component';
+import { AccountClinicalHistoryComponent } from './components/account-clinical-history/account-clinical-history.component';
+import { UtilsService } from '../_services/utils.service';
 
 @Component({
   selector: 'account-main-route',
   template: `
   <div root>
     <div page>
-      <div aside></div>
+      @if (!utilsService.sidebarCollapsed()){
+        <div aside></div>
+      }
       <div wrapper>
         <div header></div>
         <div content>
@@ -53,6 +56,7 @@ import { AccountClinicalHistoryComponent } from './components/account-clinical-h
 })
 export class AccountComponent implements OnInit {
   private bsModalService = inject(BsModalService);
+  utilsService = inject(UtilsService);
   accountService = inject(AccountService);
   breadcrumbService = inject(BreadcrumbService);
 

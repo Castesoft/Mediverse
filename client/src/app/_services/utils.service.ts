@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { mexicoCities } from 'src/app/_utils/util';
 
 @Injectable({
@@ -7,8 +7,13 @@ import { mexicoCities } from 'src/app/_utils/util';
 export class UtilsService {
 
   title = 'Mediverse';
-
   mexicoCities = mexicoCities;
+
+  sidebarCollapsed = signal(false);
+
+  toggleSidebar() {
+    this.sidebarCollapsed.update(collapsed => !collapsed);
+  }
 
   get states(): string[] {
     return Object.keys(this.mexicoCities);

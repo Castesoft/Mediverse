@@ -1,20 +1,18 @@
-import { Component, OnInit, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
+import { Component, effect, inject, input } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/_services/account.service';
-import { SelectOption } from 'src/app/_forms/form';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
-import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
 import { OccupationsService } from 'src/app/occupations/occupations.config';
 import { RelativeTypesService } from 'src/app/relativeTypes/relativeTypes.config';
 import { ColorBlindnessesService } from 'src/app/colorBlindnesses/colorBlindnesses.config';
 import { MaritalStatusesService } from 'src/app/maritalStatuses/maritalStatuses.config';
 import { EducationLevelsService } from 'src/app/educationLevels/educationLevels.config';
 import { SubstancesService } from 'src/app/substances/substances.config';
-import { DiseasesService } from 'src/app/diseases/diseases.config';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ConsumptionLevelsService } from 'src/app/consumptionLevels/consumptionLevels.config';
-import { SnackbarService } from 'src/app/_services/snackbar.service';
+import { DiseasesService } from 'src/app/diseases/diseases.config';
+import { SelectOption } from 'src/app/_forms/form';
+import { FormBuilder3Component } from 'src/app/_forms/_new/_builder/form-builder-3.component';
 
 export class MedicalRecord {
   name = '';
@@ -88,21 +86,14 @@ function validateSelectOptionId(control: AbstractControl): ValidationErrors | nu
 }
 
 @Component({
-  selector: 'app-account-clinical-history',
+  selector: 'app-clinical-history-form',
   standalone: true,
-  imports: [CommonModule, BootstrapModule, FormNewModule, ReactiveFormsModule],
-  templateUrl: './account-clinical-history.component.html',
-  styles: [
-    `
-      .btn-outline-danger:hover .ki-trash {
-        color: white !important;
-      }
-    `
-  ]
+  imports: [ ReactiveFormsModule, FormBuilder3Component ],
+  templateUrl: './clinical-history-form.component.html'
 })
-export class AccountClinicalHistoryComponent implements OnInit {
-  accountService = inject(AccountService);
+export class ClinicalHistoryFormComponent {
   snackbarService = inject(SnackbarService);
+  accountService = inject(AccountService);
 
   occupations = inject(OccupationsService);
   relativeTypes = inject(RelativeTypesService);
@@ -121,6 +112,8 @@ export class AccountClinicalHistoryComponent implements OnInit {
   substanceOptions: SelectOption[] = [];
   consumptionLevelOptions: SelectOption[] = [];
   diseaseOptions: SelectOption[] = [];
+
+  patientMedicalRecord = input<MedicalRecord>();
 
   private fb = inject(FormBuilder);
 
@@ -250,82 +243,17 @@ export class AccountClinicalHistoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.accountService.getMedicalRecord().subscribe(medicalRecord => {
-      this.patchForm(medicalRecord);
-    });
+    if (!this.patientMedicalRecord()) {
+      this.accountService.getMedicalRecord().subscribe(medicalRecord => {
+        this.patchForm(medicalRecord);
+      });
+    } else {
+      this.patchForm(this.patientMedicalRecord()!);
+    }
 
     if (!this.medicalRecord) {
       this.addFamilyMemberNew();
     }
-  }
-
-  patchForm(medicalRecord: MedicalRecord) {
-    if (!medicalRecord) return;
-
-    this.familyStructureFormArray.clear();
-    this.personalMedicalHistoryFormArray.clear();
-    this.personalDrugHistoryFormArray.clear();
-    this.familyMedicalHistoryFormArray.clear();
-
-    const medicalRecordSex = String(medicalRecord.sex);
-    const sexOption = sexOptions.find(sex => sex.name === medicalRecordSex);
-    const medicalRecordHandDominance = String(medicalRecord.handDominance);
-    const handDominanceOption = handDominanceOptions.find(handDominance => handDominance.name === medicalRecordHandDominance);
-
-    this.form.patchValue({
-      name: medicalRecord.name,
-      age: medicalRecord.age,
-      sex: sexOption ?? new SelectOption(),
-      birthPlace: medicalRecord.birthPlace,
-      birthDate: medicalRecord.birthDate,
-      educationLevel: medicalRecord.educationLevel,
-      yearsOfSchooling: medicalRecord.yearsOfSchooling,
-      occupation: medicalRecord.occupation,
-      handDominance: handDominanceOption ?? new SelectOption(),
-      maritalStatus: medicalRecord.maritalStatus,
-      currentLivingSituation: medicalRecord.currentLivingSituation,
-      currentAddress: medicalRecord.currentAddress,
-      homePhone: medicalRecord.homePhone,
-      mobilePhone: medicalRecord.mobilePhone,
-      email: medicalRecord.email,
-      attendedAlone: medicalRecord.attendedAlone ? 1 : 0,
-      economicDependence: medicalRecord.economicDependence,
-      usesGlassesOrHearingAid: medicalRecord.usesGlassesOrHearingAid ? 1 : 0,
-      colorBlindness: medicalRecord.colorBlindness,
-    });
-
-    if (medicalRecord.attendedAlone) {
-      const companionSex = String(medicalRecord.companionSex);
-      const companionSexOption = sexOptions.find(sex => sex.name === companionSex);
-
-      this.form.patchValue({
-        companionName: medicalRecord.companionName,
-        companionAge: medicalRecord.companionAge,
-        companionSex: companionSexOption ?? new SelectOption(),
-        companionRelationship: medicalRecord.companionRelationship,
-        companionOccupation: medicalRecord.companionOccupation,
-        companionCurrentAddress: medicalRecord.companionCurrentAddress,
-        companionHomePhone: medicalRecord.companionHomePhone,
-        companionMobilePhone: medicalRecord.companionMobilePhone,
-        companionEmail: medicalRecord.companionEmail,
-      });
-    }
-
-    medicalRecord.familyStructure.forEach(familyMember => {
-      this.addFamilyMember(familyMember);
-    });
-
-    medicalRecord.personalMedicalHistory.forEach(medicalHistory => {
-      this.addPersonalMedicalHistory(medicalHistory);
-    });
-
-    medicalRecord.personalDrugHistory.forEach(drugHistory => {
-      this.addPersonalDrugHistory(drugHistory);
-    });
-
-    medicalRecord.familyMedicalHistory.forEach(familyMedicalHistory => {
-      this.addFamilyMedicalHistory(familyMedicalHistory);
-    });
   }
 
   addFamilyMemberNew() {
@@ -345,7 +273,7 @@ export class AccountClinicalHistoryComponent implements OnInit {
     });
     familyMemberGroup.patchValue({
       relativeType: this.relativeTypeOptions.find(option => option.id === familyMember.relativeType.id),
-    })
+    });
     this.familyStructureFormArray.push(familyMemberGroup);
   }
 
@@ -432,6 +360,75 @@ export class AccountClinicalHistoryComponent implements OnInit {
 
   removeFamilyMedicalHistory(index: number) {
     this.familyMedicalHistoryFormArray.removeAt(index);
+  }
+
+  patchForm(medicalRecord: MedicalRecord) {
+    if (!medicalRecord) return;
+
+    this.familyStructureFormArray.clear();
+    this.personalMedicalHistoryFormArray.clear();
+    this.personalDrugHistoryFormArray.clear();
+    this.familyMedicalHistoryFormArray.clear();
+
+    const medicalRecordSex = String(medicalRecord.sex);
+    const sexOption = sexOptions.find(sex => sex.name === medicalRecordSex);
+    const medicalRecordHandDominance = String(medicalRecord.handDominance);
+    const handDominanceOption = handDominanceOptions.find(handDominance => handDominance.name === medicalRecordHandDominance);
+
+    this.form.patchValue({
+      name: medicalRecord.name,
+      age: medicalRecord.age,
+      sex: sexOption ?? new SelectOption(),
+      birthPlace: medicalRecord.birthPlace,
+      birthDate: medicalRecord.birthDate,
+      educationLevel: medicalRecord.educationLevel,
+      yearsOfSchooling: medicalRecord.yearsOfSchooling,
+      occupation: medicalRecord.occupation,
+      handDominance: handDominanceOption ?? new SelectOption(),
+      maritalStatus: medicalRecord.maritalStatus,
+      currentLivingSituation: medicalRecord.currentLivingSituation,
+      currentAddress: medicalRecord.currentAddress,
+      homePhone: medicalRecord.homePhone,
+      mobilePhone: medicalRecord.mobilePhone,
+      email: medicalRecord.email,
+      attendedAlone: medicalRecord.attendedAlone ? 1 : 0,
+      economicDependence: medicalRecord.economicDependence,
+      usesGlassesOrHearingAid: medicalRecord.usesGlassesOrHearingAid ? 1 : 0,
+      colorBlindness: medicalRecord.colorBlindness,
+    });
+
+    if (medicalRecord.attendedAlone) {
+      const companionSex = String(medicalRecord.companionSex);
+      const companionSexOption = sexOptions.find(sex => sex.name === companionSex);
+
+      this.form.patchValue({
+        companionName: medicalRecord.companionName,
+        companionAge: medicalRecord.companionAge,
+        companionSex: companionSexOption ?? new SelectOption(),
+        companionRelationship: medicalRecord.companionRelationship,
+        companionOccupation: medicalRecord.companionOccupation,
+        companionCurrentAddress: medicalRecord.companionCurrentAddress,
+        companionHomePhone: medicalRecord.companionHomePhone,
+        companionMobilePhone: medicalRecord.companionMobilePhone,
+        companionEmail: medicalRecord.companionEmail,
+      });
+    }
+
+    medicalRecord.familyStructure.forEach(familyMember => {
+      this.addFamilyMember(familyMember);
+    });
+
+    medicalRecord.personalMedicalHistory.forEach(medicalHistory => {
+      this.addPersonalMedicalHistory(medicalHistory);
+    });
+
+    medicalRecord.personalDrugHistory.forEach(drugHistory => {
+      this.addPersonalDrugHistory(drugHistory);
+    });
+
+    medicalRecord.familyMedicalHistory.forEach(familyMedicalHistory => {
+      this.addFamilyMedicalHistory(familyMedicalHistory);
+    });
   }
 
   onSubmit() {

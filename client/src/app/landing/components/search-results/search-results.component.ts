@@ -76,6 +76,10 @@ export class SearchResultsComponent implements OnInit {
     this.locationName = this.route.snapshot.queryParamMap.get('locationName') ?? '';
     this.pageNumber = Number(this.route.snapshot.queryParamMap.get('pageNumber')) || 1;
     this.makeInitialSearch(this.specialty, this.location);
+
+    if (this.isMobile() && (this.location || this.specialty)) {
+      this.showMobileSearch.set(true);
+    }
   }
 
   onPageChanged(page: number) {

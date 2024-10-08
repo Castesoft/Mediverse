@@ -1,0 +1,278 @@
+<form [id]="form.id" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <p class="text-center" style="font-size: 1.2rem; font-weight: bold;">Datos de identificación del paciente</p>
+    <div formBuilder3 [controls]="[
+      form.controls.name,
+    ]" [cols]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.age,
+      form.controls.sex,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.birthPlace,
+      form.controls.birthDate,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.educationLevel,
+      form.controls.yearsOfSchooling,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.occupation,
+      form.controls.handDominance,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.maritalStatus,
+      form.controls.currentLivingSituation,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.currentAddress,
+    ]" [cols]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.mobilePhone,
+      form.controls.homePhone,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.email,
+    ]" [cols]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.attendedAlone,
+      form.controls.economicDependence,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.usesGlassesOrHearingAid,
+      form.controls.colorBlindness,
+    ]" [cols]="2"></div>
+
+    <div formArrayName="familyStructure">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-center mb-0" style="font-size: 1.2rem; font-weight: bold;">Estructura Familiar</p>
+      </div>
+      <div class="row">
+        <div class="col-md-4">Relación</div>
+        <div class="col-md-4">Nombre</div>
+        <div class="col-md-3">Edad</div>
+      </div>
+      <div *ngFor="let familyMember of familyStructureFormArray.controls; let i = index" [formGroupName]="i" class="row mb-3">
+        <div class="col-md-4">
+          <select formControlName="relativeType" class="form-select">
+            <option value="" disabled selected>Seleccione un tipo de familiar</option>
+            <option *ngFor="let option of relativeTypeOptions" [ngValue]="option">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <input formControlName="name" type="text" class="form-control" placeholder="Nombre">
+        </div>
+        <div class="col-md-3">
+          <input formControlName="age" type="number" class="form-control" placeholder="Edad">
+        </div>
+        <div class="col-md-1 d-flex align-items-center justify-content-center">
+          <button type="button" class="btn btn-outline-danger btn-sm" [disabled]="familyStructureFormArray.controls.length === 1" (click)="removeFamilyMember(i)">
+            <i class="ki-duotone ki-trash fs-4">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span class="path3"></span>
+              <span class="path4"></span>
+              <span class="path5"></span>
+            </i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-primary btn-sm" (click)="addFamilyMemberNew()">
+        Agregar Familiar
+      </button>
+    </div>
+
+    @if (form.value.attendedAlone) {
+      <p class="text-center" style="font-size: 1.2rem; font-weight: bold;">Datos de generales del acompañante</p>
+      <div formBuilder3 [controls]="[
+        form.controls.companionName,
+      ]" [cols]="1"></div>
+      <div formBuilder3 [controls]="[
+        form.controls.companionAge,
+        form.controls.companionSex,
+      ]" [cols]="2"></div>
+      <div formBuilder3 [controls]="[
+        form.controls.companionRelationship,
+        form.controls.companionOccupation,
+      ]" [cols]="2"></div>
+      <div formBuilder3 [controls]="[
+        form.controls.companionCurrentAddress,
+      ]" [cols]="1"></div>
+      <div formBuilder3 [controls]="[
+        form.controls.companionHomePhone,
+        form.controls.companionMobilePhone,
+      ]" [cols]="2"></div>
+      <div formBuilder3 [controls]="[
+        form.controls.companionEmail,
+      ]" [cols]="1"></div>
+    }
+
+    <p class="text-center" style="font-size: 1.2rem; font-weight: bold;">Antecedentes personales</p>
+
+    <div formArrayName="personalMedicalHistory">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-center mb-0" style="font-size: 1.2rem; font-weight: bold;">Médicos</p>
+      </div>
+      @if (personalMedicalHistoryFormArray.controls.length > 0) {
+        <div class="row">
+          <div class="col-md-4">Enfermedad</div>
+          <div class="col-md-8">Especificar (tipo, tiempo con enfermedad, etc.)</div>
+        </div>
+      } @else {
+        <p class="text-center mb-0">No hay antecedentes médicos</p>
+      }
+      <div *ngFor="let medicalHistory of personalMedicalHistoryFormArray.controls; let i = index" [formGroupName]="i" class="row mb-3">
+        <div class="col-md-4">
+          <select formControlName="disease" class="form-select">
+            <option value="" disabled selected>Seleccione una enfermedad</option>
+            <option *ngFor="let option of diseaseOptions" [ngValue]="option">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-7">
+          <input formControlName="description" type="text" class="form-control" placeholder="Nombre">
+        </div>
+        <div class="col-md-1 d-flex align-items-center justify-content-center">
+          <button type="button" class="btn btn-outline-danger btn-sm" (click)="removePersonalMedicalHistory(i)">
+            <i class="ki-duotone ki-trash fs-4">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span class="path3"></span>
+              <span class="path4"></span>
+              <span class="path5"></span>
+            </i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex mb-3">
+      <button type="button" class="btn btn-primary btn-sm" (click)="addNewPersonalMedicalHistory()">
+        Agregar antecedente
+      </button>
+    </div>
+
+    <div formArrayName="personalDrugHistory">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-center mb-0" style="font-size: 1.2rem; font-weight: bold;">Consumo de sustancias</p>
+      </div>
+      @if (personalDrugHistoryFormArray.controls.length > 0) {
+        <div class="row">
+          <div class="col-md-3">Sustancia</div>
+          <div class="col-md-3">Nivel de consumo</div>
+          <div class="col-md-2">Edad de inicio</div>
+          <div class="col-md-2">Edad de finalización</div>
+          <div class="col-md-2">Actualmente consume</div>
+        </div>
+      } @else {
+        <p class="text-center mb-0">No hay antecedentes de consumo de sustancias</p>
+      }
+      <div *ngFor="let drugHistory of personalDrugHistoryFormArray.controls; let i = index" [formGroupName]="i" class="row mb-3">
+        <div class="col-md-3">
+          <select formControlName="substance" class="form-select">
+            <option value="" disabled selected>Seleccione una sustancia</option>
+            <option *ngFor="let option of substanceOptions" [ngValue]="option">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select formControlName="consumptionLevel" class="form-select">
+            <option value="" disabled selected>Seleccione una sustancia</option>
+            <option *ngFor="let option of consumptionLevelOptions" [ngValue]="option">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input formControlName="startAge" type="number" class="form-control" placeholder="Edad de inicio">
+        </div>
+        <div class="col-md-2">
+          <input formControlName="endAge" type="number" class="form-control" placeholder="Edad de finalización">
+        </div>
+        <div class="col-md-1" style="display: flex; align-items: center; justify-content: center;">
+          <input formControlName="isCurrent" type="checkbox" class="form-check-input">
+        </div>
+        <div class="col-md-1 d-flex align-items-center justify-content-center">
+          <button type="button" class="btn btn-outline-danger btn-sm" (click)="removePersonalDrugHistory(i)">
+            <i class="ki-duotone ki-trash fs-4">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span class="path3"></span>
+              <span class="path4"></span>
+              <span class="path5"></span>
+            </i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex mb-3">
+      <button type="button" class="btn btn-primary btn-sm" (click)="addNewPersonalDrugHistory()">
+        Agregar sustancia
+      </button>
+    </div>
+
+    <p class="text-center" style="font-size: 1.2rem; font-weight: bold;">Antecedentes familiares</p>
+
+    <div formArrayName="familyMedicalHistory">
+      @if (familyMedicalHistoryFormArray.controls.length > 0) {
+        <div class="row">
+          <div class="col-md-3">Enfermedad</div>
+          <div class="col-md-3">Familiar que lo padece</div>
+          <div class="col-md-6">Especificar (tipo, tiempo con enfermedad, etc.)</div>
+        </div>
+      } @else {
+        <p class="text-center mb-0">No hay antecedentes familiares</p>
+      }
+      <div *ngFor="let medicalHistory of familyMedicalHistoryFormArray.controls; let i = index" [formGroupName]="i" class="row mb-3">
+        <div class="col-md-3">
+          <select formControlName="disease" class="form-select">
+            <option value="" disabled selected>Seleccione una enfermedad</option>
+            <option *ngFor="let option of diseaseOptions" [ngValue]="option">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select formControlName="relativeType" class="form-select">
+            <option value="" disabled selected>Seleccione un familiar</option>
+            <option *ngFor="let option of relativeTypeOptions" [ngValue]="option">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <input formControlName="description" type="text" class="form-control" placeholder="Especificar">
+        </div>
+        <div class="col-md-1 d-flex align-items-center justify-content-center">
+          <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeFamilyMedicalHistory(i)">
+            <i class="ki-duotone ki-trash fs-4">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span class="path3"></span>
+              <span class="path4"></span>
+              <span class="path5"></span>
+            </i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex mb-3">
+      <button type="button" class="btn btn-primary btn-sm" (click)="addNewFamilyMedicalHistory()">
+        Agregar antecedente
+      </button>
+    </div>
+
+    <p class="text-center" style="font-size: 1.2rem; font-weight: bold;">Comentarios adicionales</p>
+
+    <div formBuilder3 [controls]="[
+      form.controls.comments,
+    ]" [cols]="1"></div>
+
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary btn-md">Guardar</button>
+    </div>
+  </form>

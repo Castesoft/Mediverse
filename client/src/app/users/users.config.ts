@@ -181,7 +181,7 @@ class PatientNewComponent {
 export const patientResolver: ResolveFn<User | null> = (route, state) => {
   const service = inject(UsersService);
   const id = +route.paramMap.get('id')!;
-  return service.getById(id, 'Patient');
+  return service.getById(id, 'Patient', {cache: false});
 };
 
 export const patientTitleDetailResolver: ResolveFn<string> = (route, state) => {

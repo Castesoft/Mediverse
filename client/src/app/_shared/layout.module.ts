@@ -10,6 +10,7 @@ import { QuickLinksDropdownComponent } from "src/app/_shared/layout/quick-links-
 import { ScrolltopComponent } from "src/app/_shared/layout/scrolltop.component";
 import { ThemeDropdownComponent } from "src/app/_shared/layout/theme-dropdown.component";
 import { UserDropdownComponent } from "src/app/_shared/layout/user-dropdown.component";
+import { UtilsService } from '../_services/utils.service';
 
 // root
 @Component({
@@ -154,12 +155,18 @@ export class CardFooterComponent { }
 // wrapper
 
 @Component({
-  host: { class: 'wrapper d-flex flex-column flex-row-fluid', },
+  host: { class: 'wrapper d-flex flex-column flex-row-fluid' },
   selector: 'div[wrapper]',
   template: `<ng-content></ng-content>`,
   standalone: true,
 })
-export class WrapperComponent { }
+export class WrapperComponent {
+  utilsService = inject(UtilsService);
+
+  @HostBinding('style') get paddingStyle() {
+    return this.utilsService.sidebarCollapsed() ? 'padding-left: 40px;' : '';
+  }
+}
 
 // header container
 

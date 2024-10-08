@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { UtilsService } from 'src/app/_services/utils.service';
 import { HeaderSearchComponent } from 'src/app/_shared/layout/header-search.component';
 import { ThemeDropdownComponent } from 'src/app/_shared/layout/theme-dropdown.component';
 import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.component';
@@ -22,8 +24,8 @@ import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.comp
     <a routerLink="/" class="d-lg-none">
       <img alt="Logo" src="media/logos/logo-compact.svg" class="mh-40px">
     </a>
-    <div class="btn btn-icon w-auto ps-0 btn-active-color-primary d-none d-lg-inline-flex me-2 me-lg-5">
-      <i class="ki-duotone ki-black-left-line fs-1 rotate-180">
+    <div class="btn btn-icon w-auto ps-0 btn-active-color-primary d-none d-lg-inline-flex me-2 me-lg-5" (click)="utilsService.toggleSidebar()">
+      <i class="ki-duotone ki-black-left-line fs-1" style="transition: transform 0.3s;" [ngStyle]="{'transform': utilsService.sidebarCollapsed() ? 'rotate(180deg)' : 'rotate(0deg)'}">
         <span class="path1"></span>
         <span class="path2"></span>
       </i>
@@ -64,9 +66,9 @@ import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.comp
 </div>
   `,
   standalone: true,
-  imports: [ RouterModule, ThemeDropdownComponent, UserDropdownComponent, BsDropdownModule, HeaderSearchComponent, ],
+  imports: [ RouterModule, ThemeDropdownComponent, UserDropdownComponent, BsDropdownModule, HeaderSearchComponent, CommonModule ],
   providers: [ BsDropdownDirective, ],
 })
 export class HeaderComponent {
-
+  utilsService = inject(UtilsService);
 }

@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
 import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.component';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 @Component({
   selector: 'app-landing-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, UserDropdownComponent, BsDropdownModule],
-  providers: [ BsDropdownDirective, ],
+  imports: [RouterLink, RouterLinkActive, CommonModule, UserDropdownComponent, BsDropdownModule, CollapseModule],
+  providers: [BsDropdownDirective],
   template: `
     <nav
       class="navbar navbar-expand-lg fixed-top"
@@ -33,8 +34,11 @@ import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
           />
           <span class="ms-2">Mediverse</span>
         </a>
-        <div class="d-flex align-items-center">
-          <div class="nav-links me-4">
+        <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" [collapse]="isCollapsed">
+          <div class="navbar-nav me-auto mb-2 mb-lg-0">
             <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
             <a routerLink="/services" routerLinkActive="active" class="nav-link">Servicios</a>
             <a routerLink="/pricing" routerLinkActive="active" class="nav-link">Precios</a>
@@ -74,6 +78,17 @@ import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
     .navbar-brand {
       color: var(--nav-link-color);
     }
+    @media (max-width: 991.98px) {
+      .navbar-collapse {
+        background-color: var(--bs-navbar-color);
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin-top: 0.5rem;
+      }
+      .nav-link {
+        padding: 0.5rem 0;
+      }
+    }
   `]
 })
 export class LandingNavbarComponent {
@@ -81,6 +96,7 @@ export class LandingNavbarComponent {
 
   accountService = inject(AccountService);
   hideBackground = false;
+  isCollapsed = true;
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

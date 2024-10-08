@@ -32,4 +32,5 @@ public class UserDto : BaseUserDto
     public List<UserMedicalInsuranceCompanyDto> MedicalInsuranceCompanies { get; set; } = [];
     public List<DoctorPatientDto> SharedDoctors { get; set; } = [];
     public bool HasPatientInformationAccess { get; set; }
+    public MedicalRecordDto MedicalRecord { get; set; }
 }
