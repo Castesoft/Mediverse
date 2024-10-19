@@ -9,7 +9,7 @@
   </div>
     <div class="card-body">
     <div formBuilder3 [controls]="[
-      form.controls.name,
+      form.controls.patientName,
     ]" [cols]="1"></div>
     <div formBuilder3 [controls]="[
       form.controls.age,
@@ -42,7 +42,7 @@
       form.controls.email,
     ]" [cols]="1"></div>
     <div formBuilder3 [controls]="[
-      form.controls.attendedAlone,
+      form.controls.hasCompanion,
       form.controls.economicDependence,
     ]" [cols]="2"></div>
     <div formBuilder3 [controls]="[
@@ -72,8 +72,8 @@
         form.controls.companion.controls.address,
       ]" [cols]="1"></div>
       <div formBuilder3 [controls]="[
-        form.controls.companion.controls.homeNumber,
         form.controls.companion.controls.phoneNumber,
+        form.controls.companion.controls.homeNumber,
       ]" [cols]="2"></div>
       <div formBuilder3 [controls]="[
         form.controls.companion.controls.email,

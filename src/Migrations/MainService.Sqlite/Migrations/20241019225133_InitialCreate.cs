@@ -278,16 +278,9 @@ namespace MainService.Sqlite.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Age = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Code = table.Column<string>(type: "TEXT", nullable: true),
-                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Color = table.Column<string>(type: "TEXT", nullable: true),
-                    LastName = table.Column<string>(type: "TEXT", nullable: true),
-                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Age = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -370,20 +363,20 @@ namespace MainService.Sqlite.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    PatientName = table.Column<string>(type: "TEXT", nullable: true),
+                    PatientName = table.Column<string>(type: "TEXT", nullable: false),
                     Age = table.Column<int>(type: "INTEGER", nullable: false),
-                    Sex = table.Column<string>(type: "TEXT", nullable: true),
-                    BirthPlace = table.Column<string>(type: "TEXT", nullable: true),
+                    Sex = table.Column<string>(type: "TEXT", nullable: false),
+                    BirthPlace = table.Column<string>(type: "TEXT", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     YearsOfSchooling = table.Column<int>(type: "INTEGER", nullable: false),
-                    HandDominance = table.Column<string>(type: "TEXT", nullable: true),
-                    CurrentLivingSituation = table.Column<string>(type: "TEXT", nullable: true),
-                    CurrentAddress = table.Column<string>(type: "TEXT", nullable: true),
+                    HandDominance = table.Column<string>(type: "TEXT", nullable: false),
+                    CurrentLivingSituation = table.Column<string>(type: "TEXT", nullable: false),
+                    CurrentAddress = table.Column<string>(type: "TEXT", nullable: false),
                     HomePhone = table.Column<string>(type: "TEXT", nullable: true),
-                    MobilePhone = table.Column<string>(type: "TEXT", nullable: true),
-                    Email = table.Column<string>(type: "TEXT", nullable: true),
-                    AttendedAlone = table.Column<bool>(type: "INTEGER", nullable: false),
-                    EconomicDependence = table.Column<string>(type: "TEXT", nullable: true),
+                    MobilePhone = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    HasCompanion = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EconomicDependence = table.Column<string>(type: "TEXT", nullable: false),
                     UsesGlassesOrHearingAid = table.Column<bool>(type: "INTEGER", nullable: false),
                     Comments = table.Column<string>(type: "TEXT", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
@@ -1337,31 +1330,6 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MedicalRecordFamilyDiseases",
-                columns: table => new
-                {
-                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DiseaseId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FamilyMember = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Other = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MedicalRecordFamilyDiseases", x => new { x.MedicalRecordId, x.DiseaseId });
-                    table.ForeignKey(
-                        name: "FK_MedicalRecordFamilyDiseases_Diseases_DiseaseId",
-                        column: x => x.DiseaseId,
-                        principalTable: "Diseases",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_MedicalRecordFamilyDiseases_MedicalRecords_MedicalRecordId",
-                        column: x => x.MedicalRecordId,
-                        principalTable: "MedicalRecords",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MedicalRecordFamilyMembers",
                 columns: table => new
                 {
@@ -2188,6 +2156,38 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MedicalRecordFamilyDiseases",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DiseaseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Other = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordFamilyDiseases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_Diseases_DiseaseId",
+                        column: x => x.DiseaseId,
+                        principalTable: "Diseases",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_RelativeTypes_RelativeTypeId",
+                        column: x => x.RelativeTypeId,
+                        principalTable: "RelativeTypes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MedicalRecordFamilyMemberRelativeTypes",
                 columns: table => new
                 {
@@ -2454,17 +2454,19 @@ namespace MainService.Sqlite.Migrations
                 name: "MedicalRecordSubstances",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
                     SubstanceId = table.Column<int>(type: "INTEGER", nullable: false),
                     ConsumptionLevelId = table.Column<int>(type: "INTEGER", nullable: false),
-                    StartAge = table.Column<int>(type: "INTEGER", nullable: false),
-                    EndAge = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartAge = table.Column<int>(type: "INTEGER", nullable: true),
+                    EndAge = table.Column<int>(type: "INTEGER", nullable: true),
                     IsCurrent = table.Column<bool>(type: "INTEGER", nullable: false),
                     Other = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MedicalRecordSubstances", x => new { x.MedicalRecordId, x.SubstanceId, x.ConsumptionLevelId });
+                    table.PrimaryKey("PK_MedicalRecordSubstances", x => x.Id);
                     table.ForeignKey(
                         name: "FK_MedicalRecordSubstances_ConsumptionLevels_ConsumptionLevelId",
                         column: x => x.ConsumptionLevelId,
@@ -2640,8 +2642,7 @@ namespace MainService.Sqlite.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CompanionRelativeTypes_RelativeTypeId",
                 table: "CompanionRelativeTypes",
-                column: "RelativeTypeId",
-                unique: true);
+                column: "RelativeTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorBannerPhoto_PhotoId",
@@ -2905,6 +2906,16 @@ namespace MainService.Sqlite.Migrations
                 column: "DiseaseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyDiseases_MedicalRecordId",
+                table: "MedicalRecordFamilyDiseases",
+                column: "MedicalRecordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyDiseases_RelativeTypeId",
+                table: "MedicalRecordFamilyDiseases",
+                column: "RelativeTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordFamilyMemberRelativeTypes_FamilyMemberId",
                 table: "MedicalRecordFamilyMemberRelativeTypes",
                 column: "FamilyMemberId",
@@ -2913,8 +2924,7 @@ namespace MainService.Sqlite.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordFamilyMemberRelativeTypes_RelativeTypeId",
                 table: "MedicalRecordFamilyMemberRelativeTypes",
-                column: "RelativeTypeId",
-                unique: true);
+                column: "RelativeTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordFamilyMembers_FamilyMemberId",
@@ -2953,6 +2963,11 @@ namespace MainService.Sqlite.Migrations
                 name: "IX_MedicalRecordSubstances_ConsumptionLevelId",
                 table: "MedicalRecordSubstances",
                 column: "ConsumptionLevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordSubstances_MedicalRecordId",
+                table: "MedicalRecordSubstances",
+                column: "MedicalRecordId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordSubstances_SubstanceId",

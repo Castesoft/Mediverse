@@ -264,67 +264,18 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         context.MedicalRecordFamilyDiseases.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordFamilyDiseases);
         context.MedicalRecordSubstances.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordSubstances);
         if (userMedicalRecord.MedicalRecord.MedicalRecordCompanion != null) {
+            if (userMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType != null)
             context.CompanionRelativeTypes.RemoveRange(userMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType);
+            if (userMedicalRecord.MedicalRecord.MedicalRecordCompanion != null)
             context.MedicalRecordCompanions.Remove(userMedicalRecord.MedicalRecord.MedicalRecordCompanion);
         }
-        // context.MedicalRecords.Remove(userMedicalRecord.MedicalRecord);
         context.UserMedicalRecords.Remove(userMedicalRecord);
         return await context.SaveChangesAsync() > 0;
     }
 
     public async Task<MedicalRecordDto> GetMedicalRecordDtoAsync(int userId)
     {
-        var user = await context.Users
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordFamilyMembers)
-                        .ThenInclude(mrfm => mrfm.FamilyMember)
-                            .ThenInclude(fm => fm.MedicalRecordFamilyMemberRelativeType)
-                                .ThenInclude(mrfmrt => mrfmrt.RelativeType)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordPersonalDiseases)
-                        .ThenInclude(mrdp => mrdp.Disease)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordSubstances)
-                        .ThenInclude(mrs => mrs.Substance)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordSubstances)
-                        .ThenInclude(mrs => mrs.ConsumptionLevel)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordFamilyDiseases)
-                        .ThenInclude(mrfd => mrfd.Disease)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordCompanion)
-                        .ThenInclude(mrc => mrc.Companion)
-                            .ThenInclude(c => c.CompanionRelativeType)
-                                .ThenInclude(c => c.RelativeType)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordCompanion)
-                        .ThenInclude(mrc => mrc.Companion)
-                            .ThenInclude(c => c.CompanionOccupation)
-                                .ThenInclude(c => c.Occupation)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordEducationLevel)
-                        .ThenInclude(mrel => mrel.EducationLevel)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordOccupation)
-                        .ThenInclude(mro => mro.Occupation)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordColorBlindness)
-                        .ThenInclude(mrcb => mrcb.ColorBlindness)
-            .Include(u => u.UserMedicalRecord)
-                .ThenInclude(umr => umr.MedicalRecord)
-                    .ThenInclude(mr => mr.MedicalRecordMaritalStatus)
-                        .ThenInclude(mrhs => mrhs.MaritalStatus)
+        var user = await IncludeMedicalRecord(context.Users).AsQueryable()
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null || user.UserMedicalRecord == null) return null;
@@ -339,4 +290,26 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         await context.Reviews.AddAsync(review);
         return await context.SaveChangesAsync() > 0;
     }
+
+    private static IQueryable<AppUser> IncludeMedicalRecord(IQueryable<AppUser> query) =>
+        query
+            .AsSplitQuery()
+                .Include(x => x.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers)
+                    .ThenInclude(x => x.FamilyMember.MedicalRecordFamilyMemberRelativeType.RelativeType)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordPersonalDiseases)
+                    .ThenInclude(mrdp => mrdp.Disease)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordSubstances)
+                    .ThenInclude(mrs => mrs.Substance)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordSubstances)
+                    .ThenInclude(mrs => mrs.ConsumptionLevel)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyDiseases)
+                    .ThenInclude(mrfd => mrfd.Disease)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType.RelativeType)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionOccupation.Occupation)
+
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordEducationLevel.EducationLevel)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordOccupation.Occupation)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordColorBlindness.ColorBlindness)
+                .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordMaritalStatus.MaritalStatus)
+        ;
 }

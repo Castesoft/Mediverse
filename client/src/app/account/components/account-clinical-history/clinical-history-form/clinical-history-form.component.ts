@@ -2,7 +2,7 @@ import { Component, effect, inject, input, model } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { AccountService } from 'src/app/_services/account.service';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
-import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
+import { FormControl2, FormGroup2, FormInfo } from 'src/app/_forms/form2';
 import { OccupationsService } from 'src/app/occupations/occupations.config';
 import { RelativeTypesService } from 'src/app/relativeTypes/relativeTypes.config';
 import { ColorBlindnessesService } from 'src/app/colorBlindnesses/colorBlindnesses.config';
@@ -23,11 +23,12 @@ const handDominanceOptions: SelectOption[] = [
 ];
 
 const sexOptions: SelectOption[] = [
-  new SelectOption({ id: 1, code: 'male', name: 'Masculino' }),
-  new SelectOption({ id: 2, code: 'female', name: 'Femenino' }),
+  new SelectOption({ id: 1, code: 'Masculino', name: 'Masculino' }),
+  new SelectOption({ id: 2, code: 'Femenino', name: 'Femenino' }),
 ];
 
 export class Companion {
+  id: number | null = null;
   name: string | null = null;
   sex: SelectOption | null = null;
   age: number | null = null;
@@ -44,18 +45,20 @@ export class Companion {
 }
 
 export const companionInfo: FormInfo<Companion> = {
-  address: { label: 'Domicilio', placeholder: 'Domicilio', type: 'text', validators: [Validators.required] },
-  age: { label: 'Edad', placeholder: 'Edad', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
+  id: { label: 'ID', type: 'number' },
+  address: { label: 'Domicilio', type: 'text', validators: [Validators.required] },
+  age: { label: 'Edad', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
   sex: { label: 'Sexo', type: 'radio', showCodeSpan: false, selectOptions: sexOptions, validators: [Validators.required, ] },
-  email: { label: 'Correo electrónico', placeholder: 'Correo electrónico', type: 'text', validators: [Validators.required, Validators.email] },
-  homeNumber: { label: 'Teléfono particular', placeholder: 'Teléfono particular', type: 'text' },
-  name: { label: 'Nombre', placeholder: 'Nombre', type: 'text', validators: [Validators.required] },
+  email: { label: 'Correo electrónico', type: 'text', validators: [Validators.required, Validators.email] },
+  homeNumber: { label: 'Teléfono de casa', type: 'text' },
+  name: { label: 'Nombre', type: 'text', validators: [Validators.required] },
   occupation: { label: 'Ocupación', type: 'select', showCodeSpan: false, validators: [Validators.required] },
-  phoneNumber: { label: 'Teléfono móvil', placeholder: 'Teléfono móvil', type: 'text', validators: [Validators.required] },
+  phoneNumber: { label: 'Teléfono móvil', type: 'text', validators: [Validators.required] },
   relativeType: { label: 'Parentesco', type: 'select', showCodeSpan: false, validators: [Validators.required] },
 } as FormInfo<Companion>;
 
 export class FamilyMember {
+  id: number | null = null;
   relativeType: SelectOption | null = null;
   name: string | null = null;
   age: number | null = null;
@@ -66,12 +69,14 @@ export class FamilyMember {
 }
 
 export const familyMemberInfo: FormInfo<FamilyMember> = {
-  age: { label: 'Edad', placeholder: 'Edad', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
-  name: { label: 'Nombre', placeholder: 'Nombre', type: 'text', validators: [Validators.required] },
+  id: { label: 'ID', type: 'number' },
+  age: { label: 'Edad', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
+  name: { label: 'Nombre', type: 'text', validators: [Validators.required] },
   relativeType: { label: 'Parentesco', type: 'select', showCodeSpan: false },
 } as FormInfo<FamilyMember>;
 
 export class PersonalMedicalHistory {
+  id: number | null = null;
   disease: SelectOption | null = null;
   description: string | null = null;
 
@@ -81,11 +86,13 @@ export class PersonalMedicalHistory {
 }
 
 export const personalMedicalHistoryInfo: FormInfo<PersonalMedicalHistory> = {
-  description: { label: 'Descripción', placeholder: 'Descripción', type: 'text', validators: [Validators.required] },
+  id: { label: 'ID', type: 'number' },
+  description: { label: 'Descripción', type: 'text', validators: [Validators.required] },
   disease: { label: 'Enfermedad', type: 'select', showCodeSpan: false },
 } as FormInfo<PersonalMedicalHistory>;
 
 export class PersonalDrugHistory {
+  id: number | null = null;
   substance: SelectOption | null = null;
   consumptionLevel: SelectOption | null = null;
   startAge: number | null = null;
@@ -98,14 +105,16 @@ export class PersonalDrugHistory {
 }
 
 export const personalDrugHistoryInfo: FormInfo<PersonalDrugHistory> = {
+  id: { label: 'ID', type: 'number' },
   consumptionLevel: { label: 'Nivel de consumo', type: 'select', showCodeSpan: false },
-  endAge: { label: 'Edad de cese', placeholder: 'Edad de cese', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
+  endAge: { label: 'Edad de cese', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
   isCurrent: { label: 'Consumo actual', type: 'checkbox' },
-  startAge: { label: 'Edad de inicio', placeholder: 'Edad de inicio', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
+  startAge: { label: 'Edad de inicio', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
   substance: { label: 'Sustancia', type: 'select', showCodeSpan: false },
 } as FormInfo<PersonalDrugHistory>;
 
 export class FamilyMedicalHistory {
+  id: number | null = null;
   disease: SelectOption | null = null;
   relativeType: SelectOption | null = null;
   description: string | null = null;
@@ -116,13 +125,14 @@ export class FamilyMedicalHistory {
 }
 
 export const familyMedicalHistoryInfo: FormInfo<FamilyMedicalHistory> = {
-  description: { label: 'Descripción', placeholder: 'Descripción', type: 'text' },
+  id: { label: 'ID', type: 'number' },
+  description: { label: 'Descripción', type: 'text' },
   disease: { label: 'Enfermedad', type: 'select', showCodeSpan: false },
   relativeType: { label: 'Parentesco', type: 'select', showCodeSpan: false },
 } as FormInfo<FamilyMedicalHistory>;
 
 export class MedicalRecord {
-  name: string | null = null;
+  patientName: string | null = null;
   age: number | null = null;
   sex: SelectOption | null = null;
   birthPlace: string | null = null;
@@ -137,14 +147,14 @@ export class MedicalRecord {
   homePhone: string | null = null;
   mobilePhone: string | null = null;
   email: string | null = null;
-  attendedAlone: boolean | null = false;
+  hasCompanion: boolean | null = false;
   economicDependence: string | null = null;
   usesGlassesOrHearingAid: boolean | null = false;
   colorBlindness: SelectOption | null = null;
-  familyMembers: FamilyMember[] = [ new FamilyMember(), ];
 
   companion: Companion = new Companion();
 
+  familyMembers: FamilyMember[] = [ new FamilyMember(), ];
   personalMedicalHistory: PersonalMedicalHistory[] = [ new PersonalMedicalHistory(), ];
   personalDrugHistory: PersonalDrugHistory[] = [ new PersonalDrugHistory(), ];
   familyMedicalHistory: FamilyMedicalHistory[] = [ new FamilyMedicalHistory(), ];
@@ -168,23 +178,23 @@ export class MedicalRecordForm extends FormGroup2<MedicalRecord> {
 
   constructor() {
     super(MedicalRecord, new MedicalRecord(), {
-      name: { label: 'Nombre completo', placeholder: 'Nombre completo', type: 'text', validators: [Validators.required, Validators.minLength(3)] },
-      age: { label: 'Edad', placeholder: 'Edad', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
+      patientName: { label: 'Nombre completo', type: 'text', validators: [Validators.required, Validators.minLength(3)] },
+      age: { label: 'Edad', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(150)] },
       sex: { label: 'Sexo', type: 'radio', showCodeSpan: false, selectOptions: sexOptions, validators: [Validators.required, ] },
-      birthPlace: { label: 'Lugar de nacimiento', placeholder: 'Lugar de nacimiento', type: 'text', validators: [Validators.required] },
-      birthDate: { label: 'Fecha de nacimiento', type: 'date', placeholder: 'Fecha de nacimiento', validators: [Validators.required] },
+      birthPlace: { label: 'Lugar de nacimiento', type: 'text', validators: [Validators.required] },
+      birthDate: { label: 'Fecha de nacimiento', type: 'date', validators: [Validators.required] },
       educationLevel: { label: 'Nivel de estudios', type: 'select', showCodeSpan: false, validators: [Validators.required, ] },
-      yearsOfSchooling: { label: 'Años de escolaridad', type: 'number', placeholder: 'Años de escolaridad', validators: [Validators.required, Validators.min(0), Validators.max(100)] },
+      yearsOfSchooling: { label: 'Años de escolaridad', type: 'number', validators: [Validators.required, Validators.min(0), Validators.max(100)] },
       occupation: { label: 'Ocupación', type: 'select', showCodeSpan: false, validators: [Validators.required, ] },
       handDominance: { label: 'Dominancia manual', type: 'select', showCodeSpan: false, selectOptions: handDominanceOptions, validators: [Validators.required, ] },
       maritalStatus: { label: 'Estado civil', type: 'select', showCodeSpan: false, validators: [Validators.required, ] },
-      currentLivingSituation: { label: 'Con quien vive actualmente', placeholder: 'Con quien vive actualmente', type: 'text', validators: [Validators.required] },
-      currentAddress: { label: 'Domicilio actual', placeholder: 'Domicilio actual', type: 'text', validators: [Validators.required] },
-      homePhone: { label: 'Teléfono particular', placeholder: 'Teléfono particular', type: 'text' },
-      mobilePhone: { label: 'Teléfono móvil', placeholder: 'Teléfono móvil', type: 'text', validators: [Validators.required] },
-      email: { label: 'Correo electrónico', placeholder: 'Correo electrónico', type: 'text', validators: [Validators.required, Validators.email] },
-      attendedAlone: { label: 'Asiste acompañado', type: 'checkbox' },
-      economicDependence: { label: 'Dependencia económica', placeholder: 'Dependencia económica', type: 'text' },
+      currentLivingSituation: { label: 'Con quien vive actualmente', type: 'text', validators: [Validators.required] },
+      currentAddress: { label: 'Domicilio actual', type: 'text', validators: [Validators.required] },
+      homePhone: { label: 'Teléfono de casa', type: 'text' },
+      mobilePhone: { label: 'Teléfono móvil', type: 'text', validators: [Validators.required] },
+      email: { label: 'Correo electrónico', type: 'text', validators: [Validators.required, Validators.email] },
+      hasCompanion: { label: 'Asiste acompañado', type: 'checkbox' },
+      economicDependence: { label: 'Dependencia económica', type: 'text' },
       usesGlassesOrHearingAid: { label: 'Usa lentes o ayuda auditiva', type: 'checkbox' },
       colorBlindness: { label: 'Daltonismo', type: 'select', showCodeSpan: false },
 
@@ -195,7 +205,7 @@ export class MedicalRecordForm extends FormGroup2<MedicalRecord> {
       personalDrugHistory: personalDrugHistoryInfo,
       personalMedicalHistory: personalMedicalHistoryInfo,
 
-      comments: { label: 'Comentarios', placeholder: 'Comentarios', type: 'textarea' },
+      comments: { label: 'Comentarios', type: 'textarea' },
     } as FormInfo<MedicalRecord>, { orientation: 'inline', });
 
     this.controls.familyMedicalHistory.controls.forEach((group, index) => {
@@ -235,6 +245,59 @@ export class MedicalRecordForm extends FormGroup2<MedicalRecord> {
       group.controls.name.showLabel = false;
 
       group.controls.relativeType.selectOptions = this.relativeTypeOptions;
+    });
+  }
+
+  patch(value: MedicalRecord) {
+
+    super.patchValue(value);
+
+    value.familyMembers.forEach((item, index) => {
+      const itemExists: boolean = this.controls.familyMembers.controls.some((group) => group.controls.id.value === item.id);
+      if (!itemExists) {
+        if (this.controls.familyMembers.controls.length === 1 && this.controls.familyMembers.controls[0].controls.id.value === null) {
+          this.controls.familyMembers.controls[0].patchValue(new FamilyMember({...item}));
+        } else {
+          this.addFamilyMember();
+          this.controls.familyMembers.controls[this.controls.familyMembers.controls.length - 1].patchValue(new FamilyMember({...item}));
+        }
+      }
+    });
+
+    value.personalMedicalHistory.forEach((item, index) => {
+      const itemExists: boolean = this.controls.personalMedicalHistory.controls.some((group) => group.controls.id.value === item.id);
+      if (!itemExists) {
+        if (this.controls.personalMedicalHistory.controls.length === 1 && this.controls.personalMedicalHistory.controls[0].controls.id.value === null) {
+          this.controls.personalMedicalHistory.controls[0].patchValue(new PersonalMedicalHistory({...item}));
+        } else {
+          this.addPersonalMedicalHistory();
+          this.controls.personalMedicalHistory.controls[this.controls.personalMedicalHistory.controls.length - 1].patchValue(new PersonalMedicalHistory({...item}));
+        }
+      }
+    });
+
+    value.personalDrugHistory.forEach((item, index) => {
+      const itemExists: boolean = this.controls.personalDrugHistory.controls.some((group) => group.controls.id.value === item.id);
+      if (!itemExists) {
+        if (this.controls.personalDrugHistory.controls.length === 1 && this.controls.personalDrugHistory.controls[0].controls.id.value === null) {
+          this.controls.personalDrugHistory.controls[0].patchValue(new PersonalDrugHistory({...item}));
+        } else {
+          this.addPersonalDrugHistory();
+          this.controls.personalDrugHistory.controls[this.controls.personalDrugHistory.controls.length - 1].patchValue(new PersonalDrugHistory({...item}));
+        }
+      }
+    });
+
+    value.familyMedicalHistory.forEach((item, index) => {
+      const itemExists: boolean = this.controls.familyMedicalHistory.controls.some((group) => group.controls.id.value === item.id);
+      if (!itemExists) {
+        if (this.controls.familyMedicalHistory.controls.length === 1 && this.controls.familyMedicalHistory.controls[0].controls.id.value === null) {
+          this.controls.familyMedicalHistory.controls[0].patchValue(new FamilyMedicalHistory({...item}));
+        } else {
+          this.addFamilyMedicalHistory();
+          this.controls.familyMedicalHistory.controls[this.controls.familyMedicalHistory.controls.length - 1].patchValue(new FamilyMedicalHistory({...item}));
+        }
+      }
     });
   }
 
@@ -376,8 +439,24 @@ export class ClinicalHistoryFormComponent {
         group.controls.consumptionLevel.selectOptions = this.form.consumptionLevelOptions;
       });
 
-      this.form.patchValue(this.medicalRecord());
+      this.form.patch(this.medicalRecord());
     });
+
+    const attendedAloneControl = this.form.controls.hasCompanion as FormControl2<boolean | null>;
+
+    attendedAloneControl.valueChanges.subscribe({
+      next: value => {
+        if (value !== null) {
+          if (value === true) {
+            this.form.controls.companion.enable();
+          } else {
+            this.form.controls.companion.disable();
+            this.form.controls.companion.clearValidators();
+            this.form.controls.companion.updateValueAndValidity();
+          }
+        }
+      }
+    })
   }
 
   ngOnInit(): void {
@@ -395,9 +474,11 @@ export class ClinicalHistoryFormComponent {
       ...this.form.value,
     }).subscribe({
       next: response => {
-        this.form.patchValue(new MedicalRecord({ ...response }) as any);
+        this.form.patch(response);
         this.snackbarService.success('Historia clínica actualizada correctamente.');
         this.form.markAsPristine();
+        this.form.error = undefined;
+        this.form.updateValueAndValidity();
       },
       error: (error: BadRequest) => {
         this.form.error = error;

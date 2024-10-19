@@ -69,7 +69,7 @@ export class AccountComponent implements OnInit {
       next: surveys => {
         this.satisfactionSurveys = surveys;
 
-        if (this.satisfactionSurveys.length > 0) {
+        if (this.satisfactionSurveys.length > 0 && false) {
         this.bsModalService.show(SatisfactionSurveyModalComponent, {
           initialState: {
             satisfactionSurvey: this.satisfactionSurveys[0],

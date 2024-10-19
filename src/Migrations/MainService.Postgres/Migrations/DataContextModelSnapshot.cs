@@ -522,8 +522,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("CompanionId")
                         .IsUnique();
 
-                    b.HasIndex("RelativeTypeId")
-                        .IsUnique();
+                    b.HasIndex("RelativeTypeId");
 
                     b.ToTable("CompanionRelativeTypes");
                 });
@@ -1146,35 +1145,14 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("text");
-
-                    b.Property<int>("CodeNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Color")
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
-
-                    b.Property<bool>("Visible")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -1381,13 +1359,11 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("AttendedAlone")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("BirthPlace")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Comments")
@@ -1397,36 +1373,47 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CurrentAddress")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CurrentLivingSituation")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("EconomicDependence")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("HandDominance")
+                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("HasCompanion")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("HomePhone")
                         .HasColumnType("text");
 
                     b.Property<string>("MobilePhone")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("PatientName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Sex")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("UsesGlassesOrHearingAid")
@@ -1503,24 +1490,34 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
                 {
-                    b.Property<int>("MedicalRecordId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<int>("DiseaseId")
-                        .HasColumnType("integer");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("FamilyMember")
-                        .HasColumnType("text");
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Other")
                         .HasColumnType("text");
 
-                    b.HasKey("MedicalRecordId", "DiseaseId");
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordId");
+
+                    b.HasIndex("RelativeTypeId");
 
                     b.ToTable("MedicalRecordFamilyDiseases");
                 });
@@ -1554,8 +1551,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("FamilyMemberId")
                         .IsUnique();
 
-                    b.HasIndex("RelativeTypeId")
-                        .IsUnique();
+                    b.HasIndex("RelativeTypeId");
 
                     b.ToTable("MedicalRecordFamilyMemberRelativeTypes");
                 });
@@ -1625,30 +1621,38 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
                 {
-                    b.Property<int>("MedicalRecordId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<int>("SubstanceId")
-                        .HasColumnType("integer");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ConsumptionLevelId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("EndAge")
+                    b.Property<int?>("EndAge")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsCurrent")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Other")
                         .HasColumnType("text");
 
-                    b.Property<int>("StartAge")
+                    b.Property<int?>("StartAge")
                         .HasColumnType("integer");
 
-                    b.HasKey("MedicalRecordId", "SubstanceId", "ConsumptionLevelId");
+                    b.Property<int>("SubstanceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ConsumptionLevelId");
+
+                    b.HasIndex("MedicalRecordId");
 
                     b.HasIndex("SubstanceId");
 
@@ -3000,8 +3004,8 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
-                        .WithOne("CompanionRelativeType")
-                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "RelativeTypeId")
+                        .WithMany("CompanionRelativeTypes")
+                        .HasForeignKey("RelativeTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -3613,9 +3617,17 @@ namespace MainService.Postgres.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Disease");
 
                     b.Navigation("MedicalRecord");
+
+                    b.Navigation("RelativeType");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
@@ -3646,8 +3658,8 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
-                        .WithOne("MedicalRecordFamilyMemberRelativeType")
-                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "RelativeTypeId")
+                        .WithMany("MedicalRecordFamilyMemberRelativeTypes")
+                        .HasForeignKey("RelativeTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -4389,9 +4401,11 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
                 {
-                    b.Navigation("MedicalRecordFamilyMember");
+                    b.Navigation("MedicalRecordFamilyMember")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
@@ -4426,25 +4440,31 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
                 {
-                    b.Navigation("MedicalRecordColorBlindness");
+                    b.Navigation("MedicalRecordColorBlindness")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordCompanion");
+                    b.Navigation("MedicalRecordCompanion")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordEducationLevel");
+                    b.Navigation("MedicalRecordEducationLevel")
+                        .IsRequired();
 
                     b.Navigation("MedicalRecordFamilyDiseases");
 
                     b.Navigation("MedicalRecordFamilyMembers");
 
-                    b.Navigation("MedicalRecordMaritalStatus");
+                    b.Navigation("MedicalRecordMaritalStatus")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordOccupation");
+                    b.Navigation("MedicalRecordOccupation")
+                        .IsRequired();
 
                     b.Navigation("MedicalRecordPersonalDiseases");
 
                     b.Navigation("MedicalRecordSubstances");
 
-                    b.Navigation("UserMedicalRecord");
+                    b.Navigation("UserMedicalRecord")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
@@ -4550,9 +4570,11 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
                 {
-                    b.Navigation("CompanionRelativeType");
+                    b.Navigation("CompanionRelativeTypes");
 
-                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeTypes");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>

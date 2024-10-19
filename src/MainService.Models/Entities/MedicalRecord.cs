@@ -27,7 +27,7 @@ namespace MainService.Models.Entities
         public string? HomePhone { get; set; } = null;
         public string MobilePhone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public bool AttendedAlone { get; set; }
+        public bool HasCompanion { get; set; }
         public string EconomicDependence { get; set; } = string.Empty;
         public bool UsesGlassesOrHearingAid { get; set; }
         public string? Comments { get; set; } = null;
@@ -44,6 +44,23 @@ namespace MainService.Models.Entities
         public MedicalRecordMaritalStatus MedicalRecordMaritalStatus { get; set; } = null!;
         public MedicalRecordColorBlindness MedicalRecordColorBlindness { get; set; } = null!;
         public MedicalRecordCompanion MedicalRecordCompanion { get; set; } = null!;
+
+        public OptionDto GetSex() =>
+            Sex switch
+            {
+                "Masculino" => new(1, "Masculino", "Masculino"),
+                "Femenino" => new(2, "Femenino", "Femenino"),
+                _ => new(3, "unknown", "Desconocido"),
+            };
+
+        public OptionDto GetHandDominance() =>
+            HandDominance switch
+            {
+                "Diestro" => new(1, "Diestro", "Diestro"),
+                "Zurdo" => new(2, "Zurdo", "Zurdo"),
+                "Ambidiestro" => new(3, "Ambidiestro", "Ambidiestro"),
+                _ => new(4, "unknown", "Desconocido"),
+            };
     }
 
     #nullable disable
@@ -127,6 +144,9 @@ namespace MainService.Models.Entities
     }
 
     public class MedicalRecordColorBlindness {
+        public MedicalRecordColorBlindness() {}
+        public MedicalRecordColorBlindness(int colorBlindnessId) => ColorBlindnessId = colorBlindnessId;
+        
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; }
         public int ColorBlindnessId { get; set; } public ColorBlindness ColorBlindness { get; set; }
 
@@ -138,7 +158,11 @@ namespace MainService.Models.Entities
     {
         public ColorBlindness() { }
         public ColorBlindness(string code) : base(code) { }
-        public ColorBlindness(string code, string name) : base(code, name) { }
+        public ColorBlindness(string code, string name) {
+            Code = code;
+            Name = code;
+            Description = name;
+        }
         public ColorBlindness(string code, string name, string description) : base(code, name, description) { }
         
         public List<MedicalRecordColorBlindness> MedicalRecordColorBlindnesses { get; set; } = [];
@@ -149,21 +173,20 @@ namespace MainService.Models.Entities
         public int FamilyMemberId { get; set; } public FamilyMember FamilyMember { get; set; }
     }
 
-    public class FamilyMember : BaseCodeEntity
-    {
-        public FamilyMember() { }
-        public FamilyMember(string name) => Name = name;
-        public FamilyMember(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+    #nullable enable
 
-        public int Age { get; set; }
+    public class FamilyMember
+    {
+        public int Id { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int? Age { get; set; } = null;
+        public string? Name { get; set; } = null;
         
-        public MedicalRecordFamilyMember MedicalRecordFamilyMember { get; set; }
-        public MedicalRecordFamilyMemberRelativeType MedicalRecordFamilyMemberRelativeType { get; set; }
+        public MedicalRecordFamilyMember MedicalRecordFamilyMember { get; set; } = null!;
+        public MedicalRecordFamilyMemberRelativeType MedicalRecordFamilyMemberRelativeType { get; set; } = null!;
     }
+
+    #nullable disable
 
     public class MedicalRecordFamilyMemberRelativeType
     {
@@ -186,8 +209,9 @@ namespace MainService.Models.Entities
         public RelativeType(string code, string name) : base(code, name) { }
         public RelativeType(string code, string name, string description) : base(code, name, description) { }
         
-        public MedicalRecordFamilyMemberRelativeType MedicalRecordFamilyMemberRelativeType { get; set; }
-        public CompanionRelativeType CompanionRelativeType { get; set; }
+        public List<MedicalRecordFamilyMemberRelativeType> MedicalRecordFamilyMemberRelativeTypes { get; set; } = [];
+        public List<CompanionRelativeType> CompanionRelativeTypes { get; set; } = [];
+        public List<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; } = [];
     }
 
     public class MedicalRecordCompanion
@@ -240,6 +264,14 @@ namespace MainService.Models.Entities
 
         
         public MedicalRecordCompanion MedicalRecordCompanion { get; set; }
+
+        public OptionDto GetSex() =>
+            Sex switch
+            {
+                "Masculino" => new(1, "Masculino", "Masculino"),
+                "Femenino" => new(2, "Femenino", "Femenino"),
+                _ => new(3, "unknown", "Desconocido"),
+            };
     }
 
     public class MedicalRecordPersonalDisease {
@@ -250,14 +282,20 @@ namespace MainService.Models.Entities
         public string Other { get; set; }
     }
 
-    public class MedicalRecordFamilyDisease {
-        public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; }
-        public int DiseaseId { get; set; } public Disease Disease { get; set; }
+    #nullable enable
 
-        public string FamilyMember { get; set; }
-        public string Description { get; set; }
-        public string Other { get; set; }
+    public class MedicalRecordFamilyDisease {
+        public int Id { get; set; }
+        
+        public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; } = null!;
+        public int DiseaseId { get; set; } public Disease Disease { get; set; } = null!;
+        public int RelativeTypeId { get; set; } public RelativeType RelativeType { get; set; } = null!;
+
+        public string? Description { get; set; } = null;
+        public string? Other { get; set; } = null;
     }
+
+    #nullable disable
 
     public class MedicalRecordDiseaseType : BaseCodeEntity
     {
@@ -300,17 +338,24 @@ namespace MainService.Models.Entities
         public List<MedicalRecordSubstance> MedicalRecordSubstances { get; set; }
     }
 
-    public class MedicalRecordSubstance {
-        public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; }
-        public int SubstanceId { get; set; } public Substance Substance { get; set; }
-        public int ConsumptionLevelId { get; set; } public ConsumptionLevel ConsumptionLevel { get; set; }
+    #nullable enable
 
-        public int StartAge { get; set; }
-        public int EndAge { get; set; }
+    public class MedicalRecordSubstance {
+        public int Id { get; set; }
+        
+        public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; } = null!;
+        public int SubstanceId { get; set; } public Substance Substance { get; set; } = null!;
+        public int ConsumptionLevelId { get; set; } public ConsumptionLevel ConsumptionLevel { get; set; } = null!;
+
+        public int? StartAge { get; set; } = null;
+        public int? EndAge { get; set; } = null;
         public bool IsCurrent { get; set; } = false;
 
-        public string Other { get; set; }
+        public string? Other { get; set; } = null;
     }
+
+    #nullable disable
+
 
     public class Substance : BaseCodeEntity {
         public Substance() { }

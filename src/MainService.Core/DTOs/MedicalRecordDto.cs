@@ -9,7 +9,8 @@ namespace MainService.Core.DTOs
     public class MedicalRecordMaritalStatusDto : BaseCodeEntity {}
     public class MedicalRecordColorBlindnessDto : BaseCodeEntity {}
     public class MedicalRecordFamilyMemberDto {
-        public RelativeTypeDto RelativeType { get; set; }
+        public int Id { get; set; }
+        public OptionDto RelativeType { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
     }
@@ -37,27 +38,31 @@ namespace MainService.Core.DTOs
 
     public class MedicalRecordCompanionDto : BaseEntity {
         public int Age { get; set; }
-        public string Sex { get; set; }
+        public OptionDto Sex { get; set; }
         public string Address { get; set; }
         public string HomePhone { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public MedicalRecordOccupationDto Occupation { get; set; }
+        public OptionDto Occupation { get; set; }
+        public OptionDto RelativeType { get; set; }
     }
 
     public class MedicalRecordPersonalDiseaseDto {
-        public DiseaseDto Disease { get; set; }
+        public int Id { get; set; }
+        public OptionDto Disease { get; set; }
         public string Description { get; set; }
     }
     public class MedicalRecordFamilyDiseaseDto {
-        public DiseaseDto Disease { get; set; }
-        public string RelativeType { get; set; }
+        public int Id { get; set; }
+        public OptionDto Disease { get; set; }
+        public OptionDto RelativeType { get; set; }
         public string Description { get; set; }
     }
 
     public class MedicalRecordSubstanceDto {
-        public SubstanceDto Substance { get; set; }
-        public ConsumptionLevelDto ConsumptionLevel { get; set; }
+        public int Id { get; set; }
+        public OptionDto Substance { get; set; }
+        public OptionDto ConsumptionLevel { get; set; }
         public int StartAge { get; set; }
         public int EndAge { get; set; }
         public bool IsCurrent { get; set; }
@@ -65,41 +70,34 @@ namespace MainService.Core.DTOs
     
     public class MedicalRecordDto
     {
-        public MedicalRecordEducationLevelDto EducationLevel { get; set; }
-        public MedicalRecordOccupationDto Occupation { get; set; }
-        public MedicalRecordColorBlindnessDto ColorBlindness { get; set; }
-        public MedicalRecordMaritalStatusDto MaritalStatus { get; set; }
-        public List<MedicalRecordFamilyMemberDto> FamilyStructure { get; set; } = [];
+        public int Id { get; set; }
+        public OptionDto EducationLevel { get; set; }
+        public OptionDto Occupation { get; set; }
+        public OptionDto ColorBlindness { get; set; }
+        public OptionDto MaritalStatus { get; set; }
+        public List<MedicalRecordFamilyMemberDto> FamilyMembers { get; set; } = [];
         public List<MedicalRecordPersonalDiseaseDto> PersonalMedicalHistory { get; set; } = [];
         public List<MedicalRecordFamilyDiseaseDto> FamilyMedicalHistory { get; set; } = [];
         public List<MedicalRecordSubstanceDto> PersonalDrugHistory { get; set; } = [];
 
-        public string Name { get; set; }
+        public string PatientName { get; set; }
         public int Age { get; set; }
-        public string Sex { get; set; }
+        public OptionDto Sex { get; set; }
         public string BirthPlace { get; set; }
         public DateTime BirthDate { get; set; }
         public int YearsOfSchooling { get; set; }
-        public string HandDominance { get; set; }
+        public OptionDto HandDominance { get; set; }
         public string CurrentLivingSituation { get; set; }
         public string CurrentAddress { get; set; }
         public string HomePhone { get; set; }
         public string MobilePhone { get; set; }
         public string Email { get; set; }
-        public bool AttendedAlone { get; set; }
+        public bool HasCompanion { get; set; }
         public string EconomicDependence { get; set; }
         public bool UsesGlassesOrHearingAid { get; set; }
         public string Comments { get; set; }
 
-        public string CompanionName { get; set; }
-        public int CompanionAge { get; set; }
-        public string CompanionSex { get; set; }
-        public RelativeTypeDto CompanionRelationship { get; set; }
-        public OccupationDto CompanionOccupation { get; set; }
-        public string CompanionCurrentAddress { get; set; }
-        public string CompanionHomePhone { get; set; }
-        public string CompanionMobilePhone { get; set; }
-        public string CompanionEmail { get; set; }
+        public MedicalRecordCompanionDto Companion { get; set; }
     }
 
     public class DiseaseDto : BaseCodeEntity {}
@@ -228,7 +226,7 @@ namespace MainService.Core.DTOs
         public string? EconomicDependence { get; set; } = null;
 
         [Required(ErrorMessage = "La asistencia es requerida.")]
-        public bool? AttendedAlone { get; set; } = null;
+        public bool? HasCompanion { get; set; } = null;
 
         [Required(ErrorMessage = "El uso de lentes o audífonos es requerido.")]
         public bool? UsesGlassesOrHearingAid { get; set; } = null;
@@ -249,7 +247,7 @@ namespace MainService.Core.DTOs
 
         public OptionDto? ColorBlindness { get; set; } = null;
 
-        public List<MedicalRecordUpdateFamilyMemberDto> FamilyStructure { get; set; } = [];
+        public List<MedicalRecordUpdateFamilyMemberDto> FamilyMembers { get; set; } = [];
         public List<MedicalRecordUpdatePersonalDiseaseDto> PersonalMedicalHistory { get; set; } = [];
         public List<MedicalRecordUpdatePersonalSubstanceDto> PersonalDrugHistory { get; set; } = [];
         public List<MedicalRecordUpdateFamilyDiseaseDto> FamilyMedicalHistory { get; set; } = [];

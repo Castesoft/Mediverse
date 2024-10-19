@@ -503,8 +503,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("CompanionId")
                         .IsUnique();
 
-                    b.HasIndex("RelativeTypeId")
-                        .IsUnique();
+                    b.HasIndex("RelativeTypeId");
 
                     b.ToTable("CompanionRelativeTypes");
                 });
@@ -1115,35 +1114,14 @@ namespace MainService.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CodeNumber")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Color")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("Visible")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -1340,13 +1318,11 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("AttendedAlone")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("BirthPlace")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Comments")
@@ -1356,36 +1332,47 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CurrentAddress")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CurrentLivingSituation")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("EconomicDependence")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("HandDominance")
+                        .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("HasCompanion")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("HomePhone")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MobilePhone")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PatientName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Sex")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("UsesGlassesOrHearingAid")
@@ -1462,24 +1449,32 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyDisease", b =>
                 {
-                    b.Property<int>("MedicalRecordId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DiseaseId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FamilyMember")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Other")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("MedicalRecordId", "DiseaseId");
+                    b.Property<int>("RelativeTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DiseaseId");
+
+                    b.HasIndex("MedicalRecordId");
+
+                    b.HasIndex("RelativeTypeId");
 
                     b.ToTable("MedicalRecordFamilyDiseases");
                 });
@@ -1513,8 +1508,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("FamilyMemberId")
                         .IsUnique();
 
-                    b.HasIndex("RelativeTypeId")
-                        .IsUnique();
+                    b.HasIndex("RelativeTypeId");
 
                     b.ToTable("MedicalRecordFamilyMemberRelativeTypes");
                 });
@@ -1584,30 +1578,36 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordSubstance", b =>
                 {
-                    b.Property<int>("MedicalRecordId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SubstanceId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ConsumptionLevelId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("EndAge")
+                    b.Property<int?>("EndAge")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsCurrent")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Other")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("StartAge")
+                    b.Property<int?>("StartAge")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("MedicalRecordId", "SubstanceId", "ConsumptionLevelId");
+                    b.Property<int>("SubstanceId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ConsumptionLevelId");
+
+                    b.HasIndex("MedicalRecordId");
 
                     b.HasIndex("SubstanceId");
 
@@ -2913,8 +2913,8 @@ namespace MainService.Sqlite.Migrations
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
-                        .WithOne("CompanionRelativeType")
-                        .HasForeignKey("MainService.Models.Entities.CompanionRelativeType", "RelativeTypeId")
+                        .WithMany("CompanionRelativeTypes")
+                        .HasForeignKey("RelativeTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -3526,9 +3526,17 @@ namespace MainService.Sqlite.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
+                        .WithMany("MedicalRecordFamilyDiseases")
+                        .HasForeignKey("RelativeTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Disease");
 
                     b.Navigation("MedicalRecord");
+
+                    b.Navigation("RelativeType");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecordFamilyMember", b =>
@@ -3559,8 +3567,8 @@ namespace MainService.Sqlite.Migrations
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
-                        .WithOne("MedicalRecordFamilyMemberRelativeType")
-                        .HasForeignKey("MainService.Models.Entities.MedicalRecordFamilyMemberRelativeType", "RelativeTypeId")
+                        .WithMany("MedicalRecordFamilyMemberRelativeTypes")
+                        .HasForeignKey("RelativeTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -4302,9 +4310,11 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
                 {
-                    b.Navigation("MedicalRecordFamilyMember");
+                    b.Navigation("MedicalRecordFamilyMember")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                    b.Navigation("MedicalRecordFamilyMemberRelativeType")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
@@ -4339,25 +4349,31 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
                 {
-                    b.Navigation("MedicalRecordColorBlindness");
+                    b.Navigation("MedicalRecordColorBlindness")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordCompanion");
+                    b.Navigation("MedicalRecordCompanion")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordEducationLevel");
+                    b.Navigation("MedicalRecordEducationLevel")
+                        .IsRequired();
 
                     b.Navigation("MedicalRecordFamilyDiseases");
 
                     b.Navigation("MedicalRecordFamilyMembers");
 
-                    b.Navigation("MedicalRecordMaritalStatus");
+                    b.Navigation("MedicalRecordMaritalStatus")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordOccupation");
+                    b.Navigation("MedicalRecordOccupation")
+                        .IsRequired();
 
                     b.Navigation("MedicalRecordPersonalDiseases");
 
                     b.Navigation("MedicalRecordSubstances");
 
-                    b.Navigation("UserMedicalRecord");
+                    b.Navigation("UserMedicalRecord")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
@@ -4463,9 +4479,11 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
                 {
-                    b.Navigation("CompanionRelativeType");
+                    b.Navigation("CompanionRelativeTypes");
 
-                    b.Navigation("MedicalRecordFamilyMemberRelativeType");
+                    b.Navigation("MedicalRecordFamilyDiseases");
+
+                    b.Navigation("MedicalRecordFamilyMemberRelativeTypes");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>

@@ -279,16 +279,9 @@ namespace MainService.Postgres.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Age = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Age = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -371,20 +364,20 @@ namespace MainService.Postgres.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PatientName = table.Column<string>(type: "text", nullable: true),
+                    PatientName = table.Column<string>(type: "text", nullable: false),
                     Age = table.Column<int>(type: "integer", nullable: false),
-                    Sex = table.Column<string>(type: "text", nullable: true),
-                    BirthPlace = table.Column<string>(type: "text", nullable: true),
+                    Sex = table.Column<string>(type: "text", nullable: false),
+                    BirthPlace = table.Column<string>(type: "text", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     YearsOfSchooling = table.Column<int>(type: "integer", nullable: false),
-                    HandDominance = table.Column<string>(type: "text", nullable: true),
-                    CurrentLivingSituation = table.Column<string>(type: "text", nullable: true),
-                    CurrentAddress = table.Column<string>(type: "text", nullable: true),
+                    HandDominance = table.Column<string>(type: "text", nullable: false),
+                    CurrentLivingSituation = table.Column<string>(type: "text", nullable: false),
+                    CurrentAddress = table.Column<string>(type: "text", nullable: false),
                     HomePhone = table.Column<string>(type: "text", nullable: true),
-                    MobilePhone = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
-                    AttendedAlone = table.Column<bool>(type: "boolean", nullable: false),
-                    EconomicDependence = table.Column<string>(type: "text", nullable: true),
+                    MobilePhone = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    HasCompanion = table.Column<bool>(type: "boolean", nullable: false),
+                    EconomicDependence = table.Column<string>(type: "text", nullable: false),
                     UsesGlassesOrHearingAid = table.Column<bool>(type: "boolean", nullable: false),
                     Comments = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
@@ -1338,31 +1331,6 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MedicalRecordFamilyDiseases",
-                columns: table => new
-                {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    DiseaseId = table.Column<int>(type: "integer", nullable: false),
-                    FamilyMember = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Other = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MedicalRecordFamilyDiseases", x => new { x.MedicalRecordId, x.DiseaseId });
-                    table.ForeignKey(
-                        name: "FK_MedicalRecordFamilyDiseases_Diseases_DiseaseId",
-                        column: x => x.DiseaseId,
-                        principalTable: "Diseases",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_MedicalRecordFamilyDiseases_MedicalRecords_MedicalRecordId",
-                        column: x => x.MedicalRecordId,
-                        principalTable: "MedicalRecords",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MedicalRecordFamilyMembers",
                 columns: table => new
                 {
@@ -2189,6 +2157,38 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MedicalRecordFamilyDiseases",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    DiseaseId = table.Column<int>(type: "integer", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Other = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordFamilyDiseases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_Diseases_DiseaseId",
+                        column: x => x.DiseaseId,
+                        principalTable: "Diseases",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_RelativeTypes_RelativeTypeId",
+                        column: x => x.RelativeTypeId,
+                        principalTable: "RelativeTypes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MedicalRecordFamilyMemberRelativeTypes",
                 columns: table => new
                 {
@@ -2455,17 +2455,19 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordSubstances",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
                     SubstanceId = table.Column<int>(type: "integer", nullable: false),
                     ConsumptionLevelId = table.Column<int>(type: "integer", nullable: false),
-                    StartAge = table.Column<int>(type: "integer", nullable: false),
-                    EndAge = table.Column<int>(type: "integer", nullable: false),
+                    StartAge = table.Column<int>(type: "integer", nullable: true),
+                    EndAge = table.Column<int>(type: "integer", nullable: true),
                     IsCurrent = table.Column<bool>(type: "boolean", nullable: false),
                     Other = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MedicalRecordSubstances", x => new { x.MedicalRecordId, x.SubstanceId, x.ConsumptionLevelId });
+                    table.PrimaryKey("PK_MedicalRecordSubstances", x => x.Id);
                     table.ForeignKey(
                         name: "FK_MedicalRecordSubstances_ConsumptionLevels_ConsumptionLevelId",
                         column: x => x.ConsumptionLevelId,
@@ -2641,8 +2643,7 @@ namespace MainService.Postgres.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CompanionRelativeTypes_RelativeTypeId",
                 table: "CompanionRelativeTypes",
-                column: "RelativeTypeId",
-                unique: true);
+                column: "RelativeTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorBannerPhoto_PhotoId",
@@ -2906,6 +2907,16 @@ namespace MainService.Postgres.Migrations
                 column: "DiseaseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyDiseases_MedicalRecordId",
+                table: "MedicalRecordFamilyDiseases",
+                column: "MedicalRecordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyDiseases_RelativeTypeId",
+                table: "MedicalRecordFamilyDiseases",
+                column: "RelativeTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordFamilyMemberRelativeTypes_FamilyMemberId",
                 table: "MedicalRecordFamilyMemberRelativeTypes",
                 column: "FamilyMemberId",
@@ -2914,8 +2925,7 @@ namespace MainService.Postgres.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordFamilyMemberRelativeTypes_RelativeTypeId",
                 table: "MedicalRecordFamilyMemberRelativeTypes",
-                column: "RelativeTypeId",
-                unique: true);
+                column: "RelativeTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordFamilyMembers_FamilyMemberId",
@@ -2954,6 +2964,11 @@ namespace MainService.Postgres.Migrations
                 name: "IX_MedicalRecordSubstances_ConsumptionLevelId",
                 table: "MedicalRecordSubstances",
                 column: "ConsumptionLevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordSubstances_MedicalRecordId",
+                table: "MedicalRecordSubstances",
+                column: "MedicalRecordId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalRecordSubstances_SubstanceId",

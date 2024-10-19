@@ -8,8 +8,6 @@ namespace MainService.Models.Config
     {
         public void Configure(EntityTypeBuilder<MedicalRecordSubstance> builder)
         {
-            builder.HasKey(x => new { x.MedicalRecordId, x.SubstanceId, x.ConsumptionLevelId });
-
             builder.HasOne(x => x.MedicalRecord)
                 .WithMany(x => x.MedicalRecordSubstances)
                 .HasForeignKey(x => x.MedicalRecordId)
@@ -49,8 +47,6 @@ namespace MainService.Models.Config
     {
         public void Configure(EntityTypeBuilder<MedicalRecordFamilyDisease> builder)
         {
-            builder.HasKey(x => new { x.MedicalRecordId, x.DiseaseId });
-
             builder.HasOne(x => x.MedicalRecord)
                 .WithMany(x => x.MedicalRecordFamilyDiseases)
                 .HasForeignKey(x => x.MedicalRecordId)
@@ -59,6 +55,12 @@ namespace MainService.Models.Config
             builder.HasOne(x => x.Disease)
                 .WithMany(x => x.MedicalRecordFamilyDiseases)
                 .HasForeignKey(x => x.DiseaseId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder
+                .HasOne(x => x.RelativeType)
+                .WithMany(x => x.MedicalRecordFamilyDiseases)
+                .HasForeignKey(x => x.RelativeTypeId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }
@@ -93,8 +95,8 @@ namespace MainService.Models.Config
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.RelativeType)
-                .WithOne(x => x.CompanionRelativeType)
-                .HasForeignKey<CompanionRelativeType>(x => x.RelativeTypeId)
+                .WithMany(x => x.CompanionRelativeTypes)
+                .HasForeignKey(x => x.RelativeTypeId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }
@@ -165,8 +167,8 @@ namespace MainService.Models.Config
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.RelativeType)
-                .WithOne(x => x.MedicalRecordFamilyMemberRelativeType)
-                .HasForeignKey<MedicalRecordFamilyMemberRelativeType>(x => x.RelativeTypeId)
+                .WithMany(x => x.MedicalRecordFamilyMemberRelativeTypes)
+                .HasForeignKey(x => x.RelativeTypeId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

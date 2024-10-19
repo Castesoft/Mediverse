@@ -649,7 +649,7 @@ public static class Seed
                 HomePhone = SeedData.GenerateMexicanPhoneNumber(),
                 MobilePhone = user.PhoneNumber,
                 Email = user.Email,
-                AttendedAlone = Random.Shared.Next(2) == 0,
+                HasCompanion = Random.Shared.Next(2) == 0,
                 EconomicDependence = GetRandomEconomicDependence(),
                 UsesGlassesOrHearingAid = Random.Shared.Next(2) == 0,
                 Comments = "Comentarios iniciales del paciente.",
@@ -672,23 +672,22 @@ public static class Seed
                 }
             };
 
-            for (int i = 0; i < Random.Shared.Next(1, 6); i++)
+            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
             {
+                int id = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id;
+                
                 medicalRecord.MedicalRecordFamilyMembers.Add(new()
                 {
                     FamilyMember = new()
                     {
                         Name = GetRandomName(),
                         Age = Random.Shared.Next(1, 90),
-                        MedicalRecordFamilyMemberRelativeType = new()
-                        {
-                            RelativeTypeId = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id
-                        }
+                        MedicalRecordFamilyMemberRelativeType = new(id)
                     }
                 });
             }
 
-            if (!medicalRecord.AttendedAlone)
+            if (!medicalRecord.HasCompanion)
             {
                 var randomOccupation = occupations[Random.Shared.Next(occupations.Count)];
 
@@ -698,7 +697,7 @@ public static class Seed
                     {
                         Name = GetRandomName(),
                         Age = Random.Shared.Next(18, 80),
-                        Sex = Random.Shared.Next(2) == 0 ? "Male" : "Female",
+                        Sex = Random.Shared.Next(2) == 0 ? "Masculino" : "Femenino",
                         Address = GetRandomAddress(),
                         HomePhone = SeedData.GenerateMexicanPhoneNumber(),
                         PhoneNumber = SeedData.GenerateMexicanPhoneNumber(),
@@ -717,8 +716,9 @@ public static class Seed
 
             var usedPersonalDiseaseIds = new HashSet<int>();
             var usedFamilyDiseaseIds = new HashSet<int>();
+            var usedRelativeTypeIds = new HashSet<int>();
 
-            for (int i = 0; i < Random.Shared.Next(0, 5); i++)
+            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
             {
                 if (usedPersonalDiseaseIds.Count >= diseases.Count) break;
 
@@ -737,28 +737,36 @@ public static class Seed
                 });
             }
 
-            for (int i = 0; i < Random.Shared.Next(0, 5); i++)
+            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
             {
                 if (usedFamilyDiseaseIds.Count >= diseases.Count) break;
+                if (usedRelativeTypeIds.Count >= relativeTypes.Count) break;
 
                 int diseaseId;
+                int relativeTypeId;
                 do
                 {
                     diseaseId = diseases[Random.Shared.Next(diseases.Count)].Id;
                 } while (usedFamilyDiseaseIds.Contains(diseaseId));
 
+                do
+                {
+                    relativeTypeId = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id;
+                } while (usedRelativeTypeIds.Contains(relativeTypeId));
+
                 usedFamilyDiseaseIds.Add(diseaseId);
+                usedRelativeTypeIds.Add(relativeTypeId);
                 medicalRecord.MedicalRecordFamilyDiseases.Add(new()
                 {
                     DiseaseId = diseaseId,
-                    FamilyMember = GetRandomFamilyMember(),
+                    RelativeTypeId = relativeTypeId,
                     Description = "Descripción de la enfermedad familiar."
                 });
             }
 
             var usedSubstances = new HashSet<(int SubstanceId, int ConsumptionLevelId)>();
 
-            for (int i = 0; i < Random.Shared.Next(0, 4); i++)
+            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
             {
                 if (usedSubstances.Count >= substances.Count * consumptionLevels.Count) break;
 
