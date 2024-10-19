@@ -1,0 +1,54 @@
+@if(!hasPair()) {
+  @if (!control().hidden) {
+    @switch (control().type) {
+      @case ('select') {
+        <div controlSelect3 [(control)]="control"></div>
+      }
+      @case ('selectMat') {
+        <div controlSelectMat3 [(control)]="control"></div>
+      }
+      @case ('checkbox') {
+        <div controlCheckbox3 [(control)]="control"></div>
+      }
+      @case ('slideToggle') {
+        <div controlSlide3 [(control)]="control"></div>
+      }
+      @case ('textarea') {
+        <div controlTextarea3 [(control)]="control"></div>
+      }
+      @case ('textMat') {
+        <div controlTextMat3 [(control)]="control"></div>
+      }
+      @case ('text') {
+        <div controlText3 [(control)]="control"></div>
+      }
+      @case ('numberMat') {
+        <div controlTextMat3 [(control)]="control"></div>
+      }
+      @case ('number') {
+        <div controlText3 [(control)]="control"></div>
+      }
+      @case ('date') {
+        <div controlDate3 [(control)]="control"></div>
+      }
+      @case ('dateRange') {
+        <div controlDateRange3 [(control)]="control"></div>
+      }
+      @case ('radio') {
+        <div controlRadio3 [(control)]="control"></div>
+      }
+      @case ('radioChips') {
+        <div controlChipsRadio3 [(control)]="control"></div>
+      }
+      @case ('search') {
+        <div controlSearchText3 [(control)]="control"></div>
+      }
+      @case('typeahead') {
+        <div controlTypeahead3 [(control)]="control"></div>
+      }
+    }
+  }
+  <ng-content></ng-content>
+} @else {
+  <div controlSelectGroup [(group)]="pair"></div>
+}

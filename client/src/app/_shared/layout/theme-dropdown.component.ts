@@ -87,7 +87,7 @@ export class ThemeDropdownComponent implements OnInit {
   selected = '';
 
   ngOnInit(): void {
-    this.theme.selected.subscribe({
+    this.theme.current.subscribe({
       next: theme => {
         this.selected = theme;
       }

@@ -99,3 +99,39 @@ html {
   border-top: 10px solid #00A3FF;
   z-index: 0;
 }
+
+.form-control.is-invalid {
+  padding-right: 0.75rem!important;
+}
+
+.form-control.is-valid {
+  padding-right: 0.75rem!important;
+}
+
+.was-validated .form-control:valid,
+.form-control.is-valid {
+  background-image: none!important;
+}
+
+.was-validated .form-select:valid:not([multiple]):not([size]),
+.was-validated .form-select:valid:not([multiple])[size="1"],
+.form-select.is-valid:not([multiple]):not([size]),
+.form-select.is-valid:not([multiple])[size="1"] {
+  background-image: none!important;
+}
+
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+  background-image: none!important;
+}
+
+.was-validated .form-select:invalid:not([multiple]):not([size]),
+.was-validated .form-select:invalid:not([multiple])[size="1"],
+.form-select.is-invalid:not([multiple]):not([size]),
+.form-select.is-invalid:not([multiple])[size="1"] {
+  background-image: none!important;
+}
+
+.was-validated .choices.invalid .choices__inner {
+  background-image: none!important;
+}

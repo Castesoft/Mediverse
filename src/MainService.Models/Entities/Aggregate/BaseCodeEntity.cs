@@ -31,8 +31,8 @@ namespace MainService.Models.Entities.Aggregate
 
         public BaseCodeEntity(string code, string text)
         {
-            Name = text;
             Code = code;
+            Name = text;
             Description = text;
         }
         

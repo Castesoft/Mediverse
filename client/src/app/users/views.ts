@@ -46,7 +46,7 @@ export class UserNewComponent {
             <div class="card-body pt-15">
               <div class="d-flex flex-center flex-column mb-5">
                 <div class="symbol symbol-100px symbol-circle mb-7">
-                  <app-user-profile-picture 
+                  <app-user-profile-picture
                     [firstName]="user.firstName"
                     [photoUrl]="user.photoUrl ?? ''"
                     size="lg"
@@ -152,7 +152,7 @@ export class UserNewComponent {
                 }
               } @else if (activeTab === 'clinical-history') {
                 @if (user.hasPatientInformationAccess) {
-                  <app-clinical-history-form [patientMedicalRecord]="user.medicalRecord"></app-clinical-history-form>
+                  <div clinicalHistoryForm [medicalRecord]="user.medicalRecord!"></div>
                 } @else {
                   <div class="text-center py-5">
                     <i class="ki-duotone ki-lock-2 fs-3x text-muted mb-3">
@@ -164,7 +164,7 @@ export class UserNewComponent {
                     </i>
                     <p class="fs-5 text-muted">No tienes acceso a la información de este paciente.</p>
                   </div>
-                } 
+                }
               } @else if (activeTab === 'payments') {
                 <app-payments-table [title]="'Pagos'" [payments]="user.doctorPayments!" [showTabs]="false" [view]="'inline'"></app-payments-table>
               } @else if (activeTab === 'insurances') {

@@ -1,0 +1,10 @@
+{{ group().label }}
+{{ group().required ? '*' : null }}
+@if (group().optional) {
+  @if (service.isOptional(group()) || !group().isReadonly) {
+    <span optionalSpan3></span>
+  }
+}
+@if (group().isNew) {
+  <fa-icon [icon]="icons.faCircle" class="text-info ms-1 new-page-indicator" style="font-size: 6px;"></fa-icon>
+}

@@ -10,12 +10,23 @@ import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FormGroup2 } from "src/app/_forms/form2";
 
+export class Options {
+  sex: string | null = null;
+  race: string | null = null;
+
+  constructor(init?: Partial<Options>) {
+    Object.assign(this, init);
+  }
+}
+
 export class SelectOption {
   id = 0;
   code: string = '';
   name: string = '';
   enabled: boolean = true;
   visible: boolean = true;
+  propiedad = null;
+  options: Options | null = null;
 
   constructor(init?: Partial<SelectOption>, obj?: any) {
     Object.assign(this, init);
@@ -60,6 +71,7 @@ export type InputTypes =
   | "donor"
   | "textarea"
   | "boolean"
+  | "checkbox"
   | "slideToggle"
   | "multiselect"
   | "dateRange"
@@ -67,25 +79,28 @@ export type InputTypes =
   | "chips"
   | "selectMat"
   | "select"
+  | "selectPair"
   | "numberMat"
   | "number"
   | "email"
   | "password"
   | "date"
-  | "check"
   | "time"
   | "datetime-local"
   | "month"
   | "week"
   | "url"
   | "tel"
-  | "file"
   | "search"
   | "hidden"
+  | "typeahead"
   | "select2"
   | "color"
+  | "radioChips"
   | "radio"
-  | "array";
+  | "file"
+  | "check"
+  ;
 
 export type ControlErrors = { [key: string]: string };
 
@@ -311,7 +326,7 @@ export class Control<TValue> implements IControl<TValue | null> {
   setOptions(options: SelectOption[] = [], columns: Column[] = [], isTypeahead = false): Control<TValue> {
     if (columns.length > 0) {
       this.options = columns.map(column => {
-        return { code: column.name, value: column.label, name: column.name, id: 0, enabled: true, visible: true };
+        return new SelectOption({ code: column.name, name: column.label, });
       });
       this.setValue(this.options[0] as TValue);
     } else {
@@ -415,7 +430,7 @@ export class ControlBuilder<T extends string | number | Date | SelectOption | bo
   setOptions(options: SelectOption[], columns: Column[]): ControlBuilder<T> {
     if (columns.length > 0) {
       this.options = columns.map(column => {
-        return { code: column.name, value: column.label, name: column.name, id: 0, enabled: true, visible: true };
+        return new SelectOption({ code: column.name, name: column.label, });
       });
       this.setValue(this.options[0] as T);
     } else {

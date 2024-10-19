@@ -4,8 +4,9 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FormsService } from "src/app/_services/forms.service";
 import { SelectOption } from "src/app/_forms/form";
 import { Subject } from "rxjs";
-import { FormControl2 } from "src/app/_forms/form2";
+import { FormControl2, FormGroup2 } from "src/app/_forms/form2";
 import { FormNewHelperModule } from "src/app/_forms/_new/_helper/form-new-helper.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   host: { class: "fw-semibold mb-0 w-100" },
@@ -17,19 +18,24 @@ import { FormNewHelperModule } from "src/app/_forms/_new/_helper/form-new-helper
     FormNewHelperModule,
     CommonModule,
     FormsModule,
+    MatTooltipModule
   ]
 })
 export class ControlSelect3Component implements OnDestroy {
   private ngUnsubscribe = new Subject<void>();
 
   service = inject(FormsService);
-  control = model.required<FormControl2<SelectOption>>();
+  control = model.required<FormControl2<SelectOption | null>>();
   validation = false;
+
+  root = computed<FormGroup2<any>>(() => {
+    return this.control().root as FormGroup2<any>;
+  });
 
   constructor() {
     effect(() => {
       this.subscribeToValidationMode();
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -44,10 +50,12 @@ export class ControlSelect3Component implements OnDestroy {
     });
   };
 
+
   optionChanged(option: string): void {
     const value: SelectOption = JSON.parse(option);
     const controlToUpdate = this.control();
     controlToUpdate.setValue(value);
+    controlToUpdate.markAsDirty();
     this.control.set(controlToUpdate);
   }
 }

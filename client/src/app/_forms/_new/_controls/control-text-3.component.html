@@ -4,11 +4,34 @@
       <label controlLabel3
              [(control)]="control"></label>
     }
-    <input
-      controlInput3
-      [(control)]="control"
-      [formControl]="$any(control())"
-    />
+
+    @if (control().inputGroupPrepend) {
+      <div class="input-group">
+        <span class="input-group-text">{{ control().inputGroupPrepend }}</span>
+        <input
+          controlInput3
+          [(control)]="control"
+          [formControl]="$any(control())"
+          class="form-control"
+        />
+      </div>
+    } @else if (control().inputGroupAppend) {
+      <div class="input-group">
+        <input
+          controlInput3
+          [(control)]="control"
+          [formControl]="$any(control())"
+          class="form-control"
+        />
+        <span class="input-group-text">{{ control().inputGroupAppend }}</span>
+      </div>
+    } @else {
+      <input
+        controlInput3
+        [(control)]="control"
+        [formControl]="$any(control())"
+      />
+    }
   </div>
 } @else {
   @if (control().showLabel) {
@@ -16,11 +39,33 @@
            [(control)]="control"></label>
   }
 
-  <input
-    controlInput3
-    [(control)]="control"
-    [formControl]="$any(control())"
-  />
+  @if (control().inputGroupPrepend) {
+    <div class="input-group">
+      <span class="input-group-text">{{ control().inputGroupPrepend }}</span>
+      <input
+        controlInput3
+        [(control)]="control"
+        [formControl]="$any(control())"
+        class="form-control"
+      />
+    </div>
+  } @else if (control().inputGroupAppend) {
+    <div class="input-group">
+      <input
+        controlInput3
+        [(control)]="control"
+        [formControl]="$any(control())"
+        class="form-control"
+      />
+      <span class="input-group-text">{{ control().inputGroupAppend }}</span>
+    </div>
+  } @else {
+    <input
+      controlInput3
+      [(control)]="control"
+      [formControl]="$any(control())"
+    />
+  }
 }
 
 @if (control().errors) {
@@ -31,5 +76,6 @@
   </div>
 }
 @if (control().helperText) {
-  <div helpBlock3 [(control)]="control"></div>
+  <div helpBlock3
+       [(control)]="control"></div>
 }

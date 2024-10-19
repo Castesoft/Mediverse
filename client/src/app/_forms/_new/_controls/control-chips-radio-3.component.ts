@@ -1,25 +1,29 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, effect, inject, model, output } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FormsService } from "src/app/_services/forms.service";
 import { SelectOption } from "src/app/_forms/form";
 import { FormControl2, FormGroup2 } from "src/app/_forms/form2";
 import { FormNewHelperModule } from "src/app/_forms/_new/_helper/form-new-helper.module";
 import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
 import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
-import { createId } from "@paralleldrive/cuid2";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
 
 @Component({
   host: { class: "fw-semibold mb-0 w-100" },
-  selector: "div[controlRadio3]",
-  templateUrl: "./control-radio-3.component.html",
+  selector: "div[controlChipsRadio3]",
+  templateUrl: "./control-chips-radio-3.component.html",
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormNewHelperModule, OptionalSpanComponent, NewBadgeComponent]
+  imports: [ReactiveFormsModule, CommonModule, FormNewHelperModule, OptionalSpanComponent, NewBadgeComponent,
+    CdkModule, MaterialModule, FormsModule,
+  ]
 })
-export class ControlRadio3Component {
+export class ControlChipsRadio3Component {
   service = inject(FormsService);
 
   control = model.required<FormControl2<string | number | boolean | Date | SelectOption | null>>();
+
   root = computed<FormGroup2<any>>(() => {
     return this.control().root as FormGroup2<any>;
   });
@@ -29,7 +33,6 @@ export class ControlRadio3Component {
   validation = false;
 
   selectedValue = new SelectOption();
-  guid = createId();
 
   constructor() {
     effect(() =>

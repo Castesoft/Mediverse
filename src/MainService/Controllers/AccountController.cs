@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿#nullable enable
+
+using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using CloudinaryDotNet;
@@ -15,7 +17,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
 using System.Text.Json;
-using Twilio.TwiML.Voice;
 using MainService.Core.DTOs;
 
 namespace MainService.Controllers;
@@ -1676,33 +1677,16 @@ public class AccountController(
     {
         int userId = User.GetUserId();
 
+        // #nullable disable
+
     var user = await userManager.Users
-        .Include(u => u.UserMedicalRecord)
-            .ThenInclude(umr => umr.MedicalRecord)
-                .ThenInclude(mr => mr.MedicalRecordFamilyMembers)
-                    .ThenInclude(mrfm => mrfm.FamilyMember)
-                        .ThenInclude(fm => fm.MedicalRecordFamilyMemberRelativeType)
-        .Include(u => u.UserMedicalRecord)
-            .ThenInclude(umr => umr.MedicalRecord)
-                .ThenInclude(mr => mr.MedicalRecordPersonalDiseases)
-        .Include(u => u.UserMedicalRecord)
-            .ThenInclude(umr => umr.MedicalRecord)
-                .ThenInclude(mr => mr.MedicalRecordSubstances)
-        .Include(u => u.UserMedicalRecord)
-            .ThenInclude(umr => umr.MedicalRecord)
-                .ThenInclude(mr => mr.MedicalRecordFamilyDiseases)
-        .Include(u => u.UserMedicalRecord)
-            .ThenInclude(umr => umr.MedicalRecord)
-                .ThenInclude(mr => mr.MedicalRecordCompanion)
-                    .ThenInclude(mrc => mrc.Companion)
-                        .ThenInclude(mrc => mrc.CompanionRelativeType)
-                            .ThenInclude(mrc => mrc.RelativeType)
-        .Include(u => u.UserMedicalRecord)
-            .ThenInclude(umr => umr.MedicalRecord)
-                .ThenInclude(mr => mr.MedicalRecordCompanion)
-                    .ThenInclude(mrc => mrc.Companion)
-                        .ThenInclude(mrc => mrc.CompanionOccupation)
-                            .ThenInclude(mrc => mrc.Occupation)
+        .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers)
+                    .ThenInclude(mrfm => mrfm.FamilyMember.MedicalRecordFamilyMemberRelativeType)
+        .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordPersonalDiseases)
+        .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordSubstances)
+        .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyDiseases)
+        .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType.RelativeType)
+        .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordOccupation.Occupation)
         .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1718,58 +1702,50 @@ public class AccountController(
         {
             UserId = userId,
             MedicalRecord = new () {
-                PatientName = request.Name,
-                Age = request.Age,
-                Sex = request.Sex,
-                BirthPlace = request.BirthPlace,
-                BirthDate = request.BirthDate,
-                YearsOfSchooling = request.YearsOfSchooling,
-                HandDominance = request.HandDominance,
-                CurrentLivingSituation = request.CurrentLivingSituation,
-                CurrentAddress = request.CurrentAddress,
+                PatientName = request.PatientName!,
+                Age = request.Age ?? 0,
+                Sex = request.Sex?.Code ?? string.Empty,
+                BirthPlace = string.IsNullOrEmpty(request.BirthPlace) ? string.Empty : request.BirthPlace,
+                BirthDate = request.BirthDate ?? DateTime.MinValue,
+                YearsOfSchooling = request.YearsOfSchooling ?? 0,
+                HandDominance = request.HandDominance?.Code ?? string.Empty,
+                CurrentLivingSituation = request.CurrentLivingSituation ?? string.Empty,
+                CurrentAddress = request.CurrentAddress ?? string.Empty,
                 HomePhone = request.HomePhone,
-                MobilePhone = request.MobilePhone,
-                Email = request.Email,
-                AttendedAlone = request.AttendedAlone,
-                EconomicDependence = request.EconomicDependence,
-                UsesGlassesOrHearingAid = request.UsesGlassesOrHearingAid,
+                MobilePhone = request.MobilePhone ?? string.Empty,
+                Email = request.Email ?? string.Empty,
+                AttendedAlone = request.AttendedAlone ?? false,
+                EconomicDependence = request.EconomicDependence ?? string.Empty,
+                UsesGlassesOrHearingAid = request.UsesGlassesOrHearingAid ?? false,
                 Comments = request.Comments,
 
-                MedicalRecordEducationLevel = new () {
-                    EducationLevelId = request.EducationLevel.Id
-                },
-                MedicalRecordOccupation = new () {
-                    OccupationId = request.Occupation.Id
-                },
-                MedicalRecordMaritalStatus = new () {
-                    MaritalStatusId = request.MaritalStatus.Id
-                },
-                MedicalRecordFamilyMembers = request.FamilyStructure.Select(fm => new MedicalRecordFamilyMember {
+                MedicalRecordEducationLevel = new (request?.EducationLevel?.Id ?? -1),
+                MedicalRecordOccupation = new (request?.Occupation?.Id ?? -1),
+                MedicalRecordMaritalStatus = new (request?.MaritalStatus?.Id ?? -1),
+                MedicalRecordFamilyMembers = request!.FamilyStructure.Count() > 0 ? request.FamilyStructure.Select(fm => new MedicalRecordFamilyMember {
                     FamilyMember = new () {
                         Name = fm.Name,
-                        Age = fm.Age,
-                        MedicalRecordFamilyMemberRelativeType = new () {
-                            RelativeTypeId = fm.RelativeType.Id
-                        }
+                        Age = fm.Age ?? 0,
+                        MedicalRecordFamilyMemberRelativeType = new (fm.RelativeType?.Id ?? -1),
                     }
-                }).ToList(),
-                MedicalRecordPersonalDiseases = request.PersonalMedicalHistory.Select(pd => new MedicalRecordPersonalDisease {
+                }).ToList() : [],
+                MedicalRecordPersonalDiseases = request.PersonalMedicalHistory.Count() > 0 ? request.PersonalMedicalHistory.Select(pd => new MedicalRecordPersonalDisease {
                     Description = pd.Description,
-                    DiseaseId = pd.Disease.Id
-                }).ToList(),
-                MedicalRecordSubstances = request.PersonalDrugHistory.Select(ps => new MedicalRecordSubstance {
-                    SubstanceId = ps.Substance.Id,
-                    ConsumptionLevelId = ps.ConsumptionLevel.Id,
-                    StartAge = ps.StartAge,
-                    EndAge = ps.EndAge,
-                    IsCurrent = ps.IsCurrent,
+                    DiseaseId = pd.Disease?.Id ?? -1,
+                }).ToList() : [],
+                MedicalRecordSubstances = request!.PersonalDrugHistory.Count() > 0 ? request.PersonalDrugHistory.Select(ps => new MedicalRecordSubstance {
+                    SubstanceId = ps.Substance?.Id ?? -1,
+                    ConsumptionLevelId = ps.ConsumptionLevel?.Id ?? -1,
+                    StartAge = ps.StartAge ?? 0,
+                    EndAge = ps.EndAge ?? 0,
+                    IsCurrent = ps.IsCurrent ?? false,
                     Other = ps.Other
-                }).ToList(),
-                MedicalRecordFamilyDiseases = request.FamilyMedicalHistory.Select(fd => new MedicalRecordFamilyDisease {
-                    FamilyMember = fd.RelativeType.Name,
+                }).ToList() : [],
+                MedicalRecordFamilyDiseases = request!.FamilyMedicalHistory.Count() > 0 ? request.FamilyMedicalHistory.Select(fd => new MedicalRecordFamilyDisease {
+                    FamilyMember = fd.RelativeType?.Name,
                     Description = fd.Description,
-                    DiseaseId = fd.Disease.Id
-                }).ToList(),
+                    DiseaseId = fd.Disease?.Id ?? -1,
+                }).ToList() : [],
             }
         };
 
@@ -1779,24 +1755,22 @@ public class AccountController(
             };
         }
 
-        if (request.AttendedAlone) {
-            newRecord.MedicalRecord.MedicalRecordCompanion = new () {
-                Companion = new () {
-                    Name = request.CompanionName,
-                    Age = request.CompanionAge,
-                    Sex = request.CompanionSex,
-                    Address = request.CompanionCurrentAddress,
-                    HomePhone = request.CompanionHomePhone,
-                    PhoneNumber = request.CompanionMobilePhone,
-                    Email = request.CompanionEmail,
-                    CompanionRelativeType = new () {
-                        RelativeTypeId = request.CompanionRelationship.Id
-                    },
-                    CompanionOccupation = new () {
-                        OccupationId = request.CompanionOccupation.Id
-                    }
-                }
-            };
+        if (request.AttendedAlone.HasValue && request.AttendedAlone.Value) {
+            if (request.Companion != null) {
+                            newRecord.MedicalRecord.MedicalRecordCompanion = new () {
+                                Companion = new () {
+                                    Name = request.Companion.Name ?? string.Empty,
+                                    Age = request.Companion.Age ?? 0,
+                                    Sex = request.Companion.Sex?.Code ?? string.Empty,
+                                    Address = request.Companion.Address,
+                                    HomePhone = request.Companion.HomePhone,
+                                    PhoneNumber = request.Companion.PhoneNumber,
+                                    Email = request.Companion.Email,
+                                    CompanionRelativeType = new (request?.Companion?.RelativeType?.Id ?? -1),
+                                    CompanionOccupation = new (request?.Companion?.Occupation?.Id ?? -1),
+                                }
+                            };
+            }
         }
 
         user.UserMedicalRecord = newRecord;

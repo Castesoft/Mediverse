@@ -22,8 +22,20 @@ export class ControlLabel3Component {
 
   control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
 
-  @HostBinding("class") get class() {
-    return this.control().orientation === "inline" ? "col-form-label fw-semibold  text-nowrap d-flex" : "form-label fw-semibold ";
+  class = 'col-form-label fw-semibold fs-6 text-nowrap';
+
+  @HostBinding("class") get hostClass() {
+    if (this.control().orientation === 'inline') {
+      this.class = 'col-form-label fw-semibold fs-6 text-nowrap d-flex';
+    } else {
+      this.class = 'fw-semibold fs-6 text-nowrap';
+    }
+
+    if (this.control().required) {
+      this.class += ' required';
+    }
+
+    return this.class;
   }
 
   @HostBinding("for") get for() {

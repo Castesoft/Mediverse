@@ -10,56 +10,54 @@ namespace MainService.Models.Entities
         public MedicalRecord MedicalRecord { get; set; }
     }
 
+    #nullable enable
+
     public class MedicalRecord : BaseEntity
     {
         // Identification Data
-        public string PatientName { get; set; }
+        public string PatientName { get; set; } = string.Empty;
         public int Age { get; set; }
-        public string Sex { get; set; }
-        public string BirthPlace { get; set; }
+        public string Sex { get; set; } = string.Empty;
+        public string BirthPlace { get; set; } = string.Empty;
         public DateTime BirthDate { get; set; }
-        public UserMedicalRecord UserMedicalRecord { get; set; }
-
-        public MedicalRecordEducationLevel MedicalRecordEducationLevel { get; set; }
-        
         public int YearsOfSchooling { get; set; }
-
-        public MedicalRecordOccupation MedicalRecordOccupation { get; set; }
-        
-        public string HandDominance { get; set; }
-
-        public MedicalRecordMaritalStatus MedicalRecordMaritalStatus { get; set; }
-        
-        public string CurrentLivingSituation { get; set; }
-        public string CurrentAddress { get; set; }
-        public string HomePhone { get; set; }
-        public string MobilePhone { get; set; }
-        public string Email { get; set; }
+        public string HandDominance { get; set; } = string.Empty;
+        public string CurrentLivingSituation { get; set; } = string.Empty;
+        public string CurrentAddress { get; set; } = string.Empty;
+        public string? HomePhone { get; set; } = null;
+        public string MobilePhone { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public bool AttendedAlone { get; set; }
-        public string EconomicDependence { get; set; }
+        public string EconomicDependence { get; set; } = string.Empty;
         public bool UsesGlassesOrHearingAid { get; set; }
+        public string? Comments { get; set; } = null;
 
-        public MedicalRecordColorBlindness MedicalRecordColorBlindness { get; set; }
-        
 
         public List<MedicalRecordFamilyMember> MedicalRecordFamilyMembers { get; set; } = [];
-        
-
-        public MedicalRecordCompanion MedicalRecordCompanion { get; set; }
-
-
         public List<MedicalRecordPersonalDisease> MedicalRecordPersonalDiseases { get; set; } = [];
         public List<MedicalRecordSubstance> MedicalRecordSubstances { get; set; } = [];
-
-        
         public List<MedicalRecordFamilyDisease> MedicalRecordFamilyDiseases { get; set; } = [];
 
-
-        public string Comments { get; set; }
+        public UserMedicalRecord UserMedicalRecord { get; set; } = null!;
+        public MedicalRecordEducationLevel MedicalRecordEducationLevel { get; set; } = null!;
+        public MedicalRecordOccupation MedicalRecordOccupation { get; set; } = null!;
+        public MedicalRecordMaritalStatus MedicalRecordMaritalStatus { get; set; } = null!;
+        public MedicalRecordColorBlindness MedicalRecordColorBlindness { get; set; } = null!;
+        public MedicalRecordCompanion MedicalRecordCompanion { get; set; } = null!;
     }
+
+    #nullable disable
 
     public class MedicalRecordEducationLevel
     {
+        public MedicalRecordEducationLevel() {}
+        public MedicalRecordEducationLevel(int educationLevelId) => EducationLevelId = educationLevelId;
+        public MedicalRecordEducationLevel(int educationLevelId, int medicalRecordId)
+        {
+            EducationLevelId = educationLevelId;
+            MedicalRecordId = medicalRecordId;
+        }
+        
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; }
         public int EducationLevelId { get; set; } public EducationLevel EducationLevel { get; set; }
     }
@@ -77,6 +75,14 @@ namespace MainService.Models.Entities
 
     public class MedicalRecordOccupation
     {
+        public MedicalRecordOccupation() {}
+        public MedicalRecordOccupation(int occupationId) => OccupationId = occupationId;
+        public MedicalRecordOccupation(int occupationId, int medicalRecordId)
+        {
+            OccupationId = occupationId;
+            MedicalRecordId = medicalRecordId;
+        }
+        
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; }
         public int OccupationId { get; set; } public Occupation Occupation { get; set; }
 
@@ -96,6 +102,14 @@ namespace MainService.Models.Entities
 
     public class MedicalRecordMaritalStatus
     {
+        public MedicalRecordMaritalStatus() {}
+        public MedicalRecordMaritalStatus(int maritalStatusId) => MaritalStatusId = maritalStatusId;
+        public MedicalRecordMaritalStatus(int maritalStatusId, int medicalRecordId)
+        {
+            MaritalStatusId = maritalStatusId;
+            MedicalRecordId = medicalRecordId;
+        }
+        
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; }
         public int MaritalStatusId { get; set; } public MaritalStatus MaritalStatus { get; set; }
 
@@ -153,6 +167,14 @@ namespace MainService.Models.Entities
 
     public class MedicalRecordFamilyMemberRelativeType
     {
+        public MedicalRecordFamilyMemberRelativeType() {}
+        public MedicalRecordFamilyMemberRelativeType(int relativeTypeId) => RelativeTypeId = relativeTypeId;
+        public MedicalRecordFamilyMemberRelativeType(int relativeTypeId, int familyMemberId)
+        {
+            RelativeTypeId = relativeTypeId;
+            FamilyMemberId = familyMemberId;
+        }
+        
         public int FamilyMemberId { get; set; } public FamilyMember FamilyMember { get; set; }
         public int RelativeTypeId { get; set; } public RelativeType RelativeType { get; set; }
     }
@@ -175,11 +197,27 @@ namespace MainService.Models.Entities
     }
 
     public class CompanionRelativeType {
+        public CompanionRelativeType() {}
+        public CompanionRelativeType(int relativeTypeId) => RelativeTypeId = relativeTypeId;
+        public CompanionRelativeType(int relativeTypeId, int companionId)
+        {
+            RelativeTypeId = relativeTypeId;
+            CompanionId = companionId;
+        }
+        
         public int CompanionId { get; set; } public Companion Companion { get; set; }
         public int RelativeTypeId { get; set; } public RelativeType RelativeType { get; set; }
     }
 
     public class CompanionOccupation {
+        public CompanionOccupation() {}
+        public CompanionOccupation(int occupationId) => OccupationId = occupationId;
+        public CompanionOccupation(int occupationId, int companionId)
+        {
+            OccupationId = occupationId;
+            CompanionId = companionId;
+        }
+        
         public int CompanionId { get; set; } public Companion Companion { get; set; }
         public int OccupationId { get; set; } public Occupation Occupation { get; set; }
     }

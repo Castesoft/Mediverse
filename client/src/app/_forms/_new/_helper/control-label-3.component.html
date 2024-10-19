@@ -1,6 +1,5 @@
 
 {{ control().label }}
-{{ control().required ? '*' : null }}
 @if (control().optional) {
   @if (service.isOptional(control()) || !control().isReadonly) {
     <span optionalSpan3></span>

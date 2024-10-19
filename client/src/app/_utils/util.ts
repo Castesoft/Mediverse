@@ -404,4 +404,7 @@ export function buildHttpParams(
   return params;
 }
 
+export function countLines(text: string): number {
+  return !text ? 0 : text.split(/\r\n|\r|\n/).length;
+}
 

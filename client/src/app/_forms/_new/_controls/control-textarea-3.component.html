@@ -1,16 +1,5 @@
-@if (control().showLabel) {
-  <label [for]="control().id" class="form-label fw-semibold ">
-    {{ control().label }}
-    {{ control().required ? '*' : null }}
-    @if (control().optional) {
-      @if (service.isOptional(control()) || !control().isReadonly) {
-        <span optionalSpan></span>
-      }
-    }
-    @if (control().isNew) {
-      <span newBadge></span>
-    }
-  </label>
+@if(control().showLabel) {
+  <label controlLabel3 [(control)]="control"></label>
 }
 <textarea
   [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"
@@ -23,7 +12,8 @@
       }"
   [readonly]="control().isReadonly"
   [spellcheck]="'false'"
-  class="form-control text-body "
+  [rows]="height()"
+  class="form-control form-control-solid"
 >
   </textarea>
 

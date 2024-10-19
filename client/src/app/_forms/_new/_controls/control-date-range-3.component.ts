@@ -4,6 +4,7 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { FormsService } from "src/app/_services/forms.service";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
+import { SelectOption } from "src/app/_forms/form";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { FormControl2 } from "src/app/_forms/form2";

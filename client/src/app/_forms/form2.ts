@@ -1,10 +1,50 @@
 import { AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlOptions, FormControlState, FormGroup, ValidatorFn, Validators, ɵTypedOrUntyped } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
+import { Observable } from "rxjs";
 import { ControlErrors, ControlOrientation, InputTypes, isSelectOption, SelectOption } from "src/app/_forms/form";
 import { BadRequest, ColumnOptions, DateRange, FormUse, Units } from "src/app/_models/types";
 import { Address, Person, Photo } from "src/app/_utils/person";
 
-type ControlInfo<T extends string | number | boolean | Date | DateRange | SelectOption | null> = Partial<{
+export class WrapperOptions {
+  class: string | null = null;
+  isCol: boolean | null = null;
+
+  constructor(init?: Partial<WrapperOptions>) {
+    Object.assign(this, init);
+  }
+}
+
+export class TextareaOptions {
+  height: number | null = null;
+
+  constructor(init?: Partial<TextareaOptions>) {
+    Object.assign(this, init);
+  }
+}
+
+export class SelectOptionOptions {
+  showCodeSpan = true;
+  showDisabled = true;
+
+  constructor(init?: Partial<SelectOptionOptions>) {
+    Object.assign(this, init);
+  }
+}
+
+class TypeaheadOptions {
+  field = "";
+  options: string[] = [];
+  options$: Observable<SelectOption[]> = new Observable<SelectOption[]>();
+  scrollable = 10;
+  limit = 20;
+  async = false;
+
+  constructor(init?: Partial<TypeaheadOptions>) {
+    Object.assign(this, init);
+  }
+}
+
+type ControlInfo<T extends string | number | boolean | Date | SelectOption | DateRange | null> = Partial<{
   label: string;
   name: string;
   type: InputTypes;
@@ -26,12 +66,19 @@ type ControlInfo<T extends string | number | boolean | Date | DateRange | Select
   showCodeSpan: boolean;
   validationErrors: ControlErrors;
   columnOptions: ColumnOptions;
+  inputGroupPrepend: string;
+  inputGroupAppend: string;
   unit: Units;
-  slideAlternateStyle: boolean;
+  typeahead: TypeaheadOptions;
   validators: ValidatorFn[];
+  asyncValidators: AsyncValidatorFn[];
+  textareaOptions: TextareaOptions;
+  selectOptionOptions: SelectOptionOptions;
+  wrapperOptions: WrapperOptions;
 }>;
 
-type ControlInfoMap<T> = T extends string
+type ControlInfoMap<T> =
+  T extends string
   ? ControlInfo<string>
   : T extends boolean
   ? ControlInfo<boolean>
@@ -84,7 +131,7 @@ export const ramiro = new Person({
   ]
 });
 
-type TypedControl<T> = T extends string | number | Date | DateRange | SelectOption
+type TypedControl<T> = T extends string | number | boolean | Date | SelectOption | DateRange
   ? AbstractControl<T | null, T | null>
   : T extends Array<infer U>
   ? FormArray<FormGroup<TypedForm<U>>>
@@ -93,7 +140,7 @@ type TypedControl<T> = T extends string | number | Date | DateRange | SelectOpti
   : never
 ;
 
-type TypedFormControl<T> = T extends string | number | Date | DateRange | SelectOption
+type TypedFormControl<T> = T extends string | number | boolean | Date | SelectOption | DateRange
   ? FormControl2<T | null>
   : T extends Array<infer U extends object>
   ? FormArray<FormGroup2<U>>
@@ -110,32 +157,7 @@ type TypedFormGroup<T> = {
   [K in keyof T]: TypedFormControl<T[K]>;
 };
 
-function createTypedFormGroup<T extends object>(createInstance: new (init?: Partial<T>) => T, instance?: T): FormGroup<TypedForm<T>> {
-  const formGroup = {} as { [K in keyof T]: any };
-
-  const model = instance || new createInstance();
-
-  Object.keys(model).forEach((key) => {
-    const typedKey = key as keyof T;
-    const value = model[typedKey];
-
-    if (Array.isArray(value)) {
-      formGroup[typedKey] = new FormArray(
-        value.map(item => createTypedFormGroup(item.constructor as new (init?: Partial<T[keyof T]>) => T[keyof T], item))
-      );
-    } else if (value instanceof SelectOption || value instanceof Date || typeof value === 'string' || typeof value === 'number') {
-      formGroup[typedKey] = new FormControl2(value as any | null);
-    } else if (typeof value === 'object' && value !== null) {
-      formGroup[typedKey] = createTypedFormGroup<typeof value>(value.constructor as new (init?: Partial<T[keyof T]>) => any, value);
-    } else {
-      formGroup[typedKey] = new FormControl2(null);
-    }
-  });
-
-  return new FormGroup(formGroup) as FormGroup<TypedForm<T>>;
-}
-
-function createTypedFormGroup2<T extends object>(
+export function createTypedFormGroup2<T extends object>(
   createInstance: new (init?: Partial<T>) => T,
   instance?: T,
   info?: FormInfo<T>,
@@ -168,19 +190,28 @@ function createTypedFormGroup2<T extends object>(
       typeof value === 'boolean' ||
       value === null
     ) {
-      const controlInfo = info && info[typedKey] as ControlInfo<any>;
-      const validators = controlInfo?.validators || [];
-      formGroup[typedKey] = new FormControl2(value as any | null, validators);
+      // console.log('FORM CONTROL 2 value', typedKey, value);
+      formGroup[typedKey] = new FormControl2(value as any | null);
 
       // Apply FormInfo settings if provided
-      if (controlInfo) {
+      if (info && info[typedKey]) {
         const control = formGroup[typedKey] as FormControl2<any>;
-        Object.assign(control, controlInfo);
+        const controlInfo = info[typedKey] as ControlInfo<any>;
+        Object.assign(control, controlInfo); // Assign settings from FormInfo
 
         // Apply the global orientation if set in init
         if (init?.orientation) {
           control.orientation = init.orientation;
         }
+
+        if (controlInfo.validators) {
+          control.setValidators(controlInfo.validators);
+        }
+
+        if (controlInfo.asyncValidators) {
+          control.setAsyncValidators(controlInfo.asyncValidators);
+        }
+
         if (init?.use === 'detail') {
           control.use = 'detail';
           control.disable();
@@ -210,9 +241,18 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   submitted: boolean = false;
   validation: boolean = true;
   orientation?: ControlOrientation = "inline";
-  submittable: boolean = true;
   use: FormUse = "detail";
-  show: boolean = false;
+  show = false;
+  label: string | null = null;
+  showLabel = true;
+  isNew = false;
+  optional = false;
+  required = false;
+  isReadonly = false;
+  helperText: string | null = null;
+  name: string | null = null;
+  hidden: boolean = false;
+  type?: InputTypes;
 
   override controls!: TypedFormGroup<T>;
 
@@ -234,6 +274,9 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   setUse(use: FormUse): this {
     this.use = use;
     this.updateControlsUse(use);
+    if (use === 'detail') {
+      this.disable();
+    }
     return this;
   }
 
@@ -255,9 +298,45 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
     });
   }
 
+  onSuccess(item: T) {
+    this.setUse('detail');
+    this.patchValue(item as any);
+    this.updateValueAndValidity();
+    this.error = undefined;
+    this.markAsPristine();
+  }
+
+  get submittable(): boolean {
+    return this.validation && this.valid;
+  }
+
+  setSubmitted() {
+    this.submitted = true;
+    this.markAllAsTouched();
+  }
+
+  hideAllLabels() {
+    Object.values(this.controls).forEach(control => {
+      if (control instanceof FormControl2) {
+        control.showLabel = false;
+      } else if (control instanceof FormGroup2) {
+        control.hideAllLabels();
+      } else if (control instanceof FormArray) {
+        control.controls.forEach(ctrl => {
+          if (ctrl instanceof FormGroup2) {
+            ctrl.hideAllLabels();
+          } else if (ctrl instanceof FormControl2) {
+            ctrl.showLabel = false;
+          }
+        });
+      }
+    });
+  }
+
+
 }
 
-export class FormControl2<T extends string | number | boolean | Date | DateRange | SelectOption | null> extends FormControl<T | null> {
+export class FormControl2<T extends string | number | boolean | Date | SelectOption | DateRange | null> extends FormControl<T | null> {
   id: string = createId();
   label: string = '';
   name: string = '';
@@ -275,12 +354,15 @@ export class FormControl2<T extends string | number | boolean | Date | DateRange
   isNew = false;
   orientation?: ControlOrientation = "block";
   validation = false;
-  isGroupSpan = false;
-  useOptionAsValue = false;
   showCodeSpan = true;
   validationErrors: ControlErrors = {};
+  inputGroupPrepend = '';
+  inputGroupAppend = '';
   isDisabled = false;
-  slideAlternateStyle = false;
+  typeahead = new TypeaheadOptions();
+  textareaOptions = new TextareaOptions();
+  selectOptionOptions = new SelectOptionOptions();
+  wrapperOptions = new WrapperOptions();
 
   constructor(
     value: FormControlState<T> | T,
@@ -291,8 +373,6 @@ export class FormControl2<T extends string | number | boolean | Date | DateRange
     super(value, validatorOrOpts, asyncValidator);
 
     Object.assign(this, init);
-
-
   }
 
   setValidation(validation: boolean): this {
@@ -311,6 +391,11 @@ export class FormControl2<T extends string | number | boolean | Date | DateRange
     } else {
       this.enable({ emitEvent: false });
     }
+    return this;
+  }
+
+  setSelectOptions(options: SelectOption[]): this {
+    this.selectOptions = options;
     return this;
   }
 }
