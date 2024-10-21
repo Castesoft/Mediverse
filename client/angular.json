@@ -120,7 +120,6 @@
         "serve": {
           "options": {
             "port": 4400,
-            "disableHostCheck": true,
             "sslCert": "ssl/localhost.pem",
             "sslKey": "ssl/localhost-key.pem",
             "ssl": true

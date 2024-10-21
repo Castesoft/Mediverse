@@ -9,7 +9,7 @@
     </div>
     <div class="doctor-info">
       <p class="fw-bold">
-        @if (accountService.current()?.sex === 'Masculino') {Dr.} @else {Dra.}
+        @if (accountService.current()?.sex?.code === 'Masculino') {Dr.} @else {Dra.}
         {{ accountService.current()?.firstName }} {{ accountService.current()?.lastName }}
       </p>
       <p>{{ accountService.current()?.mainSpecialty }}</p>
@@ -24,14 +24,14 @@
           <div class="d-flex align-items-center">
             <div class="d-flex flex-grow-1 justify-content-start align-items-center">
               <a class="symbol symbol-50px symbol-circle">
-                <app-user-profile-picture 
+                <app-user-profile-picture
                   [firstName]="patient!.firstName"
                   [photoUrl]="patient!.photoUrl ?? ''"
                 ></app-user-profile-picture>
               </a>
               <div class="ms-4 w-100">
                 <p class="mb-0 fs-6">
-                  
+
                   <b class="mb-0 me-4">{{ patient!.fullName }}</b>
                   {{ patient!.sex }} <span class="text-gray-300">|</span> {{ patient!.age }} años
                 </p>
@@ -53,7 +53,7 @@
           </div>
         }
       </div>
-  
+
       <div class="prescription-date">
         <p class="mb-0">
           @if (use() === 'create') {
@@ -92,9 +92,9 @@
     <div class="doctor-info">
       @if (use() === 'create') {
         <div class="d-flex align-items-center">
-          <p class="mb-0 me-2">{{ selectedClinic?.street }} {{ selectedClinic?.exteriorNumber }}, {{ selectedClinic?.neighborhood }}</p> 
+          <p class="mb-0 me-2">{{ selectedClinic?.street }} {{ selectedClinic?.exteriorNumber }}, {{ selectedClinic?.neighborhood }}</p>
           @if (!this.initialValues() || !this.initialValues()!.clinicId) {
-            <i class="ki-duotone ki-pencil fs-6 cursor-pointer" 
+            <i class="ki-duotone ki-pencil fs-6 cursor-pointer"
                (click)="openClinicSelector()"
                [tooltip]="'Cambiar clinica'">
               <span class="path1"></span>
@@ -104,9 +104,9 @@
         </div>
       } @else {
         @if (item()?.clinic) {
-          <p class="mb-0 me-2">{{ item()?.clinic!.street }} {{ item()?.clinic!.exteriorNumber }}, {{ item()?.clinic!.neighborhood }}</p> 
+          <p class="mb-0 me-2">{{ item()?.clinic!.street }} {{ item()?.clinic!.exteriorNumber }}, {{ item()?.clinic!.neighborhood }}</p>
         } @else {
-          <p class="mb-0 me-2">Clinica no especificada</p> 
+          <p class="mb-0 me-2">Clinica no especificada</p>
         }
       }
       <p class="mb-0">

@@ -1,5 +1,5 @@
-import { Component, inject, output } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, effect, inject, output } from '@angular/core';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { ControlCheckListComponent } from 'src/app/_forms/control-check-list.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
@@ -7,58 +7,37 @@ import { PaymentMethodType } from 'src/app/_models/paymentMethodType';
 import { Specialty } from 'src/app/_models/specialty';
 import { AccountService } from 'src/app/_services/account.service';
 import { LayoutModule } from 'src/app/_shared/layout.module';
-import { UserProfilePictureComponent } from "../../../../users/components/user-profile-picture/user-profile-picture.component";
-import { Account } from 'src/app/_models/account';
+import { Account, AccountForm } from 'src/app/_models/account';
+import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import { FormControl2 } from 'src/app/_forms/form2';
+import { BadRequest } from 'src/app/_models/types';
+import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
 
 @Component({
   selector: 'app-card-profile-details',
   standalone: true,
-  imports: [LayoutModule, ReactiveFormsModule, ControlSelectComponent, InputControlComponent, ControlCheckListComponent, UserProfilePictureComponent],
+  imports: [LayoutModule, UserProfilePictureComponent, FormNewModule, ],
   templateUrl: './card-profile-details.component.html',
   styleUrl: './card-profile-details.component.scss'
 })
 export class CardProfileDetailsComponent {
-  private fb = inject(FormBuilder);
   accountService = inject(AccountService);
   onSelectSection = output<string>();
 
-  submitted = false;
   specialties: Specialty[] = [];
   paymentMethodTypes: PaymentMethodType[] = [];
 
-  profileDetailsForm = this.fb.group({
-    FirstName: [''],
-    LastName: [''],
-    PhoneNumber: [''],
-    LicenseNumber: [''],
-    SpecialtyLicense: [''],
-    SpecialtyId: [''],
-    // subspecialtyId: [''],
-    file: [''],
-    AcceptedPaymentMethods: [''],
-    RequireAnticipatedCardPayments: [false],
-    RemoveAvatar: [false]
-  });
+  form = new AccountForm();
+
   photoFile: any;
-  photoUrl: any;
   certificateFile: any;
 
-  get userForProfilePicture() {
-    return {
-      ...this.accountService.current(),
-      photoUrl: this.profileDetailsForm.get('RemoveAvatar')?.value ? null : this.accountService.current()?.photoUrl
-    } as Account;
-  }
-
-  ngOnInit() {
-    this.accountService.getFormFields().subscribe({
-      next: (response) => {
-        this.specialties = response.specialties;
-        this.paymentMethodTypes = response.paymentMethodTypes;
+  constructor() {
+    effect(() => {
+      if (this.accountService.current() !== null) {
+        this.form.patchValue(new Account({...this.accountService.current()}) as any);
       }
-    })
-
-    this.setInitialFormValues();
+    });
   }
 
   selectSection(section: string) {
@@ -71,7 +50,7 @@ export class CardProfileDetailsComponent {
 
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.photoUrl = e.target.result;
+        this.form.controls.photoUrl.patchValue(e.target.result);
       };
       reader.readAsDataURL(this.photoFile);
 
@@ -85,74 +64,73 @@ export class CardProfileDetailsComponent {
     }
   }
 
-  setInitialFormValues() {
-    this.profileDetailsForm.get('FirstName')?.setValue(this.accountService.current()?.firstName!);
-    this.profileDetailsForm.get('LastName')?.setValue(this.accountService.current()?.lastName!);
-    this.profileDetailsForm.get('PhoneNumber')?.setValue(this.accountService.current()?.phoneNumber!);
-    this.profileDetailsForm.get('SpecialtyId')?.setValue(this.accountService.current()?.specialtyId!.toString()!);
-    this.profileDetailsForm.get('AcceptedPaymentMethods')?.setValue(this.accountService.current()?.paymentMethodTypes!.map(x => x.id).join(',')!);
-    this.profileDetailsForm.get('RequireAnticipatedCardPayments')?.setValue(this.accountService.current()?.requireAnticipatedCardPayments!);
-  }
-
   onCancel() {
-    this.setInitialFormValues();
-    this.photoUrl = undefined;
+    if (this.accountService.current() !== null) {
+      this.form.patchValue(new Account({...this.accountService.current()}) as any);
+    }
+    this.form.controls.photoUrl.patchValue(null);
     this.photoFile = undefined;
     this.certificateFile = undefined;
-    this.profileDetailsForm.get('RemoveAvatar')?.setValue(false);
-    this.submitted = false;
+    const removeAvatarControl = this.form.controls.removeAvatar as FormControl2<boolean>;
+    removeAvatarControl.patchValue(false);
+    this.form.submitted = false;
   }
 
   removeAvatar() {
-    this.photoUrl = undefined;
+    this.form.controls.photoUrl.patchValue(null);
     this.photoFile = undefined;
-    this.profileDetailsForm.get('RemoveAvatar')?.setValue(true);
+    const removeAvatarControl = this.form.controls.removeAvatar as FormControl2<boolean>;
+    removeAvatarControl.patchValue(true);
   }
 
   showRequireAnticipatedCardPaymentsField() {
-    if (this.profileDetailsForm.get('AcceptedPaymentMethods') === null) return false;
-    const paymentMethods = this.profileDetailsForm.get('AcceptedPaymentMethods')!.value as string;
-    return paymentMethods.split(',').includes('1') || paymentMethods.split(',').includes('2');
-  }
-
-  setValueAnticipatedCardPayments(e: any) {
-    if (e.target.checked) {
-      this.profileDetailsForm.get('RequireAnticipatedCardPayments')?.setValue(true);
-    } else {
-      this.profileDetailsForm.get('RequireAnticipatedCardPayments')?.setValue(false);
-    }
+    // if (this.profileDetailsForm.get('AcceptedPaymentMethods') === null) return false;
+    // const paymentMethods = this.profileDetailsForm.get('AcceptedPaymentMethods')!.value as string;
+    // return paymentMethods.split(',').includes('1') || paymentMethods.split(',').includes('2');
   }
 
   onSubmit() {
-    if (this.profileDetailsForm.get('SpecialtyId')?.value !== this.accountService.current()?.specialtyId!.toString()) {
-      this.profileDetailsForm.get('file')?.setValidators([Validators.required]);
-      this.profileDetailsForm.get('file')?.updateValueAndValidity();
+    // if (this.profileDetailsForm.get('SpecialtyId')?.value !== this.accountService.current()?.specialtyId!.toString()) {
+    //   this.profileDetailsForm.get('file')?.setValidators([Validators.required]);
+    //   this.profileDetailsForm.get('file')?.updateValueAndValidity();
+    // } else {
+    //   this.profileDetailsForm.get('file')?.clearValidators();
+    //   this.profileDetailsForm.get('file')?.updateValueAndValidity();
+    // }
+    if (this.form.controls.specialty.value !== this.accountService.current()?.specialty!.toString()) {
+      this.form.controls.photoFile.setValidators([Validators.required]);
+      this.form.controls.photoFile.updateValueAndValidity();
     } else {
-      this.profileDetailsForm.get('file')?.clearValidators();
-      this.profileDetailsForm.get('file')?.updateValueAndValidity();
+      this.form.controls.photoFile.clearValidators();
+      this.form.controls.photoFile.updateValueAndValidity();
     }
 
-    this.submitted = true;
+    this.form.submitted = true;
 
-    if (this.profileDetailsForm.invalid) {
+    if (this.form.invalid) {
       return;
     }
 
-    const jsonData = JSON.stringify(this.profileDetailsForm.value);
+    const jsonData: string = JSON.stringify(this.form.value);
 
     const formData = new FormData();
 
     formData.append('json', jsonData);
-    if (this.photoFile) {
-      formData.append('photo', this.photoFile);
+    if (this.form.controls.photoFile.value) {
+      formData.append('photo', this.form.controls.photoFile.value);
     }
-    if (this.certificateFile) {
-      formData.append('file', this.certificateFile);
+    if (this.form.controls.certificateFile.value) {
+      formData.append('file', this.form.controls.certificateFile.value);
     }
 
     this.accountService.updateAccountDetails(formData).subscribe({
-      next: () => {
-        this.submitted = false;
+      next: response => {
+        this.form.submitted = false;
+        this.form.markAsPristine();
+        this.form.updateValueAndValidity();
+      },
+      error: (error: BadRequest) => {
+        this.form.error = error;
       }
     });
   }

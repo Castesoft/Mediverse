@@ -87,6 +87,7 @@ public class MappingProfiles : Profile
         CreateMap<ProductCreateDto, Product>();
 
         CreateMap<AppUser, AccountDto>()
+            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.GetSex()))
             .ForMember(dest => dest.MedicalLicenses, opt => opt.MapFrom(src => src.UserMedicalLicenses))
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
@@ -102,7 +103,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.WorkSchedules, opt => opt.MapFrom(src => src.DoctorWorkSchedules.Select(x => x.WorkSchedule)))
             .ForMember(dest => dest.WorkScheduleSettings, opt => opt.MapFrom(src => src.DoctorWorkScheduleSettings.WorkScheduleSettings))
             .ForMember(dest => dest.DoctorClinics, opt => opt.MapFrom(src => src.DoctorClinics.Select(x => x.Clinic)))
-            .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors.Select(x => x.Doctor)));
+            .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors.Select(x => x.Doctor)))
+        ;
 
         CreateMap<WorkSchedule, WorkScheduleDto>();
         CreateMap<WorkScheduleSettings, WorkScheduleSettingsDto>();

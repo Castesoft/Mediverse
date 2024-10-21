@@ -1,4 +1,4 @@
-using MainService.Models.Entities;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.DTOs.User;
 public class AccountDto
@@ -9,7 +9,7 @@ public class AccountDto
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string FullName { get; set; }
-    public string Sex { get; set; }
+    public OptionDto Sex { get; set; }
     public string Username { get; set; }
     public string PhoneNumber { get; set; }
     public string PhoneNumberCountryCode { get; set; }

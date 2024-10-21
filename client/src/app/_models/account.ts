@@ -1,105 +1,114 @@
 import { createId } from "@paralleldrive/cuid2";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Role } from "src/app/_models/types";
-import { PaymentMethodType } from './paymentMethodType';
-import { WorkSchedule } from './workSchedule';
+import { PaymentMethodType, paymentMethodTypeInfo } from './paymentMethodType';
+import { WorkSchedule, workScheduleInfo } from './workSchedule';
+import { FormGroup2, FormInfo } from "src/app/_forms/form2";
+import { MedicalLicense, medicalLicenseInfo } from "src/app/_models/medicalLicense";
+import { SelectOption } from "src/app/_forms/form";
+import { Doctor, doctorInfo } from "src/app/_models/doctor";
+import { WorkScheduleSettings, workScheduleSettingsInfo } from "src/app/_models/workScheduleSettings";
+import { DoctorClinic } from "src/app/_models/doctorClinic";
 
 export class Account {
-  id!: number;
-  username!: string;
-  firstName!: string;
-  lastName!: string;
-  fullName!: string;
-  email!: string;
-  isEmailVerified = false;
-  phoneNumber?: string;
-  phoneNumberCountryCode?: string;
-  isPhoneNumberVerified = false;
-  sex!: string;
-  token!: string;
-  photoUrl?: string;
-  bannerUrl?: string;
-  mainSpecialty!: string;
-  linkedEmail!: boolean;
-  linkedGoogle!: boolean;
-  twoFactorEnabled!: boolean;
-  specialtyId!: string;
+  id: number | null = null;
+  acceptedPaymentMethods: SelectOption[] = [];
+  username: string | null = null;
+  firstName: string | null = null;
+  lastName: string | null = null;
+  fullName: string | null = null;
+  email: string | null = null;
+  isEmailVerified: boolean = false;
+  phoneNumber: string | null = null;
+  phoneNumberCountryCode: string | null = null;
+  isPhoneNumberVerified: boolean = false;
+  sex: SelectOption | null = null;
+  token: string | null = null;
+  photoUrl: string | null = null;
+  bannerUrl: string | null = null;
+  mainSpecialty: string | null = null;
+  linkedEmail: boolean = false;
+  linkedGoogle: boolean = false;
+  twoFactorEnabled: boolean = false;
+  specialty: SelectOption | null = null;
   paymentMethodTypes: PaymentMethodType[] = [];
-  medicalLicenses?: MedicalLicense[];
-  requireAnticipatedCardPayments!: boolean;
-  workSchedules: WorkSchedule[] = [];
-  workScheduleSettings?: WorkScheduleSettings;
+  medicalLicenses: MedicalLicense[] = [];
+  requireAnticipatedCardPayments: boolean = false;
+  workSchedules: WorkSchedule[] = [] = [];;
+  workScheduleSettings: WorkScheduleSettings = new WorkScheduleSettings();
   doctorClinics: DoctorClinic[] = [];
   sharedDoctors: Doctor[] = [];
-  country!: string;
-  state!: string;
-  city!: string;
-  address!: string;
-  dateOfBirth?: Date;
-  createdAt = new Date();
+  country: string | null = null;
+  state: string | null = null;
+  city: string | null = null;
+  address: string | null = null;
+  dateOfBirth: Date | null = null;
+  createdAt: Date | null = null;
 
-  requiresTwoFactor?: boolean;
+  requiresTwoFactor: boolean = false;
+  removeAvatar: boolean = false;
 
   roles: Role[] = [];
   permissions: string[] = [];
+  photoFile: any;
+  certificateFile: any;
+
+  licenseNumber: string | null = null;
+  specialtyLicense: string | null = null;
+
+  constructor(init?: Partial<Account>) {
+    Object.assign(this, init);
+  }
 }
 
-export interface Doctor {
-  id: number;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  createdAt: Date;
-  lastActive: Date;
-  dateOfBirth: Date;
-  email: string;
-  username: string;
-  sex: string;
-  phoneNumber: string;
-  photoUrl: string;
-  age: number;
-  specialty: string;
-  accessGranted: Date;
-}
+export const accountInfo: FormInfo<Account> = {
+  certificateFile: { label: 'Cédula/Certificación', type: 'file' },
+  licenseNumber: { label: 'Cédula Profesional', type: 'text' },
+  photoFile: { label: 'Archivo de foto', type: 'file' },
+  specialtyLicense: { label: 'Cédula de Especialidad', type: 'text' },
+  acceptedPaymentMethods: { label: 'Métodos de pago aceptados', type: 'select' },
+  removeAvatar: { label: 'Eliminar avatar', type: 'checkbox' },
+  address: { label: 'Dirección', type: 'text' },
+  bannerUrl: { label: 'Banner URL', type: 'text' },
+  city: { label: 'Ciudad', type: 'text' },
+  country: { label: 'País', type: 'text' },
+  createdAt: { label: 'Creado en', type: 'date' },
+  dateOfBirth: { label: 'Fecha de nacimiento', type: 'date' },
+  doctorClinics: {},
+  email: { label: 'Email', type: 'text' },
+  firstName: { label: 'Nombre', type: 'text' },
+  fullName: { label: 'Nombre completo', type: 'text' },
+  id: { label: 'ID', type: 'number' },
+  isEmailVerified: { label: 'Email verificado', type: 'checkbox' },
+  isPhoneNumberVerified: { label: 'Teléfono verificado', type: 'checkbox' },
+  lastName: { label: 'Apellido', type: 'text' },
+  linkedEmail: { label: 'Email vinculado', type: 'checkbox' },
+  linkedGoogle: { label: 'Google vinculado', type: 'checkbox' },
+  mainSpecialty: { label: 'Especialidad principal', type: 'text' },
+  medicalLicenses: medicalLicenseInfo,
+  paymentMethodTypes: paymentMethodTypeInfo,
+  permissions: {  },
+  phoneNumber: { label: 'Teléfono', type: 'text' },
+  phoneNumberCountryCode: { label: 'Código de país de teléfono', type: 'text' },
+  photoUrl: { label: 'URL de foto', type: 'text' },
+  requireAnticipatedCardPayments: { label: 'Requiere pagos anticipados con tarjeta', type: 'checkbox' },
+  requiresTwoFactor: { label: 'Requiere autenticación de dos factores', type: 'checkbox' },
+  roles: { },
+  sex: { label: 'Sexo', type: 'select' },
+  sharedDoctors: doctorInfo,
+  specialty: { label: 'Especialidad', type: 'select' },
+  state: { label: 'Estado', type: 'text' },
+  token: { label: 'Token', type: 'text' },
+  twoFactorEnabled: { label: 'Dos factores habilitados', type: 'checkbox' },
+  username: { label: 'Nombre de usuario', type: 'text' },
+  workSchedules: workScheduleInfo,
+  workScheduleSettings: workScheduleSettingsInfo,
+} as FormInfo<Account>;
 
-export interface DoctorClinic {
-  id: number;
-  isMain: boolean;
-  street: string;
-  neighborhood: string;
-  exteriorNumber: string;
-  interiorNumber: string;
-  city: string;
-  state: string;
-  country: string;
-  zipcode: string;
-  latitude: number;
-  longitude: number;
-  logoUrl: string;
-}
-
-export interface MedicalLicense {
-  document: Document;
-  isMain: boolean;
-  licenseNumber: string;
-  specialtyLicense: string;
-  specialtyId: number;
-  specialtyName: string;
-}
-
-export interface Document {
-  url: string;
-  publicId: string;
-  size: number;
-  name: string;
-  description: string;
-  id: number;
-  createdAt: Date;
-}
-export class WorkScheduleSettings {
-  startTime?: string;
-  endTime?: string;
-  minutesPerBlock?: number;
+export class AccountForm extends FormGroup2<Account> {
+  constructor() {
+    super(Account, new Account(), accountInfo);
+  }
 }
 
 export const genders = [

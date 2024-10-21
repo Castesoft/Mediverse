@@ -10,6 +10,23 @@ import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FormGroup2 } from "src/app/_forms/form2";
 
+export function isSelectOption(value: any): value is SelectOption {
+  return (
+    value &&
+    typeof value === 'object' &&
+    'id' in value &&
+    typeof value.id === 'number' &&
+    'code' in value &&
+    typeof value.code === 'string' &&
+    'name' in value &&
+    typeof value.name === 'string' &&
+    'enabled' in value &&
+    typeof value.enabled === 'boolean' &&
+    'visible' in value &&
+    typeof value.visible === 'boolean'
+  );
+}
+
 export class Options {
   sex: string | null = null;
   race: string | null = null;
@@ -45,23 +62,6 @@ export class SelectOption {
       this.name = obj.name;
     }
   }
-}
-
-export function isSelectOption(value: any): value is SelectOption {
-  return (
-    value &&
-    typeof value === 'object' &&
-    'id' in value &&
-    typeof value.id === 'number' &&
-    'code' in value &&
-    typeof value.code === 'string' &&
-    'name' in value &&
-    typeof value.name === 'string' &&
-    'enabled' in value &&
-    typeof value.enabled === 'boolean' &&
-    'visible' in value &&
-    typeof value.visible === 'boolean'
-  );
 }
 
 export type InputTypes =

@@ -158,7 +158,7 @@
         controlCheckList
         formControlName="AcceptedPaymentMethods"
         [label]="'Métodos de Pago Aceptados'"
-        [options]="paymentMethodTypes"
+        [options]="$any(paymentMethodTypes)"
         [submitted]="submitted()"
         [errors]="{
             required: 'Selecciona al menos un método de pago.'

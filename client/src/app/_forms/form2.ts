@@ -92,6 +92,8 @@ type ControlInfoMap<T> =
   ? ControlInfo<DateRange>
   : T extends SelectOption
   ? ControlInfo<SelectOption>
+  : T extends Array<SelectOption>
+  ? ControlInfo<SelectOption>
   : T extends Array<any>
   ? { [K in keyof T[0]]: ControlInfoMap<T[0][K]> }
   : T extends object
@@ -140,7 +142,7 @@ type TypedControl<T> = T extends string | number | boolean | Date | SelectOption
   : never
 ;
 
-type TypedFormControl<T> = T extends string | number | boolean | Date | SelectOption | DateRange
+type TypedFormControl<T> = T extends string | number | boolean | Date | SelectOption | DateRange | SelectOption[]
   ? FormControl2<T | null>
   : T extends Array<infer U extends object>
   ? FormArray<FormGroup2<U>>
@@ -336,7 +338,7 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
 
 }
 
-export class FormControl2<T extends string | number | boolean | Date | SelectOption | DateRange | null> extends FormControl<T | null> {
+export class FormControl2<T extends string | number | boolean | Date | SelectOption | SelectOption[] | DateRange | null> extends FormControl<T | null> {
   id: string = createId();
   label: string = '';
   name: string = '';

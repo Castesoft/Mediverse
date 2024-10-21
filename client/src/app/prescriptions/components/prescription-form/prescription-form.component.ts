@@ -26,10 +26,10 @@ import { ControlTextareaComponent } from 'src/app/_forms/control-textarea.compon
 import { TabDirective, TabsetComponent } from "ngx-bootstrap/tabs";
 import { CommonModule } from '@angular/common';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
-import { DoctorClinic } from 'src/app/_models/account';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ClinicSelectorModalComponent } from '../clinic-selector-modal/clinic-selector-modal.component';
+import { DoctorClinic } from 'src/app/_models/doctorClinic';
 
 @Component({
   selector: 'app-prescription-form',

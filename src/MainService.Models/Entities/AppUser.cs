@@ -1,3 +1,4 @@
+using MainService.Models.Entities.Aggregate;
 using Microsoft.AspNetCore.Identity;
 
 namespace MainService.Models.Entities;
@@ -83,4 +84,12 @@ public class AppUser : IdentityUser<int>
     public List<DoctorPhone> DoctorPhones { get; set; } = [];
     public List<DoctorLink> DoctorLinks { get; set; } = [];
     public List<DoctorClinic> DoctorClinics { get; set; } = [];
+
+    public OptionDto GetSex() =>
+            Sex switch
+            {
+                "Masculino" => new(1, "Masculino", "Masculino"),
+                "Femenino" => new(2, "Femenino", "Hembra"),
+                _ => new(3, "unknown", "Desconocido"),
+            };
 }

@@ -2,19 +2,18 @@
     <div cardHeader>
       <div cardTitle [title]="'Detalles de perfil'"></div>
     </div>
-    <form [formGroup]="profileDetailsForm" (ngSubmit)="onSubmit()">
+    <form (ngSubmit)="onSubmit()">
       <div cardBody>
         <div class="row mb-6">
           <label class="col-lg-4 col-form-label fw-semibold fs-6">Avatar</label>
           <div class="col-lg-8">
             <div class="image-input image-input-outline" style="background-image: url('media/svg/avatars/blank.svg')">
               <div class=" w-125px h-125px" >
-                @if (photoUrl) {
-                  <img [src]="photoUrl" class="mw-100 mh-100 rounded" alt="photo" />
+                @if (form.controls.photoUrl.value !== null) {
+                  <img [src]="form.controls.photoUrl.value" class="mw-100 mh-100 rounded" alt="photo" />
                 } @else {
                   <app-user-profile-picture
-                    [firstName]="userForProfilePicture.firstName"
-                    [photoUrl]="userForProfilePicture.photoUrl ?? ''"
+                    [(account)]="accountService.current"
                     shape="square" size="md2"
                   ></app-user-profile-picture>
                 }
@@ -45,147 +44,31 @@
           </div>
         </div>
 
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-semibold fs-6"
-            >Nombre completo</label
-          >
-          <div class="col-lg-8">
-            <div class="row">
-              <div class="col-lg-6 fv-row fv-plugins-icon-container">
-                <div
-                  class="fv-row fv-plugins-icon-container"
-                  inputControl
-                  formControlName="FirstName"
-                  type="text"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                  [errors]="{
-                      required: 'Los nombres son requeridos.'
-                  }"
-                ></div>
-                <div
-                  class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
-                ></div>
-              </div>
-              <div class="col-lg-6 fv-row fv-plugins-icon-container">
-                <div
-                  class="fv-row fv-plugins-icon-container"
-                  inputControl
-                  formControlName="LastName"
-                  type="text"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                  [errors]="{
-                      required: 'Los apellidos son requeridos.'
-                  }"
-                ></div>
-                <div
-                  class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
-                ></div>
-              </div>
-            </div>
-          </div>
+        <div controlsRow3 [grid]="2">
+          <div formBuilder3 [controls]="[
+            form.controls.firstName,
+            form.controls.lastName,
+          ]"></div>
         </div>
 
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-semibold fs-6">
-            <span class="">Teléfono de contacto</span>
-          </label>
-          <div class="col-lg-8 fv-row fv-plugins-icon-container">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="PhoneNumber"
-                type="tel"
-                [placeholder]="''"
-                [submitted]="submitted"
-                [errors]="{
-                    required: 'El teléfono es requerido.'
-                }"
-              ></div>
-            <div
-              class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
-            ></div>
-          </div>
+        <div controlsRow3 [grid]="2">
+          <div formBuilder3 [controls]="[
+            form.controls.phoneNumber,
+          ]"></div>
         </div>
 
         @if (accountService.hasRole(['Doctor'])) {
-          <div class="row mb-6">
-            <label class="col-lg-4 col-form-label fw-semibold fs-6">
-              <span class="">Cédula profesional</span>
-            </label>
-            <div class="col-lg-8 fv-row fv-plugins-icon-container">
-              <div
-                  class="fv-row fv-plugins-icon-container"
-                  inputControl
-                  formControlName="LicenseNumber"
-                  type="text"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                ></div>
-              <div
-                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
-              ></div>
-            </div>
-          </div>
-          <div class="row mb-6">
-            <label class="col-lg-4 col-form-label fw-semibold fs-6">
-              <span class="">Cédula de especialidad</span>
-            </label>
-            <div class="col-lg-8 fv-row fv-plugins-icon-container">
-              <div
-                  class="fv-row fv-plugins-icon-container"
-                  inputControl
-                  formControlName="SpecialtyLicense"
-                  type="text"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                ></div>
-              <div
-                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"
-              ></div>
-            </div>
-          </div>
-
-          <div class="row mb-6">
-            <label class="col-lg-4 col-form-label fw-semibold fs-6"
-              >Especialidad</label
-            >
-            <div class="col-lg-8 fv-row fv-plugins-icon-container">
-              <div
-                  class="fv-row fv-plugins-icon-container"
-                  controlSelect
-                  formControlName="SpecialtyId"
-                  [options]="specialties"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                  [errors]="{
-                      required: 'La especialidad es requerida.'
-                  }"
-                ></div>
-            </div>
+          <div controlsRow3 [grid]="1">
+            <div formBuilder3 [controls]="[
+              form.controls.licenseNumber,
+              form.controls.specialtyLicense,
+              form.controls.specialty,
+              form.controls.acceptedPaymentMethods,
+              form.controls.requireAnticipatedCardPayments,
+            ]"></div>
           </div>
 
           <!-- <div class="row mb-6">
-            <label class="col-lg-4 col-form-label fw-semibold fs-6"
-              >Subespecialidad</label
-            >
-            <div class="col-lg-8 fv-row fv-plugins-icon-container">
-              <div
-                  class="fv-row fv-plugins-icon-container"
-                  controlSelect
-                  formControlName="subspecialtyId"
-                  [options]="['Subespecialidad1', 'Subespecialidad2', 'Subespecialidad3']"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                  [errors]="{
-                      required: 'La subespecialidad es requerida.'
-                  }"
-                ></div>
-            </div>
-          </div> -->
-
-          <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-semibold fs-6"
               >Cédula/Certificación</label
             >
@@ -203,7 +86,7 @@
                   (onChange)="onFileChange($event)"
                 ></div>
             </div>
-          </div>
+          </div> -->
 
           <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-semibold fs-6"
@@ -220,7 +103,7 @@
                     required: 'Selecciona al menos un método de pago.'
                 }"
               ></div>
-              @if (showRequireAnticipatedCardPaymentsField()) {
+              <!-- @if (showRequireAnticipatedCardPaymentsField()) {
                 <div class="d-flex flex-stack mt-5 align-items-center">
                   <div class="me-5">
                       <div class="fs-6 fw-semibold">Requerir pago anticipado para citas con tarjeta de crédito/débito</div>
@@ -229,7 +112,7 @@
                       <input class="form-check-input" type="checkbox" [checked]="accountService.current()!.requireAnticipatedCardPayments" (change)="setValueAnticipatedCardPayments($event)" />
                   </label>
                 </div>
-              }
+              } -->
             </div>
           </div>
         }

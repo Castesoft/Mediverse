@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
 import { Account } from 'src/app/_models/account';
-import { User } from 'src/app/_models/user';
 import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
@@ -14,8 +13,8 @@ import { UtilsService } from 'src/app/_services/utils.service';
 export class UserProfilePictureComponent {
   utilsService = inject(UtilsService);
 
-  photoUrl = input<string>('');
-  firstName = input<string>('');
+  account = model.required<Account | null>();
+
   shape = input<'circle' | 'square'>('circle');
   size = input<'sm' | 'md' | 'md2' | 'lg'>('sm');
   showOnline = input<boolean>(false);

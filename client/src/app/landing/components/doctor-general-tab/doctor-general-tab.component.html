@@ -69,13 +69,15 @@
                     </span>
                 }
                 @for (paymentMethod of doctor()?.paymentMethods; track $index) {
-                    <span class="badge bg-light-info text-info fs-6 py-2 px-3">
+                    @if(paymentMethod.name !== null) {
+                      <span class="badge bg-light-info text-info fs-6 py-2 px-3">
                         <i [class]="getPaymentIcon(paymentMethod.name)" class="fs-5 me-1">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                         {{paymentMethod.name}}
                     </span>
+                    }
                 }
             </div>
         </div>

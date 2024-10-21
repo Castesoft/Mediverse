@@ -1733,7 +1733,7 @@ public class AccountController(
         if (request.Occupation != null) itemToCreate.MedicalRecordOccupation = new(request.Occupation.Id);
         if (request.MaritalStatus != null) itemToCreate.MedicalRecordMaritalStatus = new(request.MaritalStatus.Id);
 
-        if (request.HasCompanion.HasValue && request.HasCompanion.Value == false && request?.Companion == null)
+        if (request.HasCompanion.HasValue && request.HasCompanion.Value == true && request?.Companion == null)
         return BadRequest("Si el paciente asiste solo, debe proporcionar información del acompañante.");
 
         if (request?.Companion != null && request.HasCompanion.HasValue && request.HasCompanion.Value == true) {
@@ -1752,24 +1752,57 @@ public class AccountController(
             itemToCreate.MedicalRecordCompanion = new() { Companion = companion };
         }
 
-        if (request?.FamilyMembers.Count() > 0) {
-            itemToCreate.MedicalRecordFamilyMembers = request.FamilyMembers.Select(fm => new MedicalRecordFamilyMember {
-                FamilyMember = new() {
-                    Name = fm.Name,
-                    Age = fm.Age ?? 0,
-                    MedicalRecordFamilyMemberRelativeType = new(fm.RelativeType?.Id ?? -1),
-                }
-            }).ToList();
+        if (
+            request?.FamilyMembers.Count() > 0 && 
+            request.FamilyMembers[0].Name != null &&
+            request.FamilyMembers[0].Age != null &&
+            request.FamilyMembers[0].RelativeType != null
+        ) {
+
+        List<MedicalRecordFamilyMember> medicalRecordFamilyMembers = [];
+        for (int i = 0; i < request.FamilyMembers.Count(); i++) {
+                MedicalRecordUpdateFamilyMemberDto? fm = request.FamilyMembers[i];
+                if (fm == null) continue;
+
+                MedicalRecordFamilyMember medicalRecordFamilyMemberToCreate = new() { FamilyMember = new() };
+
+                if (!string.IsNullOrEmpty(fm.Name)) medicalRecordFamilyMemberToCreate.FamilyMember.Name = fm.Name;
+                if (fm.Age.HasValue) medicalRecordFamilyMemberToCreate.FamilyMember.Age = fm.Age.Value;
+                if (fm.RelativeType?.Id != null) medicalRecordFamilyMemberToCreate.FamilyMember.MedicalRecordFamilyMemberRelativeType = new(fm.RelativeType.Id);
+
+                medicalRecordFamilyMembers.Add(medicalRecordFamilyMemberToCreate);
+            }
+
+            itemToCreate.MedicalRecordFamilyMembers = medicalRecordFamilyMembers;
         }
 
-        if (request?.PersonalMedicalHistory.Count() > 0) {
-            itemToCreate.MedicalRecordPersonalDiseases = request.PersonalMedicalHistory.Select(pd => new MedicalRecordPersonalDisease {
-                Description = pd.Description,
-                DiseaseId = pd.Disease?.Id ?? -1,
-            }).ToList();
+        if (
+            request?.PersonalMedicalHistory.Count() > 0 && 
+            request.PersonalMedicalHistory[0].Disease != null
+        ) {
+
+            List<MedicalRecordPersonalDisease> medicalRecordPersonalDiseases = new();
+            for (int i = 0; i < request.PersonalMedicalHistory.Count(); i++) {
+                MedicalRecordUpdatePersonalDiseaseDto? pd = request.PersonalMedicalHistory[i];
+                if (pd == null) continue;
+
+                MedicalRecordPersonalDisease medicalRecordPersonalDiseaseToCreate = new();
+
+                if (!string.IsNullOrEmpty(pd.Description)) medicalRecordPersonalDiseaseToCreate.Description = pd.Description;
+                if (pd.Disease?.Id != null) medicalRecordPersonalDiseaseToCreate.DiseaseId = pd.Disease.Id;
+
+                medicalRecordPersonalDiseases.Add(medicalRecordPersonalDiseaseToCreate);
+            }
+
+            itemToCreate.MedicalRecordPersonalDiseases = medicalRecordPersonalDiseases;
         }
 
-        if (request?.PersonalDrugHistory.Count() > 0) {
+
+        if (
+            request?.PersonalDrugHistory.Count() > 0 &&
+            request.PersonalDrugHistory[0].Substance != null &&
+            request.PersonalDrugHistory[0].ConsumptionLevel != null
+        ) {
 
             List<MedicalRecordSubstance> medicalRecordSubstances = [];
             for(int i = 0; i < request.PersonalDrugHistory.Count(); i++) {
@@ -1789,6 +1822,28 @@ public class AccountController(
             }
 
             itemToCreate.MedicalRecordSubstances = medicalRecordSubstances;
+        }
+
+        if (
+            request?.FamilyMedicalHistory.Count() > 0 &&
+            request.FamilyMedicalHistory[0].Disease != null &&
+            request.FamilyMedicalHistory[0].RelativeType != null
+        ) {
+
+            List<MedicalRecordFamilyDisease> medicalRecordFamilyDiseases = [];
+            for (int i = 0; i < request.FamilyMedicalHistory.Count(); i++) {
+                MedicalRecordUpdateFamilyDiseaseDto? fd = request.FamilyMedicalHistory[i];
+                if (fd == null) continue;
+
+                MedicalRecordFamilyDisease medicalRecordFamilyDiseaseToCreate = new();
+
+                if (fd.Disease != null) medicalRecordFamilyDiseaseToCreate.DiseaseId = fd.Disease.Id;
+                if (fd.RelativeType != null) medicalRecordFamilyDiseaseToCreate.RelativeTypeId = fd.RelativeType.Id;
+
+                medicalRecordFamilyDiseases.Add(medicalRecordFamilyDiseaseToCreate);
+            }
+
+            itemToCreate.MedicalRecordFamilyDiseases = medicalRecordFamilyDiseases;
         }
 
         user.UserMedicalRecord = new UserMedicalRecord();
