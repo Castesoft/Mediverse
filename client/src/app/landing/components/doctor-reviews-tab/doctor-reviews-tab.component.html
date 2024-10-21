@@ -15,15 +15,14 @@
                 <div class="d-flex flex-column py-6 doctor-search-result">
                     <div class="d-flex gap-3">
                         <app-user-profile-picture
-                            [firstName]="review.userName"
-                            [photoUrl]="review.userPhotoUrl"
+                            [account]="review.account"
                             size="sm"
                         ></app-user-profile-picture>
                         <div class="d-flex flex-column justify-content-center">
-                            <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{review.userName}}</a>
+                            <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{review.account.username}}</a>
                             <div class="d-flex align-items-center">
                                 <div class="me-2">
-                                    @for (star of convertToStars(review.rating); track $index) {
+                                    @for (star of convertToStars(review.rating!); track $index) {
                                         <i class="ki-duotone ki-star fs-4" [class.text-gray-500]="star === 0" [class.text-warning]="star === 1">
                                             <span class="path1"></span>
                                             <span class="path2"></span>

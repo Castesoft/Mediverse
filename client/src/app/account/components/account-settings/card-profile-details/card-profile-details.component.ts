@@ -97,7 +97,7 @@ export class CardProfileDetailsComponent {
     //   this.profileDetailsForm.get('file')?.clearValidators();
     //   this.profileDetailsForm.get('file')?.updateValueAndValidity();
     // }
-    if (this.form.controls.specialty.value !== this.accountService.current()?.specialty!.toString()) {
+    if (this.form.controls.specialty.value?.id !== this.accountService.current()?.specialty?.id) {
       this.form.controls.photoFile.setValidators([Validators.required]);
       this.form.controls.photoFile.updateValueAndValidity();
     } else {

@@ -47,8 +47,7 @@ export class UserNewComponent {
               <div class="d-flex flex-center flex-column mb-5">
                 <div class="symbol symbol-100px symbol-circle mb-7">
                   <app-user-profile-picture
-                    [firstName]="user.firstName"
-                    [photoUrl]="user.photoUrl ?? ''"
+                    [(account)]="accountService.current"
                     size="lg"
                   ></app-user-profile-picture>
                 </div>

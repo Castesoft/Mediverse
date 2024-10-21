@@ -5,60 +5,80 @@ import { PaymentMethodType } from './paymentMethodType';
 import { MedicalInsuranceCompany } from './medicalInsuranceCompany';
 import { Service } from './service';
 import { Address } from '../addresses/addresses.config';
+import { Account } from 'src/app/_models/account';
 
-export interface DoctorSearchResults {
-    doctors: DoctorSearchResult[];
-    latitude: number;
-    longitude: number;
+export class DoctorSearchResults {
+  doctors: DoctorSearchResult[] = [];
+  latitude: number | null = null;
+  longitude: number | null = null;
+
+  constructor(init?: Partial<DoctorSearchResults>) {
+    Object.assign(this, init);
+  }
 }
 
-export interface DoctorSearchResult {
-    id: number;
-    firstName: string;
-    lastName: string;
-    title: any;
-    specialties: Specialty[];
-    addresses: Address[];
-    paymentMethods: PaymentMethodType[];
-    requireAnticipatedCardPayments: boolean;
-    services: Service[];
-    medicalInsuranceCompanies: MedicalInsuranceCompany[];
-    doctorAvailabilities: DoctorAvailability[];
-    reviews: DoctorReview[];
-    photoUrl: string;
-    email: string;
-    phoneNumber: string;
-    hasPatientInformationAccess: boolean;
+export class DoctorSearchResult {
+  id: number | null = null;
+  firstName: string | null = null;
+  lastName: string | null = null;
+  title: any;
+  specialties: Specialty[] = [];
+  addresses: Address[] = [];
+  paymentMethods: PaymentMethodType[] = [];
+  requireAnticipatedCardPayments: boolean = false;
+  services: Service[] = [];
+  medicalInsuranceCompanies: MedicalInsuranceCompany[] = [];
+  doctorAvailabilities: DoctorAvailability[] = [];
+  reviews: DoctorReview[] = [];
+  photoUrl: string | null = null;
+  email: string | null = null;
+  phoneNumber: string | null = null;
+  hasPatientInformationAccess: boolean = false;
+
+  constructor(init?: Partial<DoctorSearchResult>) {
+    Object.assign(this, init);
+  }
 }
 
-export interface DoctorReview {
-    rating: number;
-    comment: string;
-    userName: string;
-    userPhotoUrl: string;
-    createdAt: Date;
+export class DoctorReview {
+  rating: number | null = null;
+  comment: string | null = null;
+  createdAt: Date | null = null;
+  account: Account = new Account();
+
+  constructor(init?: Partial<DoctorReview>) {
+    Object.assign(this, init);
+  }
 }
 
-export interface DoctorAvailability {
-    day: string;
-    dayNumber: number;
-    month: string;
-    monthNumber: number;
-    year: number;
-    availability: DoctorAvailabilityTime[];
+export class DoctorAvailability {
+  day: string | null = null;
+  dayNumber: number | null = null;
+  month: string | null = null;
+  monthNumber: number | null = null;
+  year: number | null = null;
+  availability: DoctorAvailabilityTime[] = [];
+
+  constructor(init?: Partial<DoctorAvailability>) {
+    Object.assign(this, init);
+  }
 }
 
-interface DoctorAvailabilityTime {
-    start: string;
-    end: string;
-    available: boolean;
+class DoctorAvailabilityTime {
+  start: string | null = null;
+  end: string | null = null;
+  available: boolean = false;
+
+  constructor(init?: Partial<DoctorAvailabilityTime>) {
+    Object.assign(this, init);
+  }
 }
 
 export class DoctorSearchResultParams {
     pageNumber = 1;
     pageSize = 5;
-    specialty?: string;
-    location?: string;
+    specialty?: string | null = null;
+    location?: string | null = null;
 
     constructor(specialty: string, location: string) {
         this.specialty = specialty;

@@ -1,4 +1,4 @@
-import {Component, inject, input, model, OnInit} from "@angular/core";
+import {Component, effect, inject, input, model, OnInit, signal} from "@angular/core";
 import {BootstrapModule} from "../_shared/bootstrap.module";
 import {DatePipe} from "@angular/common";
 import {User} from "../_models/user";
@@ -6,6 +6,7 @@ import {UsersService} from "../_services/users.service";
 import {Subject, takeUntil} from "rxjs";
 import { UserProfilePictureComponent } from "../users/components/user-profile-picture/user-profile-picture.component";
 import { Router } from '@angular/router';
+import { Account } from "src/app/_models/account";
 
 @Component({
   selector: 'div[patientSummaryCard]',
@@ -26,8 +27,20 @@ export class PatientSummaryCardComponent implements OnInit {
   item = model.required<User>();
   headerTitle = input<string>();
 
+  account = signal<Account | null>(null);
+
   isDetailsCollapsed = true;
   photoUrl = 'https://i.pravatar.cc/300';
+
+  constructor() {
+    effect(() => {
+      this.account.set(new Account({
+        id: this.item().id,
+        firstName: this.item().firstName,
+        photoUrl: this.item().photoUrl,
+      }));
+    })
+  }
 
   ngOnInit(): void {
     this.subscribeToSelectedPatient(this.key());

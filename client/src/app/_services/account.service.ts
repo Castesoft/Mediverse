@@ -561,7 +561,7 @@ export class AccountService {
       .post<Account>(`${this.baseUrl}phone-verification`, body)
       .pipe(
         map(response => {
-          localStorage.setItem('token', response.token);
+          response.token && localStorage.setItem('token', response.token);
           this.setCurrentUser(response);
           return response;
         })

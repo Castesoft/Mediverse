@@ -181,7 +181,8 @@
                   <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
                       <div class="me-3">
-                        <app-user-profile-picture [firstName]="nurse.firstName" [photoUrl]="nurse.photoUrl || ''"></app-user-profile-picture>
+                        <app-user-profile-picture [account]="$any(nurse)">
+                        </app-user-profile-picture>
                       </div>
                       <div>
                         <h5 class="card-title mb-1">{{ nurse.fullName }}</h5>

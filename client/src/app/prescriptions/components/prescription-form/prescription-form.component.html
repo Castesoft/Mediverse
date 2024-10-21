@@ -25,8 +25,7 @@
             <div class="d-flex flex-grow-1 justify-content-start align-items-center">
               <a class="symbol symbol-50px symbol-circle">
                 <app-user-profile-picture
-                  [firstName]="patient!.firstName"
-                  [photoUrl]="patient!.photoUrl ?? ''"
+                  [account]="$any(patient)"
                 ></app-user-profile-picture>
               </a>
               <div class="ms-4 w-100">

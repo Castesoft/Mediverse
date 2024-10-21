@@ -27,9 +27,8 @@
       <div class="d-flex" [ngClass]="{'flex-column align-items-center': orientation() === 'vertical'}">
         <div class="symbol symbol-150px" [ngClass]="{'mb-5': orientation() === 'vertical', 'me-5': orientation() === 'horizontal'}">
           <span class="symbol-label bg-light-danger">
-            <app-user-profile-picture 
-              [firstName]="item().patient?.firstName ?? ''"
-              [photoUrl]="item().patient?.photoUrl ?? ''"
+            <app-user-profile-picture
+              [account]="$any(item().patient)"
               [shape]="'square'"
               [size]="'lg'"
             ></app-user-profile-picture>

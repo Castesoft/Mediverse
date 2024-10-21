@@ -6,9 +6,9 @@
       <div class="d-flex align-items-start flex-wrap justify-content-between">
         <div class="d-flex flex-wrap">
           <div class="symbol symbol-125px mb-7 me-7 position-relative">
-            <app-user-profile-picture 
-              [firstName]="accountService.current()!.firstName"
-              [photoUrl]="accountService.current()!.photoUrl ?? ''" shape="square" size="md"
+            <app-user-profile-picture
+              [(account)]="accountService.current"
+              shape="square" size="md"
             ></app-user-profile-picture>
           </div>
           <div class="d-flex flex-column">

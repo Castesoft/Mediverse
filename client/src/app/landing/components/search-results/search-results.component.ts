@@ -89,7 +89,7 @@ export class SearchResultsComponent implements OnInit {
       ...this.searchService.searchResultsParams(),
       pageNumber: page
     });
-    
+
     // Update query params with the new page number
     this.router.navigate([], {
       relativeTo: this.route,
@@ -124,15 +124,15 @@ export class SearchResultsComponent implements OnInit {
 
     // Reset page number to 1 when performing a new search
     this.pageNumber = 1;
-    
+
     // Update query params, including the page number
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { 
-        specialty, 
+      queryParams: {
+        specialty,
         location,
         locationName,
-        pageNumber: this.pageNumber 
+        pageNumber: this.pageNumber
       },
       queryParamsHandling: 'merge'
     });
@@ -284,8 +284,8 @@ export class SearchResultsComponent implements OnInit {
           </div>
         ` : `
           <div class="symbol symbol-circle symbol-60px min-w-60px doctor-map-marker" style="cursor: pointer;">
-            <div class="symbol-label fw-semibold text-primary fs-2x bg-light-${this.utilsService.getBootstrapClass(doctor.firstName)} text-${this.utilsService.getBootstrapClass(doctor.firstName)}">
-              ${doctor.firstName[0]}
+            <div class="symbol-label fw-semibold text-primary fs-2x bg-light-${this.utilsService.getBootstrapClass(doctor.firstName!)} text-${this.utilsService.getBootstrapClass(doctor.firstName!)}">
+              ${doctor.firstName![0]}
             </div>
           </div>
         `);

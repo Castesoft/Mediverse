@@ -1,10 +1,11 @@
 import { NgClass } from '@angular/common';
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, effect, inject, input, model, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
 import { User } from 'src/app/_models/user';
 import { UsersService } from 'src/app/_services/users.service';
 import { UserProfilePictureComponent } from './user-profile-picture/user-profile-picture.component';
+import { Account } from 'src/app/_models/account';
 
 @Component({
   selector: 'td[userHasAccount]',
@@ -45,9 +46,8 @@ export class UserTableSexCellComponent {
     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
       <a [routerLink]="[routerLink]">
         <div class="symbol-label">
-          <app-user-profile-picture 
-            [firstName]="user().firstName"
-            [photoUrl]="user().photoUrl ?? ''"
+          <app-user-profile-picture
+          [(account)]="account"
           ></app-user-profile-picture>
         </div>
       </a>
@@ -68,10 +68,22 @@ export class UserTableSexCellComponent {
 export class UserTableCellComponent implements OnInit {
   service = inject(UsersService);
 
-  user = input.required<User>();
+  user = model.required<User>();
   role = input.required<Role>();
 
   routerLink?: string;
+
+  account = signal<Account | null>(null);
+
+  constructor() {
+    effect(() => {
+      this.account.set(new Account({
+        id: this.user().id,
+        firstName: this.user().firstName,
+        photoUrl: this.user().photoUrl,
+      }));
+    })
+  }
 
   ngOnInit(): void {
     this.routerLink = `${

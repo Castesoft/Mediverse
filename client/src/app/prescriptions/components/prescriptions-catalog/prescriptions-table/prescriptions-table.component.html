@@ -60,9 +60,8 @@ tableHeader
         <div class="symbol symbol-circle symbol-50px overflow-hidden me-3 flex-shrink-0">
           <a>
             <div class="symbol-label">
-              <app-user-profile-picture 
-                [firstName]="item.patient?.firstName ?? ''"
-                [photoUrl]="item.patient?.photoUrl ?? ''"
+              <app-user-profile-picture
+                [account]="$any(item.patient)"
               ></app-user-profile-picture>
             </div>
           </a>
@@ -83,29 +82,29 @@ tableHeader
 
       <td class="text-end">
         <div class="d-flex justify-content-end">
-          <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+          <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
              [routerLink]="[service.naming.catalogRoute,item.id]"
              tooltip="Ver detalles"
              (click)="$event.stopPropagation()">
             <i class="ki-duotone ki-eye fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
           </a>
-          <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+          <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
              [routerLink]="[service.naming.catalogRoute, item.id, 'edit']"
              tooltip="Editar"
              (click)="$event.stopPropagation()">
             <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i>
           </a>
-          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                   (click)="deleteItem(item); $event.stopPropagation()"
                   tooltip="Eliminar">
             <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
           </button>
-          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                   tooltip="Descargar"
                   (click)="downloadPrescription(item); $event.stopPropagation()">
             <i class="ki-duotone ki-cloud-download fs-2"><span class="path1"></span><span class="path2"></span></i>
           </button>
-          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" 
+          <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
                   tooltip="Imprimir"
                   (click)="printPrescription(item); $event.stopPropagation()">
             <i class="ki-duotone ki-printer fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>

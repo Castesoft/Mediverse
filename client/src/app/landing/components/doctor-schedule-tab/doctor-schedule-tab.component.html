@@ -2,10 +2,10 @@
     <ul class="nav nav-pills d-flex flex-stack flex-nowrap scroll-x pb-2">
         @for (scheduleDay of schedule; track $index) {
             <li class="nav-item me-1">
-                <a class="nav-link btn d-flex flex-column flex-center rounded-pill min-w-45px me-2 py-4 px-3 text-gray-900 text-active-white btn-active-primary" 
+                <a class="nav-link btn d-flex flex-column flex-center rounded-pill min-w-45px me-2 py-4 px-3 text-gray-900 text-active-white btn-active-primary"
                     [class.active]="selectedDay === scheduleDay"
                     (click)="selectDay(scheduleDay)">
-                    <span class="opacity-50 fs-7 fw-semibold">{{$index === 0 ? 'Hoy' : scheduleDay.day.substring(0,3)}}</span>
+                    <span class="opacity-50 fs-7 fw-semibold">{{$index === 0 ? 'Hoy' : scheduleDay.day?.substring(0,3)}}</span>
                     <span class="fs-6 fw-bold">{{scheduleDay.dayNumber}}</span>
                 </a>
             </li>
@@ -30,7 +30,7 @@
                                 <a class="fs-5 fw-bold text-gray-800 text-hover-primary mb-2" >{{ day.available ? 'Disponible' : 'Ocupado' }}</a>
                             </div>
                             <button
-                                class="btn btn-bg-light btn-active-color-primary btn-sm" 
+                                class="btn btn-bg-light btn-active-color-primary btn-sm"
                                 [disabled]="!day.available"
                                 (click)="scheduleAppointment(selectedDay, day)"
                             >Agendar</button>

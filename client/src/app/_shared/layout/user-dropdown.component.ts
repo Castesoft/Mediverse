@@ -12,9 +12,8 @@ import { UserProfilePictureComponent } from "../../users/components/user-profile
     @if (accountService.current()) {
 
       <div class="cursor-pointer symbol symbol-35px symbol-lg-35px" dropdownToggle tabindex="0">
-        <app-user-profile-picture 
-          [firstName]="accountService.current()!.firstName"
-          [photoUrl]="accountService.current()!.photoUrl ?? ''"
+        <app-user-profile-picture
+          [(account)]="accountService.current"
         ></app-user-profile-picture>
       </div>
       <div
@@ -23,9 +22,8 @@ import { UserProfilePictureComponent } from "../../users/components/user-profile
         <div class="menu-item px-3">
           <div class="menu-content d-flex align-items-center px-3">
             <div class="symbol symbol-50px me-5">
-              <app-user-profile-picture 
-                [firstName]="accountService.current()!.firstName"
-                [photoUrl]="accountService.current()!.photoUrl ?? ''"
+              <app-user-profile-picture
+                [(account)]="accountService.current"
               ></app-user-profile-picture>
             </div>
             <div class="d-flex flex-column">

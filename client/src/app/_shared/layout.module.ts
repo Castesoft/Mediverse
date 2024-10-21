@@ -89,7 +89,7 @@ export class FooterComponent {}
   selector: 'div[symbol]',
   template: `
     @if(account().photoUrl){<img [src]="account().photoUrl" alt="image">}
-    @else {<span symbolLabel [label]="account().firstName"></span>}
+    @else if(account().firstName) {<span symbolLabel [label]="account().firstName!"></span>}
     <div onlineBadge></div>
   `,
   standalone: true,

@@ -12,7 +12,7 @@ import { AccountService } from 'src/app/_services/account.service';
 })
 export class AccountSchedulesComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
-  
+
   startTime = '08:00';
   endTime = '18:00';
   minutesPerBlock = 60;
@@ -60,7 +60,7 @@ export class AccountSchedulesComponent implements OnInit, OnDestroy {
   setWorkSchedules() {
     const workSchedules = this.accountService.current()!.workSchedules;
     for (const workSchedule of workSchedules) {
-      const block = `${workSchedule.startTime.split(':')[0]}:${workSchedule.startTime.split(':')[1]}-${workSchedule.endTime.split(':')[0]}:${workSchedule.endTime.split(':')[1]}-${workSchedule.dayOfWeek}`;
+      const block = `${workSchedule.startTime?.split(':')[0]}:${workSchedule.startTime?.split(':')[1]}-${workSchedule.endTime?.split(':')[0]}:${workSchedule.endTime?.split(':')[1]}-${workSchedule.dayOfWeek}`;
       this.selectedBlocks.add(block);
     }
   }
@@ -78,7 +78,7 @@ export class AccountSchedulesComponent implements OnInit, OnDestroy {
     while (time < this.endTime) {
       const startTime = time;
       const endTime = this.addMinutes(time, this.minutesPerBlock);
-      
+
       if (endTime <= this.endTime) {
         timeSlots.push(`${startTime}-${endTime}-${dayIndex}`);
         timeSlotsPerDay.push(`${startTime}-${endTime}`);

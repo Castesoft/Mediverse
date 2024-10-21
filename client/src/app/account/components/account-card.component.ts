@@ -49,9 +49,8 @@ import { AccountService } from 'src/app/_services/account.service';
           }
           <div class="me-7 mb-3 pt-9 ps-9 position-relative min-h-lg-200px min-w-lg-200px min-h-175px min-w-175px">
             <div class="symbol border border-3 border-white">
-              <app-user-profile-picture 
-                [firstName]="account().firstName"
-                [photoUrl]="account().photoUrl ?? ''"
+              <app-user-profile-picture
+                [(account)]="accountService.current"
                 shape="square" size="lg" [showOnline]=true
               ></app-user-profile-picture>
             </div>

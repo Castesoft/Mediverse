@@ -21,8 +21,7 @@
     <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
         <div class="d-flex gap-3 align-items-center">
             <app-user-profile-picture
-                [firstName]="doctor()?.firstName ?? ''"
-                [photoUrl]="doctor()?.photoUrl ?? ''"
+              [account]="$any(doctor())"
                 size="md"
             ></app-user-profile-picture>
             <div class="d-flex flex-column gap-2">
@@ -81,7 +80,7 @@
 
 @if (isScheduling) {
     <div [class]="!isMobile() ? 'schedule-modal' : 'schedule-modal-mobile'">
-        <app-doctor-schedule 
+        <app-doctor-schedule
             [isMobile]="isMobile()"
             (onClose)="onCloseDoctorSchedule($event)"
             [doctor]="doctor()"

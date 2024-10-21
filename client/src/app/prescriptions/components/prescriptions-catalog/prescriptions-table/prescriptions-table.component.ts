@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject, input, OnDestroy, output } from "@angular/core";
+import { Component, OnInit, Input, inject, input, OnDestroy, output, signal, effect } from "@angular/core";
 import { CatalogMode, Role } from "src/app/_models/types";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -20,6 +20,8 @@ import { PrescriptionFormComponent } from '../../prescription-form/prescription-
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { Account } from "src/app/_models/account";
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_prescriptions', },
@@ -46,12 +48,11 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
   devMode = false;
   params!: PrescriptionParams;
 
+  account = signal<Account | null>(null);
+
   subscriptions: Subscription[] = [];
 
-  cuid: string;
-  constructor(guid: GuidService) {
-    this.cuid = guid.gen();
-  }
+  cuid: string = createId();
 
   ngOnInit(): void {
     const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
@@ -85,7 +86,7 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
     await new Promise(resolve => setTimeout(resolve, 400));
 
     const prescriptionElement = document.getElementById(`prescription-form-${item.id}`);
-    
+
     if (prescriptionElement) {
       const options = {
         scale: 3,
@@ -97,14 +98,14 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
       };
 
       const canvas = await html2canvas(prescriptionElement, options);
-      
+
       const pdfWidth = 297;
       const pdfHeight = 210;
       const pdf = new jsPDF('l', 'mm', [pdfWidth, pdfHeight]);
 
       const imgData = canvas.toDataURL('image/png');
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
-      
+
       pdf.save(`${item.patient!.fullName} - ${item.createdAt}.pdf`);
     } else {
       console.error('Prescription form element not found');
@@ -117,7 +118,7 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
     await new Promise(resolve => setTimeout(resolve, 400));
 
     const prescriptionElement = document.getElementById(`prescription-form-${item.id}`);
-    
+
     if (prescriptionElement) {
       const options = {
         scale: 3,
@@ -149,7 +150,7 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
         `);
         printWindow.document.close();
         printWindow.focus();
-        
+
         printWindow.onload = () => {
           printWindow.print();
           printWindow.onafterprint = () => {
