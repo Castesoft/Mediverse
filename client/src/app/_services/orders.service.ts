@@ -24,20 +24,14 @@ export class OrdersService {
 
   baseUrl = `${environment.apiUrl}orders/`;
 
-  naming: NamingSubject = {
-    singular: "pedido",
-    plural: "pedidos",
-    pluralTitlecase: "Pedidos",
-    singularTitlecase: "Pedido",
-    catalogRoute: "/home/orders",
-    createRoute: "/home/orders/create",
-    title: "Pedidos",
-    undefinedArticle: "uno",
-    definedArticle: "lo",
-    undefinedArticlePlural: "unos",
-    definedArticlePlural: "los",
-    articleSex: 'masculine',
-  } as NamingSubject;
+  dictionary = new NamingSubject(
+    'masculine',
+    'pedido',
+    'pedidos',
+    'Pedidos',
+    'orders',
+    ['home', 'orders'],
+  );
 
   columns: Column[] = [
     { label: "Fecha", name: "createdAt" },
@@ -221,10 +215,10 @@ export class OrdersService {
         this.setSelected(key, response);
         this.current.next(response);
         this.all.next([...this.all.value, response]);
-        this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} fue creado exitosamente`);
+        this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} fue creado exitosamente`);
         if (view === "modal") {
         } else if (view === 'page') {
-          this.router.navigate([this.naming.catalogRoute, response.id]);
+          this.router.navigate([this.dictionary.catalogRoute, response.id]);
         }
         return response;
       })
@@ -295,11 +289,11 @@ export class OrdersService {
         if (result) {
           return this.delete(item.id).pipe(
             map(() => {
-              this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminado`);
+              this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id} ha sido eliminado`);
               return true;
             }),
             catchError(error => {
-              this.snackbarService.error(`Error eliminando ${this.naming.definedArticle} ${this.naming.singular} ${item.id}.`);
+              this.snackbarService.error(`Error eliminando ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id}.`);
               console.error(error);
               return of(false);
             })
@@ -331,11 +325,11 @@ export class OrdersService {
         if (result) {
           return this.deleteRange(ids.join(",")).pipe(
             map(() => {
-              this.snackbarService.success(`${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural} seleccionados fueron eliminados.`);
+              this.snackbarService.success(`${this.dictionary.articles.definedPlural} (${ids.length}) ${this.dictionary.plural} seleccionados fueron eliminados.`);
               return true;
             }),
             catchError(error => {
-              this.snackbarService.error(`Ocurrió un error eliminando ${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural}.`);
+              this.snackbarService.error(`Ocurrió un error eliminando ${this.dictionary.articles.definedPlural} (${ids.length}) ${this.dictionary.plural}.`);
               return of(false);
             })
           );
@@ -348,10 +342,10 @@ export class OrdersService {
   downloadXLSX$ = (key: string) => {
     this.downloadXLSX(key).subscribe({
       next: () => {
-        this.snackbarService.success(`Archivo XLSX de ${this.naming.plural} descargado`);
+        this.snackbarService.success(`Archivo XLSX de ${this.dictionary.plural} descargado`);
       },
       error: (error) => {
-        this.snackbarService.error(`Error descargando archivo XLSX de ${this.naming.plural}`);
+        this.snackbarService.error(`Error descargando archivo XLSX de ${this.dictionary.plural}`);
       }
     });
   }
@@ -361,7 +355,7 @@ export class OrdersService {
     const params = param.toHttpParams();
     return this.http.get(`${this.baseUrl}xlsx`, { responseType: "blob", params }).pipe(
       map(response => {
-        downloadExcelFile(response, this.naming.title);
+        downloadExcelFile(response, this.dictionary.title);
       }),
       catchError(error => {
         console.error("Error downloading XLSX:", error);
@@ -403,9 +397,9 @@ export class OrdersService {
     return undefined;
   }
 
-  private getConfirmDeleteRange = (count: number) => new Modal(`Eliminar ${this.naming.plural}`, `¿Estás seguro que deseas eliminar ${this.naming.definedArticlePlural} (${count}) ${this.naming.plural} seleccionados?`);
-  private getConfirmDeleteItem = (item: Order) => new Modal(`Eliminar ${this.naming.singular}`, `¿Estás seguro que deseas eliminar ${this.naming.definedArticle} ${this.naming.singular} (${item.id})?`);
-  private getConfirmUpdateItem = (item: Order) => new Modal(`Actualizar ${this.naming.singular}`, `¿Confirmas ${this.naming.definedArticlePlural} cambios hechos en ${this.naming.definedArticle} ${this.naming.singular} (${item.id})?`);
+  private getConfirmDeleteRange = (count: number) => new Modal(`Eliminar ${this.dictionary.plural}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedPlural} (${count}) ${this.dictionary.plural} seleccionados?`);
+  private getConfirmDeleteItem = (item: Order) => new Modal(`Eliminar ${this.dictionary.singular}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
+  private getConfirmUpdateItem = (item: Order) => new Modal(`Actualizar ${this.dictionary.singular}`, `¿Confirmas ${this.dictionary.articles.definedPlural} cambios hechos en ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
 
   hasSelected = (key: string): boolean => {
     const items = getItemsByKey<Order>(key, this.cacheMap);

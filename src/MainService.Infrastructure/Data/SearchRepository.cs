@@ -1,3 +1,5 @@
+#nullable enable
+
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Search;
@@ -6,6 +8,7 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Core.Interfaces.Services;
 using MainService.Models;
+using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Infrastructure.Data
@@ -14,26 +17,7 @@ namespace MainService.Infrastructure.Data
     {
         public async Task<PagedList<DoctorSearchResultDto>> GetPagedListAsync(SearchParams param)
         {
-            var query = context.Users
-                .Include(x => x.UserMedicalLicenses)
-                    .ThenInclude(x => x.MedicalLicense)
-                    .ThenInclude(x => x.MedicalLicenseSpecialty)
-                    .ThenInclude(x => x.Specialty)
-                .Include(x => x.DoctorClinics)
-                    .ThenInclude(x => x.Clinic)
-                .Include(x => x.DoctorWorkSchedules)
-                    .ThenInclude(x => x.WorkSchedule)
-                .Include(x => x.DoctorEvents)
-                    .ThenInclude(x => x.Event)
-                .Include(x => x.DoctorReviews)
-                    .ThenInclude(x => x.Review)
-                    .ThenInclude(x => x.UserReview)
-                    .ThenInclude(x => x.User)
-                .Include(x => x.DoctorMedicalInsuranceCompanies)
-                    .ThenInclude(x => x.MedicalInsuranceCompany)
-                .Include(x => x.Patients)
-                    .ThenInclude(x => x.Patient)
-                .AsQueryable();
+            var query = Includes(context.Users).AsQueryable();
 
             query = query.Where(x => x.UserMedicalLicenses.Count != 0);
 
@@ -43,6 +27,15 @@ namespace MainService.Infrastructure.Data
                     x.UserMedicalLicenses.Any(y => y.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name == param.Specialty) ||
                     EF.Functions.ILike(x.FirstName + " " + x.LastName, $"%{param.Specialty}%")
                 );
+            }
+
+            if (param.SpecialtyId.HasValue)
+            {
+                query = query.Where(x => x.UserMedicalLicenses.Any(y => y.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == param.SpecialtyId));
+            }
+
+            if (param.GetSpecialtyIds().Count() > 0) {
+                query = query.Where(x => x.UserMedicalLicenses.Any(y => param.GetSpecialtyIds().Contains(y.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId)));
             }
 
             if (!string.IsNullOrEmpty(param.Location))
@@ -101,6 +94,26 @@ namespace MainService.Infrastructure.Data
 
             return await query.AsNoTracking().ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
         }
+
+        private static IQueryable<AppUser> Includes(IQueryable<AppUser> query) =>
+            query
+                .AsSplitQuery()
+                .Include(x => x.UserMedicalLicenses)
+                    .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+                .Include(x => x.DoctorClinics)
+                    .ThenInclude(x => x.Clinic)
+                .Include(x => x.DoctorWorkSchedules)
+                    .ThenInclude(x => x.WorkSchedule)
+                .Include(x => x.DoctorEvents)
+                    .ThenInclude(x => x.Event)
+                .Include(x => x.DoctorReviews)
+                    .ThenInclude(x => x.Review.UserReview.User)
+                .Include(x => x.DoctorMedicalInsuranceCompanies)
+                    .ThenInclude(x => x.MedicalInsuranceCompany)
+                .Include(x => x.Patients)
+                    .ThenInclude(x => x.Patient)
+                .AsQueryable()
+            ;
     }
 
 }

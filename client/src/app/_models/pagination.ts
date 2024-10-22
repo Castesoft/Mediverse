@@ -26,7 +26,7 @@ export class PaginatedResponse<T extends Entity> {
   }
 
   get ids(): Item[] {
-    return this.result.map((x) => new Item(x.id));
+    return this.result.map((x) => new Item(x.id!));
   }
 }
 

@@ -156,25 +156,25 @@ export class PrescriptionFormComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToSelectedPatient = () => {
-    this.patientsService.selected$(this.selectedPatientKey)
-      .pipe(skip(this.use() === 'edit' ? 1 : 0))
-      .subscribe({
-        next: (patient) => {
-          this.patient = patient;
-          this.event = undefined;
-        }
-      });
+    // this.patientsService.selected$(this.selectedPatientKey)
+    //   .pipe(skip(this.use() === 'edit' ? 1 : 0))
+    //   .subscribe({
+    //     next: (patient) => {
+    //       this.patient = patient;
+    //       this.event = undefined;
+    //     }
+    //   });
   }
 
   private subscribeToSelectedEvent = () => {
-    this.eventsService.selected$(this.selectedEventKey)
-      .pipe(skip(this.use() === 'edit' ? 1 : 0))
-      .subscribe({
-        next: (event) => {
-          this.patientsService.setSelected$(this.selectedPatientKey, event?.patient || undefined);
-          this.event = event || undefined;
-        }
-      });
+    // this.eventsService.selected$(this.selectedEventKey)
+    //   .pipe(skip(this.use() === 'edit' ? 1 : 0))
+    //   .subscribe({
+    //     next: (event) => {
+    //       this.patientsService.setSelected$(this.selectedPatientKey, event?.patient || undefined);
+    //       this.event = event || undefined;
+    //     }
+    //   });
   }
 
   private subscribeToSelectedProducts = () => {

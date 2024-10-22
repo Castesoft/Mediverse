@@ -32,7 +32,6 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   key = input.required<string>();
   mode = input.required<CatalogMode>();
   showHeaders = input<boolean>(true);
-  role = input.required<Role>();
   view = input.required<View>();
 
   sortAscending = false;
@@ -48,9 +47,8 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.columns = this.service.columnDictionary.get(this.role());
-    const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
-    this.subscriptions.push(paramsSubscription);
+    // const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
+    // this.subscriptions.push(paramsSubscription);
   }
 
   ngOnDestroy(): void {

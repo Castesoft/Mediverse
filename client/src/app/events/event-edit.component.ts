@@ -1,35 +1,32 @@
-import {Component, inject, input, OnInit} from "@angular/core";
-import {FormUse, Role, View} from "../_models/types";
-import {Event} from "../_models/event";
-import {CurrencyPipe, DatePipe, JsonPipe} from "@angular/common";
-import {InputControlComponent} from "../_forms/input-control.component";
-import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {ServiceCardCompactComponent} from "../services/components/service-card-compact.component";
-import {ServicesService} from "../_services/services.service";
-import {createId} from "@paralleldrive/cuid2";
-import {Service} from "../_models/service";
-import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {IconsService} from "../_services/icons.service";
-import {ClinicSummaryCardComponent} from "../clinics/clinic-summary-card.component";
-import {NurseSummaryCardComponent} from "../nurses/nurse-summary-card.component";
-import {UsersService} from "../_services/users.service";
-import {User} from "../_models/user";
-import {Subject, takeUntil} from "rxjs";
-import {PatientSummaryCardComponent} from "../patients/patient-summary-card.component";
-import {Product} from "../_models/product";
+import { Component, inject, input, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { createId } from "@paralleldrive/cuid2";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { Subject, takeUntil } from "rxjs";
 import { Address, AddressesService } from "src/app/addresses/addresses.config";
+import { InputControlComponent } from "src/app/_forms/input-control.component";
+import { ClinicSummaryCardComponent } from "src/app/clinics/clinic-summary-card.component";
+import { NurseSummaryCardComponent } from "src/app/nurses/nurse-summary-card.component";
+import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
+import { Service, ServicesService } from "src/app/services/services.config";
+import { UsersService } from "src/app/_services/users.service";
+import { IconsService } from "src/app/_services/icons.service";
+import { FormUse, Role, View } from "src/app/_models/types";
+import { User } from "src/app/_models/user";
+import { Product } from "src/app/_models/product";
+import { Event } from "src/app/_models/event";
+import { ServiceCardCompactComponent } from "src/app/services/components/service-card-compact.component";
 
 @Component({
   selector: 'div[eventEditView]',
   templateUrl: 'event-edit.component.html',
   styleUrls: ['event-edit.component.scss'],
   imports: [
-    DatePipe,
-    JsonPipe,
+    CommonModule,
     InputControlComponent,
     ReactiveFormsModule,
     ServiceCardCompactComponent,
-    CurrencyPipe,
     FaIconComponent,
     ClinicSummaryCardComponent,
     NurseSummaryCardComponent,
@@ -74,7 +71,7 @@ export class EventEditComponent implements OnInit {
 
     if (this.item().service) {
       this.service = this.item().service;
-      this.servicesService.setSelected$(this.selectServiceKey, this.item().service!);
+      // this.servicesService.setSelected$(this.selectServiceKey, this.item().service!);
     }
 
     if (this.item().clinic) {
@@ -84,12 +81,12 @@ export class EventEditComponent implements OnInit {
 
     if (this.item().nurses) {
       this.nurses = this.item().nurses;
-      this.usersService.setMultipleSelected$(this.selectNursesKey, this.item().nurses!);
+      // this.usersService.setMultipleSelected$(this.selectNursesKey, this.item().nurses!);
     }
 
     if (this.item().patient) {
       this.patient = this.item().patient;
-      this.usersService.setSelected$(this.selectPatientKey, this.item().patient!);
+      // this.usersService.setSelected$(this.selectPatientKey, this.item().patient!);
     }
 
 
@@ -144,21 +141,21 @@ export class EventEditComponent implements OnInit {
   }
 
   private subscribeToSelectedPatient = () => {
-    this.usersService.selected$(this.selectPatientKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((patient) => {
-      this.patient = patient;
-    });
+    // this.usersService.selected$(this.selectPatientKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((patient) => {
+    //   this.patient = patient;
+    // });
   }
 
   private subscribeToSelectedService = () => {
-    this.servicesService.selected$(this.selectServiceKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((service) => {
-      this.service = service;
-    });
+    // this.servicesService.selected$(this.selectServiceKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((service) => {
+    //   this.service = service;
+    // });
   }
 
   private subscribeToSelectedNurses = () => {
-    this.usersService.multipleSelected$(this.selectNursesKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((nurses) => {
-      this.nurses = nurses;
-    });
+    // this.usersService.multipleSelected$(this.selectNursesKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((nurses) => {
+    //   this.nurses = nurses;
+    // });
   }
 
   private subscribeToSelectedClinic = () => {
@@ -171,25 +168,26 @@ export class EventEditComponent implements OnInit {
     this.servicesService.showCatalogModal(
       new MouseEvent('click'),
       this.selectServiceKey,
-      'select'
+      'select',
+      this.view(),
     )
   }
 
   showPatientSelectModal = () => {
-    this.usersService.showCatalogModal(
-      new MouseEvent('click'),
-      this.selectPatientKey,
-      'select',
-      'Patient'
-    )
+    // this.usersService.showCatalogModal(
+    //   new MouseEvent('click'),
+    //   this.selectPatientKey,
+    //   'select',
+    //   'Patient'
+    // )
   }
 
   showNursesSelectModal = () => {
-    this.usersService.showCatalogModal(
-      new MouseEvent('click'),
-      this.selectNursesKey,
-      'select',
-      'Nurse'
-    )
+    // this.usersService.showCatalogModal(
+    //   new MouseEvent('click'),
+    //   this.selectNursesKey,
+    //   'select',
+    //   'Nurse'
+    // )
   }
 }

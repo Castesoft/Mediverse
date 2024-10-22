@@ -11,7 +11,7 @@ import { Control } from "src/app/_forms/form";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { ControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
+import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
 
 @Component({
   host: { class: 'fw-semibold mb-0 w-100', },
@@ -20,7 +20,7 @@ import { ControlLabelComponent } from "src/app/_forms/helpers/control-label.comp
   imports: [
     OptionalSpanComponent, ReactiveFormsModule, NewBadgeComponent,
     FaIconComponent,  InvalidFeedbackComponent, HelpBlockComponent, CommonModule, CdkModule, MaterialModule,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
    ],
   providers: [ DatePipe,],
   standalone: true,

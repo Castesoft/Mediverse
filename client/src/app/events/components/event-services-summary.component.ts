@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { Service } from 'src/app/_models/service';
+import { Component, Input, model } from '@angular/core';
+import { Service } from 'src/app/services/services.config';
 
 @Component({
   selector: 'event-services-summary, div[eventServicesSummary]',
@@ -8,16 +8,16 @@ import { Service } from 'src/app/_models/service';
     <div class="row">
       <div class="col-9">
         <p class="fs-5 fw-semibold mb-0">
-          {{ item.name }}
+          {{ item().name }}
         </p>
       </div>
       <div class="col-3 text-end fw-bolder">
-        {{ item.price | currency : "MXN" }}
+        {{ item().price | currency : "MXN" }}
       </div>
       <div class="col-12 mt-3">
         <p [style.font-size]="'12px'"
            class="text-gray-600">
-          {{ item.description }}
+          {{ item().description }}
         </p>
       </div>
     </div>
@@ -26,5 +26,5 @@ import { Service } from 'src/app/_models/service';
   imports: [ CurrencyPipe, ]
 })
 export class EventServicesSummaryComponent {
-  @Input({ required: true }) item!: Service;
+  item = model.required<Service>();
 }

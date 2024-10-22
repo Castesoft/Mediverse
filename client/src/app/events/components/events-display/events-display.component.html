@@ -27,13 +27,13 @@
       </ul>
       <button
         (click)="service.clickLink(null, null, key(), 'create', 'modal')"
-        [naming]="service.naming!"
+        [naming]="service.dictionary"
         createBtn
       ></button>
-  
+
     </div>
   </div>
-  
+
   @if (calendarView === 'calendar') {
     <div
         eventsCalendar
@@ -50,4 +50,3 @@
          [view]="view()"
          [hideAddButton]="true"></div>
   }
-  

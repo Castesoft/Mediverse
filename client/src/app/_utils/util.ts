@@ -271,21 +271,6 @@ export const datepickerConfig: Partial<BsDatepickerConfig> = {
   containerClass: 'theme-dark-blue',
 };
 
-/**
- * if I give 'Empadre de Toro Único'
- * I want to get empadre-de-toro-unico
- * for that reason, áéíóúñ will be replaced by aeioun
- * and spaces will be replaced by -
- * and all will be lowercased
-*/
-export const cleanStringAndCreateRoute = (str: string) => {
-  return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s/g, '-')
-    .toLowerCase();
-}
-
 export const calcDateDiff = (dateFrom: Date, dateTo: Date) => {
   return Math.floor((Date.UTC(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()) - Date.UTC(dateTo.getFullYear(), dateTo.getMonth(), dateTo.getDate()) ) /(1000 * 60 * 60 * 24));
 }
@@ -408,3 +393,18 @@ export function countLines(text: string): number {
   return !text ? 0 : text.split(/\r\n|\r|\n/).length;
 }
 
+/**
+ * if I give 'Empadre de Toro Único'
+ * I want to get empadre-de-toro-unico
+ * for that reason, áéíóúñ will be replaced by aeioun
+ * and spaces will be replaced by -
+ * and all will be lowercased
+ */
+export const cleanStringAndCreateRoute = (str: string) => {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s/g, "-")
+    .replace(/\//g, "-")
+    .toLowerCase();
+};

@@ -18,7 +18,7 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                [name]="service.naming.singular"
+                [name]="service.dictionary.singular"
                 [(ngModel)]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
               />
@@ -31,7 +31,7 @@
               <input
                 class="form-check-input"
                 type="radio"
-                [name]="service.naming.singular"
+                [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
                 (change)="service.setSelected$(key(), item)"
               />
@@ -44,7 +44,7 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                [name]="service.naming.singular"
+                [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
                 (change)="service.addSelected$(key(), item)"
@@ -94,12 +94,12 @@
           cdkMenu>
           <div cdkMenuItem
                class="menu-item px-3">
-            <a [routerLink]="[service.naming.catalogRoute, item.id]"
+            <a [routerLink]="[service.dictionary.catalogRoute, item.id]"
                class="menu-link">Ver</a>
           </div>
           <div cdkMenuItem
                class="menu-item px-3">
-            <a [routerLink]="[service.naming.catalogRoute, item.id, 'edit']"
+            <a [routerLink]="[service.dictionary.catalogRoute, item.id, 'edit']"
                class="menu-link">Editar</a>
           </div>
           <button cdkMenuItem

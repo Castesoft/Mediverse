@@ -121,11 +121,11 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     if (this.use() === 'create') {
       this.form.group.reset();
       this.form.group.markAsPristine();
-      this.router.navigate([`${this.service.naming.catalogRoute}/${this.service.naming.plural}`]);
+      this.router.navigate([`${this.service.dictionary.catalogRoute}/${this.service.dictionary.plural}`]);
     } else if (this.use() === 'edit') {
       this.form.group.reset();
       this.form.group.markAsPristine();
-      this.router.navigate([`${this.service.naming.catalogRoute}/${this.item!.id}`]);
+      this.router.navigate([`${this.service.dictionary.catalogRoute}/${this.item!.id}`]);
     }
   }
 
@@ -159,10 +159,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       this.service.update(this.item!.id, formValues).subscribe({
         next: () => {
           this.form.submitted = false;
-          this.snackbarService.success(this.service.naming.singularTitlecase + ' actualizado');
+          this.snackbarService.success(this.service.dictionary.singularTitlecase + ' actualizado');
           this.form.group.reset();
           this.form.group.markAsPristine();
-          this.router.navigate([`${this.service.naming.catalogRoute}/${this.item!.id}`]);
+          this.router.navigate([`${this.service.dictionary.catalogRoute}/${this.item!.id}`]);
           this.service.hideEditModal();
         },
         error: (error: any) => {

@@ -69,8 +69,8 @@ export class EventDetailComponent implements OnInit {
     this.id = +this.route.snapshot.paramMap.get('id')!;
 
     if (this.item() && this.item()!.service) {
-      this.tax = this.item()!.service!.price * 0.16;
-      this.total = this.item()!.service!.price + this.tax;
+      this.tax = this.item()!.service!.price! * 0.16;
+      this.total = this.item()!.service!.price! + this.tax;
     }
 
     if (this.item()!.evolution) {

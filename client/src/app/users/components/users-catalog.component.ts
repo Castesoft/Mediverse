@@ -10,7 +10,7 @@ import { AlertModule } from "ngx-bootstrap/alert";
 import { CatalogMode, Role, View } from "src/app/_models/types";
 import { Router, RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { FilterForm, User, UserParams } from "src/app/_models/user";
+import { User, UserParams } from "src/app/_models/user";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { CatalogModule } from "src/app/_shared/catalog.module";
@@ -25,7 +25,7 @@ import { createId } from "@paralleldrive/cuid2";
   host: { class: 'mh-300px scroll-y me-n7 pe-7', },
   selector: 'div[usersListSelect]',
   template: `
-  @if(data && pagination) {
+  <!-- @if(data && pagination) {
     <div class="fs-6 fw-semibold mb-2 mt-5">{{service.namingDictionary.get(role())!.title}}</div>
     @for(item of data; let idx = $index; track idx; let last = $last) {
       <div class="d-flex flex-stack py-4"
@@ -103,7 +103,7 @@ import { createId } from "@paralleldrive/cuid2";
       </ng-template>
     }
 
-  }
+  } -->
   `,
   standalone: true,
   imports: [BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
@@ -124,7 +124,7 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
   data?: User[];
   params!: UserParams;
   pagination?: Pagination;
-  form = new FilterForm();
+  // form = new FilterForm();
   loading = true;
   cuid = createId();
   private ngUnsubscribe = new Subject<void>();
@@ -132,21 +132,21 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.params = new UserParams(this.key());
 
-    this.service.setParam$(this.key(), this.params);
+    // this.service.setParam$(this.key(), this.params);
 
-    this.service.param$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params) => {
-        console.log(params);
+    // this.service.param$(this.key())
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe((params) => {
+    //     console.log(params);
 
-        this.params = params;
-        this.loadData(params);
-        this.form.patchValue(params);
-      });
+    //     this.params = params;
+    //     this.loadData(params);
+    //     this.form.patchValue(params);
+    //   });
 
-    this.service.loading$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((loading) => (this.loading = loading));
+    // this.service.loading$(this.key())
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe((loading) => (this.loading = loading));
   }
 
   ngOnDestroy() {
@@ -155,13 +155,13 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
   }
 
   private loadData(params: UserParams) {
-    this.service.loadPagedList(this.role(), this.key(), params).subscribe({
-      next: (response) => {
-        const { result, pagination } = response;
-        this.data = result;
-        this.pagination = pagination;
-      },
-    });
+    // this.service.loadPagedList(this.role(), this.key(), params).subscribe({
+    //   next: (response) => {
+    //     const { result, pagination } = response;
+    //     this.data = result;
+    //     this.pagination = pagination;
+    //   },
+    // });
   }
 }
 
@@ -169,7 +169,7 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
   host: {  },
   selector: 'div[usersCatalog]',
   template: `
-    <div catalogCardHeader>
+    <!-- <div catalogCardHeader>
       <div class="card-title">
         <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
           <div searchText formControlName="search" [naming]="service.namingDictionary.get(role())!"></div>
@@ -228,7 +228,7 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
         } @else {
           @switch (mode()) {
             @case ("select") {
-              No tienes {{ service.namingDictionary.get(role())!.undefinedArticle }} {{ service.namingDictionary.get(role())!.singular }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
+              No tienes {{ service.namingDictionary.get(role())!.articles.undefinedSingular }} {{ service.namingDictionary.get(role())!.singular }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
                 seleccionado
               } @else {
                 seleccionada
@@ -290,7 +290,7 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
       } @else {
         <div tableLoadingPlaceholder></div>
       }
-    </div>
+    </div> -->
   `,
   standalone: true,
   imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
@@ -311,30 +311,30 @@ export class UsersCatalogComponent implements OnInit, OnDestroy {
   data?: User[];
   params!: UserParams;
   pagination?: Pagination;
-  form = new FilterForm();
+  // form = new FilterForm();
   loading = true;
   private ngUnsubscribe = new Subject<void>();
 
   ngOnInit(): void {
     this.params = new UserParams(this.key());
 
-    this.service.setParam$(this.key(), this.params);
+    // this.service.setParam$(this.key(), this.params);
 
-    this.service.param$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params) => {
-        this.params = params;
-        this.loadData(params);
-        this.form.patchValue(params);
-      });
+    // this.service.param$(this.key())
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe((params) => {
+    //     this.params = params;
+    //     this.loadData(params);
+    //     this.form.patchValue(params);
+    //   });
 
-    this.form.group.valueChanges
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(this.handleFormValueChange.bind(this));
+    // this.form.group.valueChanges
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(this.handleFormValueChange.bind(this));
 
-    this.service.loading$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((loading) => (this.loading = loading));
+    // this.service.loading$(this.key())
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe((loading) => (this.loading = loading));
   }
 
   ngOnDestroy() {
@@ -344,28 +344,28 @@ export class UsersCatalogComponent implements OnInit, OnDestroy {
 
   private loadData(params: UserParams) {
     console.log(this.role(), this.key());
-    this.service.loadPagedList(this.role(), this.key(), params).subscribe({
-      next: (response) => {
-        const { result, pagination } = response;
-        this.data = result;
-        this.pagination = pagination;
-      },
-    });
+    // this.service.loadPagedList(this.role(), this.key(), params).subscribe({
+    //   next: (response) => {
+    //     const { result, pagination } = response;
+    //     this.data = result;
+    //     this.pagination = pagination;
+    //   },
+    // });
   }
 
   private handleFormValueChange = () => {
-    const { controls, value } = this.form.group;
-    const { dateRange } = controls;
+    // const { controls, value } = this.form.group;
+    // const { dateRange } = controls;
 
-    this.params.updateFromPartial({
-      ...value,
-      dateFrom: dateRange.value[0],
-      dateTo: dateRange.value[1],
-    });
+    // this.params.updateFromPartial({
+    //   ...value,
+    //   dateFrom: dateRange.value[0],
+    //   dateTo: dateRange.value[1],
+    // });
   };
 
   onSubmit() {
-    this.service.setParam$(this.key(), this.params);
-    this.form.patchValue(this.params);
+    // this.service.setParam$(this.key(), this.params);
+    // this.form.patchValue(this.params);
   }
 }

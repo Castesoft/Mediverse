@@ -55,7 +55,7 @@ export class CatalogComponent implements OnInit {
   label: string;
 
   constructor() {
-    this.label = this.service.naming!.title;
+    this.label = this.service.dictionary.title;
   }
 
   ngOnInit(): void {

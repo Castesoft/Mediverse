@@ -28,17 +28,15 @@ import { MaterialModule } from 'src/app/_shared/material.module';
 import { calcDateDiff } from 'src/app/_utils/util';
 import { UserCardCompactComponent } from 'src/app/users/components/user-card-compact.component';
 import { UserFormComponent } from 'src/app/users/components/user-form.component';
-import { ServicesService } from 'src/app/_services/services.service';
-import { Service } from 'src/app/_models/service';
-import { ServiceCardCompactComponent } from 'src/app/services/components/service-card-compact.component';
-import { ServiceFormComponent } from 'src/app/services/components/service-form.component';
 import {
   UsersCatalogComponent,
   UsersListSelectComponent,
 } from 'src/app/users/components/users-catalog.component';
 import { createId } from '@paralleldrive/cuid2';
-import {PatientSelectTypeaheadComponent} from "src/app/_shared/components/patient-select-typeahead.component";
+import { PatientSelectTypeaheadComponent } from "src/app/_shared/components/patient-select-typeahead.component";
 import { Address, AddressesService } from 'src/app/addresses/addresses.config';
+import { ServiceCardCompactComponent } from 'src/app/services/components/service-card-compact.component';
+import { Service, ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
 
 @Component({
   host: { class: 'pb-3' },
@@ -163,25 +161,25 @@ export class EventFormComponent implements OnInit, OnDestroy {
       this.form = new DetailForm();
     }
 
-    this.usersService.selected$(this.selectPatientKey).subscribe({
-      next: (user) => {
-        this.patient = user;
-        if (user) {
-          this.patientAccordion()?.close();
-          this.form.group.get('patientId')!.setValue(user.id);
-        }
-      },
-    });
+    // this.usersService.selected$(this.selectPatientKey).subscribe({
+    //   next: (user) => {
+    //     this.patient = user;
+    //     if (user) {
+    //       this.patientAccordion()?.close();
+    //       this.form.group.get('patientId')!.setValue(user.id);
+    //     }
+    //   },
+    // });
 
-    this.servicesService.selected$(this.selectServiceKey).subscribe({
-      next: (service) => {
-        this.service = service;
-        if (service) {
-          this.serviceAccordion()?.close();
-          this.form.group.get('serviceId')!.setValue(service.id);
-        }
-      },
-    });
+    // this.servicesService.selected$(this.selectServiceKey).subscribe({
+    //   next: (service) => {
+    //     this.service = service;
+    //     if (service) {
+    //       this.serviceAccordion()?.close();
+    //       this.form.group.get('serviceId')!.setValue(service.id);
+    //     }
+    //   },
+    // });
 
     this.eventsService.getDoctorFields().subscribe({
       next: (fields) => {
@@ -189,18 +187,18 @@ export class EventFormComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.usersService.multipleSelected$(this.selectNursesKey).subscribe({
-      next: (nurses) => {
-        this.nurses = nurses;
-        console.log(nurses?.map((n) => n.id).join(','));
-        if (nurses) {
-          this.nursesAccordion()?.close();
-          this.form.group
-            .get('nursesIds')!
-            .setValue(nurses.map((n) => n.id).join(','));
-        }
-      },
-    });
+    // this.usersService.multipleSelected$(this.selectNursesKey).subscribe({
+    //   next: (nurses) => {
+    //     this.nurses = nurses;
+    //     console.log(nurses?.map((n) => n.id).join(','));
+    //     if (nurses) {
+    //       this.nursesAccordion()?.close();
+    //       this.form.group
+    //         .get('nursesIds')!
+    //         .setValue(nurses.map((n) => n.id).join(','));
+    //     }
+    //   },
+    // });
 
     this.formId.emit(this.form.id);
 
@@ -280,15 +278,15 @@ export class EventFormComponent implements OnInit, OnDestroy {
       this.form.group.reset();
       this.form.group.markAsPristine();
       this.router.navigate([
-        `${this.eventsService.naming!.catalogRoute}/${
-          this.eventsService.naming!.plural
+        `${this.eventsService.dictionary.catalogRoute}/${
+          this.eventsService.dictionary.plural
         }`,
       ]);
     } else if (this.use() === 'edit') {
       this.form.group.reset();
       this.form.group.markAsPristine();
       this.router.navigate([
-        `${this.eventsService.naming!.catalogRoute}/${this.item!.id}`,
+        `${this.eventsService.dictionary.catalogRoute}/${this.item!.id}`,
       ]);
     }
   }
@@ -321,11 +319,11 @@ export class EventFormComponent implements OnInit, OnDestroy {
       this.eventsService.update(this.item!.id, this.form.getRequest()).subscribe({
         next: () => {
           this.form.submitted = false;
-          this.snackbarService.success(this.eventsService.naming!.singularTitlecase + ' actualizado');
+          this.snackbarService.success(this.eventsService.dictionary.singularTitlecase + ' actualizado');
           this.form.group.reset();
           this.form.group.markAsPristine();
           this.router.navigate([
-            `${this.eventsService.naming!.catalogRoute}/${this.item!.id}`,
+            `${this.eventsService.dictionary.catalogRoute}/${this.item!.id}`,
           ]);
           this.eventsService.hideEditModal();
         },

@@ -38,12 +38,14 @@ export class EventsService {
   private catalogModalRef: BsModalRef<EventsCatalogModalComponent> = new BsModalRef<EventsCatalogModalComponent>();
   hideCatalogModal = () => this.catalogModalRef.hide();
 
-  naming: NamingSubject = {
-    singular: "cita", plural: "citas", pluralTitlecase: "Citas", singularTitlecase: "Cita",
-    catalogRoute: "/home/events", createRoute: "/home/events/create",
-    title: "Citas", undefinedArticle: "una", definedArticle: "la", undefinedArticlePlural: "unas", definedArticlePlural: "las",
-    articleSex: 'masculine',
-  } as NamingSubject;
+  dictionary = new NamingSubject(
+    'masculine',
+    'cita',
+    'citas',
+    'Citas',
+    'events',
+    ['home', 'events'],
+  );
 
   private cacheMap: Map<string, Map<string, PaginatedResult<Event[]>>> = new Map<string, Map<string, PaginatedResult<Event[]>>>();
   private cacheExists = (key: string): boolean => this.cacheMap.has(key);
@@ -279,14 +281,14 @@ export class EventsService {
         this.current.next(response);
         this.all.next([...this.all.value, response]);
         if (role === "Patient") {
-          this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.doctor?.firstName} ${response?.doctor?.lastName} fue creado exitosamente`);
+          this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} con ${response?.doctor?.firstName} ${response?.doctor?.lastName} fue creado exitosamente`);
         } else {
-          this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} con ${response?.patient?.fullName} fue creado exitosamente`);
+          this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} con ${response?.patient?.fullName} fue creado exitosamente`);
         }
         if (view === "modal") {
           this.hideNewModal();
         } else if (view === 'page') {
-          this.router.navigate([this.naming.catalogRoute, response.id]);
+          this.router.navigate([this.dictionary.catalogRoute, response.id]);
         }
         return response;
       })
@@ -362,11 +364,11 @@ export class EventsService {
         if (result) {
           return this.delete(item.id).pipe(
             map(() => {
-              this.snackbarService.success(`${this.naming.definedArticle} ${this.naming.singular} ${item.id} ha sido eliminado`);
+              this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id} ha sido eliminado`);
               return true;
             }),
             catchError(error => {
-              this.snackbarService.error(`Error eliminando ${this.naming.definedArticle} ${this.naming.singular} ${item.id}.`);
+              this.snackbarService.error(`Error eliminando ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id}.`);
               console.error(error);
               return of(false);
             })
@@ -398,11 +400,11 @@ export class EventsService {
         if (result) {
           return this.deleteRange(ids.join(",")).pipe(
             map(() => {
-              this.snackbarService.success(`${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural} seleccionados fueron eliminados.`)
+              this.snackbarService.success(`${this.dictionary.articles.definedPlural} (${ids.length}) ${this.dictionary.plural} seleccionados fueron eliminados.`)
               return true;
             }),
             catchError(error => {
-              this.snackbarService.error(`Ocurrió un error eliminando ${this.naming.definedArticlePlural} (${ids.length}) ${this.naming.plural}.`);
+              this.snackbarService.error(`Ocurrió un error eliminando ${this.dictionary.articles.definedPlural} (${ids.length}) ${this.dictionary.plural}.`);
               return of(false);
             })
           );
@@ -415,10 +417,10 @@ export class EventsService {
   downloadXLSX$ = (key: string) => {
     this.downloadXLSX(key).subscribe({
       next: () => {
-        this.snackbarService.success(`Archivo XLSX de ${this.naming.plural} descargado`);
+        this.snackbarService.success(`Archivo XLSX de ${this.dictionary.plural} descargado`);
       },
       error: (error) => {
-        this.snackbarService.error(`Error descargando archivo XLSX de ${this.naming.plural}`);
+        this.snackbarService.error(`Error descargando archivo XLSX de ${this.dictionary.plural}`);
       }
     });
   }
@@ -428,7 +430,7 @@ export class EventsService {
     const params = param.toHttpParams();
     return this.http.get(`${this.baseUrl}xlsx`, { responseType: "blob", params }).pipe(
       map(response => {
-        downloadExcelFile(response, this.naming.title);
+        downloadExcelFile(response, this.dictionary.title);
       }),
       catchError(error => {
         console.error("Error downloading XLSX:", error);
@@ -505,27 +507,27 @@ export class EventsService {
           {
             class: "modal-dialog-centered mw-650px",
             backdrop: 'static',
-            initialState: { use: use, dateFrom: dateFrom, dateTo: dateTo, title: `Nueva ${this.naming.singular}` }
+            initialState: { use: use, dateFrom: dateFrom, dateTo: dateTo, title: `Nueva ${this.dictionary.singular}` }
           } as ModalOptions<EventNewModalComponent>);
       }
     } else {
       switch (use) {
         case "create":
-          this.router.navigate([this.naming.createRoute]);
+          this.router.navigate([this.dictionary.createRoute]);
           break;
         case "edit":
-          this.router.navigate([`${this.naming.catalogRoute}/${id}/edit`]);
+          this.router.navigate([`${this.dictionary.catalogRoute}/${id}/edit`]);
           break;
         case "detail":
-          this.router.navigate([`${this.naming.catalogRoute}/${id}`]);
+          this.router.navigate([`${this.dictionary.catalogRoute}/${id}`]);
           break;
       }
     }
   };
 
-  private getConfirmDeleteRange = (count: number) => new Modal(`Eliminar ${this.naming.plural}`, `¿Estás seguro que deseas eliminar ${this.naming.definedArticlePlural} (${count}) ${this.naming.plural} seleccionados?`);
-  private getConfirmDeleteItem = (item: Event) => new Modal(`Eliminar ${this.naming.singular}`, `¿Estás seguro que deseas eliminar ${this.naming.definedArticle} ${this.naming.singular} (${item.id})?`);
-  private getConfirmUpdateItem = (item: Event) => new Modal(`Actualizar ${this.naming.singular}`, `¿Confirmas ${this.naming.definedArticlePlural} cambios hechos en ${this.naming.definedArticle} ${this.naming.singular} (${item.id})?`);
+  private getConfirmDeleteRange = (count: number) => new Modal(`Eliminar ${this.dictionary.plural}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedPlural} (${count}) ${this.dictionary.plural} seleccionados?`);
+  private getConfirmDeleteItem = (item: Event) => new Modal(`Eliminar ${this.dictionary.singular}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
+  private getConfirmUpdateItem = (item: Event) => new Modal(`Actualizar ${this.dictionary.singular}`, `¿Confirmas ${this.dictionary.articles.definedPlural} cambios hechos en ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
 
   hasSelected = (key: string): boolean => {
     const items = getItemsByKey<Event>(key, this.cacheMap);

@@ -6,7 +6,7 @@ import { FormsService } from 'src/app/_services/forms.service';
 import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
 import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
 import { Control } from 'src/app/_forms/form';
-import { ControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
+import { LegacyControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
 import { InputComponent } from 'src/app/_forms/helpers/input.component';
 import { CommonModule } from '@angular/common';
 
@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
         [(control)]="control"
         [formControl]="$any(control().formControl)"
         />
-        <label controlLabel [(control)]="control"></label>
+        <label legacyControlLabel [control]="control().formControl" [name]="control().name"></label>
       }
     </div>
     @if (control().formControl.errors) {
@@ -46,7 +46,7 @@ import { CommonModule } from '@angular/common';
     HelpBlockComponent,
     OptionalSpanComponent,
     NewBadgeComponent,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
     InputComponent,
     CommonModule,
   ],

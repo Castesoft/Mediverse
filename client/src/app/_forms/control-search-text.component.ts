@@ -3,7 +3,7 @@ import { Component, inject, model, effect } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Control } from 'src/app/_forms/form';
-import { ControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
+import { LegacyControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
 import { InputComponent } from 'src/app/_forms/helpers/input.component';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
@@ -53,7 +53,7 @@ import { MaterialModule } from 'src/app/_shared/material.module';
     HelpBlockComponent,
     OptionalSpanComponent,
     NewBadgeComponent,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
     InputComponent,
     CommonModule,
     FontAwesomeModule,

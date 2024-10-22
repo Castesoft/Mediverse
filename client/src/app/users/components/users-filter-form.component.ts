@@ -1,6 +1,6 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { BsModalRef, ModalModule } from 'ngx-bootstrap/modal';
-import { FilterForm, UserParams } from 'src/app/_models/user';
+import { UserParams } from 'src/app/_models/user';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { Role } from 'src/app/_models/types';
@@ -17,7 +17,7 @@ import { UsersService } from 'src/app/_services/users.service';
 @Component({
   selector: 'div[usersFilterForm]',
   template: `
-  <form
+  <!-- <form
       [formGroup]="form.group"
       [id]="form.id"
       (ngSubmit)="onSubmit()"
@@ -64,7 +64,7 @@ import { UsersService } from 'src/app/_services/users.service';
         />
         Filtros avanzados
       </button>
-    </form>
+    </form> -->
   `,
   standalone: true,
   imports: [ ModalModule, FontAwesomeModule, ReactiveFormsModule, SearchTextComponent, SearchDateRangeComponent, InputControlComponent, ControlMultiselectComponent, CollapseModule,  ],
@@ -79,7 +79,7 @@ export class UsersFilterFormComponent implements OnInit {
 
   modalRef: BsModalRef<UsersFilterModalComponent> = new BsModalRef<UsersFilterModalComponent>();
 
-  form = new FilterForm();
+  // form = new FilterForm();
   params!: UserParams;
 
   isAdvancedFiltersCollapsed = true;
@@ -94,18 +94,18 @@ export class UsersFilterFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.params = new UserParams(this.key());
-    this.service.setParam$(this.key(), this.params);
+    // this.service.setParam$(this.key(), this.params);
 
-    this.service.param$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params) => {
-        this.params = params;
-        this.form.patchValue(params);
-      });
+    // this.service.param$(this.key())
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe((params) => {
+    //     this.params = params;
+    //     this.form.patchValue(params);
+    //   });
 
-    this.form.group.valueChanges
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(this.handleFormValueChange.bind(this));
+    // this.form.group.valueChanges
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(this.handleFormValueChange.bind(this));
   }
 
   ngOnDestroy(): void {
@@ -114,19 +114,19 @@ export class UsersFilterFormComponent implements OnInit {
   }
 
   private handleFormValueChange = () => {
-    const { controls, value } = this.form.group;
-    const { dateRange } = controls;
+    // const { controls, value } = this.form.group;
+    // const { dateRange } = controls;
 
-    this.params.updateFromPartial({
-      ...value,
-      dateFrom: dateRange.value[0],
-      dateTo: dateRange.value[1],
-    });
+    // this.params.updateFromPartial({
+    //   ...value,
+    //   dateFrom: dateRange.value[0],
+    //   dateTo: dateRange.value[1],
+    // });
   }
 
   onSubmit() {
-    this.service.setParam$(this.key(), this.params);
-    this.form.patchValue(this.params);
+    // this.service.setParam$(this.key(), this.params);
+    // this.form.patchValue(this.params);
   }
 
 }

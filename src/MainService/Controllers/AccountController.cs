@@ -924,19 +924,6 @@ public class AccountController(
         return Ok();
     }
 
-    [AllowAnonymous]
-    [HttpGet("register-doctor-fields")]
-    public async Task<ActionResult<DoctorRegisterFieldsDto>> GetDoctorRegisterFields()
-    {
-        var item = new DoctorRegisterFieldsDto
-        {
-            Specialties = await usersService.GetSpecialtiesAsync(),
-            PaymentMethodTypes = await usersService.GetPaymentMethodTypesAsync()
-        };
-
-        return item;
-    }
-
     [Authorize]
     [HttpGet("billing-details")]
     public async Task<ActionResult<BillingDetailsDto>> GetBillingDetails()

@@ -1,8 +1,5 @@
 import { Component, effect, inject, output } from '@angular/core';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { ControlCheckListComponent } from 'src/app/_forms/control-check-list.component';
-import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
-import { InputControlComponent } from 'src/app/_forms/input-control.component';
+import { Validators } from '@angular/forms';
 import { PaymentMethodType } from 'src/app/_models/paymentMethodType';
 import { Specialty } from 'src/app/_models/specialty';
 import { AccountService } from 'src/app/_services/account.service';
@@ -18,7 +15,6 @@ import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
   standalone: true,
   imports: [LayoutModule, UserProfilePictureComponent, FormNewModule, ],
   templateUrl: './card-profile-details.component.html',
-  styleUrl: './card-profile-details.component.scss'
 })
 export class CardProfileDetailsComponent {
   accountService = inject(AccountService);

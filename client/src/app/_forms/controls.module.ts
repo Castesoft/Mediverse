@@ -23,7 +23,7 @@ import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { SearchDateRangeComponent } from 'src/app/_forms/search-date-range.component';
 import { SearchTextComponent } from 'src/app/_forms/search-text.component';
 import { ControlTextComponent } from 'src/app/_forms/control-text.component';
-import { ControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
+import { LegacyControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
 import { ControlSlideComponent } from 'src/app/_forms/control-slide.component';
 import { ControlDateRangeComponent } from 'src/app/_forms/control-date-range.component';
 import { ControlSearchTextComponent } from 'src/app/_forms/control-search-text.component';
@@ -66,7 +66,7 @@ import { ControlSelect2Component } from 'src/app/_forms/control-select-2.compone
     ControlTextComponent,
     DetailHeaderComponent,
     DetailFooterComponent,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
     ControlSlideComponent,
     ControlDateRangeComponent,
     ControlSearchTextComponent,
@@ -106,7 +106,7 @@ import { ControlSelect2Component } from 'src/app/_forms/control-select-2.compone
     ControlTextComponent,
     DetailHeaderComponent,
     DetailFooterComponent,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
     ControlSlideComponent,
     ControlDateRangeComponent,
     ControlSearchTextComponent,

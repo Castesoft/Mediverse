@@ -115,49 +115,30 @@ export class AddressParams extends EntityParams<Address> implements IParams {
 @Injectable({
   providedIn: 'root',
 })
-export class AddressesService extends ServiceHelper<
-  Address,
-  AddressParams,
-  FormGroup2<AddressParams>,
-  Addresses
-> {
+export class AddressesService extends ServiceHelper<Address, AddressParams, FormGroup2<AddressParams>> {
   constructor() {
-    super(AddressParams, 'addresses', {
-      Account: new NamingSubject('addresses','dirección', 'direcciones', 'Direcciones', 'femenine', 'account'),
-      Clinic: new NamingSubject('clinics','clínica', 'clínicas', 'Clínicas', 'femenine', 'home'),
-    }, {
-      Account: [
-        { name: 'name', label: 'Dirección' },
-        { name: 'street', label: 'Calle' },
-        { name: 'exteriorNumber', label: 'Número exterior' },
-        { name: 'interiorNumber', label: 'Número interior' },
-        { name: 'neighborhood', label: 'Colonia' },
-        { name: 'city', label: 'Ciudad' },
-        { name: 'state', label: 'Estado' },
-        { name: 'country', label: 'País' },
-        { name: 'zipcode', label: 'Código postal' },
-        { name: 'photoUrl', label: 'URL de la foto' },
-        { name: 'latitude', label: 'Latitud' },
-        { name: 'longitude', label: 'Longitud' },
-        { name: 'type', label: 'Tipo' },
-        { name: 'nursesCount', label: 'Número de enfermeras' },
-        { name: 'isMain', label: 'Principal' },
-      ],
-      Clinic: [
-        { name: 'name', label: 'Clínica' },
-        { name: 'street', label: 'Calle' },
-        { name: 'exteriorNumber', label: 'Número exterior' },
-        { name: 'interiorNumber', label: 'Número interior' },
-        { name: 'neighborhood', label: 'Colonia' },
-        { name: 'zipcode', label: 'Código postal' },
-        { name: 'city', label: 'Ciudad' },
-        { name: 'state', label: 'Estado' },
-        { name: 'country', label: 'País' },
-        { name: 'nursesCount', label: 'Número de enfermeras' },
-        { name: 'isMain', label: 'Principal' },
-      ],
-    },
-  );
+    super(AddressParams, 'addresses', new NamingSubject(
+      'feminine',
+      'dirección',
+      'direcciones',
+      'Dirección',
+      'addresses',
+      ['home', 'clinics']
+    ),
+[
+    { name: 'name', label: 'Clínica' },
+    { name: 'street', label: 'Calle' },
+    { name: 'exteriorNumber', label: 'Número exterior' },
+    { name: 'interiorNumber', label: 'Número interior' },
+    { name: 'neighborhood', label: 'Colonia' },
+    { name: 'zipcode', label: 'Código postal' },
+    { name: 'city', label: 'Ciudad' },
+    { name: 'state', label: 'Estado' },
+    { name: 'country', label: 'País' },
+    { name: 'nursesCount', label: 'Número de enfermeras' },
+    { name: 'isMain', label: 'Principal' },
+  ]
+    );
   }
 
   private detailModalRef: BsModalRef<AddressDetailModalComponent> = new BsModalRef<AddressDetailModalComponent>();
@@ -188,13 +169,13 @@ export class AddressesService extends ServiceHelper<
     this.bsModalService.hide();
     switch (use) {
       case "create":
-        this.router.navigate([this.dictionary['Clinic'].createRoute]);
+        this.router.navigate([this.dictionary.createRoute]);
         break;
       case "edit":
-        this.router.navigate([`${this.dictionary['Clinic'].catalogRoute}/${item?.id}/editar`]);
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
         break;
       case "detail":
-        this.router.navigate([`${this.dictionary['Clinic'].catalogRoute}/${item?.id}`]);
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
         break;
       }
     }
@@ -238,7 +219,7 @@ export class CatalogComponent {
   mode: CatalogMode = 'view';
   key = this.router.url;
   section: Sections = 'addresses';
-  label = this.service.dictionary['Clinic'].pluralTitlecase;
+  // label = this.service.dictionary['Clinic'].pluralTitlecase;
 
   constructor() {
   }
@@ -281,7 +262,7 @@ export class DetailComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.id.toString();
+        // if (this.item) this.label = this.item.id.toString();
       },
     });
     const navigation = this.router.getCurrentNavigation();
@@ -323,7 +304,7 @@ export class EditComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.id.toString();
+        // if (this.item) this.label = this.item.id.toString();
       },
     });
   }
@@ -354,7 +335,8 @@ export class NewComponent {
 export const itemResolver: ResolveFn<Address | null> = (route, state) => {
   const service = inject(AddressesService);
   const id = +route.paramMap.get('id')!;
-  return service.getById(id);
+  // return service.getById(id);
+  return {} as any;
 };
 
 @NgModule({

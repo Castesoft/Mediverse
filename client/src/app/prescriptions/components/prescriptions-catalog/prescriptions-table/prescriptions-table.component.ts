@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, inject, input, OnDestroy, output, signal, effect } from "@angular/core";
-import { CatalogMode, Role } from "src/app/_models/types";
+import { Component, OnInit, Input, inject, input, OnDestroy, output, signal } from "@angular/core";
+import { CatalogMode } from "src/app/_models/types";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import {CdkModule} from "src/app/_shared/cdk.module";
-import {MaterialModule} from "src/app/_shared/material.module";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
 import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
 import { CurrencyPipe, DatePipe, DecimalPipe, NgClass } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -11,17 +11,16 @@ import { RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { Prescription, PrescriptionParams } from "src/app/_models/prescription";
 import { Subscription } from "rxjs";
-import { GuidService } from "src/app/_services/guid.service";
 import { PrescriptionsService } from "src/app/_services/prescriptions.service";
-import {PrescriptionTableCellComponent, PrescriptionTableHasAccountCellComponent, PrescriptionTableSexCellComponent} from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component";
+import { PrescriptionTableCellComponent, PrescriptionTableHasAccountCellComponent, PrescriptionTableSexCellComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component";
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
-import { PrescriptionFormComponent } from '../../prescription-form/prescription-form.component';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Account } from "src/app/_models/account";
 import { createId } from "@paralleldrive/cuid2";
+import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_prescriptions', },

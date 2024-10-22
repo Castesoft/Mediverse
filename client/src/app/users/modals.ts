@@ -123,11 +123,14 @@ export class UsersFilterModalComponent implements OnInit {
   form = viewChild.required(UsersFilterFormComponent);
 
   onReset = () =>
-    this.form()!.service.resetForm(this.key, this.form()!.form);
+    {
+      // this.form()!.service.resetForm(this.key, this.form()!.form);
+
+    }
   onSubmit = () => this.form()!.onSubmit();
 
   ngOnInit(): void {
-    this.formId = this.form().form.id;
+    // this.formId = this.form().form.id;
   }
 }
 

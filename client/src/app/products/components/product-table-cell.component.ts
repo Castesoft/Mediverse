@@ -75,7 +75,7 @@ export class ProductTableCellComponent implements OnInit {
 
   ngOnInit(): void {
     this.routerLink = `${
-      this.service.naming.catalogRoute
+      this.service.dictionary.catalogRoute
     }/${this.item().id}`;
   }
 }

@@ -26,8 +26,8 @@ import { EventsService } from 'src/app/_services/events.service';
         searchText
         class="mb-3"
         formControlName="search"
-        [label]="'Buscar ' + service.naming!.plural"
-        [placeholder]="'Buscar ' + service.naming!.plural"
+        [label]="'Buscar ' + service.dictionary.plural"
+        [placeholder]="'Buscar ' + service.dictionary.plural"
       ></div>
       <div
         searchDateRange

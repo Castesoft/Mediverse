@@ -9,7 +9,7 @@ import {UsersService} from "src/app/_services/users.service";
   host: { class: 'card', },
   selector: 'div[userCardCompact]',
   template: `
-    @if (user) {
+    <!-- @if (user) {
       <div class="card-body d-flex flex-center flex-column pt-12 p-9">
         <div class="symbol symbol-65px symbol-circle mb-5">
           @if (user.photoUrl) {
@@ -43,7 +43,7 @@ import {UsersService} from "src/app/_services/users.service";
           </div>
         </div>
       </div>
-    }
+    } -->
   `,
   standalone: true,
   imports: [DecimalPipe, CurrencyPipe, RouterLink,],
@@ -59,12 +59,11 @@ export class UserCardCompactComponent implements OnInit {
   user?: User;
 
   ngOnInit(): void {
-    this.service.selected$(this.key()).subscribe({
-      next: user => {
-        console.log(user)
-        this.user = user;
-      }
-    })
-
+    // this.service.selected$(this.key()).subscribe({
+    //   next: user => {
+    //     console.log(user)
+    //     this.user = user;
+    //   }
+    // })
   }
 }

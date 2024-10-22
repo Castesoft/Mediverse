@@ -1,11 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { SearchFields } from '../_models/searchFields';
 import { Observable, of, tap } from 'rxjs';
-import { DoctorSearchResult, DoctorSearchResultParams, DoctorSearchResultParamsToHttpParams, DoctorSearchResults } from '../_models/doctorSearchResults';
-import { getPaginatedResult } from '../_utils/util';
-import { PaginatedResult, Pagination } from '../_models/pagination';
+import { DoctorSearchResult, DoctorSearchResults } from 'src/app/_models/doctorSearchResults';
+import { PaginatedResult, Pagination } from 'src/app/_models/pagination';
+import { Search } from 'src/app/_models/search';
+import { getPaginatedResult } from 'src/app/_utils/util';
 
 @Injectable({
   providedIn: 'root'
@@ -14,35 +14,29 @@ export class SearchService {
   private http = inject(HttpClient);
 
   baseUrl = `${environment.apiUrl}search/`;
-  fields = signal<SearchFields | null>(null);
-  searchResults = signal<DoctorSearchResults | null>(null);
-  searchResultsParams = signal<DoctorSearchResultParams>(new DoctorSearchResultParams('', ''));
+  results = signal<DoctorSearchResults | null>(null);
+  search = signal<Search>(new Search());
   searchResultsPagination = signal<Pagination | null>(null);
   searchResultsCache = new Map();
+  quantity = signal<number>(0);
 
-  getSearchFields() {
-    return this.http.get<SearchFields>(`${this.baseUrl}fields`).pipe(
-      tap((fields) => this.fields.set(fields))
-    );
-  }
-
-  getSearchResults(params: DoctorSearchResultParams, options: {ignoreCache: boolean} = {ignoreCache: false}): Observable<PaginatedResult<DoctorSearchResults>> {
-    this.searchResultsParams.set(params);
-    const response: DoctorSearchResults = this.searchResultsCache.get(Object.values(params).join('-'));
+  getSearchResults(options: {ignoreCache: boolean} = {ignoreCache: false}): Observable<PaginatedResult<DoctorSearchResults>> {
+    const response: DoctorSearchResults = this.searchResultsCache.get(Object.values(this.search()).join('-'));
 
     if (response && !options.ignoreCache) {
-      this.searchResults.set(response);
+      this.results.set(response);
       return of({
         result: response,
         pagination: this.searchResultsPagination()!
       });
     }
 
-    return getPaginatedResult<DoctorSearchResults>(`${this.baseUrl}`, DoctorSearchResultParamsToHttpParams(params), this.http).pipe(
+    return getPaginatedResult<DoctorSearchResults>(`${this.baseUrl}`, this.search().httpParams, this.http).pipe(
       tap((results) => {
         if (results.result) {
-          this.searchResults.set(results.result);
-          this.searchResultsCache.set(Object.values(params).join('-'), results.result);
+          this.results.set(results.result);
+          this.searchResultsCache.set(Object.values(this.search()).join('-'), results.result);
+          if (results.result.doctors.length === 0) this.search.set(new Search({ ...this.search(), pageNumber: 1 }));
         }
         if (results.pagination) this.searchResultsPagination.set(results.pagination);
       })
@@ -51,5 +45,11 @@ export class SearchService {
 
   getDoctorById(id: number): Observable<DoctorSearchResult> {
     return this.http.get<DoctorSearchResult>(`${this.baseUrl}${id}`);
+  }
+
+  getSpecialistsQuantity() {
+    return this.http.get<number>(`${this.baseUrl}specialists-quantity`).pipe(
+      tap((quantity) => this.quantity.set(quantity))
+    );
   }
 }

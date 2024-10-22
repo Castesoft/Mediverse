@@ -52,7 +52,7 @@ import { createId } from "@paralleldrive/cuid2";
         form.controls.pageNumber,
       ]" [cols]="4"></div>
       <button type="submit" class="me-2"  [attr.form]="form.id" mat-flat-button color="primary">Buscar</button>
-      <button type="button" color="secondary" mat-stroked-button (click)="service.downloadXLSX$(key(), 'Clinic')">Descargar</button>
+      <!-- <button type="button" color="secondary" mat-stroked-button (click)="service.downloadXLSX$(key(), 'Clinic')">Descargar</button> -->
     </mat-expansion-panel>
   </mat-accordion>
 </form>
@@ -132,12 +132,12 @@ export class AddressesFilterFormComponent extends FormComponent<
   }
 
   ngOnInit(): void {
-    this.service.param$(this.key(), this.mode()).subscribe({
-      next: params => {
-        this.params = params;
-        // this.form.patch(this.use(), params);
-      }
-    });
+    // this.service.param$(this.key(), this.mode()).subscribe({
+    //   next: params => {
+    //     this.params = params;
+    //     // this.form.patch(this.use(), params);
+    //   }
+    // });
   }
 
   ngOnDestroy(): void {
@@ -152,7 +152,6 @@ export class AddressesFilterFormComponent extends FormComponent<
 
 
     const result = omitKeys(this.form.value, ['httpParams', 'paramsValue', 'updateFromPartial', 'key']);
-    this.service.submitForm(this.key(), result as any);
-    // this.service.submitForm(this.key(), result as CattleParams);
+    // this.service.submitForm(this.key(), result as any);
   }
 }

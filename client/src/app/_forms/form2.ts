@@ -5,15 +5,6 @@ import { ControlErrors, ControlOrientation, InputTypes, isSelectOption, SelectOp
 import { BadRequest, ColumnOptions, DateRange, FormUse, Units } from "src/app/_models/types";
 import { Address, Person, Photo } from "src/app/_utils/person";
 
-export class WrapperOptions {
-  class: string | null = null;
-  isCol: boolean | null = null;
-
-  constructor(init?: Partial<WrapperOptions>) {
-    Object.assign(this, init);
-  }
-}
-
 export class TextareaOptions {
   height: number | null = null;
 
@@ -74,7 +65,6 @@ type ControlInfo<T extends string | number | boolean | Date | SelectOption | Dat
   asyncValidators: AsyncValidatorFn[];
   textareaOptions: TextareaOptions;
   selectOptionOptions: SelectOptionOptions;
-  wrapperOptions: WrapperOptions;
 }>;
 
 type ControlInfoMap<T> =
@@ -364,7 +354,6 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   typeahead = new TypeaheadOptions();
   textareaOptions = new TextareaOptions();
   selectOptionOptions = new SelectOptionOptions();
-  wrapperOptions = new WrapperOptions();
 
   constructor(
     value: FormControlState<T> | T,

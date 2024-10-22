@@ -19,7 +19,7 @@ import { Address, AddressParams, AddressesService } from "src/app/addresses/addr
   host: { class: 'mb-9', },
   selector: '[addressesCatalog]',
   template: `
-  <div class="pb-2">
+  <!-- <div class="pb-2">
   <h1 class="mb-4">{{ service.dictionary['Clinic'].title}}</h1>
   <div>
     <div class="row align-items-center justify-content-between g-3 mb-2">
@@ -54,7 +54,7 @@ import { Address, AddressParams, AddressesService } from "src/app/addresses/addr
     [itemsPerPage]="_pagination.itemsPerPage" [totalItems]="_pagination.totalItems" (loadMore)="service.loadMore(key())"
     (loadLess)="service.loadLess(key())" (pageChanged)="service.onPageChanged(key(), $event)"></div>
   }
-</div>
+</div> -->
 
   `,
   standalone: true,
@@ -89,18 +89,18 @@ export class AddressesCatalogComponent implements OnInit, OnDestroy {
 
     effect(() => {
       this.params = new AddressParams(this.key());
-      this.service.createEntry(this.key(), this.params, this.mode());
+      // this.service.createEntry(this.key(), this.params, this.mode());
 
-      this.service.cache$.subscribe({ next: cache => {
-        this.service.loadPagedList(this.key(), this.params).subscribe();
-      }});
+      // this.service.cache$.subscribe({ next: cache => {
+      //   this.service.loadPagedList(this.key(), this.params).subscribe();
+      // }});
     })
   }
 
   ngOnInit(): void {
-    this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
-    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list = list });
-    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination = pagination });
+    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
+    // this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list = list });
+    // this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination = pagination });
   }
 
   ngOnDestroy() {

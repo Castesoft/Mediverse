@@ -134,15 +134,19 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
         return doctor;
     }
 
-    [HttpGet("fields")]
-    public async Task<ActionResult<SearchFieldsDto>> GetSearchFieldsAsync()
-    {
-        var item = new SearchFieldsDto
-        {
-            SpecialistsQuantity = await usersService.GetSpecialistsQuantityAsync(),
-            Specialties = await usersService.GetSpecialtiesAsync(),
-        };
+    // [HttpGet("fields")]
+    // public async Task<ActionResult<SearchFieldsDto>> GetSearchFieldsAsync()
+    // {
+    //     var item = new SearchFieldsDto
+    //     {
+    //         SpecialistsQuantity = await usersService.GetSpecialistsQuantityAsync(),
+    //         // Specialties = await usersService.GetSpecialtiesAsync(),
+    //     };
 
-        return item;
-    }
+    //     return item;
+    // }
+
+    [HttpGet("specialists-quantity")]
+    public async Task<ActionResult<int>> GetSpecialistsQuantityAsync() =>
+        await usersService.GetSpecialistsQuantityAsync();
 }

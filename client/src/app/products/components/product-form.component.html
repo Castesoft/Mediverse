@@ -37,7 +37,7 @@
   </form>
   <button class="btn btn-primary" [attr.form]="form.id" type="submit">
     @if (use() === "create") {
-      Crear {{ service.naming.singular }}
+      Crear {{ service.dictionary.singular }}
     } @else if (use() === "edit") {
       Guardar cambios
     }

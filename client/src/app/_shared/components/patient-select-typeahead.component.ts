@@ -75,12 +75,12 @@ export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
   }
 
   private subscribeToSelectedUser(): void {
-    this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (user) => {
-        this.user.set(user || null);
-        this.setInputStatusAndValue();
-      }
-    });
+    // this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    //   next: (user) => {
+    //     this.user.set(user || null);
+    //     this.setInputStatusAndValue();
+    //   }
+    // });
   }
 
   private initForm = (): void => {
@@ -93,15 +93,15 @@ export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
 
     userParams.search = formValue.userTypeahead;
 
-    this.userSummaries$ = this.service.getSummaryByValue(this.key(), userParams)
-      .pipe(map((response: UserSummary[]) => {
-        this.users = response;
+    // this.userSummaries$ = this.service.getSummaryByValue(this.key(), userParams)
+    //   .pipe(map((response: UserSummary[]) => {
+    //     this.users = response;
 
-        return response.map((user: UserSummary) => {
-            return { name: user.fullName, value: user.id, data: user };
-          }
-        );
-      }));
+    //     return response.map((user: UserSummary) => {
+    //         return { name: user.fullName, value: user.id, data: user };
+    //       }
+    //     );
+    //   }));
   };
 
   private setInputStatusAndValue = () => {
@@ -145,20 +145,20 @@ export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
   };
 
   openCatalogModal = () => {
-    this.service.showCatalogModal(new MouseEvent('click'), this.key(), 'select', 'Patient')
+    // this.service.showCatalogModal(new MouseEvent('click'), this.key(), 'select', 'Patient')
   }
 
   onTypeaheadSelect = (data: TypeaheadMatch): void => {
-    if (!data.item.value) return;
+    // if (!data.item.value) return;
 
-    this.loading = true;
-    this.service.getById(data.item.value, "Patient")
-      .pipe(finalize(() => {
-        this.loading = false;
-      }))
-      .subscribe((user) => {
-        this.service.setSelected$(this.key(), user);
-      });
+    // this.loading = true;
+    // this.service.getById(data.item.value, "Patient")
+    //   .pipe(finalize(() => {
+    //     this.loading = false;
+    //   }))
+    //   .subscribe((user) => {
+    //     this.service.setSelected$(this.key(), user);
+    //   });
   };
 
   onTypeaheadLoading = (loading: boolean) => this.loading = loading;

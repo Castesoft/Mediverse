@@ -1,7 +1,7 @@
 <div catalogCardHeader>
   <div class="card-title">
     <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
-      <div searchText formControlName="search" [naming]="service.naming!"></div>
+      <div searchText formControlName="search" [naming]="service.dictionary"></div>
     </form>
   </div>
   <div class="card-toolbar">
@@ -15,7 +15,7 @@
           <button exportBtn (click)="service.downloadXLSX$(key())"></button>
 
           @if (!hideAddButton()) {
-            <button createBtn [naming]="service.naming!"
+            <button createBtn [naming]="service.dictionary"
                     (click)="service.clickLink(null, null, key(), 'create', 'modal')"
             ></button>
           }
@@ -30,14 +30,14 @@
     <h4>
       @switch (mode()) {
         @case ("select") {
-          {{ service.naming.singularTitlecase }} @if (service.naming.articleSex === 'masculine') {
+          {{ service.dictionary.singularTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
             seleccionado
           } @else {
             seleccionada
           }
         }
         @case ("multiselect") {
-          {{ service.naming.pluralTitlecase }} @if (service.naming.articleSex === 'masculine') {
+          {{ service.dictionary.pluralTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
             seleccionados
           } @else {
             seleccionadas
@@ -59,14 +59,14 @@
     } @else {
       @switch (mode()) {
         @case ("select") {
-          No tienes {{ service.naming!.undefinedArticle }} {{ service.naming!.singular }} @if (service.naming.articleSex === 'masculine') {
+          No tienes {{ service.dictionary.articles.undefinedSingular }} {{ service.dictionary.singular }} @if (service.dictionary.articleSex === 'masculine') {
             seleccionado
           } @else {
             seleccionada
           }.
         }
         @case ("multiselect") {
-          No tienes {{ service.naming!.plural }} @if (service.naming.articleSex === 'masculine') {
+          No tienes {{ service.dictionary.plural }} @if (service.dictionary.articleSex === 'masculine') {
             seleccionados
           } @else {
             seleccionadas
@@ -101,10 +101,10 @@
       <div style="border-radius: 0.7em" class="bg-white border">
         <alert type="unknown" class="mb-0 text-center">
           <h4 class="alert-heading mt-4 pt-4 mb-4 fw-bold">
-            {{ service.naming!.pluralTitlecase }} no encontrados
+            {{ service.dictionary.pluralTitlecase }} no encontrados
           </h4>
           <p class="mb-4">
-            No se encontraron {{ service.naming!.plural }} que coincidan con los
+            No se encontraron {{ service.dictionary.plural }} que coincidan con los
             criterios de búsqueda.
           </p>
           <p class="mb-4">

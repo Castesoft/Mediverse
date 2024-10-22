@@ -1,7 +1,6 @@
 import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
-import { Service } from "src/app/_models/service";
 import { BadRequest, Role } from "src/app/_models/types";
 import { User, UserSummary } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
@@ -11,6 +10,7 @@ import { PaymentMethodType } from './paymentMethodType';
 import { MedicalInsuranceCompany } from './medicalInsuranceCompany';
 import { Payment } from './payment';
 import { Prescription } from './prescription';
+import { Service } from "src/app/services/services.config";
 
 const subject = 'event';
 

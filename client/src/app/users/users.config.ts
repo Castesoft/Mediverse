@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { Component, inject, OnInit } from "@angular/core";
-import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Account } from "src/app/_models/account";
 import { CatalogMode, FormUse, Role, Sections, View } from "src/app/_models/types";
 import { User } from "src/app/_models/user";
@@ -62,10 +62,10 @@ class PatientsCatalogComponent implements OnInit {
   key = this.guid.gen();
   section: Sections = 'users';
   role: Role = 'Patient';
-  label: string;
+  // label: string;
 
   constructor() {
-    this.label = this.service.namingDictionary.get(this.role)!.title;
+    // this.label = this.service.namingDictionary.get(this.role)!.title;
   }
 
   ngOnInit(): void {
@@ -178,32 +178,6 @@ class PatientNewComponent {
   role: Role = 'Patient';
 }
 
-export const patientResolver: ResolveFn<User | null> = (route, state) => {
-  const service = inject(UsersService);
-  const id = +route.paramMap.get('id')!;
-  return service.getById(id, 'Patient', {cache: false});
-};
-
-export const patientTitleDetailResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(UsersService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Patient').subscribe();
-  const user = service.getCurrent();
-  if (!user) return 'Detalle de paciente';
-  const title = `Detalle de paciente - ${user.fullName}`;
-  return title;
-}
-
-export const patientTitleEditResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(UsersService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Patient').subscribe();
-  const user = service.getCurrent();
-  if (!user) return 'Editar paciente';
-  const title = `Editar paciente - ${user.fullName}`;
-  return title;
-}
-
 @NgModule({
   imports: [RouterModule.forChild([
     {
@@ -213,14 +187,12 @@ export const patientTitleEditResolver: ResolveFn<string> = (route, state) => {
         { path: '', component: PatientsCatalogComponent, title: 'Catálogo de pacientes', data: { breadcrumb: 'Catálogo', }, },
         { path: 'create', component: PatientNewComponent, title: 'Crear nuevo paciente', data: { breadcrumb: 'Nuevo', }, },
         {
-          path: ':id', title: patientTitleDetailResolver, data: { breadcrumb: 'Detalle', },
+          path: ':id', data: { breadcrumb: 'Detalle', },
           component: PatientDetailComponent,
-          resolve: { item: patientResolver },
         },
         {
-          path: ':id/edit', title: patientTitleEditResolver, data: { breadcrumb: 'Editar', },
+          path: ':id/edit', data: { breadcrumb: 'Editar', },
           component: PatientEditComponent,
-          resolve: { item: patientResolver },
         },
       ],
     },
@@ -287,10 +259,10 @@ class NursesCatalogComponent implements OnInit {
   key = this.guid.gen();
   section: Sections = 'users';
   role: Role = 'Nurse';
-  label: string;
+  // label: string;
 
   constructor() {
-    this.label = this.service.namingDictionary.get(this.role)!.title;
+    // this.label = this.service.namingDictionary.get(this.role)!.title;
   }
 
   ngOnInit(): void {
@@ -403,32 +375,6 @@ class NurseNewComponent {
   role: Role = 'Nurse';
 }
 
-export const nurseResolver: ResolveFn<User | null> = (route, state) => {
-  const service = inject(UsersService);
-  const id = +route.paramMap.get('id')!;
-  return service.getById(id, 'Nurse');
-};
-
-export const nurseTitleDetailResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(UsersService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Nurse').subscribe();
-  const user = service.getCurrent();
-  if (!user) return 'Detalle de enfermero';
-  const title = `Detalle de enfermero - ${user.fullName}`;
-  return title;
-}
-
-export const nurseTitleEditResolver: ResolveFn<string> = (route, state) => {
-  const service = inject(UsersService);
-  const id = +route.paramMap.get('id')!;
-  service.getById(id, 'Nurse').subscribe();
-  const user = service.getCurrent();
-  if (!user) return 'Editar enfermero';
-  const title = `Editar enfermero - ${user.fullName}`;
-  return title;
-}
-
 @NgModule({
   imports: [RouterModule.forChild([
     {
@@ -438,14 +384,12 @@ export const nurseTitleEditResolver: ResolveFn<string> = (route, state) => {
         { path: '', component: NursesCatalogComponent, title: 'Catálogo de enfermeros', data: { breadcrumb: 'Catálogo', }, },
         { path: 'create', component: NurseNewComponent, title: 'Crear nuevo enfermero', data: { breadcrumb: 'Nuevo', }, },
         {
-          path: ':id', title: nurseTitleDetailResolver, data: { breadcrumb: 'Detalle', },
+          path: ':id', data: { breadcrumb: 'Detalle', },
           component: NurseDetailComponent,
-          resolve: { item: nurseResolver },
         },
         {
-          path: ':id/edit', title: nurseTitleEditResolver, data: { breadcrumb: 'Editar', },
+          path: ':id/edit', data: { breadcrumb: 'Editar', },
           component: NurseEditComponent,
-          resolve: { item: nurseResolver },
         },
       ],
     },

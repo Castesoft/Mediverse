@@ -354,8 +354,22 @@ public class MappingProfiles : Profile
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
 
-        CreateMap<PaymentMethodType, PaymentMethodTypeDto>();
-        CreateMap<Specialty, SpecialtyDto>();
+        CreateMap<PaymentMethodType, PaymentMethodTypeDto>()
+        
+        ;
+        
+        CreateMap<PaymentMethodType, OptionDto>()
+
+        ;
+        
+        CreateMap<Specialty, SpecialtyDto>()
+        
+        ;
+
+        CreateMap<Specialty, OptionDto>()
+        
+        ;
+
         CreateMap<MedicalInsuranceCompany, MedicalInsuranceCompanyDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyPhoto.Photo.Url));
         CreateMap<UserMedicalInsuranceCompany, UserMedicalInsuranceCompanyDto>()

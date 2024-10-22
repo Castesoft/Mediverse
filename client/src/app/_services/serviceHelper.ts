@@ -5,14 +5,15 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BehaviorSubject, Observable, of, tap, map, switchMap, catchError, debounceTime, take, finalize } from "rxjs";
-import { SelectOption } from "src/app/_forms/form";
-import { FormGroup2 } from "src/app/_forms/form2";
 import { Modal } from "src/app/_models/modal";
 import { Pagination, PaginatedResponse, Item } from "src/app/_models/pagination";
-import { CatalogMode, Column, Entity, EntityParams, IParams, NamingSubject, SortOptions } from "src/app/_models/types";
-import { ConfirmService } from "src/app/_services/confirm.service";
+import { Entity, EntityParams, IParams, NamingSubject, Column, SortOptions, CatalogMode, View } from "src/app/_models/types";
 import { downloadExcelFile, getPaginatedResponse } from "src/app/_utils/util";
 import { environment } from "src/environments/environment";
+import { FormGroup2 } from "src/app/_forms/form2";
+import { MatDialog } from "@angular/material/dialog";
+import { ConfirmService } from "src/app/_services/confirm.service";
+import { SelectOption } from "src/app/_forms/form";
 
 export class ParamRecord<T extends Entity, U extends EntityParams<U>> {
   entries: Record<string, U> = {};
@@ -282,21 +283,17 @@ export class Cache<T extends Entity, U extends EntityParams<U>> {
   }
 };
 
-export class ServiceHelper<
-  T extends Entity,
-  U extends EntityParams<U> & IParams,
-  V extends FormGroup2<U>,
-  K extends string
-> {
+export class ServiceHelper<T extends Entity, U extends EntityParams<U> & IParams, V extends FormGroup2<U>> {
   protected http = inject(HttpClient);
   protected bsModalService = inject(BsModalService);
+  protected matDialog = inject(MatDialog);
   protected router = inject(Router);
   protected confirm = inject(ConfirmService);
   protected matSnackBar = inject(MatSnackBar);
 
   baseUrl: string;
-  dictionary: {[key in K]: NamingSubject};
-  columns: { [key in K]: Column[] };
+  dictionary: NamingSubject;
+  columns: Column[];
 
   data = new BehaviorSubject<T[]>([]);
   data$ = this.data.asObservable();
@@ -312,8 +309,8 @@ export class ServiceHelper<
   constructor(
     private paramsConstructor: new (key: string) => U,
     controller: string,
-    dictionary: {[key in K]: NamingSubject},
-    columns: { [key in K]: Column[] }
+    dictionary: NamingSubject,
+    columns: Column[]
   ) {
     this.baseUrl = `${environment.apiUrl}${controller.toLowerCase()}/`;
     this.dictionary = dictionary;
@@ -432,7 +429,7 @@ export class ServiceHelper<
 
     return this.http.get<SelectOption[]>(`${this.baseUrl}options`).pipe(
       map(response => {
-        this.options.set(response);
+        this.options.set(response.map(option => new SelectOption({...option})));
         return response;
       })
     )
@@ -450,18 +447,36 @@ export class ServiceHelper<
     );
   }
 
-  create(model: any, route?: string): Observable<T> {
-    return this.http.post<T>(route ? `${this.baseUrl}${route}` : this.baseUrl, model).pipe(
+  create(form: FormGroup2<T>, view: View, model?: any): Observable<T> {
+    return this.http.post<T>(this.baseUrl, model ?? form.value).pipe(
       tap(response => {
+        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} creado correctamente`, 'Cerrar', { duration: 3000 });
+        this.router.navigate([this.dictionary.catalogRoute, response.id]);
         this.data.next([...this.data.value, response]);
       })
     );
   }
 
-  update(id: number, model: any): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}${id}`, model).pipe(
+  update(form: FormGroup2<T>, view: View, id?: number, model?: any): Observable<T> {
+    return this.http.put<T>(`${this.baseUrl}${id ?? form.controls.id.value}`, model ?? form.value).pipe(
       tap(response => {
-        this.data.next(this.data.value.map(a => a.id === id ? response : a));
+        if (view === 'page') {
+          this.router.navigate([this.dictionary.catalogRoute, response.id]);
+        }
+        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`, 'Cerrar', { duration: 3000 });
+        this.data.next(this.data.value.map(a => a.id === (id ?? form.controls.id.value) ? response : a));
+
+        const options = this.options();
+        const index = options.findIndex(o => o.id === id);
+        if (index !== -1) {
+          const option = options[index];
+
+          option.name = response.name;
+          option.code = response.code;
+
+          // options[index] = updatedOption;
+          this.options.set(options);
+        }
       })
     );
   }
@@ -505,22 +520,22 @@ export class ServiceHelper<
     }
   }
 
-  downloadXLSX$ = (key: string, word: K) => {
-    this.downloadXLSX(key, word).subscribe({
+  downloadXLSX$ = (key: string) => {
+    this.downloadXLSX(key).subscribe({
       next: () => {
-        this.matSnackBar.open(`Archivo XLSX de ${this.dictionary[word].plural} descargado`, "Cerrar", { duration: 3000 });
+        this.matSnackBar.open(`Archivo XLSX de ${this.dictionary.plural} descargado`, "Cerrar", { duration: 3000 });
       },
       error: (error) => {
-        this.matSnackBar.open(`Error descargando archivo XLSX de ${this.dictionary[word].plural}`, "Cerrar", { duration: 3000 });
+        this.matSnackBar.open(`Error descargando archivo XLSX de ${this.dictionary.plural}`, "Cerrar", { duration: 3000 });
       }
     });
   }
 
-  private downloadXLSX(key: string, word: K) {
+  private downloadXLSX(key: string) {
     const param = this.cache.value.getParam(key);
     return this.http.get(`${this.baseUrl}xlsx`, { responseType: "blob", params: param.httpParams }).pipe(
       map(response => {
-        downloadExcelFile(response, this.dictionary[word].title);
+        downloadExcelFile(response, this.dictionary.title);
       }),
       catchError(error => {
         console.error("Error downloading XLSX:", error);
@@ -596,8 +611,8 @@ export class ServiceHelper<
       target.isSelected = !target.isSelected;
 
       if (target.isSelected) {
-        if (!this.cache.value.entries[key].selected.includes(item.id)) {
-          this.cache.value.entries[key].selected.push(item.id);
+        if (!this.cache.value.entries[key].selected.includes(item.id!)) {
+          this.cache.value.entries[key].selected.push(item.id!);
         }
       } else {
         this.cache.value.entries[key].selected = this.cache.value.entries[key].selected.filter(a => a !== item.id);
@@ -644,25 +659,22 @@ export class ServiceHelper<
     );
   }
 
-  delete$ = (item: T, word: K): Observable<boolean> => {
-    return this.confirm.confirm(this.getConfirmDeleteItem(item, word)).pipe(
-      switchMap(result => {
-        if (result) {
-          return this.delete(item.id).pipe(
-            map(() => {
-              this.matSnackBar.open(`${this.dictionary[word].definedArticle} ${this.dictionary[word].singular} ${item.id} ha sido eliminado`, 'Cerrar', { duration: 5000 });
-              return true;
-            }),
-            catchError(error => {
-              this.matSnackBar.open(`Error eliminando ${this.dictionary[word].definedArticle} ${this.dictionary[word].singular} ${item.id}.`);
+  delete$ = (item: T) => {
+    this.confirm.confirm(this.getConfirmDeleteItem(item)).subscribe({
+      next: confirm => {
+        if (confirm) {
+          this.delete(item.id!).subscribe({
+            next: response => {
+              this.matSnackBar.open(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id} ha sido eliminado`, 'Cerrar', { duration: 5000 });
+            },
+            error: (error: any) => {
+              this.matSnackBar.open(`Error eliminando ${this.dictionary.articles.definedPlural} ${this.dictionary.singular} ${item.id}.`);
               console.error(error);
-              return of(false);
-            })
-          );
+            }
+          })
         }
-        return of(false);
-      })
-    );
+      }
+    })
   };
 
   private deleteRange(ids: string) {
@@ -675,17 +687,17 @@ export class ServiceHelper<
 
   };
 
-  deleteRangeByIds$(ids: number[], word: K): Observable<boolean> {
-    return this.confirm.confirm(this.getConfirmDeleteRange(ids.length, word)).pipe(
+  deleteRangeByIds$(ids: number[]): Observable<boolean> {
+    return this.confirm.confirm(this.getConfirmDeleteRange(ids.length)).pipe(
       switchMap(result => {
         if (result) {
           return this.deleteRange(ids.join(',')).pipe(
             map(() => {
-              this.matSnackBar.open(`Los (${ids.length}) ${this.dictionary[word].plural} seleccionados fueron eliminados.`, 'Cerrar', { duration: 5000 });
+              this.matSnackBar.open(`Los (${ids.length}) ${this.dictionary.plural} seleccionados fueron eliminados.`, 'Cerrar', { duration: 5000 });
               return true;
             }),
             catchError(error => {
-              this.matSnackBar.open(`Ocurrió un error eliminando los (${ids.length}) ${this.dictionary[word].plural}.`, 'Cerrar', { duration: 5000 });
+              this.matSnackBar.open(`Ocurrió un error eliminando los (${ids.length}) ${this.dictionary.plural}.`, 'Cerrar', { duration: 5000 });
               return of(false);
             }),
           );
@@ -708,7 +720,7 @@ export class ServiceHelper<
 
   selectedIdsAsString = (key: string): string => '___';
 
-  private getConfirmDeleteRange = (count: number, word: K) => new Modal(`Eliminar ${this.dictionary[word].plural}`, `¿Estás seguro que deseas eliminar ${this.dictionary[word].definedArticlePlural} (${count}) ${this.dictionary[word].plural} seleccionados?`);
-  private getConfirmDeleteItem = (item: T, word: K) => new Modal(`Eliminar ${this.dictionary[word].singular}`, `¿Estás seguro que deseas eliminar ${this.dictionary[word].definedArticle} ${this.dictionary[word].singular} (${item.id})?`);
-  private getConfirmUpdateItem = (item: T, word: K) => new Modal(`Actualizar ${this.dictionary[word].singular}`, `¿Confirmas ${this.dictionary[word].definedArticlePlural} cambios hechos en ${this.dictionary[word].definedArticle} ${this.dictionary[word].singular} (${item.id})?`);
+  private getConfirmDeleteRange = (count: number) => new Modal(`Eliminar ${this.dictionary.plural}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedPlural} (${count}) ${this.dictionary.plural} seleccionados?`);
+  private getConfirmDeleteItem = (item: T) => new Modal(`Eliminar ${this.dictionary.singular}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
+  private getConfirmUpdateItem = (item: T) => new Modal(`Actualizar ${this.dictionary.singular}`, `¿Confirmas los cambios hechos en ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
 }

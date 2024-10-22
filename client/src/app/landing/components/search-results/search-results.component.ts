@@ -1,18 +1,19 @@
 /// <reference types="@types/google.maps" />
 import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DoctorSearchResult, DoctorSearchResultParams } from 'src/app/_models/doctorSearchResults';
+import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 import { Pagination } from 'src/app/_models/pagination';
 import { SearchService } from 'src/app/_services/search.service';
 import { TablePagerComponent } from 'src/app/_shared/table/table-pager.component';
 import { SearchGeneralComponent } from 'src/app/search/components/search-general/search-general.component';
-import { UserProfilePictureComponent } from "../../../users/components/user-profile-picture/user-profile-picture.component";
 import { DoctorDetailsComponent } from '../doctor-details/doctor-details.component';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
 import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.component';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { Search } from 'src/app/_models/search';
+import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 
 @Component({
   selector: 'app-search-results',
@@ -26,20 +27,14 @@ export class SearchResultsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private utilsService = inject(UtilsService);
-  searchService = inject(SearchService);
+  service = inject(SearchService);
   accountService = inject(AccountService);
 
-  params!: DoctorSearchResultParams;
   pagination?: Pagination;
   isLoading = false;
   isMobile = signal(false);
   showMobileSearch = signal(false);
   didSchedule = signal(false);
-
-  specialty = '';
-  location = '';
-  locationName = '';
-  pageNumber = 1;
 
   selectedDoctor = signal<DoctorSearchResult | null>(null);
   startingTab = 'general';
@@ -70,34 +65,31 @@ export class SearchResultsComponent implements OnInit {
       mapId: "8aab1a49ed502607"
     });
 
-    // TODO: agregar número de página
-    this.specialty = this.route.snapshot.queryParamMap.get('specialty') ?? '';
-    this.location = this.route.snapshot.queryParamMap.get('location') ?? '';
-    this.locationName = this.route.snapshot.queryParamMap.get('locationName') ?? '';
-    this.pageNumber = Number(this.route.snapshot.queryParamMap.get('pageNumber')) || 1;
-    this.makeInitialSearch(this.specialty, this.location);
+    this.service.search.set(this.service.search().setFromQueryParamMap(this.route.snapshot.queryParamMap));
+    this.makeInitialSearch();
 
-    if (this.isMobile() && (this.location || this.specialty)) {
+    console.log(this.service.search());
+
+
+    if (this.isMobile() && (this.service.search().location || this.service.search().specialty)) {
       this.showMobileSearch.set(true);
     }
   }
 
   onPageChanged(page: number) {
-    this.pageNumber = page;
     this.isLoading = true;
-    this.searchService.searchResultsParams.set({
-      ...this.searchService.searchResultsParams(),
-      pageNumber: page
-    });
+    this.service.search.set(new Search({
+      ...this.service.search(),
+      pageNumber: page,
+    }));
 
-    // Update query params with the new page number
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { pageNumber: page },
       queryParamsHandling: 'merge'
     });
 
-    this.searchService.getSearchResults(this.searchService.searchResultsParams()).subscribe({
+    this.service.getSearchResults().subscribe({
       next: (response) => {
         const { result, pagination } = response;
         this.resetMarkers();
@@ -112,28 +104,14 @@ export class SearchResultsComponent implements OnInit {
     });
   }
 
-  onSearch(event: {specialty: string, location: string, locationName: string}) {
+  onSearchChange(event: Search) {
+    this.service.search.set(new Search({ ...event }));
+
     this.resetMarkers();
-    const specialty = event.specialty;
-    const location = event.location;
-    const locationName = event.locationName;
 
-    this.specialty = specialty;
-    this.location = location;
-    this.locationName = locationName;
-
-    // Reset page number to 1 when performing a new search
-    this.pageNumber = 1;
-
-    // Update query params, including the page number
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {
-        specialty,
-        location,
-        locationName,
-        pageNumber: this.pageNumber
-      },
+      queryParams: this.service.search().params,
       queryParamsHandling: 'merge'
     });
 
@@ -141,14 +119,13 @@ export class SearchResultsComponent implements OnInit {
       this.showMobileSearch.set(true);
     }
 
-    this.makeInitialSearch(specialty, location);
+    this.makeInitialSearch();
   }
 
-  makeInitialSearch(specialty: string, location: string) {
-    this.params = new DoctorSearchResultParams(specialty || '', location || '');
-    this.params.pageNumber = this.pageNumber;
+  makeInitialSearch() {
+    console.log(this);
 
-    this.searchService.getSearchResults(this.params, {ignoreCache: true}).subscribe({
+    this.service.getSearchResults({ignoreCache: true}).subscribe({
       next: (response) => {
         const { result, pagination } = response;
         if (result) {
@@ -307,6 +284,6 @@ export class SearchResultsComponent implements OnInit {
 
   onEventCreated() {
     this.didSchedule.set(true);
-    this.makeInitialSearch(this.specialty, this.location);
+    this.makeInitialSearch();
   }
 }

@@ -1,74 +1,91 @@
-@if (label()) {
-  <label
-    [for]="id() ? id() : controlName"
-    class="form-label fw-semi-bold fs--1 d-flex"
-  >
-    {{ label() }}
-    @if (service.isOptional(control)) {
-      <span optionalSpan></span>
-    }
-    @if (isNew()) {
-      <span newBadge></span>
-    }
-  </label>
+@if (showLabel()) {
+  <label legacyControlLabel
+         [control]="$any(control())"
+         [name]="name()"
+         [orientation]="orientation()"
+         [isNew]="isNew()"
+         [id]="id()!"
+         [isReadonly]="isReadonly()"
+         [label]="label()"
+         [optional]="optional()"
+         [submitted]="submitted()"></label>
 }
 
-<input
-  *ngIf="!isReadonly(); "
-  #inputRef
-  class="form-control text-1000 fs-0"
-  [class.border-0]="hideBorder()"
-  [id]="id() ? id() : controlName"
-  [typeaheadAsync]="isTypeaheadAsync()"
-  [formControl]="control"
-  [typeahead]="typeaheadOptions()"
-  [style.border-top-right-radius.px]="isInputGroupSpan() ? 0 : null"
-  [style.border-bottom-right-radius.px]="isInputGroupSpan() ? 0 : null"
-  [typeaheadScrollable]="true"
-  [typeaheadOptionsInScrollableView]="7"
-  [adaptivePosition]="adaptivePosition()"
-  (typeaheadOnSelect)="onSelect.emit($event)"
-  (typeaheadLoading)="onLoading.emit($event)"
-  (typeaheadOnBlur)="onBlur.emit($event)"
-  (focus)="onInputFocus.emit()"
-  [typeaheadOptionField]="typeaheadOptionField()"
-  [typeaheadItemTemplate]="typeaheadItemTemplate()"
-  [typeaheadMinLength]="0"
-  [placeholder]="placeholder()"
-  autocomplete="off"
-  [typeaheadHideResultsOnBlur]="true"
-  [attr.autofocus]="autofocus() ? true : null"
-  [spellcheck]="false"
-  [ngClass]="{
-    'is-invalid': submitted() && control.invalid,
-    'is-valid': submitted() && control.valid
-  }"
-  [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
-  [attr.aria-label]="label() + ' input'"
-  container="body"
->
-
-<ng-template #readonlyInput>
+<div class="input-group">
+  @if (selectedValue() && selectedValue()?.code) {
+    <span class="input-group-text">{{ selectedValue()?.code }}</span>
+  }
   <input
-    class="form-control text-1000 fs-0"
-    [id]="id() ? id() : controlName"
-    [formControl]="control"
-    [placeholder]="placeholder()"
-    autocomplete="off"
-    [spellcheck]="false"
-    [readonly]="isReadonly()"
-    [ngClass]="{
-      'is-invalid': submitted() && control.invalid,
-      'is-valid': submitted() && control.valid
-    }"
-    [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
+    (typeaheadLoading)="onLoading.emit($event)"
+    (typeaheadOnSelect)="handleValueSelect($event)"
+    *ngIf="!isReadonly(); else readonlyInput"
+    [adaptivePosition]="true"
+    [attr.aria-describedby]="formText() ? name() + 'helpBlock' : null"
     [attr.aria-label]="label() + ' input'"
+    [attr.autofocus]="autofocus() ? true : null"
+    [container]="isModal() ? '' : 'body'"
+    [formControl]="$any(control())"
+    [id]="id()"
+    [ngClass]="{
+      'is-invalid': submitted() && control().invalid,
+      'is-valid': submitted() && control().valid
+    }"
+    [placeholder]="placeholder()"
+    [spellcheck]="false"
+    [style.border-bottom-right-radius.px]="isInputGroupSpan() ? 0 : null"
+    [style.border-top-right-radius.px]="isInputGroupSpan() ? 0 : null"
+    [typeaheadAsync]="isTypeaheadAsync"
+    [typeaheadHideResultsOnBlur]="true"
+    [typeaheadMinLength]="0"
+    [typeaheadOptionField]="optionField()"
+    [typeaheadOptionsInScrollableView]="50"
+    [typeaheadOptionsLimit]="50"
+    [typeaheadOrderBy]="{
+      field: 'name',
+      direction: 'asc'
+    }"
+    [typeaheadScrollable]="true"
+    [typeaheadSingleWords]="true"
+    [isAnimated]="true"
+    [typeaheadSelectFirstItem]="true"
+    [typeaheadGroupField]="groupField()"
+    [typeahead]="options()"
+    autocomplete="off"
+    class="form-control text-body fs-8"
   >
-</ng-template>
 
-@if (control.errors) {
-  <div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
+  <ng-template #readonlyInput>
+    <input
+      [attr.aria-describedby]="formText() ? name() + 'helpBlock' : null"
+      [attr.aria-label]="label() + ' input'"
+      [formControl]="$any(control())"
+      [id]="id()!"
+      [ngClass]="{
+      'is-invalid': submitted() && control().invalid,
+      'is-valid': submitted() && control().valid
+    }"
+      [placeholder]="placeholder()"
+      [readonly]="isReadonly()"
+      [spellcheck]="false"
+      autocomplete="off"
+      class="form-control text-body fs-8"
+    >
+  </ng-template>
+</div>
+
+@if (control().errors) {
+  @for (error of control().errors | keyvalue; let idx = $index; track idx) {
+    @if (submitted() && control().invalid) {
+      <div class="invalid-feedback">
+        {{ errors()[error.key] }}
+      </div>
+    }
+  }
 }
+
 @if (formText()) {
-  <div helpBlock [controlName]="controlName" [formText]="formText()"></div>
+  <div [id]="name()+'helpBlock'"
+       class="form-text">
+    {{ formText() }}
+  </div>
 }

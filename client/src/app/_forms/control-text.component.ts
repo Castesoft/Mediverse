@@ -6,7 +6,7 @@ import { FormsService } from 'src/app/_services/forms.service';
 import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
 import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
 import { Control } from 'src/app/_forms/form';
-import { ControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
+import { LegacyControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
 import { InputComponent } from 'src/app/_forms/helpers/input.component';
 import { CommonModule } from '@angular/common';
 
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
     @if (control().orientation === 'inline') {
       <div class="d-flex align-items-center gap-2">
         @if (control().showLabel) {
-          <label controlLabel [(control)]="control"></label>
+          <label legacyControlLabel [name]="control().name" [control]="control().formControl"></label>
         }
         <input
           inputComponent
@@ -27,7 +27,7 @@ import { CommonModule } from '@angular/common';
       </div>
     } @else {
       @if (control().showLabel) {
-        <label controlLabel [(control)]="control"></label>
+        <label legacyControlLabel [name]="control().name" [control]="control().formControl"></label>
       }
 
       <input
@@ -60,7 +60,7 @@ import { CommonModule } from '@angular/common';
     HelpBlockComponent,
     OptionalSpanComponent,
     NewBadgeComponent,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
     InputComponent,
     CommonModule,
   ],

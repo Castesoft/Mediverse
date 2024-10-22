@@ -1,3 +1,5 @@
+using MainService.Models.Entities.Aggregate;
+
 namespace MainService.Core.DTOs.User
 {
     public class PaymentDto
@@ -6,7 +8,7 @@ namespace MainService.Core.DTOs.User
         public decimal Amount { get; set; }
         public DateTime PaymentDate { get; set; }
         public UserPaymentMethodDto PaymentMethod { get; set; }
-        public PaymentMethodTypeDto PaymentMethodType { get; set; }
+        public OptionDto PaymentMethodType { get; set; }
         public int DoctorId { get; set; }
     }
 }

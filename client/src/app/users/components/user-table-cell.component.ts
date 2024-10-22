@@ -86,9 +86,9 @@ export class UserTableCellComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.routerLink = `${
-      this.service.namingDictionary.get(this.role())!.catalogRoute
-    }/${this.user().id}`;
+    // this.routerLink = `${
+    //   this.service.dictionary.get(this.role())!.catalogRoute
+    // }/${this.user().id}`;
   }
 
 }

@@ -9,43 +9,43 @@ using MainService.Models.Entities.Aggregate;
 
 
 namespace MainService.Infrastructure.Data;
-public class SpecialtyRepository(DataContext context, IMapper mapper) : ISpecialtyRepository
+public class PaymentMethodTypeRepository(DataContext context, IMapper mapper) : IPaymentMethodTypeRepository
 {
-    public async Task<SpecialtyDto> FindDtoByNameAsync(string name) => 
-        await context.Specialties.ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider).AsNoTracking()
+    public async Task<PaymentMethodTypeDto> FindDtoByNameAsync(string name) => 
+        await context.PaymentMethodTypes.ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider).AsNoTracking()
             .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Specialty> GetByNameAsync(string name) =>
-        await context.Specialties.SingleOrDefaultAsync(x => x.Name == name);
+    public async Task<PaymentMethodType> GetByNameAsync(string name) =>
+        await context.PaymentMethodTypes.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Specialty> GetByCodeAsync(string code) =>
-        await context.Specialties.SingleOrDefaultAsync(x => x.Code == code);
+    public async Task<PaymentMethodType> GetByCodeAsync(string code) =>
+        await context.PaymentMethodTypes.SingleOrDefaultAsync(x => x.Code == code);
 
-    public void Add(Specialty item) => context.Specialties.Add(item);
-    public void Delete(Specialty item) => context.Specialties.Remove(item);
+    public void Add(PaymentMethodType item) => context.PaymentMethodTypes.Add(item);
+    public void Delete(PaymentMethodType item) => context.PaymentMethodTypes.Remove(item);
 
-    public async Task<List<SpecialtyDto>> GetAllDtosAsync() => await context.Specialties
+    public async Task<List<PaymentMethodTypeDto>> GetAllDtosAsync() => await context.PaymentMethodTypes
             .AsNoTracking()
-            .ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider)
+            .ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<Specialty> GetAsNoTrackingByIdAsync(int id) =>
-        await context.Specialties
+    public async Task<PaymentMethodType> GetAsNoTrackingByIdAsync(int id) =>
+        await context.PaymentMethodTypes
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<Specialty> GetByIdAsync(int id) =>
-        await context.Specialties
+    public async Task<PaymentMethodType> GetByIdAsync(int id) =>
+        await context.PaymentMethodTypes
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<SpecialtyDto> GetDtoByIdAsync(int id) =>
-        await context.Specialties
-            .ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider)
+    public async Task<PaymentMethodTypeDto> GetDtoByIdAsync(int id) =>
+        await context.PaymentMethodTypes
+            .ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<PagedList<SpecialtyDto>> GetPagedListAsync(SpecialtyParams param, bool getAll = false)
+    public async Task<PagedList<PaymentMethodTypeDto>> GetPagedListAsync(PaymentMethodTypeParams param, bool getAll = false)
     {
-        IQueryable<Specialty> query = context.Specialties.AsQueryable();
+        IQueryable<PaymentMethodType> query = context.PaymentMethodTypes.AsQueryable();
 
         if (!string.IsNullOrEmpty(param.Name)) query = query.Where(x => x.Name.Contains(param.Name));
         if (!string.IsNullOrEmpty(param.Code)) query = query.Where(x => x.Code.Contains(param.Code));
@@ -95,24 +95,24 @@ public class SpecialtyRepository(DataContext context, IMapper mapper) : ISpecial
             );
         }
 
-        return await PagedList<SpecialtyDto>.CreateAsync(
-            query.ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider),
+        return await PagedList<PaymentMethodTypeDto>.CreateAsync(
+            query.ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider),
             param.PageNumber,
             param.PageSize);
     }
 
     public async Task<List<OptionDto>> GetOptionsAsync() => 
-        await context.Specialties
+        await context.PaymentMethodTypes
             .AsNoTracking()
             .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
     public async Task<bool> ExistsByIdAsync(int id) =>
-        await context.Specialties.AsNoTracking().AnyAsync(x => x.Id == id);
+        await context.PaymentMethodTypes.AsNoTracking().AnyAsync(x => x.Id == id);
 
     public Task<bool> ExistsByNameAsync(string name) => 
-        context.Specialties.AsNoTracking().AllAsync(x => x.Name != name);
+        context.PaymentMethodTypes.AsNoTracking().AllAsync(x => x.Name != name);
 
     public Task<bool> ExistsByCodeAsync(string code) =>
-        context.Specialties.AsNoTracking().AllAsync(x => x.Code != code);
+        context.PaymentMethodTypes.AsNoTracking().AllAsync(x => x.Code != code);
 }

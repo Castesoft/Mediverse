@@ -13,26 +13,26 @@ import { IconsService } from "src/app/_services/icons.service";
     <div class="col-12 col-md-auto">
       <h1>
         @if (use() === "create") {
-          Crear {{ service.naming.singular }}
+          Crear {{ service.dictionary.singular }}
           @if (!validation) {
             <span class="fs--1 badge badge-phoenix badge-phoenix-info me-2"
               >Validación desactivada</span
             >
             @if (use() === "create") {
               <button class="btn btn-sm btn-phoenix-info" (click)="fillForm.emit()">
-                Llenar con {{ service.naming.singular }} aleatorio
+                Llenar con {{ service.dictionary.singular }} aleatorio
               </button>
             }
           }
         } @else if (use() === "edit") {
-          Actualizar {{ service.naming.singular }}
+          Actualizar {{ service.dictionary.singular }}
           @if (!validation) {
             <span class="fs--1 badge badge-phoenix badge-phoenix-info me-2"
               >Validación desactivada</span
             >
           }
         } @else if (use() === "detail" && item !== null) {
-          {{ service.naming.singularTitlecase }} #{{ item()!.id }}
+          {{ service.dictionary.singularTitlecase }} #{{ item()!.id }}
         }
       </h1>
     </div>
@@ -50,7 +50,7 @@ import { IconsService } from "src/app/_services/icons.service";
         @if (use() === "detail" || use() === "edit") {
           <button class="btn btn-phoenix-danger me-2" (click)="service.delete$(item()!)">
             <fa-icon [icon]="icons.faTrashCan" class="me-2" />Eliminar
-            {{ service.naming.singular }}
+            {{ service.dictionary.singular }}
           </button>
         }
       </div>

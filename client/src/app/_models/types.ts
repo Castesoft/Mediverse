@@ -5,7 +5,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { SelectOption } from "src/app/_forms/form";
 import { EnvService } from "src/app/_services/env.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { getPaginationHeaders } from "src/app/_utils/util";
+import { cleanStringAndCreateRoute, getPaginationHeaders } from "src/app/_utils/util";
 
 export class Column {
   name: string;
@@ -121,55 +121,85 @@ export type CatalogMode = 'view' | 'select' | 'multiselect' | 'readonly';
 
 export type LoadingTypes = 'current' | 'all' | string;
 
-export type ArticleSex = 'masculine' | 'femenine';
+export function capitalizeFirstLetter(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+export const ArticlesBySex = {
+  masculine: {
+    undefinedSingular: 'un',
+    definedSingular: 'el',
+    undefinedPlural: 'unos',
+    definedPlural: 'los',
+  },
+  feminine: {
+    undefinedSingular: 'una',
+    definedSingular: 'la',
+    undefinedPlural: 'unas',
+    definedPlural: 'las',
+  },
+} as const;
+
+export type ArticleSexes = keyof typeof ArticlesBySex;
+
+export type Articles = typeof ArticlesBySex[ArticleSexes];
 
 export class NamingSubject {
-  subject: string;
   singular: string;
   plural: string;
-  articleSex: ArticleSex;
-  title: string;
-
   singularTitlecase: string;
   pluralTitlecase: string;
-
   createRoute: string;
   catalogRoute: string;
+  title: string;
+  articles: Articles;
+  articleSex: ArticleSexes;
+  controller: string;
+  route: string[];
 
-  undefinedArticle: string;
-  definedArticle: string;
-  undefinedArticlePlural: string;
-  definedArticlePlural: string;
-  baseUrl: string;
+  private baseUrl: string;
 
-  constructor(subject: string, singular: string, plural: string, title: string, articleSex: ArticleSex, baseUrl: string) {
-    this.subject = subject.toLowerCase();
+  constructor(
+    sex: ArticleSexes,
+    singular: string,
+    plural: string,
+    title: string,
+    controller: string,
+    route: string[],
+    path?: string,
+    init?: Partial<Omit<
+      NamingSubject,
+      | 'articles'
+      | 'articleSex'
+      | 'singular'
+      | 'plural'
+      | 'singularTitlecase'
+      | 'pluralTitlecase'
+      | 'baseUrl'
+      | 'catalogRoute'
+      | 'createRoute'
+    >>
+  ) {
+    Object.assign(this, init);
+
+    this.articleSex = sex;
     this.singular = singular;
     this.plural = plural;
     this.title = title;
-    this.baseUrl = `/${baseUrl}/${this.subject}/`;
+    this.controller = controller;
+    this.route = route;
+    this.articles = ArticlesBySex[sex];
 
-    this.singularTitlecase = singular.charAt(0).toUpperCase() + singular.slice(1);
-    this.pluralTitlecase = plural.charAt(0).toUpperCase() + plural.slice(1);
+    this.singularTitlecase = capitalizeFirstLetter(singular);
+    this.pluralTitlecase = capitalizeFirstLetter(plural);
 
-    this.createRoute = `${this.baseUrl}create`;
-    this.catalogRoute = `${this.baseUrl}`;
+    this.baseUrl = '/' + this.route.join('/');
 
-    this.undefinedArticle = articleSex === 'masculine' ? 'un' : 'una';
-    this.definedArticle = articleSex === 'masculine' ? 'el' : 'la';
-    this.undefinedArticlePlural = articleSex === 'masculine' ? 'unos' : 'unas';
-    this.definedArticlePlural = articleSex === 'masculine' ? 'los' : 'las';
-    this.articleSex = articleSex;
+    const pluralRouteSegment = path ?? cleanStringAndCreateRoute(this.plural.toLowerCase());
+    this.catalogRoute = `${this.baseUrl}/${pluralRouteSegment}`;
+    this.createRoute = `${this.baseUrl}/${pluralRouteSegment}/nuevo`;
   }
-
-  editRoute(id: number): string {
-    return `${this.baseUrl}${id}/edit`;
-  }
-
-  detailRoute(id: number): string {
-    return `${this.baseUrl}${id}`;
-  }
-};
+}
 
 export type Section = {
   label: string;
@@ -178,6 +208,7 @@ export type Section = {
 
 export type Sections =
 'admin' |
+'specialties' |
 'diseases' |
 'substances' |
 'consumptionLevels' |
@@ -203,6 +234,10 @@ export const sectionDictionary: SectionDictionary = {
   admin: {
     label: 'Admin',
     route: '/admin',
+  },
+  specialties: {
+    label: 'Especialidades',
+    route: '/admin/specialties',
   },
   occupations: {
     label: 'Ocupaciones',
@@ -356,9 +391,11 @@ export class MedicineType {
 }
 
 export class Entity {
-  id: number = 0;
+  id: number | null = null;
   createdAt: Date = new Date();
   name: string = "";
+  codeNumber: number = 0;
+  code: string = "";
   description: string = "";
   isSelected: boolean = false;
   visible: boolean = true;
@@ -480,8 +517,12 @@ export class TableCellItem<T, TKey extends keyof any> {
   type: TableCells;
   justification: TableCellItemJustification = "start";
   isLink = false;
+  showCodeSpan = true;
+  fullDate = false;
   baseUrl?: string;
   unit?: Units;
+  label?: string;
+  pair?: { first: TableCellItem<T, any>, second: TableCellItem<T, any> };
 
   constructor(key: TKey, type: TableCells, init?: Partial<TableCellItem<T, TKey>>) {
     Object.assign(this, init);

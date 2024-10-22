@@ -34,7 +34,7 @@ import {
   selector: 'div[addressesTableMenu]',
   host: { class: '' },
   template: `
-    <div class="dropdown-menu d-block" cdkMenu>
+    <!-- <div class="dropdown-menu d-block" cdkMenu>
       <a
         cdkMenuItem
         class="dropdown-item px-3"
@@ -71,7 +71,7 @@ import {
       >
         Eliminar
       </button>
-    </div>
+    </div> -->
   `,
   standalone: true,
   imports: [RouterModule, CdkModule, MaterialModule],
@@ -94,7 +94,7 @@ export class AddressesTableMenuComponent
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable' },
   selector: 'table[addressesTable]',
   template: `
-    <thead
+    <!-- <thead
       tableHeader
       [columns]="service.columns['Clinic']"
       [params]="params"
@@ -163,7 +163,7 @@ export class AddressesTableMenuComponent
           </ng-template>
         </tr>
       }
-    </tbody>
+    </tbody> -->
   `,
   standalone: true,
   imports: [
@@ -198,11 +198,11 @@ export class AddressesTableComponent implements OnInit, OnDestroy {
   constructor() {
     effect(() => {
       this.params = new AddressParams(this.key());
-      this.service.param$(this.key(), this.mode()).subscribe({
-        next: (params) => {
-          this.params = params;
-        },
-      });
+      // this.service.param$(this.key(), this.mode()).subscribe({
+      //   next: (params) => {
+      //     this.params = params;
+      //   },
+      // });
     });
   }
 

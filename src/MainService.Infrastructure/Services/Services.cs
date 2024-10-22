@@ -26,6 +26,32 @@ namespace MainService.Infrastructure.Services
         }
     }
 
+    public class PaymentMethodTypesService(IUnitOfWork uow) : IPaymentMethodTypesService {
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            PaymentMethodType itemToDelete = await uow.PaymentMethodTypeRepository.GetByIdAsync(id);
+
+            uow.PaymentMethodTypeRepository.Delete(itemToDelete);
+
+            if (!await uow.Complete()) return false;
+
+            return true;
+        }
+    }
+
+    public class SpecialtiesService(IUnitOfWork uow) : ISpecialtiesService {
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            Specialty itemToDelete = await uow.SpecialtyRepository.GetByIdAsync(id);
+
+            uow.SpecialtyRepository.Delete(itemToDelete);
+
+            if (!await uow.Complete()) return false;
+
+            return true;
+        }
+    }
+
     public class DiseasesService(IUnitOfWork uow) : IDiseasesService {
         public async Task<bool> DeleteByIdAsync(int id)
         {

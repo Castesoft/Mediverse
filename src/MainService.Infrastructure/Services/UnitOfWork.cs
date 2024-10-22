@@ -10,6 +10,8 @@ namespace MainService.Infrastructure.Services;
 public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService googleService) : IUnitOfWork
 {
     public IProductRepository ProductRepository => new ProductRepository(context, mapper);
+    public IPaymentMethodTypeRepository PaymentMethodTypeRepository => new PaymentMethodTypeRepository(context, mapper);
+    public ISpecialtyRepository SpecialtyRepository => new SpecialtyRepository(context, mapper);
     public IDiseaseRepository DiseaseRepository => new DiseaseRepository(context, mapper);
     public ISubstanceRepository SubstanceRepository => new SubstanceRepository(context, mapper);
     public IOccupationRepository OccupationRepository => new OccupationRepository(context, mapper);
@@ -25,7 +27,6 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public IEventRepository EventRepository => new EventRepository(context, mapper);
     public IPrescriptionRepository PrescriptionRepository => new PrescriptionRepository(context, mapper);
     public IOrderRepository OrderRepository => new OrderRepository(context, mapper);
-    public ISpecialtyRepository SpecialtyRepository => new SpecialtyRepository(context);
     public ISearchRepository SearchRepository => new SearchRepository(context, mapper, googleService);
 
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;

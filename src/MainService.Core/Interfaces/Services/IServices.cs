@@ -1,5 +1,15 @@
 namespace MainService.Core.Interfaces.Services
 {
+    public interface ISpecialtiesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
+    public interface IPaymentMethodTypesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
     public interface IColorBlindnessesService
     {
         Task<bool> DeleteByIdAsync(int id);

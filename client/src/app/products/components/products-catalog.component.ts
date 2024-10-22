@@ -17,7 +17,6 @@ import {ProductsFilterMenuComponent} from "src/app/products/components/products-
 import { ProductsTableComponent } from "src/app/products/components/products-table.component";
 import { ProductsService } from "src/app/_services/products.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
-import { ProductSelectTypeaheadComponent } from "src/app/_shared/components/product-select-typeahead.component";
 
 @Component({
   host: { class: 'pb-6', },

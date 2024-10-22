@@ -18,7 +18,7 @@ tableHeader
               <input
                 class="form-check-input"
                 type="checkbox"
-                [name]="service.naming.singular"
+                [name]="service.dictionary.singular"
                 [(ngModel)]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
                 (click)="stopPropagation($event)"
@@ -32,7 +32,7 @@ tableHeader
               <input
                 class="form-check-input"
                 type="radio"
-                [name]="service.naming.singular"
+                [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
                 (change)="service.setSelected$(key(), item)"
                 (click)="stopPropagation($event)"
@@ -46,7 +46,7 @@ tableHeader
               <input
                 class="form-check-input"
                 type="checkbox"
-                [name]="service.naming.singular"
+                [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
                 (change)="service.addSelected$(key(), item)"
@@ -83,13 +83,13 @@ tableHeader
       <td class="text-end">
         <div class="d-flex justify-content-end">
           <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-             [routerLink]="[service.naming.catalogRoute,item.id]"
+             [routerLink]="[service.dictionary.catalogRoute,item.id]"
              tooltip="Ver detalles"
              (click)="$event.stopPropagation()">
             <i class="ki-duotone ki-eye fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
           </a>
           <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-             [routerLink]="[service.naming.catalogRoute, item.id, 'edit']"
+             [routerLink]="[service.dictionary.catalogRoute, item.id, 'edit']"
              tooltip="Editar"
              (click)="$event.stopPropagation()">
             <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i>
@@ -117,12 +117,12 @@ tableHeader
           cdkMenu>
           <div cdkMenuItem
                class="menu-item px-3">
-            <a [routerLink]="[service.naming.catalogRoute,item.id]"
+            <a [routerLink]="[service.dictionary.catalogRoute,item.id]"
                class="menu-link">Ver</a>
           </div>
           <div cdkMenuItem
                class="menu-item px-3">
-            <a [routerLink]="[service.naming.catalogRoute, item.id, 'edit']"
+            <a [routerLink]="[service.dictionary.catalogRoute, item.id, 'edit']"
                class="menu-link">Editar</a>
           </div>
           <div cdkMenuItem

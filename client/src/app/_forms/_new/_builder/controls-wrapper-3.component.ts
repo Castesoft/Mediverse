@@ -26,12 +26,7 @@ export class ControlsWrapper3Component {
       this.control().orientation === 'inline'
     ) {
       this.class = 'col d-flex align-items-center';
-    }
-    if (
-      this.control().wrapperOptions.isCol !== null &&
-      this.control().wrapperOptions.isCol === false
-    ) {
-      this.class = 'd-flex align-items-end';
+      return this.class;
     }
 
     return this.class;

@@ -46,7 +46,7 @@ export class CatalogComponent {
   label: string;
 
   constructor() {
-    this.label = this.prescription.naming.title;
+    this.label = this.prescription.dictionary.title;
   }
 
   ngOnInit(): void {

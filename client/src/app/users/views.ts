@@ -14,7 +14,7 @@ import { ClinicalHistoryFormComponent } from '../account/components/account-clin
 @Component({
   selector: 'div[userNewView]',
   template: `
-  <div userForm [use]="use()" [id]="null" [view]="view()" [role]="role()" [style]="'normal'"></div>
+  <div userForm [style]="'normal'"></div>
   `,
   standalone: true,
   imports: [ UserFormComponent, ModalWrapperModule, ],
@@ -33,7 +33,7 @@ export class UserNewComponent {
 
   formComponent = viewChild.required(UserFormComponent);
 
-  onFillForm = () => this.formComponent().fillForm();
+  // onFillForm = () => this.formComponent().fillForm();
 }
 
 @Component({
@@ -270,7 +270,7 @@ export class UserDetailComponent implements OnInit {
 @Component({
   selector: 'div[userEditView]',
   template: `
-  <div userForm [use]="use()" [id]="id()" [view]="view()" [role]="role()" [style]="'normal'"></div>
+  <div userForm [style]="'normal'"></div>
   `,
   standalone: true,
   imports: [ UserFormComponent, ModalWrapperModule, ],

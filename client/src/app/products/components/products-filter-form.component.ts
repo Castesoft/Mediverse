@@ -25,8 +25,8 @@ import { ProductsService } from 'src/app/_services/products.service';
         searchText
         class="mb-3"
         formControlName="search"
-        [label]="'Buscar ' + product.naming.plural"
-        [placeholder]="'Buscar ' + product.naming.plural"
+        [label]="'Buscar ' + product.dictionary.plural"
+        [placeholder]="'Buscar ' + product.dictionary.plural"
       ></div>
       <div
         searchDateRange

@@ -1,6 +1,6 @@
+import { Service } from 'src/app/services/services.config';
 import { UserPaymentMethod } from './billingDetails';
 import { PaymentMethodType } from './paymentMethodType';
-import { Service } from "./service";
 
 export interface Payment {
   id: number

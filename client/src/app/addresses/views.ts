@@ -48,7 +48,7 @@ import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
 
   @if(use() !== 'detail') {
     <div container [type]="'inline'">
-      <div detailFooter [use]="use()" [view]="view()" [id]="item() ? item()!.id : undefined" [dictionary]="service.dictionary['Clinic']" [formId]="form.id"></div>
+      <!-- <div detailFooter [use]="use()" [view]="view()" [id]="item() ? item()!.id : undefined" [dictionary]="service.dictionary['Clinic']" [formId]="form.id"></div> -->
     </div>
   }
 </form>
@@ -128,20 +128,20 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
   }
 
   create() {
-    if (this.form.submittable) {
-      this.service.create(this.form.getRawValue(), 'clinic').subscribe({
-        next: item => this.form.submitted = false,
-        error: (error: BadRequest) => this.form.error = error });
-    }
+    // if (this.form.submittable) {
+    //   this.service.create(this.form.getRawValue(), 'clinic').subscribe({
+    //     next: item => this.form.submitted = false,
+    //     error: (error: BadRequest) => this.form.error = error });
+    // }
   }
 
   update() {
-    if (this.form.submittable) {
-      this.service.update(+this.form.getRawValue().id!, this.form.getRawValue()).subscribe({
-        next: () => this.form.submitted = false,
-        error: (error: BadRequest) => this.form.error = error
-      });
-    }
+    // if (this.form.submittable) {
+    //   this.service.update(+this.form.getRawValue().id!, this.form.getRawValue()).subscribe({
+    //     next: () => this.form.submitted = false,
+    //     error: (error: BadRequest) => this.form.error = error
+    //   });
+    // }
   }
 }
 
@@ -149,7 +149,7 @@ export class AddressFormComponent extends FormComponent<AddressesService> implem
   selector: 'div[addressDetail]',
   template: `
   <div container [type]="'inline'">
-    <div detailHeader [(use)]="use" [view]="view()" [dictionary]="service.dictionary['Clinic']" [id]="item() ? item()!.id : undefined" (onDelete)="service.delete$(item()!, 'Clinic')"></div>
+    <!-- <div detailHeader [(use)]="use" [view]="view()" [dictionary]="service.dictionary['Clinic']" [id]="item() ? item()!.id : undefined" (onDelete)="service.delete$(item()!, 'Clinic')"></div> -->
   </div>
   <div addressForm [item]="item()" [key]="key()" [use]="use()" [view]="view()"></div>
   `,

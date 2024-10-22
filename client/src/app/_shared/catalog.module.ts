@@ -10,7 +10,7 @@ import { CatalogMode, NamingSubject } from 'src/app/_models/types';
         {{ naming().title }}
       }
       @case ('select') {
-        Seleccione {{naming().undefinedArticle}} {{ naming().singular }}
+        Seleccione {{naming().articles.undefinedSingular}} {{ naming().singular }}
       }
       @case ('multiselect') {
         Seleccione {{ naming().plural }}

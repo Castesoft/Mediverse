@@ -47,19 +47,19 @@ export class PatientSummaryCardComponent implements OnInit {
   }
 
   private subscribeToSelectedPatient = (key: string) => {
-    this.usersService.selected$(key).pipe(takeUntil(this.ngUnsubscribe)).subscribe((patient) => {
-      if (patient) {
-        if (!patient.photoUrl) {
-          this.fetchNewPhotoUrl().then((url) => {
-            this.photoUrl = url;
-            patient.photoUrl = url;
-          });
-        } else {
-          this.photoUrl = patient.photoUrl;
-        }
-        this.item.set(patient);
-      }
-    });
+    // this.usersService.selected$(key).pipe(takeUntil(this.ngUnsubscribe)).subscribe((patient) => {
+    //   if (patient) {
+    //     if (!patient.photoUrl) {
+    //       this.fetchNewPhotoUrl().then((url) => {
+    //         this.photoUrl = url;
+    //         patient.photoUrl = url;
+    //       });
+    //     } else {
+    //       this.photoUrl = patient.photoUrl;
+    //     }
+    //     this.item.set(patient);
+    //   }
+    // });
   }
 
   private async fetchNewPhotoUrl(): Promise<string> {

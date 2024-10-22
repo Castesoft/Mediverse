@@ -18,12 +18,7 @@
                 </h1>
                 <div class="py-3">
                     <app-search-general
-                        [compact]="true"
-                        (onSearch)="onSearch($event)"
-                        [selectedSpecialty]="specialty"
-                        [selectedPlaceId]="location"
-                        [selectedLocation]="locationName"
-                        [disabled]="isLoading"
+                      [compact]="true"
                     ></app-search-general>
                 </div>
 
@@ -36,9 +31,9 @@
                 </div>
             </div>
 
-            @if (searchService.searchResults() && searchService.searchResults()?.doctors!.length > 0) {
+            @if (service.results() && service.results()?.doctors!.length > 0) {
                 <div class="overflow-y-auto" style="flex: 1;">
-                    @for (doctor of searchService.searchResults()?.doctors; track $index) {
+                    @for (doctor of service.results()?.doctors; track $index) {
                         <div class="d-flex flex-column p-6 doctor-search-result" [class.hovered]="hoveredMarkerDoctor === doctor" (click)="showDoctorDetails(doctor)" (mouseenter)="onDoctorHover(doctor)" (mouseleave)="onDoctorLeave(doctor)">
                             <div class="d-flex gap-3">
                                 <app-user-profile-picture
@@ -115,14 +110,9 @@
                 <a routerLink="/">Mediverse</a>
             </h1>
             <div class="py-3">
-                <app-search-general
-                    [compact]="true"
-                    (onSearch)="onSearch($event)"
-                    [selectedSpecialty]="specialty"
-                    [selectedPlaceId]="location"
-                    [selectedLocation]="locationName"
-                    [disabled]="isLoading"
-                ></app-search-general>
+              <app-search-general
+              [compact]="true"
+          ></app-search-general>
             </div>
         </div>
     }
@@ -136,14 +126,9 @@
                             <a routerLink="/">Mediverse</a>
                         </h1>
                         <div class="py-3">
-                            <app-search-general
-                                [compact]="true"
-                                (onSearch)="onSearch($event)"
-                                [selectedSpecialty]="specialty"
-                                [selectedPlaceId]="location"
-                                [selectedLocation]="locationName"
-                                [disabled]="isLoading"
-                            ></app-search-general>
+                          <app-search-general
+                          [compact]="true"
+                      ></app-search-general>
                         </div>
 
                         <div class="d-flex flex-wrap flex-stack mb-1">
@@ -155,9 +140,9 @@
                         </div>
                     </div>
 
-                    @if (searchService.searchResults() && searchService.searchResults()?.doctors!.length > 0) {
+                    @if (service.results() && service.results()?.doctors!.length > 0) {
                         <div class="overflow-y-auto" style="flex: 1;">
-                            @for (doctor of searchService.searchResults()?.doctors; track $index) {
+                            @for (doctor of service.results()?.doctors; track $index) {
                                 <div class="d-flex flex-column p-6 doctor-search-result" [class.hovered]="hoveredMarkerDoctor === doctor" (mouseenter)="onDoctorHover(doctor)" (mouseleave)="onDoctorLeave(doctor)">
                                     <div class="d-flex gap-3">
                                         <app-user-profile-picture

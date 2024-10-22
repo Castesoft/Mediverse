@@ -18,7 +18,7 @@
                   ></app-user-profile-picture>
                 }
               </div>
-              <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+              <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" title="Change avatar">
                 <i class="ki-duotone ki-pencil fs-7">
                   <span class="path1"></span>
                   <span class="path2"></span>
@@ -26,14 +26,14 @@
                 <input aria-label="hola" type="file" name="avatar" accept=".png, .jpg, .jpeg" (change)="onPhotoChange($event)" />
                 <input type="hidden" name="avatar_remove" />
               </label>
-              <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+              <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" title="Cancel avatar">
                 <i class="ki-duotone ki-cross fs-2">
                   <span class="path1"></span>
                   <span class="path2"></span>
                 </i>
               </span>
               <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove"
-                data-bs-toggle="tooltip" title="Remove avatar" (click)="removeAvatar()">
+               title="Remove avatar" (click)="removeAvatar()">
                 <i class="ki-duotone ki-cross fs-2">
                   <span class="path1"></span>
                   <span class="path2"></span>
@@ -44,29 +44,25 @@
           </div>
         </div>
 
-        <div controlsRow3 [grid]="2">
-          <div formBuilder3 [controls]="[
+          <div formBuilder3 [cols]="2" [controls]="[
             form.controls.firstName,
             form.controls.lastName,
           ]"></div>
-        </div>
 
-        <div controlsRow3 [grid]="2">
-          <div formBuilder3 [controls]="[
+          <div formBuilder3 [cols]="2" [controls]="[
             form.controls.phoneNumber,
           ]"></div>
-        </div>
 
         @if (accountService.hasRole(['Doctor'])) {
-          <div controlsRow3 [grid]="1">
-            <div formBuilder3 [controls]="[
+            <div formBuilder3 [cols]="2" [controls]="[
               form.controls.licenseNumber,
               form.controls.specialtyLicense,
+            ]"></div>
+            <div formBuilder3 [cols]="1" [controls]="[
               form.controls.specialty,
               form.controls.acceptedPaymentMethods,
               form.controls.requireAnticipatedCardPayments,
             ]"></div>
-          </div>
 
           <!-- <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-semibold fs-6"

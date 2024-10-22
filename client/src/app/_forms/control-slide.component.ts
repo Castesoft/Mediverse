@@ -6,7 +6,7 @@ import { FormsService } from 'src/app/_services/forms.service';
 import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
 import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
 import { Control } from 'src/app/_forms/form';
-import { ControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
+import { LegacyControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
 import { InputComponent } from 'src/app/_forms/helpers/input.component';
 import { CommonModule } from '@angular/common';
 import { CdkModule } from 'src/app/_shared/cdk.module';
@@ -49,12 +49,12 @@ import { MaterialModule } from 'src/app/_shared/material.module';
     HelpBlockComponent,
     OptionalSpanComponent,
     NewBadgeComponent,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
     InputComponent,
     CommonModule,
     CdkModule,
     MaterialModule,
-    ControlLabelComponent,
+    LegacyControlLabelComponent,
   ],
 })
 export class ControlSlideComponent {

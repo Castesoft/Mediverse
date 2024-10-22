@@ -34,14 +34,6 @@
           <button
             class="btn btn-light-primary me-2"
             type="button"
-            (click)="
-            usersService.showCatalogModal(
-              $event,
-              selectPatientKey,
-              'select',
-              'Patient'
-            )
-          "
           >
             @if (!patient) {
               Seleccionar paciente
@@ -64,7 +56,6 @@
             <button
               class="btn btn-light-danger me-2"
               type="button"
-              (click)="usersService.setSelected$(selectPatientKey)"
             >
               Quitar
             </button>
@@ -87,15 +78,7 @@
             <mat-expansion-panel-header>
               <mat-panel-title> Crear nuevo paciente</mat-panel-title>
             </mat-expansion-panel-header>
-            <div
-              userForm
-              [view]="'inline'"
-              [role]="'Patient'"
-              [id]="null"
-              [use]="'create'"
-              [key]="selectPatientKey"
-              (user)="usersService.setSelected$(selectPatientKey, $event)"
-            ></div>
+            <div userForm ></div>
           </mat-expansion-panel>
         </mat-accordion>
       </mat-step>
@@ -108,7 +91,7 @@
               @if (form.group.get('dateTime')!.get('dateFrom')!.value === form.group.get('dateTime')!.get('dateTo')!.value) {
                 El {{form.group.get('dateTime')!.get('dateFrom')!.value | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'}}
               } @else {
-                Del 
+                Del
                 @if (form.group.get('dateTime')!.get('dateFrom')!.value) {
                   {{form.group.get('dateTime')!.get('dateFrom')!.value | date : "EEEE d 'de' MMMM" : '' : 'es-MX'}}
                 }
@@ -207,7 +190,8 @@
             servicesService.showCatalogModal(
               $event,
               selectServiceKey,
-              'select'
+              'select',
+              view()
             )
           "
           >
@@ -229,10 +213,16 @@
             </button>
           }
           @if (service) {
-            <button
+            <!-- <button
               class="btn btn-light-danger me-2"
               type="button"
               (click)="servicesService.setSelected$(selectServiceKey)"
+            >
+              Quitar
+            </button> -->
+            <button
+              class="btn btn-light-danger me-2"
+              type="button"
             >
               Quitar
             </button>
@@ -262,10 +252,18 @@
               [id]="null"
               [use]="'create'"
               [key]="selectServiceKey"
+              [item]="undefined"
+            ></div>
+            <!-- <div
+              serviceForm
+              [view]="'inline'"
+              [id]="null"
+              [use]="'create'"
+              [key]="selectServiceKey"
               (itemToReturn)="
               servicesService.setSelected$(selectServiceKey, $event)
             "
-            ></div>
+            ></div> -->
           </mat-expansion-panel>
         </mat-accordion>
       </mat-step>
@@ -326,7 +324,7 @@
   @if (view() === 'page') {
     <button class="btn btn-primary" [attr.form]="form.id" type="submit">
       @if (use() === "create") {
-        Crear {{ eventsService.naming!.singular }}
+        Crear {{ eventsService.dictionary.singular }}
       } @else if (use() === "edit") {
         Guardar cambios
       }

@@ -85,7 +85,15 @@ public static class Seed
     private static async Task<List<Specialty>> SeedSpecialtiesAsync(DataContext context)
     {
         if (!await context.Specialties.AnyAsync()) {
-            await context.Specialties.AddRangeAsync(SeedDataSpecialties.specialties.ToArray());
+
+            List<Specialty> specialties = SeedDataSpecialties.specialties.ToList();
+
+            foreach (var specialty in specialties)
+            {
+                specialty.Code = specialty.Name;
+            }
+            
+            await context.Specialties.AddRangeAsync(specialties);
             await context.SaveChangesAsync();
 
             return await context.Specialties

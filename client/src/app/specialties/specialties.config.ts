@@ -26,7 +26,7 @@ import { BreadcrumbsModule } from 'src/app/_utils/breadcrumbs.module';
 import { buildHttpParams, omitKeys } from 'src/app/_utils/util';
 
 @Component({
-  selector: 'div[servicesTableMenu]',
+  selector: 'div[specialtiesTableMenu]',
   host: { class: '' },
   template: `
     <div class="dropdown-menu d-block" cdkMenu>
@@ -71,15 +71,15 @@ import { buildHttpParams, omitKeys } from 'src/app/_utils/util';
   standalone: true,
   imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class ServicesTableMenuComponent
-  extends TableMenu<ServicesService>
-  implements OnInit, ITableMenu<Service>
+export class SpecialtiesTableMenuComponent
+  extends TableMenu<SpecialtiesService>
+  implements OnInit, ITableMenu<Specialty>
 {
-  item: InputSignal<Service> = input.required();
+  item: InputSignal<Specialty> = input.required();
   key: InputSignal<string> = input.required();
 
   constructor() {
-    super(ServicesService);
+    super(SpecialtiesService);
   }
 
   ngOnInit(): void {}
@@ -87,7 +87,7 @@ export class ServicesTableMenuComponent
 
 @Component({
   host: { class: 'table fs-9 mb-0 border-translucent' },
-  selector: 'table[servicesTable]',
+  selector: 'table[specialtiesTable]',
   template: `
     <thead
       tableHeader
@@ -151,7 +151,7 @@ export class ServicesTableMenuComponent
             [contextMenu]="context_menu"
           ></td>
           <ng-template #context_menu>
-            <div servicesTableMenu [item]="item" [key]="key()"></div>
+            <div specialtiesTableMenu [item]="item" [key]="key()"></div>
           </ng-template>
         </tr>
       }
@@ -166,28 +166,28 @@ export class ServicesTableMenuComponent
     CdkModule,
     MaterialModule,
     CommonModule,
-    ServicesTableMenuComponent,
+    SpecialtiesTableMenuComponent,
   ],
 })
-export class ServicesTableComponent implements OnInit, OnDestroy {
+export class SpecialtiesTableComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
-  service = inject(ServicesService);
+  service = inject(SpecialtiesService);
   icons = inject(IconsService);
   dev = inject(EnvService);
 
-  data = input.required<Service[]>();
+  data = input.required<Specialty[]>();
   mode = input.required<CatalogMode>();
   key = input.required<string>();
   view = input.required<View>();
 
   sortAscending = false;
   devMode = false;
-  params!: ServiceParams;
+  params!: SpecialtyParams;
   cuid = createId();
   selected = false;
-  row: TableRow<Service> = new TableRow<Service>(new Service());
+  row: TableRow<Specialty> = new TableRow<Specialty>(new Specialty());
 
-  cells: PartialCellsOf<Service> = {
+  cells: PartialCellsOf<Specialty> = {
     createdAt: new TableCellItem<Date, 'createdAt'>('createdAt', 'date', { fullDate: true, }),
     description: new TableCellItem<string, 'description'>('description', 'string'),
     enabled: new TableCellItem<boolean, 'enabled'>('enabled', 'boolean'),
@@ -199,7 +199,7 @@ export class ServicesTableComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      this.params = new ServiceParams(this.key());
+      this.params = new SpecialtyParams(this.key());
       this.service.param$(this.key(), this.mode()).subscribe({
         next: (params) => {
           this.params = params;
@@ -226,7 +226,7 @@ export class ServicesTableComponent implements OnInit, OnDestroy {
 
 
 @Component({
-  selector: '[servicesFilterForm]',
+  selector: '[specialtiesFilterForm]',
   template: `
   @if(role() === 'compact') {
 <form [id]="form.id" (ngSubmit)="onSubmit()">
@@ -275,8 +275,8 @@ export class ServicesTableComponent implements OnInit, OnDestroy {
     CommonModule, CdkModule, MaterialModule, FormNewModule,
    ],
 })
-export class ServicesFilterFormComponent extends FormComponent<ServicesService> implements OnInit, FilterFormGroupActions<Service, ServiceParams, FormGroup2<ServiceParams>> {
-  item: InputSignal<Service | undefined> = input.required();
+export class SpecialtiesFilterFormComponent extends FormComponent<SpecialtiesService> implements OnInit, FilterFormGroupActions<Specialty, SpecialtyParams, FormGroup2<SpecialtyParams>> {
+  item: InputSignal<Specialty | undefined> = input.required();
   use: ModelSignal<FormUse> = model.required();
   view: InputSignal<View> = input.required();
   key: InputSignal<string> = input.required();
@@ -287,8 +287,8 @@ export class ServicesFilterFormComponent extends FormComponent<ServicesService> 
   readonly toggle = model.required();
 
   private ngUnsubscribe = new Subject<void>();
-  params!: ServiceParams;
-  info: FormInfo<ServiceParams> = {
+  params!: SpecialtyParams;
+  info: FormInfo<SpecialtyParams> = {
     description: { label: 'Descripción', placeholder: 'Descripción', type: 'textarea' },
     id: { label: this.service.dictionary.singularTitlecase, type: 'number', isDisabled: true },
     name: { label: 'Nombre', placeholder: 'Nombre', type: 'text' },
@@ -307,16 +307,16 @@ export class ServicesFilterFormComponent extends FormComponent<ServicesService> 
     paramsValue: {} as any,
   };
 
-  form: FormGroup2<ServiceParams> = new FormGroup2<ServiceParams>(ServiceParams as any, new ServiceParams(createId()), this.info, { orientation: 'inline', use: 'filter' });
+  form: FormGroup2<SpecialtyParams> = new FormGroup2<SpecialtyParams>(SpecialtyParams as any, new SpecialtyParams(createId()), this.info, { orientation: 'inline', use: 'filter' });
 
   constructor() {
-    super(ServicesService);
+    super(SpecialtiesService);
 
     this.form.controls.sort.selectOptions = sortOptions;
     this.form.controls.sort.setValue(sortOptions[0]);
 
     effect(() => {
-      this.params = new ServiceParams(this.key());
+      this.params = new SpecialtyParams(this.key());
 
 
       this.form.setUse(this.use());
@@ -349,13 +349,13 @@ export class ServicesFilterFormComponent extends FormComponent<ServicesService> 
 
     const result = omitKeys(this.form.value, ['httpParams', 'paramsValue', 'updateFromPartial', 'key']);
     this.service.submitForm(this.key(), result as any);
-    // this.service.submitForm(this.key(), result as ServiceParams);
+    // this.service.submitForm(this.key(), result as SpecialtyParams);
   }
 }
 
 
 @Component({
-  selector: '[servicesCatalog]',
+  selector: '[specialtiesCatalog]',
   template: `
   <div class="pb-2">
   <h1 class="mb-4">{{ service.dictionary.title}}</h1>
@@ -375,17 +375,17 @@ export class ServicesFilterFormComponent extends FormComponent<ServicesService> 
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div servicesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div specialtiesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div servicesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div specialtiesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
   <div tableResponsive>
     @if(service.list$(key(), mode()) | async; as _list) {
-    <table servicesTable [mode]="mode()" [data]="_list" [key]="key()" [view]="view()">
+    <table specialtiesTable [mode]="mode()" [data]="_list" [key]="key()" [view]="view()">
     </table>
     }
   </div>
@@ -398,14 +398,14 @@ export class ServicesFilterFormComponent extends FormComponent<ServicesService> 
 
   `,
   standalone: true,
-  imports: [ FontAwesomeModule, ServicesFilterFormComponent,
-    ServicesTableComponent, CommonModule,
-    RouterModule, ControlsModule, TableModule, ServicesFilterFormComponent,
+  imports: [ FontAwesomeModule, SpecialtiesFilterFormComponent,
+    SpecialtiesTableComponent, CommonModule,
+    RouterModule, ControlsModule, TableModule, SpecialtiesFilterFormComponent,
     CdkModule, MaterialModule,
    ],
 })
-export class ServicesCatalogComponent implements OnInit, OnDestroy {
-  service = inject(ServicesService);
+export class SpecialtiesCatalogComponent implements OnInit, OnDestroy {
+  service = inject(SpecialtiesService);
   icons = inject(IconsService);
   private router = inject(Router);
 
@@ -414,22 +414,22 @@ export class ServicesCatalogComponent implements OnInit, OnDestroy {
   mode = input.required<CatalogMode>();
   key = input.required<string>();
   view = input.required<View>();
-  item = input<Service>();
+  item = input<Specialty>();
 
   toggle = model(false);
 
-  params!: ServiceParams;
+  params!: SpecialtyParams;
   formId = `${this.router.url}#form-${createId()}`;
   loading = true;
   private ngUnsubscribe = new Subject<void>();
 
   pagination?: Pagination;
-  list?: Service[];
+  list?: Specialty[];
 
   constructor() {
 
     effect(() => {
-      this.params = new ServiceParams(this.key());
+      this.params = new SpecialtyParams(this.key());
       this.service.createEntry(this.key(), this.params, this.mode());
 
       this.service.cache$.subscribe({ next: cache => {
@@ -462,17 +462,13 @@ export const sortOptions = Object.values({
   visible: new SelectOption({ id: 8, code: 'visible', name: 'Visible' }),
 });
 
-export class Service extends Entity {
-  discount: number | null = null;
-  price: number | null = null;
-  photoUrl: string | null = null;
-
+export class Specialty extends Entity {
   constructor() {
     super();
   }
 }
 
-export class ServiceParams extends EntityParams<Service> implements IParams {
+export class SpecialtyParams extends EntityParams<Specialty> implements IParams {
   constructor(key: string) {
     super(key);
   }
@@ -487,7 +483,7 @@ export class ServiceParams extends EntityParams<Service> implements IParams {
 }
 
 @Component({
-  selector: "div[serviceForm]",
+  selector: "div[specialtyForm]",
   template: `
   <form [id]="form.id" (ngSubmit)="onSubmit()">
   <div container [type]="'card'">
@@ -524,13 +520,13 @@ export class ServiceParams extends EntityParams<Service> implements IParams {
   standalone: true,
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
-export class ServiceFormComponent extends FormComponent<ServicesService> implements OnInit, FormGroupActions<Service, FormGroup2<Service>> {
-  item: InputSignal<Service | undefined> = input.required();
+export class SpecialtyFormComponent extends FormComponent<SpecialtiesService> implements OnInit, FormGroupActions<Specialty, FormGroup2<Specialty>> {
+  item: InputSignal<Specialty | undefined> = input.required();
   use: ModelSignal<FormUse> = model.required();
   view: InputSignal<View> = input.required();
   key: InputSignal<string> = input.required();
 
-  info: FormInfo<Service> = {
+  info: FormInfo<Specialty> = {
     code: { label: 'Código', type: 'text' },
     createdAt: { label: 'Fecha de creación', type: 'date', isDisabled: true, },
     description: { label: 'Descripción', type: 'textarea' },
@@ -539,12 +535,12 @@ export class ServiceFormComponent extends FormComponent<ServicesService> impleme
     isSelected: { label: 'Seleccionado', type: 'slideToggle' },
     name: { label: 'Nombre', type: 'text' },
     visible: { label: 'Visible', type: 'slideToggle' },
-  } as FormInfo<Service>;
+  } as FormInfo<Specialty>;
 
-  form: FormGroup2<Service> = new FormGroup2<Service>(Service, new Service(), this.info, { orientation: 'inline', use: 'create' });
+  form: FormGroup2<Specialty> = new FormGroup2<Specialty>(Specialty, new Specialty(), this.info, { orientation: 'inline', use: 'create' });
 
   constructor() {
-    super(ServicesService);
+    super(SpecialtiesService);
 
     effect(() => {
       const value = this.item();
@@ -610,61 +606,61 @@ export class ServiceFormComponent extends FormComponent<ServicesService> impleme
 }
 
 @Component({
-  selector: 'div[serviceDetail]',
+  selector: 'div[specialtyDetail]',
   template: `
   <div container [type]="'inline'">
     <div detailHeader [(use)]="use" [view]="view()" [dictionary]="service.dictionary" [id]="item() ? item()!.id! : undefined" (onDelete)="service.delete$(item()!)"></div>
   </div>
-  <div serviceForm [item]="item()" [key]="key()" [use]="use()" [view]="view()"></div>
+  <div specialtyForm [item]="item()" [key]="key()" [use]="use()" [view]="view()"></div>
   `,
   standalone: true,
-  imports: [ServiceFormComponent, ControlsModule,],
+  imports: [SpecialtyFormComponent, ControlsModule,],
 })
-export class ServiceDetailComponent {
-  service = inject(ServicesService);
+export class SpecialtyDetailComponent {
+  service = inject(SpecialtiesService);
 
   use = model.required<FormUse>();
   view = input.required<View>();
-  item = input.required<Service | undefined>();
+  item = input.required<Specialty | undefined>();
   key = input.required<string>();
 }
 
 @Component({
-  selector: 'service-detail-modal',
+  selector: 'specialty-detail-modal',
   template: `
     <div modalContent>
       @if (title) {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div serviceDetail [id]="id" [use]="use" [view]="view" [key]="key" [item]="item"></div>
+        <div specialtyDetail [id]="id" [use]="use" [view]="view" [key]="key" [item]="item"></div>
       </div>
     </div>
   `,
   standalone: true,
-  imports: [ServiceDetailComponent, ModalWrapperModule],
+  imports: [SpecialtyDetailComponent, ModalWrapperModule],
 })
-export class ServiceDetailModalComponent extends DetailModal<Service> {}
+export class SpecialtyDetailModalComponent extends DetailModal<Specialty> {}
 
 @Component({
-  selector: 'services-filter-modal',
+  selector: 'specialties-filter-modal',
   template: `
     <div modalContent>
       @if (title) {
         <div modalHeader [title]="title"></div>
       }
       <div modalBody>
-        <div servicesFilterForm [formId]="formId" [toggle]="false" [key]="key" [item]="item" [use]="use" [view]="view" [role]="'inline'" [mode]="'view'"></div>
+        <div specialtiesFilterForm [formId]="formId" [toggle]="false" [key]="key" [item]="item" [use]="use" [view]="view" [role]="'inline'" [mode]="'view'"></div>
       </div>
     </div>
   `,
   standalone: true,
-  imports: [ServicesFilterFormComponent, ModalWrapperModule],
+  imports: [SpecialtiesFilterFormComponent, ModalWrapperModule],
 })
-export class ServicesFilterModalComponent extends FilterModal {}
+export class SpecialtiesFilterModalComponent extends FilterModal {}
 
 @Component({
-  selector: 'services-catalog-modal',
+  selector: 'specialties-catalog-modal',
   template: `
     @defer {
       <div modalContent>
@@ -673,7 +669,7 @@ export class ServicesFilterModalComponent extends FilterModal {}
         }
         <div modalBody>
           <div
-            servicesCatalog
+            specialtiesCatalog
             class="modal-body py-3 px-4"
             [mode]="mode"
             [key]="key"
@@ -685,21 +681,21 @@ export class ServicesFilterModalComponent extends FilterModal {}
     }
   `,
   standalone: true,
-  imports: [ServicesCatalogComponent, ModalWrapperModule],
+  imports: [SpecialtiesCatalogComponent, ModalWrapperModule],
 })
-export class ServicesCatalogModalComponent extends CatalogModal {}
+export class SpecialtiesCatalogModalComponent extends CatalogModal {}
 
 @Injectable({
   providedIn: 'root',
 })
-export class ServicesService extends ServiceHelper<Service, ServiceParams, FormGroup2<ServiceParams>> {
+export class SpecialtiesService extends ServiceHelper<Specialty, SpecialtyParams, FormGroup2<SpecialtyParams>> {
   constructor() {
-    super(ServiceParams, 'services', new NamingSubject(
+    super(SpecialtyParams, 'specialties', new NamingSubject(
       'feminine',
       'especialidad',
       'especialidades',
       'Especialidades',
-      'services',
+      'specialties',
       ['admin', 'utilerias', 'codigos'],
     ), [
       { name: 'id', label: 'ID' },
@@ -712,30 +708,30 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, FormG
     ]);
   }
 
-  private detailModalRef: BsModalRef<ServiceDetailModalComponent> = new BsModalRef<ServiceDetailModalComponent>();
+  private detailModalRef: BsModalRef<SpecialtyDetailModalComponent> = new BsModalRef<SpecialtyDetailModalComponent>();
   hideDetailModal = () => this.detailModalRef.hide();
-  private filterModalRef: BsModalRef<ServicesFilterModalComponent> = new BsModalRef<ServicesFilterModalComponent>();
+  private filterModalRef: BsModalRef<SpecialtiesFilterModalComponent> = new BsModalRef<SpecialtiesFilterModalComponent>();
   hideFilterModal = () => this.filterModalRef.hide();
-  private catalogModalRef: BsModalRef<ServicesCatalogModalComponent> = new BsModalRef<ServicesCatalogModalComponent>();
+  private catalogModalRef: BsModalRef<SpecialtiesCatalogModalComponent> = new BsModalRef<SpecialtiesCatalogModalComponent>();
   hideCatalogModal = () => this.catalogModalRef.hide();
 
   showCatalogModal = (event: MouseEvent, key: string, mode: CatalogMode, view: View): void => {
-    this.catalogModalRef = this.bsModalService.show(ServicesCatalogModalComponent,
+    this.catalogModalRef = this.bsModalService.show(SpecialtiesCatalogModalComponent,
       { class: "modal-dialog-centered modal-xl", initialState: { mode: mode, key: key, view: view } });
   };
 
   showFiltersModal = (key: string, title = "Filtros"): void => {
-    this.filterModalRef = this.bsModalService.show(ServicesFilterModalComponent,
+    this.filterModalRef = this.bsModalService.show(SpecialtiesFilterModalComponent,
       { class: "modal-dialog-centered", initialState: { key: key, title: title } });
   };
 
-  clickLink = (item: Service | undefined = undefined, key: string | undefined = undefined,
+  clickLink = (item: Specialty | undefined = undefined, key: string | undefined = undefined,
     use: FormUse = "detail", view: View) => {
 
   if (view === "modal") {
-    this.detailModalRef = this.bsModalService.show(ServiceDetailModalComponent, {
+    this.detailModalRef = this.bsModalService.show(SpecialtyDetailModalComponent, {
       class: "modal-dialog-centered modal-lg",
-      initialState: { item: item, use: use, key: key, title: undefined, view: "modal" }} as ModalOptions<ServiceDetailModalComponent>);
+      initialState: { item: item, use: use, key: key, title: undefined, view: "modal" }} as ModalOptions<SpecialtyDetailModalComponent>);
   } else {
     this.bsModalService.hide();
     switch (use) {
@@ -755,17 +751,17 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, FormG
 
 
 @Component({
-  selector: 'services-route',
+  selector: 'specialties-route',
   template: `
   <router-outlet></router-outlet>
   `,
 })
-export class ServicesComponent {
+export class SpecialtiesComponent {
   dev = inject(EnvService);
 }
 
 @Component({
-  selector: 'services-catalog-route',
+  selector: 'specialties-catalog-route',
   template: `
   <nav breadcrumbs>
       <li item [section]="'admin'"></li>
@@ -773,7 +769,7 @@ export class ServicesComponent {
       <li active [label]="label"></li>
     </nav>
   <div
-    servicesCatalog
+    specialtiesCatalog
     [mode]="mode"
     [key]="key"
     [view]="view"
@@ -781,10 +777,10 @@ export class ServicesComponent {
   ></div>
   `,
   standalone: true,
-  imports: [RouterModule, ServicesCatalogComponent, BreadcrumbsModule, ],
+  imports: [RouterModule, SpecialtiesCatalogComponent, BreadcrumbsModule, ],
 })
 export class CatalogComponent implements OnInit {
-  service = inject(ServicesService);
+  service = inject(SpecialtiesService);
   compact = inject(CompactTableService);
   router = inject(Router);
 
@@ -792,7 +788,7 @@ export class CatalogComponent implements OnInit {
   view: View = 'page';
   mode: CatalogMode = 'view';
   key = this.router.url;
-  section: Sections = 'services';
+  section: Sections = 'specialties';
   label = this.service.dictionary.pluralTitlecase;
 
   constructor() {
@@ -804,7 +800,7 @@ export class CatalogComponent implements OnInit {
 }
 
 @Component({
-  selector: 'service-detail-route',
+  selector: 'specialty-detail-route',
   template: `
   <nav breadcrumbs>
       <li item [section]="'admin'"></li>
@@ -812,17 +808,17 @@ export class CatalogComponent implements OnInit {
     </nav>
 
     @if (id && item) {
-      <div serviceDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>
+      <div specialtyDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>
     }
   `,
   standalone: true,
-  imports: [RouterModule, ServiceDetailComponent, BreadcrumbsModule,],
+  imports: [RouterModule, SpecialtyDetailComponent, BreadcrumbsModule,],
 })
 export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  item?: Service;
+  item?: Specialty;
   id?: number;
   use: FormUse = 'detail';
   view: View = 'page';
@@ -846,24 +842,24 @@ export class DetailComponent implements OnInit {
   }
 }
 @Component({
-  selector: 'service-edit-route',
+  selector: 'specialty-edit-route',
   template: `
   <nav breadcrumbs>
     <li item [section]="'admin'"></li>
-      <li item [section]="'services'"></li>
+      <li item [section]="'specialties'"></li>
       @if(label){<li active [label]="label"></li>}
     </nav>
       @if (id && item) {
-        <div serviceDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>
+        <div specialtyDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>
       }
   `,
   standalone: true,
-  imports: [ServiceDetailComponent, RouterModule, BreadcrumbsModule,],
+  imports: [SpecialtyDetailComponent, RouterModule, BreadcrumbsModule,],
 })
 export class EditComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  item?: Service;
+  item?: Specialty;
   id?: number;
   use: FormUse = 'edit';
   view: View = 'page';
@@ -886,18 +882,18 @@ export class EditComponent implements OnInit {
 }
 
 @Component({
-  selector: 'service-new-route',
+  selector: 'specialty-new-route',
   template: `
   <nav breadcrumbs>
       <li item [section]="'admin'"></li>
-      <li item [section]="'services'"></li>
+      <li item [section]="'specialties'"></li>
       <li active [label]="'Crear'"></li>
     </nav>
 
-  <div serviceDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>`
+  <div specialtyDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>`
   ,
   standalone: true,
-  imports: [ServiceDetailComponent, RouterModule, BreadcrumbsModule,],
+  imports: [SpecialtyDetailComponent, RouterModule, BreadcrumbsModule,],
 })
 export class NewComponent {
   use: FormUse = 'create';
@@ -906,8 +902,8 @@ export class NewComponent {
   key = createId();
 }
 
-export const itemResolver: ResolveFn<Service | null> = (route, state) => {
-  const service = inject(ServicesService);
+export const itemResolver: ResolveFn<Specialty | null> = (route, state) => {
+  const service = inject(SpecialtiesService);
   const id = +route.paramMap.get('id')!;
   return service.getById(id);
 };
@@ -916,7 +912,7 @@ export const itemResolver: ResolveFn<Service | null> = (route, state) => {
   imports: [RouterModule.forChild([
     {
       path: '', title: 'Ganaderías', data: { breadcrumb: 'Ganaderías', },
-      component: ServicesComponent, runGuardsAndResolvers: 'always',
+      component: SpecialtiesComponent, runGuardsAndResolvers: 'always',
       children: [
         { path: '', component: CatalogComponent, title: 'Catálogo de ganaderías', data: { breadcrumb: 'Catálogo', }, },
         { path: 'nuevo', component: NewComponent, title: 'Crear nueva ganadería', data: { breadcrumb: 'Nuevo', }, },
@@ -935,12 +931,12 @@ export const itemResolver: ResolveFn<Service | null> = (route, state) => {
   ])],
   exports: [RouterModule]
 })
-export class ServicesRoutingModule { }
+export class SpecialtiesRoutingModule { }
 
 @NgModule({
   declarations: [
-    ServicesComponent,
+    SpecialtiesComponent,
   ],
-  imports: [ CommonModule, ServicesRoutingModule, ]
+  imports: [ CommonModule, SpecialtiesRoutingModule, ]
 })
-export class ServicesModule { }
+export class SpecialtiesModule { }

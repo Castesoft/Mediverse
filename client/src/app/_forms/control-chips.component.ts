@@ -4,7 +4,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { ControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
+import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InputComponent } from "src/app/_forms/helpers/input.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
@@ -71,7 +71,7 @@ import { Control, SelectOption } from "src/app/_forms/form";
     }
   `,
   standalone: true,
-  imports: [ ReactiveFormsModule, FormsModule, CdkModule, MaterialModule, HelpBlockComponent, InvalidFeedbackComponent, InputComponent, ControlLabelComponent, ],
+  imports: [ ReactiveFormsModule, FormsModule, CdkModule, MaterialModule, HelpBlockComponent, InvalidFeedbackComponent, InputComponent, LegacyControlLabelComponent, ],
 })
 export class ControlChipsComponent {
   service = inject(FormsService);
