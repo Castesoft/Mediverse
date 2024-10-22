@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { take } from 'rxjs';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
-import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
+import { DoctorResult } from 'src/app/_models/doctorSearchResults';
 import { AccountService } from 'src/app/_services/account.service';
 import { EventsService } from 'src/app/_services/events.service';
 import { MaterialModule } from 'src/app/_shared/material.module';
@@ -29,7 +29,7 @@ export class DoctorScheduleComponent implements OnInit {
 
   onClose = output<boolean>();
   selectedSchedule = input<any>();
-  doctor = input<DoctorSearchResult>();
+  doctor = input<DoctorResult>();
   isMobile = input<boolean>();
   submitted = false;
 

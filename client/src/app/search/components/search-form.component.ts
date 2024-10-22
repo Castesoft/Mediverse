@@ -14,12 +14,12 @@ import { SearchService } from 'src/app/_services/search.service';
 import { SpecialtiesService } from 'src/app/specialties/specialties.config';
 
 @Component({
-  selector: 'app-search-general',
+  selector: 'div[searchForm]',
   standalone: true,
   imports: [ControlTypeaheadComponent, ReactiveFormsModule, FormNewModule, CommonModule,],
-  templateUrl: './search-general.component.html',
+  templateUrl: './search-form.component.html',
 })
-export class SearchGeneralComponent implements OnInit {
+export class SearchFormComponent implements OnInit {
   private router = inject(Router);
   service = inject(SearchService);
   specialtiesService = inject(SpecialtiesService);
@@ -41,12 +41,6 @@ export class SearchGeneralComponent implements OnInit {
     });
 
     this.form.patchValue(this.service.search());
-
-    this.form.valueChanges.subscribe({
-      next: value => {
-        this.service.search.set(new Search({ ...value }));
-      }
-    })
   }
 
   async ngOnInit() {
@@ -93,16 +87,10 @@ export class SearchGeneralComponent implements OnInit {
     });
   }
 
-  onTypeaheadSelect(e: TypeaheadMatch<SelectOption>) {
-    console.log(e);
-
-    this.haveSelected = true;
-    this.form.controls.location.selectOptions = [];
-  }
-
   onSubmit() {
     this.router.navigate(['/search'], { queryParams: this.form.params });
 
     this.service.search.set(new Search({ ...this.form.value }));
+    this.service.getSearchResults({ ignoreCache: true }).subscribe();
   }
 }

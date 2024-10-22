@@ -1,6 +1,6 @@
 import { Component, input, output, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
+import { DoctorResult } from 'src/app/_models/doctorSearchResults';
 import { UserProfilePictureComponent } from "../../../users/components/user-profile-picture/user-profile-picture.component";
 import { DoctorGeneralTabComponent } from '../doctor-general-tab/doctor-general-tab.component';
 import { DoctorScheduleTabComponent } from '../doctor-schedule-tab/doctor-schedule-tab.component';
@@ -16,13 +16,13 @@ import { DoctorScheduleComponent } from '../doctor-schedule/doctor-schedule.comp
 })
 export class DoctorDetailsComponent {
   private router = inject(Router);
-  doctor = input<DoctorSearchResult>();
+  doctor = input<DoctorResult>();
   startingTab = input<string>();
   isMobile = input<boolean>(false);
   onClose = output();
   onEventCreated = output();
 
-  constructor() { 
+  constructor() {
     effect(() => {
       if (this.doctor()) {
         this.isScheduling = false;

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
+import { DoctorResult } from 'src/app/_models/doctorSearchResults';
 
 @Component({
   selector: 'app-share-modal',
@@ -8,7 +8,7 @@ import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
 })
 export class ShareModalComponent {
   copyFeedback: string = '';
-  @Input() doctor: DoctorSearchResult | null = null;
+  @Input() doctor: DoctorResult | null = null;
   @Input() shareUrl: string = '';
 
   constructor(public bsModalRef: BsModalRef) {}
@@ -39,7 +39,7 @@ export class ShareModalComponent {
     input.select();
     document.execCommand('copy');
     input.setSelectionRange(0, 0);
-    
+
     this.copyFeedback = '¡Enlace copiado!';
     setTimeout(() => {
       this.copyFeedback = '';

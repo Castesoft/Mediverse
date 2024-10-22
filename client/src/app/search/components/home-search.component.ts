@@ -1,15 +1,14 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { SearchGeneralComponent } from '../search-general/search-general.component';
 import { CommonModule } from '@angular/common';
 import { SearchService } from 'src/app/_services/search.service';
 import { Search } from 'src/app/_models/search';
+import { Component, inject, signal } from '@angular/core';
+import { SearchFormComponent } from 'src/app/search/components/search-form.component';
 
 @Component({
   selector: 'app-home-search',
   standalone: true,
-  imports: [SearchGeneralComponent, CommonModule],
+  imports: [SearchFormComponent, CommonModule],
   templateUrl: './home-search.component.html',
-  styleUrl: './home-search.component.scss'
 })
 export class HomeSearchComponent {
   service = inject(SearchService);

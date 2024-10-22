@@ -11,21 +11,19 @@
     </div>
 
     <div id="search-sidebar" class="d-flex flex-column position-relative" style="width: 33%;">
-        @if (!isLoading) {
+        @if (!service.loading()) {
             <div class="container">
                 <h1 class="text-gray-800 fw-bold my-3 text-center">
                     <a routerLink="/">Mediverse</a>
                 </h1>
                 <div class="py-3">
-                    <app-search-general
-                      [compact]="true"
-                    ></app-search-general>
+                    <div searchForm [compact]="true"></div>
                 </div>
 
                 <div class="d-flex flex-wrap flex-stack mb-1">
                     <h3 class="text-gray-800 fw-bold my-2">Mis Resultados
-                      @if(pagination) {
-                    <span class="fs-6 text-gray-500 fw-semibold ms-1">({{pagination.totalItems | number}})</span>
+                      @if(service.pagination()) {
+                    <span class="fs-6 text-gray-500 fw-semibold ms-1">({{service.pagination()!.totalItems | number}})</span>
                       }
                     </h3>
                 </div>
@@ -64,12 +62,12 @@
                     }
                 </div>
                 <div class="d-flex flex-center pb-6 container">
-                    @if (pagination) {
+                    @if (service.pagination()) {
                         <div
                             tablePager
-                            [currentPage]="pagination.currentPage"
-                            [itemsPerPage]="pagination.itemsPerPage"
-                            [totalItems]="pagination.totalItems"
+                            [currentPage]="service.pagination()!.currentPage"
+                            [itemsPerPage]="service.pagination()!.itemsPerPage"
+                            [totalItems]="service.pagination()!.totalItems"
                             (pageChanged)="onPageChanged($event)"
                             [hideShowAll]="true"
                             [hideShowing]="true"
@@ -97,9 +95,9 @@
             </div>
         }
 
-        @if (selectedDoctor()) {
+        @if (service.selected()) {
             <div class="doctor-details">
-                <app-doctor-details [doctor]="selectedDoctor() ?? undefined" [startingTab]="startingTab" (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
+                <app-doctor-details [doctor]="service.selected() ?? undefined" [startingTab]="startingTab" (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
             </div>
         }
     </div>
@@ -110,31 +108,27 @@
                 <a routerLink="/">Mediverse</a>
             </h1>
             <div class="py-3">
-              <app-search-general
-              [compact]="true"
-          ></app-search-general>
+              <div searchForm [compact]="true"></div>
             </div>
         </div>
     }
 
     @if (isMobile() && showMobileSearch()) {
         <div class=" position-relative" style="width: 100%;">
-            @if (!selectedDoctor()) {
-                @if (!isLoading) {
+            @if (!service.selected()) {
+                @if (!service.loading()) {
                     <div class="container">
                         <h1 class="text-gray-800 fw-bold my-3 text-center">
                             <a routerLink="/">Mediverse</a>
                         </h1>
                         <div class="py-3">
-                          <app-search-general
-                          [compact]="true"
-                      ></app-search-general>
+                          <div searchForm [compact]="true"></div>
                         </div>
 
                         <div class="d-flex flex-wrap flex-stack mb-1">
                             <h3 class="text-gray-800 fw-bold my-2">Mis Resultados
-                              @if(pagination) {
-                            <span class="fs-6 text-gray-500 fw-semibold ms-1">({{pagination.totalItems | number}})</span>
+                              @if(service.pagination()) {
+                            <span class="fs-6 text-gray-500 fw-semibold ms-1">({{service.pagination()?.totalItems | number}})</span>
                               }
                             </h3>
                         </div>
@@ -177,12 +171,12 @@
                             }
                         </div>
                         <div class="d-flex flex-center pb-6 container">
-                            @if (pagination) {
+                            @if (service.pagination()) {
                                 <div
                                     tablePager
-                                    [currentPage]="pagination.currentPage"
-                                    [itemsPerPage]="pagination.itemsPerPage"
-                                    [totalItems]="pagination.totalItems"
+                                    [currentPage]="service.pagination()!.currentPage"
+                                    [itemsPerPage]="service.pagination()!.itemsPerPage"
+                                    [totalItems]="service.pagination()!.totalItems"
                                     (pageChanged)="onPageChanged($event)"
                                     [hideShowAll]="true"
                                     [hideShowing]="true"
@@ -211,11 +205,11 @@
                 }
             }
 
-            @if (selectedDoctor()) {
+            @if (service.selected()) {
                 <div class="doctor-details-mobile">
                     <app-doctor-details
                         [isMobile]="isMobile()"
-                        [doctor]="selectedDoctor() ?? undefined" [startingTab]="startingTab"
+                        [doctor]="service.selected() ?? undefined" [startingTab]="startingTab"
                         (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
                 </div>
             }

@@ -1,6 +1,6 @@
 import { Component, input, output, EventEmitter, inject, effect } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DoctorAvailability, DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
+import { DoctorAvailability, DoctorResult } from 'src/app/_models/doctorSearchResults';
 
 @Component({
   selector: 'app-doctor-schedule-tab',
@@ -12,9 +12,9 @@ import { DoctorAvailability, DoctorSearchResult } from 'src/app/_models/doctorSe
 export class DoctorScheduleTabComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  
+
   onSelectSchedule = output<any>();
-  doctor = input<DoctorSearchResult>();
+  doctor = input<DoctorResult>();
   selectedDay: any = null;
   schedule: DoctorAvailability[] = [];
 

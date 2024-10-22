@@ -5,17 +5,17 @@ import { Address } from '../addresses/addresses.config';
 import { Account } from 'src/app/_models/account';
 import { Service } from 'src/app/services/services.config';
 
-export class DoctorSearchResults {
-  doctors: DoctorSearchResult[] = [];
+export class SearchResults {
+  doctors: DoctorResult[] = [];
   latitude: number | null = null;
   longitude: number | null = null;
 
-  constructor(init?: Partial<DoctorSearchResults>) {
+  constructor(init?: Partial<SearchResults>) {
     Object.assign(this, init);
   }
 }
 
-export class DoctorSearchResult {
+export class DoctorResult {
   id: number | null = null;
   firstName: string | null = null;
   lastName: string | null = null;
@@ -33,7 +33,7 @@ export class DoctorSearchResult {
   phoneNumber: string | null = null;
   hasPatientInformationAccess: boolean = false;
 
-  constructor(init?: Partial<DoctorSearchResult>) {
+  constructor(init?: Partial<DoctorResult>) {
     Object.assign(this, init);
   }
 }

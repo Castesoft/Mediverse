@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
+import { DoctorResult } from 'src/app/_models/doctorSearchResults';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import { DoctorGeneralTabComponent } from '../doctor-general-tab/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from '../doctor-reviews-tab/doctor-reviews-tab.component';
@@ -28,11 +28,11 @@ export class DoctorProfileComponent implements OnInit {
   private searchService = inject(SearchService);
   private bsModalService = inject(BsModalService);
 
-  doctor: DoctorSearchResult | null = null;
+  doctor: DoctorResult | null = null;
   activeTab = 'general';
   isScheduling = false;
   selectedSchedule: any;
-  
+
   isMobile = signal(false);
 
   isShareModalOpen = false;

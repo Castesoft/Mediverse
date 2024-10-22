@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, NgModule, OnInit } from '@angular/core';
 import { ResolveFn, RouterModule } from '@angular/router';
 import { LayoutModule } from '../_shared/layout.module';
-import { SearchGeneralComponent } from './components/search-general/search-general.component';
-import { HomeSearchComponent } from './components/home-search/home-search.component';
+import { HomeSearchComponent } from './components/home-search.component';
 
 @Component({
     selector: 'search-route',
@@ -20,7 +19,7 @@ import { HomeSearchComponent } from './components/home-search/home-search.compon
 //     const edited = route.queryParamMap.get('edited');
 //     return prescription.getById(id, { noCache: edited ? true : false });
 //   };
-  
+
 //   export const titleDetailResolver: ResolveFn<string> = (route, state) => {
 //     const prescription = inject(PrescriptionsService);
 //     const id = +route.paramMap.get('id')!;
@@ -30,7 +29,7 @@ import { HomeSearchComponent } from './components/home-search/home-search.compon
 //     const title = `Detalle de receta - ${item.id}`;
 //     return title;
 //   }
-  
+
 //   export const titleEditResolver: ResolveFn<string> = (route, state) => {
 //     const prescription = inject(PrescriptionsService);
 //     const id = +route.paramMap.get('id')!;

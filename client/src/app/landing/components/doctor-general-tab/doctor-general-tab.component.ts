@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
+import { DoctorResult } from 'src/app/_models/doctorSearchResults';
 
 @Component({
   selector: 'app-doctor-general-tab',
@@ -11,7 +11,7 @@ import { DoctorSearchResult } from 'src/app/_models/doctorSearchResults';
   templateUrl: './doctor-general-tab.component.html',
 })
 export class DoctorGeneralTabComponent {
-  doctor = input<DoctorSearchResult>();
+  doctor = input<DoctorResult>();
   showAllServices = signal(false);
   showAllInsurances = signal(false);
 
