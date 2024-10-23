@@ -400,7 +400,7 @@ public static class Seed
         await userManager.AddToRolesAsync(admin, ["Admin"]);
         await userManager.AddToRolesAsync(doctor, ["Doctor", "Patient"]);
 
-        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(5000, Roles.Patient);
+        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(100, Roles.Patient);
         int userIndex = 1;
 
         var roles = await context.Roles.ToListAsync();
@@ -424,7 +424,7 @@ public static class Seed
             .Where(x => x.UserRoles.Any(y => y.Role.Name == "Patient"))
             .ToListAsync();
 
-        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(500, Roles.Doctor);
+        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(300, Roles.Doctor);
         userIndex = 1;
 
         foreach (var user in doctorsForSeeding)
