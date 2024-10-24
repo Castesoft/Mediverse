@@ -93,7 +93,6 @@ export class DoctorScheduleComponent implements OnInit {
   }
 
   onSubmit() {
-
     this.form.submitted = true;
 
     this.eventsService.create(this.form.value, 'Patient', 'inline', '').subscribe({

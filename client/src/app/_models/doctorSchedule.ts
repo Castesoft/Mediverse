@@ -5,6 +5,7 @@ import { Address } from "src/app/_models/address";
 import { AvailableDay } from "src/app/_models/availableDay";
 import { DoctorResult, doctorResultInfo } from "src/app/_models/doctorResult";
 import { MedicalInsuranceCompany } from "src/app/_models/medicalInsuranceCompany";
+import { PaymentMethodType } from "src/app/_models/paymentMethodType";
 import { Service } from "src/app/_models/service";
 
 export class DoctorSchedule {
@@ -26,7 +27,7 @@ export class DoctorSchedule {
 }
 
 export const doctorScheduleInfo: FormInfo<DoctorSchedule> = {
-  clinic: { type: 'typeahead', label: 'Clínica' },
+  clinic: { type: 'typeahead', label: 'Clínica', showCodeSpan: false, },
 
   dateFrom: { type: 'date', label: 'Fecha desde', validators: [Validators.required] },
   dateTo: { type: 'date', label: 'Fecha hasta', validators: [Validators.required] },
@@ -37,9 +38,9 @@ export const doctorScheduleInfo: FormInfo<DoctorSchedule> = {
   doctor: doctorResultInfo,
 
   hasPatientInformationAccess: { type: 'checkbox', label: 'Acceso a información del paciente' },
-  medicalInsuranceCompany: { type: 'select', label: 'Compañía de seguros médicos' },
-  paymentMethodType: { type: 'select', label: 'Tipo de método de pago' },
-  service: { type: 'typeahead', label: 'Servicio' },
+  medicalInsuranceCompany: { type: 'typeahead', label: 'Compañía de seguros médicos', showCodeSpan: false, },
+  paymentMethodType: { type: 'typeahead', label: 'Tipo de método de pago', showCodeSpan: false, },
+  service: { type: 'typeahead', label: 'Servicio', showCodeSpan: false, },
 
   stripePaymentMethodId: { type: 'text', label: 'ID del método de pago de Stripe' },
 } as FormInfo<DoctorSchedule>;
@@ -73,6 +74,12 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
       const constructedMedicalInsuranceCompany = new MedicalInsuranceCompany({ ...medicalInsuranceCompany });
 
       return new SelectOption({ id: constructedMedicalInsuranceCompany.id!, name: constructedMedicalInsuranceCompany.name, code: constructedMedicalInsuranceCompany.name, enabled: constructedMedicalInsuranceCompany.enabled, visible: constructedMedicalInsuranceCompany.visible });
+    });
+
+    this.controls.paymentMethodType.selectOptions = doctor.paymentMethods.map(paymentMethod => {
+      const constructedPaymentMethod = new PaymentMethodType({ ...paymentMethod });
+
+      return new SelectOption({ id: constructedPaymentMethod.id!, name: constructedPaymentMethod.name, code: constructedPaymentMethod.name, enabled: constructedPaymentMethod.enabled, visible: constructedPaymentMethod.visible });
     });
 
     if (selectedSchedule) {

@@ -348,7 +348,7 @@ export class AccountService {
   getDoctorMedicalInsuranceCompanies() {
     if (this.doctorMedicalInsuranceCompanies() !== null) return;
 
-    this.http.get<UserMedicalInsuranceCompany[]>(`${this.baseUrl}doctor-medical-insurance-companies`).subscribe({
+    this.http.get<MedicalInsuranceCompany[]>(`${this.baseUrl}doctor-medical-insurance-companies`).subscribe({
       next: companies => {
         this.doctorMedicalInsuranceCompanies.set(companies);
       }
