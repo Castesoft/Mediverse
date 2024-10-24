@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, input } from '@angular/core';
+import { Component, effect, input, model } from '@angular/core';
 import { BadRequest } from 'src/app/_models/types';
 
 @Component({
@@ -12,7 +12,7 @@ import { BadRequest } from 'src/app/_models/types';
   imports: [CommonModule,],
 })
 export class ErrorsAlert3Component {
-  error = input.required<BadRequest>();
+  error = model.required<BadRequest>();
 
   constructor() {
     effect(() => {

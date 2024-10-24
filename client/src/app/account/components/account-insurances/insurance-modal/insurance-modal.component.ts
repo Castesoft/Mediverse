@@ -3,7 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
-import { MedicalInsuranceCompany, UserMedicalInsuranceCompany } from 'src/app/_models/medicalInsuranceCompany';
+import { MedicalInsuranceCompany } from 'src/app/_models/medicalInsuranceCompany';
+import { UserMedicalInsuranceCompany } from 'src/app/_models/userMedicalInsuranceCompany';
 import { AccountService } from 'src/app/_services/account.service';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 
@@ -37,7 +38,7 @@ export class InsuranceModalComponent {
     this.accountService.getMedicalInsuranceCompaniesFields();
 
     if (this.type === 'edit' && this.insurance) {
-      this.insuranceForm.get('MedicalInsuranceCompanyId')?.setValue(this.insurance.id.toString());
+      this.insuranceForm.get('MedicalInsuranceCompanyId')?.setValue(this.insurance!.id!.toString());
       this.insuranceForm.get('PolicyNumber')?.setValue(this.insurance.policyNumber);
       this.insuranceForm.get('IsMain')?.setValue(this.insurance.isMain);
       if (this.insurance.isMain) {
@@ -80,9 +81,10 @@ export class InsuranceModalComponent {
         }
       });
     } else {
-      if (!this.insurance) return;
+      const insurance = this.insurance;
+      if (insurance !== null && insurance.id === null) return;
       this.insuranceForm.get('IsMain')?.enable();
-      this.accountService.updateMedicalInsurance(this.insurance.id, formData).subscribe({
+      this.accountService.updateMedicalInsurance(insurance!.id!, formData).subscribe({
         next: () => {
           this.bsModalRef.hide();
           this.submitted = false;

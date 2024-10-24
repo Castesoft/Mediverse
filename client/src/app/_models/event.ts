@@ -5,12 +5,12 @@ import { BadRequest, Role } from "src/app/_models/types";
 import { User, UserSummary } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
-import { Address } from "src/app/addresses/addresses.config";
 import { PaymentMethodType } from './paymentMethodType';
 import { MedicalInsuranceCompany } from './medicalInsuranceCompany';
 import { Payment } from './payment';
 import { Prescription } from './prescription';
-import { Service } from "src/app/services/services.config";
+import { Service } from "src/app/_models/service";
+import { Address } from "src/app/_models/address";
 
 const subject = 'event';
 

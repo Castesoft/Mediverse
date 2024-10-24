@@ -12,10 +12,10 @@
                 @if (form.controls.photoUrl.value !== null) {
                   <img [src]="form.controls.photoUrl.value" class="mw-100 mh-100 rounded" alt="photo" />
                 } @else {
-                  <app-user-profile-picture
+                  <div userProfilePicture userProfilePicture
                     [(account)]="accountService.current"
                     shape="square" size="md2"
-                  ></app-user-profile-picture>
+                  ></div>
                 }
               </div>
               <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" title="Change avatar">

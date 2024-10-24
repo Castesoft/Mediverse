@@ -1,12 +1,9 @@
 /// <reference types="@types/google.maps" />
 import { Component, effect, HostListener, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DoctorResult, SearchResults } from 'src/app/_models/doctorSearchResults';
-import { Pagination } from 'src/app/_models/pagination';
+import { SearchResults } from 'src/app/_models/doctorSearchResults';
 import { SearchService } from 'src/app/_services/search.service';
 import { TablePagerComponent } from 'src/app/_shared/table/table-pager.component';
-import { DoctorDetailsComponent } from '../doctor-details/doctor-details.component';
-import { UtilsService } from 'src/app/_services/utils.service';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
 import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.component';
@@ -14,11 +11,23 @@ import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Search } from 'src/app/_models/search';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import { SearchFormComponent } from 'src/app/search/components/search-form.component';
+import { DoctorResult } from 'src/app/_models/doctorResult';
+import { SearchAuthComponent } from 'src/app/search/components/search-auth.component';
+import { SearchResultCounterComponent } from 'src/app/search/components/search-result-counter.component';
+import { ResultRowComponent } from 'src/app/search/components/result-row.component';
+import { NoResultScreenComponent } from 'src/app/search/components/no-result-screen.component';
+import { LoadingPlaceholderComponent } from 'src/app/search/components/loading-placeholder.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Subject, takeUntil } from 'rxjs';
+import { DoctorDetailComponent } from 'src/app/search/windows/doctor-detail.component';
 
 @Component({
-  selector: 'app-search-results',
+  selector: 'div[searchResults]',
+  host: { class: 'h-100 d-flex mobile-view', },
   standalone: true,
-  imports: [TablePagerComponent, SearchFormComponent, UserProfilePictureComponent, DoctorDetailsComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule],
+  imports: [TablePagerComponent, SearchFormComponent, UserProfilePictureComponent, DoctorDetailComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule,
+    SearchAuthComponent, SearchResultCounterComponent, ResultRowComponent, NoResultScreenComponent, LoadingPlaceholderComponent,
+  ],
   providers: [ BsDropdownDirective, ],
   templateUrl: './search-results.component.html',
   styleUrl: './search-results.component.scss'
@@ -26,20 +35,17 @@ import { SearchFormComponent } from 'src/app/search/components/search-form.compo
 export class SearchResultsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private utilsService = inject(UtilsService);
   service = inject(SearchService);
   accountService = inject(AccountService);
 
+  destroyed = new Subject<void>();
   isMobile = signal(false);
   showMobileSearch = signal(false);
   didSchedule = signal(false);
 
   startingTab = 'general';
 
-  map: google.maps.Map | undefined;
-  markers: google.maps.marker.AdvancedMarkerElement[] = [];
-  doctorMarkersMap = new Map<DoctorResult, google.maps.marker.AdvancedMarkerElement[]>();
-  hoveredMarkerDoctor: DoctorResult | null = null;
+  map?: google.maps.Map;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -47,6 +53,21 @@ export class SearchResultsComponent implements OnInit {
   }
 
   constructor() {
+    inject(BreakpointObserver)
+      .observe([
+        Breakpoints.XSmall,
+        Breakpoints.Small,
+        Breakpoints.Medium,
+        Breakpoints.Large,
+        Breakpoints.XLarge,
+      ])
+      .pipe(takeUntil(this.destroyed))
+      .subscribe(result => {
+        if (result.matches) {
+          this.isMobile.set(result.breakpoints[Breakpoints.XSmall] || result.breakpoints[Breakpoints.Small]);
+        }
+      })
+
     effect(() => {
       console.log(this.service.results());
       this.setSearch();
@@ -54,6 +75,9 @@ export class SearchResultsComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.service.search.set(this.service.search().setFromQueryParamMap(this.route.snapshot.queryParamMap));
+    this.service.getSearchResults().subscribe();
+
     this.isMobile.set(window.innerWidth <= 768);
 
     const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
@@ -65,10 +89,8 @@ export class SearchResultsComponent implements OnInit {
       streetViewControl: false,
       rotateControl: false,
       fullscreenControl: false,
-      mapId: "8aab1a49ed502607"
+      mapId: "8aab1a49ed502607",
     });
-
-    this.service.search.set(this.service.search().setFromQueryParamMap(this.route.snapshot.queryParamMap));
 
     if (this.isMobile() && (this.service.search().location || this.service.search().specialty)) {
       this.showMobileSearch.set(true);
@@ -76,6 +98,7 @@ export class SearchResultsComponent implements OnInit {
   }
 
   setSearch() {
+    
     const results: SearchResults | null = this.service.results();
     const selected: DoctorResult | null = this.service.selected();
     if (results) {
@@ -88,10 +111,10 @@ export class SearchResultsComponent implements OnInit {
       }
       if (results.doctors.length > 0) {
         if (selected && this.didSchedule()) {
-          this.onCloseDoctorDetails();
+          this.service.close();
           this.startingTab = 'schedule';
           setTimeout(() => {
-            this.showDoctorDetails(selected);
+            this.service.open(selected);
           }, 10);
           setTimeout(() => {
             this.startingTab = 'general';
@@ -101,7 +124,7 @@ export class SearchResultsComponent implements OnInit {
           this.showMarker(doctor);
         }
       } else {
-        this.resetMarkers();
+        this.service.resetMarkers();
       }
     }
   }
@@ -121,7 +144,7 @@ export class SearchResultsComponent implements OnInit {
     this.service.getSearchResults().subscribe({
       next: (response) => {
         const { result, pagination } = response;
-        this.resetMarkers();
+        this.service.resetMarkers();
         if (result) {
           for (const doctor of result.doctors) {
             this.showMarker(doctor);
@@ -134,7 +157,7 @@ export class SearchResultsComponent implements OnInit {
   onSearchChange(event: Search) {
     this.service.search.set(new Search({ ...event }));
 
-    this.resetMarkers();
+    this.service.resetMarkers();
 
     this.router.navigate([], {
       relativeTo: this.route,
@@ -161,109 +184,37 @@ export class SearchResultsComponent implements OnInit {
         });
 
         marker.addListener("click", () => {
-          this.showDoctorDetails(doctor);
-          this.hoveredMarkerDoctor = null;
+          this.service.open(doctor);
+          this.service.hoveredMarker.set(null);
           if (this.isMobile() && this.service.selected()) {
             this.showMobileSearch.set(true);
           }
         });
 
         marker.content?.addEventListener("mouseenter", () => {
-          this.hoveredMarkerDoctor = doctor;
+          this.service.hoveredMarker.set(doctor);
         });
 
         marker.content?.addEventListener("mouseleave", () => {
-          this.hoveredMarkerDoctor = null;
+          this.service.hoveredMarker.set(null);
         });
 
-        this.markers.push(marker);
-        const doctorMarkers = this.doctorMarkersMap.get(doctor);
+        this.service.markers.set([...this.service.markers(), marker]);
+        const doctorMarkers = this.service.markersMap().get(doctor);
         if (doctorMarkers) {
           doctorMarkers.push(marker);
         } else {
-          this.doctorMarkersMap.set(doctor, [marker]);
+          this.service.setMarkerToMap(doctor, marker);
         }
       }
     }
   }
 
-  resetMarkers() {
-    this.markers.forEach((marker) => marker.map = null);
-    this.markers = [];
-  }
-
-  showDoctorDetails(doctor: DoctorResult) {
-    this.service.selected.set(doctor);
-    this.doctorMarkersMap.forEach((_, doctor) => {
-      this.resetDoctorMarkersIcons(doctor);
-    });
-    this.transformDoctorMarkersIcons(doctor);
-  }
-
-  showDoctorOnMap(doctor: DoctorResult) {
-    this.service.selected.set(doctor);
-    this.doctorMarkersMap.forEach((_, doctor) => {
-      this.resetDoctorMarkersIcons(doctor);
-    });
-    this.transformDoctorMarkersIcons(doctor);
-    this.centerMapOnDoctor(doctor);
-    this.showMobileSearch.set(false);
-  }
-
-  centerMapOnDoctor(doctor: DoctorResult) {
-    const address = doctor.addresses[0];
-    this.map?.setCenter({ lat: address.latitude!, lng: address.longitude! });
-    this.map?.setZoom(12);
-  }
-
-  onCloseDoctorDetails() {
-    this.service.selected.set(null);
-    this.doctorMarkersMap.forEach((_, doctor) => {
-      this.resetDoctorMarkersIcons(doctor);
-    });
-  }
-
-  onDoctorHover(doctor: DoctorResult) {
-    this.transformDoctorMarkersIcons(doctor);
-  }
-
-  onDoctorLeave(doctor: DoctorResult) {
-    if (this.service.selected() === doctor) return;
-
-    this.resetDoctorMarkersIcons(doctor);
-  }
-
-  transformDoctorMarkersIcons(doctor: DoctorResult) {
-    const doctorMarkers = this.doctorMarkersMap.get(doctor);
-    if (doctorMarkers) {
-      doctorMarkers.forEach((marker) => {
-        const range = document.createRange();
-        const fragment = range.createContextualFragment(doctor.photoUrl ? `
-          <div class="symbol symbol-circle symbol-60px min-w-60px doctor-map-marker" style="cursor: pointer;">
-            <img src="${doctor.photoUrl}" alt="${doctor.firstName}" style="width: 60px;height: 60px;border-radius: 50%;overflow: hidden;">
-          </div>
-        ` : `
-          <div class="symbol symbol-circle symbol-60px min-w-60px doctor-map-marker" style="cursor: pointer;">
-            <div class="symbol-label fw-semibold text-primary fs-2x bg-light-${this.utilsService.getBootstrapClass(doctor.firstName!)} text-${this.utilsService.getBootstrapClass(doctor.firstName!)}">
-              ${doctor.firstName![0]}
-            </div>
-          </div>
-        `);
-        marker.content = fragment;
-        marker.zIndex = doctor === this.service.selected() ? 101 : 100;
-      });
-    }
-  }
-
-  resetDoctorMarkersIcons(doctor: DoctorResult) {
-    const doctorMarkers = this.doctorMarkersMap.get(doctor);
-    if (doctorMarkers) {
-      doctorMarkers.forEach((marker) => {
-        marker.content = null;
-        marker.zIndex = 0;
-      });
-    }
-  }
+  // centerMapOnDoctor(doctor: DoctorResult) {
+  //   const address = doctor.addresses[0];
+  //   this.map?.setCenter({ lat: address.latitude!, lng: address.longitude! });
+  //   this.map?.setZoom(12);
+  // }
 
   onEventCreated() {
     this.didSchedule.set(true);

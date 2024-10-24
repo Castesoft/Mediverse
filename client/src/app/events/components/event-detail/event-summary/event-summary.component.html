@@ -27,11 +27,11 @@
       <div class="d-flex" [ngClass]="{'flex-column align-items-center': orientation() === 'vertical'}">
         <div class="symbol symbol-150px" [ngClass]="{'mb-5': orientation() === 'vertical', 'me-5': orientation() === 'horizontal'}">
           <span class="symbol-label bg-light-danger">
-            <app-user-profile-picture
+            <div userProfilePicture userProfilePicture
               [account]="$any(item().patient)"
               [shape]="'square'"
               [size]="'lg'"
-            ></app-user-profile-picture>
+            ></div>
           </span>
         </div>
         <div class="d-flex flex-grow-1 flex-column" [ngClass]="{'w-100': orientation() === 'vertical'}">

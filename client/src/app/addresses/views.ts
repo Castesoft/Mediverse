@@ -1,15 +1,13 @@
 import { Component, effect, inject, input, InputSignal, model, OnInit } from "@angular/core";
-import { BadRequest, FormUse, View } from "src/app/_models/types";
+import { FormUse, View } from "src/app/_models/types";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { Control, FormActions, FormComponent, FormGroupActions } from "src/app/_forms/form";
-import { Validators } from "@angular/forms";
+import { FormComponent, FormGroupActions } from "src/app/_forms/form";
 import { RouterModule } from "@angular/router";
-import { Address, AddressesService } from "src/app/addresses/addresses.config";
+import { AddressesService } from "src/app/addresses/addresses.config";
 import { CommonModule } from "@angular/common";
-import { omitKeys, stateOptions } from "src/app/_utils/util";
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
-import { AddressParam } from "@stripe/stripe-js";
 import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { Address } from "src/app/_models/address";
 
 @Component({
   selector: "[addressForm]",

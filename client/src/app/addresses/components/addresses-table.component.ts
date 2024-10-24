@@ -12,6 +12,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { createId } from '@paralleldrive/cuid2';
 import { Subject, takeUntil } from 'rxjs';
 import { ControlsModule } from 'src/app/_forms/controls.module';
+import { Address } from 'src/app/_models/address';
 import {
   CatalogMode,
   ITableMenu,
@@ -25,7 +26,6 @@ import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { TableModule } from 'src/app/_shared/table/table.module';
 import {
-  Address,
   AddressParams,
   AddressesService,
 } from 'src/app/addresses/addresses.config';

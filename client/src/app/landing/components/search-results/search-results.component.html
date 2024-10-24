@@ -1,222 +1,145 @@
-<div class="h-100 d-flex mobile-view">
-    <div id="profile" class="position-absolute top-0 end-0 p-4" style="z-index: 1;">
-        @if (accountService.current()) {
-            <div class="position-relative">
-                <div userDropdown dropdown triggers="hover" placement="bottom right" class="pt-2"></div>
-              </div>
-        } @else {
-            <a routerLink="/auth/sign-in" class="btn btn-light-primary me-3">Iniciar sesión</a>
-            <a routerLink="/auth/sign-up" class="btn btn-primary">Registrarse</a>
-        }
+<div searchAuth></div>
+
+<div id="search-sidebar" class="d-flex flex-column position-relative" style="width: 33%;">
+  @if (!service.loading()) {
+  <div class="container">
+    <h1 class="text-gray-800 fw-bold my-3 text-center">
+      <a routerLink="/">Mediverse</a>
+    </h1>
+    <div class="py-3" searchForm [compact]="true"></div>
+
+    <div style="max-height: 100px; overflow: auto; min-height: 100px;" class="border">
+      <strong>Search: </strong><code>
+        {{service.search() | json}}
+      </code>
+    </div>
+    <div style="max-height: 100px; overflow: auto; min-height: 100px;" class="border">
+      <strong>Seleccionado: </strong><code>
+        {{service.selected() | json}}
+      </code>
+    </div>
+    <div style="max-height: 100px; overflow: auto; min-height: 100px;" class="border">
+      <strong>Params: </strong><code>
+        {{service.search().params | json}}
+      </code>
     </div>
 
-    <div id="search-sidebar" class="d-flex flex-column position-relative" style="width: 33%;">
-        @if (!service.loading()) {
-            <div class="container">
-                <h1 class="text-gray-800 fw-bold my-3 text-center">
-                    <a routerLink="/">Mediverse</a>
-                </h1>
-                <div class="py-3">
-                    <div searchForm [compact]="true"></div>
-                </div>
 
-                <div class="d-flex flex-wrap flex-stack mb-1">
-                    <h3 class="text-gray-800 fw-bold my-2">Mis Resultados
-                      @if(service.pagination()) {
-                    <span class="fs-6 text-gray-500 fw-semibold ms-1">({{service.pagination()!.totalItems | number}})</span>
-                      }
-                    </h3>
-                </div>
-            </div>
 
-            @if (service.results() && service.results()?.doctors!.length > 0) {
-                <div class="overflow-y-auto" style="flex: 1;">
-                    @for (doctor of service.results()?.doctors; track $index) {
-                        <div class="d-flex flex-column p-6 doctor-search-result" [class.hovered]="hoveredMarkerDoctor === doctor" (click)="showDoctorDetails(doctor)" (mouseenter)="onDoctorHover(doctor)" (mouseleave)="onDoctorLeave(doctor)">
-                            <div class="d-flex gap-3">
-                                <app-user-profile-picture
-                                    [account]="$any(doctor)"
-                                    [showOnline]="true"
-                                    size="sm"
-                                ></app-user-profile-picture>
-                                <div class="d-flex flex-column justify-content-center">
-                                    <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{doctor.firstName}} {{doctor.lastName}}</a>
-                                    <div class="fw-semibold text-gray-500">
-                                        @for (specialty of doctor.specialties; track $index) {
-                                            {{specialty.name}}@if ($index < doctor.specialties.length - 1) {, }
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            @for (address of doctor.addresses; track $index) {
-                                <div class="fw-semibold text-gray-500 pt-3">
-                                    <i class="ki-duotone ki-geolocation fs-4 text-primary">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                    {{address.street}}, {{address.city}}, {{address.state}}
-                                </div>
-                            }
-                        </div>
-                        <div class="separator separator-dashed"></div>
-                    }
-                </div>
-                <div class="d-flex flex-center pb-6 container">
-                    @if (service.pagination()) {
-                        <div
-                            tablePager
-                            [currentPage]="service.pagination()!.currentPage"
-                            [itemsPerPage]="service.pagination()!.itemsPerPage"
-                            [totalItems]="service.pagination()!.totalItems"
-                            (pageChanged)="onPageChanged($event)"
-                            [hideShowAll]="true"
-                            [hideShowing]="true"
-                        ></div>
-                    }
-                </div>
-            } @else {
-                <div class="d-flex flex-column align-items-center justify-content-center pb-6 container">
-                    <i class="ki-duotone ki-search-list fs-5x text-gray-400 mb-5">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                        <span class="path3"></span>
-                    </i>
-                    <h3 class="text-gray-800 fw-bold mb-3">No se encontraron resultados</h3>
-                    <p class="text-gray-600 text-center mb-5">Intenta ajustar tus criterios de búsqueda o explorar otras especialidades.</p>
-                </div>
-            }
-        } @else {
-            <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <h4 class="text-gray-800 fw-bold mb-2">Buscando especialistas</h4>
-                <p class="text-gray-600">Por favor, espere un momento...</p>
-            </div>
-        }
+    <div searchResultCounter></div>
 
-        @if (service.selected()) {
-            <div class="doctor-details">
-                <app-doctor-details [doctor]="service.selected() ?? undefined" [startingTab]="startingTab" (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
-            </div>
-        }
-    </div>
+  </div>
 
-    @if (isMobile() && !showMobileSearch()) {
-        <div id="search-mobile" class="position-absolute top-0 p-4" style="z-index: 1;">
-            <h1 class="text-gray-800 fw-bold my-3 text-center">
-                <a routerLink="/">Mediverse</a>
-            </h1>
-            <div class="py-3">
-              <div searchForm [compact]="true"></div>
-            </div>
-        </div>
+  @if (service.results() && service.results()?.doctors!.length > 0) {
+  <div class="overflow-y-auto" style="flex: 1;">
+    @for (doctor of service.results()?.doctors; let idx = $index; track idx) {
+    <div resultRow [(doctor)]="service.results()!.doctors[idx]"></div>
+    <div class="separator separator-dashed"></div>
     }
-
-    @if (isMobile() && showMobileSearch()) {
-        <div class=" position-relative" style="width: 100%;">
-            @if (!service.selected()) {
-                @if (!service.loading()) {
-                    <div class="container">
-                        <h1 class="text-gray-800 fw-bold my-3 text-center">
-                            <a routerLink="/">Mediverse</a>
-                        </h1>
-                        <div class="py-3">
-                          <div searchForm [compact]="true"></div>
-                        </div>
-
-                        <div class="d-flex flex-wrap flex-stack mb-1">
-                            <h3 class="text-gray-800 fw-bold my-2">Mis Resultados
-                              @if(service.pagination()) {
-                            <span class="fs-6 text-gray-500 fw-semibold ms-1">({{service.pagination()?.totalItems | number}})</span>
-                              }
-                            </h3>
-                        </div>
-                    </div>
-
-                    @if (service.results() && service.results()?.doctors!.length > 0) {
-                        <div class="overflow-y-auto" style="flex: 1;">
-                            @for (doctor of service.results()?.doctors; track $index) {
-                                <div class="d-flex flex-column p-6 doctor-search-result" [class.hovered]="hoveredMarkerDoctor === doctor" (mouseenter)="onDoctorHover(doctor)" (mouseleave)="onDoctorLeave(doctor)">
-                                    <div class="d-flex gap-3">
-                                        <app-user-profile-picture
-                                            [account]="$any(doctor)"
-                                            [showOnline]="true"
-                                            size="sm"
-                                        ></app-user-profile-picture>
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{doctor.firstName}} {{doctor.lastName}}</a>
-                                            <div class="fw-semibold text-gray-500">
-                                                @for (specialty of doctor.specialties; track $index) {
-                                                    {{specialty.name}}@if ($index < doctor.specialties.length - 1) {, }
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @for (address of doctor.addresses; track $index) {
-                                        <div class="fw-semibold text-gray-500 pt-3">
-                                            <i class="ki-duotone ki-geolocation fs-4 text-primary">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>
-                                            {{address.street}}, {{address.city}}, {{address.state}}
-                                        </div>
-                                    }
-                                    <div class="d-flex justify-content-between mt-3">
-                                        <button class="btn btn-sm btn-primary" (click)="showDoctorDetails(doctor)">Ver detalles</button>
-                                        <button class="btn btn-sm btn-secondary" (click)="showDoctorOnMap(doctor)">Ver en mapa</button>
-                                    </div>
-                                </div>
-                                <div class="separator separator-dashed"></div>
-                            }
-                        </div>
-                        <div class="d-flex flex-center pb-6 container">
-                            @if (service.pagination()) {
-                                <div
-                                    tablePager
-                                    [currentPage]="service.pagination()!.currentPage"
-                                    [itemsPerPage]="service.pagination()!.itemsPerPage"
-                                    [totalItems]="service.pagination()!.totalItems"
-                                    (pageChanged)="onPageChanged($event)"
-                                    [hideShowAll]="true"
-                                    [hideShowing]="true"
-                                ></div>
-                            }
-                        </div>
-                    } @else {
-                        <div class="d-flex flex-column align-items-center justify-content-center pb-6 container">
-                            <i class="ki-duotone ki-search-list fs-5x text-gray-400 mb-5">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                            </i>
-                            <h3 class="text-gray-800 fw-bold mb-3">No se encontraron resultados</h3>
-                            <p class="text-gray-600 text-center mb-5">Intenta ajustar tus criterios de búsqueda o explorar otras especialidades.</p>
-                        </div>
-                    }
-                } @else {
-                    <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-                            <span class="visually-hidden">Cargando...</span>
-                        </div>
-                        <h4 class="text-gray-800 fw-bold mb-2">Buscando especialistas</h4>
-                        <p class="text-gray-600">Por favor, espere un momento...</p>
-                    </div>
-                }
-            }
-
-            @if (service.selected()) {
-                <div class="doctor-details-mobile">
-                    <app-doctor-details
-                        [isMobile]="isMobile()"
-                        [doctor]="service.selected() ?? undefined" [startingTab]="startingTab"
-                        (onClose)="onCloseDoctorDetails()" (onEventCreated)="onEventCreated()"></app-doctor-details>
-                </div>
-            }
-        </div>
+  </div>
+  <div class="d-flex flex-center pb-6 container">
+    @if (service.pagination()) {
+    <div tablePager [currentPage]="service.pagination()!.currentPage"
+      [itemsPerPage]="service.pagination()!.itemsPerPage" [totalItems]="service.pagination()!.totalItems"
+      (pageChanged)="onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true"></div>
     }
+  </div>
+  } @else {
+  <div noResultScreen></div>
+  }
+  } @else {
+  <div loadingPlaceholder></div>
+  }
 
-    <div class="w-100" [class.d-none]="isMobile() && showMobileSearch()">
-        <div id="map" style="height: 100%;"></div>
+  @if (service.selected()) {
+  <div class="doctor-details">
+    <div doctorDetail [startingTab]="startingTab" (onClose)="service.close()" (onEventCreated)="onEventCreated()"></div>
+  </div>
+  }
+</div>
+
+@if (isMobile() && !showMobileSearch()) {
+<div id="search-mobile" class="position-absolute top-0 p-4" style="z-index: 1;">
+  <h1 class="text-gray-800 fw-bold my-3 text-center">
+    <a routerLink="/">Mediverse</a>
+  </h1>
+  <div class="py-3">
+    <div searchForm [compact]="true"></div>
+  </div>
+</div>
+}
+
+@if (isMobile() && showMobileSearch()) {
+<div class=" position-relative" style="width: 100%;">
+  @if (!service.selected()) {
+  @if (!service.loading()) {
+  <div class="container">
+    <h1 class="text-gray-800 fw-bold my-3 text-center">
+      <a routerLink="/">Mediverse</a>
+    </h1>
+    <div class="py-3">
+      <div searchForm [compact]="true"></div>
     </div>
+
+    <div searchResultCounter></div>
+  </div>
+
+  @if (service.results() && service.results()?.doctors!.length > 0) {
+  <div class="overflow-y-auto" style="flex: 1;">
+      @for (doctor of service.results()?.doctors; let idx = $index; track idx) {
+        <div resultRow [(doctor)]="service.results()!.doctors[idx]"></div>
+        <div class="separator separator-dashed"></div>
+      <!-- <div class="d-flex flex-column p-6 doctor-search-result" [class.hovered]="hoveredMarkerDoctor === doctor"
+        (mouseenter)="onDoctorHover(doctor)" (mouseleave)="onDoctorLeave(doctor)">
+        <div class="d-flex gap-3">
+          <div userProfilePicture [account]="$any(doctor)" [showOnline]="true" size="sm"></div>
+          <div class="d-flex flex-column justify-content-center">
+            <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{doctor.firstName}} {{doctor.lastName}}</a>
+            <div class="fw-semibold text-gray-500">
+              @for (specialty of doctor.specialties; track $index) {
+              {{specialty.name}}@if ($index < doctor.specialties.length - 1) {, } } </div>
+            </div>
+          </div>
+          @for (address of doctor.addresses; track $index) {
+          <div class="fw-semibold text-gray-500 pt-3">
+            <i class="ki-duotone ki-geolocation fs-4 text-primary">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+            {{address.street}}, {{address.city}}, {{address.state}}
+          </div>
+          }
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-sm btn-primary" (click)="showDoctorDetails(doctor)">Ver detalles</button>
+            <button class="btn btn-sm btn-secondary" (click)="showDoctorOnMap(doctor)">Ver en mapa</button>
+          </div>
+        </div> -->
+        }
+      </div>
+  <div class="d-flex flex-center pb-6 container">
+    @if (service.pagination()) {
+    <div tablePager [currentPage]="service.pagination()!.currentPage"
+      [itemsPerPage]="service.pagination()!.itemsPerPage" [totalItems]="service.pagination()!.totalItems"
+      (pageChanged)="onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true"></div>
+    }
+  </div>
+  } @else {
+  <div noResultScreen></div>
+  }
+  } @else {
+  <div loadingPlaceholder></div>
+  }
+  }
+
+  @if (service.selected()) {
+  <div class="doctor-details-mobile">
+    <div doctorDetail [isMobile]="isMobile()" [startingTab]="startingTab" (onClose)="service.close()"
+      (onEventCreated)="onEventCreated()"></div>
+  </div>
+  }
+</div>
+}
+
+<div class="w-100" [class.d-none]="isMobile() && showMobileSearch()">
+  <div id="map" style="height: 100%;"></div>
 </div>

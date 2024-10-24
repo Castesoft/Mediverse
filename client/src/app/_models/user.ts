@@ -2,10 +2,10 @@ import { HttpParams } from "@angular/common/http";
 import { Entity, EntityParams, IParams } from "src/app/_models/types";
 import { buildHttpParams, omitKeys } from "src/app/_utils/util";
 import { Payment } from './payment';
-import { UserMedicalInsuranceCompany } from './medicalInsuranceCompany';
 import { Event } from "./event";
 import { MedicalRecord } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 import { SelectOption } from "src/app/_forms/form";
+import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
 
 const subject = 'user';
 

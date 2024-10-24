@@ -361,8 +361,6 @@ export class BadRequest {
 
 export type FormControlStyles = 'solid' | 'normal';
 
-export type Addresses = 'Account' | 'Clinic';
-
 export class TableMenu<T> {
   protected matSnackBar = inject(MatSnackBar);
   dev = inject(EnvService);

@@ -8,9 +8,9 @@
     <div class="d-flex flex-grow-1 justify-content-start align-items-center">
       <a [routerLink]="'/home/patients/' + item()!.id"
          class="symbol symbol-50px symbol-circle">
-        <app-user-profile-picture
+        <div userProfilePicture userProfilePicture
           [(account)]="account"
-        ></app-user-profile-picture>
+        ></div>
       </a>
       <div class="ms-4 w-100">
         <div class="d-flex flex-grow-1 justify-content-between align-items-center">

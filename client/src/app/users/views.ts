@@ -46,10 +46,10 @@ export class UserNewComponent {
             <div class="card-body pt-15">
               <div class="d-flex flex-center flex-column mb-5">
                 <div class="symbol symbol-100px symbol-circle mb-7">
-                  <app-user-profile-picture
+                  <div userProfilePicture userProfilePicture
                     [(account)]="accountService.current"
                     size="lg"
-                  ></app-user-profile-picture>
+                  ></div>
                 </div>
                 <a [routerLink]="['']" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">{{user.fullName}}</a>
                 <div class="fs-5 fw-semibold text-muted mb-6">Paciente</div>

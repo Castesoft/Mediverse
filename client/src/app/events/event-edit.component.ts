@@ -3,13 +3,13 @@ import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { Subject, takeUntil } from "rxjs";
-import { Address, AddressesService } from "src/app/addresses/addresses.config";
+import { Subject } from "rxjs";
+import { AddressesService } from "src/app/addresses/addresses.config";
 import { InputControlComponent } from "src/app/_forms/input-control.component";
 import { ClinicSummaryCardComponent } from "src/app/clinics/clinic-summary-card.component";
 import { NurseSummaryCardComponent } from "src/app/nurses/nurse-summary-card.component";
 import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
-import { Service, ServicesService } from "src/app/services/services.config";
+import { ServicesService } from "src/app/services/services.config";
 import { UsersService } from "src/app/_services/users.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FormUse, Role, View } from "src/app/_models/types";
@@ -17,6 +17,8 @@ import { User } from "src/app/_models/user";
 import { Product } from "src/app/_models/product";
 import { Event } from "src/app/_models/event";
 import { ServiceCardCompactComponent } from "src/app/services/components/service-card-compact.component";
+import { Service } from "src/app/_models/service";
+import { Address } from "src/app/_models/address";
 
 @Component({
   selector: 'div[eventEditView]',

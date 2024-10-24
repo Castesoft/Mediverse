@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { Component, inject, Injectable, NgModule, OnInit } from '@angular/core';
-import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from '@angular/router';
+import { ActivatedRoute, ResolveFn, Router, RouterModule } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 import { SelectOption } from 'src/app/_forms/form';
 import { Columns, FormGroup2 } from 'src/app/_forms/form2';
-import { Addresses, CatalogMode, Entity, EntityParams, FormUse, IParams, NamingSubject, Sections, View } from 'src/app/_models/types';
-import { CompactTableService } from 'src/app/_services/compact-table.service';
+import { Address, Addresses } from 'src/app/_models/address';
+import { CatalogMode, EntityParams, FormUse, IParams, NamingSubject, Sections, View } from 'src/app/_models/types';
 import { EnvService } from 'src/app/_services/env.service';
 import { ServiceHelper } from 'src/app/_services/serviceHelper';
 // import { BreadcrumbsModule } from 'src/app/_utils/breadcrumbs.module';
@@ -39,28 +39,6 @@ export const sortOptions = Object.values({
   visible: new SelectOption({ id: 20, name: 'Visible', code: 'visible' }),
   zipcode: new SelectOption({ id: 21, name: 'Código postal', code: 'zipcode' }),
 } as Columns<Address>);
-
-export class Address extends Entity {
-  street: string = '';
-  exteriorNumber: string = '';
-  interiorNumber: string = '';
-  neighborhood: string = '';
-  city: string = '';
-  state: string = '';
-  country: string = '';
-  zipcode: string = '';
-  photoUrl: string = '';
-  latitude: number = 0;
-  longitude: number = 0;
-  type: Addresses = 'Clinic';
-
-  nursesCount = 0;
-  isMain = false;
-
-  constructor() {
-    super();
-  }
-}
 
 export class AddressParams extends EntityParams<Address> implements IParams {
   street: string = '';

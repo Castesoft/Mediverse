@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, Input, model } from '@angular/core';
-import { Service } from 'src/app/services/services.config';
+import { Component, model } from '@angular/core';
+import { Service } from 'src/app/_models/service';
 
 @Component({
   selector: 'event-services-summary, div[eventServicesSummary]',

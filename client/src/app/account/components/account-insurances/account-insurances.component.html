@@ -109,7 +109,7 @@
                                 <label class="fs-6 fw-semibold form-label">{{insuranceCompany.name}}</label>
                             </div>
                             <label class="form-check form-switch form-check-custom form-check-solid">
-                                <input class="form-check-input" type="checkbox" [checked]="doctorContainsCompany(insuranceCompany)" (change)="toggleDoctorMedicalInsuranceCompany($event, insuranceCompany.id)"  />
+                                <input class="form-check-input" type="checkbox" [checked]="doctorContainsCompany(insuranceCompany)" (change)="toggleDoctorMedicalInsuranceCompany($event, insuranceCompany.id!)"  />
                             </label>
                         </div>
                     </div>

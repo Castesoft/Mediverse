@@ -6,10 +6,10 @@
       <div class="d-flex align-items-start flex-wrap justify-content-between">
         <div class="d-flex flex-wrap">
           <div class="symbol symbol-125px mb-7 me-7 position-relative">
-            <app-user-profile-picture
+            <div userProfilePicture
               [(account)]="accountService.current"
               shape="square" size="md"
-            ></app-user-profile-picture>
+            ></div>
           </div>
           <div class="d-flex flex-column">
             <div class="fs-2 fw-bold mb-1">{{accountService.current()?.fullName}}</div>

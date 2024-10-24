@@ -28,6 +28,21 @@ public class OptionDto
     public int Id { get; set; } = 0;
     public string Code { get; set; }
     public string Name { get; set; }
+    public Options Options { get; set; } = null;
     public bool Enabled { get; set; } = true;
     public bool Visible { get; set; } = true;
+    
 }
+
+#nullable enable
+
+public class Options
+{
+    public int? Id { get; set; } = null;
+    public string? Sex { get; set; } = null;
+    public string? Race { get; set; } = null;
+    public decimal? Price { get; set; } = null;
+    public string? PhotoUrl { get; set; } = null;
+}
+
+#nullable disable

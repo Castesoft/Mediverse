@@ -8,10 +8,11 @@ import { Router } from "@angular/router";
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
 import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billingDetails';
-import { MedicalInsuranceCompany, UserMedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
+import { MedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
 import { Payment } from '../_models/payment';
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 import { MedicalRecord } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
+import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
 
 
 @Injectable({

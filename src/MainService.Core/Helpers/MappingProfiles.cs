@@ -506,5 +506,24 @@ public class MappingProfiles : Profile
             
         ;
         CreateMap<MedicalRecordSubstance, MedicalRecordSubstanceDto>();
+
+        CreateMap<Service, OptionDto>()
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options { Price = src.Price }))
+        ;
+
+        CreateMap<Address, OptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.Street}, {src.City}, {src.State}, {src.Country}"))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Id.ToString()))
+        ;
+
+        CreateMap<MedicalInsuranceCompany, OptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Id.ToString()))
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options() { PhotoUrl = src.GetPhotoUrl(), }))
+        ;
     }
 }

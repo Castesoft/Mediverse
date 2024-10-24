@@ -4,10 +4,7 @@
     <div class="col-md-4">
       <div class="card">
         <div class="card-body text-center">
-          <app-user-profile-picture
-            [account]="$any(doctor)"
-            size="lg"
-          ></app-user-profile-picture>
+          <div userProfilePicture [account]="$any(doctor)" size="lg"></div>
           <h2 class="mt-3">
             {{ doctor!.firstName }} {{ doctor!.lastName }}
           </h2>
@@ -84,28 +81,22 @@
 
       <div class="tab-content mt-3">
         <div [hidden]="activeTab !== 'general'">
-          <app-doctor-general-tab [doctor]="doctor!"></app-doctor-general-tab>
+          <div doctorGeneralTab [doctor]="doctor!"></div>
         </div>
         <div [hidden]="activeTab !== 'reviews'">
-          <app-doctor-reviews-tab
-            [reviews]="doctor!.reviews"
-          ></app-doctor-reviews-tab>
+          <div doctorReviewsTab [(doctor)]="service.selected"></div>
         </div>
         <div [hidden]="activeTab !== 'schedule'" class="row">
           <div [class.col-md-6]="!isMobile()" [class.col-12]="isMobile()">
-            <app-doctor-schedule-tab
-              [doctor]="doctor!"
-              (onSelectSchedule)="selectSchedule($event)"
-            ></app-doctor-schedule-tab>
+            <div doctorScheduleTab [(doctor)]="service.selected" [(selectedSchedule)]="selectedSchedule"></div>
           </div>
           @if (isScheduling && !isMobile()) {
             <div class="col-md-6">
-              <app-doctor-schedule
-              [doctor]="doctor!"
-              [selectedSchedule]="selectedSchedule"
+              <div doctorScheduleWindow
+              [(selectedSchedule)]="selectedSchedule"
               (onClose)="onCloseDoctorSchedule($event)"
               [isMobile]="isMobile()"
-              ></app-doctor-schedule>
+              ></div>
             </div>
           }
         </div>
@@ -118,12 +109,11 @@
              [style.z-index]="isMobile() ? '1050' : 'auto'" [style.background-color]="isMobile() ? 'rgba(0,0,0,0.5)' : 'transparent'">
           <div [class.modal-dialog]="isMobile()" [class.modal-fullscreen]="isMobile()">
             <div [class.modal-content]="isMobile()">
-              <app-doctor-schedule
-                [doctor]="doctor!"
-                [selectedSchedule]="selectedSchedule"
+              <div doctorScheduleWindow
+                [(selectedSchedule)]="selectedSchedule"
                 (onClose)="onCloseDoctorSchedule($event)"
                 [isMobile]="isMobile()"
-              ></app-doctor-schedule>
+              ></div>
             </div>
           </div>
         </div>

@@ -13,6 +13,7 @@ import { ControlsModule } from 'src/app/_forms/controls.module';
 import { FilterFormGroupActions, FormComponent, FormGroupActions, SelectOption } from 'src/app/_forms/form';
 import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
 import { Pagination } from 'src/app/_models/pagination';
+import { Service } from 'src/app/_models/service';
 import { BadRequest, CatalogMode, Column, Entity, EntityParams, FormUse, IParams, ITableMenu, NamingSubject, PartialCellsOf, Sections, TableCellItem, TableMenu, TableRow, View } from 'src/app/_models/types';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { EnvService } from 'src/app/_services/env.service';
@@ -461,16 +462,6 @@ export const sortOptions = Object.values({
   isSelected: new SelectOption({ id: 7, code: 'isSelected', name: 'Seleccionado' }),
   visible: new SelectOption({ id: 8, code: 'visible', name: 'Visible' }),
 });
-
-export class Service extends Entity {
-  discount: number | null = null;
-  price: number | null = null;
-  photoUrl: string | null = null;
-
-  constructor() {
-    super();
-  }
-}
 
 export class ServiceParams extends EntityParams<Service> implements IParams {
   constructor(key: string) {

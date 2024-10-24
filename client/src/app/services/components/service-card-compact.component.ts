@@ -1,8 +1,9 @@
 import {CurrencyPipe, DecimalPipe} from "@angular/common";
 import {Component, inject, input, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
+import { Service } from "src/app/_models/service";
 import {Role, View} from "src/app/_models/types";
-import { Service, ServicesService } from "src/app/services/services.config";
+import {ServicesService } from "src/app/services/services.config";
 
 @Component({
   host: { class: 'card', },

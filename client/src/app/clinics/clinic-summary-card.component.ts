@@ -3,7 +3,8 @@ import {RouterLink} from "@angular/router";
 import {Subject} from "rxjs";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
-import { Address, AddressesService } from "src/app/addresses/addresses.config";
+import { AddressesService } from "src/app/addresses/addresses.config";
+import { Address } from "src/app/_models/address";
 
 @Component({
   selector: 'div[clinicSummaryCard]',

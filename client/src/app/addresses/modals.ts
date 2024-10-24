@@ -2,9 +2,9 @@ import { Component } from "@angular/core";
 import { DetailModal, FilterModal, CatalogModal } from "src/app/_shared/table/table.module";
 import { AddressDetailComponent } from "src/app/addresses/views";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { Address } from './addresses.config';
 import { AddressesFilterFormComponent } from './components/addresses-filter-form.component';
 import { AddressesCatalogComponent } from './components/addresses-catalog.component';
+import { Address } from "src/app/_models/address";
 
 @Component({
   selector: 'address-detail-modal',

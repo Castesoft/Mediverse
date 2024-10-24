@@ -34,9 +34,11 @@ import {
 } from 'src/app/users/components/users-catalog.component';
 import { createId } from '@paralleldrive/cuid2';
 import { PatientSelectTypeaheadComponent } from "src/app/_shared/components/patient-select-typeahead.component";
-import { Address, AddressesService } from 'src/app/addresses/addresses.config';
+import { AddressesService } from 'src/app/addresses/addresses.config';
 import { ServiceCardCompactComponent } from 'src/app/services/components/service-card-compact.component';
-import { Service, ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
+import { ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
+import { Address } from 'cluster';
+import { Service } from 'src/app/_models/service';
 
 @Component({
   host: { class: 'pb-3' },

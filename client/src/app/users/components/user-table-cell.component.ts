@@ -46,9 +46,9 @@ export class UserTableSexCellComponent {
     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
       <a [routerLink]="[routerLink]">
         <div class="symbol-label">
-          <app-user-profile-picture
+          <div userProfilePicture userProfilePicture
           [(account)]="account"
-          ></app-user-profile-picture>
+          ></div>
         </div>
       </a>
     </div>

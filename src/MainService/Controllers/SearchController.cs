@@ -32,16 +32,16 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
 
         foreach (var doctor in pagedList)
         {
-            doctor.DoctorAvailabilities = Enumerable.Range(0, 7)
+            doctor.AvailableDays = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Now.AddDays(i))
-                .Select((date, index) => new DoctorAvailability
+                .Select((date, index) => new AvailableDayDto
                 {
                     Day = index == 0 ? "Hoy" : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("dddd", new System.Globalization.CultureInfo("es-ES"))),
                     DayNumber = date.Day,
                     Month = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("MMMM", new System.Globalization.CultureInfo("es-ES"))),
                     MonthNumber = date.Month,
                     Year = date.Year,
-                    Availability = [.. doctor.WorkSchedules
+                    AvailableTimes = [.. doctor.WorkSchedules
                         .Where(ws => ws.DayOfWeek == (int)date.DayOfWeek)
                         .Select(ws =>
                         {
@@ -53,7 +53,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                                 e.DateFrom.ToLocalTime().TimeOfDay < endTime &&
                                 e.DateTo.ToLocalTime().TimeOfDay > startTime);
 
-                            return new DoctorAvailabilityTime
+                            return new AvailableTimeDto
                             {
                                 Start = ws.StartTime.ToString("HH:mm"),
                                 End = ws.EndTime.ToString("HH:mm"),
@@ -63,7 +63,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                         .Where(ws => TimeSpan.Parse(ws.Start) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
                         .OrderBy(ws => ws.Start)]
                 })
-                .ToArray();
+                .ToList();
 
             doctor.WorkSchedules = [];
             doctor.DoctorEvents = [];
@@ -95,16 +95,16 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
     {
         var doctor = await uow.SearchRepository.GetDoctorByIdAsync(id);
 
-        doctor.DoctorAvailabilities = Enumerable.Range(0, 7)
+        doctor.AvailableDays = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Now.AddDays(i))
-                .Select((date, index) => new DoctorAvailability
+                .Select((date, index) => new AvailableDayDto
                 {
                     Day = index == 0 ? "Hoy" : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("dddd", new System.Globalization.CultureInfo("es-ES"))),
                     DayNumber = date.Day,
                     Month = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(date.ToString("MMMM", new System.Globalization.CultureInfo("es-ES"))),
                     MonthNumber = date.Month,
                     Year = date.Year,
-                    Availability = [.. doctor.WorkSchedules
+                    AvailableTimes = [.. doctor.WorkSchedules
                         .Where(ws => ws.DayOfWeek == (int)date.DayOfWeek)
                         .Select(ws =>
                         {
@@ -116,7 +116,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                                 e.DateFrom.ToLocalTime().TimeOfDay < endTime &&
                                 e.DateTo.ToLocalTime().TimeOfDay > startTime);
 
-                            return new DoctorAvailabilityTime
+                            return new AvailableTimeDto
                             {
                                 Start = ws.StartTime.ToString("HH:mm"),
                                 End = ws.EndTime.ToString("HH:mm"),
@@ -126,7 +126,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                         .Where(ws => TimeSpan.Parse(ws.Start) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
                         .OrderBy(ws => ws.Start)]
                 })
-                .ToArray();
+                .ToList();
 
         doctor.WorkSchedules = [];
         doctor.DoctorEvents = [];

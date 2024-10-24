@@ -2,12 +2,15 @@ import { HttpParams } from "@angular/common/http";
 import { ParamMap, Params } from "@angular/router";
 import { SelectOption } from "src/app/_forms/form";
 import { FormInfo, FormGroup2 } from "src/app/_forms/form2";
+import { Doctor, doctorInfo } from "src/app/_models/doctor";
 
 export class Search {
   specialty: SelectOption | null = null;
   location: SelectOption | null = null;
+  doctor: Doctor = new Doctor();
   pageNumber: number | null = 1;
   pageSize: number | null = 5;
+  tab: string | null = 'general';
 
   constructor(init?: Partial<Omit<Search, 'setFromQueryParamMap' | 'params' | 'httpParams'>>) {
     Object.assign(this, init);
@@ -26,6 +29,12 @@ export class Search {
     if (params.has('pageSize')) {
       this.pageSize = +params.get('pageSize')!;
     }
+    if (params.has('doctorId')) {
+      this.doctor = new Doctor({ id: +params.get('doctorId')! });
+      if (params.has('doctorFullName')) {
+        this.doctor.fullName = params.get('doctorFullName')!;
+      }
+    }
 
     console.log(this);
 
@@ -40,6 +49,8 @@ export class Search {
     if (this.specialty?.name) params['specialty'] = this.specialty.name;
     if (this.location?.code) params['location'] = this.location.code;
     if (this.location?.name) params['locationName'] = this.location.name;
+    if (this.doctor.id) params['doctorId'] = this.doctor.id.toString();
+    if (this.doctor.fullName) params['doctorFullName'] = this.doctor.fullName;
     if (this.pageNumber) params['pageNumber'] = this.pageNumber.toString();
     if (this.pageSize) params['pageSize'] = this.pageSize.toString();
 
@@ -65,6 +76,7 @@ export const searchInfo: FormInfo<Search> = {
   location: { type: 'select', label: 'Ubicación', showLabel: false, showCodeSpan: false, },
   pageNumber: { type: 'number', label: 'Página', showLabel: false, },
   pageSize: { type: 'number', label: 'Resultados por página', showLabel: false, },
+  doctor: doctorInfo,
 } as FormInfo<Search>;
 
 export class SearchForm extends FormGroup2<Search> {
@@ -73,6 +85,6 @@ export class SearchForm extends FormGroup2<Search> {
   }
 
   get params(): Params {
-    return new Search({ ...this.value }).params;
+    return new Search({ ...this.value, doctor: new Doctor({...this.controls.doctor.value}) }).params;
   }
 }

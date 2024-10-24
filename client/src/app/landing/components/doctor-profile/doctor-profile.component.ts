@@ -1,14 +1,15 @@
 import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DoctorResult } from 'src/app/_models/doctorSearchResults';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
-import { DoctorGeneralTabComponent } from '../doctor-general-tab/doctor-general-tab.component';
-import { DoctorReviewsTabComponent } from '../doctor-reviews-tab/doctor-reviews-tab.component';
-import { DoctorScheduleTabComponent } from '../doctor-schedule-tab/doctor-schedule-tab.component';
-import { DoctorScheduleComponent } from '../doctor-schedule/doctor-schedule.component';
+import { DoctorGeneralTabComponent } from '../../../search/tabs/doctor-general-tab.component';
+import { DoctorReviewsTabComponent } from '../../../search/tabs/doctor-reviews-tab.component';
+import { DoctorScheduleTabComponent } from '../../../search/tabs/doctor-schedule-tab.component';
+import { DoctorScheduleComponent } from '../../../search/windows/doctor-schedule.component';
 import { SearchService } from 'src/app/_services/search.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ShareModalComponent } from './share-modal/share-modal.component'; // You'll need to create this component
+import { DoctorResult } from 'src/app/_models/doctorResult';
+import { AvailableDay } from 'src/app/_models/availableDay';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -25,13 +26,13 @@ import { ShareModalComponent } from './share-modal/share-modal.component'; // Yo
 export class DoctorProfileComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private searchService = inject(SearchService);
+  service = inject(SearchService);
   private bsModalService = inject(BsModalService);
 
   doctor: DoctorResult | null = null;
   activeTab = 'general';
   isScheduling = false;
-  selectedSchedule: any;
+  selectedSchedule = signal<AvailableDay | null>(null);
 
   isMobile = signal(false);
 
@@ -48,7 +49,7 @@ export class DoctorProfileComponent implements OnInit {
 
     const doctorId = this.route.snapshot.paramMap.get('id');
     if (doctorId) {
-      this.searchService.getDoctorById(+doctorId).subscribe(
+      this.service.getDoctorById(+doctorId).subscribe(
         doctor => {
             this.doctor = doctor
         }
@@ -73,18 +74,19 @@ export class DoctorProfileComponent implements OnInit {
     });
   }
 
-  selectSchedule(schedule: any) {
+  selectSchedule(schedule: AvailableDay) {
     this.isScheduling = true;
-    this.selectedSchedule = schedule;
+    this.selectedSchedule.set(schedule);
   }
 
   onCloseDoctorSchedule(event: boolean) {
     this.isScheduling = false;
-    if (event) {
+    const selectedSchedule = this.selectedSchedule();
+    if (event && selectedSchedule !== null) {
       setTimeout(() => {
         this.router.navigate([], {
           relativeTo: this.route,
-          queryParams: { day: this.selectedSchedule.day.dayNumber },
+          queryParams: { day: selectedSchedule.dayNumber },
           queryParamsHandling: 'merge'
         })
         location.reload();

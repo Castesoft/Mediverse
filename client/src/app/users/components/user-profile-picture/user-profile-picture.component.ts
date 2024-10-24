@@ -4,11 +4,10 @@ import { Account } from 'src/app/_models/account';
 import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
-  selector: 'app-user-profile-picture',
+  selector: 'div[userProfilePicture]',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './user-profile-picture.component.html',
-  styleUrl: './user-profile-picture.component.scss'
 })
 export class UserProfilePictureComponent {
   utilsService = inject(UtilsService);

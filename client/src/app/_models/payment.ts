@@ -1,4 +1,4 @@
-import { Service } from 'src/app/services/services.config';
+import { Service } from 'src/app/_models/service';
 import { UserPaymentMethod } from './billingDetails';
 import { PaymentMethodType } from './paymentMethodType';
 

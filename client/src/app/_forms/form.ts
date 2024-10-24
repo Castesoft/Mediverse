@@ -30,6 +30,8 @@ export function isSelectOption(value: any): value is SelectOption {
 export class Options {
   sex: string | null = null;
   race: string | null = null;
+  price: number | null = null;
+  photoUrl: string | null = null;
 
   constructor(init?: Partial<Options>) {
     Object.assign(this, init);

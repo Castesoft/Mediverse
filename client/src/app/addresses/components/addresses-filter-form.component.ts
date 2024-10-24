@@ -6,16 +6,16 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { ControlSelectComponent } from "src/app/_forms/control-select.component";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { Control, FilterFormGroupActions, FormComponent } from "src/app/_forms/form";
+import { FilterFormGroupActions, FormComponent } from "src/app/_forms/form";
 import { CommonModule } from "@angular/common";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { Address, AddressesService, AddressParams, sortOptions } from "src/app/addresses/addresses.config";
+import { AddressesService, AddressParams, sortOptions } from "src/app/addresses/addresses.config";
 import { omitKeys } from "src/app/_utils/util";
-import { Validators } from "@angular/forms";
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
 import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
 import { createId } from "@paralleldrive/cuid2";
+import { Address } from "src/app/_models/address";
 
 @Component({
   selector: '[addressesFilterForm]',
@@ -117,8 +117,8 @@ export class AddressesFilterFormComponent extends FormComponent<
   constructor() {
     super(AddressesService);
 
-    this.form.controls.sort.selectOptions = sortOptions;
-    this.form.controls.sort.setValue(sortOptions[0]);
+    // this.form.controls.sort.selectOptions = sortOptions;
+    // this.form.controls.sort.patchValue(sortOptions[0]);
 
     effect(() => {
       this.params = new AddressParams(this.key());

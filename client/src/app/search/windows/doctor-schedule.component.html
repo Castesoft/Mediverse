@@ -20,10 +20,19 @@
     </div>
     <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
         @if (accountService.current()) {
+
+          @if(form.error) {
+            <div errorsAlert3 [(error)]="form.error"></div>
+          }
+
+          <code class="json">
+            {{form.value | json}}
+          </code>
+
             <div class="stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid gap-10" id="kt_create_account_stepper">
                 <div class="stepper-nav">
-                    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                        <div class="stepper-item" [class.completed]="form.get('doctorId')?.valid" data-kt-stepper-element="nav">
+                    <form (ngSubmit)="onSubmit()" [id]="form.id">
+                        <div class="stepper-item" [class.completed]="form.controls.doctor.controls.id.value !== null">
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
                                     <i class="ki-duotone ki-check fs-2 stepper-check"></i>
@@ -31,18 +40,18 @@
                                 </div>
                                 <div class="stepper-label">
                                     <h3 class="stepper-title">Especialista</h3>
-                                    <div class="stepper-desc fw-semibold">{{doctor()?.firstName}} {{doctor()?.lastName}}</div>
-                                    <div class="stepper-desc fw-semibold">{{doctor()?.specialties![0].name}}</div>
+                                    <div class="stepper-desc fw-semibold">{{service.selected()?.firstName}} {{service.selected()?.lastName}}</div>
+                                    <div class="stepper-desc fw-semibold">{{service.selected()?.specialties![0].name}}</div>
                                 </div>
                             </div>
                             <div class="stepper-line h-40px"></div>
                         </div>
-                        <div class="stepper-item" 
+                        <div class="stepper-item"
                             [class.completed]="form.get('dateFrom')?.valid &&
                                 form.get('dateTo')?.valid &&
                                 form.get('timeFrom')?.valid &&
                                 form.get('timeTo')?.valid"
-                            data-kt-stepper-element="nav"
+
                         >
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
@@ -51,13 +60,15 @@
                                 </div>
                                 <div class="stepper-label">
                                     <h3 class="stepper-title">Fecha y hora</h3>
-                                    <div class="stepper-desc fw-semibold">{{selectedSchedule().day.day}} {{selectedSchedule().day.dayNumber}} de {{selectedSchedule().day.month}} del {{selectedSchedule().day.year}}</div>
-                                    <div class="stepper-desc fw-semibold">De las {{selectedSchedule().time.start}} a las {{selectedSchedule().time.end}}</div>
+                                    @if(selectedSchedule()) {
+                                      <div class="stepper-desc fw-semibold">{{selectedSchedule()!.day }} {{selectedSchedule()!.dayNumber }} de {{selectedSchedule()!.month}} del {{selectedSchedule()!.year}}</div>
+                                    <div class="stepper-desc fw-semibold">De las {{selectedSchedule()!.availableTimes[0].start }} a las {{selectedSchedule()!.availableTimes[0].end }}</div>
+                                    }
                                 </div>
                             </div>
                             <div class="stepper-line h-40px"></div>
                         </div>
-                        <div class="stepper-item" [class.completed]="form.get('clinicId')?.valid" data-kt-stepper-element="nav">
+                        <div class="stepper-item" [class.completed]="form.controls.clinic.value?.id !== null">
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
                                     <i class="ki-duotone ki-check fs-2 stepper-check"></i>
@@ -65,30 +76,30 @@
                                 </div>
                                 <div class="stepper-label">
                                     <h3 class="stepper-title">Dirección</h3>
-                                    @if (doctor()?.addresses!.length > 1) {
+                                    @if (service.selected()?.addresses!.length > 1) {
                                         <div class="stepper-desc fw-semibold">Selecciona una dirección</div>
                                         <div
                                             class="fv-row fv-plugins-icon-container"
                                             controlSelect
                                             formControlName="clinicId"
-                                            [options]="doctor()?.addresses!"
+                                            [options]="service.selected()?.addresses!"
                                             [isAddress]="true"
                                             [placeholder]="''"
-                                            [submitted]="submitted"
+                                            [submitted]="form.submitted"
                                             [errors]="{
                                                 required: 'La dirección es requerida.'
                                             }"
                                         ></div>
                                     } @else {
                                         <div class="stepper-desc fw-semibold">
-                                            {{doctor()?.addresses![0].street}}, {{doctor()?.addresses![0].city}}, {{doctor()?.addresses![0].state}}
+                                            {{service.selected()?.addresses![0].name}}
                                         </div>
                                     }
                                 </div>
                             </div>
                             <div class="stepper-line h-40px"></div>
                         </div>
-                        <div class="stepper-item" [class.completed]="form.get('serviceId')?.valid" data-kt-stepper-element="nav">
+                        <div class="stepper-item" [class.completed]="form.get('serviceId')?.valid">
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
                                     <i class="ki-duotone ki-check fs-2 stepper-check"></i>
@@ -96,30 +107,30 @@
                                 </div>
                                 <div class="stepper-label">
                                     <h3 class="stepper-title">Servicio</h3>
-                                    @if (doctor()?.services!.length > 1) {
+                                    @if (service.selected()?.services!.length > 1) {
                                         <div class="stepper-desc fw-semibold">Selecciona el motivo de la cita</div>
                                         <div
                                             class="fv-row fv-plugins-icon-container"
                                             controlSelect
                                             formControlName="serviceId"
                                             [showPrice]="true"
-                                            [options]="doctor()?.services!"
+                                            [options]="service.selected()?.services!"
                                             [placeholder]="''"
-                                            [submitted]="submitted"
+                                            [submitted]="form.submitted"
                                             [errors]="{
                                                 required: 'El servicio es requerido.'
                                             }"
                                         ></div>
                                     } @else {
-                                        <div class="stepper-desc fw-semibold">{{doctor()?.services![0].name}} - ${{doctor()?.services![0].price}}</div>
+                                        <div class="stepper-desc fw-semibold">{{service.selected()?.services![0].name}} - ${{service.selected()?.services![0].options?.price | currency}}</div>
                                     }
                                 </div>
                             </div>
                             <div class="stepper-line h-40px"></div>
                         </div>
-                        <div class="stepper-item" 
-                            [class.completed]="doctor()?.medicalInsuranceCompanies!.length > 0 ? form.get('medicalInsuranceCompanyId')?.valid : true" 
-                            data-kt-stepper-element="nav"
+                        <div class="stepper-item"
+                            [class.completed]="service.selected()?.medicalInsuranceCompanies!.length > 0 ? form.get('medicalInsuranceCompanyId')?.valid : true"
+
                         >
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
@@ -128,16 +139,16 @@
                                 </div>
                                 <div class="stepper-label">
                                     <h3 class="stepper-title">Aseguradora</h3>
-                                    @if (doctor()?.medicalInsuranceCompanies!.length > 0) {
+                                    @if (service.selected()?.medicalInsuranceCompanies!.length > 0) {
                                         <div class="stepper-desc fw-semibold">Selecciona tu aseguradora</div>
                                         <div
                                             class="fv-row fv-plugins-icon-container"
                                             controlSelect
                                             formControlName="medicalInsuranceCompanyId"
                                             [isInsurance]="true"
-                                            [options]="doctor()?.medicalInsuranceCompanies!"
+                                            [options]="service.selected()?.medicalInsuranceCompanies!"
                                             [placeholder]="''"
-                                            [submitted]="submitted"
+                                            [submitted]="form.submitted"
                                             [errors]="{
                                                 required: 'La aseguradora es requerida.'
                                             }"
@@ -151,7 +162,7 @@
                             </div>
                             <div class="stepper-line h-40px"></div>
                         </div>
-                        <div class="stepper-item" [class.completed]="form.get('paymentMethodTypeId')?.valid" data-kt-stepper-element="nav">
+                        <div class="stepper-item" [class.completed]="form.get('paymentMethodTypeId')?.valid">
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
                                     <i class="ki-duotone ki-check fs-2 stepper-check"></i>
@@ -159,33 +170,33 @@
                                 </div>
                                 <div class="stepper-label">
                                     <h3 class="stepper-title">Método de pago</h3>
-                                    @if (doctor()?.paymentMethods!.length > 1) {
+                                    @if (service.selected()?.paymentMethods!.length > 1) {
                                         <div class="stepper-desc fw-semibold">Selecciona el método de pago</div>
                                         <div
                                             class="fv-row fv-plugins-icon-container"
                                             controlSelect
                                             formControlName="paymentMethodTypeId"
-                                            [options]="doctor()?.paymentMethods!"
+                                            [options]="service.selected()?.paymentMethods!"
                                             [placeholder]="''"
-                                            [submitted]="submitted"
+                                            [submitted]="form.submitted"
                                             [errors]="{
                                                 required: 'El método de pago es requerido.'
                                             }"
                                         ></div>
                                     } @else {
-                                        <div class="stepper-desc fw-semibold">{{doctor()?.paymentMethods![0].name}}</div>
+                                        <div class="stepper-desc fw-semibold">{{service.selected()?.paymentMethods![0].name}}</div>
                                     }
                                 </div>
                             </div>
                             <div class="stepper-line h-40px"></div>
                         </div>
-                        <div class="stepper-item mark-completed" data-kt-stepper-element="nav">
+                        <div class="stepper-item mark-completed">
                             <div class="stepper-wrapper">
                                 <div class="stepper-icon w-40px h-40px">
                                     <i class="ki-duotone ki-check fs-2 stepper-check"></i>
                                     <span class="stepper-number">5</span>
                                 </div>
-                                @if ((this.form.value.paymentMethodTypeId == 1 || this.form.value.paymentMethodTypeId == 2) && this.doctor()!.requireAnticipatedCardPayments) {
+                                @if ((form.controls.paymentMethodType.value?.id === 1 || form.controls.paymentMethodType.value?.id === 2) && service.selected()!.requireAnticipatedCardPayments) {
                                     <div class="stepper-label">
                                         <h3 class="stepper-title">Pagar y confirmar</h3>
                                         <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de realizar el pago</div>
@@ -198,7 +209,7 @@
                                             [options]="accountService.billingDetails()?.userPaymentMethods!"
                                             [isPaymentMethod]="true"
                                             [placeholder]="'Seleccione un método de pago'"
-                                            [submitted]="submitted"
+                                            [submitted]="form.submitted"
                                             [errors]="{
                                                 required: 'El método de pago es requerido.'
                                             }"
@@ -211,9 +222,9 @@
                                     <div class="stepper-label">
                                         <h3 class="stepper-title">Confirmar</h3>
                                         <div class="stepper-desc fw-semibold mb-4">Confirma todos los datos seleccionados antes de agendar</div>
-                                        @if (!doctor()?.hasPatientInformationAccess) {
+                                        @if (!service.selected()?.hasPatientInformationAccess) {
                                             <div class="fv-row fv-plugins-icon-container">
-                                                <div controlCheck formControlName="hasPatientInformationAccess" [submitted]="submitted">
+                                                <div controlCheck formControlName="hasPatientInformationAccess" [submitted]="form.submitted">
                                                     <span class="form-check-label fw-semibold text-gray-700 fs-7">
                                                         Doy mi consentimiento para que el especialista tenga acceso a mi información personal e historial clínico.
                                                     </span>
@@ -224,7 +235,7 @@
                                                 *Este especialista ya tiene acceso a tu información personal e historial clínico.
                                             </span>
                                         }
-                                        <button type="submit" class="btn btn-success">Agendar</button>
+                                        <button type="submit" [attr.form]="form.id" class="btn btn-success">Agendar</button>
                                     </div>
                                 }
                             </div>

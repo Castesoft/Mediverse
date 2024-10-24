@@ -7,7 +7,7 @@ import { User } from './user';
 import { BadRequest } from './types';
 import { Product } from './product';
 import { Event } from './event';
-import { Address } from 'src/app/addresses/addresses.config';
+import { Address } from 'src/app/_models/address';
 
 const subject = 'prescription';
 

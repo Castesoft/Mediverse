@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { DoctorResult } from 'src/app/_models/doctorSearchResults';
+import { DoctorResult } from 'src/app/_models/doctorResult';
 
 @Component({
   selector: 'app-share-modal',
