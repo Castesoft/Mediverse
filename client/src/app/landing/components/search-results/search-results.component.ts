@@ -69,14 +69,12 @@ export class SearchResultsComponent implements OnInit {
       })
 
     effect(() => {
-      console.log(this.service.results());
-      this.setSearch();
+      this.setMarkersAndPosition();
     }, { allowSignalWrites: true, });
   }
 
   async ngOnInit() {
-    this.service.search.set(this.service.search().setFromQueryParamMap(this.route.snapshot.queryParamMap));
-    this.service.getSearchResults().subscribe();
+    this.service.setSearchWithParamMap(this.route.snapshot.queryParamMap);
 
     this.isMobile.set(window.innerWidth <= 768);
 
@@ -97,8 +95,7 @@ export class SearchResultsComponent implements OnInit {
     }
   }
 
-  setSearch() {
-    
+  setMarkersAndPosition() {
     const results: SearchResults | null = this.service.results();
     const selected: DoctorResult | null = this.service.selected();
     if (results) {
@@ -169,7 +166,7 @@ export class SearchResultsComponent implements OnInit {
       this.showMobileSearch.set(true);
     }
 
-    this.setSearch();
+    this.setMarkersAndPosition();
   }
 
   async showMarker(doctor: DoctorResult) {
@@ -218,6 +215,6 @@ export class SearchResultsComponent implements OnInit {
 
   onEventCreated() {
     this.didSchedule.set(true);
-    this.setSearch();
+    this.setMarkersAndPosition();
   }
 }

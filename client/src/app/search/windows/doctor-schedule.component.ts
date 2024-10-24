@@ -16,12 +16,14 @@ import { CommonModule } from '@angular/common';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
 import { BadRequest } from 'src/app/_models/types';
+import { Search } from 'src/app/_models/search';
+import { StepperIconComponent } from 'src/app/search/utils/stepper-icon.component';
 
 @Component({
   selector: 'div[doctorScheduleWindow]',
   standalone: true,
   imports: [MaterialModule, ControlSelectComponent, ReactiveFormsModule, SignInBasicFormComponent, ControlCheckComponent, CommonModule,
-    FormNewModule,
+    FormNewModule, StepperIconComponent,
   ],
   templateUrl: './doctor-schedule.component.html',
 })
@@ -33,7 +35,6 @@ export class DoctorScheduleComponent implements OnInit {
   accountService = inject(AccountService);
   service = inject(SearchService);
 
-  onClose = output<boolean>();
   selectedSchedule = model.required<AvailableDay | null>();
   isMobile = input<boolean>();
 
@@ -42,16 +43,26 @@ export class DoctorScheduleComponent implements OnInit {
   constructor() {
     effect(() => {
       console.log('DoctorScheduleComponent effect', this.selectedSchedule());
+      if (this.service.selected() && this.accountService.current() && this.selectedSchedule()) {
+        console.log('hi im patching');
 
-
-      if (this.service.selected() && this.accountService.current()) {
-        this.form.patch(this.service.selected()!, this.selectedSchedule());
+        this.form.patch(this.service.selected()!, this.selectedSchedule()!);
       }
     })
   }
 
   ngOnInit(): void {
     this.accountService.getBillingDetails();
+  }
+
+  onClickClose() {
+    this.service.search.set(new Search({ ...this.service.search(), scheduleOption: null }));
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: this.service.search().params,
+      queryParamsHandling: 'merge'
+    });
   }
 
   onChangePaymentMethod(event: any) {
@@ -99,7 +110,6 @@ export class DoctorScheduleComponent implements OnInit {
             queryParams: { day: selectedSchedule.dayNumber },
             queryParamsHandling: 'merge',
           });
-          this.onClose.emit(true);
         }
       },
       error: (error: BadRequest) => {

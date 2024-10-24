@@ -12,6 +12,7 @@ import { map, Observable, startWith } from "rxjs";
 
 @Component({
   selector: "[controlTypeahead3]",
+  host: { class: 'fw-semibold mb-0 w-100', },
   templateUrl: "./control-typeahead-3.component.html",
   standalone: true,
   imports: [ReactiveFormsModule, FormNewHelperModule, CommonModule, FormsModule, CdkModule, MaterialModule,

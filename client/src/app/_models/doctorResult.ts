@@ -6,6 +6,7 @@ import { DoctorReview, doctorReviewInfo } from "src/app/_models/doctorReview";
 
 export class DoctorResult {
   id: number | null = null;
+  fullName: string | null = null;
   firstName: string | null = null;
   lastName: string | null = null;
   title: any;
@@ -24,8 +25,20 @@ export class DoctorResult {
   phoneNumber: string | null = null;
   hasPatientInformationAccess: boolean = false;
 
-  constructor(init?: Partial<DoctorResult>) {
+  constructor(init?: Partial<Omit<DoctorResult, 'getAvailableDayByIndex'>>) {
     Object.assign(this, init);
+  }
+
+  getAvailableDayByDayNumber(dayNumber: number): AvailableDay | null {
+    const day = this.availableDays.find(d => d.dayNumber === dayNumber);
+
+    if (this.availableDays && this.availableDays.length) {
+      if (day) {
+        return day;
+      }
+    }
+
+    return null;
   }
 }
 
@@ -33,6 +46,7 @@ export const doctorResultInfo: FormInfo<DoctorResult> = {
   addresses: addressInfo,
   email: { label: 'Email', type: 'text' },
   firstName: { label: 'Nombre', type: 'text' },
+  fullName: { label: 'Nombre completo', type: 'text' },
   availableDays: availableDayInfo,
   hasPatientInformationAccess: { label: 'Acceso a información de pacientes', type: 'checkbox' },
   id: { label: 'ID', type: 'number' },

@@ -1,7 +1,4 @@
 using System.Globalization;
-using AngleSharp.Text;
-using MainService.Core.DTOs;
-using MainService.Core.DTOs.Services;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
@@ -11,11 +8,7 @@ using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 using MainService.Core.DTOs.Events;
-using Serilog;
-using MainService.Infrastructure.Services;
 using Stripe;
 
 namespace MainService.Controllers;
@@ -115,6 +108,122 @@ public class EventsController(IUnitOfWork uow, IEventsService service, UserManag
             var deleteResult = await service.DeleteAsync(itemToDelete);
         }
 
+        return Ok();
+    }
+
+    [HttpPost("landing")]
+    public async Task<ActionResult<EventDto>> PatientCreateAsync([FromBody] PatientCreateEventDto request)
+    {
+        // TODO: que cuando el rol del usuario de la peticion, cuando este es nurse, obtener el ID del doctor para 
+        // la propiedad de Event de DoctorEvent
+
+        var user = await uow.UserRepository.GetByIdAsync(User.GetUserId());
+
+        var userRoles = await userManager.GetRolesAsync(user);
+
+        IEnumerable<int> nurseIds = [];
+        int doctorId = 0;
+        AppUser doctor = null;
+
+        // AppUser patient = await uow.UserRepository.GetByIdAsync(request.PatientId);
+        // if (patient == null) return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado.");
+        // Service doctorService = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
+        // if (doctorService == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
+
+        // if (userRoles.Contains("Doctor") && request.Role == "Doctor")
+        // {
+        //     doctorId = user.Id;
+        //     doctor = user;
+
+        //     if (!await uow.UserRepository.PatientExistsAsync(request.PatientId, doctorId))
+        //         return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
+
+        //     nurseIds = request.NursesIds.Split(',')
+        //         .Select(s => int.TryParse(s, out var n) ? n : (int?)null)
+        //         .Where(n => n.HasValue)
+        //         .Select(n => n.Value);
+        // }
+        // else
+        // {
+        //     doctorId = request.DoctorId;
+        //     doctor = await uow.UserRepository.GetByIdAsync(request.DoctorId);
+        //     if (doctor == null) return BadRequest($"Doctor de ID {request.DoctorId} no fue encontrado.");
+
+        //     var isAvailable = await service.IsDoctorAvailableAsync(request.DoctorId, request.DateFrom, request.DateTo);
+        //     if (!isAvailable) return BadRequest("El doctor no está disponible en el horario seleccionado.");
+
+        //     if ((request.PaymentMethodTypeId == 1 || request.PaymentMethodTypeId == 2) && doctor.RequireAnticipatedCardPayments)
+        //     {
+        //         if (string.IsNullOrEmpty(request.StripePaymentMethodId))
+        //             return BadRequest("StripePaymentMethodId es requerido para el pago anticipado.");
+
+        //         if (string.IsNullOrEmpty(doctor.StripeConnectAccountId))
+        //         {
+        //             Account account = await stripeService.CreateExpressAccountAsync(doctor);
+        //             doctor.StripeConnectAccountId = account.Id;
+        //         }
+
+        //         PaymentIntent payment = await stripeService.CreatePaymentIntentAsync(patient.StripeCustomerId, request.StripePaymentMethodId, doctor.StripeConnectAccountId, doctorService.Price * 100, 5 * 100);
+
+        //         if (payment == null) return BadRequest("Error al procesar el pago.");
+        //         if (payment.Status != "succeeded") return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
+        //     }
+
+        //     bool patientExists = await uow.UserRepository.PatientExistsAsync(user.Id, doctorId);
+        //     Console.WriteLine($"PatientExists: {patientExists}");
+        //     if (!patientExists)
+        //     {
+        //         doctor.Patients.Add(new DoctorPatient(request.DoctorId, user.Id) { HasPatientInformationAccess = request.HasPatientInformationAccess });
+        //     }
+        //     else
+        //     {
+        //         var doctorPatient = doctor.Patients.FirstOrDefault(p => p.PatientId == user.Id);
+        //         if (doctorPatient != null)
+        //         {
+        //             doctorPatient.HasPatientInformationAccess = request.HasPatientInformationAccess;
+        //         }
+        //     }
+        // }
+
+        // if (!await uow.UserRepository.DoctorExistsAsync(doctorId, doctorId))
+        //     return BadRequest($"Doctor de ID {doctorId} no fue encontrado o no existe para el doctor actual.");
+
+        // if (!await uow.AddressRepository.ClinicExistsAsync(request.ClinicId, doctorId))
+        //     return BadRequest($"Clinica de ID {request.PatientId} no fue encontrado o no existe para el doctor actual.");
+
+        // if (!await uow.ServiceRepository.ExistsAsync(request.ServiceId, doctorId))
+        //     return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado o no existe para el doctor actual.");
+
+        // foreach (var nurseId in nurseIds)
+        // {
+        //     if (!await uow.UserRepository.NurseExistsAsync(nurseId, doctorId))
+        //         return BadRequest($"Especialista de ID {nurseId} no fue encontrado o no existe para el doctor actual.");
+        // }
+
+        // Models.Entities.Event item = new(request.AllDay, request.DateFrom, request.DateTo, request.TimeFrom, request.TimeTo)
+        // {
+        //     NurseEvents = nurseIds.Select(x => new NurseEvent(x)).ToList(),
+        //     EventService = new(request.ServiceId),
+        //     PatientEvent = new(request.PatientId),
+        //     EventClinic = new(request.ClinicId),
+        //     DoctorEvent = new(doctorId),
+        //     EventPaymentMethodType = request.PaymentMethodTypeId > 0 ? new(request.PaymentMethodTypeId) : null,
+        //     EventMedicalInsuranceCompany = request.MedicalInsuranceCompanyId > 0 ? new(request.MedicalInsuranceCompanyId) : null
+        // };
+
+        // uow.EventRepository.Add(item);
+
+        // if (!await uow.Complete()) return BadRequest($"Error al crear {subject}.");
+
+        // string formattedDate = request.DateFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+        // string emailSubject = $"Mediverse: Confirmación de tu cita!";
+        // string htmlMessage =  emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName, formattedDate, request.TimeFrom + " - " + request.TimeTo, doctorService.Name);
+
+        // await emailService.SendMail(patient.Email, emailSubject, htmlMessage);
+
+        // var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
+
+        // return itemDto;
         return Ok();
     }
 

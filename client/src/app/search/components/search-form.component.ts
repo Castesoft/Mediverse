@@ -10,6 +10,7 @@ import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
 import { ControlTypeaheadComponent } from 'src/app/_forms/control-typeahead.component';
 import { SelectOption } from 'src/app/_forms/form';
 import { Doctor } from 'src/app/_models/doctor';
+import { DoctorResult } from 'src/app/_models/doctorResult';
 import { Search, SearchForm } from 'src/app/_models/search';
 import { SearchService } from 'src/app/_services/search.service';
 import { SpecialtiesService } from 'src/app/specialties/specialties.config';
@@ -91,7 +92,7 @@ export class SearchFormComponent implements OnInit {
   onSubmit() {
     this.router.navigate(['/search'], { queryParams: this.form.params });
 
-    this.service.search.set(new Search({ ...this.form.value, doctor: new Doctor({ ...this.form.controls.doctor.value, }) }));
+    this.service.search.set(new Search({ ...this.form.value, result: new DoctorResult({ ...this.form.controls.result.value, } as any) }));
     this.service.getSearchResults({ ignoreCache: true }).subscribe();
   }
 }

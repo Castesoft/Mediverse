@@ -9,8 +9,12 @@ export class AvailableDay {
   year: number | null = null;
   availableTimes: AvailableTime[] = [];
 
-  constructor(init?: Partial<AvailableDay>) {
+  constructor(init?: Partial<Omit<AvailableDay, 'findIndex'>>) {
     Object.assign(this, init);
+  }
+
+  findIndex(time: AvailableTime): number {
+    return this.availableTimes.indexOf(time);
   }
 }
 

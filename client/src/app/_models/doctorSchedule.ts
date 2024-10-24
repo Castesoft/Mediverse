@@ -1,7 +1,11 @@
 import { Validators } from "@angular/forms";
 import { SelectOption } from "src/app/_forms/form";
 import { FormInfo, FormGroup2, FormControl2 } from "src/app/_forms/form2";
+import { Address } from "src/app/_models/address";
+import { AvailableDay } from "src/app/_models/availableDay";
 import { DoctorResult, doctorResultInfo } from "src/app/_models/doctorResult";
+import { MedicalInsuranceCompany } from "src/app/_models/medicalInsuranceCompany";
+import { Service } from "src/app/_models/service";
 
 export class DoctorSchedule {
   doctor: DoctorResult = new DoctorResult();
@@ -22,7 +26,7 @@ export class DoctorSchedule {
 }
 
 export const doctorScheduleInfo: FormInfo<DoctorSchedule> = {
-  clinic: { type: 'select', label: 'Clínica' },
+  clinic: { type: 'typeahead', label: 'Clínica' },
 
   dateFrom: { type: 'date', label: 'Fecha desde', validators: [Validators.required] },
   dateTo: { type: 'date', label: 'Fecha hasta', validators: [Validators.required] },
@@ -35,7 +39,7 @@ export const doctorScheduleInfo: FormInfo<DoctorSchedule> = {
   hasPatientInformationAccess: { type: 'checkbox', label: 'Acceso a información del paciente' },
   medicalInsuranceCompany: { type: 'select', label: 'Compañía de seguros médicos' },
   paymentMethodType: { type: 'select', label: 'Tipo de método de pago' },
-  service: { type: 'select', label: 'Servicio' },
+  service: { type: 'typeahead', label: 'Servicio' },
 
   stripePaymentMethodId: { type: 'text', label: 'ID del método de pago de Stripe' },
 } as FormInfo<DoctorSchedule>;
@@ -46,16 +50,38 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
     super(DoctorSchedule, new DoctorSchedule(), doctorScheduleInfo);
   }
 
-  patch(value: DoctorResult, selectedSchedule: any) {
-    this.controls.doctor.patchValue(new DoctorResult({...value!}));
+  patch(value: DoctorResult, selectedSchedule: AvailableDay) {
+    console.log('value:', value);
+
+    const doctor = new DoctorResult({ ...value, });
+
+    this.controls.doctor.patchValue(doctor);
+
+    this.controls.clinic.selectOptions = doctor.addresses.map(address => {
+      const constructedAddress = new Address({ ...address });
+
+      return new SelectOption({ id: constructedAddress.id!, name: constructedAddress.address, code: constructedAddress.address, enabled: constructedAddress.enabled, visible: constructedAddress.visible });
+    });
+
+    this.controls.service.selectOptions = doctor.services.map(service => {
+      const constructedService = new Service({ ...service });
+
+      return new SelectOption({ id: constructedService.id!, name: constructedService.name, code: constructedService.name, enabled: constructedService.enabled, visible: constructedService.visible });
+    });
+
+    this.controls.medicalInsuranceCompany.selectOptions = doctor.medicalInsuranceCompanies.map(medicalInsuranceCompany => {
+      const constructedMedicalInsuranceCompany = new MedicalInsuranceCompany({ ...medicalInsuranceCompany });
+
+      return new SelectOption({ id: constructedMedicalInsuranceCompany.id!, name: constructedMedicalInsuranceCompany.name, code: constructedMedicalInsuranceCompany.name, enabled: constructedMedicalInsuranceCompany.enabled, visible: constructedMedicalInsuranceCompany.visible });
+    });
 
     if (selectedSchedule) {
 
-      this.controls.dateFrom.patchValue(new Date(selectedSchedule.day.year, selectedSchedule.day.monthNumber - 1, selectedSchedule.day.dayNumber));
-      this.controls.dateTo.patchValue(new Date(selectedSchedule.day.year, selectedSchedule.day.monthNumber - 1, selectedSchedule.day.dayNumber));
+      this.controls.dateFrom.patchValue(new Date(selectedSchedule.year!, selectedSchedule.monthNumber! - 1, selectedSchedule.dayNumber!));
+      this.controls.dateTo.patchValue(new Date(selectedSchedule.year!, selectedSchedule.monthNumber! - 1, selectedSchedule.dayNumber!));
 
-      this.controls.timeFrom.patchValue(selectedSchedule.time.start);
-      this.controls.timeTo.patchValue(selectedSchedule.time.end);
+      this.controls.timeFrom.patchValue(selectedSchedule.availableTimes[0].start);
+      this.controls.timeTo.patchValue(selectedSchedule.availableTimes[0].end);
     }
 
     if (value!.addresses.length === 1) {

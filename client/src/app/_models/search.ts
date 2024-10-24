@@ -3,14 +3,18 @@ import { ParamMap, Params } from "@angular/router";
 import { SelectOption } from "src/app/_forms/form";
 import { FormInfo, FormGroup2 } from "src/app/_forms/form2";
 import { Doctor, doctorInfo } from "src/app/_models/doctor";
+import { DoctorResult, doctorResultInfo } from "src/app/_models/doctorResult";
+import { searchResultsInfo } from "src/app/_models/doctorSearchResults";
 
 export class Search {
   specialty: SelectOption | null = null;
   location: SelectOption | null = null;
-  doctor: Doctor = new Doctor();
+  result: DoctorResult = new DoctorResult();
   pageNumber: number | null = 1;
   pageSize: number | null = 5;
   tab: string | null = 'general';
+  dayNumber: number | null = null;
+  scheduleOption: number | null = null;
 
   constructor(init?: Partial<Omit<Search, 'setFromQueryParamMap' | 'params' | 'httpParams'>>) {
     Object.assign(this, init);
@@ -30,14 +34,20 @@ export class Search {
       this.pageSize = +params.get('pageSize')!;
     }
     if (params.has('doctorId')) {
-      this.doctor = new Doctor({ id: +params.get('doctorId')! });
-      if (params.has('doctorFullName')) {
-        this.doctor.fullName = params.get('doctorFullName')!;
+      this.result = new DoctorResult({ id: +params.get('doctorId')! });
+      if (params.has('doctorName')) {
+        this.result.fullName = params.get('doctorName')!;
       }
     }
-
-    console.log(this);
-
+    if (params.has('tab')) {
+      this.tab = params.get('tab')!;
+    }
+    if (params.has('dayNumber')) {
+      this.dayNumber = +params.get('dayNumber')!;
+    }
+    if (params.has('scheduleOption')) {
+      this.scheduleOption = +params.get('scheduleOption')!;
+    }
 
     return this;
   }
@@ -46,13 +56,37 @@ export class Search {
     const params: Params = {};
 
     if (this.specialty?.id) params['specialtyId'] = this.specialty.id.toString();
+    else params['specialtyId'] = null;
+
     if (this.specialty?.name) params['specialty'] = this.specialty.name;
+    else params['specialty'] = null;
+
     if (this.location?.code) params['location'] = this.location.code;
+    else params['location'] = null;
+
     if (this.location?.name) params['locationName'] = this.location.name;
-    if (this.doctor.id) params['doctorId'] = this.doctor.id.toString();
-    if (this.doctor.fullName) params['doctorFullName'] = this.doctor.fullName;
+    else params['locationName'] = null;
+
+    if (this.result.id) params['doctorId'] = this.result.id.toString();
+    else params['doctorId'] = null;
+
+    if (this.result.fullName) params['doctorName'] = this.result.fullName;
+    else params['doctorName'] = null;
+
     if (this.pageNumber) params['pageNumber'] = this.pageNumber.toString();
+    else params['pageNumber'] = null;
+
     if (this.pageSize) params['pageSize'] = this.pageSize.toString();
+    else params['pageSize'] = null;
+
+    if (this.tab) params['tab'] = this.tab;
+    else params['tab'] = null;
+
+    if (this.dayNumber !== null) params['dayNumber'] = this.dayNumber;
+    else params['dayNumber'] = null;
+
+    if (this.scheduleOption !== null) params['scheduleOption'] = this.scheduleOption;
+    else params['scheduleOption'] = null;
 
     return params;
   }
@@ -76,7 +110,7 @@ export const searchInfo: FormInfo<Search> = {
   location: { type: 'select', label: 'Ubicación', showLabel: false, showCodeSpan: false, },
   pageNumber: { type: 'number', label: 'Página', showLabel: false, },
   pageSize: { type: 'number', label: 'Resultados por página', showLabel: false, },
-  doctor: doctorInfo,
+  result: doctorResultInfo,
 } as FormInfo<Search>;
 
 export class SearchForm extends FormGroup2<Search> {
@@ -85,6 +119,6 @@ export class SearchForm extends FormGroup2<Search> {
   }
 
   get params(): Params {
-    return new Search({ ...this.value, doctor: new Doctor({...this.controls.doctor.value}) }).params;
+    return new Search({ ...this.value, result: new DoctorResult({...this.controls.result.value, } as any) }).params;
   }
 }

@@ -6,8 +6,10 @@ export class Service extends Entity {
   price: number | null = null;
   photoUrl: string | null = null;
 
-  constructor() {
+  constructor(init?: Partial<Service>) {
     super();
+
+    Object.assign(this, init);
   }
 }
 

@@ -3,7 +3,7 @@
     @for (workday of schedule(); let idx = $index; track idx) {
     <li class="nav-item me-1">
       <a class="nav-link btn d-flex flex-column flex-center rounded-pill min-w-45px me-2 py-4 px-3 text-gray-900 text-active-white btn-active-primary"
-        [class.active]="selectedDay() === workday" (click)="selectDay(workday)">
+        [class.active]="selectedDay()?.day === workday.day" (click)="selectDay(workday)">
         <span class="opacity-50 fs-7 fw-semibold">{{$index === 0 ? 'Hoy' : workday.day?.substring(0,3)}}</span>
         <span class="fs-6 fw-bold">{{workday.dayNumber}}</span>
       </a>

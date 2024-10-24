@@ -94,7 +94,6 @@
             <div class="col-md-6">
               <div doctorScheduleWindow
               [(selectedSchedule)]="selectedSchedule"
-              (onClose)="onCloseDoctorSchedule($event)"
               [isMobile]="isMobile()"
               ></div>
             </div>
@@ -111,7 +110,6 @@
             <div [class.modal-content]="isMobile()">
               <div doctorScheduleWindow
                 [(selectedSchedule)]="selectedSchedule"
-                (onClose)="onCloseDoctorSchedule($event)"
                 [isMobile]="isMobile()"
               ></div>
             </div>

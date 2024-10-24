@@ -1,11 +1,12 @@
 import { FormInfo } from "src/app/_forms/form2";
+import { Entity } from "src/app/_models/types";
 
-export class MedicalInsuranceCompany {
-  id: number | null = null;
-  name: string | null = null;
+export class MedicalInsuranceCompany extends Entity {
   photoUrl: string | null = null;
 
   constructor(init?: Partial<MedicalInsuranceCompany>) {
+    super();
+    
     Object.assign(this, init);
   }
 }

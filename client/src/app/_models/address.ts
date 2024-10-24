@@ -20,10 +20,14 @@ export class Address extends Entity {
   nursesCount: number | null = null;
   isMain: boolean | null = null;
 
-  constructor(init?: Partial<Address>) {
+  constructor(init?: Partial<Omit<Address, 'address'>>) {
     super();
 
     Object.assign(this, init);
+  }
+
+  get address(): string {
+    return `${this.street} ${this.exteriorNumber} ${this.interiorNumber}, ${this.neighborhood}, ${this.city}, ${this.state}, ${this.country}, ${this.zipcode}`;
   }
 }
 

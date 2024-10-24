@@ -12,7 +12,7 @@
       <h2>Detalles del Especialista</h2>
     </div>
     <div class="card-toolbar gap-3">
-      <i class="ki-duotone ki-cross fs-2" (click)="onClose.emit()" style="cursor: pointer;">
+      <i class="ki-duotone ki-cross fs-2" (click)="onClickClose()" style="cursor: pointer;">
         <span class="path1"></span>
         <span class="path2"></span>
         <span class="path3"></span>
@@ -44,12 +44,12 @@
     <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x fs-6 fw-semibold mt-6 mb-3 gap-2">
       <li class="nav-item" style="cursor: pointer;">
         <a class="nav-link text-active-primary d-flex align-items-center pb-4"
-          [class.active]="selectedTab === 'general'" (click)="selectTab('general')">
+          [class.active]="service.isTabActive('general')" (click)="selectTab('general')">
           <i class="ki-duotone ki-home fs-4 me-1"></i>General</a>
       </li>
       <li class="nav-item" style="cursor: pointer;">
         <a class="nav-link text-active-primary d-flex align-items-center pb-4"
-          [class.active]="selectedTab === 'schedule'" (click)="selectTab('schedule')">
+          [class.active]="service.isTabActive('schedule')" (click)="selectTab('schedule')">
           <i class="ki-duotone ki-calendar-8 fs-4 me-1">
             <span class="path1"></span>
             <span class="path2"></span>
@@ -61,7 +61,7 @@
       </li>
       <li class="nav-item" style="cursor: pointer;">
         <a class="nav-link text-active-primary d-flex align-items-center pb-4"
-          [class.active]="selectedTab === 'reviews'" (click)="selectTab('reviews')">
+          [class.active]="service.isTabActive('reviews')" (click)="selectTab('reviews')">
           <i class="ki-duotone ki-save-2 fs-4 me-1">
             <span class="path1"></span>
             <span class="path2"></span>
@@ -69,11 +69,11 @@
       </li>
     </ul>
     <div class="tab-content" id="">
-      @if (selectedTab === 'general') {
+      @if (service.isTabActive('general')) {
       <div doctorGeneralTab [(doctor)]="service.selected"></div>
-      } @else if (selectedTab === 'schedule') {
+      } @else if (service.isTabActive('schedule')) {
       <div doctorScheduleTab [(doctor)]="service.selected" [(selectedSchedule)]="selectedSchedule" (selectedScheduleChange)="onSelectedScheduleChange($event)"></div>
-      } @else if (selectedTab === 'reviews') {
+      } @else if (service.isTabActive('reviews')) {
       <div doctorReviewsTab [(doctor)]="service.selected"></div>
       }
     </div>
@@ -82,7 +82,7 @@
 
 @if (scheduleWindowOpen()) {
 <div [class]="!isMobile() ? 'schedule-modal' : 'schedule-modal-mobile'">
-  <div doctorScheduleWindow [isMobile]="isMobile()" (onClose)="onCloseDoctorSchedule($event)"
+  <div doctorScheduleWindow [isMobile]="isMobile()"
     [(selectedSchedule)]="selectedSchedule"></div>
 </div>
 }
