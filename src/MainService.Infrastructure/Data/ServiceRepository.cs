@@ -53,7 +53,7 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
             .Where(x => x.DoctorService.DoctorId == user.GetUserId())
             .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<bool> ExistsAsync(int id, int doctorId)
+    public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId)
     {
         return await context.Services
             .Include(x => x.DoctorService)
@@ -130,4 +130,6 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
             query.AsNoTracking().ProjectTo<ServiceDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
     }
+
+    public async Task<bool> ExistsByIdAsync(int id) => await context.Services.AnyAsync(x => x.Id == id);
 }

@@ -59,21 +59,15 @@ namespace MainService.Core.DTOs.Events
         public string? TimeTo { get; set; } = null;
 
         [Required(ErrorMessage = "El doctor es requerido.")]
-        public DoctorOptionDto? Doctor { get; set; } = null;
+        public OptionDto? Doctor { get; set; } = null;
 
         [Required(ErrorMessage = "El método de pago es requerido.")]
         public OptionDto? PaymentMethodType { get; set; } = null;
 
         
-        public int MedicalInsuranceCompanyId { get; set; }
-        public string StripePaymentMethodId { get; set; }
-        public bool HasPatientInformationAccess { get; set; }
-    }
-
-    public class DoctorOptionDto
-    {
-        [Required(ErrorMessage = "El doctor es requerido.")]
-        public int? Id { get; set; } = null;
+        public OptionDto? MedicalInsuranceCompany { get; set; } = null;
+        public string? StripePaymentMethodId { get; set; } = null;
+        public bool? HasPatientInformationAccess { get; set; } = null;
     }
 
     #nullable disable

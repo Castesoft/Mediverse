@@ -1,62 +1,17 @@
 <div searchAuth></div>
 
-<div id="search-sidebar" class="d-flex flex-column position-relative" style="width: 33%;">
-  @if (!service.loading()) {
-  <div class="container">
-    <h1 class="text-gray-800 fw-bold my-3 text-center">
-      <a routerLink="/">Mediverse</a>
-    </h1>
-    <div class="py-3" searchForm [compact]="true"></div>
+<div doctorResultsWindow></div>
 
-    <!-- <div style="max-height: 100px; overflow: auto; min-height: 100px;" class="border border-2 rounded-3 border-gray-700">
-      <strong>Search: </strong><code>
-        {{service.search() | json}}
-      </code>
-    </div>
-    <div style="max-height: 100px; overflow: auto; min-height: 100px;" class="border border-2 rounded-3 border-gray-700">
-      <strong>Seleccionado: </strong><code>
-        {{service.selected() | json}}
-      </code>
-    </div>
-    <div style="max-height: 100px; overflow: auto; min-height: 100px;" class="border border-2 rounded-3 border-gray-700">
-      <strong>Params: </strong><code>
-        {{service.search().params | json}}
-      </code>
-    </div> -->
-
-
-
-    <div searchResultCounter></div>
-
-  </div>
-
-  @if (service.results() && service.results()?.doctors!.length > 0) {
-  <div class="overflow-y-auto" style="flex: 1;">
-    @for (doctor of service.results()?.doctors; let idx = $index; track idx) {
-    <div resultRow [(doctor)]="service.results()!.doctors[idx]"></div>
-    <div class="separator separator-dashed"></div>
-    }
-  </div>
-  <div class="d-flex flex-center pb-6 container">
-    @if (service.pagination()) {
-    <div tablePager [currentPage]="service.pagination()!.currentPage"
-      [itemsPerPage]="service.pagination()!.itemsPerPage" [totalItems]="service.pagination()!.totalItems"
-      (pageChanged)="onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true"></div>
-    }
-  </div>
-  } @else {
-  <div noResultScreen></div>
+@if (service.selected() !== null) {
+  <div doctorDetailWindow [startingTab]="startingTab" (onClose)="service.close()" (onEventCreated)="onEventCreated()"
+    [(selectedSchedule)]="selectedSchedule" [(scheduleWindowOpen)]="scheduleWindowOpen"></div>
+}
+@if (scheduleWindowOpen()) {
+  <div doctorScheduleWindow [(isMobile)]="isMobile"
+    [(selectedSchedule)]="selectedSchedule"></div>
+  <!-- <div [class]="!isMobile() ? 'schedule-modal' : 'schedule-modal-mobile'">
+  </div> -->
   }
-  } @else {
-  <div loadingPlaceholder></div>
-  }
-
-  @if (service.selected() !== null) {
-  <div class="doctor-details">
-    <div doctorDetail [startingTab]="startingTab" (onClose)="service.close()" (onEventCreated)="onEventCreated()"></div>
-  </div>
-  }
-</div>
 
 @if (isMobile() && !showMobileSearch()) {
 <div id="search-mobile" class="position-absolute top-0 p-4" style="z-index: 1;">
@@ -69,7 +24,7 @@
 </div>
 }
 
-@if (isMobile() && showMobileSearch()) {
+<!-- @if (isMobile() && showMobileSearch()) {
 <div class=" position-relative" style="width: 100%;">
   @if (!service.selected()) {
   @if (!service.loading()) {
@@ -89,31 +44,6 @@
       @for (doctor of service.results()?.doctors; let idx = $index; track idx) {
         <div resultRow [(doctor)]="service.results()!.doctors[idx]"></div>
         <div class="separator separator-dashed"></div>
-      <!-- <div class="d-flex flex-column p-6 doctor-search-result" [class.hovered]="hoveredMarkerDoctor === doctor"
-        (mouseenter)="onDoctorHover(doctor)" (mouseleave)="onDoctorLeave(doctor)">
-        <div class="d-flex gap-3">
-          <div userProfilePicture [account]="$any(doctor)" [showOnline]="true" size="sm"></div>
-          <div class="d-flex flex-column justify-content-center">
-            <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{doctor.firstName}} {{doctor.lastName}}</a>
-            <div class="fw-semibold text-gray-500">
-              @for (specialty of doctor.specialties; track $index) {
-              {{specialty.name}}@if ($index < doctor.specialties.length - 1) {, } } </div>
-            </div>
-          </div>
-          @for (address of doctor.addresses; track $index) {
-          <div class="fw-semibold text-gray-500 pt-3">
-            <i class="ki-duotone ki-geolocation fs-4 text-primary">
-              <span class="path1"></span>
-              <span class="path2"></span>
-            </i>
-            {{address.street}}, {{address.city}}, {{address.state}}
-          </div>
-          }
-          <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-sm btn-primary" (click)="showDoctorDetails(doctor)">Ver detalles</button>
-            <button class="btn btn-sm btn-secondary" (click)="showDoctorOnMap(doctor)">Ver en mapa</button>
-          </div>
-        </div> -->
         }
       </div>
   <div class="d-flex flex-center pb-6 container">
@@ -133,12 +63,12 @@
 
   @if (service.selected() !== null) {
   <div class="doctor-details-mobile">
-    <div doctorDetail [isMobile]="isMobile()" [startingTab]="startingTab" (onClose)="service.close()"
+    <div doctorDetailWindow [isMobile]="isMobile()" [startingTab]="startingTab" (onClose)="service.close()" [(selectedSchedule)]="selectedSchedule" [(scheduleWindowOpen)]="scheduleWindowOpen"
       (onEventCreated)="onEventCreated()"></div>
   </div>
   }
 </div>
-}
+} -->
 
 <div class="w-100" [class.d-none]="isMobile() && showMobileSearch()">
   <div id="map" style="height: 100%;"></div>

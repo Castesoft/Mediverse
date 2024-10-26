@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, model, OnInit, output } from '@angular/core';
+import { Component, effect, inject, model, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { take } from 'rxjs';
@@ -25,9 +25,10 @@ import { StepperIconComponent } from 'src/app/search/utils/stepper-icon.componen
   imports: [MaterialModule, ControlSelectComponent, ReactiveFormsModule, SignInBasicFormComponent, ControlCheckComponent, CommonModule,
     FormNewModule, StepperIconComponent,
   ],
-  templateUrl: './doctor-schedule.component.html',
+  templateUrl: './doctor-schedule-window.component.html',
+  styleUrl: './doctor-schedule-window.component.scss'
 })
-export class DoctorScheduleComponent implements OnInit {
+export class DoctorScheduleWindowComponent implements OnInit {
   private bsModalService = inject(BsModalService);
   private eventsService = inject(EventsService);
   private router = inject(Router);
@@ -36,15 +37,13 @@ export class DoctorScheduleComponent implements OnInit {
   service = inject(SearchService);
 
   selectedSchedule = model.required<AvailableDay | null>();
-  isMobile = input<boolean>();
+  isMobile = model.required<boolean>();
 
   form = new DoctorScheduleForm();
 
   constructor() {
     effect(() => {
-      console.log('DoctorScheduleComponent effect', this.selectedSchedule());
       if (this.service.selected() && this.accountService.current() && this.selectedSchedule()) {
-        console.log('hi im patching');
 
         this.form.patch(this.service.selected()!, this.selectedSchedule()!);
       }
@@ -95,21 +94,22 @@ export class DoctorScheduleComponent implements OnInit {
   onSubmit() {
     this.form.submitted = true;
 
-    this.eventsService.create(this.form.value, 'Patient', 'inline', '').subscribe({
-      next: () => {
-        if (!this.service.selected()!.hasPatientInformationAccess) {
-          this.accountService.updateCurrentUser();
-        }
+    this.eventsService.createInSearch(this.form.payload).subscribe({
+      next: response => {
+        
+        // if (!this.service.selected()!.hasPatientInformationAccess) {
+        //   this.accountService.updateCurrentUser();
+        // }
 
-        const selectedSchedule = this.selectedSchedule();
+        // const selectedSchedule = this.selectedSchedule();
 
-        if (selectedSchedule) {
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { day: selectedSchedule.dayNumber },
-            queryParamsHandling: 'merge',
-          });
-        }
+        // if (selectedSchedule) {
+        //   this.router.navigate([], {
+        //     relativeTo: this.route,
+        //     queryParams: { day: selectedSchedule.dayNumber },
+        //     queryParamsHandling: 'merge',
+        //   });
+        // }
       },
       error: (error: BadRequest) => {
         this.form.error = error;

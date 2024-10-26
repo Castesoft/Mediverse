@@ -1,4 +1,4 @@
-import { Component, input, output, effect, inject, signal } from '@angular/core';
+import { Component, input, output, effect, inject, signal, model } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { DoctorResult } from 'src/app/_models/doctorResult';
@@ -7,17 +7,16 @@ import { SearchService } from 'src/app/_services/search.service';
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
 import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
-import { DoctorScheduleComponent } from 'src/app/search/windows/doctor-schedule.component';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 
 @Component({
-  selector: 'div[doctorDetail]',
+  selector: 'div[doctorDetailWindow]',
   standalone: true,
-  imports: [UserProfilePictureComponent, UserProfilePictureComponent, DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent, DoctorScheduleComponent],
-  templateUrl: './doctor-detail.component.html',
-  styleUrl: './doctor-detail.component.scss'
+  imports: [UserProfilePictureComponent, UserProfilePictureComponent, DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent],
+  templateUrl: './doctor-detail-window.component.html',
+  styleUrl: './doctor-detail-window.component.scss'
 })
-export class DoctorDetailComponent {
+export class DoctorDetailWindowComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   service = inject(SearchService);
@@ -25,8 +24,8 @@ export class DoctorDetailComponent {
   startingTab = input<string>();
   isMobile = input<boolean>(false);
   onEventCreated = output();
-  scheduleWindowOpen = signal(false);
-  selectedSchedule = signal<AvailableDay | null>(null);
+  scheduleWindowOpen = model.required<boolean>();
+  selectedSchedule = model.required<AvailableDay | null>();
 
   constructor() {
     effect(() => {

@@ -11,10 +11,11 @@ public interface IServiceRepository
     void Delete(Service item);
     Task<Service> GetByIdAsync(int id);
     Task<Service> GetByNameAsync(string name, ClaimsPrincipal user);
-    Task<bool> ExistsAsync(int id, int doctorId);
+    Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId);
     Task<ServiceDto> GetDtoByIdAsync(int id);
     Task<Service> GetByIdAsNoTrackingAsync(int id);
     Task<List<Service>> GetAllAsync();
     Task<List<ServiceDto>> GetAllDtoAsync(ServiceParams param, ClaimsPrincipal user);
     Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user);
+    Task<bool> ExistsByIdAsync(int id);
 }

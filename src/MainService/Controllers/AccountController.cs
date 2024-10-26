@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
 using System.Text.Json;
 using MainService.Core.DTOs;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Controllers;
 public class AccountController(
@@ -42,17 +43,10 @@ public class AccountController(
 {
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<AccountDto>> GetAccountAsync()
-    {
-        int id = User.GetUserId();
-
-        var itemToReturn = await usersService.GenerateAccountDtoAsync(id);
-
-        return itemToReturn;
-    }
+    public async Task<ActionResult<AccountDto?>> GetAccountAsync() => await usersService.GenerateAccountDtoAsync(User.GetUserId());
 
     [HttpPost("login")]
-    public async Task<ActionResult<AccountDto>> LoginAsync([FromBody]LoginDto request)
+    public async Task<ActionResult<AccountDto?>> LoginAsync([FromBody]LoginDto request)
     {
         AppUser? user = await userManager.FindByEmailAsync(request.Email);
 
@@ -67,21 +61,14 @@ public class AccountController(
             return Ok(new { RequiresTwoFactor = true });
         }
 
-        AccountDto itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+        AccountDto? itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
         return itemToReturn;
     }
 
     [Authorize]
     [HttpGet("current")]
-    public async Task<ActionResult<AccountDto>> GetCurrentUserAsync()
-    {
-        int id = User.GetUserId();
-
-        var itemToReturn = await usersService.GenerateAccountDtoAsync(id);
-
-        return itemToReturn;
-    }
+    public async Task<ActionResult<AccountDto?>> GetCurrentUserAsync() => await usersService.GenerateAccountDtoAsync(User.GetUserId());
 
     [HttpPost("login-two-factor")]
     public async Task<ActionResult<AccountDto>> LoginTwoFactorAsync([FromBody] TwoFactorLoginDto request)
@@ -94,15 +81,15 @@ public class AccountController(
 
         if (!validVerification) return Unauthorized("Código de verificación incorrecto.");
 
-        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+        AccountDto? itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
-        itemToReturn.Token = await tokenService.CreateToken(user);
+        itemToReturn!.Token = await tokenService.CreateToken(user);
 
         return itemToReturn;
     }
 
     [HttpPost("login-social")]
-    public async Task<ActionResult<AccountDto>> LoginSocialAsync([FromBody] SocialAuthDto request)
+    public async Task<ActionResult<AccountDto?>> LoginSocialAsync([FromBody] SocialAuthDto request)
     {
         var payload = await googleService.VerifyGoogleTokenAsync(request.AccessToken);
 
@@ -171,7 +158,7 @@ public class AccountController(
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<AccountDto>> RegisterAsync([FromBody] RegisterDto request)
+    public async Task<ActionResult<AccountDto?>> RegisterAsync([FromBody] RegisterDto request)
     {
         using var hmac = new HMACSHA512();
         
@@ -214,7 +201,7 @@ public class AccountController(
     }
 
     [HttpPost("register-doctor")]
-    public async Task<ActionResult<AccountDto>> RegisterDoctorAsync([FromForm] IFormFile file, [FromForm] string json)
+    public async Task<ActionResult<AccountDto?>> RegisterDoctorAsync([FromForm] IFormFile file, [FromForm] string json)
     {
         if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
 
@@ -421,7 +408,7 @@ public class AccountController(
 
     [Authorize]
     [HttpPut]
-    public async Task<ActionResult<AccountDto>> UpdateAsync([FromBody]UserUpdateDto request)
+    public async Task<ActionResult<AccountDto?>> UpdateAsync([FromBody]UserUpdateDto request)
     {
         int id = User.GetUserId();
 
@@ -464,7 +451,7 @@ public class AccountController(
 
     [Authorize]
     [HttpPost("user-photo")]
-    public async Task<ActionResult<AccountDto>> SetUserPhotoAsync(IFormFile file)
+    public async Task<ActionResult<AccountDto?>> SetUserPhotoAsync(IFormFile file)
     {
         int userId = User.GetUserId();
 
@@ -491,7 +478,7 @@ public class AccountController(
 
     [Authorize]
     [HttpDelete("user-photo")]
-    public async Task<ActionResult<AccountDto>> DeleteUserPhotoAsync()
+    public async Task<ActionResult<AccountDto?>> DeleteUserPhotoAsync()
     {
         int userId = User.GetUserId();
 
@@ -513,7 +500,7 @@ public class AccountController(
 
     [Authorize]
     [HttpPut("doctor-banner")]
-    public async Task<ActionResult<AccountDto>> SetDoctorBannerPhotoAsync(IFormFile file)
+    public async Task<ActionResult<AccountDto?>> SetDoctorBannerPhotoAsync(IFormFile file)
     {
         int userId = User.GetUserId();
 
@@ -556,7 +543,7 @@ public class AccountController(
 
     [AllowAnonymous]
     [HttpGet("request-password-reset-token/{email}")]
-    public async Task<ActionResult<AccountDto>> RequestPasswordResetTokenWithEmailAsync([FromRoute] string email)
+    public async Task<ActionResult<AccountDto?>> RequestPasswordResetTokenWithEmailAsync([FromRoute] string email)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)
@@ -575,7 +562,7 @@ public class AccountController(
 
         await  emailService.SendMail(email, subject, htmlMessage);
 
-        var accountToReturn =  mapper.Map<AppUser, AccountDto>(user);
+        var accountToReturn = mapper.Map<AppUser, AccountDto>(user);
 
         return accountToReturn;
     }
@@ -651,7 +638,7 @@ public class AccountController(
     }
 
     [HttpPost("email-verification")]
-    public async Task<ActionResult<AccountDto>> EmailVerificationCode([FromBody] EmailVerificationDto request)
+    public async Task<ActionResult<AccountDto?>> EmailVerificationCode([FromBody] EmailVerificationDto request)
     {
         var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
 
@@ -712,7 +699,7 @@ public class AccountController(
     }
 
     [HttpPost("phone-verification")] 
-    public async Task<ActionResult<AccountDto>> VerifyPhoneNumber([FromBody] PhoneNumberVerificationDto request)
+    public async Task<ActionResult<AccountDto?>> VerifyPhoneNumber([FromBody] PhoneNumberVerificationDto request)
     {
         var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
 
@@ -754,7 +741,7 @@ public class AccountController(
 
     [Authorize]
     [HttpPut("update-email/{newEmail}")]
-    public async Task<ActionResult<AccountDto>> UpdateEmail([FromRoute] string newEmail)
+    public async Task<ActionResult<AccountDto?>> UpdateEmail([FromRoute] string newEmail)
     {
         using var hmac = new HMACSHA512();
 
@@ -795,7 +782,7 @@ public class AccountController(
     }
     
     [HttpPut("update-phoneNumber")]
-    public async Task<ActionResult<AccountDto>> UpdateEmail(PhoneNumberUpdateDto request)
+    public async Task<ActionResult<AccountDto?>> UpdateEmail(PhoneNumberUpdateDto request)
     {
         using var hmac = new HMACSHA512();
 
@@ -926,11 +913,13 @@ public class AccountController(
 
     [Authorize]
     [HttpGet("billing-details")]
-    public async Task<ActionResult<BillingDetailsDto>> GetBillingDetails()
+    public async Task<ActionResult<BillingDetailsDto?>> GetBillingDetails()
     {
         int userId = User.GetUserId();
 
-        var itemToReturn = await usersService.GetBillingDetailsAsync(userId);
+        BillingDetailsDto? itemToReturn = await usersService.GetBillingDetailsAsync(userId);
+
+        if (itemToReturn == null) return NotFound($"No se han encontrado detalles de facturación para el usuario con id {userId}.");
 
         itemToReturn.UserPaymentMethods = [..itemToReturn.UserPaymentMethods.OrderBy(x => !x.IsMain)];
         itemToReturn.UserAddresses = [..itemToReturn.UserAddresses.OrderBy(x => !x.IsBilling)];
@@ -1170,9 +1159,9 @@ public class AccountController(
 
     [Authorize]
     [HttpGet("medical-insurance-companies-fields")]
-    public async Task<ActionResult<List<MedicalInsuranceCompanyDto>>> GetMedicalInsuranceCompaniesFields()
+    public async Task<ActionResult<List<OptionDto>>> GetMedicalInsuranceCompanyOptionsAsync()
     {
-        return await uow.UserRepository.GetMedicalInsuranceCompaniesAsync();
+        return await uow.MedicalInsuranceCompanyRepository.GetOptionsAsync();
     }
 
     [Authorize]
@@ -1377,7 +1366,7 @@ public class AccountController(
         else
         {
             user.DoctorMedicalInsuranceCompanies.Add(new() {
-                UserId = userId,
+                DoctorId = userId,
                 MedicalInsuranceCompanyId = medicalInsuranceCompanyId
             });
         }
@@ -1389,7 +1378,7 @@ public class AccountController(
 
     [Authorize]
     [HttpPut("email")]
-    public async Task<ActionResult<AccountDto>> UpdateEmail([FromBody] EmailUpdateDto request)
+    public async Task<ActionResult<AccountDto?>> UpdateEmail([FromBody] EmailUpdateDto request)
     {
         using var hmac = new HMACSHA512();
 
@@ -1448,7 +1437,7 @@ public class AccountController(
 
     [Authorize]
     [HttpPut("account-details")]
-    public async Task<ActionResult<AccountDto>> UpdateAccountDetails([FromForm] IFormFile photo, [FromForm] IFormFile file, [FromForm] string json)
+    public async Task<ActionResult<AccountDto?>> UpdateAccountDetailsAsync([FromForm] IFormFile photo, [FromForm] IFormFile file, [FromForm] string json)
     {
         int userId = User.GetUserId();
         var roles = User.GetRoles();
@@ -1584,7 +1573,7 @@ public class AccountController(
 
     [Authorize]
     [HttpPost("work-schedule")]
-    public async Task<ActionResult<AccountDto>> UpdateWorkSchedule([FromBody] WorkScheduleUpdateDto request)
+    public async Task<ActionResult<AccountDto?>> UpdateWorkScheduleAsync([FromBody] WorkScheduleUpdateDto request)
     {
         int userId = User.GetUserId();
 

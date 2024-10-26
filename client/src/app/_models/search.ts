@@ -2,9 +2,7 @@ import { HttpParams } from "@angular/common/http";
 import { ParamMap, Params } from "@angular/router";
 import { SelectOption } from "src/app/_forms/form";
 import { FormInfo, FormGroup2 } from "src/app/_forms/form2";
-import { Doctor, doctorInfo } from "src/app/_models/doctor";
 import { DoctorResult, doctorResultInfo } from "src/app/_models/doctorResult";
-import { searchResultsInfo } from "src/app/_models/doctorSearchResults";
 
 export class Search {
   specialty: SelectOption | null = null;

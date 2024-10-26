@@ -32,6 +32,8 @@ export class Options {
   race: string | null = null;
   price: number | null = null;
   photoUrl: string | null = null;
+  description: string | null = null;
+  isMain: boolean | null = null;
 
   constructor(init?: Partial<Options>) {
     Object.assign(this, init);

@@ -679,13 +679,13 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
                         .HasColumnType("integer");
 
-                    b.HasKey("UserId", "MedicalInsuranceCompanyId");
+                    b.HasKey("DoctorId", "MedicalInsuranceCompanyId");
 
                     b.HasIndex("MedicalInsuranceCompanyId");
 
@@ -1235,14 +1235,32 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CodeNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -3128,21 +3146,21 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
                 {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorMedicalInsuranceCompanies")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MainService.Models.Entities.MedicalInsuranceCompany", "MedicalInsuranceCompany")
                         .WithMany("DoctorMedicalInsuranceCompanies")
                         .HasForeignKey("MedicalInsuranceCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MainService.Models.Entities.AppUser", "User")
-                        .WithMany("DoctorMedicalInsuranceCompanies")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Doctor");
 
                     b.Navigation("MedicalInsuranceCompany");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
@@ -4460,7 +4478,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("EventMedicalInsuranceCompanies");
 
-                    b.Navigation("MedicalInsuranceCompanyPhoto");
+                    b.Navigation("MedicalInsuranceCompanyPhoto")
+                        .IsRequired();
 
                     b.Navigation("UserMedicalInsuranceCompanies");
                 });

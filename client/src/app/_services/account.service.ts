@@ -13,6 +13,7 @@ import { Payment } from '../_models/payment';
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 import { MedicalRecord } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
+import { SelectOption } from "src/app/_forms/form";
 
 
 @Injectable({
@@ -22,10 +23,10 @@ export class AccountService {
   baseUrl = `${environment.apiUrl}account/`;
   current = signal<Account | null>(null);
   billingDetails = signal<BillingDetails | null>(null);
-  medicalInsuranceCompanies = signal<MedicalInsuranceCompany[] | null>(null);
-  userMedicalInsuranceCompanies = signal<UserMedicalInsuranceCompany[] | null>(null);
-  doctorMedicalInsuranceCompanies = signal<MedicalInsuranceCompany[] | null>(null);
-  userPaymentHistory = signal<Payment[] | null>(null);
+  medicalInsuranceCompanies = signal<SelectOption[]>([]);
+  userMedicalInsuranceCompanies = signal<UserMedicalInsuranceCompany[]>([]);
+  doctorMedicalInsuranceCompanies = signal<MedicalInsuranceCompany[]>([]);
+  userPaymentHistory = signal<Payment[]>([]);
   roles = computed<Role[]>(() => {
 
     const user = this.current();
@@ -277,8 +278,6 @@ export class AccountService {
   }
 
   getMedicalInsuranceCompaniesFields() {
-    if (this.medicalInsuranceCompanies() !== null) return;
-
     this.http.get<[]>(`${this.baseUrl}medical-insurance-companies-fields`).subscribe({
       next: companies => {
         this.medicalInsuranceCompanies.set(companies);
@@ -287,8 +286,6 @@ export class AccountService {
   }
 
   getUserMedicalInsuranceCompanies() {
-    if (this.userMedicalInsuranceCompanies() !== null) return;
-
     this.http.get<UserMedicalInsuranceCompany[]>(`${this.baseUrl}medical-insurance-companies`).subscribe({
       next: companies => {
         this.userMedicalInsuranceCompanies.set(companies);
@@ -301,12 +298,12 @@ export class AccountService {
       map(newInsurance => {
         this.snackbarService.success('Póliza de seguro añadida correctamente');
         if (newInsurance.isMain) {
-          const insurances = this.userMedicalInsuranceCompanies() || [];
+          const insurances = this.userMedicalInsuranceCompanies();
           insurances.forEach(i => i.isMain = false);
           insurances.push(newInsurance as UserMedicalInsuranceCompany);
           this.userMedicalInsuranceCompanies.set(insurances.sort((a, b) => a.isMain ? -1 : 1));
         } else {
-          this.userMedicalInsuranceCompanies.set([...this.userMedicalInsuranceCompanies() || [], newInsurance as UserMedicalInsuranceCompany]);
+          this.userMedicalInsuranceCompanies.set([...this.userMedicalInsuranceCompanies(), newInsurance as UserMedicalInsuranceCompany]);
         }
       })
     );
@@ -327,7 +324,7 @@ export class AccountService {
         console.log(id)
         console.log(value)
         this.snackbarService.success('Póliza de seguro actualizada correctamente');
-        let insurances = this.userMedicalInsuranceCompanies() || [];
+        let insurances = this.userMedicalInsuranceCompanies();
         let modifiedInsurance = insurances.find(i => i.id === id);
         if (value.IsMain) {
           insurances.forEach(i => i.isMain = false);
@@ -346,8 +343,6 @@ export class AccountService {
   }
 
   getDoctorMedicalInsuranceCompanies() {
-    if (this.doctorMedicalInsuranceCompanies() !== null) return;
-
     this.http.get<MedicalInsuranceCompany[]>(`${this.baseUrl}doctor-medical-insurance-companies`).subscribe({
       next: companies => {
         this.doctorMedicalInsuranceCompanies.set(companies);
@@ -358,9 +353,9 @@ export class AccountService {
   toggleDoctorMedicalInsuranceCompany(insuranceId: number, checked: boolean) {
     return this.http.post(`${this.baseUrl}doctor-medical-insurance-company/${insuranceId}`, {}).pipe(
       tap(() => {
-        let companies = this.doctorMedicalInsuranceCompanies() || [];
+        let companies = this.doctorMedicalInsuranceCompanies();
         const selectedInsurance = this.medicalInsuranceCompanies()?.find(company => company.id == insuranceId)!;
-        companies = checked ? [...companies, selectedInsurance] : companies.filter(c => c.id !== insuranceId);
+        companies = checked ? [...companies, new MedicalInsuranceCompany({...selectedInsurance})] : companies.filter(c => c.id !== insuranceId);
         this.doctorMedicalInsuranceCompanies.set(companies);
       }),
       catchError(_ => {
@@ -476,8 +471,8 @@ export class AccountService {
     localStorage.removeItem('user');
     this.current.set(null);
     this.billingDetails.set(null);
-    this.userMedicalInsuranceCompanies.set(null);
-    this.doctorMedicalInsuranceCompanies.set(null);
+    this.userMedicalInsuranceCompanies.set([]);
+    this.doctorMedicalInsuranceCompanies.set([]);
     this.router.navigate(['/']);
   }
 

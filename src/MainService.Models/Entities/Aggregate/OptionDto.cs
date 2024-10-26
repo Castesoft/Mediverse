@@ -43,6 +43,8 @@ public class Options
     public string? Race { get; set; } = null;
     public decimal? Price { get; set; } = null;
     public string? PhotoUrl { get; set; } = null;
+    public string? Description { get; set; } = null;
+    public bool? IsMain { get; set; } = null;
 }
 
 #nullable disable

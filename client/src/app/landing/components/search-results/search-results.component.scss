@@ -1,56 +1,47 @@
-.doctor-search-result:hover {
-  background-color: #f5f5f5;
-}
+// .doctor-search-result:hover {
+//   background-color: #f5f5f5;
+// }
 
-.hovered {
-  background-color: #f5f5f5;
-}
+// .hovered {
+//   background-color: #f5f5f5;
+// }
 
-.doctor-details {
-    z-index: 999;
-    position: absolute;
-    right: 0;
-    top: 5%;
-    transform: translateX(105%);
-    height: 90%;
-}
+// .doctor-details-mobile {
+//   z-index: 999;
+//   position: absolute;
+//   right: 0;
+//   top: 0;
+//   width: 100vw;
+//   height: 100vh;
+//   overflow-y: auto;
+// }
 
-.doctor-details-mobile {
-  z-index: 999;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow-y: auto;
-}
+// .mobile-view {
+//   #profile {
+//     display: none;
+//   }
 
-.mobile-view {
-  #profile {
-    display: none;
-  }
+//   #search-sidebar {
+//     display: none !important;
+//   }
 
-  #search-sidebar {
-    display: none !important;
-  }
+//   #search-mobile {
+//     display: block !important;
+//   }
+// }
 
-  #search-mobile {
-    display: block !important;
-  }
-}
+// @media (min-width: 768px) {
+//   .mobile-view {
+//     #profile {
+//       display: block;
+//     }
 
-@media (min-width: 768px) {
-  .mobile-view {
-    #profile {
-      display: block;
-    }
+//     #search-sidebar {
+//       display: flex !important;
+//     }
 
-    #search-sidebar {
-      display: flex !important;
-    }
-
-    #search-mobile {
-      display: none !important;
-    }
-  }
-}
+//     #search-mobile {
+//       display: none !important;
+//     }
+//   }
+// }

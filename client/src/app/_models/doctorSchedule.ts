@@ -1,5 +1,5 @@
 import { Validators } from "@angular/forms";
-import { SelectOption } from "src/app/_forms/form";
+import { Options, SelectOption } from "src/app/_forms/form";
 import { FormInfo, FormGroup2, FormControl2 } from "src/app/_forms/form2";
 import { Address } from "src/app/_models/address";
 import { AvailableDay } from "src/app/_models/availableDay";
@@ -7,6 +7,40 @@ import { DoctorResult, doctorResultInfo } from "src/app/_models/doctorResult";
 import { MedicalInsuranceCompany } from "src/app/_models/medicalInsuranceCompany";
 import { PaymentMethodType } from "src/app/_models/paymentMethodType";
 import { Service } from "src/app/_models/service";
+
+export class DoctorScheduleFormPayload {
+  service: SelectOption | null = null;
+  clinic: SelectOption | null = null;
+  dateFrom: Date | null = null;
+  dateTo: Date | null = null;
+  timeFrom: string | null = null;
+  timeTo: string | null = null;
+  doctor: SelectOption | null = null;
+  paymentMethodType: SelectOption | null = null;
+  medicalInsuranceCompany: SelectOption | null = null;
+  hasPatientInformationAccess: boolean | null = null;
+  stripePaymentMethodId: string | null = null;
+
+  constructor(init?: Partial<DoctorScheduleFormPayload>) {
+    Object.assign(this, init);
+  }
+
+  setFromForm(form: DoctorScheduleForm) {
+    this.service = form.controls.service.value;
+    this.clinic = form.controls.clinic.value;
+    this.dateFrom = form.controls.dateFrom.value;
+    this.dateTo = form.controls.dateTo.value;
+    this.timeFrom = form.controls.timeFrom.value;
+    this.timeTo = form.controls.timeTo.value;
+    if (form.controls.doctor.value.id) {
+      this.doctor = new SelectOption({ id: form.controls.doctor.value.id });
+    }
+    this.paymentMethodType = form.controls.paymentMethodType.value;
+    this.medicalInsuranceCompany = form.controls.medicalInsuranceCompany.value;
+    this.hasPatientInformationAccess = form.controls.hasPatientInformationAccess.value;
+    this.stripePaymentMethodId = form.controls.stripePaymentMethodId.value;
+  }
+}
 
 export class DoctorSchedule {
   doctor: DoctorResult = new DoctorResult();
@@ -67,13 +101,36 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
     this.controls.service.selectOptions = doctor.services.map(service => {
       const constructedService = new Service({ ...service });
 
-      return new SelectOption({ id: constructedService.id!, name: constructedService.name, code: constructedService.name, enabled: constructedService.enabled, visible: constructedService.visible });
+      let optionToReturn = new SelectOption({ id: constructedService.id!,
+        name: constructedService.name,
+        code: constructedService.name,
+        enabled: constructedService.enabled,
+        visible: constructedService.visible,
+      });
+
+      if (service.options && service.options.price) {
+        optionToReturn.options = new Options({ price: service.options.price });
+      }
+
+      // console.log(constructedService, service);
+
+      return optionToReturn;
     });
 
     this.controls.medicalInsuranceCompany.selectOptions = doctor.medicalInsuranceCompanies.map(medicalInsuranceCompany => {
       const constructedMedicalInsuranceCompany = new MedicalInsuranceCompany({ ...medicalInsuranceCompany });
 
-      return new SelectOption({ id: constructedMedicalInsuranceCompany.id!, name: constructedMedicalInsuranceCompany.name, code: constructedMedicalInsuranceCompany.name, enabled: constructedMedicalInsuranceCompany.enabled, visible: constructedMedicalInsuranceCompany.visible });
+      let optionToReturn = new SelectOption({ id: constructedMedicalInsuranceCompany.id!,
+        name: constructedMedicalInsuranceCompany.name,
+        code: constructedMedicalInsuranceCompany.name,
+        enabled: constructedMedicalInsuranceCompany.enabled,
+        visible: constructedMedicalInsuranceCompany.visible });
+
+      if (medicalInsuranceCompany.options && medicalInsuranceCompany.options.photoUrl) {
+        optionToReturn.options = new Options({ photoUrl: medicalInsuranceCompany.options.photoUrl });
+      }
+
+      return optionToReturn;
     });
 
     this.controls.paymentMethodType.selectOptions = doctor.paymentMethods.map(paymentMethod => {
@@ -119,6 +176,14 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
       const hasPatientInformationAccessControl = this.controls.hasPatientInformationAccess as FormControl2<boolean>;
       hasPatientInformationAccessControl.patchValue(true);
     }
+  }
+
+  get payload(): DoctorScheduleFormPayload {
+    const payload = new DoctorScheduleFormPayload();
+
+    payload.setFromForm(this);
+
+    return payload;
   }
 
 }

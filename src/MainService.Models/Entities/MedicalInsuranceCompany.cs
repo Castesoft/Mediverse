@@ -1,8 +1,10 @@
 #nullable enable
 
+using MainService.Models.Entities.Aggregate;
+
 namespace MainService.Models.Entities
 {
-    public class MedicalInsuranceCompany : BaseEntity
+    public class MedicalInsuranceCompany : BaseCodeEntity
     {
         public MedicalInsuranceCompanyPhoto MedicalInsuranceCompanyPhoto { get; set; } = null!;
         public List<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
@@ -11,6 +13,11 @@ namespace MainService.Models.Entities
 
         public string? GetPhotoUrl() => MedicalInsuranceCompanyPhoto?.Photo?.Url ?? null;
     }
+
+    public class MedicalInsuranceCompanyDto : BaseCodeEntity {}
+    public class MedicalInsuranceCompanyParams : BaseCodeParams {}
+    public class MedicalInsuranceCompanyCreateDto : BaseCodeManageDto {}
+    public class MedicalInsuranceCompanyUpdateDto : BaseCodeManageDto {}
 }
 
 #nullable disable

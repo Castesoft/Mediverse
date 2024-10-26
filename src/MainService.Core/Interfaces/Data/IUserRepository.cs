@@ -30,4 +30,7 @@ public interface IUserRepository
     Task<bool> AddReviewAsync(Review review);
     Task<bool> DeleteMedicalRecordAsync(UserMedicalRecord userMedicalRecord);
     Task<MedicalRecordDto> GetMedicalRecordDtoAsync(int userId);
+    Task<bool> UserExistsByIdAsync(int id);
+    Task<bool> HasDoctorRoleByIdAsync(int id);
+    Task<bool> RequireAnticipatedCardPaymentsByIdAsync(int id);
 }

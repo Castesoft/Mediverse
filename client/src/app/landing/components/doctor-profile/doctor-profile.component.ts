@@ -1,15 +1,15 @@
 import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
-import { DoctorGeneralTabComponent } from '../../../search/tabs/doctor-general-tab.component';
-import { DoctorReviewsTabComponent } from '../../../search/tabs/doctor-reviews-tab.component';
-import { DoctorScheduleTabComponent } from '../../../search/tabs/doctor-schedule-tab.component';
-import { DoctorScheduleComponent } from '../../../search/windows/doctor-schedule.component';
 import { SearchService } from 'src/app/_services/search.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ShareModalComponent } from './share-modal/share-modal.component'; // You'll need to create this component
 import { DoctorResult } from 'src/app/_models/doctorResult';
 import { AvailableDay } from 'src/app/_models/availableDay';
+import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
+import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
+import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
+import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-schedule-window.component';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -19,7 +19,7 @@ import { AvailableDay } from 'src/app/_models/availableDay';
     DoctorGeneralTabComponent,
     DoctorReviewsTabComponent,
     DoctorScheduleTabComponent,
-    DoctorScheduleComponent
+    DoctorScheduleWindowComponent
   ],
   templateUrl: './doctor-profile.component.html'
 })

@@ -203,6 +203,21 @@ export class SearchService {
     );
   }
 
+  onPageChanged(page: number) {
+    this.search.set(new Search({
+      ...this.search(),
+      pageNumber: page,
+    }));
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { pageNumber: page },
+      queryParamsHandling: 'merge'
+    });
+
+    this.getSearchResults().subscribe();
+  }
+
   isTabActive(tab: string): boolean {
     return this.search().tab === tab;
   }

@@ -5,6 +5,7 @@ public interface IUnitOfWork
 {
     IDiseaseRepository DiseaseRepository { get; }
     IPaymentMethodTypeRepository PaymentMethodTypeRepository { get; }
+    IMedicalInsuranceCompanyRepository MedicalInsuranceCompanyRepository { get; }
     ISubstanceRepository SubstanceRepository { get; }
     IOccupationRepository OccupationRepository { get; }
     IMaritalStatusRepository MaritalStatusRepository { get; }

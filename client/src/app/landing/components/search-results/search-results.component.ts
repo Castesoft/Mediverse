@@ -13,20 +13,19 @@ import { UserProfilePictureComponent } from 'src/app/users/components/user-profi
 import { SearchFormComponent } from 'src/app/search/components/search-form.component';
 import { DoctorResult } from 'src/app/_models/doctorResult';
 import { SearchAuthComponent } from 'src/app/search/components/search-auth.component';
-import { SearchResultCounterComponent } from 'src/app/search/components/search-result-counter.component';
-import { ResultRowComponent } from 'src/app/search/components/result-row.component';
-import { NoResultScreenComponent } from 'src/app/search/components/no-result-screen.component';
-import { LoadingPlaceholderComponent } from 'src/app/search/components/loading-placeholder.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Subject, takeUntil } from 'rxjs';
-import { DoctorDetailComponent } from 'src/app/search/windows/doctor-detail.component';
+import { DoctorDetailWindowComponent } from 'src/app/search/windows/doctor-detail-window.component';
+import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-schedule-window.component';
+import { AvailableDay } from 'src/app/_models/availableDay';
+import { DoctorResultsWindowComponent } from 'src/app/search/windows/doctor-results-window.component';
 
 @Component({
   selector: 'div[searchResults]',
   host: { class: 'h-100 d-flex mobile-view', },
   standalone: true,
-  imports: [TablePagerComponent, SearchFormComponent, UserProfilePictureComponent, DoctorDetailComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule,
-    SearchAuthComponent, SearchResultCounterComponent, ResultRowComponent, NoResultScreenComponent, LoadingPlaceholderComponent,
+  imports: [TablePagerComponent, SearchFormComponent, UserProfilePictureComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule,
+    SearchAuthComponent, DoctorDetailWindowComponent, DoctorScheduleWindowComponent, DoctorResultsWindowComponent,
   ],
   providers: [ BsDropdownDirective, ],
   templateUrl: './search-results.component.html',
@@ -42,6 +41,8 @@ export class SearchResultsComponent implements OnInit {
   isMobile = signal(false);
   showMobileSearch = signal(false);
   didSchedule = signal(false);
+  scheduleWindowOpen = signal(false);
+  selectedSchedule = signal<AvailableDay | null>(null);
 
   startingTab = 'general';
 
@@ -124,31 +125,6 @@ export class SearchResultsComponent implements OnInit {
         this.service.resetMarkers();
       }
     }
-  }
-
-  onPageChanged(page: number) {
-    this.service.search.set(new Search({
-      ...this.service.search(),
-      pageNumber: page,
-    }));
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { pageNumber: page },
-      queryParamsHandling: 'merge'
-    });
-
-    this.service.getSearchResults().subscribe({
-      next: (response) => {
-        const { result, pagination } = response;
-        this.service.resetMarkers();
-        if (result) {
-          for (const doctor of result.doctors) {
-            this.showMarker(doctor);
-          }
-        }
-      }
-    });
   }
 
   onSearchChange(event: Search) {

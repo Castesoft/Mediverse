@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, model, signal } from "@angular/core";
+import { Component, computed, effect, inject, model } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { FormsService } from "src/app/_services/forms.service";
@@ -7,7 +7,6 @@ import { FormControl2, FormGroup2 } from "src/app/_forms/form2";
 import { SelectOption } from "src/app/_forms/form";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { MatOptionSelectionChange } from "@angular/material/core";
 import { map, Observable, startWith } from "rxjs";
 
 @Component({
@@ -15,6 +14,12 @@ import { map, Observable, startWith } from "rxjs";
   host: { class: 'fw-semibold mb-0 w-100', },
   templateUrl: "./control-typeahead-3.component.html",
   standalone: true,
+  styles: `
+.example-option-img {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+  `,
   imports: [ReactiveFormsModule, FormNewHelperModule, CommonModule, FormsModule, CdkModule, MaterialModule,
   ],
 })
@@ -33,6 +38,8 @@ export class ControlTypeahead3Component {
 
   constructor() {
     effect(() => {
+
+
       this.service.mode$.subscribe({ next: validation => this.control.set(this.control().setValidation(validation)) });
     });
   }
@@ -44,6 +51,7 @@ export class ControlTypeahead3Component {
         if (typeof value === 'string') {
           return this._filter(value as string)
         }
+
         return this.control().selectOptions;
       }),
     )

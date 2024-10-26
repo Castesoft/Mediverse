@@ -11,6 +11,7 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
 {
     public IProductRepository ProductRepository => new ProductRepository(context, mapper);
     public IPaymentMethodTypeRepository PaymentMethodTypeRepository => new PaymentMethodTypeRepository(context, mapper);
+    public IMedicalInsuranceCompanyRepository MedicalInsuranceCompanyRepository => new MedicalInsuranceCompanyRepository(context, mapper);
     public ISpecialtyRepository SpecialtyRepository => new SpecialtyRepository(context, mapper);
     public IDiseaseRepository DiseaseRepository => new DiseaseRepository(context, mapper);
     public ISubstanceRepository SubstanceRepository => new SubstanceRepository(context, mapper);

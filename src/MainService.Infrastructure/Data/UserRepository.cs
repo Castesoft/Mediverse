@@ -312,4 +312,18 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
                 .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordColorBlindness.ColorBlindness)
                 .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordMaritalStatus.MaritalStatus)
         ;
+
+    public async Task<bool> UserExistsByIdAsync(int id) => await context.Users.AnyAsync(x => x.Id == id);
+
+    public async Task<bool> HasDoctorRoleByIdAsync(int id) => 
+        await IncludeRoles(context.Users).AnyAsync(x => x.Id == id && x.UserRoles.Any(x => x.Role.Name == "Doctor"));
+
+    private static IQueryable<AppUser> IncludeRoles(IQueryable<AppUser> query) =>
+        query
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+        ;
+
+    public async Task<bool> RequireAnticipatedCardPaymentsByIdAsync(int id) =>
+        await context.Users.AnyAsync(x => x.Id == id && x.RequireAnticipatedCardPayments == true);
 }

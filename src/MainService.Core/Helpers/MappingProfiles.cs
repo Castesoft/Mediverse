@@ -356,7 +356,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
 
         CreateMap<PaymentMethodType, PaymentMethodTypeDto>()
-        
+
         ;
         
         CreateMap<PaymentMethodType, OptionDto>()
@@ -372,7 +372,8 @@ public class MappingProfiles : Profile
         ;
 
         CreateMap<MedicalInsuranceCompany, MedicalInsuranceCompanyDto>()
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyPhoto.Photo.Url));
+            // .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyPhoto.Photo.Url))
+        ;
         CreateMap<UserMedicalInsuranceCompany, UserMedicalInsuranceCompanyDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyId))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo.Url))

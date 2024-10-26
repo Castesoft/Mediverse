@@ -19,4 +19,5 @@ public interface IPaymentMethodTypeRepository
     Task<PaymentMethodType> GetByCodeAsync(string code);
     void Add(PaymentMethodType item);
     void Delete(PaymentMethodType item);
+    Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId);
 }

@@ -656,13 +656,13 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("DoctorId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MedicalInsuranceCompanyId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("UserId", "MedicalInsuranceCompanyId");
+                    b.HasKey("DoctorId", "MedicalInsuranceCompanyId");
 
                     b.HasIndex("MedicalInsuranceCompanyId");
 
@@ -1198,14 +1198,32 @@ namespace MainService.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Code")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CodeNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -3037,21 +3055,21 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorMedicalInsuranceCompany", b =>
                 {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithMany("DoctorMedicalInsuranceCompanies")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MainService.Models.Entities.MedicalInsuranceCompany", "MedicalInsuranceCompany")
                         .WithMany("DoctorMedicalInsuranceCompanies")
                         .HasForeignKey("MedicalInsuranceCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MainService.Models.Entities.AppUser", "User")
-                        .WithMany("DoctorMedicalInsuranceCompanies")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Doctor");
 
                     b.Navigation("MedicalInsuranceCompany");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorNurse", b =>
@@ -4369,7 +4387,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("EventMedicalInsuranceCompanies");
 
-                    b.Navigation("MedicalInsuranceCompanyPhoto");
+                    b.Navigation("MedicalInsuranceCompanyPhoto")
+                        .IsRequired();
 
                     b.Navigation("UserMedicalInsuranceCompanies");
                 });

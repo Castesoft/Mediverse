@@ -28,6 +28,9 @@ namespace MainService.Models.Entities
         public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
         public ICollection<OrderAddress> OrderAddresses { get; set; } = [];
         public UserAddress UserAddress { get; set; }
+
+        public double GetLatitude() => Latitude ?? 0;
+        public double GetLongitude() => Longitude ?? 0;
     }
     public enum Addresses
     {

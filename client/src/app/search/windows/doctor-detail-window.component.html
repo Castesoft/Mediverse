@@ -1,6 +1,5 @@
-<div class="card card-flush h-lg-100" [style]="isMobile() ? { width: '100%' } : { width: '420px' }"
-  id="kt_contacts_main">
-  <div class="card-header pt-7" id="kt_chat_contacts_header">
+<div class="card card-flush h-lg-100" [style]="isMobile() ? { width: '100%' } : { width: '420px' }">
+  <div class="card-header pt-7">
     <div class="card-title">
       <i class="ki-duotone ki-badge fs-1 me-2">
         <span class="path1"></span>
@@ -19,8 +18,8 @@
       </i>
     </div>
   </div>
-  <div class="card-body pt-5 d-flex flex-column overflow-y-scroll" style="overflow-x: hidden;">
-    <div class="d-flex gap-3 align-items-center">
+  <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
+    <div class="d-flex gap-3 align-items-center" style="overflow-x: clip;">
       <div userProfilePicture userProfilePicture [account]="$any(service.selected())" size="md"></div>
       <div class="d-flex flex-column gap-2">
         <h3 (click)="navigateToDoctorProfile()" style="cursor: pointer;" class="mb-0 text-hover-primary">
@@ -68,7 +67,7 @@
           </i>Reseñas</a>
       </li>
     </ul>
-    <div class="tab-content" id="">
+    <div class="tab-content">
       @if (service.isTabActive('general')) {
       <div doctorGeneralTab [(doctor)]="service.selected"></div>
       } @else if (service.isTabActive('schedule')) {
@@ -79,10 +78,3 @@
     </div>
   </div>
 </div>
-
-@if (scheduleWindowOpen()) {
-<div [class]="!isMobile() ? 'schedule-modal' : 'schedule-modal-mobile'">
-  <div doctorScheduleWindow [isMobile]="isMobile()"
-    [(selectedSchedule)]="selectedSchedule"></div>
-</div>
-}

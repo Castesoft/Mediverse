@@ -7,11 +7,11 @@ public class DoctorMedicalInsuranceCompanyConfiguration : IEntityTypeConfigurati
 {
     public void Configure(EntityTypeBuilder<DoctorMedicalInsuranceCompany> builder)
     {
-        builder.HasKey(x => new { x.UserId, x.MedicalInsuranceCompanyId });
+        builder.HasKey(x => new { x.DoctorId, x.MedicalInsuranceCompanyId });
 
-        builder.HasOne(x => x.User)
+        builder.HasOne(x => x.Doctor)
             .WithMany(x => x.DoctorMedicalInsuranceCompanies)
-            .HasForeignKey(x => x.UserId)
+            .HasForeignKey(x => x.DoctorId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.MedicalInsuranceCompany)

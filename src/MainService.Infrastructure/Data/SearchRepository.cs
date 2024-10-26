@@ -108,8 +108,10 @@ namespace MainService.Infrastructure.Data
                     .ThenInclude(x => x.Event)
                 .Include(x => x.DoctorReviews)
                     .ThenInclude(x => x.Review.UserReview.User)
+
                 .Include(x => x.DoctorMedicalInsuranceCompanies)
-                    .ThenInclude(x => x.MedicalInsuranceCompany)
+                    .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
+
                 .Include(x => x.Patients)
                     .ThenInclude(x => x.Patient)
                 .AsQueryable()

@@ -38,7 +38,7 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
         => await context.Addresses
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<bool> ClinicExistsAsync(int id, int doctorId)
+    public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId)
     {
         return await context.Addresses
             .Include(x => x.DoctorClinic)
@@ -167,4 +167,6 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
             })
             .ToListAsync();
     }
+
+    public async Task<bool> ExistsByIdAsync(int id) => await context.Addresses.AnyAsync(x => x.Id == id);
 }

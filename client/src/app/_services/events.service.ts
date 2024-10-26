@@ -295,6 +295,14 @@ export class EventsService {
     );
   }
 
+  createInSearch(model: any): Observable<Event> {
+    return this.http.post<Event>(`${this.baseUrl}search`, model).pipe(
+      tap(response => {
+
+      })
+    );
+  }
+
   update(id: number, formData: any): Observable<Event> {
     return this.http.put<Event>(`${this.baseUrl}${id}`, formData).pipe(
       tap(response => {
