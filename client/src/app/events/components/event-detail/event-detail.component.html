@@ -1,11 +1,11 @@
 ﻿@if (item()) {
 <div class="fs-6 d-flex flex-column">
   @if (summaryMode) {
-    <app-event-summary [item]="item()" [summaryMode]="summaryMode"></app-event-summary>
+    <app-event-summary [item]="item()!" [summaryMode]="summaryMode"></app-event-summary>
   } @else {
     <div class="row">
       <div class="col-3">
-        <app-event-summary [item]="item()" [summaryMode]="summaryMode" orientation="vertical"></app-event-summary>
+        <app-event-summary [item]="item()!" [summaryMode]="summaryMode" orientation="vertical"></app-event-summary>
       </div>
       <div class="col-9">
         <div class="card mb-xl-8">
@@ -52,11 +52,11 @@
                   <button type="button" class="btn btn-primary mt-3 float-end" (click)="isEvolutionEditing = true">Editar</button>
                 }
               } @else if (activeTab === 'recipes') {
-                @if (item()!.prescriptions && item()!.prescriptions!.length > 0) {
+                @if (item()!!.prescriptions && item()!!.prescriptions!.length > 0) {
                   <div tableWrapper>
                     <table
                       prescriptionsTable
-                      [data]="item()!.prescriptions ?? []"
+                      [data]="item()!.prescriptions"
                       [mode]="'view'"
                       [key]="'event-recipe'"
                     ></table>
@@ -70,17 +70,20 @@
 
                 <h2 class="mt-5 mb-3 text-gray-800">Nueva receta</h2>
 
-                <app-prescription-form
-                  [id]="null"
+                <div prescriptionForm
                   [use]="'create'"
                   [view]="'inline'"
-                  [key]="'event-recipe'"
-                  [initialValues]="{
-                    clinicId: item()!.clinic?.id,
-                    patient: item()!.patient,
-                    event: item()!
+                  [item]="$any(null)"
+                ></div>
+                <!-- <div prescriptionForm
+                  [use]="'create'"
+                  [view]="'inline'"
+                  [item]="{
+                    clinicId: item()!!.clinic,
+                    patient: item()!!.patient,
+                    event: item()!!.event,
                   }"
-                ></app-prescription-form>
+                ></div> -->
               } @else if (activeTab === 'nextSteps') {
                 @if (isNextStepsEditing) {
                   <quill-editor placeholder="Escribe aquí los próximos pasos del paciente..." [trimOnValidation]="true" formControlName="nextSteps"></quill-editor>
@@ -128,10 +131,10 @@
           <div class="col-6">
             <h5 class="text-gray-500 mb-3">Clínica</h5>
             <div>
-              @if (item().clinic) {
-                {{ item().clinic?.name }}
+              @if (item()!.clinic) {
+                {{ item()!.clinic.name }}
                 <br>
-                {{ item().clinic?.street }} {{ item().clinic?.exteriorNumber }}, {{ item().clinic?.neighborhood }}
+                {{ item()!.clinic.street }} {{ item()!.clinic.exteriorNumber }}, {{ item()!.clinic.neighborhood }}
               } @else {
                 Sin clínica asignada
               }
@@ -140,8 +143,8 @@
           <div class="col-6">
             <h5 class="text-gray-500 mb-3">Aseguradora</h5>
             <div>
-              @if (item().medicalInsuranceCompany) {
-                {{ item().medicalInsuranceCompany?.name }}
+              @if (item()!.medicalInsuranceCompany) {
+                {{ item()!.medicalInsuranceCompany?.name }}
               } @else {
                 Sin aseguradora
               }
@@ -150,8 +153,8 @@
         </div>
 
         <h5 class="text-gray-500 mb-3">Servicios solicitados</h5>
-        @if (item()!.service) {
-          <div eventServicesSummary [item]="item()!.service!"></div>
+        @if (item()!!.service) {
+          <div eventServicesSummary [item]="item()!!.service!"></div>
         }
         <div class="row mt-2">
           <div class="col">
@@ -171,11 +174,11 @@
           </div>
         </div>
       } @else if (activeDetails === 'payments') {
-        <app-payments-table [title]="'Pagos'" [payments]="item()!.payments ?? []" [showTabs]="false" [view]="'inline'"></app-payments-table>
+        <app-payments-table [title]="'Pagos'" [payments]="item()!!.payments" [showTabs]="false" [view]="'inline'"></app-payments-table>
       } @else if (activeDetails === 'experts') {
-        @if (item()!.nurses && item()!.nurses!.length > 0) {
+        @if (item()!!.nurses && item()!!.nurses!.length > 0) {
           <div class="row row-cols-1 row-cols-md-2 g-4">
-            @for (nurse of item()!.nurses; track nurse.id) {
+            @for (nurse of item()!!.nurses; track nurse.id) {
               <div class="col">
                 <div class="card h-100 nurse-card">
                   <div class="card-body">

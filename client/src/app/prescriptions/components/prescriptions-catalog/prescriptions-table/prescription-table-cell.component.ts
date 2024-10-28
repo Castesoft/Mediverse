@@ -1,5 +1,5 @@
-import { CurrencyPipe, NgClass, PercentPipe } from '@angular/common';
-import { Component, inject, input, OnInit } from '@angular/core';
+import { CommonModule, CurrencyPipe, NgClass, PercentPipe } from '@angular/common';
+import { Component, inject, input, model, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Prescription } from 'src/app/_models/prescription';
 import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
@@ -14,10 +14,10 @@ import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
   } -->
   `,
   standalone: true,
-  imports: [ NgClass, PercentPipe, ],
+  imports: [ CommonModule, ],
 })
 export class PrescriptionTableHasAccountCellComponent {
-  item = input.required<Prescription>();
+  item = model.required<Prescription>();
 }
 
 @Component({
@@ -32,7 +32,7 @@ export class PrescriptionTableHasAccountCellComponent {
   imports: [ NgClass ],
 })
 export class PrescriptionTableSexCellComponent {
-  item = input.required<Prescription>();
+  item = model.required<Prescription>();
 }
 
 @Component({
@@ -69,7 +69,7 @@ export class PrescriptionTableSexCellComponent {
 export class PrescriptionTableCellComponent implements OnInit {
   service = inject(PrescriptionsService);
 
-  item = input.required<Prescription>();
+  item = model.required<Prescription>();
 
   routerLink?: string;
 

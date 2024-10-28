@@ -75,8 +75,8 @@ export class RelativeTypesTableMenuComponent
   extends TableMenu<RelativeTypesService>
   implements OnInit, ITableMenu<RelativeType>
 {
-  item: InputSignal<RelativeType> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<RelativeType> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(RelativeTypesService);
@@ -176,9 +176,9 @@ export class RelativeTypesTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<RelativeType[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +276,13 @@ export class RelativeTypesTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class RelativeTypesFilterFormComponent extends FormComponent<RelativeTypesService> implements OnInit, FilterFormGroupActions<RelativeType, RelativeTypeParams, FormGroup2<RelativeTypeParams>> {
-  item: InputSignal<RelativeType | undefined> = input.required();
+  item: ModelSignal<RelativeType | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +375,11 @@ export class RelativeTypesFilterFormComponent extends FormComponent<RelativeType
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div relativeTypesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div relativeTypesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div relativeTypesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div relativeTypesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -411,9 +411,9 @@ export class RelativeTypesCatalogComponent implements OnInit, OnDestroy {
 
   animalId = input<number>();
   isCompact = input.required<boolean>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<RelativeType>();
 
   toggle = model(false);
@@ -521,10 +521,10 @@ export class RelativeTypeParams extends EntityParams<RelativeType> implements IP
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class RelativeTypeFormComponent extends FormComponent<RelativeTypesService> implements OnInit, FormGroupActions<RelativeType, FormGroup2<RelativeType>> {
-  item: InputSignal<RelativeType | undefined> = input.required();
+  item: ModelSignal<RelativeType | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<RelativeType> = {
     code: { label: 'Código', type: 'text' },
@@ -620,9 +620,9 @@ export class RelativeTypeDetailComponent {
   service = inject(RelativeTypesService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<RelativeType | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<RelativeType | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -898,7 +898,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = null;
   key = createId();
 }
 

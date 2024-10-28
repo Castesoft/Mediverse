@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import { Event } from 'src/app/_models/event';
@@ -10,14 +10,13 @@ import { BsModalService } from 'ngx-bootstrap/modal';
   standalone: true,
   imports: [CommonModule, UserProfilePictureComponent, RouterLink],
   templateUrl: './event-summary.component.html',
-  styleUrl: './event-summary.component.scss'
 })
 export class EventSummaryComponent {
   orientation = input<'vertical' | 'horizontal'>('horizontal');
   router = inject(Router);
   private modalService = inject(BsModalService);
 
-  item = input.required<Event>();
+  item = model.required<Event>();
   summaryMode = input.required<boolean>();
 
   goToEvent() {

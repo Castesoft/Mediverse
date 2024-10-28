@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from "@angular/core";
+import { Component, inject, input, model, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
@@ -43,12 +43,11 @@ export class EventEditComponent implements OnInit {
   private usersService = inject(UsersService);
   icons = inject(IconsService);
 
-  key = input.required<string | undefined>();
-  use = input.required<FormUse>();
-  item = input.required<Event>();
-  id = input.required<number>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  key = model.required<string | null>();
+  use = model.required<FormUse>();
+  item = model.required<Event | null>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   formGroup: FormGroup = new FormGroup({});
   timeOptions: string[] = [];
@@ -71,25 +70,25 @@ export class EventEditComponent implements OnInit {
     this.initForm();
     this.generateTimeOptions();
 
-    if (this.item().service) {
-      this.service = this.item().service;
-      // this.servicesService.setSelected$(this.selectServiceKey, this.item().service!);
-    }
+    // if (this.item().service) {
+    //   this.service = this.item().service;
+    //   // this.servicesService.setSelected$(this.selectServiceKey, this.item().service!);
+    // }
 
-    if (this.item().clinic) {
-      this.address = this.item().clinic;
-      // this.addressesService.setSelected$(this.selectClinicKey, this.item().clinic!);
-    }
+    // if (this.item().clinic) {
+    //   this.address = this.item().clinic;
+    //   // this.addressesService.setSelected$(this.selectClinicKey, this.item().clinic!);
+    // }
 
-    if (this.item().nurses) {
-      this.nurses = this.item().nurses;
-      // this.usersService.setMultipleSelected$(this.selectNursesKey, this.item().nurses!);
-    }
+    // if (this.item().nurses) {
+    //   this.nurses = this.item().nurses;
+    //   // this.usersService.setMultipleSelected$(this.selectNursesKey, this.item().nurses!);
+    // }
 
-    if (this.item().patient) {
-      this.patient = this.item().patient;
-      // this.usersService.setSelected$(this.selectPatientKey, this.item().patient!);
-    }
+    // if (this.item().patient) {
+    //   this.patient = this.item().patient;
+    //   // this.usersService.setSelected$(this.selectPatientKey, this.item().patient!);
+    // }
 
 
 
@@ -110,11 +109,11 @@ export class EventEditComponent implements OnInit {
   }
 
   private setTimeOptions = () => {
-    const timeFrom = this.getClosestTimeOption(new Date(this.item().dateFrom));
-    const timeTo = this.getClosestTimeOption(new Date(this.item().dateTo));
+    // const timeFrom = this.getClosestTimeOption(new Date(this.item().dateFrom!));
+    // const timeTo = this.getClosestTimeOption(new Date(this.item().dateTo!));
 
-    this.formGroup.controls['timeFrom']?.setValue(timeFrom);
-    this.formGroup.controls['timeTo']?.setValue(timeTo);
+    // this.formGroup.controls['timeFrom']?.setValue(timeFrom);
+    // this.formGroup.controls['timeTo']?.setValue(timeTo);
   }
 
   private getClosestTimeOption(date: Date): string {

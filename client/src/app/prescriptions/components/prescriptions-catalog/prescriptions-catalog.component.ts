@@ -1,13 +1,13 @@
-import { Component, inject, input } from "@angular/core";
+import { Component, inject, input, model } from "@angular/core";
 import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
 import { ActivatedRoute, Router, RouterLink, RouterModule } from "@angular/router";
 import { CatalogMode, View } from 'src/app/_models/types';
 import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
-import { FilterForm, Prescription, PrescriptionParams } from 'src/app/_models/prescription';
+import { Prescription, PrescriptionParams } from 'src/app/_models/prescription';
 import { Pagination } from 'src/app/_models/pagination';
 import { Subject, takeUntil } from 'rxjs';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LayoutModule } from 'src/app/_shared/layout.module';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { DecimalPipe } from '@angular/common';
@@ -16,6 +16,41 @@ import { ControlsModule } from 'src/app/_forms/controls.module';
 import { CatalogModule } from 'src/app/_shared/catalog.module';
 import { TableModule } from 'src/app/_shared/table/table.module';
 import { PrescriptionsTableComponent } from './prescriptions-table/prescriptions-table.component';
+import { createId } from "@paralleldrive/cuid2";
+
+export class FilterForm {
+  group: FormGroup;
+  id: string;
+
+  constructor() {
+    this.id = `$recetafilterForm${createId()}`;
+    this.group = new FormGroup({
+      search: new FormControl(''),
+      dateRange: new FormControl({ value: ['', ''], disabled: false }),
+      pageSize: new FormControl(10, [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(50),
+      ]),
+      sex: new FormControl(''),
+    });
+  }
+
+  patchValue(params: PrescriptionParams) {
+    const dateRange = [params.dateFrom, params.dateTo];
+
+    this.group.patchValue(
+      {
+        search: params.search,
+        dateRange,
+        pageSize: params.pageSize ?? 10,
+        sex: params.sex
+      },
+      { emitEvent: false, onlySelf: true },
+    );
+  }
+}
+
 
 @Component({
   host: { class: 'pb-6', },
@@ -34,9 +69,9 @@ export class PrescriptionsCatalogComponent {
   router = inject(Router);
   route = inject(ActivatedRoute);
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
 
   data?: Prescription[];
   params!: PrescriptionParams;

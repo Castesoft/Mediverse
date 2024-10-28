@@ -1,4 +1,4 @@
-import {Component, inject, input, OnInit} from "@angular/core";
+import {Component, inject, input, model, OnInit} from "@angular/core";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {RouterLink} from "@angular/router";
 import {User} from "../_models/user";
@@ -18,8 +18,8 @@ export class NurseSummaryCardComponent implements OnInit {
   icons = inject(IconsService);
 
   title = input<string>();
-  item = input.required<User>();
-  key = input.required<string>();
+  item = model.required<User>();
+  key = model.required<string>();
 
   ngOnInit(): void {
   }

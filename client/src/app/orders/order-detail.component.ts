@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, model, OnDestroy, OnInit } from "@angular/core";
-import { FormUse } from "src/app/_models/types";
+import { FormUse, View } from "src/app/_models/types";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { IconsService } from "src/app/_services/icons.service";
 import { Subject } from "rxjs";
@@ -36,9 +36,9 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   private orderService = inject(OrdersService);
   icons = inject(IconsService);
 
-  use = input.required<FormUse>();
-  key = input.required<string>();
-  view = input.required<string>();
+  use = model.required<FormUse>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = model.required<Order>();
 
   id!: number;
@@ -46,11 +46,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   deliveryStatusIndex = computed(() => parseOrderDeliveryStatusIndex(this.item()!.deliveryStatus!));
 
   get tax() {
-    return this.item()!.items.reduce((acc, x) => acc + (x.price * x.quantity * 0.16), 0);
+    return this.item()!.items.reduce((acc, x) => acc + (x.price! * x.quantity! * 0.16), 0);
   }
 
   get total() {
-    return this.item()!.items.reduce((acc, x) => acc + (x.price * x.quantity), 0) + this.tax;
+    return this.item()!.items.reduce((acc, x) => acc + (x.price! * x.quantity!), 0) + this.tax;
   }
 
   ngOnInit(): void {

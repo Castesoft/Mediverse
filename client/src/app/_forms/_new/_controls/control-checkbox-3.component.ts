@@ -12,6 +12,7 @@ import { OptionalSpan3Component } from 'src/app/_forms/_new/_helper/optional-spa
 import { NewBadge3Component } from 'src/app/_forms/_new/_helper/new-badge-3.component';
 import { ControlLabel3Component } from 'src/app/_forms/_new/_helper/control-label-3.component';
 import { DateRange } from 'src/app/_models/types';
+import { createId } from '@paralleldrive/cuid2';
 
 @Component({
   host: { class: 'fw-semibold mb-0 w-100 text-body' },
@@ -37,6 +38,8 @@ export class ControlCheckbox3Component {
   control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
 
   validation = false;
+
+  guid = createId();
 
   constructor() {
     effect(() => {

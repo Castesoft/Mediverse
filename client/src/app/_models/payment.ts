@@ -1,36 +1,32 @@
-import { Service } from 'src/app/_models/service';
-import { UserPaymentMethod } from './billingDetails';
-import { PaymentMethodType } from './paymentMethodType';
+import { Service, serviceInfo } from 'src/app/_models/service';
+import { baseInfo, Entity } from 'src/app/_models/types';
+import { SelectOption } from 'src/app/_forms/form';
+import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
+import { UserPaymentMethod, userPaymentMethodInfo } from 'src/app/_models/billingDetails';
 
-export interface Payment {
-  id: number
-  amount: number
-  paymentMethod: UserPaymentMethod
-  paymentMethodType: PaymentMethodType
-  paymentDate: Date
-}
-export interface PaymentBilling {
-  services: Service[];
-  paymentMethod: PaymentMethod;
-  billingAddress: string;
-  insuranceProvider?: string;
-  insurancePolicyNumber?: string;
-  transactionId: string;
-  paymentStatus: PaymentStatus;
-  notes?: string;
+export class Payment extends Entity {
+  amount: number | null = null;
+  paymentMethod: UserPaymentMethod = new UserPaymentMethod();
+  paymentMethodType: SelectOption | null = null;
+  date: Date | null = null;
+
+  constructor(init?: Partial<Payment>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
-export enum PaymentMethod {
-  Cash = 'Efectivo',
-  CreditCard = 'Tarjeta de crédito',
-  DebitCard = 'Tarjeta de débito',
-  Insurance = 'Seguro médico',
-  BankTransfer = 'Transferencia bancaria',
-  Other = 'Otro',
+export const paymentInfo: FormInfo<Payment> = {
+  ...baseInfo,
+  amount: { label: 'Cantidad', type: 'number', },
+  date: { label: 'Fecha', type: 'date', },
+  paymentMethod: userPaymentMethodInfo,
+  paymentMethodType: { label: 'Tipo de pago', type: 'select', },
+} as FormInfo<Payment>;
+
+export class PaymentForm extends FormGroup2<Payment> {
+  constructor() {
+    super(Payment, new Payment(), paymentInfo);
+  }
 }
 
-export enum PaymentStatus {
-  Paid = 'Pagada',
-  Pending = 'Pendiente',
-  Failed = 'Fallado',
-}

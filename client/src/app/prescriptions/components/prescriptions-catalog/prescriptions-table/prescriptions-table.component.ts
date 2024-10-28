@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject, input, OnDestroy, output, signal } from "@angular/core";
+import { Component, OnInit, Input, inject, input, OnDestroy, output, signal, model } from "@angular/core";
 import { CatalogMode } from "src/app/_models/types";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -37,8 +37,8 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
   icons = inject(IconsService);
 
   @Input() data: Prescription[] = [];
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
   showHeaders = input<boolean>(true);
   onReloadData = output();
 
@@ -105,7 +105,7 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
       const imgData = canvas.toDataURL('image/png');
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
 
-      pdf.save(`${item.patient!.fullName} - ${item.createdAt}.pdf`);
+      pdf.save(`${item.patient!.name!} - ${item.createdAt}.pdf`);
     } else {
       console.error('Prescription form element not found');
     }

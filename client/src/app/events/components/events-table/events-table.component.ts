@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject, input, OnDestroy } from "@angular/core";
+import { Component, OnInit, Input, inject, input, OnDestroy, model } from "@angular/core";
 import { CatalogMode, Role } from "src/app/_models/types";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -11,11 +11,11 @@ import { RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { Event, EventParams } from "src/app/_models/event";
 import { Subscription } from "rxjs";
-import { GuidService } from "src/app/_services/guid.service";
 import { EventsService } from "src/app/_services/events.service";
 import {PatientTableCellComponent, PatientTableHasAccountCellComponent, PatientTableSexCellComponent} from "src/app/_shared/components/patient-table-cell.component";
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { UtilsService } from 'src/app/_services/utils.service';
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },
@@ -33,8 +33,8 @@ export class EventsTableComponent implements OnInit, OnDestroy {
   utils = inject(UtilsService);
 
   @Input() data: Event[] = [];
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
   showHeaders = input<boolean>(true);
   location = input<'events-catalog' | 'user-detail'>('events-catalog');
 
@@ -45,10 +45,8 @@ export class EventsTableComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription[] = [];
 
-  cuid: string;
-  constructor(guid: GuidService) {
-    this.cuid = guid.gen();
-  }
+  cuid: string = createId();
+  constructor() {}
 
   ngOnInit(): void {
     const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
@@ -62,15 +60,15 @@ export class EventsTableComponent implements OnInit, OnDestroy {
   getContrastColor(hexColor: string): string {
     // Remove the hash if it's there
     hexColor = hexColor.replace('#', '');
-  
+
     // Convert to RGB
     const r = parseInt(hexColor.substr(0, 2), 16);
     const g = parseInt(hexColor.substr(2, 2), 16);
     const b = parseInt(hexColor.substr(4, 2), 16);
-  
+
     // Calculate luminance
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  
+
     // Return black for bright colors, white for dark colors
     return luminance > 0.5 ? '#000000' : '#FFFFFF';
   }

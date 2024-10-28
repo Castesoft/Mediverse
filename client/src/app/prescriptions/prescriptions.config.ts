@@ -1,16 +1,14 @@
-import { Component, inject, NgModule, OnInit } from "@angular/core";
+import { Component, inject, NgModule, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ActivatedRoute, ResolveFn, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, ResolveFn, RouterModule } from "@angular/router";
 import { CardComponent, LayoutModule } from "src/app/_shared/layout.module";
-import { CatalogMode, FormUse, Role, Sections, View } from "src/app/_models/types";
+import { CatalogMode, FormUse, View } from "src/app/_models/types";
 import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
-import { GuidService } from '../_services/guid.service';
-import { CompactTableService } from '../_services/compact-table.service';
-import { PrescriptionsService } from '../_services/prescriptions.service';
-import { Prescription } from '../_models/prescription';
-import { PrescriptionDetailsComponent } from './components/prescription-details/prescription-details.component';
-import { PrescriptionEditComponent } from './components/prescription-edit/prescription-edit.component';
-import { PrescriptionNewComponent } from './components/prescription-new/prescription-new.component';
+import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
+import { Prescription } from "src/app/_models/prescription";
+import { CompactTableService } from "src/app/_services/compact-table.service";
+import { PrescriptionsService } from "src/app/_services/prescriptions.service";
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   selector: 'prescriptions-route',
@@ -37,12 +35,11 @@ export class PrescriptionsComponent implements OnInit {
 export class CatalogComponent {
   prescription = inject(PrescriptionsService);
   compact = inject(CompactTableService);
-  guid = inject(GuidService);
 
   isCompact = false;
   view: View = 'page';
   mode: CatalogMode = 'view';
-  key = this.guid.gen();
+  key = createId();
   label: string;
 
   constructor() {
@@ -53,6 +50,80 @@ export class CatalogComponent {
     this.compact.mode$.subscribe({ next: (mode) => (this.isCompact = mode) });
   }
 }
+
+@Component({
+  selector: 'app-prescription-detail',
+  template: `
+@if (item()) {
+<div prescriptionForm [(use)]="use" [(view)]="view" [(item)]="item"></div>
+}
+  `,
+  standalone: true,
+  imports: [PrescriptionFormComponent],
+})
+export class PrescriptionDetailComponent {
+  private route = inject(ActivatedRoute);
+
+  use = signal<FormUse>('detail');
+  view = signal<View>('page');
+  item = signal<Prescription | null>(null);
+
+  constructor() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.route.data.subscribe({
+        next: (data) => {
+          this.item = data['item'];
+        },
+      });
+    }
+  }
+}
+
+@Component({
+  selector: 'app-prescription-edit',
+  template: `
+@if (item()) {
+<div prescriptionForm [(use)]="use" [(view)]="view" [(item)]="item"></div>
+}
+
+  `,
+  standalone: true,
+  imports: [PrescriptionFormComponent],
+})
+export class PrescriptionEditComponent {
+  private route = inject(ActivatedRoute);
+
+  use = signal<FormUse>('edit');
+  view = signal<View>('page');
+  item = signal<Prescription | null>(null);
+
+  constructor() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.route.data.subscribe({
+        next: (data) => {
+          this.item = data['item'];
+        },
+      });
+    }
+  }
+}
+
+@Component({
+  selector: 'app-prescription-new',
+  template: `
+    <div prescriptionForm [(use)]="use" [(view)]="view" [(item)]="item"></div>
+  `,
+  standalone: true,
+  imports: [PrescriptionFormComponent, CommonModule,],
+})
+export class PrescriptionNewComponent {
+  use = signal<FormUse>('create');
+  view = signal<View>('page');
+  item = signal<Prescription | null>(null);
+}
+
 
 export const itemResolver: ResolveFn<Prescription | null> = (route, state) => {
   const prescription = inject(PrescriptionsService);
@@ -91,7 +162,7 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
         { path: 'create', component: PrescriptionNewComponent, title: 'Crear nueva receta', data: { breadcrumb: 'Nuevo', }, },
         {
           path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
-          component: PrescriptionDetailsComponent,
+          component: PrescriptionDetailComponent,
           resolve: { item: itemResolver },
         },
         {

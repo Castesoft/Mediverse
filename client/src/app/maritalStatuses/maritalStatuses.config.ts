@@ -75,8 +75,8 @@ export class MaritalStatusesTableMenuComponent
   extends TableMenu<MaritalStatusesService>
   implements OnInit, ITableMenu<MaritalStatus>
 {
-  item: InputSignal<MaritalStatus> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<MaritalStatus> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(MaritalStatusesService);
@@ -176,9 +176,9 @@ export class MaritalStatusesTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<MaritalStatus[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +276,13 @@ export class MaritalStatusesTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class MaritalStatusesFilterFormComponent extends FormComponent<MaritalStatusesService> implements OnInit, FilterFormGroupActions<MaritalStatus, MaritalStatusParams, FormGroup2<MaritalStatusParams>> {
-  item: InputSignal<MaritalStatus | undefined> = input.required();
+  item: ModelSignal<MaritalStatus | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +375,11 @@ export class MaritalStatusesFilterFormComponent extends FormComponent<MaritalSta
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div maritalStatusesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div maritalStatusesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div maritalStatusesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div maritalStatusesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -411,9 +411,9 @@ export class MaritalStatusesCatalogComponent implements OnInit, OnDestroy {
 
   animalId = input<number>();
   isCompact = input.required<boolean>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<MaritalStatus>();
 
   toggle = model(false);
@@ -521,10 +521,10 @@ export class MaritalStatusParams extends EntityParams<MaritalStatus> implements 
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class MaritalStatusFormComponent extends FormComponent<MaritalStatusesService> implements OnInit, FormGroupActions<MaritalStatus, FormGroup2<MaritalStatus>> {
-  item: InputSignal<MaritalStatus | undefined> = input.required();
+  item: ModelSignal<MaritalStatus | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<MaritalStatus> = {
     code: { label: 'Código', type: 'text' },
@@ -620,9 +620,9 @@ export class MaritalStatusDetailComponent {
   service = inject(MaritalStatusesService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<MaritalStatus | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<MaritalStatus | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -898,7 +898,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = null;
   key = createId();
 }
 

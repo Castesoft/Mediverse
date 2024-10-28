@@ -1,0 +1,58 @@
+@if(use() === 'create' && item() === null) {
+  <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed flex-stack h-xl-100 mb-10 p-6">
+    <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+      <div class="mb-3 mb-md-0 fw-semibold">
+        <h4 class="text-gray-900 fw-bold">Agregar un nueva póliza</h4>
+        <div class="fs-6 text-gray-700 pe-7">
+          Puede agregar pólizas de seguros adicionales
+        </div>
+      </div>
+      <a (click)="service.clickInsuranceCompany(null, 'create', 'modal')"
+        class="btn btn-primary px-6 align-self-center text-nowrap">Nueva Póliza</a>
+    </div>
+  </div>
+}
+@if(use() !== 'create' && item() !== null) {
+<div class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6">
+  <div class="d-flex flex-column py-2 w-100">
+    <div class="d-flex align-items-center justify-content-between py-2">
+      <div class="d-flex align-items-center">
+        <img src="{{ item()!.medicalInsuranceCompany?.options?.photoUrl }}"
+          alt="{{ item()!.medicalInsuranceCompany?.name }}" class="h-50px me-3" />
+      </div>
+      <div>
+        <button class="btn btn-sm btn-light btn-active-light-primary me-3" [disabled]="item()!.isMain"
+          (click)="service.deleteMedicalInsurance(this.item()!.id!)">
+          <span class="indicator-label">Eliminar</span>
+          <span class="indicator-progress">Please wait...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+        </button>
+        <button class="btn btn-sm btn-light btn-active-light-primary"
+          (click)="service.clickInsuranceCompany(item(), 'edit', 'modal')">
+          Editar
+        </button>
+      </div>
+    </div>
+    <div class="d-flex align-items-center fs-5 fw-bold mb-2">
+      {{ item()!.medicalInsuranceCompany?.name }}
+      @if (item()!.isMain) {
+      <span class="badge badge-light-success fs-7 ms-2">Principal</span>
+      }
+    </div>
+    <div class="fs-6 fw-semibold text-gray-600 mb-4">
+      No. Póliza: {{ item()!.policyNumber }}
+    </div>
+    @if (item()!.document.thumbnailUrl) {
+    <div class="mt-auto position-relative">
+      <a [href]="item()!.document.url" target="_blank" class="d-block thumbnail-link mx-auto">
+        <img src="{{ item()!.document.thumbnailUrl }}" alt="Policy Document" class="thumbnail-img" />
+        <div class="thumbnail-overlay">
+          <i class="ki-duotone ki-eye fs-1 text-white"><span class="path1"></span><span class="path2"></span><span
+              class="path3"></span></i>
+        </div>
+      </a>
+    </div>
+    }
+  </div>
+</div>
+}

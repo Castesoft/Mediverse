@@ -105,6 +105,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.WorkScheduleSettings, opt => opt.MapFrom(src => src.DoctorWorkScheduleSettings.WorkScheduleSettings))
             .ForMember(dest => dest.DoctorClinics, opt => opt.MapFrom(src => src.DoctorClinics.Select(x => x.Clinic)))
             .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors.Select(x => x.Doctor)))
+            .ForMember(dest => dest.MedicalInsuranceCompanies, opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies))
+            .ForMember(dest => dest.DoctorInsuranceCompanies, opt => opt.MapFrom(src => src.DoctorMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)))
         ;
 
         CreateMap<WorkSchedule, WorkScheduleDto>();
@@ -376,9 +378,9 @@ public class MappingProfiles : Profile
         ;
         CreateMap<UserMedicalInsuranceCompany, UserMedicalInsuranceCompanyDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyId))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo.Url))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MedicalInsuranceCompany.Name))
-            .ForMember(dest => dest.Document, opt => opt.MapFrom(src => src.Document));
+            .ForMember(dest => dest.Document, opt => opt.MapFrom(src => src.Document))
+            .ForMember(dest => dest.MedicalInsuranceCompany, opt => opt.MapFrom(src => src.MedicalInsuranceCompany))
+        ;
 
         CreateMap<Disease, DiseaseDto>();
         CreateMap<Substance, SubstanceDto>();

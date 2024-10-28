@@ -1,22 +1,26 @@
-import { Component, inject, input, OnDestroy, OnInit } from "@angular/core";
+import { Component, effect, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { IconsService } from "src/app/_services/icons.service";
 import { Pagination } from "src/app/_models/pagination";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { Subject, takeUntil } from "rxjs";
-import { DecimalPipe } from "@angular/common";
+import { Subject } from "rxjs";
+import { CommonModule, DecimalPipe } from "@angular/common";
 import { AlertModule } from "ngx-bootstrap/alert";
-import { CatalogMode, Role, View } from "src/app/_models/types";
+import { CatalogMode, View } from "src/app/_models/types";
 import { Router, RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { FilterForm, Product, ProductParams } from "src/app/_models/product";
+import { Product, ProductParams, ProductsFilterForm } from "src/app/_models/product";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { CatalogModule } from "src/app/_shared/catalog.module";
-import {ProductsFilterMenuComponent} from "src/app/products/components/products-filter-menu.component";
+import { ProductsFilterMenuComponent } from "src/app/products/components/products-filter-menu.component";
 import { ProductsTableComponent } from "src/app/products/components/products-table.component";
 import { ProductsService } from "src/app/_services/products.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
+import { createId } from "@paralleldrive/cuid2";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { ProductsFilterFormComponent } from "src/app/products/components/products-filter-form.component";
 
 @Component({
   host: { class: 'pb-6', },
@@ -25,7 +29,8 @@ import { LayoutModule } from "src/app/_shared/layout.module";
   standalone: true,
   imports: [BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
     ProductsTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, ProductsFilterMenuComponent, LayoutModule,
+    LayoutModule, ProductsFilterMenuComponent, LayoutModule, CommonModule, CdkModule, MaterialModule,
+    ProductsFilterFormComponent,
   ],
 })
 export class ProductsCatalogComponent implements OnInit, OnDestroy {
@@ -33,67 +38,40 @@ export class ProductsCatalogComponent implements OnInit, OnDestroy {
   service = inject(ProductsService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
 
-  data?: Product[];
-  params!: ProductParams;
   pagination?: Pagination;
-  form = new FilterForm();
-  loading = true;
+  form = new ProductsFilterForm();
   private ngUnsubscribe = new Subject<void>();
 
+  toggle = model(false);
+
+  params!: ProductParams;
+  formId = `${this.router.url}#form-${createId()}`;
+  loading = true;
+  list?: Product[];
+
+  constructor() {
+    effect(() => {
+      this.params = new ProductParams(this.key());
+      this.service.createEntry(this.key(), this.params, this.mode());
+
+      this.service.cache$.subscribe({ next: cache => {
+        this.service.loadPagedList(this.key(), this.params).subscribe();
+      }});
+    })
+  }
+
   ngOnInit(): void {
-    this.params = new ProductParams(this.key());
-
-    this.service.setParam$(this.key(), this.params);
-
-    this.service.param$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params) => {
-        this.params = params;
-        this.loadData(params);
-        this.form.patchValue(params);
-      });
-
-    this.form.group.valueChanges
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(this.handleFormValueChange.bind(this));
-
-    this.service.loading$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((loading) => (this.loading = loading));
+    this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
+    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list = list });
+    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination = pagination });
   }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
-  }
-
-  private loadData(params: ProductParams) {
-    this.service.loadPagedList(this.key(), params).subscribe({
-      next: (response) => {
-        const { result, pagination } = response;
-        this.data = result;
-        this.pagination = pagination;
-      },
-    });
-  }
-
-  private handleFormValueChange = () => {
-    const { controls, value } = this.form.group;
-    const { dateRange } = controls;
-
-    this.params.updateFromPartial({
-      ...value,
-      dateFrom: dateRange.value[0],
-      dateTo: dateRange.value[1],
-    });
-  };
-
-  onSubmit() {
-    this.service.setParam$(this.key(), this.params);
-    this.form.patchValue(this.params);
   }
 }

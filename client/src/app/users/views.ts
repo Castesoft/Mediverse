@@ -1,5 +1,5 @@
-import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
-import { Component, HostBinding, inject, input, OnInit, viewChild } from "@angular/core";
+import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
+import { Component, HostBinding, inject, input, model, OnInit, viewChild } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { User } from "src/app/_models/user";
@@ -20,9 +20,9 @@ import { ClinicalHistoryFormComponent } from '../account/components/account-clin
   imports: [ UserFormComponent, ModalWrapperModule, ],
 })
 export class UserNewComponent {
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  use = model.required<FormUse>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   @HostBinding('class') get hostClass() {
     if (this.view() === 'page') {
@@ -37,9 +37,9 @@ export class UserNewComponent {
 }
 
 @Component({
-  selector: 'div[userDetailView]',
+  selector: 'div[userDetail]',
   template: `
-  @if(user) {
+  @if(item() !== null) {
     <div class="row">
         <div class="col-3">
           <div class="card mb-5 mb-xl-8">
@@ -51,7 +51,7 @@ export class UserNewComponent {
                     size="lg"
                   ></div>
                 </div>
-                <a [routerLink]="['']" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">{{user.fullName}}</a>
+                <a [routerLink]="['']" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">{{item()!.fullName}}</a>
                 <div class="fs-5 fw-semibold text-muted mb-6">Paciente</div>
                 <div class="d-flex flex-wrap flex-center">
                   <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
@@ -66,7 +66,7 @@ export class UserNewComponent {
                   </div>
                   <div class="border border-gray-300 border-dashed rounded py-3 px-3 mx-4 mb-3">
                     <div class="fs-4 fw-bold text-gray-700">
-                      <span class="w-50px">{{ user.doctorEvents?.length }}</span>
+                      <span class="w-50px">{{ item()!.doctorEvents.length }}</span>
                       <!-- <i class="ki-duotone ki-arrow-down fs-3 text-danger">
                         <span class="path1"></span>
                         <span class="path2"></span>
@@ -91,14 +91,14 @@ export class UserNewComponent {
                 <div class="py-5 fs-6">
                   <div class="fw-bold mt-5">Correo</div>
                   <div class="text-gray-600">
-                    <a href="#" class="text-gray-600 text-hover-primary">{{ user.email }}</a>
+                    <a href="#" class="text-gray-600 text-hover-primary">{{ item()!.email }}</a>
                   </div>
                   <div class="fw-bold mt-5">Fecha de nacimiento</div>
-                  <div class="text-gray-600">{{user.dateOfBirth | date: "mediumDate": "": "es-MX"}}</div>
+                  <div class="text-gray-600">{{item()!.dateOfBirth | date: "mediumDate": "": "es-MX"}}</div>
                   <div class="fw-bold mt-5">Edad</div>
-                  <div class="text-gray-600">{{user.age | number}}</div>
-                  @if(user.taxId){<div class="fw-bold mt-5">RFC</div>
-                  <div class="text-gray-600">{{user.taxId}}</div>}
+                  <div class="text-gray-600">{{item()!.age | number}}</div>
+                  @if(item()!.taxId){<div class="fw-bold mt-5">RFC</div>
+                  <div class="text-gray-600">{{item()!.taxId}}</div>}
                 </div>
               </div>
             </div>
@@ -133,11 +133,11 @@ export class UserNewComponent {
             <div class="separator mb-3 opacity-75"></div>
             <div class="card-body">
               @if (activeTab === 'events') {
-                @if (user.doctorEvents && user.doctorEvents!.length > 0) {
+                @if (item()!.doctorEvents && item()!.doctorEvents!.length > 0) {
                   <div tableWrapper>
                     <table
                       eventsTable
-                      [data]="user.doctorEvents"
+                      [data]="item()!.doctorEvents"
                       [mode]="'view'"
                       [key]="'event-recipe'"
                       [location]="'user-detail'"
@@ -150,8 +150,8 @@ export class UserNewComponent {
                   </div>
                 }
               } @else if (activeTab === 'clinical-history') {
-                @if (user.hasPatientInformationAccess) {
-                  <div clinicalHistoryForm [medicalRecord]="user.medicalRecord!"></div>
+                @if (item()!.hasPatientInformationAccess) {
+                  <div clinicalHistoryForm [medicalRecord]="item()!.medicalRecord!"></div>
                 } @else {
                   <div class="text-center py-5">
                     <i class="ki-duotone ki-lock-2 fs-3x text-muted mb-3">
@@ -165,19 +165,19 @@ export class UserNewComponent {
                   </div>
                 }
               } @else if (activeTab === 'payments') {
-                <app-payments-table [title]="'Pagos'" [payments]="user.doctorPayments!" [showTabs]="false" [view]="'inline'"></app-payments-table>
+                <app-payments-table [title]="'Pagos'" [payments]="item()!.doctorPayments!" [showTabs]="false" [view]="'inline'"></app-payments-table>
               } @else if (activeTab === 'insurances') {
-                @if (user.hasPatientInformationAccess) {
-                  @if (user.medicalInsuranceCompanies && user.medicalInsuranceCompanies.length > 0) {
+                @if (item()!.hasPatientInformationAccess) {
+                  @if (item()!.medicalInsuranceCompanies && item()!.medicalInsuranceCompanies.length > 0) {
                     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                      @for (insurance of user.medicalInsuranceCompanies; track insurance.id) {
+                      @for (insurance of item()!.medicalInsuranceCompanies; track insurance.id) {
                         <div class="col">
                           <div class="card h-100 insurance-card">
                             <div class="card-body p-4">
                               <div class="d-flex align-items-center mb-3">
-                                <img [src]="insurance.photoUrl || 'assets/images/default-avatar.png'" class="rounded-circle h-30px me-2" alt="{{ insurance.name }}">
+                                <img [src]="insurance?.medicalInsuranceCompany?.options?.photoUrl || 'assets/images/default-avatar.png'" class="rounded-circle h-30px me-2" alt="{{ insurance?.medicalInsuranceCompany?.name }}">
                                 <div>
-                                  <h5 class="card-title fs-6 fw-bold mb-0">{{ insurance.name }}</h5>
+                                  <h5 class="card-title fs-6 fw-bold mb-0">{{ insurance?.medicalInsuranceCompany?.name }}</h5>
                                 </div>
                               </div>
                               <div class="d-flex align-items-center">
@@ -230,38 +230,28 @@ export class UserNewComponent {
     }
   `],
   standalone: true,
-  imports: [UserFormComponent, RouterModule, DatePipe, DecimalPipe, UserProfilePictureComponent, PaymentsTableComponent, EventsTableComponent, CurrencyPipe, ClinicalHistoryFormComponent],
+  imports: [UserFormComponent, RouterModule, UserProfilePictureComponent, PaymentsTableComponent, EventsTableComponent, CommonModule, ClinicalHistoryFormComponent],
 })
-export class UserDetailComponent implements OnInit {
+export class UserDetailComponent {
   accountService = inject(AccountService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  id = input.required<number>();
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<User>();
-  key = input.required<string | undefined>();
-  role = input.required<Role>();
+  use = model.required<FormUse>();
+  view = model.required<View>();
+  item = model.required<User | null>();
+  key = model.required<string | null>();
+  role = model.required<Role>();
 
-  user?: User;
   activeTab = 'events';
-
-  ngOnInit(): void {
-    this.route.data.subscribe({
-      next: (data) => {
-        this.user = data['item'];
-      },
-    });
-  }
 
   onSelectTab = (tab: string) => this.activeTab = tab;
 
-  getEarnings = () => this.user!.doctorPayments?.map(p => p.amount).reduce((a, b) => a + b, 0) ?? 0;
+  getEarnings = () => this.item()!.doctorPayments?.map(p => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
 
   getPendingPayments = () => {
-    const total = this.user!.doctorEvents?.map(e => e.service?.price!).reduce((a, b) => a + b, 0) ?? 0;
-    const paid = this.user!.doctorPayments?.map(p => p.amount).reduce((a, b) => a + b, 0) ?? 0;
+    const total = this.item()!.doctorEvents?.map(e => e.service?.price!).reduce((a, b) => a + b, 0) ?? 0;
+    const paid = this.item()!.doctorPayments?.map(p => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
     return total - paid;
   };
 
@@ -277,11 +267,11 @@ export class UserDetailComponent implements OnInit {
 })
 export class UserEditComponent {
   id = input.required<number>();
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<User>();
-  key = input.required<string | undefined>();
-  role = input.required<Role>();
+  use = model.required<FormUse>();
+  view = model.required<View>();
+  item = model.required<User>();
+  key = model.required<string | null>();
+  role = model.required<Role>();
 
   @HostBinding('class') get hostClass() {
     if (this.view() === 'page') {

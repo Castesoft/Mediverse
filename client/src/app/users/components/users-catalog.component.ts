@@ -1,11 +1,10 @@
-import { Component, HostBinding, inject, input, OnChanges, OnDestroy, OnInit } from "@angular/core";
+import { Component, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import {GuidService} from "src/app/_services/guid.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { Pagination } from "src/app/_models/pagination";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { Subject, takeUntil } from "rxjs";
-import {DecimalPipe, NgClass} from "@angular/common";
+import { Subject } from "rxjs";
+import { DecimalPipe, NgClass } from "@angular/common";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { CatalogMode, Role, View } from "src/app/_models/types";
 import { Router, RouterModule } from "@angular/router";
@@ -14,7 +13,7 @@ import { User, UserParams } from "src/app/_models/user";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { CatalogModule } from "src/app/_shared/catalog.module";
-import {UsersFilterMenuComponent} from "src/app/users/components/users-filter-menu.component";
+import { UsersFilterMenuComponent } from "src/app/users/components/users-filter-menu.component";
 import { UsersTableComponent } from "src/app/users/components/users-table.component";
 import { UsersService } from "src/app/_services/users.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
@@ -116,10 +115,10 @@ export class UsersListSelectComponent implements OnInit, OnDestroy {
   service = inject(UsersService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   data?: User[];
   params!: UserParams;
@@ -303,10 +302,10 @@ export class UsersCatalogComponent implements OnInit, OnDestroy {
   service = inject(UsersService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   data?: User[];
   params!: UserParams;

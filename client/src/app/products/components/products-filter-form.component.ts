@@ -1,6 +1,6 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, model, OnInit } from '@angular/core';
 import { BsModalRef, ModalModule } from 'ngx-bootstrap/modal';
-import { FilterForm, ProductParams } from 'src/app/_models/product';
+import { ProductParams, ProductsFilterForm } from 'src/app/_models/product';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { IconsService } from 'src/app/_services/icons.service';
@@ -17,7 +17,6 @@ import { ProductsService } from 'src/app/_services/products.service';
   selector: 'div[productsFilterForm]',
   template: `
   <form
-      [formGroup]="form.group"
       [id]="form.id"
       (ngSubmit)="onSubmit()"
     >
@@ -25,8 +24,8 @@ import { ProductsService } from 'src/app/_services/products.service';
         searchText
         class="mb-3"
         formControlName="search"
-        [label]="'Buscar ' + product.dictionary.plural"
-        [placeholder]="'Buscar ' + product.dictionary.plural"
+        [label]="'Buscar ' + service.dictionary.plural"
+        [placeholder]="'Buscar ' + service.dictionary.plural"
       ></div>
       <div
         searchDateRange
@@ -68,16 +67,16 @@ import { ProductsService } from 'src/app/_services/products.service';
   standalone: true,
   imports: [ ModalModule, FontAwesomeModule, ReactiveFormsModule, SearchTextComponent, SearchDateRangeComponent, InputControlComponent, ControlMultiselectComponent, CollapseModule,  ],
 })
-export class ProductsFilterFormComponent implements OnInit {
-  product = inject(ProductsService);
+export class ProductsFilterFormComponent {
+  service = inject(ProductsService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
+  key = model.required<string>();
   formId = input.required<string>();
 
   modalRef: BsModalRef<ProductsFilterModalComponent> = new BsModalRef<ProductsFilterModalComponent>();
 
-  form = new FilterForm();
+  form = new ProductsFilterForm();
   params!: ProductParams;
 
   isAdvancedFiltersCollapsed = true;
@@ -90,20 +89,10 @@ export class ProductsFilterFormComponent implements OnInit {
 
   resetMultiselects= false;
 
-  ngOnInit(): void {
-    this.params = new ProductParams(this.key());
-    this.product.setParam$(this.key(), this.params);
+  constructor() {}
 
-    this.product.param$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params) => {
-        this.params = params;
-        this.form.patchValue(params);
-      });
+  onCancel(): void {
 
-    this.form.group.valueChanges
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(this.handleFormValueChange.bind(this));
   }
 
   ngOnDestroy(): void {
@@ -111,20 +100,8 @@ export class ProductsFilterFormComponent implements OnInit {
     this.ngUnsubscribe.complete();
   }
 
-  private handleFormValueChange = () => {
-    const { controls, value } = this.form.group;
-    const { dateRange } = controls;
-
-    this.params.updateFromPartial({
-      ...value,
-      dateFrom: dateRange.value[0],
-      dateTo: dateRange.value[1],
-    });
-  }
-
   onSubmit() {
-    this.product.setParam$(this.key(), this.params);
-    this.form.patchValue(this.params);
+
   }
 
 }

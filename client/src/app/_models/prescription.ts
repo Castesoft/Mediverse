@@ -1,49 +1,160 @@
 import { HttpParams } from '@angular/common/http';
-import { getPaginationHeaders } from '../_utils/util';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { PrescriptionsService } from '../_services/prescriptions.service';
-import { createId } from '@paralleldrive/cuid2';
-import { User } from './user';
-import { BadRequest } from './types';
-import { Product } from './product';
-import { Event } from './event';
+import { FormGroup } from '@angular/forms';
+import { SelectOption } from 'src/app/_forms/form';
+import { baseInfo, Entity } from 'src/app/_models/types';
+import { PrescriptionItem, prescriptionItemInfo } from 'src/app/_models/prescriptionItem';
+import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
+import { User, userInfo } from 'src/app/_models/user';
+import { getPaginationHeaders } from 'src/app/_utils/util';
+import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
+import { Account, accountInfo } from 'src/app/_models/account';
 import { Address } from 'src/app/_models/address';
+import { Event } from 'src/app/_models/event';
+import { MedicalLicense, medicalLicenseInfo } from 'src/app/_models/medicalLicense';
 
-const subject = 'prescription';
+export class Prescription extends Entity {
+  exchangeAmount: number | null = null;
+  notes: string | null = null;
+  logoUrl: string | null = null;
+  orderId: number | null = null;
+  date: Date | null = null;
 
-export class Prescription {
-  id!: number;
-  exchangeAmount!: number;
-  notes!: string;
-  items!: PrescriptionItem[];
-  clinic?: Address;
-  doctor?: User;
-  patient?: User;
-  event?: Event;
-  createdAt!: Date;
-  logoUrl!: string;
-  orderId?: number;
+  doctor: Account = new Account();
 
-  isSelected = false;
+  clinic: Address = new Address();
+  event: Event = new Event();
+  patient: User = new User();
+
+  items: PrescriptionItem[] = [];
+
   isCollapsed = true;
+
+  constructor(init?: Partial<Prescription>) {
+    super();
+
+    Object.assign(this, init);
+  }
 }
 
-export class PrescriptionItem {
-  quantity!: number;
-  instructions!: string;
-  notes!: string;
-  createdAt!: string;
-  description!: string;
-  discount!: number;
-  dosage!: string;
-  itemId!: number;
-  lotNumber!: string;
-  manufacturer!: string;
-  name!: string;
-  price!: number;
-  unit!: string;
+export const prescriptionInfo: FormInfo<Prescription> = {
+  ...baseInfo,
+  doctor: accountInfo,
+  exchangeAmount: { label: 'Monto de cambio', type: 'number', },
+  isCollapsed: { label: 'Colapsado', type: 'checkbox', },
+  items: prescriptionItemInfo,
+  logoUrl: { label: 'URL del logo', type: 'text', },
+  notes: { label: 'Notas', type: 'textarea', },
+  orderId: { label: 'ID de pedido', type: 'number', },
+} as FormInfo<Prescription>;
 
-  product?: Product;
+export class PrescriptionForm extends FormGroup2<Prescription> {
+  constructor() {
+    super(Prescription, new Prescription(), prescriptionInfo);
+  }
+
+  patch(doctor: Account) {
+    this.controls.doctor.patchValue(
+      new Account({
+        ...doctor,
+        // medicalLicenses: doctor.medicalLicenses.map(license => {
+        //   return new MedicalLicense({
+        //     ...license,
+        //     licenseNumber: license.licenseNumber,
+        //     specialtyId: license.specialtyId,
+        //     specialtyLicense: license.specialtyLicense,
+        //     specialtyName: license.specialtyName,
+        //   });
+        // }),
+    }));
+
+    if (this.use === 'create') {
+      this.controls.date.patchValue(new Date());
+
+      if (doctor.doctorClinics.length && doctor.doctorClinics.length > 0) {
+        const clinic = doctor.doctorClinics[0];
+        this.controls.clinic.patchValue(new Address({
+          city: clinic.city,
+          country: clinic.country,
+          exteriorNumber: clinic.exteriorNumber,
+          interiorNumber: clinic.interiorNumber,
+          photoUrl: clinic.logoUrl,
+          isMain: clinic.isMain,
+          latitude: clinic.latitude,
+          longitude: clinic.longitude,
+          neighborhood: clinic.neighborhood,
+          zipcode: clinic.zipcode,
+          state: clinic.state,
+          street: clinic.street,
+        }));
+      }
+
+      if (doctor.medicalLicenses.length && doctor.medicalLicenses.length > 0) {
+        doctor.medicalLicenses.forEach(license => {
+          this.controls.doctor.controls.medicalLicenses.push(new FormGroup2<MedicalLicense>(MedicalLicense, new MedicalLicense({
+            ...license,
+            licenseNumber: license.licenseNumber,
+            specialtyId: license.specialtyId,
+            specialtyLicense: license.specialtyLicense,
+            specialtyName: license.specialtyName,
+          }), medicalLicenseInfo));
+        })
+      }
+    }
+
+    console.log(this);
+
+
+    this.updateValueAndValidity();
+  }
+
+  get addressString1(): string {
+    return `${this.controls.clinic.controls.street.value!} ${this.controls.clinic.controls.exteriorNumber.value!} ${this.controls.clinic.controls.neighborhood.value!}`;
+  }
+
+  get addressString2(): string {
+    return `${this.controls.clinic.controls.city.value!}, ${this.controls.clinic.controls.state.value!}, ${this.controls.clinic.controls.country.value!}`;
+  }
+
+  get hasAddress(): boolean {
+    return this.controls.clinic.controls.id.value !== null;
+  }
+
+  get doctorPhoneNumber(): string {
+    return `${this.controls.doctor.controls.phoneNumberCountryCode.value!} ${this.controls.doctor.controls.phoneNumber.value!}`;
+  }
+
+  get doctorLicenseNumber(): string | null {
+    const medicalLicense = this.controls.doctor.controls.medicalLicenses.controls;
+    if (medicalLicense.length && medicalLicense.length > 0) {
+      const licenseNumber = medicalLicense[0].controls.licenseNumber;
+      if (licenseNumber.value) {
+        return licenseNumber.value;
+      }
+    }
+    return null;
+  }
+
+  get doctorSpecialtyLicense(): string | null {
+    const medicalLicense = this.controls.doctor.controls.medicalLicenses.controls;
+    if (medicalLicense.length && medicalLicense.length > 0) {
+      const specialtyLicense = medicalLicense[0].controls.specialtyLicense;
+      if (specialtyLicense.value) {
+        return specialtyLicense.value;
+      }
+    }
+    return null;
+  }
+
+  resetPatient() {
+    this.controls.patient.reset();
+    this.controls.patient.patchValue(new User());
+    this.controls.patient.markAsPristine();
+    this.updateValueAndValidity();
+  }
+
+  payload(): any {
+    return this.value;
+  }
 }
 
 export class PrescriptionParams {
@@ -105,135 +216,3 @@ export class PrescriptionParams {
   }
 }
 
-export class FilterForm {
-  group: FormGroup;
-  id: string;
-
-  constructor() {
-    this.id = `${subject}filterForm${createId()}`;
-    this.group = new FormGroup({
-      search: new FormControl(''),
-      dateRange: new FormControl({ value: ['', ''], disabled: false }),
-      pageSize: new FormControl(10, [
-        Validators.required,
-        Validators.min(1),
-        Validators.max(50),
-      ]),
-      sex: new FormControl(''),
-    });
-  }
-
-  patchValue(params: PrescriptionParams) {
-    const dateRange = [params.dateFrom, params.dateTo];
-
-    this.group.patchValue(
-      {
-        search: params.search,
-        dateRange,
-        pageSize: params.pageSize ?? 10,
-        sex: params.sex
-      },
-      { emitEvent: false, onlySelf: true },
-    );
-  }
-}
-
-export class CreateForm {
-  group: FormGroup;
-  id: string;
-  error?: BadRequest;
-  submitted = false;
-  validation = true;
-
-  constructor() {
-    this.id = `${subject}Form${createId()}`;
-
-    this.group = new FormGroup({
-      name: new FormControl(''),
-      description: new FormControl(''),
-      price: new FormControl(''),
-      discount: new FormControl(''),
-    });
-  }
-
-  setValidators(mode: boolean) {
-    const controls = this.group.controls;
-
-    if (mode) {
-      controls['name'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
-      controls['description'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
-      controls['price'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
-      controls['discount'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
-    } else {
-      controls['name'].clearValidators(); controls['name'].clearAsyncValidators();
-      controls['description'].clearValidators(); controls['description'].clearAsyncValidators();
-      controls['price'].clearValidators(); controls['price'].clearAsyncValidators();
-      controls['discount'].clearValidators(); controls['discount'].clearAsyncValidators();
-    }
-    // this.group.updateValueAndValidity();
-  }
-
-  patchWithSample() {
-    // let sample = getRandomSample();
-    // this.group.patchValue(sample);
-  }
-}
-
-export class EditForm {
-  group: FormGroup;
-  id: string;
-  error?: BadRequest;
-  submitted = false;
-  validation = true;
-
-  constructor() {
-    this.id = `${subject}Form${createId()}`;
-
-    this.group = new FormGroup({
-      name: new FormControl(''),
-      description: new FormControl(''),
-      price: new FormControl(''),
-      discount: new FormControl(''),
-    });
-  }
-
-  setValidators(mode: boolean) {
-    const controls = this.group.controls;
-
-    if (mode) {
-      controls['name'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
-      controls['description'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
-      controls['price'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255)]);
-      controls['discount'].addValidators([Validators.required, Validators.minLength(2), Validators.maxLength(255), Validators.email]);
-    } else {
-      controls['name'].clearValidators(); controls['name'].clearAsyncValidators();
-      controls['description'].clearValidators(); controls['description'].clearAsyncValidators();
-      controls['price'].clearValidators(); controls['price'].clearAsyncValidators();
-      controls['discount'].clearValidators(); controls['discount'].clearAsyncValidators();
-    }
-    // this.group.updateValueAndValidity();
-  }
-
-  patchValues = (item: Prescription) => this.group.patchValue(item);
-}
-
-export class DetailForm {
-  group: FormGroup;
-  id: string;
-  error?: BadRequest;
-  submitted = false;
-  validation = true;
-
-  patchValues = (item: Prescription) => this.group.patchValue(item);
-
-  constructor() {
-    this.id = `${subject}Form${createId()}`;
-
-    this.group = new FormGroup({
-      name: new FormControl({ value: '', disabled: true }),
-      description: new FormControl({ value: '', disabled: true }),
-      discount: new FormControl({ value: '', disabled: true }),
-      price: new FormControl({ value: '', disabled: true }),
-    });
-  }
-}

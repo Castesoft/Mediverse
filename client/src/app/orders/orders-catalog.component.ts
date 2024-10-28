@@ -1,4 +1,4 @@
-import { Component, inject, input, OnDestroy, OnInit } from "@angular/core";
+import { Component, inject, model, OnDestroy, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { IconsService } from "src/app/_services/icons.service";
 import { Pagination } from "src/app/_models/pagination";
@@ -33,9 +33,9 @@ export class OrdersCatalogComponent implements OnInit, OnDestroy {
   service = inject(OrdersService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
 
   data?: Order[];
   params!: OrderParams;

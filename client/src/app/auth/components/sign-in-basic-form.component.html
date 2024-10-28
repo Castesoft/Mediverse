@@ -1,45 +1,33 @@
-<form class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" [formGroup]="form.group" (ngSubmit)="onSubmit()"
+@if(form.error) {
+  <div errorsAlert3 [(form)]="form"></div>
+}
+
+<form class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" [id]="form.id" (ngSubmit)="onSubmit()"
   [id]="form.id">
   <div class="text-center mb-10">
     <h1 class="text-dark mb-3">Iniciar sesión en {{ utils.title }}</h1>
     @if (!requiresTwoFactor) {
-      <div class="text-gray-400 fw-semibold fs-4">
-        ¿Eres nuevo aquí?
-        <a routerLink="/auth/sign-up" class="link-primary fw-bold">
-          Crear una cuenta
-        </a>
-      </div>
+    <div class="text-gray-400 fw-semibold fs-4">
+      ¿Eres nuevo aquí?
+      <a routerLink="/auth/sign-up" class="link-primary fw-bold">
+        Crear una cuenta
+      </a>
+    </div>
     }
   </div>
   @if (!requiresTwoFactor) {
-    <div class="fv-row mb-10 fv-plugins-icon-container" inputControl formControlName="email" [label]="'Correo'"
-      [type]="'email'" [autofocus]="true" [placeholder]="'Ingrese su usuario o correo electrónico'"
-      [submitted]="form.group.dirty" [errors]="{
-        required: 'El nombre de usuario o el correo es requerido.',
-        minlength:
-          'El nombre de usuario o el correo debe tener al menos 6 caracteres.',
-        maxlength:
-          'El nombre de usuario o el correo no debe tener más de 255 caracteres.'
-      }"></div>
-  
-    <div class="fv-row mb-5 fv-plugins-icon-container" inputControl formControlName="password" [type]="'password'"
-      [label]="'Contraseña'" [autofocus]="true" [placeholder]="'Ingrese su usuario o correo electrónico'" [errors]="{
-        'required': 'La contraseña es requerida',
-        'minlength': 'La contraseña debe tener al menos 6 caracteres.',
-        'maxlength': 'La contraseña no debe tener más de 100 caracteres.'
-      }"></div>
-  
-    <a class="fs-6 link-primary" routerLink="/auth/sign-in/password-reset">¿Olvidaste tu contraseña?</a>
+  <div formBuilder3 [cols]="1" [gap]="7" [controls]="[
+      form.controls.email,
+      form.controls.password,
+    ]"></div>
+
+  <a class="fs-6 link-primary" routerLink="/auth/sign-in/password-reset">¿Olvidaste tu contraseña?</a>
   } @else {
-    <div class="fv-row mb-10 fv-plugins-icon-container" inputControl formControlName="twoFactorCode"
-      [label]="'Código de autenticación'" [type]="'text'" [autofocus]="true"
-      [placeholder]="'Ingrese el código de autenticación'" [submitted]="form.group.dirty" [errors]="{
-        required: 'El código de autenticación es requerido.',
-        minlength:
-          'El código de autenticación debe tener al menos 6 caracteres.',
-        maxlength:
-          'El código de autenticación no debe tener más de 6 caracteres.'
-      }"></div>
+
+  <div formBuilder3 [cols]="1" [controls]="[
+      form.controls.twoFactorCode,
+    ]"></div>
+
   }
 
   <div class="text-center mt-5">
@@ -52,8 +40,8 @@
       </span>
     </button>
     @if (!requiresTwoFactor && accountService.current() === null) {
-      <div class="text-center text-muted text-uppercase fw-bold mb-5">o</div>
-      <div id="google-btn"></div>
+    <div class="text-center text-muted text-uppercase fw-bold mb-5">o</div>
+    <div id="google-btn"></div>
     }
   </div>
 </form>

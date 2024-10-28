@@ -75,8 +75,8 @@ export class ColorBlindnessesTableMenuComponent
   extends TableMenu<ColorBlindnessesService>
   implements OnInit, ITableMenu<ColorBlindness>
 {
-  item: InputSignal<ColorBlindness> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<ColorBlindness> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(ColorBlindnessesService);
@@ -176,9 +176,9 @@ export class ColorBlindnessesTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<ColorBlindness[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +276,13 @@ export class ColorBlindnessesTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class ColorBlindnessesFilterFormComponent extends FormComponent<ColorBlindnessesService> implements OnInit, FilterFormGroupActions<ColorBlindness, ColorBlindnessParams, FormGroup2<ColorBlindnessParams>> {
-  item: InputSignal<ColorBlindness | undefined> = input.required();
+  item: ModelSignal<ColorBlindness | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +375,11 @@ export class ColorBlindnessesFilterFormComponent extends FormComponent<ColorBlin
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div colorBlindnessesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div colorBlindnessesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div colorBlindnessesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div colorBlindnessesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -411,9 +411,9 @@ export class ColorBlindnessesCatalogComponent implements OnInit, OnDestroy {
 
   animalId = input<number>();
   isCompact = input.required<boolean>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<ColorBlindness>();
 
   toggle = model(false);
@@ -521,10 +521,10 @@ export class ColorBlindnessParams extends EntityParams<ColorBlindness> implement
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class ColorBlindnessFormComponent extends FormComponent<ColorBlindnessesService> implements OnInit, FormGroupActions<ColorBlindness, FormGroup2<ColorBlindness>> {
-  item: InputSignal<ColorBlindness | undefined> = input.required();
+  item: ModelSignal<ColorBlindness | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<ColorBlindness> = {
     code: { label: 'Código', type: 'text' },
@@ -620,9 +620,9 @@ export class ColorBlindnessDetailComponent {
   service = inject(ColorBlindnessesService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<ColorBlindness | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<ColorBlindness | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -898,7 +898,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = null;
   key = createId();
 }
 

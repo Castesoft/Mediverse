@@ -1,6 +1,6 @@
 <thead
   (onParamsChange)="service.onSortOptionsChange(key(), $event)"
-  (onSelectAll)="service.selectAll(key(), $event)"
+  (onSelectAll)="service.onSelectAll(key(), mode(), $event)"
   [columns]="columns"
   [mode]="mode()"
   [params]="params"
@@ -33,7 +33,7 @@
                 type="radio"
                 [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
-                (change)="service.setSelected$(key(), item)"
+                (change)="service.onSelect(key(), mode(), item)"
               />
             </div>
           </td>
@@ -47,7 +47,7 @@
                 [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
-                (change)="service.addSelected$(key(), item)"
+                (change)="service.onSelect(key(), mode(), item)"
               />
             </div>
           </td>
@@ -57,8 +57,7 @@
       <td>{{ item.name }}</td>
       <td>{{ item.description }}</td>
       <td>{{ item.price | currency }}</td>
-      <td productDiscount
-          [item]="item"></td>
+      <td productDiscount [(item)]="data[idx]"></td>
       <td>{{ item.createdAt | date }}</td>
 
       <td class="text-end">

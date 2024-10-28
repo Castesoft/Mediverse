@@ -8,6 +8,7 @@ import {
   output,
   signal,
   viewChild,
+  model,
 } from '@angular/core';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -16,7 +17,6 @@ import { Event, CreateForm, EditForm, DetailForm, EventDoctorFields } from 'src/
 import { BadRequest, FormUse, Role, View } from 'src/app/_models/types';
 import { User } from 'src/app/_models/user';
 import { FormsService } from 'src/app/_services/forms.service';
-import { GuidService } from 'src/app/_services/guid.service';
 import { IconsService } from 'src/app/_services/icons.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AlertModule } from 'ngx-bootstrap/alert';
@@ -75,12 +75,11 @@ export class EventFormComponent implements OnInit, OnDestroy {
   usersService = inject(UsersService);
   servicesService = inject(ServicesService);
   addressesService = inject(AddressesService);
-  guid = inject(GuidService);
 
   id = input.required<number | null>();
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  use = model.required<FormUse>();
+  view = model.required<View>();
+  role = model.required<Role>();
   key = input<string>();
   dateFrom = input<Date>();
   dateTo = input<Date>();
@@ -89,10 +88,10 @@ export class EventFormComponent implements OnInit, OnDestroy {
   event = output<Event>();
 
   item: Event | null = null;
-  selectPatientKey: string;
-  selectServiceKey: string;
-  selectNursesKey: string;
-  selectClinicKey: string;
+  selectPatientKey = createId();
+  selectServiceKey = createId();
+  selectNursesKey = createId();
+  selectClinicKey = createId();
   _key = createId();
 
   readonly patientPanelOpen = signal(false);
@@ -116,11 +115,6 @@ export class EventFormComponent implements OnInit, OnDestroy {
   doctorFields?: EventDoctorFields;
 
   constructor() {
-    this.selectPatientKey = this.guid.gen();
-    this.selectServiceKey = this.guid.gen();
-    this.selectNursesKey = this.guid.gen();
-    this.selectClinicKey = this.guid.gen();
-
     this.route.queryParams.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (params) => {
         if (params['returnUrl']) this.returnUrl = params['returnUrl'];
@@ -318,7 +312,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   update() {
     if (this.use() === 'edit' && this.form instanceof EditForm) {
-      this.eventsService.update(this.item!.id, this.form.getRequest()).subscribe({
+      this.eventsService.update(this.item!.id!, this.form.getRequest()).subscribe({
         next: () => {
           this.form.submitted = false;
           this.snackbarService.success(this.eventsService.dictionary.singularTitlecase + ' actualizado');
@@ -327,7 +321,6 @@ export class EventFormComponent implements OnInit, OnDestroy {
           this.router.navigate([
             `${this.eventsService.dictionary.catalogRoute}/${this.item!.id}`,
           ]);
-          this.eventsService.hideEditModal();
         },
         error: (error: any) => {
           this.form.error = error;

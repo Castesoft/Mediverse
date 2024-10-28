@@ -1,5 +1,5 @@
 import {CurrencyPipe, DecimalPipe} from "@angular/common";
-import {Component, inject, input, OnInit} from "@angular/core";
+import {Component, inject, input, model, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
 import {Role, View} from "src/app/_models/types";
 import {User} from "src/app/_models/user";
@@ -52,9 +52,9 @@ export class UserCardCompactComponent implements OnInit {
   service = inject(UsersService);
   router = inject(Router);
 
-  role = input.required<Role>();
-  view = input.required<View>();
-  key = input.required<string>();
+  role = model.required<Role>();
+  view = model.required<View>();
+  key = model.required<string>();
 
   user?: User;
 

@@ -7,7 +7,7 @@ import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.compon
 import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
 import { ProductsService } from "src/app/_services/products.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { Product, ProductParams, ProductSummary } from "src/app/_models/product";
+import { Product, ProductParams } from "src/app/_models/product";
 import { TypeaheadComplexOption } from "src/app/_models/types";
 import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";
@@ -15,9 +15,18 @@ import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
 import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
 import { ProductProfilePictureComponent } from "src/app/_shared/components/product-picture.component";
+import { ProductSummary } from "src/app/_models/productSummary";
 
-interface ProductTypeaheadOptions extends TypeaheadComplexOption {
-  data: ProductSummary,
+class ProductTypeaheadOptions implements TypeaheadComplexOption {
+  data: ProductSummary;
+  name: string;
+  value: any;
+
+  constructor(data: ProductSummary, name: string, value: any) {
+    this.data = data;
+    this.name = name;
+    this.value = value;
+  }
 }
 
 @Component({
@@ -77,12 +86,12 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
   }
 
   private subscribeToSelectedProduct(): void {
-    this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (product) => {
-        this.product.set(product || null);
-        this.setInputStatusAndValue();
-      }
-    });
+    // this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    //   next: (product) => {
+    //     this.product.set(product || null);
+    //     this.setInputStatusAndValue();
+    //   }
+    // });
   }
 
   private initForm = (): void => {
@@ -91,19 +100,19 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
   };
 
   private subscribeToSummaries = (formValue: any) => {
-    const productParams: ProductParams = new ProductParams(this.key());
+    // const productParams: ProductParams = new ProductParams(this.key());
 
-    productParams.search = formValue.productTypeahead;
+    // productParams.search = formValue.productTypeahead;
 
-    this.productSummaries$ = this.service.getSummaryByValue(this.key(), productParams)
-      .pipe(map((response: ProductSummary[]) => {
-        this.products = response;
+    // this.productSummaries$ = this.service.getSummaryByValue(this.key(), productParams)
+    //   .pipe(map((response: ProductSummary[]) => {
+    //     this.products = response;
 
-        return response.map((product: ProductSummary) => {
-            return { name: product.name, value: product.id, data: product };
-          }
-        );
-      }));
+    //     return response.map((product: ProductSummary) => {
+    //         return new ProductTypeaheadOptions(product, product.name!, product.id);
+    //       }
+    //     );
+    //   }));
   };
 
   private setInputStatusAndValue = () => {
@@ -147,7 +156,7 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
   };
 
   openCatalogModal = () => {
-    this.service.showCatalogModal(new MouseEvent('click'), this.key(), 'select')
+    // this.service.showCatalogModal(new MouseEvent('click'), this.key(), 'select')
   }
 
   onTypeaheadSelect = (data: TypeaheadMatch): void => {
@@ -160,7 +169,7 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
       }))
       .subscribe((product) => {
         this.onSelectProduct.emit(product);
-        this.service.setSelected$(this.key(), product);
+        // this.service.setSelected$(this.key(), product);
       });
   };
 

@@ -5,6 +5,11 @@ namespace MainService.Core.Interfaces.Services
         Task<bool> DeleteByIdAsync(int id);
     }
 
+    public interface IMedicalInsuranceCompaniesService
+    {
+        Task<bool> DeleteByIdAsync(int id);
+    }
+
     public interface IPaymentMethodTypesService
     {
         Task<bool> DeleteByIdAsync(int id);

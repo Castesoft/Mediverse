@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject, input, OnDestroy } from "@angular/core";
+import { Component, OnInit, Input, inject, input, OnDestroy, model } from "@angular/core";
 import { CatalogMode, Role } from "src/app/_models/types";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -11,9 +11,9 @@ import { RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { Product, ProductParams } from "src/app/_models/product";
 import { Subscription } from "rxjs";
-import { GuidService } from "src/app/_services/guid.service";
 import { ProductsService } from "src/app/_services/products.service";
 import {ProductTableCellComponent, ProductTableHasAccountCellComponent, ProductTableSexCellComponent} from "src/app/products/components/product-table-cell.component";
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_products', },
@@ -29,8 +29,8 @@ export class ProductsTableComponent implements OnInit, OnDestroy {
   icons = inject(IconsService);
 
   @Input() data: Product[] = [];
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
   showHeaders = input<boolean>(true);
 
   sortAscending = false;
@@ -40,13 +40,11 @@ export class ProductsTableComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription[] = [];
 
-  cuid: string;
-  constructor(guid: GuidService) {
-    this.cuid = guid.gen();
-  }
+  cuid: string = createId();
+  constructor() {}
 
   ngOnInit(): void {
-    const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
+    const paramsSubscription = this.service.param$(this.key(), 'view').subscribe({ next: params => this.params = params });
     this.subscriptions.push(paramsSubscription);
   }
 

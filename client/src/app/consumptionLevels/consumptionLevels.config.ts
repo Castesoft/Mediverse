@@ -75,8 +75,8 @@ export class ConsumptionLevelsTableMenuComponent
   extends TableMenu<ConsumptionLevelsService>
   implements OnInit, ITableMenu<ConsumptionLevel>
 {
-  item: InputSignal<ConsumptionLevel> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<ConsumptionLevel> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(ConsumptionLevelsService);
@@ -176,9 +176,9 @@ export class ConsumptionLevelsTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<ConsumptionLevel[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +276,13 @@ export class ConsumptionLevelsTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class ConsumptionLevelsFilterFormComponent extends FormComponent<ConsumptionLevelsService> implements OnInit, FilterFormGroupActions<ConsumptionLevel, ConsumptionLevelParams, FormGroup2<ConsumptionLevelParams>> {
-  item: InputSignal<ConsumptionLevel | undefined> = input.required();
+  item: ModelSignal<ConsumptionLevel | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +375,11 @@ export class ConsumptionLevelsFilterFormComponent extends FormComponent<Consumpt
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div consumptionLevelsFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div consumptionLevelsFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div consumptionLevelsFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div consumptionLevelsFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -411,9 +411,9 @@ export class ConsumptionLevelsCatalogComponent implements OnInit, OnDestroy {
 
   animalId = input<number>();
   isCompact = input.required<boolean>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<ConsumptionLevel>();
 
   toggle = model(false);
@@ -521,10 +521,10 @@ export class ConsumptionLevelParams extends EntityParams<ConsumptionLevel> imple
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class ConsumptionLevelFormComponent extends FormComponent<ConsumptionLevelsService> implements OnInit, FormGroupActions<ConsumptionLevel, FormGroup2<ConsumptionLevel>> {
-  item: InputSignal<ConsumptionLevel | undefined> = input.required();
+  item: ModelSignal<ConsumptionLevel | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<ConsumptionLevel> = {
     code: { label: 'Código', type: 'text' },
@@ -620,9 +620,9 @@ export class ConsumptionLevelDetailComponent {
   service = inject(ConsumptionLevelsService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<ConsumptionLevel | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<ConsumptionLevel | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -898,7 +898,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = null;
   key = createId();
 }
 

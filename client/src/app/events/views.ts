@@ -1,4 +1,4 @@
-import { Component, input, viewChild } from "@angular/core";
+import { Component, input, model, viewChild } from "@angular/core";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { Event } from "src/app/_models/event";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
@@ -7,15 +7,15 @@ import { EventFormComponent } from "src/app/events/components/event-form/event-f
 @Component({
   selector: 'div[eventNewView]',
   template: `
-  <div eventForm [use]="use()" [id]="null" [view]="view()" [role]="role()"></div>
+  <div eventForm [use]="use()" [id]="null" [(view)]="view" [role]="role()"></div>
   `,
   standalone: true,
   imports: [ EventFormComponent, ModalWrapperModule, ],
 })
 export class EventNewComponent {
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  use = model.required<FormUse>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   formComponent = viewChild.required(EventFormComponent);
 

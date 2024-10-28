@@ -1,4 +1,4 @@
-import { Component, inject, input, OnDestroy, OnInit } from "@angular/core";
+import { Component, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { IconsService } from "src/app/_services/icons.service";
 import { Pagination } from "src/app/_models/pagination";
@@ -33,10 +33,10 @@ export class EventsCatalogComponent implements OnInit, OnDestroy {
   service = inject(EventsService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   hideAddButton = input<boolean>(false);
 

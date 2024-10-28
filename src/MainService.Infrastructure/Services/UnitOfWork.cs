@@ -10,6 +10,7 @@ namespace MainService.Infrastructure.Services;
 public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService googleService) : IUnitOfWork
 {
     public IProductRepository ProductRepository => new ProductRepository(context, mapper);
+    public IDocumentRepository DocumentRepository => new DocumentRepository(context, mapper);
     public IPaymentMethodTypeRepository PaymentMethodTypeRepository => new PaymentMethodTypeRepository(context, mapper);
     public IMedicalInsuranceCompanyRepository MedicalInsuranceCompanyRepository => new MedicalInsuranceCompanyRepository(context, mapper);
     public ISpecialtyRepository SpecialtyRepository => new SpecialtyRepository(context, mapper);

@@ -1,7 +1,7 @@
 import { AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlOptions, FormControlState, FormGroup, ValidatorFn, Validators, ɵTypedOrUntyped } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
 import { Observable } from "rxjs";
-import { ControlErrors, ControlOrientation, InputTypes, isSelectOption, SelectOption } from "src/app/_forms/form";
+import { ControlErrors, ControlOrientation, InputTypes, isFile, isSelectOption, SelectOption } from "src/app/_forms/form";
 import { BadRequest, ColumnOptions, DateRange, FormUse, Units } from "src/app/_models/types";
 import { Address, Person, Photo } from "src/app/_utils/person";
 
@@ -35,7 +35,7 @@ class TypeaheadOptions {
   }
 }
 
-type ControlInfo<T extends string | number | boolean | Date | SelectOption | DateRange | null> = Partial<{
+type ControlInfo<T extends string | number | boolean | Date | SelectOption | File | DateRange | null> = Partial<{
   label: string;
   name: string;
   type: InputTypes;
@@ -59,6 +59,7 @@ type ControlInfo<T extends string | number | boolean | Date | SelectOption | Dat
   columnOptions: ColumnOptions;
   inputGroupPrepend: string;
   inputGroupAppend: string;
+  title: string;
   unit: Units;
   typeahead: TypeaheadOptions;
   validators: ValidatorFn[];
@@ -72,6 +73,8 @@ type ControlInfoMap<T> =
   ? ControlInfo<string>
   : T extends boolean
   ? ControlInfo<boolean>
+  : T extends File
+  ? ControlInfo<File>
   : T extends number
   ? ControlInfo<number>
   : T extends boolean
@@ -132,7 +135,7 @@ type TypedControl<T> = T extends string | number | boolean | Date | SelectOption
   : never
 ;
 
-type TypedFormControl<T> = T extends string | number | boolean | Date | SelectOption | DateRange | SelectOption[]
+type TypedFormControl<T> = T extends string | number | boolean | Date | SelectOption | File | DateRange | SelectOption[]
   ? FormControl2<T | null>
   : T extends Array<infer U extends object>
   ? FormArray<FormGroup2<U>>
@@ -175,6 +178,8 @@ export function createTypedFormGroup2<T extends object>(
       );
     } else if (
       isSelectOption(value) ||
+      isFile(value) ||
+      value instanceof File ||
       value instanceof DateRange ||
       value instanceof Date ||
       typeof value === 'string' ||
@@ -229,7 +234,7 @@ export function createTypedFormGroup2<T extends object>(
 
 export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   id: string = createId();
-  error?: BadRequest;
+  error: BadRequest | null = null;
   submitted: boolean = false;
   validation: boolean = true;
   orientation?: ControlOrientation = "inline";
@@ -245,6 +250,7 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   name: string | null = null;
   hidden: boolean = false;
   type?: InputTypes;
+  loading = false;
 
   override controls!: TypedFormGroup<T>;
 
@@ -294,7 +300,7 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
     this.setUse('detail');
     this.patchValue(item as any);
     this.updateValueAndValidity();
-    this.error = undefined;
+    this.error = null;
     this.markAsPristine();
   }
 
@@ -325,10 +331,14 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
     });
   }
 
+  removeError(): this {
+    this.error = null;
+    return this;
+  }
 
 }
 
-export class FormControl2<T extends string | number | boolean | Date | SelectOption | SelectOption[] | DateRange | null> extends FormControl<T | null> {
+export class FormControl2<T extends string | number | boolean | Date | SelectOption | File | SelectOption[] | DateRange | null> extends FormControl<T | null> {
   id: string = createId();
   label: string = '';
   name: string = '';
@@ -354,6 +364,7 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   typeahead = new TypeaheadOptions();
   textareaOptions = new TextareaOptions();
   selectOptionOptions = new SelectOptionOptions();
+  title: string | null = null;
 
   constructor(
     value: FormControlState<T> | T,

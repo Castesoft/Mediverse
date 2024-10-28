@@ -310,7 +310,7 @@ public class AccountController(
             if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
                 return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
 
-            var uploadResult = await cloudinaryService.Upload(file, new() {
+            var uploadResult = await cloudinaryService.UploadAsync(file, new() {
                 File = new FileDescription(file.FileName, file.OpenReadStream()),
                 Folder = "Mediverse/DoctorMedicalLicenses",
             });
@@ -461,7 +461,7 @@ public class AccountController(
             Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
         };
 
-        var result = await cloudinaryService.Upload(file, imageUploadParams);
+        var result = await cloudinaryService.UploadAsync(file, imageUploadParams);
 
         if (result.Error != null) return BadRequest(result.Error.Message);
 
@@ -525,7 +525,7 @@ public class AccountController(
             Folder = "Mediverse/DoctorBannerPhoto",
         };
 
-        var result = await cloudinaryService.Upload(file, imageUploadParams);
+        var result = await cloudinaryService.UploadAsync(file, imageUploadParams);
 
         if (result.Error != null) return BadRequest(result.Error.Message);
 
@@ -1212,90 +1212,160 @@ public class AccountController(
 
     [Authorize]
     [HttpPost("medical-insurance-company")]
-    public async Task<ActionResult<UserMedicalInsuranceCompanyDto>> AddMedicalInsuranceCompany([FromForm] IFormFile file, [FromForm] string json)
+    public async Task<ActionResult<AccountDto?>> AddMedicalInsuranceCompanyAsync([FromForm] UserMedicalInsuranceCompanyCreateDto request)
     {
         int userId = User.GetUserId();
 
-        UserMedicalInsuranceCompanyCreateDto? request = JsonSerializer.Deserialize<UserMedicalInsuranceCompanyCreateDto>(json);
+        if (!await uow.UserRepository.UserExistsByIdAsync(userId))
+        return BadRequest($"Usuario de ID {userId} no fue encontrado.");
 
-        if (file == null || file.Length == 0) return BadRequest("No se ha enviado un documento.");
-        if (request == null) return BadRequest("No se ha enviado la información de la compañía de seguro médico.");
+        if (!request.IsMain.HasValue)
+        return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
 
-        var uploadResult = await cloudinaryService.Upload(file, new() {
-            File = new FileDescription(file.FileName, file.OpenReadStream()),
-            Folder = "Mediverse/UserMedicalInsuranceCompanies",
-        });
-        if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+        if (request.MedicalInsuranceCompany == null)
+        return BadRequest("No se ha enviado la compañía de seguro médico.");
 
-        var uploadThumbnailResult = await cloudinaryService.Upload(file, new() {
-            File = new FileDescription(file.FileName, file.OpenReadStream()),
-            Folder = "Mediverse/UserMedicalInsuranceCompanies/Thumbnails",
-            Format = "jpg",
-            Transformation = new Transformation().Page(1).Height(300).Width(400).Crop("fill").Gravity("north")
-        });
-        if (uploadThumbnailResult.Error != null) return BadRequest(uploadThumbnailResult.Error.Message);
+        if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(request.MedicalInsuranceCompany.Id))
+        return BadRequest($"Compañía de seguro médico de ID {request.MedicalInsuranceCompany.Id} no fue encontrada.");
 
+        if (string.IsNullOrEmpty(request.PolicyNumber))
+        return BadRequest("No se ha enviado el número de póliza.");
+
+        if (request.File == null)
+        return BadRequest("No se ha enviado el documento.");
+
+        IFormFile file = request.File;
+        bool isMain = request.IsMain.Value;
+        OptionDto medicalInsuranceCompany = request.MedicalInsuranceCompany;
+        string policyNumber = request.PolicyNumber;
         AppUser? user = await userManager.Users
             .Include(x => x.UserMedicalInsuranceCompanies)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        if (user.UserMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == int.Parse(request.MedicalInsuranceCompanyId)))
-            return BadRequest("Ya tienes esta compañía de seguro médico registrada.");
+        if (user.UserMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompany.Id))
+        return BadRequest("Ya tienes esta compañía de seguro médico registrada.");
 
-        if (request.IsMain)
+        ImageUploadResult uploadResult = await cloudinaryService.UploadAsync(file, new() {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/UserMedicalInsuranceCompanies",
+        });
+
+        if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+
+        ImageUploadResult uploadThumbnailResult = await cloudinaryService.UploadAsync(file, new() {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/UserMedicalInsuranceCompanies/Thumbnails",
+            Format = "jpg",
+            Transformation = new Transformation().Page(1).Height(300).Width(400).Crop("fill").Gravity("north")
+        });
+
+        if (uploadThumbnailResult.Error != null) return BadRequest(uploadThumbnailResult.Error.Message);
+
+        if (isMain)
         {
-            var mainMedicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.IsMain);
+            UserMedicalInsuranceCompany? mainMedicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.IsMain);
             if (mainMedicalInsuranceCompany != null) mainMedicalInsuranceCompany.IsMain = false;
         }
 
         user.UserMedicalInsuranceCompanies.Add(new() {
-            UserId = userId,
-            MedicalInsuranceCompanyId = int.Parse(request.MedicalInsuranceCompanyId),
-            IsMain = request.IsMain,
+            MedicalInsuranceCompanyId = medicalInsuranceCompany.Id,
+            IsMain = isMain,
             PolicyNumber = request.PolicyNumber,
-            Document = new()
-            {
+            Document = new() {
                 Url = uploadResult.SecureUrl.AbsoluteUri,
                 PublicId = uploadResult.PublicId,
                 ThumbnailUrl = uploadThumbnailResult.SecureUrl.AbsoluteUri,
-                ThumbnailPublicId = uploadThumbnailResult.PublicId
+                ThumbnailPublicId = uploadThumbnailResult.PublicId,
+                Name = file.FileName,
+                Size = (int)file.Length,
             }
         });
 
         if (!await uow.Complete()) return BadRequest("Error guardando la compañía de seguro médico.");
 
-        user = await userManager.Users
-            .Include(x => x.UserMedicalInsuranceCompanies)
-                .ThenInclude(x => x.MedicalInsuranceCompany)
-                .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
-                .ThenInclude(x => x.Photo)
-            .SingleOrDefaultAsync(x => x.Id == userId);
-
-        return mapper.Map<UserMedicalInsuranceCompanyDto>(user!.UserMedicalInsuranceCompanies.Last());
+        return await usersService.GenerateAccountDtoAsync(userId);
     }
 
     [Authorize]
-    [HttpDelete("medical-insurance-company/{medicalInsuranceCompanyId}")]
-    public async Task<ActionResult> DeleteMedicalInsuranceCompany(int medicalInsuranceCompanyId)
+    [HttpDelete("medical-insurance-company/{insuranceId}")]
+    public async Task<ActionResult<AccountDto?>> DeleteInsuranceByIdAsync([FromRoute]int insuranceId)
     {
         int userId = User.GetUserId();
 
-        var user = await userManager.Users
+        AppUser? user = await userManager.Users
             .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.Document)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        UserMedicalInsuranceCompany? medicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId);
-        if (medicalInsuranceCompany == null) return NotFound($"La compañía de seguro médico con id {medicalInsuranceCompanyId} no existe.");
+        if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(insuranceId))
+        return BadRequest($"La compañía de seguro médico con id {insuranceId} no existe.");
 
-        user.UserMedicalInsuranceCompanies.Remove(medicalInsuranceCompany);
+        UserMedicalInsuranceCompany? toDelete = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == insuranceId);
+        if (toDelete == null) return NotFound($"No estás registrado con la compañía de seguro médico con id {insuranceId}.");
 
+        user.UserMedicalInsuranceCompanies.Remove(toDelete);
         if (!await uow.Complete()) return BadRequest("Error eliminando la compañía de seguro médico.");
 
-        return Ok();
+        if (toDelete.Document != null) {
+            if (!string.IsNullOrEmpty(toDelete.Document.PublicId)) {
+                DeletionResult deleteResponse = await cloudinaryService.DeleteAsync(toDelete.Document.PublicId);
+                if (deleteResponse.Error != null) return BadRequest(deleteResponse.Error.Message);
+            }
+
+            if (!string.IsNullOrEmpty(toDelete.Document.ThumbnailPublicId)) {
+                DeletionResult thumbnailDeleteResponse = await cloudinaryService.DeleteAsync(toDelete.Document.ThumbnailPublicId);
+                if (thumbnailDeleteResponse.Error != null) return BadRequest(thumbnailDeleteResponse.Error.Message);
+            }
+        }
+
+        return await usersService.GenerateAccountDtoAsync(userId);
+    }
+
+    [Authorize]
+    [HttpDelete("medical-insurance-company-document/{documentId}")]
+    public async Task<ActionResult<AccountDto?>> DeleteInsuranceDocumentByIdAsync([FromRoute]int documentId)
+    {
+        int userId = User.GetUserId();
+
+        AppUser? user = await userManager.Users
+            .AsNoTracking()
+            .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.Document)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (!await uow.DocumentRepository.ExistsByIdAsync(documentId))
+        return BadRequest($"El documento de la compañía de seguro médico con id {documentId} no existe.");
+
+        if (!user.UserMedicalInsuranceCompanies.Any(x => x.DocumentId == documentId))
+        return BadRequest($"No estás registrado con la compañía de seguro médico que tiene el documento con id {documentId}.");
+
+        Document? document = await uow.DocumentRepository.GetByIdAsync(documentId);
+
+        if (document == null) return NotFound($"No se ha encontrado el documento de la compañía de seguro médico con id {documentId}.");
+
+        if (document != null) {
+            if (!string.IsNullOrEmpty(document.PublicId)) {
+                DeletionResult deleteResponse = await cloudinaryService.DeleteAsync(document.PublicId);
+                if (deleteResponse.Error != null) return BadRequest(deleteResponse.Error.Message);
+            }
+
+            if (!string.IsNullOrEmpty(document.ThumbnailPublicId)) {
+                DeletionResult thumbnailDeleteResponse = await cloudinaryService.DeleteAsync(document.ThumbnailPublicId);
+                if (thumbnailDeleteResponse.Error != null) return BadRequest(thumbnailDeleteResponse.Error.Message);
+            }
+        }
+
+        uow.DocumentRepository.Delete(document);
+
+        if (!await uow.Complete()) return BadRequest("Error eliminando el documento de la compañía de seguro médico.");
+
+        return await usersService.GenerateAccountDtoAsync(userId);
     }
 
     [Authorize]
@@ -1347,33 +1417,36 @@ public class AccountController(
     }
 
     [Authorize]
-    [HttpPost("doctor-medical-insurance-company/{medicalInsuranceCompanyId}")]
-    public async Task<ActionResult> ToggleDoctorMedicalInsuranceCompany(int medicalInsuranceCompanyId)
+    [HttpPut("doctor-medical-insurance-company")]
+    public async Task<ActionResult<AccountDto?>> ToggleDoctorInsuranceAsync([FromQuery]int insuranceId, [FromQuery]bool isActive)
     {
         int userId = User.GetUserId();
 
-        var user = await userManager.Users
+        AppUser? user = await userManager.Users
             .Include(x => x.DoctorMedicalInsuranceCompanies)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        if (user.DoctorMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId))
+        if (!await uow.UserRepository.HasDoctorRoleByIdAsync(userId))
+        return BadRequest($"El usuario con id {userId} no es un doctor.");
+
+        if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(insuranceId))
+        return BadRequest($"La compañía de seguro médico con id {insuranceId} no existe.");
+
+        if (user.DoctorMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == insuranceId))
         {
-            DoctorMedicalInsuranceCompany? doctorMedicalInsuranceCompany = user.DoctorMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId);
+            DoctorMedicalInsuranceCompany? doctorMedicalInsuranceCompany = user.DoctorMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == insuranceId);
             user.DoctorMedicalInsuranceCompanies.Remove(doctorMedicalInsuranceCompany);
         }
         else
         {
-            user.DoctorMedicalInsuranceCompanies.Add(new() {
-                DoctorId = userId,
-                MedicalInsuranceCompanyId = medicalInsuranceCompanyId
-            });
+            user.DoctorMedicalInsuranceCompanies.Add(new(insuranceId));
         }
 
         if (!await uow.Complete()) return BadRequest("Error actualizando la compañía de seguro médico del doctor.");
 
-        return Ok();
+        return await usersService.GenerateAccountDtoAsync(userId);
     }
 
     [Authorize]
@@ -1474,7 +1547,7 @@ public class AccountController(
                 if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
                     return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
 
-                var uploadResult = await cloudinaryService.Upload(file, new() {
+                var uploadResult = await cloudinaryService.UploadAsync(file, new() {
                     File = new FileDescription(file.FileName, file.OpenReadStream()),
                     Folder = "Mediverse/DoctorMedicalLicenses",
                 });
@@ -1482,7 +1555,7 @@ public class AccountController(
 
                 if (prevMedicalLicense != null)
                 {
-                    var deletionResult = await cloudinaryService.Delete(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
+                    var deletionResult = await cloudinaryService.DeleteAsync(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
                     if (deletionResult.Error != null)
                         return BadRequest("Error eliminando la prueba de especialidad anterior.");
                 }
@@ -1498,14 +1571,14 @@ public class AccountController(
                     var medicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == int.Parse(request.SpecialtyId));
                     if (medicalLicense == null) return BadRequest("No se ha encontrado la prueba de especialidad.");
 
-                    var uploadResult = await cloudinaryService.Upload(file, new() {
+                    var uploadResult = await cloudinaryService.UploadAsync(file, new() {
                         File = new FileDescription(file.FileName, file.OpenReadStream()),
                         Folder = "Mediverse/DoctorMedicalLicenses",
                     });
                     if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
                     var previousMedicalLicenseDocument = medicalLicense.MedicalLicense.MedicalLicenseDocument;
-                    var prevDocumentDeleteResult = await cloudinaryService.Delete(previousMedicalLicenseDocument.Document.PublicId);
+                    var prevDocumentDeleteResult = await cloudinaryService.DeleteAsync(previousMedicalLicenseDocument.Document.PublicId);
                     if (prevDocumentDeleteResult.Error != null) return BadRequest("Error eliminando la prueba de especialidad anterior.");
 
                     medicalLicense.MedicalLicense.MedicalLicenseDocument = new(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
@@ -1546,7 +1619,7 @@ public class AccountController(
                     Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
                 };
 
-                var result = await cloudinaryService.Upload(photo, imageUploadParams);
+                var result = await cloudinaryService.UploadAsync(photo, imageUploadParams);
 
                 if (result.Error != null) return BadRequest(result.Error.Message);
 

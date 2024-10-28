@@ -141,3 +141,10 @@ html {
   font-family: monospace;
 }
 
+[mat-dialog-title] {
+  cursor: move!important;
+}
+
+.mat-mdc-dialog-surface {
+  background-color: transparent!important;
+}

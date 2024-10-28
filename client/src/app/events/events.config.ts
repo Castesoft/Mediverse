@@ -1,12 +1,11 @@
 import {CommonModule} from "@angular/common";
-import {NgModule} from "@angular/core";
+import {NgModule, signal} from "@angular/core";
 import {Component, inject, OnInit} from "@angular/core";
 import {ActivatedRoute, ResolveFn, Router, RouterModule, Routes} from "@angular/router";
 import {CatalogMode, FormUse, Role, Sections, View} from "src/app/_models/types";
 import {CompactTableService} from "src/app/_services/compact-table.service";
 import {EventsService} from "src/app/_services/events.service";
 import {Event} from "src/app/_models/event";
-import {GuidService} from "src/app/_services/guid.service";
 import {LayoutModule} from "src/app/_shared/layout.module";
 import {EventNewComponent} from "src/app/events/views";
 import {EventDetailComponent} from "src/app/events/components/event-detail/event-detail.component";
@@ -20,10 +19,7 @@ import { EventsDisplayComponent } from './components/events-display/events-displ
   template: `
     <router-outlet></router-outlet>`,
 })
-export class EventsComponent implements OnInit {
-  ngOnInit(): void {
-
-  }
+export class EventsComponent {
 }
 
 @Component({
@@ -31,9 +27,9 @@ export class EventsComponent implements OnInit {
   template: `
     <div card>
       <app-events-display
-        [key]="key"
+        [(key)]="key"
         [mode]="mode"
-        [view]="view"
+        [(view)]="view"
         [role]="role"
       ></app-events-display>
     </div>
@@ -44,12 +40,11 @@ export class EventsComponent implements OnInit {
 export class CatalogComponent implements OnInit {
   service = inject(EventsService);
   compact = inject(CompactTableService);
-  guid = inject(GuidService);
 
   isCompact = false;
   view: View = 'page';
   mode: CatalogMode = 'view';
-  key = this.guid.gen();
+  key = createId();
   section: Sections = 'events';
   role: Role = 'Patient';
   label: string;
@@ -66,16 +61,13 @@ export class CatalogComponent implements OnInit {
 @Component({
   selector: 'event-detail-route',
   template: `
-    @if (id && item && key) {
       <div
-        eventDetailView
-        [id]="id"
-        [use]="use"
-        [view]="view"
-        [item]="item"
-        [key]="key"
+        eventDetail
+        [(use)]="use"
+        [(view)]="view"
+        [(item)]="item"
+        [(key)]="key"
       ></div>
-    }
   `,
   standalone: true,
   imports: [RouterModule, EventDetailComponent, LayoutModule,],
@@ -85,107 +77,67 @@ export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  item?: Event;
-  id?: number;
-  use: FormUse = 'detail';
-  view: View = 'page';
-  label?: string;
-  key?: string;
+  item = signal<Event | null>(null);
+  use = signal<FormUse>('detail');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   section: Sections = 'events';
   role: Role = 'Patient';
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-        this.eventsService.getById(this.id).subscribe({
-          next: (item) => {
-            this.item = item;
-            this.label = item.patient?.fullName;
-          },
-        });
-      },
-    });
     this.route.data.subscribe({
       next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.patient?.fullName;
+        this.item.set(data['item']);
       },
     });
     const navigation = this.router.getCurrentNavigation();
-    this.key = navigation?.extras?.state?.['key'] || createId();
+    this.key.set(navigation?.extras?.state?.['key'] || createId());
   }
 }
 
 @Component({
   selector: 'event-edit-route',
   template: `
-    @if (id && item) {
       <div
-        eventEditView
-        [id]="id"
-        [use]="use"
-        [view]="view"
-        [key]="key"
-        [item]="item"
-        [role]="role"
+        eventDetail
+        [(use)]="use"
+        [(view)]="view"
+        [(key)]="key"
+        [(item)]="item"
       ></div>
-    }
   `,
   standalone: true,
-  imports: [EventEditComponent, RouterModule, LayoutModule],
+  imports: [EventDetailComponent, RouterModule, LayoutModule],
 })
-export class EditComponent implements OnInit {
+export class EditComponent {
   private eventsService = inject(EventsService);
   private ngUnsubscribe = new Subject<void>();
   private route = inject(ActivatedRoute);
 
-  item?: Event;
-  id?: number;
-  use: FormUse = 'edit';
-  view: View = 'page';
+  item = signal<Event | null>(null);
+  use = signal<FormUse>('edit');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   label?: string;
-  key = undefined;
   section: Sections = 'events';
-  role: Role = 'Patient';
+  role = signal<Role>('Patient');
 
-  ngOnInit(): void {
-    this.subscribeToParams();
-    this.subscribeToRouteData();
-  }
-
-  private subscribeToRouteData = (): void => {
+  constructor() {
     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data): void => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.patient?.fullName;
+        this.item.set(data['item']);
       },
     });
   }
 
-  private subscribeToParams = (): void => {
-    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (params): void => {
-        this.id = +params.get('id')!;
-        this.getEvent(this.id);
-      },
-    });
-  }
-
-  private getEvent = (id: number): void => {
-    this.eventsService.getById(id).subscribe({
-      next: (item): void => {
-        this.item = item;
-        this.label = item.patient?.fullName;
-      },
-    });
-  }
 }
 
 @Component({
   selector: 'event-new-route',
   template: `
-    <div eventNewView [use]="use" [view]="view" [role]="role"
+    <div eventNewView [(use)]="use" [(view)]="view" [role]="role"
     ></div>`,
   standalone: true,
   imports: [EventNewComponent, RouterModule, LayoutModule,],

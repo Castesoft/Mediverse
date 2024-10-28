@@ -4,9 +4,9 @@ import { FormInfo, FormGroup2, FormControl2 } from "src/app/_forms/form2";
 import { Address } from "src/app/_models/address";
 import { AvailableDay } from "src/app/_models/availableDay";
 import { DoctorResult, doctorResultInfo } from "src/app/_models/doctorResult";
-import { MedicalInsuranceCompany } from "src/app/_models/medicalInsuranceCompany";
 import { PaymentMethodType } from "src/app/_models/paymentMethodType";
 import { Service } from "src/app/_models/service";
+import { MedicalInsuranceCompany } from "src/app/medicalInsuranceCompanies/medicalInsuranceCompanies.config";
 
 export class DoctorScheduleFormPayload {
   service: SelectOption | null = null;
@@ -102,8 +102,8 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
       const constructedService = new Service({ ...service });
 
       let optionToReturn = new SelectOption({ id: constructedService.id!,
-        name: constructedService.name,
-        code: constructedService.name,
+        name: constructedService.name!,
+        code: constructedService.name!,
         enabled: constructedService.enabled,
         visible: constructedService.visible,
       });
@@ -121,8 +121,8 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
       const constructedMedicalInsuranceCompany = new MedicalInsuranceCompany({ ...medicalInsuranceCompany });
 
       let optionToReturn = new SelectOption({ id: constructedMedicalInsuranceCompany.id!,
-        name: constructedMedicalInsuranceCompany.name,
-        code: constructedMedicalInsuranceCompany.name,
+        name: constructedMedicalInsuranceCompany.name!,
+        code: constructedMedicalInsuranceCompany.name!,
         enabled: constructedMedicalInsuranceCompany.enabled,
         visible: constructedMedicalInsuranceCompany.visible });
 
@@ -136,7 +136,7 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
     this.controls.paymentMethodType.selectOptions = doctor.paymentMethods.map(paymentMethod => {
       const constructedPaymentMethod = new PaymentMethodType({ ...paymentMethod });
 
-      return new SelectOption({ id: constructedPaymentMethod.id!, name: constructedPaymentMethod.name, code: constructedPaymentMethod.name, enabled: constructedPaymentMethod.enabled, visible: constructedPaymentMethod.visible });
+      return new SelectOption({ id: constructedPaymentMethod.id!, name: constructedPaymentMethod.name!, code: constructedPaymentMethod.name!, enabled: constructedPaymentMethod.enabled, visible: constructedPaymentMethod.visible });
     });
 
     if (selectedSchedule) {
@@ -152,10 +152,10 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
       const address = value!.addresses[0]!;
 
       this.controls.clinic.patchValue(new SelectOption({
-        code: address.code,
+        code: address.code!,
         enabled: address.enabled,
         id: address.id!,
-        name: address.name,
+        name: address.name!,
         visible: address.visible,
       }));
     }

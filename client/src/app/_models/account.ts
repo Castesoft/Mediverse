@@ -9,6 +9,7 @@ import { SelectOption } from "src/app/_forms/form";
 import { Doctor, doctorInfo } from "src/app/_models/doctor";
 import { WorkScheduleSettings, workScheduleSettingsInfo } from "src/app/_models/workScheduleSettings";
 import { DoctorClinic } from "src/app/_models/doctorClinic";
+import { UserMedicalInsuranceCompany, userMedicalInsuranceCompanyInfo } from "src/app/_models/userMedicalInsuranceCompany";
 
 export class Account {
   id: number | null = null;
@@ -34,7 +35,7 @@ export class Account {
   paymentMethodTypes: PaymentMethodType[] = [];
   medicalLicenses: MedicalLicense[] = [];
   requireAnticipatedCardPayments: boolean = false;
-  workSchedules: WorkSchedule[] = [] = [];;
+  workSchedules: WorkSchedule[] = [] = [];
   workScheduleSettings: WorkScheduleSettings = new WorkScheduleSettings();
   doctorClinics: DoctorClinic[] = [];
   sharedDoctors: Doctor[] = [];
@@ -56,12 +57,16 @@ export class Account {
   licenseNumber: string | null = null;
   specialtyLicense: string | null = null;
 
+  medicalInsuranceCompanies: UserMedicalInsuranceCompany[] = [];
+  doctorInsuranceCompanies: SelectOption[] = [];
+
   constructor(init?: Partial<Account>) {
     Object.assign(this, init);
   }
 }
 
 export const accountInfo: FormInfo<Account> = {
+  medicalInsuranceCompanies: userMedicalInsuranceCompanyInfo,
   certificateFile: { label: 'Cédula/Certificación', type: 'file' },
   licenseNumber: { label: 'Cédula Profesional', type: 'text' },
   photoFile: { label: 'Archivo de foto', type: 'file' },

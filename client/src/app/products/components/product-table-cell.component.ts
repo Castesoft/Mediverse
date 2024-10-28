@@ -1,5 +1,5 @@
 import { CurrencyPipe, NgClass, PercentPipe } from '@angular/common';
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, model, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Product } from 'src/app/_models/product';
 import { ProductsService } from 'src/app/_services/products.service';
@@ -7,7 +7,7 @@ import { ProductsService } from 'src/app/_services/products.service';
 @Component({
   selector: 'td[productDiscount]',
   template: `
-  @if(item().discount > 0) {
+  @if(item().discount! > 0) {
     <div class="badge badge-light-success fw-bold">
       {{ item().discount | percent }}
     </div>
@@ -17,7 +17,7 @@ import { ProductsService } from 'src/app/_services/products.service';
   imports: [ NgClass, PercentPipe, ],
 })
 export class ProductTableHasAccountCellComponent {
-  item = input.required<Product>();
+  item = model.required<Product>();
 }
 
 @Component({
@@ -32,7 +32,7 @@ export class ProductTableHasAccountCellComponent {
   imports: [ NgClass ],
 })
 export class ProductTableSexCellComponent {
-  item = input.required<Product>();
+  item = model.required<Product>();
 }
 
 @Component({
@@ -47,7 +47,7 @@ export class ProductTableSexCellComponent {
           <img [src]="item().photoUrl" alt="Emma Smith" class="w-100" />
           } @else {
           <div class="symbol-label fs-3 bg-light-danger text-danger">
-            {{ item().name[0] }}
+            {{ item().name![0] }}
           </div>
           }
         </div>
@@ -69,7 +69,7 @@ export class ProductTableSexCellComponent {
 export class ProductTableCellComponent implements OnInit {
   service = inject(ProductsService);
 
-  item = input.required<Product>();
+  item = model.required<Product>();
 
   routerLink?: string;
 

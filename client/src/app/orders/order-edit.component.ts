@@ -1,4 +1,4 @@
-import { Component, inject, input, OnDestroy, OnInit } from "@angular/core";
+import { Component, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { Order } from "src/app/_models/order";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -16,7 +16,6 @@ import { SnackbarService } from 'src/app/_services/snackbar.service';
 @Component({
   selector: '[orderEditView]',
   templateUrl: './order-edit.component.html',
-  styleUrls: ['./order-edit.component.scss'],
   standalone: true,
   imports: [
     DatePipe,
@@ -33,12 +32,12 @@ export class OrderEditComponent implements OnInit, OnDestroy {
   service = inject(OrdersService);
   icons = inject(IconsService);
 
-  key = input.required<string | undefined>();
-  use = input.required<FormUse>();
-  item = input.required<Order>();
+  key = model.required<string | null>();
+  use = model.required<FormUse>();
+  item = model.required<Order>();
   id = input.required<number>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   formGroup: FormGroup = new FormGroup({});
 

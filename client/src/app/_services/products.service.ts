@@ -1,531 +1,81 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
-import { SnackbarService } from 'src/app/_services/snackbar.service';
-import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap } from "rxjs";
-import { Modal } from "src/app/_models/modal";
-import { PaginatedResult } from "src/app/_models/pagination";
-import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, SortOptions, View } from "src/app/_models/types";
-import { FilterForm, Product, ProductParams, ProductSummary } from "src/app/_models/product";
-import { ConfirmService } from "src/app/_services/confirm.service";
-import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
-import { ProductDetailModalComponent, ProductEditModalComponent, ProductNewModalComponent, ProductsCatalogModalComponent, ProductsFilterModalComponent } from "src/app/products/modals";
-import { environment } from "src/environments/environment";
+import { Injectable } from "@angular/core";
+import { BsModalRef, ModalOptions } from "ngx-bootstrap/modal";
+import { FormGroup2 } from "src/app/_forms/form2";
+import { Product, ProductParams } from "src/app/_models/product";
+import { CatalogMode, Column, FormUse, NamingSubject, View } from "src/app/_models/types";
+import { ServiceHelper } from "src/app/_services/serviceHelper";
+import { ProductDetailModalComponent, ProductsCatalogModalComponent, ProductsFilterModalComponent } from "src/app/products/modals";
 
 @Injectable({
   providedIn: "root",
 })
-export class ProductsService {
-  private http = inject(HttpClient);
-  private bsModalService = inject(BsModalService);
-  private router = inject(Router);
-  private confirm = inject(ConfirmService);
-  private snackbarService = inject(SnackbarService);
-
-  baseUrl = `${environment.apiUrl}products/`;
+export class ProductsService extends ServiceHelper<Product, ProductParams, FormGroup2<ProductParams>> {
+  constructor() {
+    super(ProductParams, 'products', new NamingSubject(
+      'masculine',
+      'producto',
+      'productos',
+      'Productos',
+      'products',
+      ['home', 'products']
+    ), [
+      new Column('id', 'ID'),
+      new Column('name', 'Nombre'),
+      new Column('description', 'Descripción'),
+      new Column('price', 'Precio'),
+      new Column('quantity', 'Cantidad'),
+      new Column('unit', 'Unidad'),
+      new Column('discount', 'Descuento'),
+      new Column('dosage', 'Dosis'),
+      new Column('lotNumber', 'Número de lote'),
+      new Column('manufacturer', 'Fabricante'),
+      new Column('photoUrl', 'URL de la foto'),
+      new Column('isInternal', 'Interno'),
+      new Column('createdAt', 'Creado'),
+      new Column('enabled', 'Habilitado'),
+      new Column('visible', 'Visible'),
+    ])
+  }
 
   private detailModalRef: BsModalRef<ProductDetailModalComponent> = new BsModalRef<ProductDetailModalComponent>();
   hideDetailModal = () => this.detailModalRef.hide();
-  private editModalRef: BsModalRef<ProductEditModalComponent> = new BsModalRef<ProductEditModalComponent>();
-  hideEditModal = () => this.editModalRef.hide();
-  private newModalRef: BsModalRef<ProductNewModalComponent> = new BsModalRef<ProductNewModalComponent>();
-  hideNewModal = () => this.newModalRef.hide();
   private filterModalRef: BsModalRef<ProductsFilterModalComponent> = new BsModalRef<ProductsFilterModalComponent>();
   hideFilterModal = () => this.filterModalRef.hide();
   private catalogModalRef: BsModalRef<ProductsCatalogModalComponent> = new BsModalRef<ProductsCatalogModalComponent>();
   hideCatalogModal = () => this.catalogModalRef.hide();
 
-  dictionary = new NamingSubject(
-    'masculine',
-    'producto',
-    'productos',
-    'Productos',
-    'products',
-    ['home', 'products'],
-  )
-
-  columns: Column[] = [
-    { label: "Nombre", name: "name", options: { justify: 'center' } },
-    { label: "Descripción", name: "description" },
-    { label: "Precio", name: "price", options: { justify: 'end' } },
-    { label: "Descuento", name: "discount" },
-    { label: "Creado", name: "createdAt" },
-  ];
-
-  private cacheMap: Map<string, Map<string, PaginatedResult<Product[]>>> = new Map<string, Map<string, PaginatedResult<Product[]>>>();
-  private cacheExists = (key: string): boolean => this.cacheMap.has(key);
-  private getCache = (key: string): Map<string, PaginatedResult<Product[]>> => {
-    if (!this.cacheExists(key)) this.cacheMap.set(key, new Map<string, PaginatedResult<Product[]>>());
-    return this.cacheMap.get(key)!;
-  };
-
-  private paramsMap: Map<string, ProductParams> = new Map<string, ProductParams>();
-  private paramsExists = (key: string): boolean => this.paramsMap.has(key);
-  getParam = (key: string): ProductParams => {
-    if (!this.paramsExists(key)) this.paramsMap.set(key, new ProductParams(key));
-    return this.paramsMap.get(key)!;
-  };
-  private setParam = (key: string, value: ProductParams): void => {
-    this.paramsMap.set(key, value);
-  };
-
-  // Paged List
-  private pagedLists = new BehaviorSubject<{ [key: string]: PaginatedResult<Product[]> }>({});
-  pagedLists$ = this.pagedLists.asObservable();
-  pagedList$ = (key: string): Observable<PaginatedResult<Product[]>> => this.pagedLists$.pipe(map(pagedList => pagedList[key]));
-  setPagedList = (key: string, value: PaginatedResult<Product[]>): void => this.pagedLists.next({
-    ...this.pagedLists.value,
-    [key]: value
-  });
-
-  // All
-  private all = new BehaviorSubject<Product[]>([]);
-  all$ = this.all.asObservable();
-
-  // Current
-  private current = new BehaviorSubject<Product | null>(null);
-  current$ = this.current.asObservable();
-  getCurrent = (): Product | null => this.current.value;
-
-  // Params
-  private params = new BehaviorSubject<{ [key: string]: ProductParams }>({});
-  params$ = this.params.asObservable();
-  param$ = (key: string): Observable<ProductParams> => this.params$.pipe(map(params => params[key]));
-  setParam$ = (key: string, value: ProductParams): void => {
-    this.params.next({ ...this.params.value, [key]: value });
-    this.setParam(key, value);
-  };
-  resetParam = (key: string): void => this.params.next({ ...this.params.value, [key]: new ProductParams(key) });
-  resetParams = (): void => this.params.next({});
-
-  // Loading
-  private loadings = new BehaviorSubject<{ [key: LoadingTypes]: boolean }>({});
-  loadings$ = this.loadings.asObservable();
-  loading$ = (key: string): Observable<boolean> => this.loadings$.pipe(map(loadings => loadings[key]));
-  private setLoading = (key: LoadingTypes, value: boolean): void => this.loadings.next({
-    ...this.loadings.value,
-    [key]: value
-  });
-
-  selectAll(key: string, event: any) {
-    const items = getItemsByKey<Product>(key, this.cacheMap);
-    // if all of them are already selected, then deselect all of them...
-    // however if there's at least one that is not selected, then select all of them
-    const allSelected = items.every((item) => item.isSelected);
-    items.forEach((item) => item.isSelected = !allSelected);
-  }
-
-  private selectedMap = new Map<string, Product | undefined>();
-  private getSelected = (key: string): Product | null => this.selectedMap.get(key) || null;
-  private setSelected = (key: string, value: Product | undefined): void => {
-    this.selectedMap.set(key, value);
-    this.setSelected$(key, value);
-  };
-  private selecteds = new BehaviorSubject<{ [key: string]: Product | undefined }>({});
-  selecteds$ = this.selecteds.asObservable();
-  selected$ = (key: string): Observable<Product | undefined> => this.selecteds$.pipe(map(selecteds => selecteds[key]));
-  getSelected$ = (key: string): Product[] => this.selecteds.value[key] ? [this.selecteds.value[key]!] : [];
-  hasSelected$ = (key: string): boolean => this.selecteds.value[key] !== undefined;
-
-  setSelected$ = (key: string, value: Product | undefined = undefined): void => {
-
-    getItemsByKey<Product>(key, this.cacheMap).map((d) => d.isSelected = false);
-
-    if (value) value.isSelected = true;
-
-    this.selecteds.next({ ...this.selecteds.value, [key]: value });
-  };
-
-  // Summaries Handlers
-  private summaryCacheMap: Map<string, Map<string, ProductSummary[]>> = new Map<string, Map<string, ProductSummary[]>>();
-  private summaryCacheExists = (key: string): boolean => this.summaryCacheMap.has(key);
-  private getSummaryCache = (key: string): Map<string, ProductSummary[]> => {
-    if (!this.summaryCacheExists(key)) this.summaryCacheMap.set(key, new Map<string, ProductSummary[]>());
-    return this.summaryCacheMap.get(key)!;
-  };
-  private summaryMap = new Map<string, ProductSummary[] | null>();
-  private getSummary = (key: string): ProductSummary[] => this.summaryMap.get(key) || [];
-  private setSummary = (key: string, value: ProductSummary[] | null): void => {
-    this.summaryMap.set(key, value);
-  };
-  private summaries = new BehaviorSubject<{ [key: string]: ProductSummary[] | null }>({});
-  summaries$ = this.summaries.asObservable();
-  summary$ = (key: string): Observable<ProductSummary[] | null> => this.summaries$.pipe(map(summaries => summaries[key]));
-  setSummary$ = (key: string, value: ProductSummary[] | null): void => this.summaries.next({
-    ...this.summaries.value,
-    [key]: value
-  });
-
-
-  resetSelected = (key: string): void => this.selecteds.next({ ...this.selecteds.value, [key]: undefined });
-  resetSelecteds = (): void => this.selecteds.next({});
-
-  private multipleSelectedMap = new Map<string, Product[]>();
-  private getMultipleSelected = (key: string): Product[] => this.multipleSelectedMap.get(key) || [];
-  private setMultipleSelected = (key: string, value: Product[]): void => {
-    this.multipleSelectedMap.set(key, value);
-    this.setMultipleSelected$(key, value);
-  };
-  private addSelected = (key: string, value: Product): void => this.setMultipleSelected(key, [...this.getMultipleSelected(key), value]);
-  private multipleSelecteds = new BehaviorSubject<{ [key: string]: Product[] }>({});
-  multipleSelecteds$ = this.multipleSelecteds.asObservable();
-  multipleSelected$ = (key: string): Observable<Product[]> => this.multipleSelecteds$.pipe(map(multipleSelecteds => multipleSelecteds[key]));
-  setMultipleSelected$ = (key: string, value: Product[]): void => this.multipleSelecteds.next({
-    ...this.multipleSelecteds.value,
-    [key]: value
-  });
-  addSelected$ = (key: string, value: Product): void => this.setMultipleSelected(key, [...this.getMultipleSelected(key), value]);
-  resetMultipleSelected = (key: string): void => this.multipleSelecteds.next({
-    ...this.multipleSelecteds.value,
-    [key]: []
-  });
-  resetMultipleSelecteds = (): void => this.multipleSelecteds.next({});
-
-  // Get Paged List
-  loadPagedList(key: string, param: ProductParams): Observable<PaginatedResult<Product[]>> {
-    this.setLoading(key, true);
-    this.cacheExists(key);
-
-    const mapKey = Object.values(param).join("-");
-    const response = this.getCache(key).get(mapKey);
-
-    if (response) {
-      this.setPagedList(key, response);
-      this.setLoading(key, false);
-      return of(response);
-    }
-
-    let params = param.toHttpParams();
-
-    return getPaginatedResult<Product[]>(this.baseUrl, params, this.http).pipe(
-      tap(response => {
-        this.getCache(key).set(mapKey, response);
-        this.setPagedList(key, response);
-        this.setLoading(key, false);
-      })
-    );
-  }
-
-  getAll(): Observable<Product[]> {
-    this.setLoading("all", true);
-
-    return this.http
-      .get<Product[]>(`${this.baseUrl}all/`)
-      .pipe(
-        map(response => {
-          this.all.next(response);
-          this.setLoading("all", false);
-          return response;
-        })
-      );
-  }
-
-  getSummaryByValue(key: string, summaryParams: ProductParams): Observable<ProductSummary[]> {
-    const { search } = summaryParams;
-
-    this.setLoading(key, true);
-    this.summaryCacheExists(key);
-
-    let params = summaryParams.toHttpParams();
-
-    const response = this.getSummaryCache(key).get(search ?? '');
-
-    if (response) {
-      this.setSummary(key, response);
-      this.setLoading(key, false);
-      return of(response);
-    }
-
-    return this.http.get<ProductSummary[]>(`${this.baseUrl}summary`, {params}).pipe(
-      tap(response => {
-        this.getSummaryCache(key).set(search ?? '', response);
-        this.setSummary(key, response);
-        this.setLoading(key, false);
-      }),
-      finalize(() => this.setLoading(key, false))
-    );
-  }
-
-  getById(id: number): Observable<Product> {
-    this.setLoading("current", true);
-
-    const found = this.findInCache(this.cacheMap, id);
-
-    if (found) {
-      this.current.next(found);
-      this.setLoading("current", false);
-      return of(found);
-    }
-
-    return this.http.get<Product>(`${this.baseUrl}${id}`).pipe(
-      tap(response => {
-        this.current.next(response);
-        this.setLoading("current", false);
-      })
-    );
-  }
-
-  create(formData: FormData, view: View, key: string): Observable<Product> {
-    return this.http.post<Product>(this.baseUrl, formData).pipe(
-      tap(response => {
-        this.loadPagedList(key, this.getParam(key)).pipe();
-        this.setSelected(key, response);
-        this.current.next(response);
-        this.all.next([...this.all.value, response]);
-        this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${response.name} fue creado exitosamente`);
-        if (view === "modal") {
-          this.hideNewModal();
-        } else if (view === 'page') {
-          this.router.navigate([this.dictionary.catalogRoute, response.id]);
-        }
-        return response;
-      })
-    );
-  }
-
-  update(id: number, formData: FormData): Observable<Product> {
-    return this.http.put<Product>(`${this.baseUrl}${id}`, formData).pipe(
-      tap(response => {
-        // TODO
-      })
-    );
-  }
-
-  private delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}${id}`).pipe(
-      tap(() => {
-        // TODO
-        this.current.next(null);
-        this.all.next(this.all.value.filter(s => s.id !== id));
-      })
-    );
-  }
-
-  private deleteRange(ids: string) {
-    return this.http.delete(`${this.baseUrl}range/${ids}`).pipe(
-      tap(() => {
-        // TODO
-      })
-    );
-  }
-
-  onSortOptionsChange = (key: string, options: SortOptions): void => {
-    const params = this.getParam(key);
-    if (!options.sort) params.sort = "createdAt";
-    else params.sort = options.sort;
-    params.isSortAscending = options.isSortAscending;
-    this.setParam(key, params);
-  };
-
-  onPageChanged(key: string, event: any) {
-    const params = this.getParam(key);
-    if (params.pageNumber !== event) {
-      params.pageNumber = event;
-      this.setParam(key, params);
-      this.setParam$(key, params);
-    }
-  }
-
-  loadMore(key: string) {
-    const params = this.getParam(key);
-    params.pageNumber = 1;
-    params.pageSize = 50;
-    this.setParam(key, params);
-    this.setParam$(key, params);
-  }
-
-  loadLess(key: string) {
-    const params = this.getParam(key);
-    params.pageSize = 10;
-    this.setParam(key, params);
-    this.setParam$(key, params);
-  }
-
-  resetForm(key: string, filterForm: FilterForm) {
-    filterForm.patchValue(new ProductParams(key));
-    this.resetParam(key);
-  }
-
-  delete$ = (item: Product): Observable<boolean> => {
-    return this.confirm.confirm(this.getConfirmDeleteItem(item)).pipe(
-      switchMap(result => {
-        if (result) {
-          return this.delete(item.id).pipe(
-            map(() => {
-              this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id} ha sido eliminado`);
-              return true;
-            }),
-            catchError(error => {
-              this.snackbarService.error(`Error eliminando ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id}.`);
-              console.error(error);
-              return of(false);
-            })
-          );
-        }
-        return of(false);
-      })
-    );
-  };
-
-  deleteRange$ = (key: string) => {
-    const items = getItemsByKey<Product>(key, this.cacheMap);
-
-    if (!items || items.length === 0) return;
-    const selectedItems = items.filter((item) => item.isSelected);
-    const selectedCount = selectedItems.length;
-    if (selectedCount === 1) {
-      const item = selectedItems[0];
-      this.delete$(item).subscribe();
-    } else if (selectedCount > 1) {
-      const selectedIds = selectedItems.map((item) => item.id);
-      this.deleteRangeByIds$(selectedIds).subscribe();
-    }
-  };
-
-  deleteRangeByIds$(ids: number[]): Observable<boolean> {
-    return this.confirm.confirm(this.getConfirmDeleteRange(ids.length)).pipe(
-      switchMap(result => {
-        if (result) {
-          return this.deleteRange(ids.join(",")).pipe(
-            map(() => {
-              this.snackbarService.success(`${this.dictionary.articles.definedPlural} (${ids.length}) ${this.dictionary.plural} seleccionados fueron eliminados.`);
-              return true;
-            }),
-            catchError(error => {
-              this.snackbarService.error(`Ocurrió un error eliminando ${this.dictionary.articles.definedPlural} (${ids.length}) ${this.dictionary.plural}.`);
-              return of(false);
-            })
-          );
-        }
-        return of(false);
-      })
-    );
-  }
-
-  downloadXLSX$ = (key: string) => {
-    this.downloadXLSX(key).subscribe({
-      next: () => {
-        this.snackbarService.success(`Archivo XLSX de ${this.dictionary.plural} descargado`);
-      },
-      error: (error) => {
-        this.snackbarService.error(`Error descargando archivo XLSX de ${this.dictionary.plural}`);
-      }
+  showCatalogModal = (event: MouseEvent, key: string, mode: CatalogMode, view: View): void => {
+    this.matDialog.open(ProductsCatalogModalComponent, {
+      data: { key: key, mode: mode, view: view }
     });
-  }
-
-  private downloadXLSX(key: string) {
-    const param = this.getParam(key);
-    const params = param.toHttpParams();
-    return this.http.get(`${this.baseUrl}xlsx`, { responseType: "blob", params }).pipe(
-      map(response => {
-        downloadExcelFile(response, this.dictionary.title);
-      }),
-      catchError(error => {
-        console.error("Error downloading XLSX:", error);
-        throw error;
-      })
-    );
-  }
-
-  setCurrent(animal: Product) {
-    this.current.next(animal);
-  }
-
-  setDateRange(key: string, dateRange: Date[]) {
-    const updatedParams = { ...this.getParam(key) };
-    updatedParams.dateFrom = dateRange[0] || null;
-    updatedParams.dateTo = dateRange[1] || null;
-
-    const newParams = new ProductParams(key);
-    newParams.updateFromPartial(updatedParams);
-
-    this.setParam(key, newParams);
-  }
-
-  private findInCache(cacheMap: Map<string, Map<string, PaginatedResult<Product[]>>>, id: number): Product | undefined {
-    for (const key of cacheMap.keys()) {
-      const map = cacheMap.get(key);
-
-      if (map) {
-        for (const paginatedResult of map.values()) {
-          if (paginatedResult && paginatedResult.result) {
-            const found = paginatedResult.result.find(current => current.id === id);
-            if (found) {
-              return found;
-            }
-          }
-        }
-      }
-    }
-    return undefined;
-  }
-
-  showCatalogModal = (event: MouseEvent, key: string, mode: CatalogMode): void => {
-    this.catalogModalRef = this.bsModalService.show(ProductsCatalogModalComponent,
-      { class: "modal-dialog-centered modal-xl", initialState: { mode: mode, key: key } });
   };
 
   showFiltersModal = (key: string, title = "Filtros"): void => {
-    this.filterModalRef = this.bsModalService.show(ProductsFilterModalComponent,
-      { class: "modal-dialog-centered", initialState: { key: key, title: title } });
+    this.matDialog.open(ProductsFilterModalComponent, {
+      data: { key: key, title: title }
+    });
   };
 
-  clickLink = (id: number | null = null, item: Product | null = null, key: string | null = null, use: FormUse = "detail", view: View) => {
-    if (view === "modal") {
-      if (id) {
-        switch (use) {
-          case "detail":
-            this.detailModalRef = this.bsModalService.show(ProductDetailModalComponent,
-              {
-                class: "modal-dialog-centered modal-lg",
-                initialState: { id: id, use: use, item: item, key: key }
-              } as ModalOptions<ProductDetailModalComponent>);
-            break;
-          case "edit":
-            this.editModalRef = this.bsModalService.show(ProductEditModalComponent,
-              {
-                class: "modal-dialog-centered modal-lg",
-                initialState: { id: id, use: use, item: item, key: key }
-              } as ModalOptions<ProductEditModalComponent>);
-            break;
-        }
-      } else {
-        this.newModalRef = this.bsModalService.show(ProductNewModalComponent,
-          {
-            class: "modal-dialog-centered modal-lg",
-            initialState: { use: use }
-          } as ModalOptions<ProductNewModalComponent>);
-      }
-    } else {
-      switch (use) {
-        case "create":
-          this.router.navigate([this.dictionary.createRoute]);
-          break;
-        case "edit":
-          this.router.navigate([`${this.dictionary.catalogRoute}/${id}/edit`]);
-          break;
-        case "detail":
-          this.router.navigate([`${this.dictionary.catalogRoute}/${id}`]);
-          break;
+  clickLink = (item: Product | null = null, key: string | null = null,
+    use: FormUse = "detail", view: View) => {
+
+  if (view === "modal") {
+    this.matDialog.open(ProductDetailModalComponent, {
+      data: { item: item, key: key, use: use, view: 'modal'}
+    });
+  } else {
+    this.bsModalService.hide();
+    switch (use) {
+      case "create":
+        this.router.navigate([this.dictionary.createRoute]);
+        break;
+      case "edit":
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
+        break;
+      case "detail":
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
+        break;
       }
     }
   };
-
-  private getConfirmDeleteRange = (count: number) => new Modal(`Eliminar ${this.dictionary.plural}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedPlural} (${count}) ${this.dictionary.plural} seleccionados?`);
-  private getConfirmDeleteItem = (item: Product) => new Modal(`Eliminar ${this.dictionary.singular}`, `¿Estás seguro que deseas eliminar ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
-  private getConfirmUpdateItem = (item: Product) => new Modal(`Actualizar ${this.dictionary.singular}`, `¿Confirmas ${this.dictionary.articles.definedPlural} cambios hechos en ${this.dictionary.articles.definedSingular} ${this.dictionary.singular} (${item.id})?`);
-
-  hasSelected = (key: string): boolean => {
-    const items = getItemsByKey<Product>(key, this.cacheMap);
-    return items.some((item) => item.isSelected) ?? false;
-  };
-
-  selectedCount = (key: string): number => getItemsByKey<Product>(key, this.cacheMap).filter((item) => item.isSelected).length ?? 0;
-
-  selectedIdsAsString = (key: string): string => {
-    const items = getItemsByKey<Product>(key, this.cacheMap);
-    return items.filter((item) => item.isSelected).map((item) => item.id).join(",") || "";
-  };
-
 }

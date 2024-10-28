@@ -7,13 +7,14 @@ import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.compon
 import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
 import { UsersService } from "src/app/_services/users.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { User, UserParams, UserSummary } from "src/app/_models/user";
+import { User, UserParams } from "src/app/_models/user";
 import { TypeaheadComplexOption } from "src/app/_models/types";
 import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
 import { UserProfilePictureComponent } from "../../users/components/user-profile-picture/user-profile-picture.component";
+import { UserSummary } from "src/app/_models/userSummary";
 
 interface PatientTypeaheadOptions extends TypeaheadComplexOption {
   data: UserSummary,

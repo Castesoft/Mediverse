@@ -21,7 +21,7 @@ export class ClinicSummaryCardComponent implements OnInit {
   icons = inject(IconsService);
 
   title = input<string>();
-  key = input.required<string>();
+  key = model.required<string>();
   item = model.required<Address>();
   showEdit = input<boolean>(false);
 

@@ -6,8 +6,6 @@ import { User, UserParams } from "src/app/_models/user";
 import { ServiceHelper } from "src/app/_services/serviceHelper";
 import {
   UserDetailModalComponent,
-  UserEditModalComponent,
-  UserNewModalComponent,
   UsersCatalogModalComponent,
   UsersFilterModalComponent
 } from "src/app/users/modals";
@@ -18,10 +16,6 @@ import {
 export class UsersService extends ServiceHelper<User, UserParams, FormGroup2<UserParams>> {
   private detailModalRef: BsModalRef<UserDetailModalComponent> = new BsModalRef<UserDetailModalComponent>();
   hideDetailModal = () => this.detailModalRef.hide();
-  private editModalRef: BsModalRef<UserEditModalComponent> = new BsModalRef<UserEditModalComponent>();
-  hideEditModal = () => this.editModalRef.hide();
-  private newModalRef: BsModalRef<UserNewModalComponent> = new BsModalRef<UserNewModalComponent>();
-  hideNewModal = () => this.newModalRef.hide();
   private filterModalRef: BsModalRef<UsersFilterModalComponent> = new BsModalRef<UsersFilterModalComponent>();
   hideFilterModal = () => this.filterModalRef.hide();
   private catalogModalRef: BsModalRef<UsersCatalogModalComponent> = new BsModalRef<UsersCatalogModalComponent>();

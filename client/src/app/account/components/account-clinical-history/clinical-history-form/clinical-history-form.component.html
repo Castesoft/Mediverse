@@ -1,5 +1,5 @@
 @if (form.error) {
-  <div errorsAlert3 [error]="form.error"></div>
+  <div errorsAlert3 [(form)]="form"></div>
 }
 
 <form [id]="form.id" (ngSubmit)="onSubmit()">

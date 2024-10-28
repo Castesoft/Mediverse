@@ -3,6 +3,7 @@ import { inject, InputSignal } from "@angular/core";
 import {FormGroup} from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SelectOption } from "src/app/_forms/form";
+import { FormInfo } from "src/app/_forms/form2";
 import { EnvService } from "src/app/_services/env.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { cleanStringAndCreateRoute, getPaginationHeaders } from "src/app/_utils/util";
@@ -320,7 +321,7 @@ export const sectionDictionary: SectionDictionary = {
 export type View = 'page' | 'modal' | 'inline';
 
 export interface Identifiable {
-  id: number | string;
+  id: number | string | null;
 }
 
 export interface BaseForm {
@@ -390,15 +391,27 @@ export class MedicineType {
 
 export class Entity {
   id: number | null = null;
-  createdAt: Date = new Date();
-  name: string = "";
-  codeNumber: number = 0;
-  code: string = "";
-  description: string = "";
+  createdAt: Date | null = null;
+  name: string | null = null;
+  codeNumber: number | null = null;
+  code: string | null = null;
+  description: string | null = null;
   isSelected: boolean = false;
   visible: boolean = true;
   enabled: boolean = true;
 }
+
+export const baseInfo: FormInfo<Entity> = {
+  code: { label: 'Código', type: 'text', },
+  codeNumber: { label: 'Número de Código', type: 'number', },
+  createdAt: { label: 'Creado', type: 'date', },
+  description: { label: 'Descripción', type: 'textarea', },
+  enabled: { label: 'Habilitado', type: 'checkbox', },
+  id: { label: 'ID', type: 'number', },
+  isSelected: { label: 'Seleccionado', type: 'checkbox', },
+  name: { label: 'Nombre', type: 'text', },
+  visible: { label: 'Visible', type: 'checkbox', },
+} as FormInfo<Entity>;
 
 export type Units = "kg" | "días" | "ha";
 
@@ -416,26 +429,41 @@ export interface IParams {
   get httpParams(): HttpParams;
 }
 
-export class EntityParams<T> {
-  pageNumber = 1;
-  pageSize = 10;
-  search = "";
-  sort = new SelectOption({ name: "ID", code: "id" });
-  isSortAscending = true;
-  dateRange: DateRange = new DateRange();
+export class BaseParams {
+  pageNumber: number | null = 1;
+  pageSize: number | null = 10;
+  search: string | null = null;
+  sort: SelectOption | null = null;
+  isSortAscending: boolean | null = true;
+  dateRange: DateRange | null = new DateRange();
+  name: string | null = null;
+  description: string | null = null;
+  key: string | null = null;
+  id: number | null = null;
+}
+
+export const baseParamsInfo: FormInfo<BaseParams> = {
+  description: { label: 'Descripción', type: 'text', },
+  id: { label: 'ID', type: 'number', },
+  isSortAscending: { label: 'Orden Ascendente', type: 'slideToggle', },
+  name: { label: 'Nombre', type: 'text', },
+  pageNumber: { label: 'Número de Página', type: 'number', },
+  pageSize: { label: 'Tamaño de Página', type: 'number', },
+  search: { label: 'Buscar', type: 'text', },
+  sort: { label: 'Ordenar', type: 'select', },
+} as FormInfo<BaseParams>;
+
+export class EntityParams<T> extends BaseParams {
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
-  name = "";
-  description = "";
-  key: string;
-  id = 0;
 
   constructor(key: string) {
+    super();
     this.key = key;
   }
 
   protected value<U extends Entity>(template: { [K in keyof U]: U[K] }) {
-    const value = new EntityParams<U>(this.key);
+    const value = new EntityParams<U>(this.key!);
 
     for (const prop in template) {
       (value as any)[prop] = (this as any)[prop];
@@ -445,11 +473,11 @@ export class EntityParams<T> {
   }
 
   protected getHttpParams(): HttpParams {
-    let params = getPaginationHeaders(this.pageNumber, this.pageSize);
+    let params = getPaginationHeaders(this.pageNumber!, this.pageSize!);
 
     if (this.search) params = params.append("search", this.search);
     // if (this.sort) params = params.append("sort", this.sort);
-    if (typeof this.isSortAscending !== "undefined") params = params.append("isSortAscending", this.isSortAscending);
+    if (typeof this.isSortAscending !== "undefined") params = params.append("isSortAscending", this.isSortAscending!);
     if (this.dateFrom) params = params.append("dateFrom", this.dateFrom.toISOString());
     if (this.dateTo) params = params.append("dateTo", this.dateTo.toISOString());
     if (this.name) params = params.append("name", this.name);

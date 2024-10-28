@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
+import { NgModule, signal } from "@angular/core";
 import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, ResolveFn, Router, RouterModule, Routes } from "@angular/router";
 import { Account } from "src/app/_models/account";
@@ -8,11 +8,11 @@ import { Product } from "src/app/_models/product";
 import { AccountService } from "src/app/_services/account.service";
 import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
 import { CompactTableService } from "src/app/_services/compact-table.service";
-import { GuidService } from "src/app/_services/guid.service";
 import { ProductsService } from "src/app/_services/products.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
 import { ProductsCatalogComponent } from "src/app/products/components/products-catalog.component";
-import { ProductDetailComponent, ProductEditComponent, ProductNewComponent } from "src/app/products/views";
+import { ProductDetailComponent } from "src/app/products/views";
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   selector: 'products-route',
@@ -44,7 +44,6 @@ export class ProductsComponent implements OnInit {
       [mode]="mode"
       [key]="key"
       [view]="view"
-
     ></div>
   </div>
   `,
@@ -54,12 +53,11 @@ export class ProductsComponent implements OnInit {
 export class CatalogComponent implements OnInit {
   product = inject(ProductsService);
   compact = inject(CompactTableService);
-  guid = inject(GuidService);
 
   isCompact = false;
   view: View = 'page';
   mode: CatalogMode = 'view';
-  key = this.guid.gen();
+  key = createId();
   section: Sections = 'products';
   role: Role = 'Patient';
   label: string;
@@ -76,17 +74,7 @@ export class CatalogComponent implements OnInit {
 @Component({
   selector: 'product-detail-route',
   template: `
-    @if (id && item) {
-      <div
-        productDetailView
-        [id]="id"
-        [use]="use"
-        [view]="view"
-        [item]="item"
-        [key]="key"
-
-      ></div>
-    }
+      <div productDetailForm [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key"></div>
   `,
   standalone: true,
   imports: [RouterModule, ProductDetailComponent, LayoutModule,],
@@ -95,70 +83,47 @@ export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  item?: Product;
-  id?: number;
-  use: FormUse = 'detail';
-  view: View = 'page';
-  label?: string;
-  key?: string;
   section: Sections = 'products';
   role: Role = 'Patient';
 
+  item = signal<Product | null>(null);
+  use = signal<FormUse>('detail');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
     this.route.data.subscribe({
       next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.name;
+        this.item.set(data['item']);
       },
     });
     const navigation = this.router.getCurrentNavigation();
-    this.key = navigation?.extras?.state?.['key'];
+    this.key.set(navigation?.extras?.state?.['key']);
   }
 }
 @Component({
   selector: 'product-edit-route',
   template: `
-      @if (id && item) {
-        <div
-          productEditView
-          [id]="id"
-          [use]="use"
-          [view]="view"
-          [key]="key"
-          [item]="item"
-        ></div>
-      }
+  <div productDetailForm [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key"></div>
   `,
   standalone: true,
-  imports: [ProductEditComponent, RouterModule, LayoutModule,],
+  imports: [ProductDetailComponent, RouterModule, LayoutModule,],
 })
 export class EditComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  item?: Product;
-  id?: number;
-  use: FormUse = 'edit';
-  view: View = 'page';
-  label?: string;
-  key = undefined;
   section: Sections = 'products';
   role: Role = 'Patient';
 
+  item = signal<Product | null>(null);
+  use = signal<FormUse>('edit');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
     this.route.data.subscribe({
       next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.name;
+        this.item.set(data['item']);
       },
     });
   }
@@ -166,15 +131,17 @@ export class EditComponent implements OnInit {
 
 @Component({
   selector: 'product-new-route',
-  template: `<div productNewView [use]="use" [view]="view"
-  ></div>`,
+  template: `
+  <div productDetailForm [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key"></div>
+  `,
   standalone: true,
-  imports: [ProductNewComponent, RouterModule, LayoutModule,],
+  imports: [ProductDetailComponent, RouterModule, LayoutModule,],
 })
 export class NewComponent {
-  use: FormUse = 'create';
-  view: View = 'page';
-  role: Role = 'Patient';
+  item = signal<Product | null>(null);
+  use = signal<FormUse>('create');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
 }
 
 export const itemResolver: ResolveFn<Product | null> = (route, state) => {
@@ -182,26 +149,6 @@ export const itemResolver: ResolveFn<Product | null> = (route, state) => {
   const id = +route.paramMap.get('id')!;
   return product.getById(id);
 };
-
-export const titleDetailResolver: ResolveFn<string> = (route, state) => {
-  const product = inject(ProductsService);
-  const id = +route.paramMap.get('id')!;
-  product.getById(id).subscribe();
-  const item = product.getCurrent();
-  if (!item) return 'Detalle de producto';
-  const title = `Detalle de producto - ${item.name}`;
-  return title;
-}
-
-export const titleEditResolver: ResolveFn<string> = (route, state) => {
-  const product = inject(ProductsService);
-  const id = +route.paramMap.get('id')!;
-  product.getById(id).subscribe();
-  const item = product.getCurrent();
-  if (!item) return 'Editar producto';
-  const title = `Editar producto - ${item.name}`;
-  return title;
-}
 
 @NgModule({
   imports: [RouterModule.forChild([
@@ -212,12 +159,12 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
         { path: '', component: CatalogComponent, title: 'Catálogo de productos', data: { breadcrumb: 'Catálogo', }, },
         { path: 'create', component: NewComponent, title: 'Crear nuevo producto', data: { breadcrumb: 'Nuevo', }, },
         {
-          path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
+          path: ':id', data: { breadcrumb: 'Detalle', },
           component: DetailComponent,
           resolve: { item: itemResolver },
         },
         {
-          path: ':id/edit', title: titleEditResolver, data: { breadcrumb: 'Editar', },
+          path: ':id/edit', data: { breadcrumb: 'Editar', },
           component: EditComponent,
           resolve: { item: itemResolver },
         },

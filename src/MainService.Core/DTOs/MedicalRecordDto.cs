@@ -135,6 +135,7 @@ namespace MainService.Core.DTOs
     public class ColorBlindnessParams : BaseCodeParams {}
     public class RelativeTypeParams : BaseCodeParams {}
     public class ConsumptionLevelParams : BaseCodeParams {}
+    public class DocumentParams : BaseCodeParams {}
 
     #nullable enable
 

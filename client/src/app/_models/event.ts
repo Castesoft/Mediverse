@@ -1,54 +1,69 @@
 import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
-import { BadRequest, Role } from "src/app/_models/types";
-import { User, UserSummary } from "src/app/_models/user";
+import { BadRequest, baseInfo, Entity, Role } from "src/app/_models/types";
+import { User, userInfo } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
-import { PaymentMethodType } from './paymentMethodType';
-import { MedicalInsuranceCompany } from './medicalInsuranceCompany';
-import { Payment } from './payment';
-import { Prescription } from './prescription';
-import { Service } from "src/app/_models/service";
-import { Address } from "src/app/_models/address";
+import { Payment, paymentInfo } from './payment';
+import { Prescription, prescriptionInfo } from './prescription';
+import { Service, serviceInfo } from "src/app/_models/service";
+import { Address, addressInfo } from "src/app/_models/address";
+import { SelectOption } from "src/app/_forms/form";
+import { FormGroup2, FormInfo } from "src/app/_forms/form2";
 
-const subject = 'event';
-
-export class Event {
-  id!: number;
-
+export class Event extends Entity {
   allDay = false;
-  dateFrom = new Date();
-  dateTo = new Date();
+  dateFrom: Date | null = null;
+  dateTo: Date | null = null;
+  paymentStatus: SelectOption | null = null;
+  paymentMethodType: SelectOption | null = null;
+  medicalInsuranceCompany: SelectOption | null = null;
+  evolution: string | null = null;
+  nextSteps: string | null = null;
 
-  patient?: User;
-  doctor?: User;
-  service?: Service;
-  clinic?: Address;
-  nurses?: User[];
-  paymentMethodType?: PaymentMethodType;
-  medicalInsuranceCompany?: MedicalInsuranceCompany;
-  payments?: Payment[];
-  evolution?: string;
-  nextSteps?: string;
-  prescriptions?: Prescription[];
-  paymentStatus?: PaymentStatus;
+  patient: User = new User();
+  doctor: User = new User();
+  service: Service = new Service();
+  clinic: Address = new Address();
+  nurses: User[] = [];
+  payments: Payment[] = [];
+  prescriptions: Prescription[] = [];
 
-  createdAt!: Date;
-  isSelected = false;
+  constructor(init?: Partial<Event>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
-export class PaymentStatus {
-  name!: string;
-  color!: string;
-}
+export const eventInfo: FormInfo<Event> = {
+  // ...baseInfo,
+  // allDay: { label: 'Todo el día', type: 'checkbox', },
+  // dateFrom: { label: 'Fecha de inicio', type: 'date', },
+  // dateTo: { label: 'Fecha de fin', type: 'date', },
+  // evolution: { label: 'Evolución', type: 'textarea', },
+  // nextSteps: { label: 'Próximos pasos', type: 'textarea', },
 
-export class EventSummary {
-  id!: number;
-  allDay = false;
-  dateFrom = new Date();
-  dateTo = new Date();
-  patient?: UserSummary;
+  // doctor: userInfo,
+  // patient: userInfo,
+  // service: serviceInfo,
+  // clinic: addressInfo,
+  // nurses: userInfo,
+  // medicalInsuranceCompany: { label: 'Compañía de seguro médico', type: 'typeahead', },
+  // paymentMethodType: { label: 'Método de pago', type: 'typeahead', },
+  // payments: paymentInfo,
+  // paymentStatus: { label: 'Estado de pago', type: 'typeahead', },
+  // prescriptions: prescriptionInfo,
+} as FormInfo<Event>;
+
+export class EventForm extends FormGroup2<Event> {
+  constructor() {
+    super(Event, new Event(), eventInfo);
+  }
+
+  payload(): any {
+    return this.value;
+  }
 }
 
 export class EventParams {
@@ -119,7 +134,7 @@ export class FilterForm {
   id: string;
 
   constructor() {
-    this.id = `${subject}filterForm${createId()}`;
+    this.id = `$citafilterForm${createId()}`;
     this.group = new FormGroup({
       search: new FormControl(''),
       dateRange: new FormControl({ value: ['', ''], disabled: false }),
@@ -155,7 +170,7 @@ export class CreateForm {
   validation = true;
 
   constructor() {
-    this.id = `${subject}Form${createId()}`;
+    this.id = `$citaForm${createId()}`;
 
     this.group = new FormGroup({
       patientId: new FormControl(''),
@@ -225,7 +240,7 @@ export class EditForm {
   validation = true;
 
   constructor() {
-    this.id = `${subject}Form${createId()}`;
+    this.id = `$citaForm${createId()}`;
 
     this.group = new FormGroup({
       firstName: new FormControl(''),
@@ -292,7 +307,7 @@ export class DetailForm {
   patchValues = (item: Event) => this.group.patchValue(item);
 
   constructor() {
-    this.id = `${subject}Form${createId()}`;
+    this.id = `$citaForm${createId()}`;
 
     this.group = new FormGroup({
       firstName: new FormControl({ value: '', disabled: true }),

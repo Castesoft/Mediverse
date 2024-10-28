@@ -471,8 +471,8 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U> & IParams
         if (index !== -1) {
           const option = options[index];
 
-          option.name = response.name;
-          option.code = response.code;
+          option.name = response.name!;
+          option.code = response.code!;
 
           // options[index] = updatedOption;
           this.options.set(options);

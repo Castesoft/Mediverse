@@ -5,10 +5,10 @@ import { IconsService } from "src/app/_services/icons.service";
 import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
 import { Column } from "src/app/_models/types";
 import { FormsModule } from "@angular/forms";
-import { PrescriptionItem } from "src/app/_models/prescription";
 import { ProductSelectTypeaheadComponent } from 'src/app/_shared/components/product-select-typeahead.component';
 import { createId } from '@paralleldrive/cuid2';
 import { Product } from 'src/app/_models/product';
+import { PrescriptionItem } from "src/app/_models/prescriptionItem";
 @Component({
   selector: '[prescriptionProductsTable]',
   templateUrl: './prescription-products-table.component.html',
@@ -26,7 +26,7 @@ export class PrescriptionProductsTableComponent implements OnInit {
   icons = inject(IconsService);
 
   data = model.required<PrescriptionItem[]>();
-  key = input.required<string>();
+  key = model.required<string>();
   mode = input.required<'view' | 'edit'>();
   onProductSelected = output<PrescriptionItem>();
   onProductDeleted = output<PrescriptionItem>();
@@ -48,21 +48,21 @@ export class PrescriptionProductsTableComponent implements OnInit {
 
   selectProduct(product: Product) {
     if (product) {
-      this.onProductSelected.emit({
-        ...product,
-        dosage: product.dosage.toString(),
-        instructions: "",
-        itemId: product.id,
-        notes: "",
-        quantity: 1
-      });
+      this.onProductSelected.emit(
+        new PrescriptionItem({
+          product: product,
+          dosage: product.dosage,
+          itemId: product.id,
+          quantity: 1,
+        })
+      );
       this.selectedProductKey = createId();
     }
   }
 
   handleAmountChange = (item: PrescriptionItem, quantity: number) => {
-    if (item.quantity + quantity < 0) { return; }
-    item.quantity += quantity;
+    if (item.quantity! + quantity < 0) { return; }
+    item.quantity! += quantity;
   }
 
   handleDeleteProduct(item: PrescriptionItem) {
@@ -70,17 +70,15 @@ export class PrescriptionProductsTableComponent implements OnInit {
   }
 
   openProductSelectModal = () => {
-    this.productsService.showCatalogModal(new MouseEvent('click'), this.key(), "multiselect");
+    // this.productsService.showCatalogModal(new MouseEvent('click'), this.key(), "multiselect");
   }
 
   addEmptyPrescriptionItem() {
-    this.onProductSelected.emit({
-      ... new Product(),
-      dosage: "",
-      instructions: "",
-      itemId: 0,
-      notes: "",
-      quantity: 1
-    });
+    this.onProductSelected.emit(
+      new PrescriptionItem({
+        product: new Product(),
+        quantity: 1,
+      })
+    );
   }
 }

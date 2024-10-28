@@ -1,164 +1,60 @@
-import { Component, inject, OnInit, viewChild } from "@angular/core";
-import { CatalogMode, FormUse, Role, View } from "src/app/_models/types";
+import { CdkDrag } from "@angular/cdk/drag-drop";
+import { Component, inject } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { Product } from "src/app/_models/product";
-import { ProductsService } from "src/app/_services/products.service";
-import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
+import { DetailModal, FilterModal, CatalogModal } from "src/app/_shared/table/table.module";
 import { ProductsCatalogComponent } from "src/app/products/components/products-catalog.component";
 import { ProductsFilterFormComponent } from "src/app/products/components/products-filter-form.component";
-import { ProductDetailComponent, ProductEditComponent, ProductNewComponent } from "src/app/products/views";
+import { ProductDetailComponent } from "src/app/products/views";
 
 @Component({
-  selector: 'product-edit-modal',
+  standalone: true,
+  selector: 'product-detail-modal',
   template: `
-    <div modalContent>
-      @if (title) {
-        <div modalHeader [title]="title"></div>
-      }
-      <div modalBody>
-        <div
-          productEditView
-          [id]="id"
-          [use]="use"
-          [view]="'modal'"
-          [key]="undefined"
-          [item]="item"
-
-        ></div>
-      </div>
+    <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+      @if (data.title) { <h2 mat-dialog-title>{{data.title}}</h2> }
+      <mat-dialog-content>
+        <div productDetailForm [id]="data.id" [use]="data.use" [view]="data.view" [key]="data.key" [item]="data.item"></div>
+      </mat-dialog-content>
     </div>
   `,
-  standalone: true,
-  imports: [ProductEditComponent, ModalWrapperModule],
-})
-export class ProductEditModalComponent {
-  id!: number;
-  use!: FormUse;
-  title?: string;
-  item!: Product;
-
-}
-
-@Component({
-  selector: 'product-edit-modal',
-  template: `
-    <div modalContent>
-      @if (title) {
-        <div modalHeader [title]="title"></div>
-      }
-      <div modalBody>
-        <div
-          productDetailView
-          [id]="id"
-          [use]="use"
-          [view]="'modal'"
-          [key]="key"
-          [item]="item"
-
-        ></div>
-      </div>
-    </div>
-  `,
-  standalone: true,
-  imports: [ProductDetailComponent, ModalWrapperModule],
+  imports: [ProductDetailComponent, MatDialogTitle, MatDialogContent, CdkDrag ],
 })
 export class ProductDetailModalComponent {
-  id!: number;
-  use!: FormUse;
-  title?: string;
-  key!: string;
-  item!: Product;
-
-}
-
-@Component({
-  selector: 'product-new-modal',
-  template: `
-    <div modalContent>
-      @if (title) {
-        <div modalHeader [title]="title"></div>
-      }
-      <div modalBody>
-        <div productNewView [use]="use" [view]="'modal'" ></div>
-      </div>
-    </div>
-  `,
-  standalone: true,
-  imports: [ProductNewComponent, ModalWrapperModule],
-})
-export class ProductNewModalComponent {
-  use!: FormUse;
-  title?: string;
-
+  data = inject<DetailModal<Product>>(MAT_DIALOG_DATA);
 }
 
 @Component({
   selector: 'products-filter-modal',
   template: `
-    <div modalContent>
-      @if (title) {
-        <div modalHeader [title]="title"></div>
-      }
-      <div modalBody>
-        <div productsFilterForm [key]="key" [formId]="formId" ></div>
-      </div>
-      <div
-        modalFooterFilters
-        [formId]="formId"
-        (onReset)="onReset()"
-        (onSubmit)="onSubmit()"
-      ></div>
+    <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+    @if (data.title) { <h2 mat-dialog-title>{{data.title}}</h2> }
+      <mat-dialog-content>
+        <div productsFilterForm [formId]="data.formId" [key]="data.key"></div>
+      </mat-dialog-content>
     </div>
   `,
   standalone: true,
-  imports: [ProductsFilterFormComponent, ModalWrapperModule],
+  imports: [ProductsFilterFormComponent, MatDialogTitle, MatDialogContent, CdkDrag, ],
 })
-export class ProductsFilterModalComponent implements OnInit {
-  product = inject(ProductsService);
-
-  formId!: string;
-  key!: string;
-
-  title?: string;
-
-  form = viewChild.required(ProductsFilterFormComponent);
-
-  onReset = () =>
-    this.form()!.product.resetForm(this.key, this.form()!.form);
-  onSubmit = () => this.form()!.onSubmit();
-
-  ngOnInit(): void {
-    this.formId = this.form().form.id;
-  }
+export class ProductsFilterModalComponent {
+  data = inject<FilterModal>(MAT_DIALOG_DATA);
 }
 
 @Component({
   selector: 'products-catalog-modal',
   template: `
-    @defer {
-      <div modalContent>
-        @if (title) {
-          <div modalHeader [title]="title"></div>
-        }
-        <div modalBody>
-          <div
-            productsCatalog
-            class="modal-body py-3 px-4"
-            [mode]="mode"
-            [key]="key"
-            [view]="view"
-          ></div>
-        </div>
+      <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+      @if (data.title) { <h2 mat-dialog-title>{{data.title}}</h2> }
+
+        <mat-dialog-content>
+          <div productsCatalog [mode]="data.mode" [key]="data.key" [view]="data.view"></div>
+        </mat-dialog-content>
       </div>
-    }
   `,
   standalone: true,
-  imports: [ProductsCatalogComponent, ModalWrapperModule],
+  imports: [ProductsCatalogComponent, MatDialogTitle, MatDialogContent, CdkDrag, ],
 })
 export class ProductsCatalogModalComponent {
-  key!: string;
-
-  isCompact = true;
-  mode!: CatalogMode;
-  view: View = 'modal';
-  title?: string;
+  data = inject<CatalogModal>(MAT_DIALOG_DATA);
 }

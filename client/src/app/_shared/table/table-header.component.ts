@@ -23,7 +23,7 @@ export class TableHeaderComponent implements OnInit {
   // required
   columns = input.required<Column[]>();
   params = input.required<EntityParams<any> | any | undefined>();
-  mode = input.required<CatalogMode>();
+  mode = model.required<CatalogMode>();
   show = input<boolean>(true);
   disableFirstCellPadding = input<boolean>(false);
 

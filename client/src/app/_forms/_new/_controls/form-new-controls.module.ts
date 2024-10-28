@@ -3,6 +3,7 @@ import { ControlCheckbox3Component } from "src/app/_forms/_new/_controls/control
 import { ControlChipsRadio3Component } from "src/app/_forms/_new/_controls/control-chips-radio-3.component";
 import { ControlDate3Component } from "src/app/_forms/_new/_controls/control-date-3.component";
 import { ControlDateRange3Component } from "src/app/_forms/_new/_controls/control-date-range-3.component";
+import { ControlFile3Component } from "src/app/_forms/_new/_controls/control-file-3.component";
 import { ControlInput3Component } from "src/app/_forms/_new/_controls/control-input-3.component";
 import { ControlRadio3Component } from "src/app/_forms/_new/_controls/control-radio-3.component";
 import { ControlSearchText3Component } from "src/app/_forms/_new/_controls/control-search-text-3.component";
@@ -34,6 +35,7 @@ import { FormNewHelperModule } from "src/app/_forms/_new/_helper/form-new-helper
     ControlSelectGroupComponent,
     ControlChipsRadio3Component,
     ControlCheckbox3Component,
+    ControlFile3Component,
   ],
   exports: [
     FormNewHelperModule,
@@ -52,6 +54,7 @@ import { FormNewHelperModule } from "src/app/_forms/_new/_helper/form-new-helper
     ControlSelectGroupComponent,
     ControlChipsRadio3Component,
     ControlCheckbox3Component,
+    ControlFile3Component,
   ],
 })
 export class FormNewControlsModule {}

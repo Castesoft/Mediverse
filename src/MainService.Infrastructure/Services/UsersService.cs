@@ -64,7 +64,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
         if (string.IsNullOrEmpty(photo.PublicId)) return true;
 
-        var deleteResult = await cloudinaryService.Delete(photo.PublicId);
+        var deleteResult = await cloudinaryService.DeleteAsync(photo.PublicId);
 
         if (deleteResult.Result != "ok")
             Log.Warning($"La foto de perfil con ID {photo.Id} no pudo ser eliminada de Cloudinary. Resultado: {deleteResult.Result}.");
@@ -150,6 +150,15 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
     private static IQueryable<AppUser> Includes(IQueryable<AppUser> query) =>
         query
             .AsSplitQuery()
+
+            .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
+            .Include(x => x.UserMedicalInsuranceCompanies)
+                .ThenInclude(x => x.Document)
+
+            .Include(x => x.DoctorMedicalInsuranceCompanies)
+                .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
+            
             .Include(x => x.UserPhoto.Photo)
             .Include(x => x.DoctorBannerPhoto.Photo)
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)

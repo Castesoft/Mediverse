@@ -16,7 +16,7 @@
 
           @if (!hideAddButton()) {
             <button createBtn [naming]="service.dictionary"
-                    (click)="service.clickLink(null, null, key(), 'create', 'modal')"
+                    (click)="service.clickLink(null, key(), 'create', 'modal')"
             ></button>
           }
         </div>

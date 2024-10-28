@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, model, OnInit } from '@angular/core';
 import { BsModalRef, ModalModule } from 'ngx-bootstrap/modal';
 import { UserParams } from 'src/app/_models/user';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -73,9 +73,9 @@ export class UsersFilterFormComponent implements OnInit {
   service = inject(UsersService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
+  key = model.required<string>();
   formId = input.required<string>();
-  role = input.required<Role>();
+  role = model.required<Role>();
 
   modalRef: BsModalRef<UsersFilterModalComponent> = new BsModalRef<UsersFilterModalComponent>();
 

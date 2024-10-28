@@ -23,7 +23,7 @@ export class PatientSummaryCardComponent implements OnInit {
   private usersService = inject(UsersService);
   private router = inject(Router);
 
-  key = input.required<string>();
+  key = model.required<string>();
   item = model.required<User>();
   headerTitle = input<string>();
 

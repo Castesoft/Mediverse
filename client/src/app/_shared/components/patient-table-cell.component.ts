@@ -17,13 +17,13 @@ import { UsersService } from "src/app/_services/users.service";
   imports: [NgClass],
 })
 export class PatientTableHasAccountCellComponent {
-  patient = input.required<User | undefined>();
+  patient = input.required<User | null>();
 }
 
 @Component({
   selector: 'td[patientSex]',
   template: `
-    <div [ngClass]="{ 'badge-light-primary': patient()?.sex === 'Masculino', 'badge-light-warning': patient()?.sex === 'Femenino'}"
+    <div [ngClass]="{ 'badge-light-primary': patient()?.sex?.name === 'Masculino', 'badge-light-warning': patient()?.sex?.name === 'Femenino'}"
          class="badge fw-bold">
       {{ patient()?.sex }}
     </div>
@@ -32,7 +32,7 @@ export class PatientTableHasAccountCellComponent {
   imports: [NgClass],
 })
 export class PatientTableSexCellComponent {
-  patient = input.required<User | undefined>();
+  patient = input.required<User | null>();
 }
 
 @Component({
@@ -71,7 +71,7 @@ export class PatientTableSexCellComponent {
 export class PatientTableCellComponent implements OnInit {
   service = inject(UsersService);
 
-  patient = input.required<User | undefined>();
+  patient = input.required<User | null>();
 
   routerLink?: string;
 

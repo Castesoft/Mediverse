@@ -338,7 +338,7 @@ export class ExportBtnComponent {}
   imports: [],
 })
 export class CreateBtnComponent {
-  naming = input.required<NamingSubject>();
+  naming = model.required<NamingSubject>();
 }
 
 @Component({

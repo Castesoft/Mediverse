@@ -44,7 +44,7 @@ export class DetailLinkComponent {
   type = input.required<DetailActions>();
   use = model.required<FormUse>();
   dictionary = input.required<NamingSubject>();
-  view = input.required<View>();
+  view = model.required<View>();
   id = input.required<number | undefined>();
 
   onDelete = output<void>();
@@ -126,7 +126,7 @@ export class DetailLinkComponent {
 })
 export class FormHeaderComponent {
   dictionary = input.required<NamingSubject>();
-  use = input.required<FormUse>();
+  use = model.required<FormUse>();
   id = input.required<number | undefined>();
 }
 
@@ -162,7 +162,7 @@ export class DetailHeaderComponent {
   router = inject(Router);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
+  view = model.required<View>();
   id = input.required<number | undefined>();
   dictionary = input.required<NamingSubject>();
 
@@ -203,7 +203,7 @@ export class DetailFooterComponent {
   form = inject(FormsService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
+  view = model.required<View>();
   id = input.required<number | undefined>();
   dictionary = input.required<NamingSubject>();
   formId = input.required<string>();

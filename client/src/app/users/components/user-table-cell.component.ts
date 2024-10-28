@@ -27,7 +27,7 @@ export class UserTableHasAccountCellComponent {
   selector: 'td[userSex]',
   template: `
     <div class="badge fw-bold"
-      [ngClass]="{ 'badge-light-primary': user().sex === 'Masculino', 'badge-light-warning': user().sex === 'Femenino'}">
+      [ngClass]="{ 'badge-light-primary': user().sex?.name === 'Masculino', 'badge-light-warning': user().sex?.name === 'Femenino'}">
       {{user().sex}}
     </div>
   `,
@@ -69,7 +69,7 @@ export class UserTableCellComponent implements OnInit {
   service = inject(UsersService);
 
   user = model.required<User>();
-  role = input.required<Role>();
+  role = model.required<Role>();
 
   routerLink?: string;
 

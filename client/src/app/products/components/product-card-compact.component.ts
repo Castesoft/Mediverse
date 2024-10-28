@@ -1,5 +1,5 @@
 import {CurrencyPipe, DecimalPipe} from "@angular/common";
-import {Component, inject, input, OnInit} from "@angular/core";
+import {Component, inject, input, model, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
 import {Role, View} from "src/app/_models/types";
 import {Product} from "src/app/_models/product";
@@ -16,14 +16,14 @@ import { ProductsService } from "src/app/_services/products.service";
             <img [src]="item.photoUrl" [alt]="item.name" class="w-100"/>
           } @else {
             <span class="symbol-label fs-2x fw-semibold text-primary bg-light-primary">
-                {{ item.name[0] }}
+                {{ item.name![0] }}
             </span>
           }
           <div
             class="bg-success position-absolute border border-4 border-body h-15px w-15px rounded-circle translate-middle start-100 top-100 ms-n3 mt-n3">
             </div>
         </div>
-        <a [routerLink]="[]" (click)="service.clickLink(item.id, item, key(), 'detail', view())"
+        <a [routerLink]="[]" (click)="service.clickLink(item, key(), 'detail', view())"
            class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">
           {{ item.name }}
         </a>
@@ -52,17 +52,16 @@ export class ProductCardCompactComponent implements OnInit {
   service = inject(ProductsService);
   router = inject(Router);
 
-  view = input.required<View>();
-  key = input.required<string>();
+  view = model.required<View>();
+  key = model.required<string>();
 
   item?: Product;
 
   ngOnInit(): void {
-    this.service.selected$(this.key()).subscribe({
-      next: item => {
-        this.item = item;
-      }
-    })
-
+    // this.service.selected$(this.key()).subscribe({
+    //   next: item => {
+    //     this.item = item;
+    //   }
+    // })
   }
 }

@@ -219,18 +219,15 @@ export class PrescriptionsService {
     );
   }
 
-  create(formData: any, doctorId: number): Observable<Prescription> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<Prescription>(`${this.baseUrl}${doctorId}`, formData, { headers }).pipe(
+  create(model: any, view: View): Observable<Prescription> {
+    return this.http.post<Prescription>(`${this.baseUrl}`, model).pipe(
       tap(response => {
-        return response;
       })
     );
   }
 
-
-  update(id: number, formData: any): Observable<Prescription> {
-    return this.http.put<Prescription>(`${this.baseUrl}${id}`, formData).pipe(
+  update(id: number, model: any, view: View): Observable<Prescription> {
+    return this.http.put<Prescription>(`${this.baseUrl}${id}`, model).pipe(
       tap(response => {
         // TODO
       })
@@ -297,7 +294,7 @@ export class PrescriptionsService {
     return this.confirm.confirm(this.getConfirmDeleteItem(item)).pipe(
       switchMap(result => {
         if (result) {
-          return this.delete(item.id).pipe(
+          return this.delete(item.id!).pipe(
             map(() => {
               this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id} ha sido eliminada`);
               return true;
@@ -324,7 +321,7 @@ export class PrescriptionsService {
       const item = selectedItems[0];
       return this.delete$(item);
     } else if (selectedCount > 1) {
-      const selectedIds = selectedItems.map((item) => item.id);
+      const selectedIds = selectedItems.map((item) => item.id!);
       return this.deleteRangeByIds$(selectedIds);
     } else {
       return of();

@@ -1,12 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, input, OnInit } from '@angular/core';
 import { Product } from 'src/app/_models/product';
 import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
-  selector: '[productPicture]',
-  standalone: true,
-  imports: [],
+  selector: 'div[productPicture]',
   templateUrl: './product-picture.component.html',
+  standalone: true,
+  imports: [ CommonModule],
 })
 export class ProductProfilePictureComponent implements OnInit {
   private utilsService = inject(UtilsService);
@@ -14,6 +15,6 @@ export class ProductProfilePictureComponent implements OnInit {
   bootstrapClass = 'success';
 
   ngOnInit(): void {
-    this.bootstrapClass = this.utilsService.getBootstrapClass(this.product().name);
+    this.bootstrapClass = this.utilsService.getBootstrapClass(this.product().name!);
   }
 }

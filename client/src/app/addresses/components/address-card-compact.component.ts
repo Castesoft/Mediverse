@@ -52,8 +52,8 @@ export class AddressCardCompactComponent implements OnInit {
   router = inject(Router);
 
   type = input.required<Addresses>();
-  view = input.required<View>();
-  key = input.required<string>();
+  view = model.required<View>();
+  key = model.required<string>();
 
   address?: Address;
 

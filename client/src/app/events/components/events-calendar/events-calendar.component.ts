@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, input, OnDestroy, OnInit, viewChild, } from '@angular/core';
+import { Component, forwardRef, inject, input, model, OnDestroy, OnInit, viewChild, } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { IconsService } from 'src/app/_services/icons.service';
 import { Pagination } from 'src/app/_models/pagination';
@@ -66,10 +66,10 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   service = inject(EventsService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
+  role = model.required<Role>();
 
   calendarView = 'calendar';
   data?: Event[];
@@ -143,7 +143,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const classIndex = asciiSum % colors.length;
     const baseColor = colors[classIndex];
-  
+
     const now = new Date();
     if (dateFrom <= now && now <= dateTo) {
       return `${baseColor} border-2 border-primary`;
@@ -168,7 +168,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
               start: event.dateFrom,
               end: event.dateTo,
               id: event.id,
-              className: this.getBgColorClass(event.patient?.firstName || '', new Date(event.dateFrom), new Date(event.dateTo)),
+              className: this.getBgColorClass(event.patient?.firstName || '', new Date(event.dateFrom!), new Date(event.dateTo!)),
             } as any;
           });
         }
@@ -197,15 +197,15 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   }
 
   handleDateClick(arg: DateClickArg) {
-    this.service.clickLink(
-      null,
-      null,
-      this.key(),
-      'create',
-      'modal',
-      arg.date,
-      arg.date
-    );
+    // this.service.clickLink(
+    //   null,
+    //   null,
+    //   this.key(),
+    //   'create',
+    //   'modal',
+    //   arg.date,
+    //   arg.date
+    // );
   }
 
   formatTimeRange = (start: Date, end: Date): string => {
@@ -231,7 +231,7 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   }
 
   handleEventClick(arg: EventClickArg) {
-    this.service.clickLink(+arg.event.id, this.service.getById$(+arg.event.id, this.key(), this.role()), this.key(), 'detail', 'modal');
+    // this.service.clickLink(+arg.event.id, this.service.getById$(+arg.event.id, this.key(), this.role()), this.key(), 'detail', 'modal');
   }
 
   handleEventDragStop(arg: EventDragStopArg) {
@@ -240,15 +240,15 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
 
   private handleSelect(arg: DateSelectArg) {
     if (calcDateDiff(arg.start, arg.end) !== -1) {
-      this.service.clickLink(
-        null,
-        null,
-        this.key(),
-        'create',
-        'modal',
-        arg.start,
-        arg.end
-      );
+      // this.service.clickLink(
+      //   null,
+      //   null,
+      //   this.key(),
+      //   'create',
+      //   'modal',
+      //   arg.start,
+      //   arg.end
+      // );
     }
   }
 

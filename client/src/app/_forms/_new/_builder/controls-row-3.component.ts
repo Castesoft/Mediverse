@@ -1,5 +1,5 @@
-import { Component, input, HostBinding, effect } from "@angular/core";
-import { ControlRows, ControlOrientation } from "src/app/_forms/form";
+import { Component, input, HostBinding, effect, model } from "@angular/core";
+import { ControlRows, ControlOrientation, FormGap } from "src/app/_forms/form";
 
 @Component({
   selector: 'div[controlsRow3]',
@@ -12,6 +12,7 @@ export class ControlsRow3Component {
   grid = input<ControlRows>('responsive');
 
   orientation = input<ControlOrientation>('inline');
+  gap = model<FormGap>(null);
 
   class = 'row d-flex';
 
@@ -50,6 +51,10 @@ export class ControlsRow3Component {
           this.class = `${this.class} align-items-end gx-2 gy-1`;
           break;
       }
-    })
+
+      if (this.gap() !== null) {
+        this.class = `${this.class} gap-${this.gap()}`;
+      }
+    });
   }
 }

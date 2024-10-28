@@ -1,56 +1,60 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { SelectOption } from 'src/app/_forms/form';
+import { Account } from 'src/app/_models/account';
 import { AccountService } from 'src/app/_services/account.service';
-import { InsuranceModalComponent } from './insurance-modal/insurance-modal.component';
+import { InsuranceCompanyItemComponent } from 'src/app/account/utils/insurance-company-item.component';
+import { InsuranceCompanySwitchComponent } from 'src/app/account/utils/insurance-company-switch.component';
+import { MedicalInsuranceCompaniesService } from 'src/app/medicalInsuranceCompanies/medicalInsuranceCompanies.config';
 
 @Component({
   selector: 'app-account-insurances',
   standalone: true,
-  imports: [],
+  imports: [ InsuranceCompanyItemComponent, CommonModule, InsuranceCompanySwitchComponent, ],
   templateUrl: './account-insurances.component.html',
   styleUrl: './account-insurances.component.scss'
 })
 export class AccountInsurancesComponent implements OnInit {
-  private bsModalService = inject(BsModalService);
-  accountService = inject(AccountService);
+  service = inject(AccountService);
+  private medicalInsuranceCompanies = inject(MedicalInsuranceCompaniesService);
+
+  medicalInsuranceCompanyOptions = signal<SelectOption[]>([]);
+  account = signal<Account | null>(null);
+
+  constructor() {
+    this.medicalInsuranceCompanies.getOptions().subscribe();
+
+    effect(() => {
+      this.account.set(this.service.current());
+
+      const doctorInsurances = this.account()!.doctorInsuranceCompanies;
+      const medicalInsuranceCompanyOptions = this.medicalInsuranceCompanies.options();
+
+      const filteredOptions = medicalInsuranceCompanyOptions.map(option => {
+        return new SelectOption({
+          ...option,
+          enabled: doctorInsurances.some((insurance: any) => insurance.id === option.id)
+        })
+      });
+
+      this.medicalInsuranceCompanyOptions.set(filteredOptions);
+
+    }, { allowSignalWrites: true, });
+  }
 
   ngOnInit(): void {
-    this.accountService.getMedicalInsuranceCompaniesFields();
-    this.accountService.getUserMedicalInsuranceCompanies();
-    this.accountService.getDoctorMedicalInsuranceCompanies();
-  }
 
-  openAddInsuranceModal() {
-    this.bsModalService.show(InsuranceModalComponent, {
-      initialState: {
-        title: 'Añadir póliza de seguro',
-      },
-    });
-  }
-
-  openEditInsuranceModal(insurance: any) {
-    this.bsModalService.show(InsuranceModalComponent, {
-      initialState: {
-        title: 'Editar póliza de seguro',
-        type: 'edit',
-        insurance,
-      },
-    });
-  }
-
-  deleteInsurance(insuranceId: number) {
-    this.accountService.deleteMedicalInsurance(insuranceId).subscribe();
   }
 
   toggleDoctorMedicalInsuranceCompany(e: any, insuranceId: number) {
-    this.accountService.toggleDoctorMedicalInsuranceCompany(insuranceId, e.target.checked).subscribe();
+    this.service.toggleDoctorInsurance(insuranceId, e.target.checked).subscribe();
   }
 
   doctorContainsCompany(insuranceCompany: any) {
-    if (!this.accountService.doctorMedicalInsuranceCompanies()) {
-      return false;
-    }
+    // if (!this.service.doctorMedicalInsuranceCompanies()) {
+    //   return false;
+    // }
 
-    return this.accountService.doctorMedicalInsuranceCompanies()!.some((company: any) => company.id === insuranceCompany.id);
+    // return this.service.doctorMedicalInsuranceCompanies()!.some((company: any) => company.id === insuranceCompany.id);
   }
 }

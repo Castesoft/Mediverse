@@ -1,14 +1,14 @@
 import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
+import { NgModule, signal } from "@angular/core";
 import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { createId } from "@paralleldrive/cuid2";
 import { Account } from "src/app/_models/account";
 import { CatalogMode, FormUse, Role, Sections, View } from "src/app/_models/types";
 import { User } from "src/app/_models/user";
 import { AccountService } from "src/app/_services/account.service";
 import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
 import { CompactTableService } from "src/app/_services/compact-table.service";
-import { GuidService } from "src/app/_services/guid.service";
 import { UsersService } from "src/app/_services/users.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
 import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
@@ -42,9 +42,9 @@ export class PatientsComponent implements OnInit {
     <div
       usersCatalog
       [mode]="mode"
-      [key]="key"
-      [view]="view"
-      [role]="role"
+      [(key)]="key"
+      [(view)]="view"
+      [(role)]="role"
     ></div>
   </div>
   `,
@@ -54,15 +54,13 @@ export class PatientsComponent implements OnInit {
 class PatientsCatalogComponent implements OnInit {
   service = inject(UsersService);
   compact = inject(CompactTableService);
-  guid = inject(GuidService);
 
   isCompact = false;
   view: View = 'page';
   mode: CatalogMode = 'view';
-  key = this.guid.gen();
+  key = createId();
   section: Sections = 'users';
   role: Role = 'Patient';
-  // label: string;
 
   constructor() {
     // this.label = this.service.namingDictionary.get(this.role)!.title;
@@ -76,17 +74,13 @@ class PatientsCatalogComponent implements OnInit {
 @Component({
   selector: 'patient-detail-route',
   template: `
-    @if (id && item) {
-      <div
-        userDetailView
-        [id]="id"
-        [use]="use"
-        [view]="view"
-        [item]="item"
-        [key]="key"
-        [role]="role"
+      <div userDetail
+        [(use)]="use"
+        [(view)]="view"
+        [(item)]="item"
+        [(key)]="key"
+        [(role)]="role"
       ></div>
-    }
   `,
   standalone: true,
   imports: [RouterModule, UserDetailComponent, LayoutModule,],
@@ -95,71 +89,54 @@ class PatientDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  item?: User;
-  id?: number;
-  use: FormUse = 'detail';
-  view: View = 'page';
-  label?: string;
-  key?: string;
+  item = signal<User | null>(null);
+  use = signal<FormUse>('detail');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   section: Sections = 'users';
   role: Role = 'Patient';
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
     this.route.data.subscribe({
       next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        this.item.set(data['item']);
       },
     });
     const navigation = this.router.getCurrentNavigation();
-    this.key = navigation?.extras?.state?.['key'];
+    this.key.set(navigation?.extras?.state?.['key']);
   }
 }
 @Component({
   selector: 'patient-edit-route',
   template: `
-      @if (id && item) {
         <div
-          userEditView
-          [id]="id"
-          [use]="use"
-          [view]="view"
-          [key]="key"
-          [item]="item"
-          [role]="role"
+          userDetail
+          [(use)]="use"
+          [(view)]="view"
+          [(key)]="key"
+          [(item)]="item"
+          [(role)]="role"
         ></div>
-      }
   `,
   standalone: true,
-  imports: [UserEditComponent, RouterModule, LayoutModule,],
+  imports: [UserDetailComponent, RouterModule, LayoutModule,],
 })
 class PatientEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  item?: User;
-  id?: number;
-  use: FormUse = 'edit';
-  view: View = 'page';
-  label?: string;
-  key = undefined;
+  item = signal<User | null>(null);
+  use = signal<FormUse>('edit');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   section: Sections = 'users';
   role: Role = 'Patient';
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
     this.route.data.subscribe({
       next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        this.item.set(data['item']);
       },
     });
   }
@@ -167,15 +144,17 @@ class PatientEditComponent implements OnInit {
 
 @Component({
   selector: 'patient-new-route',
-  template: `<div userNewView [use]="use" [view]="view" [role]="role"
-  ></div>`,
+  template: `<div userDetail [(use)]="use" [(view)]="view" [(role)]="role" [(item)]="item" [(key)]="key"></div>`,
   standalone: true,
-  imports: [UserNewComponent, RouterModule, LayoutModule,],
+  imports: [UserDetailComponent, RouterModule, LayoutModule,],
 })
 class PatientNewComponent {
-  use: FormUse = 'create';
-  view: View = 'page';
-  role: Role = 'Patient';
+  item = signal<User | null>(null);
+  use = signal<FormUse>('create');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
+  role = signal<Role>('Patient');
 }
 
 @NgModule({
@@ -239,9 +218,9 @@ export class NursesComponent implements OnInit {
     <div
       usersCatalog
       [mode]="mode"
-      [key]="key"
-      [view]="view"
-      [role]="role"
+      [(key)]="key"
+      [(view)]="view"
+      [(role)]="role"
     ></div>
   </div>
   `,
@@ -251,15 +230,13 @@ export class NursesComponent implements OnInit {
 class NursesCatalogComponent implements OnInit {
   service = inject(UsersService);
   compact = inject(CompactTableService);
-  guid = inject(GuidService);
 
   isCompact = false;
   view: View = 'page';
   mode: CatalogMode = 'view';
-  key = this.guid.gen();
+  key = createId();
   section: Sections = 'users';
   role: Role = 'Nurse';
-  // label: string;
 
   constructor() {
     // this.label = this.service.namingDictionary.get(this.role)!.title;
@@ -273,17 +250,14 @@ class NursesCatalogComponent implements OnInit {
 @Component({
   selector: 'nurse-detail-route',
   template: `
-    @if (id && item) {
       <div
-        userDetailView
-        [id]="id"
-        [use]="use"
-        [view]="view"
-        [item]="item"
-        [key]="key"
-        [role]="role"
+        userDetail
+        [(use)]="use"
+        [(view)]="view"
+        [(item)]="item"
+        [(key)]="key"
+        [(role)]="role"
       ></div>
-    }
   `,
   standalone: true,
   imports: [RouterModule, UserDetailComponent, LayoutModule,],
@@ -292,71 +266,54 @@ class NurseDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  item?: User;
-  id?: number;
-  use: FormUse = 'detail';
-  view: View = 'page';
-  label?: string;
-  key?: string;
+  item = signal<User | null>(null);
+  use = signal<FormUse>('detail');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   section: Sections = 'users';
   role: Role = 'Nurse';
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
     this.route.data.subscribe({
       next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        this.item.set(data['item']);
       },
     });
     const navigation = this.router.getCurrentNavigation();
-    this.key = navigation?.extras?.state?.['key'];
+    this.key.set(navigation?.extras?.state?.['key']);
   }
 }
 @Component({
   selector: 'nurse-edit-route',
   template: `
-      @if (id && item) {
         <div
-          userEditView
-          [id]="id"
-          [use]="use"
-          [view]="view"
-          [key]="key"
-          [item]="item"
-          [role]="role"
+          userDetail
+          [(use)]="use"
+          [(view)]="view"
+          [(key)]="key"
+          [(item)]="item"
+          [(role)]="role"
         ></div>
-      }
   `,
   standalone: true,
-  imports: [UserEditComponent, RouterModule, LayoutModule,],
+  imports: [UserDetailComponent, RouterModule, LayoutModule,],
 })
 class NurseEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  item?: User;
-  id?: number;
-  use: FormUse = 'edit';
-  view: View = 'page';
-  label?: string;
-  key = undefined;
+  item = signal<User | null>(null);
+  use = signal<FormUse>('detail');
+  view = signal<View>('page');
+  key = signal<string | null>(null);
+
   section: Sections = 'users';
-  role: Role = 'Nurse';
+  role = signal<Role>('Nurse');
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe({
-      next: (params) => {
-        this.id = +params.get('id')!;
-      },
-    });
     this.route.data.subscribe({
       next: (data) => {
-        this.item = data['item'];
-        if (this.item) this.label = this.item.fullName;
+        this.item.set(data['item']);
       },
     });
   }
@@ -364,7 +321,7 @@ class NurseEditComponent implements OnInit {
 
 @Component({
   selector: 'nurse-new-route',
-  template: `<div userNewView [use]="use" [view]="view" [role]="role"
+  template: `<div userNewView [(use)]="use" [(view)]="view" [(role)]="role"
   ></div>`,
   standalone: true,
   imports: [UserNewComponent, RouterModule, LayoutModule,],

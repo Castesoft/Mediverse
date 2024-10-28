@@ -20,7 +20,7 @@ export class ControlLabel3Component {
   service = inject(FormsService);
   icons = inject(IconsService);
 
-  control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
+  control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | File | null>>();
 
   class = 'col-form-label fw-semibold fs-6 text-nowrap';
 

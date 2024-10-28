@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import {
   Component, InputSignal,
+  ModelSignal,
   OnDestroy,
   OnInit,
   effect,
   inject,
-  input
+  input,
+  model
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -80,8 +82,8 @@ export class AddressesTableMenuComponent
   extends TableMenu<AddressesService>
   implements OnInit, ITableMenu<Address>
 {
-  item: InputSignal<Address> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<Address> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(AddressesService);
@@ -184,9 +186,9 @@ export class AddressesTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<Address[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;

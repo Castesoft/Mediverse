@@ -70,9 +70,9 @@
               <tbody class="fw-semibold text-gray-600">
                 @for (payment of payments(); track payment.id) {
                   <tr>
-                    <td>{{ payment.paymentDate | date }}</td>
+                    <td>{{ payment.date | date }}</td>
                     <td>
-                    <a href="#">{{ payment.paymentMethodType.name }} @if (payment.paymentMethod) { {{ payment.paymentMethod.last4 }} }</a>
+                    <a href="#">{{ payment.paymentMethodType?.name }} @if (payment.paymentMethod) { {{ payment.paymentMethod.last4 }} }</a>
                   </td>
                   <td>{{ payment.amount | currency }}</td>
                   <td>

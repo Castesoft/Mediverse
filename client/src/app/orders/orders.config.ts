@@ -97,7 +97,7 @@ export class EditComponent implements OnInit {
   use: FormUse = 'edit';
   view: View = 'page';
   label?: string;
-  key = undefined;
+  key = null;
   role: Role = 'Patient';
 
   ngOnInit(): void {
@@ -109,7 +109,7 @@ export class EditComponent implements OnInit {
     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data): void => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.patient?.fullName;
+        if (this.item) this.label = this.item.patient.fullName!;
       },
     });
   }
@@ -127,7 +127,7 @@ export class EditComponent implements OnInit {
     this.ordersService.getById(id).subscribe({
       next: (item): void => {
         this.item = item;
-        this.label = item.patient?.fullName;
+        this.label = item.patient.fullName!;
       },
     });
   }
@@ -183,7 +183,7 @@ export class DetailComponent implements OnInit, OnDestroy {
         this.ordersService.getById(this.id).subscribe({
           next: (item) => {
             this.item = item;
-            this.label = item.patient?.fullName;
+            this.label = item.patient.fullName!;
           },
         });
       },
@@ -194,7 +194,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
         this.item = data['item'];
-        if (this.item) this.label = this.item.patient?.fullName;
+        if (this.item) this.label = this.item.patient.fullName!;
       },
     });
   }

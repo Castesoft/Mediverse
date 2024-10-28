@@ -1,117 +1,37 @@
-<div catalogCardHeader>
-  <div class="card-title">
-    <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
-      <div searchText formControlName="search" [naming]="service.dictionary"></div>
-    </form>
-  </div>
-  <div class="card-toolbar">
-    @if (service.hasSelected(key()) && mode() === 'view') {
-      <div deleteSelectedBtn [count]="service.selectedCount(key())" (click)="service.deleteRange$(key())"></div>
-    }
-    @if(!service.hasSelected(key())) {
-      <div class="d-flex justify-content-end">
-        <button filterMenuBtn (click)="service.showFiltersModal(key())"></button>
-        <products-filter-menu></products-filter-menu>
-        <button exportBtn (click)="service.downloadXLSX$(key())"></button>
-        <button createBtn [naming]="service.dictionary"
-                (click)="service.clickLink(null, null, key(), 'create', view())"
-        ></button>
+<div class="pb-2">
+  <h1 class="mb-4">{{ service.dictionary.title}}</h1>
+  <div>
+    <div class="row align-items-center justify-content-between g-3 mb-2">
+      <div class="col-12 col-md-auto">
+        <a type="button" class="btn btn-primary me-4" (click)="service.clickLink(undefined, key(), 'create', 'page')">
+          <fa-icon [icon]="icons.faPlus" class="me-1" />
+          Crear {{ service.dictionary.singular }}
+        </a>
+        @if (service.hasSelected(key(), mode()) | async) {
+        @if (service.selectedCount(key(), mode()) | async; as count) {
+        <button mat-raised-button [matBadge]="count" matBadgePosition="after" (click)="service.deleteRange$(key())">
+          Eliminar {{ count > 1 ? service.dictionary.plural : service.dictionary.singular }}
+        </button>
+        }
+        }
       </div>
-    }
+      <div class="col-12 col-md-auto d-flex">
+        <div productsFilterForm [formId]="formId" [key]="key()"></div>
+      </div>
+    </div>
+    <div productsFilterForm [formId]="formId" [key]="key()"></div>
   </div>
 </div>
-
-<div cardBody>
-  @if (mode() === "select" || mode() === "multiselect") {
-    <h4>
-      @switch (mode()) {
-        @case ("select") {
-          {{ service.dictionary.singularTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionado
-          } @else {
-            seleccionada
-          }
-        }
-        @case ("multiselect") {
-          {{ service.dictionary.pluralTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionados
-          } @else {
-            seleccionadas
-          }
-        }
-      }
-    </h4>
-    @if (service.hasSelected$(key())) {
-      <div tableWrapper class="mb-4">
-        <table
-          productsTable
-          [data]="mode() === 'select' ? service.getSelected$(key()) : []"
-          [key]="key()"
-          [mode]="'readonly'"
-          [showHeaders]="false"
-        ></table>
-      </div>
-    } @else {
-      @switch (mode()) {
-        @case ("select") {
-          No tienes {{ service.dictionary.articles.undefinedSingular }} {{ service.dictionary.singular }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionado
-          } @else {
-            seleccionada
-          }.
-        }
-        @case ("multiselect") {
-          No tienes {{ service.dictionary.plural }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionados
-          } @else {
-            seleccionadas
-          }.
-        }
-      }
+<div tableWrapper>
+  <div tableResponsive>
+    @if(service.list$(key(), mode()) | async; as _list) {
+    <table productsTable [mode]="mode()" [data]="_list" [key]="key()">
+    </table>
     }
-  }
-
-  @if (data && pagination) {
-    @if (data.length > 0) {
-      <div tableWrapper>
-        <table
-          productsTable
-          [data]="data"
-          [mode]="mode()"
-          [key]="key()"
-        ></table>
-      </div>
-      <div
-        tablePager
-        [currentPage]="pagination.currentPage"
-        (pageChanged)="service.onPageChanged(key(), $event)"
-        [itemsPerPage]="pagination.itemsPerPage"
-        [totalItems]="pagination.totalItems"
-        (loadMore)="service.loadMore(key())"
-        (loadLess)="service.loadLess(key())"
-      ></div>
-    } @else {
-      <div style="border-radius: 0.7em" class="bg-white border">
-        <alert type="unknown" class="mb-0 text-center">
-          <h4 class="alert-heading mt-4 pt-4 mb-4 fw-bold">
-            {{ service.dictionary.pluralTitlecase }} no encontrados
-          </h4>
-          <p class="mb-4">
-            No se encontraron {{ service.dictionary.plural }} que coincidan con los
-            criterios de búsqueda.
-          </p>
-          <p class="mb-4">
-            <button
-              class="btn btn-phoenix-secondary me-2"
-              (click)="service.resetForm(key(), form)"
-            >
-              Restablecer los filtros
-            </button>
-          </p>
-        </alert>
-      </div>
-    }
-  } @else {
-    <div tableLoadingPlaceholder></div>
+  </div>
+  @if(service.pagination$(key()) | async; as _pagination) {
+  <div tablePager [currentPage]="_pagination.currentPage"
+    [itemsPerPage]="_pagination.itemsPerPage" [totalItems]="_pagination.totalItems" (loadMore)="service.loadMore(key())"
+    (loadLess)="service.loadLess(key())" (pageChanged)="service.onPageChanged(key(), $event)"></div>
   }
 </div>

@@ -22,7 +22,7 @@ export class PatientSelectDisplayCardComponent implements OnInit {
 
   title = input<string>();
   item = model.required<User>();
-  key = input.required<string>();
+  key = model.required<string>();
   inline = input<boolean>(false);
 
   account = signal<Account | null>(null);

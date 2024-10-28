@@ -7,13 +7,14 @@ import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.compon
 import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
 import { EventsService } from "src/app/_services/events.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { Event, EventParams, EventSummary } from "src/app/_models/event";
+import { Event, EventParams } from "src/app/_models/event";
 import { TypeaheadComplexOption } from "src/app/_models/types";
 import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
 import { EventSelectDisplayCardComponent } from "src/app/events/event-select-display-card.component";
+import { EventSummary } from "src/app/_models/eventSummary";
 
 interface EventTypeaheadOptions extends TypeaheadComplexOption {
   data: EventSummary,
@@ -22,7 +23,6 @@ interface EventTypeaheadOptions extends TypeaheadComplexOption {
 @Component({
   selector: '[eventSelectTypeahead]',
   templateUrl: './event-select-typeahead.component.html',
-  styleUrls: ['./event-select-typeahead.component.scss'],
   imports: [
     ControlTypeaheadComponent,
     FaIconComponent,
@@ -146,7 +146,7 @@ export class EventSelectTypeaheadComponent implements OnInit, OnChanges {
   };
 
   openCatalogModal = () => {
-    this.service.showCatalogModal(new MouseEvent('click'), this.key(), 'select')
+    this.service.showCatalogModal({} as any, this.key(), 'select', 'modal');
   }
 
   onTypeaheadSelect = (data: TypeaheadMatch): void => {

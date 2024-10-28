@@ -75,8 +75,8 @@ export class EducationLevelsTableMenuComponent
   extends TableMenu<EducationLevelsService>
   implements OnInit, ITableMenu<EducationLevel>
 {
-  item: InputSignal<EducationLevel> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<EducationLevel> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(EducationLevelsService);
@@ -176,9 +176,9 @@ export class EducationLevelsTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<EducationLevel[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +276,13 @@ export class EducationLevelsTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class EducationLevelsFilterFormComponent extends FormComponent<EducationLevelsService> implements OnInit, FilterFormGroupActions<EducationLevel, EducationLevelParams, FormGroup2<EducationLevelParams>> {
-  item: InputSignal<EducationLevel | undefined> = input.required();
+  item: ModelSignal<EducationLevel | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +375,11 @@ export class EducationLevelsFilterFormComponent extends FormComponent<EducationL
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div educationLevelsFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div educationLevelsFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div educationLevelsFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div educationLevelsFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -411,9 +411,9 @@ export class EducationLevelsCatalogComponent implements OnInit, OnDestroy {
 
   animalId = input<number>();
   isCompact = input.required<boolean>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<EducationLevel>();
 
   toggle = model(false);
@@ -521,10 +521,10 @@ export class EducationLevelParams extends EntityParams<EducationLevel> implement
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class EducationLevelFormComponent extends FormComponent<EducationLevelsService> implements OnInit, FormGroupActions<EducationLevel, FormGroup2<EducationLevel>> {
-  item: InputSignal<EducationLevel | undefined> = input.required();
+  item: ModelSignal<EducationLevel | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<EducationLevel> = {
     code: { label: 'Código', type: 'text' },
@@ -620,9 +620,9 @@ export class EducationLevelDetailComponent {
   service = inject(EducationLevelsService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<EducationLevel | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<EducationLevel | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -898,7 +898,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = null;
   key = createId();
 }
 

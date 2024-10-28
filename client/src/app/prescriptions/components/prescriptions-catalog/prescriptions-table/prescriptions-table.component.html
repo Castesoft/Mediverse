@@ -67,7 +67,7 @@ tableHeader
           </a>
         </div>
         <div class="d-flex flex-column flex-grow-1">
-          <a class="text-gray-800 text-hover-primary mb-1">{{ item.patient?.fullName }}</a>
+          <a class="text-gray-800 text-hover-primary mb-1">{{ item.patient!.name! }}</a>
           <span class="d-flex align-items-center">
             {{ item.notes }}
             @if (item.isCollapsed) {
@@ -145,14 +145,12 @@ tableHeader
         <td colspan="100" style="padding: 0;">
             <div [collapse]="!item.isCollapsed" [id]="'collapseBasic' + item.id" [isAnimated]="true">
               <div class="p-4">
-                <app-prescription-form
+                <div prescriptionForm
                   [id]="null"
-                  [componentId]="'prescription-form-' + item.id"
                   [use]="'detail'"
                   [view]="'inline'"
-                  [key]="'detail'"
-                  [item]="item"
-                ></app-prescription-form>
+                  [(item)]="data[idx]"
+                ></div>
               </div>
             </div>
         </td>

@@ -1,4 +1,4 @@
-import { Component, inject, Input, input, OnDestroy, OnInit } from "@angular/core";
+import { Component, inject, Input, input, model, OnDestroy, OnInit } from "@angular/core";
 import { CatalogMode } from "src/app/_models/types";
 import { IconsService } from "src/app/_services/icons.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -11,7 +11,6 @@ import { RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { Order, OrderParams } from "src/app/_models/order";
 import { Subscription } from "rxjs";
-import { GuidService } from "src/app/_services/guid.service";
 import { OrdersService } from "src/app/_services/orders.service";
 import { ProductTableHasAccountCellComponent } from "src/app/products/components/product-table-cell.component";
 import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
@@ -19,6 +18,7 @@ import { PatientSelectDisplayCardComponent } from "src/app/patients/patient-sele
 import { PatientTableCellComponent } from "src/app/_shared/components/patient-table-cell.component";
 import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-deilvery-status-badge.component";
 import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
+import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   selector: 'table[ordersTable]',
@@ -33,8 +33,8 @@ export class OrdersTableComponent implements OnInit, OnDestroy {
   icons = inject(IconsService);
 
   @Input() data: Order[] = [];
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
   showHeaders = input<boolean>(true);
 
   sortAscending = false;
@@ -44,11 +44,9 @@ export class OrdersTableComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription[] = [];
 
-  cuid: string;
+  cuid: string = createId();
 
-  constructor(guid: GuidService) {
-    this.cuid = guid.gen();
-  }
+  constructor() {}
 
   ngOnInit(): void {
     const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });

@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
+import { RouterModule } from "@angular/router";
 import { SearchService } from "src/app/_services/search.service";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { LoadingPlaceholderComponent } from "src/app/search/components/loading-placeholder.component";
@@ -15,7 +16,7 @@ import { SearchResultCounterComponent } from "src/app/search/components/search-r
   styleUrl: './doctor-results-window.component.scss',
   standalone: true,
   imports: [ CommonModule, ResultRowComponent, SearchFormComponent, NoResultScreenComponent, LoadingPlaceholderComponent, TableModule,
-    SearchResultCounterComponent,
+    SearchResultCounterComponent, RouterModule,
    ],
 })
 export class DoctorResultsWindowComponent {

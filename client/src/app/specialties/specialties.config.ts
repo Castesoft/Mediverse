@@ -71,12 +71,9 @@ import { buildHttpParams, omitKeys } from 'src/app/_utils/util';
   standalone: true,
   imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class SpecialtiesTableMenuComponent
-  extends TableMenu<SpecialtiesService>
-  implements OnInit, ITableMenu<Specialty>
-{
-  item: InputSignal<Specialty> = input.required();
-  key: InputSignal<string> = input.required();
+export class SpecialtiesTableMenuComponent extends TableMenu<SpecialtiesService> implements OnInit, ITableMenu<Specialty> {
+  item: ModelSignal<Specialty> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(SpecialtiesService);
@@ -176,9 +173,9 @@ export class SpecialtiesTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<Specialty[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +273,13 @@ export class SpecialtiesTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class SpecialtiesFilterFormComponent extends FormComponent<SpecialtiesService> implements OnInit, FilterFormGroupActions<Specialty, SpecialtyParams, FormGroup2<SpecialtyParams>> {
-  item: InputSignal<Specialty | undefined> = input.required();
+  item: ModelSignal<Specialty | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +372,11 @@ export class SpecialtiesFilterFormComponent extends FormComponent<SpecialtiesSer
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div specialtiesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div specialtiesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div specialtiesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div specialtiesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -411,9 +408,9 @@ export class SpecialtiesCatalogComponent implements OnInit, OnDestroy {
 
   animalId = input<number>();
   isCompact = input.required<boolean>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<Specialty>();
 
   toggle = model(false);
@@ -521,10 +518,10 @@ export class SpecialtyParams extends EntityParams<Specialty> implements IParams 
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class SpecialtyFormComponent extends FormComponent<SpecialtiesService> implements OnInit, FormGroupActions<Specialty, FormGroup2<Specialty>> {
-  item: InputSignal<Specialty | undefined> = input.required();
+  item: ModelSignal<Specialty | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<Specialty> = {
     code: { label: 'Código', type: 'text' },
@@ -620,9 +617,9 @@ export class SpecialtyDetailComponent {
   service = inject(SpecialtiesService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<Specialty | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<Specialty | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -898,7 +895,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = null;
   key = createId();
 }
 

@@ -1,3 +1,4 @@
+@if(service.current() !== null) {
 <div class="card mb-5 mb-xl-10">
   <div class="card-header">
     <div class="card-title">
@@ -6,115 +7,30 @@
   </div>
   <div class="card-body">
     <div class="row gx-9 gy-6">
-      @for (insurance of accountService.userMedicalInsuranceCompanies(); track $index) {
-      <div class="col-xl-6" data-kt-billing-element="address">
-        <div
-          class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6"
-        >
-          <div class="d-flex flex-column py-2 w-100">
-            <div class="d-flex align-items-center justify-content-between py-2">
-                <div class="d-flex align-items-center">
-                  <img src="{{ insurance?.photoUrl }}" alt="{{ insurance?.name }}" class="h-50px me-3" />
-                </div>
-                <div>
-                    <button
-                        class="btn btn-sm btn-light btn-active-light-primary me-3"
-                        data-kt-billing-action="address-delete"
-                        [disabled]="insurance?.isMain"
-                        (click)="deleteInsurance(insurance?.id!)"
-                        >
-                        <span class="indicator-label">Eliminar</span>
-                        <span class="indicator-progress"
-                            >Please wait...
-                            <span
-                            class="spinner-border spinner-border-sm align-middle ms-2"
-                            ></span
-                        ></span>
-                    </button>
-                    <button
-                        class="btn btn-sm btn-light btn-active-light-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#kt_modal_new_address"
-                        (click)="openEditInsuranceModal(insurance)"
-                        >
-                        Editar
-                    </button>
-                </div>
-            </div>
-            <div class="d-flex align-items-center fs-5 fw-bold mb-2">
-              {{ insurance?.name }}
-              @if (insurance?.isMain) {
-                <span class="badge badge-light-success fs-7 ms-2"
-                    >Principal</span
-                >
-              }
-            </div>
-            <div class="fs-6 fw-semibold text-gray-600 mb-4">
-                No. Póliza: {{ insurance?.policyNumber }}
-            </div>
-            @if (insurance?.document?.thumbnailUrl) {
-              <div class="mt-auto position-relative">
-                <a [href]="insurance.document.url" target="_blank" class="d-block thumbnail-link mx-auto">
-                  <img src="{{ insurance.document.thumbnailUrl }}" alt="Policy Document" class="thumbnail-img" />
-                  <div class="thumbnail-overlay">
-                    <i class="ki-duotone ki-eye fs-1 text-white"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                  </div>
-                </a>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
+      @for (insurance of service.current()?.medicalInsuranceCompanies; let idx = $index; track idx) {
+        <div insuranceCompanyItem [(item)]="service.current()!.medicalInsuranceCompanies[idx]" [use]="'edit'"></div>
       }
-      <div class="col-xl-6">
-        <div
-          class="notice d-flex bg-light-primary rounded border-primary border border-dashed flex-stack h-xl-100 mb-10 p-6"
-        >
-          <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
-            <div class="mb-3 mb-md-0 fw-semibold">
-              <h4 class="text-gray-900 fw-bold">Agregar un nueva póliza</h4>
-              <div class="fs-6 text-gray-700 pe-7">
-                Puede agregar pólizas de seguros adicionales
-              </div>
-            </div>
-            <a
-              (click)="openAddInsuranceModal()"
-              class="btn btn-primary px-6 align-self-center text-nowrap"
-              data-bs-toggle="modal"
-              data-bs-target="#kt_modal_new_address"
-              >Nueva Póliza</a
-            >
-          </div>
-        </div>
-      </div>
+      <div insuranceCompanyItem [item]="null" [use]="'create'"></div>
     </div>
   </div>
 </div>
 
-@if (accountService.hasRole(['Doctor'])) {
-    <div class="card mb-5 mb-xl-10">
-        <div class="card-header">
-            <div class="card-title">
-                <h3>Seguros afiliados</h3>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="fs-6 fw-semibold text-muted">Los seguros seleccionados aparecerán a los pacientes a la hora de agendar una cita.</div>
-            <div class="row gx-9 gy-6">
-                @for (insuranceCompany of accountService.medicalInsuranceCompanies(); let idx = $index; track idx) {
-                    <div class="col-xl-6">
-                        <div class="d-flex flex-stack mt-5">
-                            <div class="me-5">
-                                <img src="{{ insuranceCompany?.options?.photoUrl }}" alt="{{ insuranceCompany?.name }}" class="w-50px me-3" />
-                                <label class="fs-6 fw-semibold form-label">{{insuranceCompany.name}}</label>
-                            </div>
-                            <label class="form-check form-switch form-check-custom form-check-solid">
-                                <input class="form-check-input" type="checkbox" [checked]="doctorContainsCompany(insuranceCompany)" (change)="toggleDoctorMedicalInsuranceCompany($event, insuranceCompany.id!)"  />
-                            </label>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
+@if (service.hasRole(['Doctor'])) {
+<div class="card mb-5 mb-xl-10">
+  <div class="card-header">
+    <div class="card-title">
+      <h3>Seguros afiliados</h3>
     </div>
+  </div>
+  <div class="card-body">
+    <div class="fs-6 fw-semibold text-muted">Los seguros seleccionados aparecerán a los pacientes al momento de agendar
+      una cita.</div>
+    <div class="row gx-9 gy-6">
+      @for (item of medicalInsuranceCompanyOptions(); let idx = $index; track idx) {
+        <div insuranceCompanySwitch [(item)]="medicalInsuranceCompanyOptions()[idx]"></div>
+      }
+    </div>
+  </div>
+</div>
+}
 }

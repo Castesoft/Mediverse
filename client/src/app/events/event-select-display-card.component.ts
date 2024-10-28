@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from "@angular/core";
+import { Component, inject, input, model, OnInit } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { RouterLink } from "@angular/router";
 import { Event } from "../_models/event";
@@ -21,7 +21,7 @@ export class EventSelectDisplayCardComponent implements OnInit {
 
   title = input<string>();
   item = input<Event>();
-  key = input.required<string>();
+  key = model.required<string>();
 
   ngOnInit(): void {}
 

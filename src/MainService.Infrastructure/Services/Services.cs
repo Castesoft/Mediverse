@@ -12,13 +12,26 @@ namespace MainService.Infrastructure.Services
 
             if (!string.IsNullOrEmpty(itemToDelete.PublicId))
             {
-                var deleteResult = await cloudinaryService.Delete(itemToDelete.PublicId);
+                var deleteResult = await cloudinaryService.DeleteAsync(itemToDelete.PublicId);
 
                 if (deleteResult.Result != "ok")
                     Log.Information($"La foto con ID {item.Id} no pudo ser eliminada de Cloudinary. Resultado: {deleteResult.Result}.");
             }
 
             uow.PhotoRepository.Delete(itemToDelete);
+
+            if (!await uow.Complete()) return false;
+
+            return true;
+        }
+    }
+
+    public class MedicalInsuranceCompaniesService(IUnitOfWork uow) : IMedicalInsuranceCompaniesService {
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            MedicalInsuranceCompany itemToDelete = await uow.MedicalInsuranceCompanyRepository.GetByIdAsync(id);
+
+            uow.MedicalInsuranceCompanyRepository.Delete(itemToDelete);
 
             if (!await uow.Complete()) return false;
 

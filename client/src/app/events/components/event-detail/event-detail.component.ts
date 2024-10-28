@@ -5,7 +5,7 @@ import {Event} from 'src/app/_models/event';
 import {CurrencyPipe, DatePipe, NgSwitch, NgSwitchCase} from "@angular/common";
 import {BootstrapModule} from "src/app/_shared/bootstrap.module";
 import {DashboardModule} from "src/app/home/dashboard/dashboard.module";
-import {FormUse} from "src/app/_models/types";
+import {FormUse, View} from "src/app/_models/types";
 import {IconsService} from "../../../_services/icons.service";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EventServicesSummaryComponent } from 'src/app/events/components/event-services-summary.component';
@@ -22,7 +22,7 @@ import { LayoutModule } from 'src/app/_shared/layout.module';
 import { PrescriptionsTableComponent } from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component';
 
 @Component({
-  selector: 'div[eventDetailView]',
+  selector: 'div[eventDetail]',
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss'],
   standalone: true,
@@ -41,11 +41,10 @@ export class EventDetailComponent implements OnInit {
   private snackbarService = inject(SnackbarService);
   icons = inject(IconsService);
 
-  use = input.required<FormUse>();
-  key = input.required<string>();
-  view = input.required<string>();
-
-  item = model.required<Event>();
+  use = model.required<FormUse>();
+  key = model.required<string | null>();
+  view = model.required<View>();
+  item = model.required<Event | null>();
 
   id!: number;
 
@@ -89,12 +88,12 @@ export class EventDetailComponent implements OnInit {
 
   onSave(tab: string) {
     if (tab === 'evolution') {
-      this.eventService.updateEvent(this.item()!.id, {evolution: this.form.value.evolution ?? undefined}).subscribe((res) => {
+      this.eventService.updateEvent(this.item()!.id!, {evolution: this.form.value.evolution ?? undefined}).subscribe((res) => {
         this.snackbarService.success('Evolución actualizada correctamente');
       });
       this.isEvolutionEditing = false;
     } else if (tab === 'nextSteps') {
-      this.eventService.updateEvent(this.item()!.id, {nextSteps: this.form.value.nextSteps ?? undefined}).subscribe((res) => {
+      this.eventService.updateEvent(this.item()!.id!, {nextSteps: this.form.value.nextSteps ?? undefined}).subscribe((res) => {
         this.snackbarService.success('Próximos pasos actualizados correctamente');
       });
       this.isNextStepsEditing = false;
@@ -110,7 +109,7 @@ export class EventDetailComponent implements OnInit {
   }
 
   goToEvent() {
-    this.router.navigate(['/home/events', this.item().id]);
+    this.router.navigate(['/home/events', this.item()!.id]);
     this.modalService.hide();
   }
 

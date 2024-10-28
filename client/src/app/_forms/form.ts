@@ -1,4 +1,4 @@
-import { inject, InputSignal } from "@angular/core";
+import { inject, InputSignal, ModelSignal } from "@angular/core";
 import { AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlOptions, FormControlState, FormGroup, ValidatorFn, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -9,6 +9,10 @@ import { EnvService } from "src/app/_services/env.service";
 import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FormGroup2 } from "src/app/_forms/form2";
+
+export function isFile(value: any): value is File {
+  return value instanceof File;
+}
 
 export function isSelectOption(value: any): value is SelectOption {
   return (
@@ -31,8 +35,10 @@ export class Options {
   sex: string | null = null;
   race: string | null = null;
   price: number | null = null;
+  age: number | null = null;
   photoUrl: string | null = null;
   description: string | null = null;
+  color: string | null = null;
   isMain: boolean | null = null;
 
   constructor(init?: Partial<Options>) {
@@ -110,6 +116,8 @@ export type ControlErrors = { [key: string]: string };
 
 export type ControlRows = 1 | 2 | 3 | 4 | 5 | "responsive";
 
+export type FormGap = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | null;
+
 export type ControlOrientation = "inline" | "block";
 
 export class FormComponent<T> {
@@ -129,10 +137,10 @@ export class FormComponent<T> {
 }
 
 export interface FormGroupActions<T extends Entity, V extends FormGroup2<T>> {
-  item: InputSignal<T | undefined>;
-  use: InputSignal<FormUse>;
-  view: InputSignal<View>;
-  key: InputSignal<string>;
+  item: ModelSignal<T | null>;
+  use: ModelSignal<FormUse>;
+  view: ModelSignal<View>;
+  key: ModelSignal<string>;
 
   form: V;
 
@@ -165,11 +173,11 @@ export interface FormActions<T extends Entity, V extends Form<T>> {
 }
 
 export interface FilterFormGroupActions<T extends Entity, U extends EntityParams<U> & IParams, V extends FormGroup2<U>> {
-  item: InputSignal<T | undefined>;
-  use: InputSignal<FormUse>;
-  view: InputSignal<View>;
-  key: InputSignal<string>;
-  mode: InputSignal<CatalogMode>;
+  item: ModelSignal<T | null>;
+  use: ModelSignal<FormUse>;
+  view: ModelSignal<View>;
+  key: ModelSignal<string>;
+  mode: ModelSignal<CatalogMode>;
 
   params?: U;
   form: V;

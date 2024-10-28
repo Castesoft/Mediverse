@@ -26,7 +26,7 @@
         </li>
       </ul>
       <button
-        (click)="service.clickLink(null, null, key(), 'create', 'modal')"
+        (click)="service.clickLink(null, key(), 'create', 'modal')"
         [naming]="service.dictionary"
         createBtn
       ></button>
@@ -37,16 +37,16 @@
   @if (calendarView === 'calendar') {
     <div
         eventsCalendar
-        [role]="role()"
-        [mode]="mode()"
-        [key]="key()"
-        [view]="view()"
+        [(role)]="role"
+        [(mode)]="mode"
+        [(key)]="key"
+        [(view)]="view"
       ></div>
   } @else {
     <div eventsCatalog
-         [key]="key()"
-         [role]="role()"
-         [mode]="mode()"
-         [view]="view()"
+         [(key)]="key"
+         [(role)]="role"
+         [(mode)]="mode"
+         [(view)]="view"
          [hideAddButton]="true"></div>
   }

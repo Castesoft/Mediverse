@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, input, model } from '@angular/core';
-import { BadRequest } from 'src/app/_models/types';
+import { Component, effect, model } from '@angular/core';
+import { FormGroup2 } from 'src/app/_forms/form2';
 
 @Component({
   host: { class: 'alert alert-dismissible bg-light-danger border border-danger border-dashed d-flex flex-column flex-sm-row w-100 p-5 mb-10' },
@@ -12,12 +12,16 @@ import { BadRequest } from 'src/app/_models/types';
   imports: [CommonModule,],
 })
 export class ErrorsAlert3Component {
-  error = model.required<BadRequest>();
+  form = model.required<FormGroup2<any>>();
 
   constructor() {
     effect(() => {
-      console.log(this.error());
+      console.log(this.form());
 
     })
+  }
+
+  onCloseClick() {
+    this.form().removeError();
   }
 }

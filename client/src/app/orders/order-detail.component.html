@@ -142,9 +142,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                  @for (item of item().items; track item) {
-                    <tr orderProductsSummary
-                        [item]="item"></tr>
+                  @for (_ of item().items; let idx = $index; track idx) {
+                    <tr orderProductsSummary [(item)]="item().items[idx]"></tr>
                   }
                 </tbody>
               </table>

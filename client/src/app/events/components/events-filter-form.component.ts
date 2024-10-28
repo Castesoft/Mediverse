@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, model, OnInit } from '@angular/core';
 import { BsModalRef, ModalModule } from 'ngx-bootstrap/modal';
 import { FilterForm, EventParams } from 'src/app/_models/event';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { EventsFilterModalComponent } from 'src/app/events/modals';
 import { EventsService } from 'src/app/_services/events.service';
 
 @Component({
-  selector: 'div[filterForm]',
+  selector: 'div[eventsFilterForm]',
   template: `
   <form
       [formGroup]="form.group"
@@ -73,7 +73,7 @@ export class EventsFilterFormComponent implements OnInit {
   service = inject(EventsService);
   icons = inject(IconsService);
 
-  key = input.required<string>();
+  key = model.required<string>();
   formId = input.required<string>();
 
   modalRef: BsModalRef<EventsFilterModalComponent> = new BsModalRef<EventsFilterModalComponent>();

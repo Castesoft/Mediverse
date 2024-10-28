@@ -2,18 +2,18 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { Router } from "@angular/router";
-import {DateClickArg} from "@fullcalendar/interaction";
-import { BsModalRef, BsModalService, ModalOptions } from "ngx-bootstrap/modal";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap } from "rxjs";
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
 import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, Role, SortOptions, View } from "src/app/_models/types";
-import { FilterForm, Event, EventParams, EventSummary, EventDoctorFields } from "src/app/_models/event";
+import { FilterForm, Event, EventParams, EventDoctorFields } from "src/app/_models/event";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
-import { EventDetailModalComponent, EventEditModalComponent, EventNewModalComponent, EventsCatalogModalComponent, EventsFilterModalComponent } from "src/app/events/modals";
+import { EventDetailModalComponent, EventsCatalogModalComponent, EventsFilterModalComponent } from "src/app/events/modals";
 import { environment } from "src/environments/environment";
-import { UserParams, UserSummary } from "src/app/_models/user";
+import { EventSummary } from "src/app/_models/eventSummary";
+import { MatDialog } from "@angular/material/dialog";
 
 @Injectable({
   providedIn: "root",
@@ -23,16 +23,13 @@ export class EventsService {
   private bsModalService = inject(BsModalService);
   private router = inject(Router);
   private confirm = inject(ConfirmService);
-  snackbarService = inject(SnackbarService)
+  private matDialog = inject(MatDialog);
+  snackbarService = inject(SnackbarService);
 
   baseUrl = `${environment.apiUrl}events/`;
 
   private detailModalRef: BsModalRef<EventDetailModalComponent> = new BsModalRef<EventDetailModalComponent>();
   hideDetailModal = () => this.detailModalRef.hide();
-  private editModalRef: BsModalRef<EventEditModalComponent> = new BsModalRef<EventEditModalComponent>();
-  hideEditModal = () => this.editModalRef.hide();
-  private newModalRef: BsModalRef<EventNewModalComponent> = new BsModalRef<EventNewModalComponent>();
-  hideNewModal = () => this.newModalRef.hide();
   private filterModalRef: BsModalRef<EventsFilterModalComponent> = new BsModalRef<EventsFilterModalComponent>();
   hideFilterModal = () => this.filterModalRef.hide();
   private catalogModalRef: BsModalRef<EventsCatalogModalComponent> = new BsModalRef<EventsCatalogModalComponent>();
@@ -286,7 +283,6 @@ export class EventsService {
           this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} con ${response?.patient?.fullName} fue creado exitosamente`);
         }
         if (view === "modal") {
-          this.hideNewModal();
         } else if (view === 'page') {
           this.router.navigate([this.dictionary.catalogRoute, response.id]);
         }
@@ -370,7 +366,7 @@ export class EventsService {
     return this.confirm.confirm(this.getConfirmDeleteItem(item)).pipe(
       switchMap(result => {
         if (result) {
-          return this.delete(item.id).pipe(
+          return this.delete(item.id!).pipe(
             map(() => {
               this.snackbarService.success(`${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id} ha sido eliminado`);
               return true;
@@ -397,7 +393,7 @@ export class EventsService {
       const item = selectedItems[0];
       this.delete$(item).subscribe();
     } else if (selectedCount > 1) {
-      const selectedIds = selectedItems.map((item) => item.id);
+      const selectedIds = selectedItems.map((item) => item.id!);
       this.deleteRangeByIds$(selectedIds).subscribe();
     }
   };
@@ -480,55 +476,37 @@ export class EventsService {
     return undefined;
   }
 
-  showCatalogModal = (event: MouseEvent, key: string, mode: CatalogMode): void => {
-    this.catalogModalRef = this.bsModalService.show(EventsCatalogModalComponent,
-      { class: "modal-dialog-centered modal-xl", initialState: { mode: mode, key: key } });
+  showCatalogModal = (event: MouseEvent, key: string, mode: CatalogMode, view: View): void => {
+    this.matDialog.open(EventsCatalogModalComponent, {
+      data: { key: key, mode: mode, view: view }
+    });
   };
 
   showFiltersModal = (key: string, title = "Filtros"): void => {
-    this.filterModalRef = this.bsModalService.show(EventsFilterModalComponent,
-      { class: "modal-dialog-centered", initialState: { key: key, title: title } });
+    this.matDialog.open(EventsFilterModalComponent, {
+      data: { key: key, title: title }
+    });
   };
 
-  clickLink = (id: number | null = null, item: Event | null = null, key: string | null = null, use: FormUse = "detail", view: View,
-               dateFrom: Date | undefined = undefined, dateTo: Date | undefined = undefined) => {
-    if (view === "modal") {
-      if (id) {
-        switch (use) {
-          case "detail":
-            this.detailModalRef = this.bsModalService.show(EventDetailModalComponent,
-              {
-                class: "modal-dialog-centered modal-lg",
-                initialState: { id: id, use: use, item: item, key: key }
-              } as ModalOptions<EventDetailModalComponent>);
-            break;
-          case "edit":
-            this.editModalRef = this.bsModalService.show(EventEditModalComponent,
-              {
-                class: "modal-dialog-centered modal-lg",
-                initialState: { id: id, use: use, item: item, key: key }
-              } as ModalOptions<EventEditModalComponent>);
-            break;
-        }
-      } else {
-        this.newModalRef = this.bsModalService.show(EventNewModalComponent,
-          {
-            class: "modal-dialog-centered mw-650px",
-            backdrop: 'static',
-            initialState: { use: use, dateFrom: dateFrom, dateTo: dateTo, title: `Nueva ${this.dictionary.singular}` }
-          } as ModalOptions<EventNewModalComponent>);
-      }
-    } else {
-      switch (use) {
-        case "create":
-          this.router.navigate([this.dictionary.createRoute]);
-          break;
-        case "edit":
-          this.router.navigate([`${this.dictionary.catalogRoute}/${id}/edit`]);
-          break;
-        case "detail":
-          this.router.navigate([`${this.dictionary.catalogRoute}/${id}`]);
-          break;
+  clickLink = (item: Event | null = null, key: string | null = null,
+    use: FormUse = "detail", view: View) => {
+
+  if (view === "modal") {
+    this.matDialog.open(EventDetailModalComponent, {
+      data: { item: item, key: key, use: use, view: 'modal'}
+    });
+  } else {
+    this.bsModalService.hide();
+    switch (use) {
+      case "create":
+        this.router.navigate([this.dictionary.createRoute]);
+        break;
+      case "edit":
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
+        break;
+      case "detail":
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
+        break;
       }
     }
   };

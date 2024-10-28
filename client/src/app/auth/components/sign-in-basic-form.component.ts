@@ -1,50 +1,57 @@
 declare var google: any;
-import { AfterViewInit, Component, inject, input, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { AfterViewInit, Component, inject, input, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { JsonPipe } from '@angular/common';
-import { ControlsModule } from 'src/app/_forms/controls.module';
-import {BadRequest} from "src/app/_models/types";
+import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
 import { UtilsService } from 'src/app/_services/utils.service';
-import { createId } from '@paralleldrive/cuid2';
 import { FormsService } from 'src/app/_services/forms.service';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
+import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
+import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
 
-export class LoginForm {
-  id: string;
-  group: FormGroup;
-  error?: BadRequest;
-  validation = false;
-  submitted = false;
+export class Login {
+  email: string | null = null;
+  password: string | null = null;
+  twoFactorCode: string | null = null;
 
-  constructor(creds = false) {
-    this.id = `form${createId()}`;
-    this.group = new FormGroup({
-      email: new FormControl(''),
-      password: new FormControl(''),
-      twoFactorCode: new FormControl('')
-    });
-
-    if (creds) {
-      this.group.controls['email'].setValue('');
-      this.group.controls['password'].setValue('');
-    }
+  constructor(init?: Partial<Login>) {
+    Object.assign(this, init);
   }
+}
 
-  setValidators(validation: boolean) {
-    this.validation = validation;
+export const loginInfo: FormInfo<Login> = {
+  email: { type: 'text', label: 'Email', validators: [Validators.required, Validators.email, Validators.maxLength(255)],
+    validationErrors: {
+      required: 'El nombre de usuario o el correo es requerido.',
+      minlength:
+        'El nombre de usuario o el correo debe tener al menos 6 caracteres.',
+      maxlength:
+        'El nombre de usuario o el correo no debe tener más de 255 caracteres.'
+    },
+   },
+  password: { type: 'text', label: 'Password', validators: [Validators.required, Validators.minLength(8), Validators.maxLength(30)],
+    validationErrors: {
+      'required': 'La contraseña es requerida',
+      'minlength': 'La contraseña debe tener al menos 6 caracteres.',
+      'maxlength': 'La contraseña no debe tener más de 100 caracteres.'
+    },
+   },
+  twoFactorCode: { type: 'text', label: 'Código',
+    validationErrors: {
+      required: 'El código de autenticación es requerido.',
+      minlength:
+        'El código de autenticación debe tener al menos 6 caracteres.',
+      maxlength:
+        'El código de autenticación no debe tener más de 6 caracteres.'
+    },
+   },
+} as FormInfo<Login>;
 
-    const controls = this.group.controls;
-
-    if (validation) {
-      controls['email'].setValidators([Validators.required, Validators.email, Validators.maxLength(255)]);
-      controls['password'].setValidators([Validators.required, Validators.minLength(8), Validators.maxLength(30)]);
-    } else {
-      controls['email'].clearValidators(); controls['email'].clearAsyncValidators();
-      controls['password'].clearValidators(); controls['password'].clearAsyncValidators();
-    }
+export class LoginForm extends FormGroup2<Login> {
+  constructor() {
+    super(Login, new Login(), loginInfo);
   }
 
 }
@@ -53,7 +60,7 @@ export class LoginForm {
   selector: '[signInBasicForm]',
   templateUrl: './sign-in-basic-form.component.html',
   standalone: true,
-  imports: [ RouterModule, ControlsModule, JsonPipe, MaterialModule ],
+  imports: [ RouterModule, FormNewModule, CommonModule, MaterialModule, ],
 })
 export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   accountService = inject(AccountService);
@@ -63,7 +70,8 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   forms = inject(FormsService);
   snackbarService = inject(SnackbarService)
 
-  form = new LoginForm(true);
+  form = new LoginForm();
+
   emailFromQuery: string = '';
   returnUrl: string = '/admin';
   focusOnEmail: boolean = false;
@@ -76,7 +84,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   constructor() {
     this.forms.mode$.subscribe({
       next: mode => {
-        this.form.setValidators(mode);
+        this.form.validation = mode;
       }
     });
 
@@ -114,9 +122,9 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
 
   onSubmit() {
     this.form.submitted = true;
-    if (this.form.group.valid) {
+    if (this.form.valid) {
       if (!this.requiresTwoFactor) {
-        this.accountService.login(this.form.group.value).subscribe({
+        this.accountService.login(this.form.value).subscribe({
           next: response => {
             this.form.submitted = false;
             if (response.requiresTwoFactor) {
@@ -132,7 +140,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
           }
         })
       } else {
-        this.accountService.twoFactorLogin(this.form.group.get('email')?.value, this.form.group.get('twoFactorCode')?.value).subscribe({
+        this.accountService.twoFactorLogin(this.form.controls.email.value!, this.form.controls.twoFactorCode.value!).subscribe({
           next: response => {
             if (this.noRedirect()) return;
             if (this.redirectUrl) {

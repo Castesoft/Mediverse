@@ -477,7 +477,7 @@ export class ClinicalHistoryFormComponent {
         this.form.patch(response);
         this.snackbarService.success('Historia clínica actualizada correctamente.');
         this.form.markAsPristine();
-        this.form.error = undefined;
+        this.form.error = null;
         this.form.updateValueAndValidity();
       },
       error: (error: BadRequest) => {

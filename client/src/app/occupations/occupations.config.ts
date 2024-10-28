@@ -75,8 +75,8 @@ export class OccupationsTableMenuComponent
   extends TableMenu<OccupationsService>
   implements OnInit, ITableMenu<Occupation>
 {
-  item: InputSignal<Occupation> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<Occupation> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(OccupationsService);
@@ -176,9 +176,9 @@ export class OccupationsTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<Occupation[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +276,13 @@ export class OccupationsTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class OccupationsFilterFormComponent extends FormComponent<OccupationsService> implements OnInit, FilterFormGroupActions<Occupation, OccupationParams, FormGroup2<OccupationParams>> {
-  item: InputSignal<Occupation | undefined> = input.required();
+  item: ModelSignal<Occupation | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +375,11 @@ export class OccupationsFilterFormComponent extends FormComponent<OccupationsSer
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div occupationsFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div occupationsFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div occupationsFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div occupationsFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -410,9 +410,9 @@ export class OccupationsCatalogComponent implements OnInit, OnDestroy {
   private router = inject(Router);
 
   animalId = input<number>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<Occupation>();
 
   toggle = model(false);
@@ -520,10 +520,10 @@ export class OccupationParams extends EntityParams<Occupation> implements IParam
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class OccupationFormComponent extends FormComponent<OccupationsService> implements OnInit, FormGroupActions<Occupation, FormGroup2<Occupation>> {
-  item: InputSignal<Occupation | undefined> = input.required();
+  item: ModelSignal<Occupation | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<Occupation> = {
     code: { label: 'Código', type: 'text' },
@@ -619,9 +619,9 @@ export class OccupationDetailComponent {
   service = inject(OccupationsService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<Occupation | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<Occupation | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -895,7 +895,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = null;
   key = createId();
 }
 

@@ -1,7 +1,7 @@
-import { Component, inject, input, OnInit, output } from "@angular/core";
+import { Component, inject, input, model, OnInit, output } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Product } from "src/app/_models/product";
-import { FormUse, Role, View } from "src/app/_models/types";
+import { FormUse, View } from "src/app/_models/types";
 import { ProductsService } from "src/app/_services/products.service";
 import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
@@ -41,7 +41,7 @@ import { IconsService } from "src/app/_services/icons.service";
         @if (use() === "detail") {
           <a
             class="btn btn-phoenix-secondary px-3 px-sm-5 me-2"
-            (click)="service.clickLink(item()!.id, item()!, key() ?? null, 'edit', view())"
+            (click)="service.clickLink(item()!, key(), use(), view())"
           >
             <fa-icon class="me-sm-2" [icon]="icons.faPenToSquare"></fa-icon>
             <span class="d-none d-sm-inline">Editar</span>
@@ -64,10 +64,10 @@ export class ProductHeaderComponent implements OnInit {
   icons = inject(IconsService);
   private forms = inject(FormsService);
 
-  use = input.required<FormUse>();
-  view = input.required<View>();
-  key = input.required<string | undefined>();
-  item = input.required<Product | null>();
+  use = model.required<FormUse>();
+  view = model.required<View>();
+  key = model.required<string | null>();
+  item = model.required<Product | null>();
 
   fillForm = output<void>();
 

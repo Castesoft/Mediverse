@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
 import { Role, View } from 'src/app/_models/types';
 import { CatalogMode } from 'src/app/_models/types';
 import { EventsService } from 'src/app/_services/events.service';
@@ -11,15 +11,14 @@ import { EventsCalendarComponent } from '../events-calendar/events-calendar.comp
   standalone: true,
   imports: [CreateBtnComponent, EventsCalendarComponent, EventsCatalogComponent],
   templateUrl: './events-display.component.html',
-  styleUrl: './events-display.component.scss'
 })
 export class EventsDisplayComponent {
   service = inject(EventsService);
-  
+
   calendarView = 'calendar';
 
-  key = input.required<string>();
-  mode = input.required<CatalogMode>();
-  view = input.required<View>();
-  role = input.required<Role>();
+  key = model.required<string>();
+  mode = model.required<CatalogMode>();
+  view = model.required<View>();
+  role = model.required<Role>();
 }

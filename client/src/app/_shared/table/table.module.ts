@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FormUse, View, CatalogMode, Entity } from 'src/app/_models/types';
+import { FormUse, View, CatalogMode, Entity, Role } from 'src/app/_models/types';
 import { TableHeaderComponent } from 'src/app/_shared/table/table-header.component';
 import { TableLoadingPlaceholderComponent } from 'src/app/_shared/table/table-loading-placeholder.component';
 import {
@@ -35,7 +35,7 @@ import { TableWrapperComponent } from 'src/app/_shared/table/table-wrapper.compo
 })
 export class TableModule {}
 
-export class DetailModal<T extends Entity> {
+export class DetailModal<T extends Entity | object> {
   id!: number;
   use!: FormUse;
   title?: string;
@@ -48,7 +48,7 @@ export class FilterModal {
   formId!: string;
   key!: string;
   title?: string;
-  item = undefined;
+  item = null;
   use: FormUse = 'filter';
   view: View = 'modal';
 }
@@ -58,4 +58,5 @@ export class CatalogModal {
   mode!: CatalogMode;
   view: View = 'modal';
   title?: string;
+  role: Role = 'Patient';
 }

@@ -1,5 +1,4 @@
 @if (item()) {
-
   <div class="card-header d-flex align-items-center">
     <div class="d-flex flex-grow-1 justify-content-between align-items-end">
       <div class="d-flex flex-grow-1 flex-column">
@@ -10,12 +9,12 @@
         <div class="d-flex flex-grow-1 align-items-center justify-content-start">
           <div class="text-gray-900 fw-bold my-0 fs-1 form-date">
             <fa-icon [icon]="icons.faRegCalendar" class="me-2 text-primary"></fa-icon>
-            {{ item().dateFrom | date }}
+            {{ item()!.dateFrom | date }}
           </div>
         </div>
       </div>
       <div class="card p-3 px-5">
-        @if (!item().allDay) {
+        @if (!item()!.allDay) {
           <form [formGroup]="formGroup">
             <div class="text-gray-700 fw-bold my-0 fs-3">
               <fa-icon [icon]="icons.faClock" class="me-4 text-primary"></fa-icon>

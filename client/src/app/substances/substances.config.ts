@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
-import { Component, effect, inject, Injectable, input, InputSignal, model, ModelSignal, NgModule, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, inject, Injectable, input, InputSignal, model, ModelSignal, NgModule, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, ResolveFn, Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { createId } from '@paralleldrive/cuid2';
@@ -75,8 +75,8 @@ export class SubstancesTableMenuComponent
   extends TableMenu<SubstancesService>
   implements OnInit, ITableMenu<Substance>
 {
-  item: InputSignal<Substance> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<Substance> = model.required();
+  key: ModelSignal<string> = model.required();
 
   constructor() {
     super(SubstancesService);
@@ -176,9 +176,9 @@ export class SubstancesTableComponent implements OnInit, OnDestroy {
   dev = inject(EnvService);
 
   data = input.required<Substance[]>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
 
   sortAscending = false;
   devMode = false;
@@ -276,13 +276,13 @@ export class SubstancesTableComponent implements OnInit, OnDestroy {
    ],
 })
 export class SubstancesFilterFormComponent extends FormComponent<SubstancesService> implements OnInit, FilterFormGroupActions<Substance, SubstanceParams, FormGroup2<SubstanceParams>> {
-  item: InputSignal<Substance | undefined> = input.required();
+  item: ModelSignal<Substance | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 
@@ -375,11 +375,11 @@ export class SubstancesFilterFormComponent extends FormComponent<SubstancesServi
         }
       </div>
       <div class="col-12 col-md-auto d-flex">
-        <div substancesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'"
+        <div substancesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
           [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
       </div>
     </div>
-    <div substancesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="undefined" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+    <div substancesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
   </div>
 </div>
 <div tableWrapper>
@@ -411,9 +411,9 @@ export class SubstancesCatalogComponent implements OnInit, OnDestroy {
 
   animalId = input<number>();
   isCompact = input.required<boolean>();
-  mode = input.required<CatalogMode>();
-  key = input.required<string>();
-  view = input.required<View>();
+  mode = model.required<CatalogMode>();
+  key = model.required<string>();
+  view = model.required<View>();
   item = input<Substance>();
 
   toggle = model(false);
@@ -521,10 +521,10 @@ export class SubstanceParams extends EntityParams<Substance> implements IParams 
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class SubstanceFormComponent extends FormComponent<SubstancesService> implements OnInit, FormGroupActions<Substance, FormGroup2<Substance>> {
-  item: InputSignal<Substance | undefined> = input.required();
+  item: ModelSignal<Substance | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<Substance> = {
     code: { label: 'Código', type: 'text' },
@@ -611,7 +611,7 @@ export class SubstanceFormComponent extends FormComponent<SubstancesService> imp
   <div container [type]="'inline'">
     <div detailHeader [(use)]="use" [view]="view()" [dictionary]="service.dictionary" [id]="item() ? item()!.id! : undefined" (onDelete)="service.delete$(item()!)"></div>
   </div>
-  <div substanceForm [item]="item()" [key]="key()" [use]="use()" [view]="view()"></div>
+  <div substanceForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
   standalone: true,
   imports: [SubstanceFormComponent, ControlsModule,],
@@ -620,9 +620,9 @@ export class SubstanceDetailComponent {
   service = inject(SubstancesService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<Substance | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<Substance | null>();
+  key = model.required<string>();
 }
 
 @Component({
@@ -890,7 +890,7 @@ export class EditComponent implements OnInit {
       <li active [label]="'Crear'"></li>
     </nav>
 
-  <div substanceDetail [use]="use" [view]="view" [item]="item" [key]="key"></div>`
+  <div substanceDetail [use]="use" [view]="view" [(item)]="item" [key]="key"></div>`
   ,
   standalone: true,
   imports: [SubstanceDetailComponent, RouterModule, BreadcrumbsModule,],
@@ -898,7 +898,7 @@ export class EditComponent implements OnInit {
 export class NewComponent {
   use: FormUse = 'create';
   view: View = 'page';
-  item = undefined;
+  item = signal<Substance | null>(null);
   key = createId();
 }
 

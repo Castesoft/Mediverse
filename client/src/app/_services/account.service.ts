@@ -1,31 +1,37 @@
 import { Observable, catchError, map, of, tap } from "rxjs";
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { Account } from "src/app/_models/account";
-import { Role } from "src/app/_models/types";
+import { FormUse, Role, View } from "src/app/_models/types";
 import { Router } from "@angular/router";
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
 import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billingDetails';
-import { MedicalInsuranceCompany } from '../_models/medicalInsuranceCompany';
 import { Payment } from '../_models/payment';
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 import { MedicalRecord } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
 import { SelectOption } from "src/app/_forms/form";
+import { UserInsuranceModalComponent } from "src/app/account/modals/user-insurance-modal.component";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private snackbarService = inject(SnackbarService);
+  private snackBar = inject(MatSnackBar);
+  private matDialog = inject(MatDialog);
+
   baseUrl = `${environment.apiUrl}account/`;
+
   current = signal<Account | null>(null);
   billingDetails = signal<BillingDetails | null>(null);
-  medicalInsuranceCompanies = signal<SelectOption[]>([]);
-  userMedicalInsuranceCompanies = signal<UserMedicalInsuranceCompany[]>([]);
-  doctorMedicalInsuranceCompanies = signal<MedicalInsuranceCompany[]>([]);
   userPaymentHistory = signal<Payment[]>([]);
   roles = computed<Role[]>(() => {
 
@@ -42,10 +48,6 @@ export class AccountService {
   emailPattern:string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   phonePattern: string = '^[0-9]+$';
 
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  private snackbarService = inject(SnackbarService);
-
   login(value: any) {
     return this.http.post<Account>(`${this.baseUrl}login`, value).pipe(
       map(response => {
@@ -58,6 +60,25 @@ export class AccountService {
         return response;
       })
     );
+  }
+
+  setCurrentUser(user: Account) {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.current.set(user);
+    this.getCurrent().subscribe({
+      next: response => {
+        console.log('response', response);
+        this.current.set(response);
+      }
+    });
+  }
+
+  private getCurrent(): Observable<Account> {
+    return this.http.get<Account>(`${this.baseUrl}`).pipe(
+      map(response => {
+        return response;
+      })
+    )
   }
 
   updateCurrentUser() {
@@ -256,7 +277,7 @@ export class AccountService {
         if (value.IsBilling) {
           addresses.forEach(a => a.isBilling = false);
         }
-        addresses = addresses.map(a => a.id === id ? {
+        addresses = addresses.map(a => a.id === id ? new UserAddress({
           id: id,
           isMain: value.IsMain,
           isBilling: value.IsBilling,
@@ -268,7 +289,7 @@ export class AccountService {
           neighborhood: value.Neighborhood,
           exteriorNumber: value.ExteriorNumber,
           interiorNumber: value.InteriorNumber
-        } : a);
+        }) : a);
         this.billingDetails.set({
           userAddresses: addresses.sort((a, b) => a.isBilling ? -1 : 1),
           userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
@@ -277,91 +298,63 @@ export class AccountService {
     );
   }
 
-  getMedicalInsuranceCompaniesFields() {
-    this.http.get<[]>(`${this.baseUrl}medical-insurance-companies-fields`).subscribe({
-      next: companies => {
-        this.medicalInsuranceCompanies.set(companies);
-      }
-    });
-  }
-
-  getUserMedicalInsuranceCompanies() {
-    this.http.get<UserMedicalInsuranceCompany[]>(`${this.baseUrl}medical-insurance-companies`).subscribe({
-      next: companies => {
-        this.userMedicalInsuranceCompanies.set(companies);
-      }
-    });
-  }
-
-  addMedicalInsurance(value: any) {
-    return this.http.post<UserMedicalInsuranceCompany>(`${this.baseUrl}medical-insurance-company`, value).pipe(
-      map(newInsurance => {
-        this.snackbarService.success('Póliza de seguro añadida correctamente');
-        if (newInsurance.isMain) {
-          const insurances = this.userMedicalInsuranceCompanies();
-          insurances.forEach(i => i.isMain = false);
-          insurances.push(newInsurance as UserMedicalInsuranceCompany);
-          this.userMedicalInsuranceCompanies.set(insurances.sort((a, b) => a.isMain ? -1 : 1));
-        } else {
-          this.userMedicalInsuranceCompanies.set([...this.userMedicalInsuranceCompanies(), newInsurance as UserMedicalInsuranceCompany]);
-        }
-      })
-    );
-  }
-
   deleteMedicalInsurance(id: number) {
-    return this.http.delete(`${this.baseUrl}medical-insurance-company/${id}`).pipe(
-      tap(() => {
+    this._deleteMedicalInsurance(id).subscribe();
+  }
+
+  private _deleteMedicalInsurance(id: number): Observable<Account> {
+    return this.http.delete<Account>(`${this.baseUrl}medical-insurance-company/${id}`).pipe(
+      tap(response => {
+        this.current.set(response);
         this.snackbarService.success('Póliza de seguro eliminada correctamente');
-        this.userMedicalInsuranceCompanies.set(this.userMedicalInsuranceCompanies()?.filter(i => i.id !== id) || []);
       })
     );
   }
 
-  updateMedicalInsurance(id:number, value: any) {
-    return this.http.put<UserMedicalInsuranceCompany>(`${this.baseUrl}medical-insurance-company/${id}`, value).pipe(
-      tap(_ => {
-        console.log(id)
-        console.log(value)
-        this.snackbarService.success('Póliza de seguro actualizada correctamente');
-        let insurances = this.userMedicalInsuranceCompanies();
-        let modifiedInsurance = insurances.find(i => i.id === id);
-        if (value.IsMain) {
-          insurances.forEach(i => i.isMain = false);
-        }
-        insurances = insurances.map(i => i.id === id ? {
-          id: id,
-          name: modifiedInsurance!.name,
-          isMain: value.IsMain,
-          policyNumber: value.PolicyNumber,
-          photoUrl: modifiedInsurance!.photoUrl,
-          document: modifiedInsurance!.document
-        } : i);
-        this.userMedicalInsuranceCompanies.set(insurances.sort((a, b) => a.isMain ? -1 : 1));
+  deleteMedicalInsuranceDocument(id: number) {
+    this._deleteMedicalInsuranceDocument(id).subscribe();
+  }
+
+  private _deleteMedicalInsuranceDocument(id: number): Observable<Account> {
+    return this.http.delete<Account>(`${this.baseUrl}medical-insurance-company-document/${id}`).pipe(
+      tap(response => {
+        this.current.set(response);
+        this.snackbarService.success('El documento de la póliza de seguro ha sido eliminado correctamente');
       })
     );
   }
 
-  getDoctorMedicalInsuranceCompanies() {
-    this.http.get<MedicalInsuranceCompany[]>(`${this.baseUrl}doctor-medical-insurance-companies`).subscribe({
-      next: companies => {
-        this.doctorMedicalInsuranceCompanies.set(companies);
-      }
-    });
+  addMedicalInsurance(value: FormData) {
+    return this.http.post<Account>(`${this.baseUrl}medical-insurance-company`, value).pipe(
+      tap(response => {
+        this.current.set(response);
+        this.snackBar.open('Póliza de seguro añadida correctamente', 'Cerrar', { duration: 5000 });
+      })
+    );
   }
 
-  toggleDoctorMedicalInsuranceCompany(insuranceId: number, checked: boolean) {
-    return this.http.post(`${this.baseUrl}doctor-medical-insurance-company/${insuranceId}`, {}).pipe(
-      tap(() => {
-        let companies = this.doctorMedicalInsuranceCompanies();
-        const selectedInsurance = this.medicalInsuranceCompanies()?.find(company => company.id == insuranceId)!;
-        companies = checked ? [...companies, new MedicalInsuranceCompany({...selectedInsurance})] : companies.filter(c => c.id !== insuranceId);
-        this.doctorMedicalInsuranceCompanies.set(companies);
+  updateMedicalInsurance(model: any) {
+    return this.http.put<Account>(`${this.baseUrl}medical-insurance-company`, model).pipe(
+      tap(response => {
+        this.current.set(response);
+        this.snackBar.open('Póliza de seguro actualizada correctamente', 'Cerrar', { duration: 5000 });
+      })
+    );
+  }
+
+  toggleDoctorInsurance(insuranceId: number, isActive: boolean): Observable<Account> {
+    let params = new HttpParams();
+
+    params = params.append('insuranceId', insuranceId.toString());
+    params = params.append('isActive', isActive);
+
+    console.log('params', params);
+
+    return this.http.put<Account>(`${this.baseUrl}doctor-medical-insurance-company`, null, { params: params, }).pipe(
+      tap(account => {
+        this.snackBar.open('Póliza de seguro actualizada correctamente', 'Cerrar', { duration: 5000 });
+        this.current.set(account);
       }),
-      catchError(_ => {
-        this.snackbarService.error('Error al actualizar la aseguradora afiliada');
-        return of(null);
-      })
     );
   }
 
@@ -462,17 +455,10 @@ export class AccountService {
     return this.http.post(`${this.baseUrl}review/skip/${eventId}`, {});
   }
 
-  setCurrentUser(user: Account) {
-    localStorage.setItem('user', JSON.stringify(user));
-    this.current.set(user);
-  }
-
   logout() {
     localStorage.removeItem('user');
     this.current.set(null);
     this.billingDetails.set(null);
-    this.userMedicalInsuranceCompanies.set([]);
-    this.doctorMedicalInsuranceCompanies.set([]);
     this.router.navigate(['/']);
   }
 
@@ -629,5 +615,16 @@ export class AccountService {
   termsAndConditionsValidator(control: AbstractControl): ValidationErrors | null {
     return control.value === true ? null : {termsAndConditions: true};
   }
+
+  clickInsuranceCompany(item: UserMedicalInsuranceCompany | null = null, use: FormUse = "detail", view: View) {
+
+  if (view === "modal") {
+    this.matDialog.open(UserInsuranceModalComponent, {
+      data: { item: item, use: use, view: 'modal', },
+      maxWidth: '500px',
+      panelClass: 'bg-body'
+    });
+  }
+  };
 
 }

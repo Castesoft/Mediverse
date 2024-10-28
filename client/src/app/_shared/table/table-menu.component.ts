@@ -36,7 +36,7 @@ import { MaterialModule } from 'src/app/_shared/material.module';
   imports: [ RouterModule, CommonModule,],
 })
 export class TableCellComponent {
-  item = input.required<TableCellItem<any, any>>();
+  item = model.required<TableCellItem<any, any>>();
   value = input.required<any>();
 
   linkClass = 'd-flex align-items-center px-0';
@@ -134,7 +134,7 @@ export class TableCellComponent {
   imports: [ RouterModule, CommonModule,],
 })
 export class TableCell2Component {
-  item = input.required<TableCellItem<any, any>>();
+  item = model.required<TableCellItem<any, any>>();
   value = input.required<any>();
   guid = createId();
 
@@ -195,7 +195,7 @@ export class TableMenuCellComponent {
   icons = inject(IconsService);
 
   contextMenu = input.required<TemplateRef<any>>();
-  item = input.required<Entity>();
+  item = model.required<Entity>();
 
   class =
     'align-middle white-space-nowrap text-end pe-0 btn-reveal-trigger text-center';

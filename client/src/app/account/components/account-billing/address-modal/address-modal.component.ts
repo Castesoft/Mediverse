@@ -56,7 +56,7 @@ export class AddressModalComponent implements OnInit {
       if (this.address.isBilling) {
         this.addressForm.get('IsBilling')?.disable();
       }
-      this.searchZipcodes(this.address.zipcode);
+      this.searchZipcodes(this.address.zipcode!);
     }
   }
 
@@ -119,7 +119,7 @@ export class AddressModalComponent implements OnInit {
     } else {
       if (!this.address) return;
       this.addressForm.get('IsBilling')?.enable();
-      this.accountService.updateAddress(this.address.id, this.addressForm.value).subscribe({
+      this.accountService.updateAddress(this.address.id!, this.addressForm.value).subscribe({
         next: () => {
           this.bsModalRef.hide();
           this.submitted = false;

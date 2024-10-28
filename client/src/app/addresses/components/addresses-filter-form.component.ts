@@ -1,4 +1,4 @@
-import { Component, effect, input, InputSignal, model, OnInit } from "@angular/core";
+import { Component, effect, input, InputSignal, model, ModelSignal, OnInit } from "@angular/core";
 import { ModalModule } from "ngx-bootstrap/modal";
 import { Subject } from "rxjs";
 import { CatalogMode, FormUse, View } from "src/app/_models/types";
@@ -68,13 +68,13 @@ import { Address } from "src/app/_models/address";
 export class AddressesFilterFormComponent extends FormComponent<
   AddressesService
 > implements OnInit, FilterFormGroupActions<Address, AddressParams, FormGroup2<AddressParams>> {
-  item: InputSignal<Address | undefined> = input.required();
-  use: InputSignal<FormUse> = input.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
-  role: InputSignal<string> = input.required();
+  item: ModelSignal<Address | null> = model.required();
+  use: ModelSignal<FormUse> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
+  role: ModelSignal<string> = model.required();
   formId: InputSignal<string> = input.required();
-  mode: InputSignal<CatalogMode> = input.required();
+  mode: ModelSignal<CatalogMode> = model.required();
 
   readonly toggle = model.required();
 

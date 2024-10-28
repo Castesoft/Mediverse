@@ -23,6 +23,7 @@ public interface IUnitOfWork
     IOrderRepository OrderRepository { get; }
     ISpecialtyRepository SpecialtyRepository { get; }
     ISearchRepository SearchRepository { get; }
+    IDocumentRepository DocumentRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();

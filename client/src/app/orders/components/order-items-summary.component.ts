@@ -1,5 +1,5 @@
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, input, model } from '@angular/core';
 import { Product } from 'src/app/_models/product';
 
 @Component({
@@ -17,12 +17,12 @@ import { Product } from 'src/app/_models/product';
       {{ item().quantity }}
     </td>
     <td class="fw-bold text-end">
-      {{ (item().price * item().quantity) | currency }}
+      {{ (item().price! * item().quantity!) | currency }}
     </td>
   `,
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe,]
+  imports: [CommonModule,]
 })
 export class OrderProductsSummaryComponent {
-  item = input.required<Product>();
+  item = model.required<Product>();
 }

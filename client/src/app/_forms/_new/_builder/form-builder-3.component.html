@@ -1,6 +1,6 @@
 <div [grid]="cols()"
      [orientation]="orientation()"
-     controlsRow3>
+     controlsRow3 [(gap)]="gap">
   @for (control of controls(); let idx = $index; track idx) {
     @if (control && !control.hidden) {
       <div controlsWrapper3 [(control)]="controls()[idx]"></div>

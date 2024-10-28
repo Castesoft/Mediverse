@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, InputSignal, model, OnInit } from "@angular/core";
+import { Component, effect, inject, input, InputSignal, model, ModelSignal, OnInit } from "@angular/core";
 import { FormUse, View } from "src/app/_models/types";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { FormComponent, FormGroupActions } from "src/app/_forms/form";
@@ -56,10 +56,10 @@ import { Address } from "src/app/_models/address";
   imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
 })
 export class AddressFormComponent extends FormComponent<AddressesService> implements OnInit, FormGroupActions<Address, FormGroup2<Address>> {
-  item: InputSignal<Address | undefined> = input.required();
-  use: InputSignal<FormUse> = input.required();
-  view: InputSignal<View> = input.required();
-  key: InputSignal<string> = input.required();
+  item: ModelSignal<Address | null> = model.required();
+  use: ModelSignal<FormUse> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string> = model.required();
 
   info: FormInfo<Address> = {
     city: { label: 'Ciudad', placeholder: 'Ciudad', type: 'text', },
@@ -158,7 +158,7 @@ export class AddressDetailComponent {
   service = inject(AddressesService);
 
   use = model.required<FormUse>();
-  view = input.required<View>();
-  item = input.required<Address | undefined>();
-  key = input.required<string>();
+  view = model.required<View>();
+  item = model.required<Address | null>();
+  key = model.required<string>();
 }

@@ -1,5 +1,5 @@
 import {CurrencyPipe, DecimalPipe} from "@angular/common";
-import {Component, inject, input, OnInit} from "@angular/core";
+import {Component, inject, input, model, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
 import { Service } from "src/app/_models/service";
 import {Role, View} from "src/app/_models/types";
@@ -40,8 +40,8 @@ export class ServiceCardCompactComponent implements OnInit {
   service = inject(ServicesService);
   router = inject(Router);
 
-  view = input.required<View>();
-  key = input.required<string>();
+  view = model.required<View>();
+  key = model.required<string>();
 
   item?: Service;
 
