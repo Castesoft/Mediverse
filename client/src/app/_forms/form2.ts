@@ -251,6 +251,7 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   hidden: boolean = false;
   type?: InputTypes;
   loading = false;
+  selectOptions: SelectOption[] = [];
 
   override controls!: TypedFormGroup<T>;
 

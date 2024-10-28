@@ -26,6 +26,7 @@ export class Prescription extends Entity {
   patient: User = new User();
 
   items: PrescriptionItem[] = [];
+  product: SelectOption | null = null;
 
   isCollapsed = true;
 
@@ -42,6 +43,7 @@ export const prescriptionInfo: FormInfo<Prescription> = {
   exchangeAmount: { label: 'Monto de cambio', type: 'number', },
   isCollapsed: { label: 'Colapsado', type: 'checkbox', },
   items: prescriptionItemInfo,
+  product: { label: 'Productos', type: 'typeahead', },
   logoUrl: { label: 'URL del logo', type: 'text', },
   notes: { label: 'Notas', type: 'textarea', },
   orderId: { label: 'ID de pedido', type: 'number', },
@@ -56,15 +58,6 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     this.controls.doctor.patchValue(
       new Account({
         ...doctor,
-        // medicalLicenses: doctor.medicalLicenses.map(license => {
-        //   return new MedicalLicense({
-        //     ...license,
-        //     licenseNumber: license.licenseNumber,
-        //     specialtyId: license.specialtyId,
-        //     specialtyLicense: license.specialtyLicense,
-        //     specialtyName: license.specialtyName,
-        //   });
-        // }),
     }));
 
     if (this.use === 'create') {

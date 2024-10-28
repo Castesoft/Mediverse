@@ -209,7 +209,7 @@ public class EventsController(
         OptionDto paymentMethodTypeOption = request.PaymentMethodType;
         OptionDto? medicalInsuranceCompanyOption = request.MedicalInsuranceCompany;
 
-        Service serviceAsNoTracking = await uow.ServiceRepository.GetByIdAsNoTrackingAsync(request.Service.Id);
+        Models.Entities.Service serviceAsNoTracking = await uow.ServiceRepository.GetByIdAsNoTrackingAsync(request.Service.Id);
 
         if ((request.PaymentMethodType.Id == 1 || request.PaymentMethodType.Id == 2) && doctorAsNoTracking.RequireAnticipatedCardPayments)
         {
@@ -271,7 +271,7 @@ public class EventsController(
 
         AppUser patient = await uow.UserRepository.GetByIdAsync(request.PatientId);
         if (patient == null) return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado.");
-        Service doctorService = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
+        Models.Entities.Service doctorService = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
         if (doctorService == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
 
         if (userRoles.Contains("Doctor") && request.Role == "Doctor")

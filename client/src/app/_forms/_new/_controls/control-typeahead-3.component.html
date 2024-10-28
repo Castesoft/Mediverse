@@ -60,18 +60,28 @@
 <mat-autocomplete [displayWith]="displayFn" [autoActiveFirstOption]="true" #auto="matAutocomplete">
   @for (item of filteredOptions | async; let idx = $index; track idx;) {
   <mat-option [value]="item" [id]="item.id.toString()">
-    @if (item.options && item.options.photoUrl) {
-    <img alt="" class="example-option-img" [src]="item.options.photoUrl" height="25">
-    }
-    <span>
-      {{item.name}}
-    </span>
-    @if(item.options && item.options.description) {
-    <small>{{item.options.description}}</small>
-    }
-    @if(item.options && item.options.price !== null) {
-    <small>{{item.options.price | currency}}</small>
-    }
+    <div class="d-flex justify-content-between">
+
+      <div>
+        @if (item.options && item.options.photoUrl) {
+        <img alt="" class="example-option-img" [src]="item.options.photoUrl" height="25">
+        }
+        <span>
+          {{item.name}}
+        </span>
+      </div>
+      <div>
+        @if(item.options && item.options.description) {
+        <small>{{item.options.description}}</small>
+        }
+      </div>
+      <div>
+        @if(item.options && item.options.price !== null) {
+        <small>{{item.options.price | currency}}</small>
+        }
+      </div>
+
+    </div>
   </mat-option>
   }
 </mat-autocomplete>

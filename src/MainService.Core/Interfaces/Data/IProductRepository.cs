@@ -3,6 +3,7 @@ using MainService.Core.DTOs.Products;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Models.Entities;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.Interfaces.Data;
 public interface IProductRepository
@@ -18,4 +19,5 @@ public interface IProductRepository
     Task<List<Product>> GetAllAsync();
     Task<List<ProductDto>> GetAllDtoAsync(ProductParams param, ClaimsPrincipal user);
     Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user);
+    Task<List<OptionDto>> GetOptionsAsync(ProductParams param);
 }

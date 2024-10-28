@@ -2,21 +2,7 @@ namespace MainService.Models.Entities;
 
 public class Product : BaseEntity
 {
-    public int Dosage { get; set; }
-    public string Unit { get; set; }
-    public string Manufacturer { get; set; }
-    public string LotNumber { get; set; }
-    public decimal Price { get; set; }
-    public double Discount { get; set; }
-
-    public DoctorProduct DoctorProduct { get; set; }
-    public ICollection<ProductPhoto> ProductPhotos { get; set; } = [];
-    public ICollection<PrescriptionItem> PrescriptionItems { get; set; } = [];
-    public ICollection<OrderItem> OrderItems { get; set; } = [];
-
-    public Product()
-    {
-    }
+    public Product() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
@@ -42,4 +28,18 @@ public class Product : BaseEntity
         Price = price;
         Discount = discount;
     }
+    
+    public int Dosage { get; set; }
+    public string Unit { get; set; }
+    public string Manufacturer { get; set; }
+    public string LotNumber { get; set; }
+    public decimal Price { get; set; }
+    public double Discount { get; set; }
+
+    public DoctorProduct DoctorProduct { get; set; }
+    public List<ProductPhoto> ProductPhotos { get; set; } = [];
+    public List<PrescriptionItem> PrescriptionItems { get; set; } = [];
+    public List<OrderItem> OrderItems { get; set; } = [];
+
+    public string GetPhotoUrl() => ProductPhotos.FirstOrDefault()?.Photo.Url;
 }

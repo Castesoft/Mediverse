@@ -68,6 +68,8 @@ export class PrescriptionFormComponent implements OnDestroy {
   patientOptions = signal<SelectOption[]>([]);
 
   constructor() {
+    this.productsService.getOptions().subscribe();
+
     effect(() => {
       this.account.set(this.accountService.current());
       const value = this.item();
@@ -85,6 +87,9 @@ export class PrescriptionFormComponent implements OnDestroy {
         const account = this.accountService.current();
         if (account !== null) {
           this.form.patch(account);
+          this.form.controls.product.selectOptions = this.productsService.options();
+          console.log(this.form.controls.product.selectOptions);
+          this.productOptions.set(this.productsService.options());
         }
       }
 

@@ -9,6 +9,7 @@ using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Infrastructure.Data;
 
@@ -95,6 +96,25 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
 
         return await query.ToListAsync();
     }
+
+    public async Task<List<OptionDto>> GetOptionsAsync(ProductParams param)
+    {
+        IQueryable<Product> query = Includes(context.Products).AsQueryable();
+
+        query = query.Where(x => x.DoctorProduct.DoctorId == param.DoctorId || x.DoctorProduct == null);
+
+        return await query
+            .AsNoTracking()
+            .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
+    private static IQueryable<Product> Includes(IQueryable<Product> query) =>
+        query
+            .AsSplitQuery()
+            .Include(x => x.DoctorProduct)
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+        ;
 
     public async Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user)
     {

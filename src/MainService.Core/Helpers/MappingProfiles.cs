@@ -352,7 +352,20 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.IsInternal, opt => opt.MapFrom(src => src.DoctorProduct == null))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url));
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url))
+        ;
+
+        CreateMap<Product, OptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options() {
+                Description = src.Description,
+                Id = src.Id,
+                PhotoUrl = src.ProductPhotos.FirstOrDefault().Photo.Url,
+                Price = src.Price,
+            }))
+        ;
 
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));

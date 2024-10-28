@@ -10,12 +10,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Controllers;
 public class ProductsController(IUnitOfWork uow, IProductsService service, IMapper mapper, UserManager<AppUser> userManager) : BaseApiController
 {
     private static readonly string subject = "producto";
     private static readonly string subjectArticle = "El";
+
+    [HttpGet("options")]
+    public async Task<ActionResult<List<OptionDto>>> GetOptionsAsync([FromQuery] ProductParams param) {
+        int userId = User.GetUserId();
+
+        param.DoctorId = userId;
+
+        List<OptionDto> data = await uow.ProductRepository.GetOptionsAsync(param);
+
+        return data;
+    }
 
     [HttpGet]
     public async Task<ActionResult<PagedList<ProductDto>>> GetPagedListAsync([FromQuery] ProductParams param)
