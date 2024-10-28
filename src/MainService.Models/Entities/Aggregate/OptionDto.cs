@@ -40,10 +40,12 @@ public class Options
 {
     public int? Id { get; set; } = null;
     public string? Sex { get; set; } = null;
+    public double? Dosage { get; set; } = null;
+    public string? Unit { get; set; } = null;
+    public string? Description { get; set; } = null;
     public string? Race { get; set; } = null;
     public decimal? Price { get; set; } = null;
     public string? PhotoUrl { get; set; } = null;
-    public string? Description { get; set; } = null;
     public bool? IsMain { get; set; } = null;
 }
 

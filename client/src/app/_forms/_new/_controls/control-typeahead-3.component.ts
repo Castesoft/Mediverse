@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, model } from "@angular/core";
+import { Component, computed, effect, inject, model, output } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { FormsService } from "src/app/_services/forms.service";
@@ -8,6 +8,7 @@ import { SelectOption } from "src/app/_forms/form";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { map, Observable, startWith } from "rxjs";
+import { MatOptionSelectionChange } from "@angular/material/core";
 
 @Component({
   selector: "[controlTypeahead3]",
@@ -28,6 +29,8 @@ export class ControlTypeahead3Component {
 
   control = model.required<FormControl2<SelectOption | null>>();
 
+  onSelectionChange = output<SelectOption | null>();
+
   filteredOptions: Observable<SelectOption[]> = new Observable<SelectOption[]>();
 
   root = computed<FormGroup2<any>>(() => {
@@ -38,8 +41,6 @@ export class ControlTypeahead3Component {
 
   constructor() {
     effect(() => {
-
-
       this.service.mode$.subscribe({ next: validation => this.control.set(this.control().setValidation(validation)) });
     });
   }

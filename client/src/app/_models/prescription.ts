@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { FormGroup } from '@angular/forms';
 import { SelectOption } from 'src/app/_forms/form';
-import { baseInfo, Entity } from 'src/app/_models/types';
+import { baseInfo, Column, Entity } from 'src/app/_models/types';
 import { PrescriptionItem, prescriptionItemInfo } from 'src/app/_models/prescriptionItem';
 import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
 import { User, userInfo } from 'src/app/_models/user';
@@ -11,6 +11,7 @@ import { Account, accountInfo } from 'src/app/_models/account';
 import { Address } from 'src/app/_models/address';
 import { Event } from 'src/app/_models/event';
 import { MedicalLicense, medicalLicenseInfo } from 'src/app/_models/medicalLicense';
+import { Observable } from 'rxjs';
 
 export class Prescription extends Entity {
   exchangeAmount: number | null = null;
@@ -50,17 +51,42 @@ export const prescriptionInfo: FormInfo<Prescription> = {
 } as FormInfo<Prescription>;
 
 export class PrescriptionForm extends FormGroup2<Prescription> {
-  constructor() {
-    super(Prescription, new Prescription(), prescriptionInfo);
+
+  readonly prescriptionItemColumns: Column[] = [
+    new Column('name', 'Nombre'),
+    new Column('description', 'Descripción'),
+    new Column('dose', 'Dosis'),
+    new Column('instructions', 'Instrucciones'),
+    new Column('quantity', 'Cantidad'),
+  ];
+
+  private _productOptions: SelectOption[] = [];
+
+  set productOptions(value: SelectOption[]) {
+    this._productOptions = value;
+    if (this.controls.items.controls.length && this.controls.items.controls.length > 0) {
+      this.controls.items.controls.forEach(x => {
+        x.controls.selectProduct.selectOptions = this._productOptions;
+      });
+    }
   }
 
-  patch(doctor: Account) {
-    this.controls.doctor.patchValue(
-      new Account({
-        ...doctor,
-    }));
+  constructor() {
+    super(Prescription, new Prescription(), prescriptionInfo);
+
+    this.addEmptyProductItem();
+  }
+
+  patch(doctor: Account, prescription: Prescription | null) {
+    console.log('doctor', doctor, 'prescription', prescription);
+
 
     if (this.use === 'create') {
+      this.controls.doctor.patchValue(
+        new Account({
+          ...doctor,
+      }));
+
       this.controls.date.patchValue(new Date());
 
       if (doctor.doctorClinics.length && doctor.doctorClinics.length > 0) {
@@ -94,9 +120,54 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
       }
     }
 
-    console.log(this);
 
+    if (this.use === 'detail' || this.use === 'edit') {
+      if (prescription !== null) {
+        this.controls.items.clear();
+        prescription.items.forEach(x => {
+          const prescriptionItem = new PrescriptionItem({
+            ...x,
+          });
+          const prescriptionItemGroup = new FormGroup2<PrescriptionItem>(PrescriptionItem, prescriptionItem, prescriptionItemInfo);
+          if (x.unit) {
+            prescriptionItemGroup.controls.dosage.inputGroupAppend = x.unit;
+          }
+          this.controls.items.push(prescriptionItemGroup);
+        });
 
+        this.controls.date.patchValue(prescription.date);
+
+        this.controls.clinic.patchValue(new Address({
+          ...prescription.clinic,
+        }));
+
+        this.controls.doctor.patchValue(new Account({
+          ...prescription.doctor,
+        }));
+      }
+    }
+
+    this.updateValueAndValidity();
+  }
+
+  patchProductItem(value: SelectOption | null, index: number) {
+    if (this.controls.items.length && this.controls.items.length > 0) {
+      const prescriptionItem = this.controls.items.controls[index];
+      prescriptionItem.controls.selectProduct.patchValue(value);
+      prescriptionItem.controls.quantity.patchValue(1);
+    }
+  }
+
+  removeProductItem(index: number) {
+    this.controls.items.removeAt(index);
+    this.updateValueAndValidity();
+  }
+
+  addEmptyProductItem() {
+    const prescriptionItem = new PrescriptionItem();
+    const prescriptionItemGroup = new FormGroup2<PrescriptionItem>(PrescriptionItem, prescriptionItem, prescriptionItemInfo);
+    prescriptionItemGroup.controls.selectProduct.selectOptions = this._productOptions;
+    this.controls.items.push(prescriptionItemGroup);
     this.updateValueAndValidity();
   }
 

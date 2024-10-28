@@ -364,6 +364,8 @@ public class MappingProfiles : Profile
                 Id = src.Id,
                 PhotoUrl = src.ProductPhotos.FirstOrDefault().Photo.Url,
                 Price = src.Price,
+                Dosage = src.Dosage,
+                Unit = src.Unit,
             }))
         ;
 

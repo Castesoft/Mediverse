@@ -1,3 +1,4 @@
+import { SelectOption } from "src/app/_forms/form";
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
 import { Product } from "src/app/_models/product";
 
@@ -17,6 +18,7 @@ export class PrescriptionItem {
   unit: string | null = null;
 
   product: Product = new Product();
+  selectProduct: SelectOption | null = null;
 
   constructor(init?: Partial<PrescriptionItem>) {
     Object.assign(this, init);
@@ -24,17 +26,20 @@ export class PrescriptionItem {
 }
 
 export const prescriptionItemInfo: FormInfo<PrescriptionItem> = {
-  createdAt: { label: 'Creado', type: 'date', },
-  description: { label: 'Descripción', type: 'textarea', },
-  discount: { label: 'Descuento', type: 'number', },
-  dosage: { label: 'Dosis', type: 'text', },
-  instructions: { label: 'Instrucciones', type: 'textarea', },
-  itemId: { label: 'Item ID', type: 'number', },
-  lotNumber: { label: 'Número de lote', type: 'text', },
-  manufacturer: { label: 'Fabricante', type: 'text', },
-  name: { label: 'Nombre', type: 'text', },
-  notes: { label: 'Notas', type: 'textarea', },
-  price: { label: 'Precio', type: 'number', },
+  createdAt: { label: 'Creado', type: 'date', showLabel: false, },
+  description: { label: 'Descripción', type: 'text', showLabel: false, },
+  discount: { label: 'Descuento', type: 'number', showLabel: false, },
+  dosage: { label: 'Dosis', type: 'text', showLabel: false, },
+  instructions: { label: 'Instrucciones', type: 'text', showLabel: false, },
+  itemId: { label: 'Item ID', type: 'number', showLabel: false, },
+  lotNumber: { label: 'Número de lote', type: 'text', showLabel: false, },
+  manufacturer: { label: 'Fabricante', type: 'text', showLabel: false, },
+  name: { label: 'Nombre', type: 'text', showLabel: false, },
+  notes: { label: 'Notas', type: 'textarea', showLabel: false, },
+  price: { label: 'Precio', type: 'number', showLabel: false, },
+  quantity: { label: 'Cantidad', type: 'number', showLabel: false, },
+  unit: { label: 'Unidad', type: 'text', showLabel: false, },
+  selectProduct: { label: 'Producto', type: 'typeahead', showLabel: false, },
 } as FormInfo<PrescriptionItem>;
 
 export class PrescriptionItemForm extends FormGroup2<PrescriptionItem> {

@@ -17,7 +17,7 @@ namespace MainService.Postgres.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -2254,8 +2254,8 @@ namespace MainService.Postgres.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("Dosage")
-                        .HasColumnType("integer");
+                    b.Property<double>("Dosage")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("LotNumber")
                         .HasColumnType("text");

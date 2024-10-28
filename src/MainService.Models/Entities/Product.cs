@@ -29,7 +29,7 @@ public class Product : BaseEntity
         Discount = discount;
     }
     
-    public int Dosage { get; set; }
+    public double Dosage { get; set; }
     public string Unit { get; set; }
     public string Manufacturer { get; set; }
     public string LotNumber { get; set; }

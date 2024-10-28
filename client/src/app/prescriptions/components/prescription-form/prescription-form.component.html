@@ -63,7 +63,71 @@
 
     <div class="prescription-content">
       <div class="rx-symbol">℞</div>
-      <div controlsWrapper3 [(control)]="form.controls.product"></div>
+      <div class="table-responsive px-10">
+        <table class="table table-hover">
+          <thead
+            [class]="'border-bottom'"
+            [columns]="form.prescriptionItemColumns"
+            [mode]="'readonly'"
+            [params]="null"
+            [showActions]="form.use === 'edit' ? true : false"
+            [show]="true"
+            tableHeader
+          ></thead>
+          <tbody>
+            @for (productItem of form.controls.items.controls; let idx = $index; track idx) {
+              <tr>
+                <td></td>
+                @if (productItem.controls.itemId.value === null) {
+                  <td>
+                    <div controlTypeahead3 [(control)]="form.controls.items.controls[idx].controls.selectProduct" (onSelectionChange)="form.patchProductItem($event, idx)"></div>
+                  </td>
+                } @else {
+                  <td class="fw-bold">
+                    <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.name"></div>
+                  </td>
+                }
+                <td>
+                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.description"></div>
+                </td>
+                <td>
+                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.dosage"></div>
+                </td>
+                @if (productItem.controls.itemId.value === 0) {
+                  <td></td>
+                } @else {
+                  <td>
+                    <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.instructions"></div>
+                  </td>
+                }
+                <td>
+                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.quantity"></div>
+                </td>
+                @if (form.use !== 'detail') {
+                  <td>
+                    <button class="btn btn-sm btn-light-danger" (click)="form.removeProductItem(idx)">
+                      <fa-icon [icon]="icons.faClipboard"></fa-icon>
+                    </button>
+                  </td>
+                }
+              </tr>
+            }
+            @if (form.use !== 'detail') {
+              <tr>
+                <td></td>
+                <td>
+                  <button
+                    (click)="form.addEmptyProductItem()"
+                    class="btn btn-primary">
+                    <fa-icon [icon]="icons.faPlus"></fa-icon>
+                    Agregar
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="prescription-notes">

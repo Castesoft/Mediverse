@@ -1,10 +1,7 @@
 import { Component, effect, HostBinding, inject, model, OnDestroy, signal, ViewChild } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { Prescription, PrescriptionForm } from 'src/app/_models/prescription';
 import { BadRequest, FormUse, View } from 'src/app/_models/types';
 import { ProductsService } from 'src/app/_services/products.service';
-import { PatientSelectTypeaheadComponent } from 'src/app/_shared/components/patient-select-typeahead.component';
-import { PatientSelectDisplayCardComponent } from 'src/app/patients/patient-select-display-card.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconsService } from 'src/app/_services/icons.service';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
@@ -15,7 +12,6 @@ import { ConfirmService } from 'src/app/_services/confirm.service';
 import { AccountService } from 'src/app/_services/account.service';
 import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ControlTextareaComponent } from 'src/app/_forms/control-textarea.component';
 import { TabDirective, TabsetComponent } from "ngx-bootstrap/tabs";
 import { CommonModule } from '@angular/common';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
@@ -25,6 +21,8 @@ import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
 import { Account } from 'src/app/_models/account';
 import { SelectOption } from 'src/app/_forms/form';
 import { UsersService } from 'src/app/_services/users.service';
+import { TableHeaderComponent } from 'src/app/_shared/table/table-header.component';
+import { FormControl2 } from 'src/app/_forms/form2';
 
 @Component({
   selector: '[prescriptionForm]',
@@ -33,7 +31,7 @@ import { UsersService } from 'src/app/_services/users.service';
     FaIconComponent, BootstrapModule,
     PrescriptionProductsTableComponent,
     EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, CommonModule,
-    UserProfilePictureComponent, FormNewModule,
+    UserProfilePictureComponent, FormNewModule, TableHeaderComponent,
     TooltipModule,
   ],
   templateUrl: './prescription-form.component.html',
@@ -75,24 +73,13 @@ export class PrescriptionFormComponent implements OnDestroy {
       const value = this.item();
 
       this.form.use = this.use();
+      this.form.productOptions = this.productsService.options();
 
-      if (value) {
-        this.form.patchValue(value as any);
-        const account = this.accountService.current();
-        if (account !== null) {
-          this.form.patch(account);
-        }
+      const account = this.accountService.current();
+      if (account !== null) {
+        this.form.patch(account, this.item()!);
+        this.form.controls.product.selectOptions = this.productsService.options();
       }
-      if (this.use() === 'create') {
-        const account = this.accountService.current();
-        if (account !== null) {
-          this.form.patch(account);
-          this.form.controls.product.selectOptions = this.productsService.options();
-          console.log(this.form.controls.product.selectOptions);
-          this.productOptions.set(this.productsService.options());
-        }
-      }
-
       this.form.setUse(this.use());
     }, { allowSignalWrites: true });
   }
