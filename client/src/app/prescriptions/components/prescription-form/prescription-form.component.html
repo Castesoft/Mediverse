@@ -1,4 +1,8 @@
-<form class="prescription-pad bg-body" [id]="form.id">
+@if(form.error) {
+  <div errorsAlert3 [(form)]="form"></div>
+}
+
+<form class="prescription-pad bg-body" [id]="form.id" (ngSubmit)="onSubmit()">
   <div class="prescription-header">
     <div class="logo">
       @if (use() === 'create') {
@@ -14,6 +18,10 @@
       </p>
       <p>{{ form.controls.doctor.controls.mainSpecialty.value }}</p>
     </div>
+  </div>
+
+  <div class="prescription-content">
+    <div class="rx-symbol">℞</div>
   </div>
 
   <div class="prescription-body">
@@ -61,74 +69,68 @@
       </div>
     </div>
 
-    <div class="prescription-content">
-      <div class="rx-symbol">℞</div>
-      <div class="table-responsive px-10">
-        <table class="table table-hover">
+    <div class="table-responsive mt-10">
+        <table class="table table-row-dashed table-row-gray-300 gx-1 gy-3">
           <thead
-            [class]="'border-bottom'"
             [columns]="form.prescriptionItemColumns"
             [mode]="'readonly'"
             [params]="null"
-            [showActions]="form.use === 'edit' ? true : false"
+            [showActions]="false"
             [show]="true"
             tableHeader
           ></thead>
           <tbody>
             @for (productItem of form.controls.items.controls; let idx = $index; track idx) {
               <tr>
-                <td></td>
-                @if (productItem.controls.itemId.value === null) {
-                  <td>
-                    <div controlTypeahead3 [(control)]="form.controls.items.controls[idx].controls.selectProduct" (onSelectionChange)="form.patchProductItem($event, idx)"></div>
-                  </td>
-                } @else {
-                  <td class="fw-bold">
-                    <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.name"></div>
-                  </td>
-                }
+                <td class="fw-bold">{{(idx + 1) | number}}</td>
+                <td>
+                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.selectProduct" (onSelectionChange)="form.patchProductItem($event, idx)"></div>
+                </td>
                 <td>
                   <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.description"></div>
                 </td>
-                <td>
+                <td style="max-width: 80px;">
                   <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.dosage"></div>
                 </td>
-                @if (productItem.controls.itemId.value === 0) {
-                  <td></td>
-                } @else {
-                  <td>
-                    <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.instructions"></div>
-                  </td>
-                }
-                <td>
+                <td style="max-width: 80px;">
                   <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.quantity"></div>
                 </td>
                 @if (form.use !== 'detail') {
-                  <td>
-                    <button class="btn btn-sm btn-light-danger" (click)="form.removeProductItem(idx)">
+                  <td class="d-flex justify-content-start align-items-end">
+                    <button class="btn btn-sm btn-light-danger" type="button" (click)="form.removeProductItem(idx)">
                       <fa-icon [icon]="icons.faClipboard"></fa-icon>
                     </button>
                   </td>
                 }
               </tr>
-            }
-            @if (form.use !== 'detail') {
-              <tr>
-                <td></td>
-                <td>
-                  <button
-                    (click)="form.addEmptyProductItem()"
-                    class="btn btn-primary">
-                    <fa-icon [icon]="icons.faPlus"></fa-icon>
-                    Agregar
-                  </button>
-                </td>
-              </tr>
+              @if(form.controls.items.controls[idx].controls.productId.value !== null) {
+                <tr>
+                  <td></td>
+                  <td colspan="5">
+                    <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.instructions"></div>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>
       </div>
-    </div>
+
+    @if (form.use !== 'detail') {
+      <tr>
+        <td>
+          <button
+            (click)="form.addEmptyProductItem()"
+            class="btn btn-primary"
+            type="button"
+            [disabled]="!form.addButtonEnabled"
+            >
+            <fa-icon [icon]="icons.faPlus"></fa-icon>
+            Agregar
+          </button>
+        </td>
+      </tr>
+    }
 
     <div class="prescription-notes">
       <div controlsWrapper3 [(control)]="form.controls.notes"></div>
@@ -185,17 +187,17 @@
 </form>
 @if (use() === 'create' || use() === 'edit') {
   <div class="form-actions">
-    <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light">
+    <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light" type="button">
       Cancelar
     </button>
-    <button (click)="onSubmit()" class="btn btn-primary">
+    <button class="btn btn-primary" type="submit" [attr.form]="form.id">
       Guardar receta
     </button>
   </div>
 } @else {
   @if (view() === 'page') {
     <div class="form-actions">
-      <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light">
+      <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light" type="button">
         Volver
       </button>
     </div>

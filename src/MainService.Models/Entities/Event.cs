@@ -38,9 +38,9 @@
         public PatientEvent PatientEvent { get; set; }
         public EventPaymentMethodType EventPaymentMethodType { get; set; }
         public EventMedicalInsuranceCompany EventMedicalInsuranceCompany { get; set; }
-        public ICollection<NurseEvent> NurseEvents { get; set; } = [];
-        public ICollection<EventPrescription> EventPrescriptions { get; set; } = [];
-        public ICollection<EventPayment> EventPayments { get; set; } = [];
+        public List<NurseEvent> NurseEvents { get; set; } = [];
+        public List<EventPrescription> EventPrescriptions { get; set; } = [];
+        public List<EventPayment> EventPayments { get; set; } = [];
         public string Evolution { get; set; }
         public string NextSteps { get; set; }
     }
@@ -68,7 +68,7 @@
 
         public string Color { get; set; }
 
-        public ICollection<EventPaymentStatus> EventPaymentStatuses { get; set; } = [];
+        public List<EventPaymentStatus> EventPaymentStatuses { get; set; } = [];
     }
 
     public class Payment : BaseEntity

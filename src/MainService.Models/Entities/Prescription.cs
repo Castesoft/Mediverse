@@ -10,4 +10,5 @@ public class Prescription : BaseEntity
     public EventPrescription EventPrescription { get; set; }
     public List<PrescriptionItem> PrescriptionItems { get; set; } = [];
     public PrescriptionOrder PrescriptionOrder { get; set; }
+    public PrescriptionClinic PrescriptionClinic { get; set; }
 }

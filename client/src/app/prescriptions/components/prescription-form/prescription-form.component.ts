@@ -22,7 +22,7 @@ import { Account } from 'src/app/_models/account';
 import { SelectOption } from 'src/app/_forms/form';
 import { UsersService } from 'src/app/_services/users.service';
 import { TableHeaderComponent } from 'src/app/_shared/table/table-header.component';
-import { FormControl2 } from 'src/app/_forms/form2';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: '[prescriptionForm]',
@@ -32,7 +32,7 @@ import { FormControl2 } from 'src/app/_forms/form2';
     PrescriptionProductsTableComponent,
     EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, CommonModule,
     UserProfilePictureComponent, FormNewModule, TableHeaderComponent,
-    TooltipModule,
+    TooltipModule, FormsModule, ReactiveFormsModule,
   ],
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss'

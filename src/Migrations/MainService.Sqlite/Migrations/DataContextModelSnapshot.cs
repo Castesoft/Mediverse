@@ -1788,8 +1788,8 @@ namespace MainService.Sqlite.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Dosage")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Dosage")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Instructions")
                         .HasColumnType("TEXT");
@@ -2109,6 +2109,24 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("Prescriptions");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionClinic", b =>
+                {
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("PrescriptionId", "ClinicId");
+
+                    b.HasIndex("ClinicId");
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique();
+
+                    b.ToTable("PrescriptionClinic");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
                     b.Property<int>("PrescriptionId")
@@ -2123,8 +2141,8 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Dosage")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Dosage")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
@@ -2133,9 +2151,6 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Notes")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
@@ -2543,7 +2558,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("AddressId")
                         .IsUnique();
 
-                    b.ToTable("UserAddress");
+                    b.ToTable("UserAddresses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalInsuranceCompany", b =>
@@ -3867,6 +3882,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("PaymentMethodType");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionClinic", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Clinic")
+                        .WithMany("PrescriptionClinics")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithOne("PrescriptionClinic")
+                        .HasForeignKey("MainService.Models.Entities.PrescriptionClinic", "PrescriptionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Prescription");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Product", "Item")
@@ -4206,6 +4240,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("OrderAddresses");
 
+                    b.Navigation("PrescriptionClinics");
+
                     b.Navigation("UserAddress");
                 });
 
@@ -4515,6 +4551,8 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("EventPrescription");
 
                     b.Navigation("PatientPrescription");
+
+                    b.Navigation("PrescriptionClinic");
 
                     b.Navigation("PrescriptionItems");
 

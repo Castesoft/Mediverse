@@ -201,4 +201,11 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
         return mapper.Map<EventDoctorFieldsDto>(doctor);
     }
+
+    public async Task<bool> ExistsByIdAsync(int id) => await context.Events.AnyAsync(x => x.Id == id);
+
+    public async Task<bool> DoctorHasEventAsync(int doctorId, int eventId) =>
+        await context.Events
+            .Include(x => x.DoctorEvent)
+            .AnyAsync(x => x.Id == eventId && x.DoctorEvent.DoctorId == doctorId);
 }

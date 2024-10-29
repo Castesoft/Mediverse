@@ -51,8 +51,8 @@ export class PrescriptionProductsTableComponent implements OnInit {
       this.onProductSelected.emit(
         new PrescriptionItem({
           product: product,
-          dosage: product.dosage,
-          itemId: product.id,
+          // dosage: product.dosage,
+          productId: product.id,
           quantity: 1,
         })
       );

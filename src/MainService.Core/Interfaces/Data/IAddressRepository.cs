@@ -18,4 +18,5 @@ void Add(Address item);
     Task<PagedList<AddressDto>> GetPagedListAsync(AddressParams param, ClaimsPrincipal user);
     Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode);
     Task<bool> ExistsByIdAsync(int id);
+    Task<bool> DoctorHasAddressAsync(int doctorId, int addressId);
 }

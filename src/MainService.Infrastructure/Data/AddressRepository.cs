@@ -169,4 +169,9 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
     }
 
     public async Task<bool> ExistsByIdAsync(int id) => await context.Addresses.AnyAsync(x => x.Id == id);
+
+    public async Task<bool> DoctorHasAddressAsync(int doctorId, int addressId) =>
+        await context.Addresses
+            .Include(x => x.DoctorClinic)
+            .AnyAsync(x => x.Id == addressId && x.DoctorClinic.DoctorId == doctorId);
 }

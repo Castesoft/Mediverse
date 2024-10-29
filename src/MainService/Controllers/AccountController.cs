@@ -1216,7 +1216,7 @@ public class AccountController(
     {
         int userId = User.GetUserId();
 
-        if (!await uow.UserRepository.UserExistsByIdAsync(userId))
+        if (!await uow.UserRepository.ExistsByIdAsync(userId))
         return BadRequest($"Usuario de ID {userId} no fue encontrado.");
 
         if (!request.IsMain.HasValue)

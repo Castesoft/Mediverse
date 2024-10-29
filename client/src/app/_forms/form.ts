@@ -35,8 +35,10 @@ export class Options {
   sex: string | null = null;
   race: string | null = null;
   price: number | null = null;
+  dosage: number | null = null;
   age: number | null = null;
   photoUrl: string | null = null;
+  unit: string | null = null;
   description: string | null = null;
   color: string | null = null;
   isMain: boolean | null = null;

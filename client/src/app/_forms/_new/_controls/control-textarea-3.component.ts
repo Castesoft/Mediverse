@@ -19,8 +19,9 @@ export class ControlTextarea3Component {
   service = inject(FormsService);
 
   control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
-  parent = computed<FormGroup2<any>>(() => {
-    return this.control().parent as FormGroup2<any>;
+  
+  root = computed<FormGroup2<any>>(() => {
+    return this.control().root as FormGroup2<any>;
   });
 
   height = signal<number>(0);

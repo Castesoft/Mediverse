@@ -1,3 +1,5 @@
+#nullable enable
+
 using AutoMapper;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.Extensions;
@@ -18,7 +20,9 @@ public class PrescriptionsController(
     IUnitOfWork uow,
     IPrescriptionsService service,
     IMapper mapper,
-    UserManager<AppUser> userManager) : BaseApiController
+    // UserManager<AppUser> userManager,
+    IOrdersService ordersService
+) : BaseApiController
 {
     private static readonly string subject = "receta";
     private static readonly string subjectArticle = "La";
@@ -58,162 +62,100 @@ public class PrescriptionsController(
         return itemToReturn;
     }
 
-    [HttpPost("{doctorId}")]
-    public async Task<ActionResult<PrescriptionDto>> CreateAsync([FromRoute] int doctorId,
-        [FromBody] PrescriptionCreateDto request)
+    [HttpPost]
+    public async Task<ActionResult<PrescriptionDto?>> CreateAsync(
+        [FromBody] PrescriptionCreateDto request
+    )
     {
-        Log.Information("Request: {@request}, DoctorId: {@doctorId}", request, doctorId);
-        if (request == null)
-        {
-            return BadRequest("Invalid request payload");
+        int doctorId = User.GetUserId();
+        
+        if (request.Patient == null)
+        return BadRequest("El paciente es requerido");
+
+        if (string.IsNullOrEmpty(request.Notes))
+        return BadRequest("Las notas son requeridas");
+
+        if (!await uow.UserRepository.ExistsByIdAsync(request.Patient.Id))
+        return NotFound($"El paciente con Id {request.Patient.Id} no existe");
+        
+        if (!await uow.UserRepository.PatientExistsAsync(request.Patient.Id, doctorId))
+        return BadRequest($"El paciente {request.Patient.Id} no corresponde al doctor {doctorId}.");
+        
+        if (request.Event != null) {
+            if (!await uow.EventRepository.ExistsByIdAsync(request.Event.Id))
+            return NotFound($"La cita con Id {request.Event.Id} no existe");
+
+            if (!await uow.EventRepository.DoctorHasEventAsync(doctorId, request.Event.Id))
+            return BadRequest($"La cita {request.Event.Id} no corresponde al doctor {doctorId}.");
         }
 
-        var patient = await userManager.FindByIdAsync(request.PatientId.ToString());
+        if (request.Clinic == null)
+        return BadRequest("La clínica es requerida");
 
-        if (patient == null) return NotFound("El paciente no existe");
+        if (!await uow.AddressRepository.ExistsByIdAsync(request.Clinic.Id))
+        return NotFound($"La clínica con Id {request.Clinic.Id} no existe");
 
-        Event eventItem = null;
-        if (request.EventId != null)
+        if (!await uow.AddressRepository.DoctorHasAddressAsync(doctorId, request.Clinic.Id))
+        return BadRequest($"La clínica {request.Clinic.Id} no corresponde al doctor {doctorId}.");
+
+        if (request.Items.Count() == 0)
+        return BadRequest("Los medicamentos son requeridos");
+
+        int patientId = request.Patient.Id;
+        int clinicId = request.Clinic.Id;
+        string notes = request.Notes;
+
+        AppUser? patient = await uow.UserRepository.GetByIdAsNoTrackingAsync(patientId);
+
+        if (patient == null) return NotFound($"Paciente {patientId} no existe");
+
+        Prescription prescriptionToCreate = new();
+
+        if (request.ExchangeAmount.HasValue) prescriptionToCreate.ExchangeAmount = request.ExchangeAmount.Value;
+        prescriptionToCreate.Notes = notes;
+        prescriptionToCreate.PatientPrescription = new(patientId);
+        prescriptionToCreate.DoctorPrescription = new(doctorId);
+        if (request.Event != null) prescriptionToCreate.EventPrescription = new(request.Event.Id);
+
+        List<OrderItem> globalProducts = [];
+
+        foreach (PrescriptionItemCreateDto item in request.Items)
         {
-            eventItem = await uow.EventRepository.GetByIdAsync(request.EventId.Value);
-            if (eventItem == null) return NotFound("La cita no existe");
-            if (eventItem.PatientEvent.PatientId != request.PatientId)
-                return BadRequest("La cita no corresponde al paciente");
-        } else {
-            if (request.ClinicId == null) return BadRequest("ClinicId is required");
-            var clinic = await uow.AddressRepository.GetByIdAsync(request.ClinicId.Value);
-            if (clinic == null) return NotFound("La clínica no existe");
+            if (!await uow.ProductRepository.ExistsByIdAsync(item.Product.Id))
+            return NotFound($"Producto {item.Product.Id} no existe");
 
-            eventItem = new Event
-            {
-                EventClinic = new EventClinic
-                {
-                    Clinic = clinic
-                }
-            };
-        }
-
-        var newPrescription = new Prescription
-        {
-            DoctorPrescription = new DoctorPrescription
-            {
-                DoctorId = User.GetUserId()
-            },
-            ExchangeAmount = request.ExchangeAmount ?? 1,
-            PrescriptionItems = new List<PrescriptionItem>(),
-            Notes = request.Notes,
-        };
-
-        var foreignItems = new List<OrderItem>();
-
-        foreach (var item in request.PrescriptionItems)
-        {
-            var product = await uow.ProductRepository.GetByIdAsync(item.ProductId);
-            if (product == null) return NotFound($"Producto {item.ProductId} no existe");
-
-            if (product.DoctorProduct?.DoctorId != doctorId)
-            {
-                foreignItems.Add(new OrderItem
+            if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id)) {
+                prescriptionToCreate.PrescriptionItems.Add(new PrescriptionItem {
+                    ItemId = item.Product.Id,
+                    Dosage = item.Dosage,
+                    Quantity = item.Quantity,
+                    Instructions = item.Instructions,
+                });
+            } else if (await uow.ProductRepository.IsGlobalAsync(item.Product.Id)) {
+                globalProducts.Add(new OrderItem
                 {
                     Quantity = item.Quantity,
-                    Dosage = product.Dosage.ToString(),
+                    Dosage = item.Dosage,
                     Instructions = item.Instructions,
-                    Notes = item.Notes,
-                    Unit = product.Unit,
-                    Item = product
+                    Unit = item.Unit,
+                    ItemId = item.Product.Id,
                 });
             }
-
-            newPrescription.PrescriptionItems.Add(new PrescriptionItem
-            {
-                ItemId = product.Id,
-                Dosage = item.Dosage,
-                Quantity = item.Quantity,
-                Instructions = item.Instructions,
-                Notes = item.Notes,
-            });
         }
 
-        if (eventItem != null)
-        {
-            newPrescription.EventPrescription = new EventPrescription
-            {
-                Event = eventItem
-            };
-        }
+        if (globalProducts.Count() > 0) {
+            Order order = await ordersService.CreateAsync(globalProducts, patientId, doctorId);
 
-        patient.PatientPrescriptions.Add(new PatientPrescription()
-        {
-            Prescription = newPrescription,
-        });
-
-        if (foreignItems.Count > 0)
-        {
-            var order = CreateOrder(foreignItems);
-
-            order.PrescriptionOrder = new PrescriptionOrder
-            {
-                Prescription = newPrescription
-            };
-
-            patient.PatientOrders.Add(new PatientOrder
-            {
-                Order = order
-            });
-
-            order.DoctorOrder = new DoctorOrder
-            {
-                DoctorId = User.GetUserId()
-            };
-
-            var patientAddress = patient.UserAddresses.FirstOrDefault(x => x.IsMain);
-            if (patientAddress != null)
-            {
-                order.OrderAddress = new OrderAddress
-                {
-                    Address = patientAddress.Address,
-                };
-            }
+            prescriptionToCreate.PrescriptionOrder = new(order);
 
             uow.OrderRepository.Add(order);
         }
 
-        uow.PrescriptionRepository.Add(newPrescription);
+        uow.PrescriptionRepository.Add(prescriptionToCreate);
 
-        await uow.Complete();
+        if (!await uow.Complete()) return BadRequest("Error al crear la receta.");
 
-        return await uow.PrescriptionRepository.GetDtoByIdAsync(newPrescription.Id);
-    }
-
-    private static Order CreateOrder(List<OrderItem> orderItems)
-    {
-        var order = new Order
-        {
-            Total = 0,
-            Subtotal = 0,
-            Discount = 0,
-            Tax = 0,
-            AmountPaid = 0,
-            AmountDue = 0,
-            PrescriptionOrder = null,
-            PatientOrder = null,
-            DoctorOrder = null,
-            OrderAddress = null,
-            OrderItems = [],
-            Status = OrderStatus.Pending,
-            DeliveryStatus = OrderDeliveryStatus.Pending
-        };
-
-        foreach (var orderItem in orderItems)
-        {
-            order.OrderItems.Add(orderItem);
-            order.Subtotal += orderItem.Item.Price * orderItem.Quantity;
-        }
-
-        order.Tax = order.Subtotal * (decimal)0.16;
-        order.Total = order.Subtotal + order.Tax;
-
-        return order;
+        return await uow.PrescriptionRepository.GetDtoByIdAsync(prescriptionToCreate.Id);
     }
 
     [HttpDelete("{id}")]

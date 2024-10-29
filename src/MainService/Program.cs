@@ -92,7 +92,7 @@ try
     Log.Information("Database migration applied.");
     
     await Seed.SeedRolesAndPermissionsAsync(roleManager, permissionManager);
-    await Seed.SeedUsersAsync(userManager, context);
+    await Seed.SeedAsync(userManager, context, 30, 100);
     // await Seed.SeedProductsAsync(context);
     
     Log.Information("Done seeding database. Exiting.");

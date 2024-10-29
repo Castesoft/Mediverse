@@ -29,6 +29,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITokenService, TokenService>();
 
         services.AddScoped<IMedicalInsuranceCompaniesService, MedicalInsuranceCompaniesService>();
+        services.AddScoped<IOrdersService, OrdersService>();
         services.AddScoped<ISpecialtiesService, SpecialtiesService>();
         services.AddScoped<IPaymentMethodTypesService, PaymentMethodTypesService>();
         services.AddScoped<IDiseasesService, DiseasesService>();

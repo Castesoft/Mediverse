@@ -7,7 +7,7 @@
 
     @if (control().inputGroupPrepend) {
       <div class="input-group">
-        <span class="input-group-text">{{ control().inputGroupPrepend }}</span>
+        <span class="input-group-text border-0">{{ control().inputGroupPrepend }}</span>
         <input
           controlInput3
           [(control)]="control"
@@ -23,7 +23,7 @@
           [formControl]="$any(control())"
           class="form-control"
         />
-        <span class="input-group-text">{{ control().inputGroupAppend }}</span>
+        <span class="input-group-text border-0">{{ control().inputGroupAppend }}</span>
       </div>
     } @else {
       <input
@@ -41,7 +41,7 @@
 
   @if (control().inputGroupPrepend) {
     <div class="input-group">
-      <span class="input-group-text">{{ control().inputGroupPrepend }}</span>
+      <span class="input-group-text border-0">{{ control().inputGroupPrepend }}</span>
       <input
         controlInput3
         [(control)]="control"
@@ -57,7 +57,7 @@
         [formControl]="$any(control())"
         class="form-control"
       />
-      <span class="input-group-text">{{ control().inputGroupAppend }}</span>
+      <span class="input-group-text border-0">{{ control().inputGroupAppend }}</span>
     </div>
   } @else {
     <input

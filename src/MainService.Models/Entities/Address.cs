@@ -24,10 +24,11 @@ namespace MainService.Models.Entities
 
         public ClinicLogo ClinicLogo { get; set; }
         public DoctorClinic DoctorClinic { get; set; }
-        public ICollection<EventClinic> EventClinics { get; set; } = [];
-        public ICollection<ClinicNurse> ClinicNurses { get; set; } = [];
-        public ICollection<OrderAddress> OrderAddresses { get; set; } = [];
+        public List<EventClinic> EventClinics { get; set; } = [];
+        public List<ClinicNurse> ClinicNurses { get; set; } = [];
+        public List<OrderAddress> OrderAddresses { get; set; } = [];
         public UserAddress UserAddress { get; set; }
+        public List<PrescriptionClinic> PrescriptionClinics { get; set; } = [];
 
         public double GetLatitude() => Latitude ?? 0;
         public double GetLongitude() => Longitude ?? 0;

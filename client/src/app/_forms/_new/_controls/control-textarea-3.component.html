@@ -7,8 +7,8 @@
   [formControl]="$any(control())"
   [id]="control().id"
   [ngClass]="{
-        'is-invalid': parent().submitted && control().invalid,
-        'is-valid': parent().submitted && control().valid,
+        'is-invalid': root().submitted && control().invalid,
+        'is-valid': root().submitted && control().valid,
       }"
   [readonly]="control().isReadonly"
   [spellcheck]="'false'"
@@ -21,9 +21,10 @@
     <div invalidFeedback3
          [errors]="control().validationErrors"
          [control]="control()"
-         [submitted]="control().submitted">
+         [submitted]="root().submitted">
     </div>
   }
   @if (control().helperText) {
-    <div helpBlock3 [(control)]="control"></div>
+    <div helpBlock3
+         [(control)]="control"></div>
   }

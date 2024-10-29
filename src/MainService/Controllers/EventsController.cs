@@ -130,13 +130,13 @@ public class EventsController(
 
         Models.Entities.Event eventToCreate = new();
 
-        if (!await uow.UserRepository.UserExistsByIdAsync(userId))
+        if (!await uow.UserRepository.ExistsByIdAsync(userId))
         return BadRequest($"Usuario de ID {userId} no fue encontrado.");
 
         if (request.Doctor == null)
         return BadRequest("Doctor es requerido.");
 
-        if (!await uow.UserRepository.UserExistsByIdAsync(request.Doctor.Id))
+        if (!await uow.UserRepository.ExistsByIdAsync(request.Doctor.Id))
         return BadRequest($"Doctor de ID {request.Doctor.Id} no fue encontrado.");
 
         if (!await uow.UserRepository.HasDoctorRoleByIdAsync(request.Doctor.Id))

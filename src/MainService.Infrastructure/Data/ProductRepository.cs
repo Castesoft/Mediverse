@@ -174,4 +174,21 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         return await PagedList<ProductDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<ProductDto>(mapper.ConfigurationProvider), param.PageNumber, param.PageSize);
     }
+
+    public async Task<bool> ExistsByIdAsync(int id) => await context.Products.AnyAsync(x => x.Id == id);
+
+    public async Task<bool> DoctorHasProductOrIsGlobalAsync(int doctorId, int productId) =>
+        await context.Products
+            .Include(x => x.DoctorProduct.Product)
+            .AnyAsync(x => x.Id == productId && (x.DoctorProduct.DoctorId == doctorId || x.DoctorProduct == null));
+
+    public async Task<bool> IsGlobalAsync(int productId) =>
+        await context.Products
+            .Include(x => x.DoctorProduct)
+            .AnyAsync(x => x.Id == productId && x.DoctorProduct == null);
+
+    public async Task<bool> DoctorHasProductAsync(int doctorId, int productId) =>
+        await context.Products
+            .Include(x => x.DoctorProduct)
+            .AnyAsync(x => x.Id == productId && x.DoctorProduct.DoctorId == doctorId);
 }

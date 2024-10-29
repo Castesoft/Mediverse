@@ -47,7 +47,7 @@
         <div controlSearchText3 [(control)]="control"></div>
       }
       @case('typeahead') {
-        <div controlTypeahead3 [(control)]="control"></div>
+        <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control"></div>
       }
     }
   }

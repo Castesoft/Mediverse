@@ -35,14 +35,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await query.ToListAsync();
     }
 
-    public async Task<AppUser> GetByIdAsNoTrackingAsync(int id)
-    {
-        var item = await context.Users
+    public async Task<AppUser> GetByIdAsNoTrackingAsync(int id) =>
+        await Includes(context.Users)
+            .AsQueryable()
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<AppUser> GetByIdAsync(int id)
     {
@@ -313,7 +311,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
                 .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordMaritalStatus.MaritalStatus)
         ;
 
-    public async Task<bool> UserExistsByIdAsync(int id) => await context.Users.AnyAsync(x => x.Id == id);
+    public async Task<bool> ExistsByIdAsync(int id) => await context.Users.AnyAsync(x => x.Id == id);
 
     public async Task<bool> HasDoctorRoleByIdAsync(int id) => 
         await IncludeRoles(context.Users).AnyAsync(x => x.Id == id && x.UserRoles.Any(x => x.Role.Name == "Doctor"));
@@ -326,4 +324,24 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
     public async Task<bool> RequireAnticipatedCardPaymentsByIdAsync(int id) =>
         await context.Users.AnyAsync(x => x.Id == id && x.RequireAnticipatedCardPayments == true);
+
+    private static IQueryable<AppUser> Includes(IQueryable<AppUser> query) =>
+        query
+            .AsSplitQuery()
+            .AsQueryable()
+
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+
+            .Include(x => x.UserAddresses)
+                .ThenInclude(x => x.Address)
+        ;
+
+    public async Task<int?> GetMainAddressIdAsync(int userId) =>
+        await context.UserAddresses
+            .Where(x => x.UserId == userId && x.IsMain)
+            .Select(x => x.AddressId)
+            .SingleOrDefaultAsync()
+        ;
+
 }

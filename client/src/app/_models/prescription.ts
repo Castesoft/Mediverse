@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { SelectOption } from 'src/app/_forms/form';
 import { baseInfo, Column, Entity } from 'src/app/_models/types';
 import { PrescriptionItem, prescriptionItemInfo } from 'src/app/_models/prescriptionItem';
@@ -53,11 +53,13 @@ export const prescriptionInfo: FormInfo<Prescription> = {
 export class PrescriptionForm extends FormGroup2<Prescription> {
 
   readonly prescriptionItemColumns: Column[] = [
+    new Column('number', '#'),
     new Column('name', 'Nombre'),
     new Column('description', 'Descripción'),
     new Column('dose', 'Dosis'),
-    new Column('instructions', 'Instrucciones'),
+    // new Column('instructions', 'Instrucciones'),
     new Column('quantity', 'Cantidad'),
+    new Column('', ''),
   ];
 
   private _productOptions: SelectOption[] = [];
@@ -152,9 +154,28 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
 
   patchProductItem(value: SelectOption | null, index: number) {
     if (this.controls.items.length && this.controls.items.length > 0) {
-      const prescriptionItem = this.controls.items.controls[index];
-      prescriptionItem.controls.selectProduct.patchValue(value);
-      prescriptionItem.controls.quantity.patchValue(1);
+      if (value !== null) {
+        const prescriptionItem = this.controls.items.controls[index];
+        prescriptionItem.controls.selectProduct.patchValue(value);
+        prescriptionItem.controls.quantity.patchValue(1);
+        prescriptionItem.controls.productId.patchValue(value.id);
+
+        if (value?.options?.dosage) {
+          prescriptionItem.controls.dosage.patchValue(value?.options?.dosage);
+          if (value?.options?.unit) {
+            prescriptionItem.controls.dosage.inputGroupAppend = value?.options?.unit;
+          }
+        }
+
+        if (value?.options?.description) {
+          prescriptionItem.controls.description.patchValue(value?.options?.description);
+        }
+
+        prescriptionItem.disable();
+        prescriptionItem.controls.selectProduct.enable();
+        prescriptionItem.controls.instructions.enable();
+        prescriptionItem.controls.quantity.enable();
+      }
     }
   }
 
@@ -163,10 +184,23 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     this.updateValueAndValidity();
   }
 
+  // returns true if all of the items in the FormArray<FormGroup2<PrescriptionItem>> have a value in the itemId property
+  get addButtonEnabled(): boolean {
+    return this.controls.items.controls.every(x => x.controls.productId.value !== null);
+  }
+
   addEmptyProductItem() {
     const prescriptionItem = new PrescriptionItem();
     const prescriptionItemGroup = new FormGroup2<PrescriptionItem>(PrescriptionItem, prescriptionItem, prescriptionItemInfo);
     prescriptionItemGroup.controls.selectProduct.selectOptions = this._productOptions;
+
+    prescriptionItemGroup.disable();
+    prescriptionItemGroup.controls.selectProduct.enable();
+
+    prescriptionItemGroup.controls.selectProduct.setValidators([Validators.required, Validators.maxLength(500)]);
+    prescriptionItemGroup.controls.quantity.setValidators([Validators.required, Validators.min(1), Validators.max(1000)]);
+    prescriptionItemGroup.controls.instructions.setValidators([Validators.required, Validators.maxLength(1000)]);
+
     this.controls.items.push(prescriptionItemGroup);
     this.updateValueAndValidity();
   }

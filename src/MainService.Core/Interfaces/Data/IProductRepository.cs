@@ -20,4 +20,8 @@ public interface IProductRepository
     Task<List<ProductDto>> GetAllDtoAsync(ProductParams param, ClaimsPrincipal user);
     Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user);
     Task<List<OptionDto>> GetOptionsAsync(ProductParams param);
+    Task<bool> ExistsByIdAsync(int id);
+    Task<bool> DoctorHasProductOrIsGlobalAsync(int doctorId, int productId);
+    Task<bool> IsGlobalAsync(int productId);
+    Task<bool> DoctorHasProductAsync(int doctorId, int productId);
 }

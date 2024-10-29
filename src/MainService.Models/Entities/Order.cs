@@ -17,6 +17,7 @@ public class Order : BaseEntity
     public DoctorOrder DoctorOrder { get; set; }
     public OrderAddress OrderAddress { get; set; }
     public List<OrderItem> OrderItems { get; set; } = [];
+    
     public OrderStatus Status { get; set; } = OrderStatus.Pending;
     public OrderDeliveryStatus DeliveryStatus { get; set; } = OrderDeliveryStatus.Pending;
 }

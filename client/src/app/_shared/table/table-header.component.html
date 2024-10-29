@@ -1,25 +1,25 @@
 @if (show()) {
   <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0"
   role="row">
+  @if (mode() !== 'readonly') {
     <th class="w-10px pe-2 dt-orderable-none" style="max-width:20px; width:18px;"class="w-10px pe-2 dt-orderable-none" style="max-width:20px; width:18px;">
       <span class="dt-column-title">
         <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-          @if (mode() !== 'readonly') {
             <input class="form-check-input"
                    [(ngModel)]="selected"
                    [disabled]="mode() !== 'view'"
                    type="checkbox"
                    (ngModelChange)="selected.set($event)"
                    [id]="guid + 'tableCheckbox'">
-          }
-        </div>
-      </span>
-    </th>
+                  </div>
+                </span>
+              </th>
+            }
     @for (column of columns(); track column; let idx = $index; let last = $last; let first = $first) {
       @if (!column.devModeOnly || (column.devModeOnly && isDev)) {
         <th (click)="onClick(column.name)"
-            class="min-w-125px dt-orderable-asc dt-orderable-desc"
-            tabindex="0"
+            class="dt-orderable-asc dt-orderable-desc"
+            [tabIndex]="mode() === 'readonly' ? -1 : 0"
             rowspan="1"
             colspan="1"
             [attr.aria-label]="(column.label + ': ' + (column.name === params()?.sort ?
@@ -39,7 +39,7 @@
     }
 
     @if (showActions() === true) {
-      <th class="text-end min-w-100px dt-orderable-none"
+      <th class="text-end dt-orderable-none"
           rowspan="1"
           colspan="1"
           aria-label="Actions">

@@ -1839,8 +1839,8 @@ namespace MainService.Postgres.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("Dosage")
-                        .HasColumnType("text");
+                    b.Property<double>("Dosage")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Instructions")
                         .HasColumnType("text");
@@ -2174,6 +2174,24 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("Prescriptions");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionClinic", b =>
+                {
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PrescriptionId", "ClinicId");
+
+                    b.HasIndex("ClinicId");
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique();
+
+                    b.ToTable("PrescriptionClinic");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
                     b.Property<int>("PrescriptionId")
@@ -2188,8 +2206,8 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("Dosage")
-                        .HasColumnType("text");
+                    b.Property<double>("Dosage")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("Id")
                         .HasColumnType("integer");
@@ -2198,9 +2216,6 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Notes")
                         .HasColumnType("text");
 
                     b.Property<int>("Quantity")
@@ -2626,7 +2641,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("AddressId")
                         .IsUnique();
 
-                    b.ToTable("UserAddress");
+                    b.ToTable("UserAddresses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalInsuranceCompany", b =>
@@ -3958,6 +3973,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("PaymentMethodType");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionClinic", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Clinic")
+                        .WithMany("PrescriptionClinics")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithOne("PrescriptionClinic")
+                        .HasForeignKey("MainService.Models.Entities.PrescriptionClinic", "PrescriptionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Prescription");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Product", "Item")
@@ -4297,6 +4331,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("OrderAddresses");
 
+                    b.Navigation("PrescriptionClinics");
+
                     b.Navigation("UserAddress");
                 });
 
@@ -4606,6 +4642,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("EventPrescription");
 
                     b.Navigation("PatientPrescription");
+
+                    b.Navigation("PrescriptionClinic");
 
                     b.Navigation("PrescriptionItems");
 

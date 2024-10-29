@@ -283,7 +283,7 @@ public static class Seed
         // TODO
     }
 
-    public static async Task SeedUsersAsync(UserManager<AppUser> userManager, DataContext context)
+    public static async Task SeedAsync(UserManager<AppUser> userManager, DataContext context, int doctorCount = 300, int patientCount = 100)
     {
         await SeedProductsAsync(context);
         await SeedServicesAsync(context);
@@ -400,7 +400,7 @@ public static class Seed
         await userManager.AddToRolesAsync(admin, ["Admin"]);
         await userManager.AddToRolesAsync(doctor, ["Doctor", "Patient"]);
 
-        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(100, Roles.Patient);
+        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(patientCount, Roles.Patient);
         int userIndex = 1;
 
         var roles = await context.Roles.ToListAsync();
@@ -424,7 +424,7 @@ public static class Seed
             .Where(x => x.UserRoles.Any(y => y.Role.Name == "Patient"))
             .ToListAsync();
 
-        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(300, Roles.Doctor);
+        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(doctorCount, Roles.Doctor);
         userIndex = 1;
 
         foreach (var user in doctorsForSeeding)
@@ -937,9 +937,8 @@ public static class Seed
                         ItemId = randomMedicineId,
                         Item = randomMedicine,
                         Quantity = Random.Next(1, 10),
-                        Dosage = "500",
+                        Dosage = 500,
                         Instructions = "Tomar 1 tableta cada 6 horas",
-                        Notes = "Según necesidad para la fiebre y el dolor.",
                         Unit = "mg"
                     };
 

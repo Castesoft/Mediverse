@@ -1,5 +1,6 @@
-import { Component, effect, HostBinding, model, signal } from "@angular/core";
+import { Component, effect, HostBinding, model, output, signal } from "@angular/core";
 import { FormNewControlsModule } from "src/app/_forms/_new/_controls/form-new-controls.module";
+import { SelectOption } from "src/app/_forms/form";
 import { FormControl2, FormGroup2 } from "src/app/_forms/form2";
 import { SelectOptionPair } from "src/app/_models/select-option-pair";
 
@@ -17,6 +18,8 @@ export class ControlsWrapper3Component {
 
   pair = signal<FormGroup2<SelectOptionPair>>(new FormGroup2<SelectOptionPair>(SelectOptionPair, new SelectOptionPair(), {} as any));
   hasPair = signal<boolean>(false);
+
+  onSelectionChange = output<SelectOption | null>();
 
   class = 'col d-flex align-items-end';
 

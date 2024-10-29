@@ -20,4 +20,12 @@ public interface IEventRepository
     Task<List<EventDto>> GetAllDtoAsync(EventParams param, ClaimsPrincipal user);
     Task<EventDoctorFieldsDto> GetDoctorFieldsDtoAsync(ClaimsPrincipal user);
     Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId);
+    Task<bool> ExistsByIdAsync(int id);
+    /// <summary>
+    /// Asynchronously checks if a doctor has a specific event.
+    /// </summary>
+    /// <param name="doctorId">The unique identifier of the doctor.</param>
+    /// <param name="eventId">The unique identifier of the event.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the doctor has the event.</returns>
+    Task<bool> DoctorHasEventAsync(int doctorId, int eventId);
 }

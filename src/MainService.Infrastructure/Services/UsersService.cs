@@ -177,9 +177,9 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
     public async Task<bool> AddPatientToDoctorAsync(int doctorId, int patientId)
     {
-        if (await uow.UserRepository.UserExistsByIdAsync(patientId) == false) return false;
+        if (await uow.UserRepository.ExistsByIdAsync(patientId) == false) return false;
 
-        if (await uow.UserRepository.UserExistsByIdAsync(doctorId) == false) return false;
+        if (await uow.UserRepository.ExistsByIdAsync(doctorId) == false) return false;
         
         if (await DoesPatientBelongToDoctorAsync(doctorId, patientId)) return true;
 
