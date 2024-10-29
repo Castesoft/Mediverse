@@ -50,15 +50,23 @@ export class User extends Entity {
   doctorPayments: Payment[] = [];
   medicalRecord: MedicalRecord = new MedicalRecord();
   hasPatientInformationAccess = false;
+
+  select: SelectOption | null = null;
+
+  constructor(init?: Partial<User>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const userInfo: FormInfo<User> = {
-  // ...baseInfo,
-  // age: { label: 'Edad', type: 'number', },
-  // city: { label: 'Ciudad', type: 'text', },
-  // country: { label: 'País', type: 'text', },
-  // dateOfBirth: { label: 'Fecha de nacimiento', type: 'date', },
+  ...baseInfo,
+  age: { label: 'Edad', type: 'number', },
+  city: { label: 'Ciudad', type: 'text', },
+  country: { label: 'País', type: 'text', },
+  dateOfBirth: { label: 'Fecha de nacimiento', type: 'date', },
   // doctorEvents: eventInfo,
+  select: { label: 'Usuario', type: 'typeahead', orientation: 'inline' },
 } as FormInfo<User>;
 
 export class UserForm extends FormGroup2<User> {

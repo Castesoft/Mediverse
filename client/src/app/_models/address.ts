@@ -1,3 +1,4 @@
+import { SelectOption } from "src/app/_forms/form";
 import { FormInfo } from "src/app/_forms/form2";
 import { baseInfo, Entity } from "src/app/_models/types";
 
@@ -20,6 +21,8 @@ export class Address extends Entity {
   nursesCount: number | null = null;
   isMain: boolean | null = null;
 
+  select: SelectOption | null = null;
+
   constructor(init?: Partial<Omit<Address, 'address'>>) {
     super();
 
@@ -32,19 +35,20 @@ export class Address extends Entity {
 }
 
 export const addressInfo: FormInfo<Address> = {
-  // ...baseInfo,
-  // city: { label: 'Ciudad', type: 'text' },
-  // country: { label: 'País', type: 'text' },
-  // exteriorNumber: { label: 'Número exterior', type: 'text' },
-  // interiorNumber: { label: 'Número interior', type: 'text' },
-  // isMain: { label: 'Es principal', type: 'checkbox' },
-  // latitude: { label: 'Latitud', type: 'number' },
-  // longitude: { label: 'Longitud', type: 'number' },
-  // neighborhood: { label: 'Colonia', type: 'text' },
-  // nursesCount: { label: 'Número de enfermeras', type: 'number' },
-  // photoUrl: { label: 'URL de foto', type: 'text' },
-  // state: { label: 'Estado', type: 'text' },
-  // street: { label: 'Calle', type: 'text' },
-  // type: { label: 'Tipo', type: 'select' },
-  // zipcode: { label: 'Código postal', type: 'text' },
+  ...baseInfo,
+  city: { label: 'Ciudad', type: 'text' },
+  country: { label: 'País', type: 'text' },
+  exteriorNumber: { label: 'Número exterior', type: 'text' },
+  interiorNumber: { label: 'Número interior', type: 'text' },
+  isMain: { label: 'Es principal', type: 'checkbox' },
+  latitude: { label: 'Latitud', type: 'number' },
+  longitude: { label: 'Longitud', type: 'number' },
+  neighborhood: { label: 'Colonia', type: 'text' },
+  nursesCount: { label: 'Número de enfermeras', type: 'number' },
+  photoUrl: { label: 'URL de foto', type: 'text' },
+  state: { label: 'Estado', type: 'text' },
+  street: { label: 'Calle', type: 'text' },
+  type: { label: 'Tipo', type: 'select' },
+  zipcode: { label: 'Código postal', type: 'text' },
+  select: { label: 'Dirección', type: 'typeahead', orientation: 'inline', },
 } as FormInfo<Address>;

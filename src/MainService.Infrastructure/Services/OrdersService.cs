@@ -37,10 +37,15 @@ namespace MainService.Infrastructure.Services
 
             if (addressId.HasValue) order.OrderAddress = new (addressId.Value);
 
-            foreach (var orderItem in items)
+            foreach (OrderItem orderItem in items)
             {
                 order.OrderItems.Add(orderItem);
                 order.Subtotal += orderItem.Item.Price * orderItem.Quantity;
+            }
+
+            foreach (OrderItem orderItem in order.OrderItems)
+            {
+                orderItem.Item = null;
             }
 
             order.Tax = order.Subtotal * (decimal)0.16;

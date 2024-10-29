@@ -8,10 +8,11 @@ import { User, userInfo } from 'src/app/_models/user';
 import { getPaginationHeaders } from 'src/app/_utils/util';
 import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
 import { Account, accountInfo } from 'src/app/_models/account';
-import { Address } from 'src/app/_models/address';
+import { Address, addressInfo } from 'src/app/_models/address';
 import { Event } from 'src/app/_models/event';
 import { MedicalLicense, medicalLicenseInfo } from 'src/app/_models/medicalLicense';
-import { Observable } from 'rxjs';
+import { Patient } from 'src/app/patients/patients.config';
+import { Clinic } from 'src/app/clinics/clinics.config';
 
 export class Prescription extends Entity {
   exchangeAmount: number | null = null;
@@ -22,10 +23,10 @@ export class Prescription extends Entity {
 
   doctor: Account = new Account();
 
-  clinic: Address = new Address();
+  clinic: Clinic = new Clinic();
   event: Event = new Event();
-  patient: User = new User();
 
+  patient: Patient = new Patient();
   items: PrescriptionItem[] = [];
   product: SelectOption | null = null;
 
@@ -48,9 +49,13 @@ export const prescriptionInfo: FormInfo<Prescription> = {
   logoUrl: { label: 'URL del logo', type: 'text', },
   notes: { label: 'Notas', type: 'textarea', },
   orderId: { label: 'ID de pedido', type: 'number', },
+  patient: userInfo,
+  clinic: addressInfo,
 } as FormInfo<Prescription>;
 
 export class PrescriptionForm extends FormGroup2<Prescription> {
+
+  clinicSelectMode = false;
 
   readonly prescriptionItemColumns: Column[] = [
     new Column('number', '#'),
@@ -63,6 +68,8 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
   ];
 
   private _productOptions: SelectOption[] = [];
+  private _patientOptions: SelectOption[] = [];
+  private _clinicOptions: SelectOption[] = [];
 
   set productOptions(value: SelectOption[]) {
     this._productOptions = value;
@@ -71,6 +78,16 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         x.controls.selectProduct.selectOptions = this._productOptions;
       });
     }
+  }
+
+  set patientOptions(value: SelectOption[]) {
+    this._patientOptions = value;
+    this.controls.patient.controls.select.selectOptions = this._patientOptions;
+  }
+
+  set clinicOptions(value: SelectOption[]) {
+    this._clinicOptions = value;
+    this.controls.clinic.controls.select.selectOptions = this._clinicOptions;
   }
 
   constructor() {
@@ -152,18 +169,41 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     this.updateValueAndValidity();
   }
 
+  patchPatient(value: SelectOption | null) {
+    if (value !== null) {
+      this.controls.patient.patchValue(new User({
+        id: value.id,
+        fullName: value.name,
+      }));
+      this.controls.patient.controls.select.patchValue(new SelectOption({
+        ...value,
+      }));
+    }
+  }
+
+  patchClinic(value: SelectOption | null) {
+    if (value !== null) {
+      this.controls.clinic.patchValue(new Address({
+        id: value.id,
+      }));
+      this.controls.clinic.controls.select.patchValue(new SelectOption({
+        ...value,
+      }));
+    }
+  }
+
   patchProductItem(value: SelectOption | null, index: number) {
     if (this.controls.items.length && this.controls.items.length > 0) {
       if (value !== null) {
         const prescriptionItem = this.controls.items.controls[index];
-        prescriptionItem.controls.selectProduct.patchValue(value);
+        prescriptionItem.controls.selectProduct.patchValue(new SelectOption({...value}));
         prescriptionItem.controls.quantity.patchValue(1);
-        prescriptionItem.controls.productId.patchValue(value.id);
 
         if (value?.options?.dosage) {
           prescriptionItem.controls.dosage.patchValue(value?.options?.dosage);
           if (value?.options?.unit) {
             prescriptionItem.controls.dosage.inputGroupAppend = value?.options?.unit;
+            prescriptionItem.controls.unit.patchValue(value?.options?.unit);
           }
         }
 
@@ -186,7 +226,7 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
 
   // returns true if all of the items in the FormArray<FormGroup2<PrescriptionItem>> have a value in the itemId property
   get addButtonEnabled(): boolean {
-    return this.controls.items.controls.every(x => x.controls.productId.value !== null);
+    return this.controls.items.controls.every(x => x.controls.selectProduct.value?.id !== null);
   }
 
   addEmptyProductItem() {
@@ -250,8 +290,44 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     this.updateValueAndValidity();
   }
 
-  payload(): any {
-    return this.value;
+  get payload(): {
+    items: {
+      product: SelectOption | null;
+      quantity: number | null;
+      instructions: string | null;
+      dosage: number | null;
+      unit: string | null;
+    }[];
+    patient: SelectOption | null;
+    event: SelectOption | null;
+    clinic: SelectOption | null;
+    exchangeAmount: number | null;
+    notes: string | null;
+  } {
+    const patient = this.controls.patient.controls;
+    const clinic = this.controls.clinic.controls;
+    const event = this.controls.event.controls;
+
+    return {
+      items: this.controls.items.controls.map(x => ({
+        product: x.controls.selectProduct.value,
+        quantity: x.controls.quantity.value,
+        instructions: x.controls.instructions.value,
+        dosage: x.controls.dosage.value,
+        unit: x.controls.unit.value,
+      })),
+      patient: patient.id.value === null ? null : new SelectOption({
+        id: patient.id.value,
+      }),
+      event: event.id.value === null ? null : new SelectOption({
+        id: event.id.value,
+      }),
+      clinic: clinic.id.value === null ? null : new SelectOption({
+        id: clinic.id.value,
+      }),
+      exchangeAmount: this.controls.exchangeAmount.value,
+      notes: this.controls.notes.value,
+    }
   }
 }
 

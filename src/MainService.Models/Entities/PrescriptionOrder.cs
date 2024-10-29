@@ -4,6 +4,7 @@ public class PrescriptionOrder
 {
     public PrescriptionOrder() {}
     public PrescriptionOrder(Order order) => Order = order;
+    public PrescriptionOrder(int prescriptionId) => PrescriptionId = prescriptionId;
     public PrescriptionOrder(int prescriptionId, int orderId)
     {
         PrescriptionId = prescriptionId;

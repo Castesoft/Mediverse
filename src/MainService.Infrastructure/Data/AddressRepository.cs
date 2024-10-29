@@ -9,6 +9,7 @@ using MainService.Core.Extensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Infrastructure.Data;
 
@@ -174,4 +175,26 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
         await context.Addresses
             .Include(x => x.DoctorClinic)
             .AnyAsync(x => x.Id == addressId && x.DoctorClinic.DoctorId == doctorId);
+
+    public async Task<List<OptionDto>> GetClinicOptionsForDoctorAsync(AddressParams param)
+    {
+        IQueryable<Address> query = Includes(context.Addresses).AsQueryable();
+
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.DoctorClinic.DoctorId == param.DoctorId);
+        }
+
+        return await query
+            .AsNoTracking()
+            .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
+    private static IQueryable<Address> Includes(IQueryable<Address> query) => 
+        query
+            .AsSplitQuery()
+            .AsQueryable()
+
+            .Include(x => x.DoctorClinic.Clinic.ClinicLogo.Photo)
+    ;
 }

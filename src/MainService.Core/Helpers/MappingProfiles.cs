@@ -18,6 +18,18 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        CreateMap<AppUser, OptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options()
+            {
+                Id = src.Id,
+                PhotoUrl = src.UserPhoto.Photo.Url,
+                Sex = src.Sex,
+            }));
+        ;
+        
         CreateMap<AppUser, DoctorSearchResultDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
@@ -535,6 +547,9 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.Street}, {src.City}, {src.State}, {src.Country}"))
             .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Id.ToString()))
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options { 
+                PhotoUrl = src.ClinicLogo.Photo.Url
+            }))
         ;
 
         CreateMap<MedicalInsuranceCompany, OptionDto>()

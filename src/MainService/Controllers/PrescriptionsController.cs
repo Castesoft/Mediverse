@@ -115,45 +115,67 @@ public class PrescriptionsController(
         prescriptionToCreate.Notes = notes;
         prescriptionToCreate.PatientPrescription = new(patientId);
         prescriptionToCreate.DoctorPrescription = new(doctorId);
+        prescriptionToCreate.PrescriptionClinic = new(clinicId);
         if (request.Event != null) prescriptionToCreate.EventPrescription = new(request.Event.Id);
 
         List<OrderItem> globalProducts = [];
 
         foreach (PrescriptionItemCreateDto item in request.Items)
         {
-            if (!await uow.ProductRepository.ExistsByIdAsync(item.Product.Id))
-            return NotFound($"Producto {item.Product.Id} no existe");
+            if (item.Product != null) {
+                if (!await uow.ProductRepository.ExistsByIdAsync(item.Product.Id))
+                return NotFound($"Producto {item.Product.Id} no existe");
 
-            if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id)) {
-                prescriptionToCreate.PrescriptionItems.Add(new PrescriptionItem {
-                    ItemId = item.Product.Id,
-                    Dosage = item.Dosage,
-                    Quantity = item.Quantity,
-                    Instructions = item.Instructions,
-                });
-            } else if (await uow.ProductRepository.IsGlobalAsync(item.Product.Id)) {
-                globalProducts.Add(new OrderItem
-                {
-                    Quantity = item.Quantity,
-                    Dosage = item.Dosage,
-                    Instructions = item.Instructions,
-                    Unit = item.Unit,
-                    ItemId = item.Product.Id,
-                });
+                Product product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item.Product.Id);
+
+                if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id)) {
+                    PrescriptionItem itemToAdd = new();
+
+                    if (!string.IsNullOrEmpty(item.Instructions)) itemToAdd.Instructions = item.Instructions;
+                    if (item.Quantity.HasValue) itemToAdd.Quantity = item.Quantity.Value;
+                    
+                    if (item.Dosage.HasValue) itemToAdd.Dosage = product.Dosage;
+                    if (item.Product != null) itemToAdd.ItemId = product.Id;
+                    itemToAdd.Unit = product.Unit;
+                    itemToAdd.Name = product.Name;
+
+                    prescriptionToCreate.PrescriptionItems.Add(itemToAdd);
+                    
+                } else if (await uow.ProductRepository.IsGlobalAsync(item.Product.Id)) {
+                    OrderItem orderItemToAdd = new();
+
+                    if (item.Quantity.HasValue) orderItemToAdd.Quantity = item.Quantity.Value;
+                    if (!string.IsNullOrEmpty(item.Instructions)) orderItemToAdd.Instructions = item.Instructions;
+
+                    if (item.Product != null) orderItemToAdd.ItemId = product.Id;
+                    if (item.Dosage.HasValue) orderItemToAdd.Dosage = product.Dosage;
+                    if (!string.IsNullOrEmpty(item.Unit)) orderItemToAdd.Unit = product.Unit;
+                    orderItemToAdd.Price = product.Price;
+                    orderItemToAdd.Discount = product.Discount;
+                    orderItemToAdd.Item = product;
+                    
+                    globalProducts.Add(orderItemToAdd);
+                }
             }
         }
 
+        Order? order = null;
+
         if (globalProducts.Count() > 0) {
-            Order order = await ordersService.CreateAsync(globalProducts, patientId, doctorId);
-
-            prescriptionToCreate.PrescriptionOrder = new(order);
-
-            uow.OrderRepository.Add(order);
+            order = await ordersService.CreateAsync(globalProducts, patientId, doctorId);
         }
 
         uow.PrescriptionRepository.Add(prescriptionToCreate);
 
         if (!await uow.Complete()) return BadRequest("Error al crear la receta.");
+
+        if (order != null) {
+            order.PrescriptionOrder = new(prescriptionToCreate.Id);
+
+            uow.OrderRepository.Add(order);
+
+            if (!await uow.Complete()) return BadRequest("Error al crear la orden.");
+        }
 
         return await uow.PrescriptionRepository.GetDtoByIdAsync(prescriptionToCreate.Id);
     }

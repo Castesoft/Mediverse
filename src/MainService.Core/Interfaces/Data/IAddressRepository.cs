@@ -3,6 +3,7 @@ using MainService.Core.DTOs.Addresses;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Models.Entities;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.Interfaces.Data;
 public interface IAddressRepository
@@ -19,4 +20,5 @@ void Add(Address item);
     Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode);
     Task<bool> ExistsByIdAsync(int id);
     Task<bool> DoctorHasAddressAsync(int doctorId, int addressId);
+    Task<List<OptionDto>> GetClinicOptionsForDoctorAsync(AddressParams param);
 }

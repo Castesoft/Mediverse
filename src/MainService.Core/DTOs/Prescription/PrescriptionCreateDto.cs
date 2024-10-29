@@ -25,24 +25,22 @@ public class PrescriptionCreateDto
     public string? Notes { get; set; } = null;
 }
 
-#nullable disable
-
 public class PrescriptionItemCreateDto
 {
     [Required(ErrorMessage = "El medicamento es requerido.")]
-    public OptionDto Product { get; set; }
+    public OptionDto? Product { get; set; } = null;
 
     [Required(ErrorMessage = "La cantidad es requerida.")]
     [Range(1, 1000, ErrorMessage = "La cantidad debe ser mayor a 0 y menor que 1,000.")]
-    public int Quantity { get; set; }
+    public int? Quantity { get; set; } = null;
 
     [Required(ErrorMessage = "La dosis es requerida.")]
-    public double Dosage { get; set; }
+    public double? Dosage { get; set; } = null;
 
     [Required(ErrorMessage = "Las instrucciones son requeridas.")]
     [MaxLength(500, ErrorMessage = "Las instrucciones no pueden exceder los 500 caracteres.")]
-    public string Instructions { get; set; }
+    public string? Instructions { get; set; } = null;
 
     [Required(ErrorMessage = "Las unidades son requeridas.")]
-    public string Unit { get; set; }
+    public string? Unit { get; set; } = null;
 }

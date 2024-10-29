@@ -1,14 +1,14 @@
 import { HttpParams } from "@angular/common/http";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
-import { BadRequest, baseInfo, Entity, Role } from "src/app/_models/types";
-import { User, userInfo } from "src/app/_models/user";
+import { BadRequest, Entity, Role } from "src/app/_models/types";
+import { User } from "src/app/_models/user";
 import { EventsService } from "src/app/_services/events.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
-import { Payment, paymentInfo } from './payment';
-import { Prescription, prescriptionInfo } from './prescription';
-import { Service, serviceInfo } from "src/app/_models/service";
-import { Address, addressInfo } from "src/app/_models/address";
+import { Payment } from './payment';
+import { Prescription } from './prescription';
+import { Service } from "src/app/_models/service";
+import { Address } from "src/app/_models/address";
 import { SelectOption } from "src/app/_forms/form";
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
 
@@ -29,6 +29,8 @@ export class Event extends Entity {
   nurses: User[] = [];
   payments: Payment[] = [];
   prescriptions: Prescription[] = [];
+
+  select: SelectOption | null = null;
 
   constructor(init?: Partial<Event>) {
     super();

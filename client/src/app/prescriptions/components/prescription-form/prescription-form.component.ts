@@ -16,20 +16,20 @@ import { TabDirective, TabsetComponent } from "ngx-bootstrap/tabs";
 import { CommonModule } from '@angular/common';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { PrescriptionProductsTableComponent } from 'src/app/prescriptions/components/prescription-form/prescription-products-table/prescription-products-table.component';
 import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
 import { Account } from 'src/app/_models/account';
 import { SelectOption } from 'src/app/_forms/form';
 import { UsersService } from 'src/app/_services/users.service';
 import { TableHeaderComponent } from 'src/app/_shared/table/table-header.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PatientsService } from 'src/app/patients/patients.config';
+import { ClinicsService } from 'src/app/clinics/clinics.config';
 
 @Component({
   selector: '[prescriptionForm]',
   standalone: true,
   imports: [
     FaIconComponent, BootstrapModule,
-    PrescriptionProductsTableComponent,
     EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, CommonModule,
     UserProfilePictureComponent, FormNewModule, TableHeaderComponent,
     TooltipModule, FormsModule, ReactiveFormsModule,
@@ -42,9 +42,13 @@ export class PrescriptionFormComponent implements OnDestroy {
   icons = inject(IconsService);
   router = inject(Router);
   service = inject(PrescriptionsService);
+
   private productsService = inject(ProductsService);
   private usersService = inject(UsersService);
   private confirmService = inject(ConfirmService);
+  private patientsService = inject(PatientsService);
+  private clinicsService = inject(ClinicsService);
+
   private ngUnsubscribe = new Subject<void>();
   private route = inject(ActivatedRoute);
 
@@ -64,9 +68,12 @@ export class PrescriptionFormComponent implements OnDestroy {
 
   productOptions = signal<SelectOption[]>([]);
   patientOptions = signal<SelectOption[]>([]);
+  clinicOptions = signal<SelectOption[]>([]);
 
   constructor() {
     this.productsService.getOptions().subscribe();
+    this.patientsService.getOptions().subscribe();
+    this.clinicsService.getOptions().subscribe();
 
     effect(() => {
       this.account.set(this.accountService.current());
@@ -74,11 +81,12 @@ export class PrescriptionFormComponent implements OnDestroy {
 
       this.form.use = this.use();
       this.form.productOptions = this.productsService.options();
+      this.form.patientOptions = this.patientsService.options();
+      this.form.clinicOptions = this.clinicsService.options();
 
       const account = this.accountService.current();
       if (account !== null) {
         this.form.patch(account, this.item()!);
-        this.form.controls.product.selectOptions = this.productsService.options();
       }
       this.form.setUse(this.use());
     }, { allowSignalWrites: true });
@@ -144,26 +152,22 @@ export class PrescriptionFormComponent implements OnDestroy {
   }
 
   create() {
-    if (this.form.submittable) {
-      this.service.create(this.form.payload, this.view()).subscribe({
-        next: response => {
-          this.form.onSuccess(response);
-          this.use.set('detail');
-        },
-        error: (error: BadRequest) => this.form.error = error
-      });
-    }
+    this.service.create(this.form.payload, this.view()).subscribe({
+      next: response => {
+        this.form.onSuccess(response);
+        this.use.set('detail');
+      },
+      error: (error: BadRequest) => this.form.error = error
+    });
   }
 
   update() {
-    if (this.form.submittable) {
-      this.service.update(this.item()!.id!, this.form.payload, this.view()).subscribe({
-        next: response => {
-          this.form.onSuccess(response);
-          this.use.set('detail');
-        },
-        error: (error: BadRequest) => this.form.error = error
-      });
-    }
+    this.service.update(this.item()!.id!, this.form.payload, this.view()).subscribe({
+      next: response => {
+        this.form.onSuccess(response);
+        this.use.set('detail');
+      },
+      error: (error: BadRequest) => this.form.error = error
+    });
   }
 }

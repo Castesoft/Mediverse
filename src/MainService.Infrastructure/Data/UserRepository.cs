@@ -1,3 +1,5 @@
+#nullable enable
+
 using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -9,6 +11,7 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
+using MainService.Models.Entities.Aggregate;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -35,27 +38,30 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await query.ToListAsync();
     }
 
-    public async Task<AppUser> GetByIdAsNoTrackingAsync(int id) =>
+    public async Task<AppUser?> GetByIdAsNoTrackingAsync(int id) =>
         await Includes(context.Users)
             .AsQueryable()
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id)
         ;
 
-    public async Task<AppUser> GetByIdAsync(int id)
-    {
-        var item = await context.Users
+    public async Task<AppUser?> GetByIdAsync(int id) =>
+        await context.Users
             .Include(x => x.Patients)
                 .ThenInclude(x => x.Patient)
             .SingleOrDefaultAsync(x => x.Id == id);
 
-        return item;
-    }
+    public async Task<UserDto?> GetDtoByIdAsync(int id) =>
+        await IncludesForUserDto(context.Users).AsQueryable()
+            .ProjectTo<UserDto>(mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-    public async Task<UserDto> GetDtoByIdAsync(int id)
-    {
-        var item = await context.Users
-            .AsNoTracking()
+    private static IQueryable<AppUser> IncludesForUserDto(IQueryable<AppUser> query) =>
+        query
+            .AsSplitQuery()
+            .AsQueryable()
+
             .Include(x => x.UserMedicalInsuranceCompanies)
                 .ThenInclude(x => x.MedicalInsuranceCompany)
             .Include(x => x.PatientEvents)
@@ -77,21 +83,13 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
                 .ThenInclude(x => x.DoctorEvent)
                 .ThenInclude(x => x.Doctor)
             .Include(x => x.Doctors)
-            .ProjectTo<UserDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
+        ;
 
-        return item;
-    }
-
-    public async Task<PatientDto> GetPatientDtoByIdAsync(int id)
-    {
-        var item = await context.Users
+    public async Task<PatientDto?> GetPatientDtoByIdAsync(int id) =>
+        await context.Users
             .AsNoTracking()
             .ProjectTo<PatientDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
 
     public async Task<List<UserSummaryDto>> GetSummaryDtosAsync(UserParams param, ClaimsPrincipal user)
     {
@@ -144,17 +142,13 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .AnyAsync(x => x.Id == id && x.NursesDoctor.Any(x => x.DoctorId == doctorId));
     }
 
-    public async Task<UserDto> GetDtoByEmailAsync(string email)
-    {
-        var item = await context.Users
+    public async Task<UserDto?> GetDtoByEmailAsync(string email) =>
+        await IncludesForUserDto(context.Users)
             .AsNoTracking()
             .ProjectTo<UserDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Email == email);
 
-        return item;
-    }
-
-    public async Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user)
+    public async Task<PagedList<UserDto>?> GetPagedListAsync(UserParams param, ClaimsPrincipal user)
     {
         var query = context.Users
             .Include(x => x.Patients)
@@ -211,9 +205,10 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             query = query.Where(x =>
                 EF.Functions.Like(x.FirstName.ToLower(), $"%{param.Search}%") ||
                 EF.Functions.Like(x.LastName.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.Email.ToLower(), $"%{param.Search}%") ||
+                EF.Functions.Like(x.Email!.ToLower(), $"%{param.Search}%") ||
                 EF.Functions.Like(x.Sex.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.PhoneNumber.ToLower(), $"%{param.Search}%"));
+                EF.Functions.Like(x.PhoneNumber!.ToLower(), $"%{param.Search}%"))
+            ;
         }
 
         return await PagedList<UserDto>.CreateAsync(
@@ -271,9 +266,9 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.SaveChangesAsync() > 0;
     }
 
-    public async Task<MedicalRecordDto> GetMedicalRecordDtoAsync(int userId)
+    public async Task<MedicalRecordDto?> GetMedicalRecordDtoAsync(int userId)
     {
-        var user = await IncludeMedicalRecord(context.Users).AsQueryable()
+        var user = await IncludesForMedicalRecord(context.Users).AsQueryable()
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null || user.UserMedicalRecord == null) return null;
@@ -289,7 +284,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.SaveChangesAsync() > 0;
     }
 
-    private static IQueryable<AppUser> IncludeMedicalRecord(IQueryable<AppUser> query) =>
+    private static IQueryable<AppUser> IncludesForMedicalRecord(IQueryable<AppUser> query) =>
         query
             .AsSplitQuery()
                 .Include(x => x.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers)
@@ -335,6 +330,9 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
             .Include(x => x.UserAddresses)
                 .ThenInclude(x => x.Address)
+
+            .Include(x => x.Patients)
+            .Include(x => x.Doctors)
         ;
 
     public async Task<int?> GetMainAddressIdAsync(int userId) =>
@@ -344,4 +342,17 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .SingleOrDefaultAsync()
         ;
 
+    public async Task<List<OptionDto>> GetPatientOptionsForDoctorAsync(UserParams param)
+    {
+        IQueryable<AppUser> query = Includes(context.Users).AsQueryable();
+
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.Doctors.Any(x => x.DoctorId == param.DoctorId));
+        }
+
+        return await query
+            .AsNoTracking()
+            .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 }

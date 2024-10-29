@@ -10,7 +10,6 @@ export class PrescriptionItem {
   description: string | null = null;
   discount: number | null = null;
   dosage: number | null = null;
-  productId: number | null = null;
   lotNumber: string | null = null;
   manufacturer: string | null = null;
   name: string | null = null;
@@ -31,7 +30,6 @@ export const prescriptionItemInfo: FormInfo<PrescriptionItem> = {
   discount: { label: 'Descuento', type: 'number', showLabel: false, },
   dosage: { label: 'Dosis', type: 'number', showLabel: false, },
   instructions: { label: 'Indicaciones', type: 'text', orientation: 'inline', },
-  productId: { label: 'Item ID', type: 'number', showLabel: false, },
   lotNumber: { label: 'Número de lote', type: 'text', showLabel: false, },
   manufacturer: { label: 'Fabricante', type: 'text', showLabel: false, },
   name: { label: 'Nombre', type: 'text', showLabel: false, },
