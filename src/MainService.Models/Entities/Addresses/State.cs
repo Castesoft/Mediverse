@@ -2,5 +2,5 @@ namespace MainService.Models.Entities;
 public class State : BaseEntity
 {
     
-    public ICollection<StateCity> StateCities { get; set; } = [];
+    public List<StateCity> StateCities { get; set; } = [];
 }

@@ -64,5 +64,5 @@ public class MedicalLicense : BaseEntity
     /// </remarks>
     public MedicalLicenseDocument MedicalLicenseDocument { get; set; }
     public MedicalLicenseSpecialty MedicalLicenseSpecialty { get; set; }
-    public ICollection<MedicalLicenseSubSpecialty> MedicalLicenseSubSpecialties { get; set; } = [];
+    public List<MedicalLicenseSubSpecialty> MedicalLicenseSubSpecialties { get; set; } = [];
 }

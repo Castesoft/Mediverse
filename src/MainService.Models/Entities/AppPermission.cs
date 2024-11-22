@@ -16,6 +16,6 @@ public class AppPermission
         Description = description;
     }
 
-    public ICollection<AppUserPermission> UserPermissions { get; set; } = [];
-    public ICollection<AppRolePermission> RolePermissions { get; set; } = [];
+    public List<AppUserPermission> UserPermissions { get; set; } = [];
+    public List<AppRolePermission> RolePermissions { get; set; } = [];
 }

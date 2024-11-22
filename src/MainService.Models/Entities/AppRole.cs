@@ -17,8 +17,8 @@ namespace MainService.Models.Entities
             RolePermissions = permissions.Select(x => new AppRolePermission { Permission = new AppPermission(x.Key.Trim().Replace(" ", ""), x.Value) }).ToList();
         }
 
-        public ICollection<AppUserRole> UserRoles { get; set; } = [];
-        public ICollection<AppRolePermission> RolePermissions { get; set; } = [];
+        public List<AppUserRole> UserRoles { get; set; } = [];
+        public List<AppRolePermission> RolePermissions { get; set; } = [];
     };
 
     public enum Roles

@@ -3,5 +3,5 @@ public class City : BaseEntity
 {
     
     public StateCity StateCity { get; set; }
-    public ICollection<CityNeighborhood> CityNeighborhoods { get; set; } = [];
+    public List<CityNeighborhood> CityNeighborhoods { get; set; } = [];
 }

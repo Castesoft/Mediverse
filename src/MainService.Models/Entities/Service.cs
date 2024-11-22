@@ -26,7 +26,7 @@ public class Service : BaseEntity
     public double Discount { get; set; }
 
     public DoctorService DoctorService { get; set; }
-    public ICollection<ServicePhoto> ServicePhotos { get; set; } = [];
-    public ICollection<EventService> EventServices { get; set; } = [];
-    public ICollection<SpecialtyService> SpecialtyServices { get; set; } = [];
+    public List<ServicePhoto> ServicePhotos { get; set; } = [];
+    public List<EventService> EventServices { get; set; } = [];
+    public List<SpecialtyService> SpecialtyServices { get; set; } = [];
 }
