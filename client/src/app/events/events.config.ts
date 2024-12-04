@@ -16,8 +16,8 @@ import { EventsDisplayComponent } from './components/events-display/events-displ
 
 @Component({
   selector: 'events-route',
-  template: `
-    <router-outlet></router-outlet>`,
+  template: `<router-outlet></router-outlet>`,
+  standalone: false,
 })
 export class EventsComponent {
 }
@@ -37,25 +37,8 @@ export class EventsComponent {
   standalone: true,
   imports: [RouterModule, EventsDisplayComponent, LayoutModule],
 })
-export class CatalogComponent implements OnInit {
-  service = inject(EventsService);
-  compact = inject(CompactTableService);
+export class CatalogComponent {
 
-  isCompact = false;
-  view: View = 'page';
-  mode: CatalogMode = 'view';
-  key = createId();
-  section: Sections = 'events';
-  role: Role = 'Patient';
-  label: string;
-
-  constructor() {
-    this.label = this.service.dictionary.title;
-  }
-
-  ngOnInit(): void {
-    this.compact.mode$.subscribe({next: (mode) => (this.isCompact = mode)});
-  }
 }
 
 @Component({
@@ -180,7 +163,7 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
       path: '', title: 'Citas', data: {breadcrumb: 'Citas',},
       component: EventsComponent, runGuardsAndResolvers: 'always',
       children: [
-        {path: '', component: CatalogComponent, title: 'Catálogo de citas', data: {breadcrumb: 'Catálogo',},},
+        {path: ':span', component: CatalogComponent, title: 'Catálogo de citas', data: {breadcrumb: 'Catálogo',},},
         {path: 'create', component: NewComponent, title: 'Crear nuevo cita', data: {breadcrumb: 'Nuevo',},},
         {
           path: ':id', title: titleDetailResolver, data: {breadcrumb: 'Detalle',},

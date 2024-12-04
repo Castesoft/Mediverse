@@ -1,13 +1,13 @@
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { LayoutModule } from '../_shared/layout.module';
-import { LandingComponent } from './components/landing.component';
-import { SearchResultsComponent } from './components/search-results/search-results.component';
-import { ServicesComponent } from './components/services/services.component';
-import { PricingComponent } from './components/pricing/pricing.component';
-import { LandingNavbarComponent } from './components/landing-navbar/landing-navbar.component';
-import { DoctorProfileComponent } from './components/doctor-profile/doctor-profile.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { DoctorProfileComponent } from 'src/app/landing/components/doctor-profile/doctor-profile.component';
+import { LandingNavbarComponent } from 'src/app/landing/components/landing-navbar/landing-navbar.component';
+import { LandingComponent } from 'src/app/landing/components/landing.component';
+import { PricingComponent } from 'src/app/landing/components/pricing/pricing.component';
+import { SearchResultsComponent } from 'src/app/landing/components/search-results/search-results.component';
+import { ServicesComponent } from 'src/app/services/services.config';
 
 @Component({
     selector: 'landing-route',
@@ -35,7 +35,7 @@ export class LandingRouterComponent {
 @NgModule({
     imports: [RouterModule.forChild([
         {
-            path: '', 
+            path: '',
             component: LandingRouterComponent,
             children: [
                 { path: '', component: LandingComponent, title: 'Mediverse', data: { breadcrumb: 'Landing' } },

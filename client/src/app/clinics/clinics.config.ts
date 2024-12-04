@@ -12,7 +12,7 @@ export class Clinic extends Address {
   }
 }
 
-export class ClinicParams extends EntityParams<Clinic> implements IParams {
+export class ClinicParams extends EntityParams<Clinic> {
   constructor(key: string) {
     super(key);
   }

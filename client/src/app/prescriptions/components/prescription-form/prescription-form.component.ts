@@ -89,7 +89,7 @@ export class PrescriptionFormComponent implements OnDestroy {
         this.form.patch(account, this.item()!);
       }
       this.form.setUse(this.use());
-    }, { allowSignalWrites: true });
+    });
   }
 
   ngOnDestroy() {

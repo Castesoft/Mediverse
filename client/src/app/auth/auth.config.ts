@@ -147,7 +147,8 @@ export class PasswordResetComponent {}
     </li>
   </ol>
 </div>
-  `
+  `,
+  standalone: false,
 })
 export class AuthComponent { }
 

@@ -17,6 +17,7 @@ import { createId } from "@paralleldrive/cuid2";
 @Component({
   selector: 'products-route',
   template: `<router-outlet></router-outlet>`,
+  standalone: false,
 })
 export class ProductsComponent implements OnInit {
   accountService = inject(AccountService);

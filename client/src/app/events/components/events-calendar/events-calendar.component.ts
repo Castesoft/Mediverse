@@ -4,7 +4,7 @@ import { IconsService } from 'src/app/_services/icons.service';
 import { Pagination } from 'src/app/_models/pagination';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Subject, takeUntil } from 'rxjs';
-import { DatePipe, DecimalPipe, JsonPipe } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe, JsonPipe } from '@angular/common';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { CatalogMode, Role, View } from 'src/app/_models/types';
 import { Router, RouterModule } from '@angular/router';
@@ -38,7 +38,6 @@ import { AccountService } from 'src/app/_services/account.service';
     RouterModule,
     ReactiveFormsModule,
     FontAwesomeModule,
-    DecimalPipe,
     EventsTableComponent,
     AlertModule,
     ControlsModule,
@@ -49,8 +48,7 @@ import { AccountService } from 'src/app/_services/account.service';
     LayoutModule,
     FullCalendarModule,
     ButtonsModule,
-    DatePipe,
-    JsonPipe,
+    CommonModule,
   ],
   styles: `
     .current-event {

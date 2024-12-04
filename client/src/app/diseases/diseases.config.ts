@@ -468,17 +468,9 @@ export class Disease extends Entity {
   }
 }
 
-export class DiseaseParams extends EntityParams<Disease> implements IParams {
+export class DiseaseParams extends EntityParams<Disease> {
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }
 
@@ -755,6 +747,7 @@ export class DiseasesService extends ServiceHelper<Disease, DiseaseParams, FormG
   template: `
   <router-outlet></router-outlet>
   `,
+  standalone: false,
 })
 export class DiseasesComponent {
   dev = inject(EnvService);

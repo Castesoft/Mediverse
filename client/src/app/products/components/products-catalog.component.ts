@@ -1,7 +1,6 @@
 import { Component, effect, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { IconsService } from "src/app/_services/icons.service";
-import { Pagination } from "src/app/_models/pagination";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Subject } from "rxjs";
 import { CommonModule, DecimalPipe } from "@angular/common";

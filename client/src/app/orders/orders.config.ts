@@ -36,8 +36,8 @@ export const titleEditResolver: ResolveFn<string> = (route, state) => {
 
 @Component({
   selector: 'orders-route',
-  template: `
-    <router-outlet></router-outlet>`,
+  template: `<router-outlet></router-outlet>`,
+  standalone: false,
 })
 export class OrdersComponent implements OnInit {
   ngOnInit(): void {

@@ -463,17 +463,9 @@ export const sortOptions = Object.values({
   visible: new SelectOption({ id: 8, code: 'visible', name: 'Visible' }),
 });
 
-export class ServiceParams extends EntityParams<Service> implements IParams {
+export class ServiceParams extends EntityParams<Service> {
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }
 
@@ -750,6 +742,7 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, FormG
   template: `
   <router-outlet></router-outlet>
   `,
+  standalone: false,
 })
 export class ServicesComponent {
   dev = inject(EnvService);

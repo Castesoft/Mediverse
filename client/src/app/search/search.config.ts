@@ -6,8 +6,8 @@ import { HomeSearchComponent } from './components/home-search.component';
 
 @Component({
     selector: 'search-route',
-    template: `
-      <router-outlet></router-outlet>`,
+    template: `<router-outlet></router-outlet>`,
+    standalone: false,
   })
   export class SearchComponent implements OnInit {
     ngOnInit(): void { }

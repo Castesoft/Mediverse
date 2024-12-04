@@ -62,6 +62,7 @@ export class HomeComponent {
 @Component({
   selector: 'admin-route',
   template: `<router-outlet></router-outlet>`,
+  standalone: false,
 })
 export class AdminComponent {}
 

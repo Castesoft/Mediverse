@@ -40,6 +40,6 @@ export class ControlDate2Component {
         // this.control().formControl.setValue(this.datePipe.transform(this.control().value, 'dd/MM/YYYY', '', 'es-MX'));
         this.control().formControl.updateValueAndValidity();
       }
-    }, { allowSignalWrites: true});
+    });
   }
 }

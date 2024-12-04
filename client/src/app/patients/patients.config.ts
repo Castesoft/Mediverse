@@ -13,7 +13,7 @@ export class Patient extends User {
   }
 }
 
-export class PatientParams extends EntityParams<Patient> implements IParams {
+export class PatientParams extends EntityParams<Patient> {
 
   constructor(key: string) {
     super(key);

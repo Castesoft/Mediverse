@@ -31,7 +31,7 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
       class="dropdown-menu dropdown-menu-right menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-gray-500 menu-active-bg menu-state-color fw-semibold py-4 fs-base w-150px"
       *dropdownMenu>
       <div class="menu-item px-3 my-0">
-        <a [ngClass]="{'active': selected === 'light'}" (click)="theme.set('light'); $event.preventDefault()" href
+        <a [ngClass]="{'active': theme.theme() === 'light'}" (click)="theme.set('light'); $event.preventDefault()" href
            class="menu-link px-3 py-2">
       <span class="menu-icon">
         <i class="ki-duotone ki-night-day fs-2">
@@ -51,7 +51,7 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
         </a>
       </div>
       <div class="menu-item px-3 my-0">
-        <a [ngClass]="{'active': selected === 'dark'}" (click)="theme.set('dark'); $event.preventDefault()" href
+        <a [ngClass]="{'active': theme.theme() === 'dark'}" (click)="theme.set('dark'); $event.preventDefault()" href
            class="menu-link px-3 py-2">
       <span class="menu-icon">
         <i class="ki-duotone ki-moon fs-2">
@@ -63,7 +63,7 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
         </a>
       </div>
       <div class="menu-item px-3 my-0">
-        <a [ngClass]="{'active': selected === 'auto'}" (click)="theme.set('auto'); $event.preventDefault();" href
+        <a [ngClass]="{'active': theme.theme() === 'auto'}" (click)="theme.set('auto'); $event.preventDefault();" href
            class="menu-link px-3 py-2">
       <span class="menu-icon">
         <i class="ki-duotone ki-screen fs-2">
@@ -81,17 +81,6 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
   standalone: true,
   imports: [ NgClass, RouterModule, BootstrapModule, ],
 })
-export class ThemeDropdownComponent implements OnInit {
+export class ThemeDropdownComponent {
   theme = inject(ThemeService)
-
-  selected = '';
-
-  ngOnInit(): void {
-    this.theme.current.subscribe({
-      next: theme => {
-        this.selected = theme;
-      }
-    })
-  }
-
 }

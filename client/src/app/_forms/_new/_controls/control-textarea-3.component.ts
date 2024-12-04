@@ -19,7 +19,7 @@ export class ControlTextarea3Component {
   service = inject(FormsService);
 
   control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
-  
+
   root = computed<FormGroup2<any>>(() => {
     return this.control().root as FormGroup2<any>;
   });
@@ -40,7 +40,7 @@ export class ControlTextarea3Component {
           this.height.set(countLines(value));
         }
       })
-    }, { allowSignalWrites: true, });
+    });
 
   }
 }

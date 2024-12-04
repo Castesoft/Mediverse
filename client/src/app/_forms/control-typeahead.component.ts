@@ -68,7 +68,7 @@ export class ControlTypeaheadComponent {
       if (!this.id()) {
         this.id.set(`${this.name()}${createId()}`);
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   private setOptions = () => {

@@ -47,6 +47,6 @@ export class ControlDate3Component {
       if (this.control().disabled && this.control().value) {
         this.tooltipText.set(this.datePipe.transform(this.control().value! as Date, 'fullDate', '', 'es-MX'));
       }
-    }, { allowSignalWrites: true});
+    });
   }
 }

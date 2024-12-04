@@ -3,52 +3,34 @@ import { AbstractControl, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
 import { debounceTime, finalize, map, of, switchMap, take } from 'rxjs';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { Range } from 'src/app/_models/date-range';
-import { PaginatedResponse, PaginatedResult } from 'src/app/_models/pagination';
 import { AccountService } from 'src/app/_services/account.service';
 import { Entity, Identifiable } from 'src/app/_models/types';
 import { SelectOption } from 'src/app/_forms/form';
 
-export const getItemsByKey = <T extends Identifiable>(key: string, cache: Map<string, Map<string, PaginatedResult<T[]>>>): T[] => {
-  const items: T[] = [];
-  const cacheMap = cache.get(key);
-
-  if (cacheMap) {
-    cacheMap.forEach(paginatedResult => {
-      if (paginatedResult.result) {
-        items.push(...paginatedResult.result);
-      }
-    })
-  }
-
-  return items.filter((item, index, self) =>
-    self.findIndex((i) => i.id === item.id) === index
-  );
-}
-
-export const downloadExcelFile = (
+export function downloadExcelFile(
   response: any,
-  fileName: string,
-) => {
-    const blob = new Blob([response], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
+  fileName: string
+) {
+  const blob = new Blob([response], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  });
 
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const date = new Date();
-    const formattedDate = `${date.getFullYear()}.${String(
-      date.getMonth() + 1
-    ).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(
-      date.getHours()
-    ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(
-      date.getSeconds()
-    ).padStart(2, '0')}`;
-    a.download = `${formattedDate} ${fileName}.xlsx`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const date = new Date();
+  const formattedDate = `${date.getFullYear()}.${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")} ${String(
+    date.getHours()
+  ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}:${String(
+    date.getSeconds()
+  ).padStart(2, "0")}`;
+  a.download = `${formattedDate} ${fileName}.xlsx`;
+  a.click();
+  window.URL.revokeObjectURL(url);
 
-    return;
+  return;
 };
 
 export function getPaginationHeaders(pageNumber: number, pageSize: number) {
@@ -163,26 +145,6 @@ export function getPaginatedResponse<T extends Entity>(
         return { ...item, isSelected: false };
       });
       return new PaginatedResponse<T>(result, JSON.parse(response.headers.get("Pagination")!));
-    })
-  );
-}
-
-export function getPaginatedResult<T>(
-  url: string,
-  params: HttpParams,
-  http: HttpClient
-) {
-  const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
-  return http.get<T>(url, { observe: 'response', params }).pipe(
-    map((response) => {
-      if (response.body) {
-        paginatedResult.result = response.body;
-      }
-      const pagination = response.headers.get('Pagination');
-      if (pagination) {
-        paginatedResult.pagination = JSON.parse(pagination);
-      }
-      return paginatedResult;
     })
   );
 }
@@ -356,38 +318,6 @@ export const stateOptions: SelectOption[] = [
   new SelectOption({ name: "Yucatán"}),
   new SelectOption({ name: "Zacatecas"}),
 ];
-
-export function buildHttpParams(
-  obj: any,
-  parentKey?: string,
-  params: HttpParams = new HttpParams()
-): HttpParams {
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const value = obj[key];
-      const paramKey = parentKey ? `${parentKey}.${key}` : key;
-
-      if (
-        value !== null &&
-        value !== undefined &&
-        !(typeof value === 'string' && value.trim() === '')
-      ) {
-        if (Array.isArray(value)) {
-          if (value.length > 0) {
-            value.forEach((element: any, index: number) => {
-              params = buildHttpParams(element, `${paramKey}[${index}]`, params);
-            });
-          }
-        } else if (typeof value === 'object' && !(value instanceof Date)) {
-          params = buildHttpParams(value, paramKey, params);
-        } else {
-          params = params.append(paramKey, value.toString());
-        }
-      }
-    }
-  }
-  return params;
-}
 
 export function countLines(text: string): number {
   return !text ? 0 : text.split(/\r\n|\r|\n/).length;

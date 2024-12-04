@@ -1,7 +1,6 @@
 import { Component, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { IconsService } from "src/app/_services/icons.service";
-import { Pagination } from "src/app/_models/pagination";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Subject } from "rxjs";
 import { DecimalPipe, NgClass } from "@angular/common";
@@ -19,6 +18,7 @@ import { UsersService } from "src/app/_services/users.service";
 import { LayoutModule } from "src/app/_shared/layout.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { createId } from "@paralleldrive/cuid2";
+import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
 
 @Component({
   host: { class: 'mh-300px scroll-y me-n7 pe-7', },

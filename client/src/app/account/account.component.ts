@@ -53,6 +53,7 @@ import { UtilsService } from '../_services/utils.service';
       </div>
     </div>
   </div>`,
+  standalone: false,
 })
 export class AccountComponent implements OnInit {
   private bsModalService = inject(BsModalService);

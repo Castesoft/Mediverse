@@ -468,17 +468,9 @@ export class MaritalStatus extends Entity {
   }
 }
 
-export class MaritalStatusParams extends EntityParams<MaritalStatus> implements IParams {
+export class MaritalStatusParams extends EntityParams<MaritalStatus> {
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }
 
@@ -755,6 +747,7 @@ export class MaritalStatusesService extends ServiceHelper<MaritalStatus, Marital
   template: `
   <router-outlet></router-outlet>
   `,
+  standalone: false,
 })
 export class MaritalStatusesComponent {
   dev = inject(EnvService);

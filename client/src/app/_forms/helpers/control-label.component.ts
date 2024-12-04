@@ -92,7 +92,7 @@ export class LegacyControlLabelComponent {
       if (!this.id()) {
         this.id.set(`${this.name()}${createId()}`);
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
 

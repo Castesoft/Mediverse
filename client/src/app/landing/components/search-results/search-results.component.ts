@@ -19,6 +19,7 @@ import { DoctorDetailWindowComponent } from 'src/app/search/windows/doctor-detai
 import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-schedule-window.component';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { DoctorResultsWindowComponent } from 'src/app/search/windows/doctor-results-window.component';
+import { Theme, ThemeService } from 'src/app/_services/theme.service';
 
 @Component({
   selector: 'div[searchResults]',
@@ -36,6 +37,7 @@ export class SearchResultsComponent implements OnInit {
   private router = inject(Router);
   service = inject(SearchService);
   accountService = inject(AccountService);
+  theme = inject(ThemeService);
 
   destroyed = new Subject<void>();
   isMobile = signal(false);
@@ -52,6 +54,16 @@ export class SearchResultsComponent implements OnInit {
   onResize(event: any) {
     this.isMobile.set(event.target.innerWidth <= 768);
   }
+
+  mapOptions: google.maps.MapOptions = {
+    colorScheme: 'FOLLOW_SYSTEM',
+    mapTypeControl: false,
+    scaleControl: false,
+    streetViewControl: false,
+    rotateControl: false,
+    fullscreenControl: false,
+    mapId: "49526df74cd05e3a",
+  } as google.maps.MapOptions;
 
   constructor() {
     inject(BreakpointObserver)
@@ -71,7 +83,18 @@ export class SearchResultsComponent implements OnInit {
 
     effect(() => {
       this.setMarkersAndPosition();
-    }, { allowSignalWrites: true, });
+    });
+  }
+
+  getTheme(theme: Theme): google.maps.ColorScheme {
+    switch (theme) {
+      case 'dark':
+        return google.maps.ColorScheme.DARK;
+      case 'light':
+        return google.maps.ColorScheme.LIGHT;
+      default:
+        return google.maps.ColorScheme.FOLLOW_SYSTEM;
+    }
   }
 
   async ngOnInit() {
@@ -83,13 +106,9 @@ export class SearchResultsComponent implements OnInit {
     this.map = new Map(document.getElementById("map") as HTMLElement, {
       center: { lat: 22.5799, lng: -103.1648 },
       zoom: 6,
-      mapTypeControl: false,
-      scaleControl: false,
-      streetViewControl: false,
-      rotateControl: false,
-      fullscreenControl: false,
-      mapId: "8aab1a49ed502607",
-    });
+      ...this.mapOptions,
+      colorScheme: this.getTheme(this.theme.theme()),
+    } as google.maps.MapOptions);
 
     if (this.isMobile() && (this.service.search().location || this.service.search().specialty)) {
       this.showMobileSearch.set(true);
@@ -97,6 +116,7 @@ export class SearchResultsComponent implements OnInit {
   }
 
   setMarkersAndPosition() {
+    this.service.resetMarkers();
     const results: SearchResults | null = this.service.results();
     const selected: DoctorResult | null = this.service.selected();
     if (results) {
@@ -121,8 +141,6 @@ export class SearchResultsComponent implements OnInit {
         for (const doctor of results.doctors) {
           this.showMarker(doctor);
         }
-      } else {
-        this.service.resetMarkers();
       }
     }
   }

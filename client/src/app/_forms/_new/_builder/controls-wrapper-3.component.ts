@@ -44,6 +44,6 @@ export class ControlsWrapper3Component {
         this.hasPair.set(true);
       }
 
-    }, { allowSignalWrites: true, });
+    });
   }
 }

@@ -36,6 +36,6 @@ export class ControlDateRange3Component {
       if (this.control().isReadonly) {
         this.control().updateValueAndValidity();
       }
-    }, { allowSignalWrites: true});
+    });
   }
 }

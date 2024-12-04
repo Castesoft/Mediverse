@@ -17,6 +17,7 @@ import { UserDetailComponent, UserEditComponent, UserNewComponent } from "src/ap
 @Component({
   selector: 'patients-route',
   template: `<router-outlet></router-outlet>`,
+  standalone: false,
 })
 export class PatientsComponent implements OnInit {
   accountService = inject(AccountService);
@@ -193,6 +194,7 @@ export class PatientsModule { }
 @Component({
   selector: 'nurses-route',
   template: `<router-outlet></router-outlet>`,
+  standalone: false,
 })
 export class NursesComponent implements OnInit {
   accountService = inject(AccountService);

@@ -52,6 +52,7 @@ import { UtilsService } from '../_services/utils.service';
       </div>
     </div>
   `,
+  standalone: false,
 })
 export class HomeComponent implements OnInit {
   accountService = inject(AccountService);

@@ -39,7 +39,7 @@ export class AccountInsurancesComponent implements OnInit {
 
       this.medicalInsuranceCompanyOptions.set(filteredOptions);
 
-    }, { allowSignalWrites: true, });
+    });
   }
 
   ngOnInit(): void {

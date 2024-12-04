@@ -1,14 +1,12 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+
+export type Theme = 'light' | 'dark' | 'auto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
-  current: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  effective$: Observable<string> = this.current.pipe(
-    map(() => this.getEffectiveTheme())
-  );
+  theme = signal<Theme>('auto');
 
   constructor() {
     this.init();
@@ -19,21 +17,21 @@ export class ThemeService {
     const isDarkModePreferred = window.matchMedia(
       '(prefers-color-scheme: dark)'
     ).matches;
-    if (storedTheme) {
-      this.set(storedTheme);
+    if (storedTheme !== null) {
+      this.set(storedTheme as Theme);
     } else {
       this.set(isDarkModePreferred ? 'dark' : 'light');
     }
   }
 
-  set(theme: string): void {
+  set(theme: Theme): void {
     if (theme === 'auto') {
       this.setMediaQueryListener();
-      this.current.next('auto');
+      this.theme.set('auto');
       localStorage.setItem('theme', 'auto');
     } else {
       this.updateThemeClass(theme);
-      this.current.next(theme);
+      this.theme.set(theme);
       localStorage.setItem('theme', theme);
     }
   }
@@ -49,10 +47,10 @@ export class ThemeService {
   private updateAutoTheme(isDark: boolean): void {
     const autoTheme = isDark ? 'dark' : 'light';
     this.updateThemeClass(autoTheme);
-    this.current.next(autoTheme);
+    this.theme.set(autoTheme);
   }
 
-  private updateThemeClass(theme: string): void {
+  private updateThemeClass(theme: Theme): void {
     const root = document.documentElement;
     const body = document.body;
     if (theme === 'dark') {
@@ -69,17 +67,17 @@ export class ThemeService {
     root.setAttribute('data-bs-theme', theme);
   }
 
-  private getEffectiveTheme(): string {
-    if (this.current.value === 'auto') {
+  private getEffectiveTheme(): Theme {
+    if (this.theme() === 'auto') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
         : 'light';
     }
-    return this.current.value;
+    return this.theme();
   }
 
   cycle(): void {
-    const currentTheme = this.current.value;
+    const currentTheme = this.theme();
     if (currentTheme === 'light') {
       this.set('dark');
     } else if (currentTheme === 'dark') {

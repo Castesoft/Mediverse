@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit, effect, inject, input, model } from "@angular/core";
 import { IconsService } from "src/app/_services/icons.service";
-import { Pagination } from "src/app/_models/pagination";
 import { AddressesFilterFormComponent } from "./addresses-filter-form.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CommonModule } from "@angular/common";

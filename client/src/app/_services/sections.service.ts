@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
-import { sectionDictionary, SectionDictionary, Sections } from "src/app/_models/types";
+import { SectionDictionary, Sections } from "src/app/_models/types";
+import { sectionDictionary } from "../_models/sections/sectionConstants";
 
 @Injectable({
   providedIn: 'root'

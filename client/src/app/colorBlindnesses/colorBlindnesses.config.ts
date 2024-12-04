@@ -468,17 +468,9 @@ export class ColorBlindness extends Entity {
   }
 }
 
-export class ColorBlindnessParams extends EntityParams<ColorBlindness> implements IParams {
+export class ColorBlindnessParams extends EntityParams<ColorBlindness> {
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }
 
@@ -755,6 +747,7 @@ export class ColorBlindnessesService extends ServiceHelper<ColorBlindness, Color
   template: `
   <router-outlet></router-outlet>
   `,
+  standalone: false,
 })
 export class ColorBlindnessesComponent {
   dev = inject(EnvService);

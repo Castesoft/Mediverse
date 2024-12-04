@@ -16,17 +16,9 @@ export class MedicalInsuranceCompany extends Entity {
   }
 }
 
-export class MedicalInsuranceCompanyParams extends EntityParams<MedicalInsuranceCompany> implements IParams {
+export class MedicalInsuranceCompanyParams extends EntityParams<MedicalInsuranceCompany> {
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }
 

@@ -12,8 +12,8 @@ import { createId } from "@paralleldrive/cuid2";
 
 @Component({
   selector: 'prescriptions-route',
-  template: `
-    <router-outlet></router-outlet>`,
+  template: `<router-outlet></router-outlet>`,
+  standalone: false,
 })
 export class PrescriptionsComponent implements OnInit {
   ngOnInit(): void { }

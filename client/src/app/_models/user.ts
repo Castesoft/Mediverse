@@ -1,12 +1,11 @@
-import { HttpParams } from "@angular/common/http";
-import { baseInfo, Entity, EntityParams, IParams } from "src/app/_models/types";
-import { buildHttpParams, omitKeys } from "src/app/_utils/util";
 import { Payment } from './payment';
-import { Event, eventInfo } from "./event";
+import { Event } from "./event";
 import { MedicalRecord } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 import { SelectOption } from "src/app/_forms/form";
 import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
+import { Entity, baseInfo } from "src/app/_models/base/entity";
+import { EntityParams } from "src/app/_models/base/entityParams";
 
 export class User extends Entity {
   username: string | null = null;
@@ -75,17 +74,9 @@ export class UserForm extends FormGroup2<User> {
   }
 }
 
-export class UserParams extends EntityParams<User> implements IParams {
+export class UserParams extends EntityParams<User> {
 
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }

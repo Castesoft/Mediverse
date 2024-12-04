@@ -43,7 +43,7 @@ export class ProductForm extends FormGroup2<Product> {
   }
 }
 
-export class ProductParams extends EntityParams<Product> implements IParams {
+export class ProductParams extends EntityParams<Product> {
   constructor(key: string) {
     super(key);
   }

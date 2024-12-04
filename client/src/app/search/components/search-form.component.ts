@@ -4,12 +4,9 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, input, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
-import { ControlTypeaheadComponent } from 'src/app/_forms/control-typeahead.component';
 import { SelectOption } from 'src/app/_forms/form';
-import { Doctor } from 'src/app/_models/doctor';
 import { DoctorResult } from 'src/app/_models/doctorResult';
 import { Search, SearchForm } from 'src/app/_models/search';
 import { SearchService } from 'src/app/_services/search.service';
@@ -18,7 +15,7 @@ import { SpecialtiesService } from 'src/app/specialties/specialties.config';
 @Component({
   selector: 'div[searchForm]',
   standalone: true,
-  imports: [ControlTypeaheadComponent, ReactiveFormsModule, FormNewModule, CommonModule,],
+  imports: [ReactiveFormsModule, FormNewModule, CommonModule,],
   templateUrl: './search-form.component.html',
 })
 export class SearchFormComponent implements OnInit {

@@ -468,17 +468,9 @@ export class EducationLevel extends Entity {
   }
 }
 
-export class EducationLevelParams extends EntityParams<EducationLevel> implements IParams {
+export class EducationLevelParams extends EntityParams<EducationLevel> {
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }
 
@@ -755,6 +747,7 @@ export class EducationLevelsService extends ServiceHelper<EducationLevel, Educat
   template: `
   <router-outlet></router-outlet>
   `,
+  standalone: false,
 })
 export class EducationLevelsComponent {
   dev = inject(EnvService);

@@ -40,7 +40,7 @@ export const sortOptions = Object.values({
   zipcode: new SelectOption({ id: 21, name: 'Código postal', code: 'zipcode' }),
 } as Columns<Address>);
 
-export class AddressParams extends EntityParams<Address> implements IParams {
+export class AddressParams extends EntityParams<Address> {
   street: string = '';
   exteriorNumber: string = '';
   interiorNumber: string = '';
@@ -166,6 +166,7 @@ export class AddressesService extends ServiceHelper<Address, AddressParams, Form
   template: `
   <router-outlet></router-outlet>
   `,
+  standalone: false,
 })
 export class AddressesComponent {
   dev = inject(EnvService);

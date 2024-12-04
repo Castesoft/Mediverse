@@ -468,17 +468,9 @@ export class ConsumptionLevel extends Entity {
   }
 }
 
-export class ConsumptionLevelParams extends EntityParams<ConsumptionLevel> implements IParams {
+export class ConsumptionLevelParams extends EntityParams<ConsumptionLevel> {
   constructor(key: string) {
     super(key);
-  }
-
-  get httpParams(): HttpParams {
-    return buildHttpParams(omitKeys(this, ['key', 'httpParams', 'id']));
-  }
-
-  private isSelectItemArray(array: any[]): array is SelectOption[] {
-    return array.length > 0 && typeof array[0] === 'object' && 'value' in array[0];
   }
 }
 
@@ -755,6 +747,7 @@ export class ConsumptionLevelsService extends ServiceHelper<ConsumptionLevel, Co
   template: `
   <router-outlet></router-outlet>
   `,
+  standalone: false,
 })
 export class ConsumptionLevelsComponent {
   dev = inject(EnvService);

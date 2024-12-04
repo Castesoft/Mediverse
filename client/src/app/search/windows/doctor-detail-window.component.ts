@@ -41,7 +41,7 @@ export class DoctorDetailWindowComponent {
 
       console.log('is open', this.scheduleWindowOpen());
 
-    }, { allowSignalWrites: true, });
+    });
   }
 
   selectTab(tab: string) {

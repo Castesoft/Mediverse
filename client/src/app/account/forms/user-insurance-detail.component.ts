@@ -45,7 +45,7 @@ export class UserInsuranceDetailComponent {
       }
 
       this.form.setUse(this.use());
-    }, { allowSignalWrites: true, });
+    });
   }
 
   onSubmit() {
