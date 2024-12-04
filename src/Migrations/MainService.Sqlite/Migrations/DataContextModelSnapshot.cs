@@ -15,7 +15,7 @@ namespace MainService.Sqlite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("MainService.Models.Entities.Address", b =>
                 {
@@ -2132,7 +2132,7 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int>("PrescriptionId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ItemId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
