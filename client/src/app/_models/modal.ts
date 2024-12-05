@@ -1,14 +1,25 @@
 export class Modal {
-  title = 'Confirmación';
-  message = '¿Quieres continuar?';
-  btnOkText = 'Ok';
-  btnCancelText = 'Cancelar';
+  title: string | null = 'Confirmación';
+  message: string | null = '¿Quieres continuar?';
+  btnOkText: string | null = 'Ok';
+  btnCancelText: string | null = 'Cancelar';
+  result: boolean | null = null;
 
-  constructor(title: string, message: string, btnOkText: string = 'Ok', btnCancelText: string = 'Cancelar') {
-    this.title = title;
-    this.message = message;
-    this.btnOkText = btnOkText;
-    this.btnCancelText = btnCancelText;
+  constructor(init?: Partial<Modal>) {
+    Object.assign(this, init);
+
+    if (this.title === null) this.title = 'Confirmación';
+    if (this.message === null) this.message = '¿Quieres continuar?';
+    if (this.btnOkText === null) this.btnOkText = 'Ok';
+    if (this.btnCancelText === null) this.btnCancelText = 'Cancelar';
   }
 
+}
+
+export interface IModal {
+  title: string;
+  message: string;
+  btnOkText: string;
+  btnCancelText: string;
+  result: boolean | null;
 }

@@ -1,6 +1,6 @@
 import { Component, effect, inject, output } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { PaymentMethodType } from 'src/app/_models/paymentMethodType';
+import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 import { Specialty } from 'src/app/_models/specialty';
 import { AccountService } from 'src/app/_services/account.service';
 import { LayoutModule } from 'src/app/_shared/layout.module';

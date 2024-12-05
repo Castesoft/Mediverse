@@ -1,0 +1,43 @@
+import { accountInfo } from "src/app/_models/account";
+import { addressInfo } from "src/app/_models/addresses/addressConstants";
+import { baseColumns, Column } from "src/app/_models/base/column";
+import { baseInfo } from "src/app/_models/base/entity";
+import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
+import { NamingSubject } from "src/app/_models/base/namingSubject";
+import { FormInfo } from "src/app/_models/forms/formTypes";
+import { prescriptionItemInfo } from "src/app/_models/prescriptionItem";
+import { Prescription } from "src/app/_models/prescriptions/prescription";
+import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
+import { userInfo } from "src/app/_models/users/userConstants";
+
+
+export const prescriptionFormInfo: FormInfo<Prescription> = {
+  ...baseInfo,
+  doctor: accountInfo,
+  exchangeAmount: { label: 'Monto de cambio', type: 'number', },
+  isCollapsed: { label: 'Colapsado', type: 'checkbox', },
+  items: prescriptionItemInfo,
+  product: { label: 'Productos', type: 'typeahead', },
+  logoUrl: { label: 'URL del logo', type: 'text', },
+  notes: { label: 'Notas', type: 'textarea', },
+  orderId: { label: 'ID de pedido', type: 'number', },
+  patient: userInfo,
+  clinic: addressInfo,
+} as FormInfo<Prescription>;
+
+export const prescriptionFiltersFormInfo: FormInfo<PrescriptionParams> = {
+  ...baseFilterFormInfo,
+} as FormInfo<PrescriptionParams>;
+
+export const prescriptionDictionary: NamingSubject = new NamingSubject(
+  'feminine',
+  'receta',
+  'recetas',
+  'Recetas',
+  'prescriptions',
+  ['home', 'prescriptions'],
+);
+
+export const prescriptionColumns: Column[] = [
+  ...baseColumns,
+];

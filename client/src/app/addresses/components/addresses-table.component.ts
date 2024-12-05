@@ -14,7 +14,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { createId } from '@paralleldrive/cuid2';
 import { Subject, takeUntil } from 'rxjs';
 import { ControlsModule } from 'src/app/_forms/controls.module';
-import { Address } from 'src/app/_models/address';
+import { Address } from "src/app/_models/addresses/address";
 import {
   CatalogMode,
   ITableMenu,
@@ -28,9 +28,9 @@ import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { TableModule } from 'src/app/_shared/table/table.module';
 import {
-  AddressParams,
   AddressesService,
 } from 'src/app/addresses/addresses.config';
+import { AddressParams } from 'src/app/_models/addresses/addressParams';
 
 @Component({
   selector: 'div[addressesTableMenu]',
@@ -209,7 +209,7 @@ export class AddressesTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscribeToDevMode();
+
   }
 
   ngOnDestroy(): void {
@@ -217,9 +217,5 @@ export class AddressesTableComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  private subscribeToDevMode = () => {
-    this.dev.mode$.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (devMode) => (this.devMode = devMode),
-    });
-  };
+
 }

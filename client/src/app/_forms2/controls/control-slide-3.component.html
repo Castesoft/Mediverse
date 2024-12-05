@@ -1,0 +1,18 @@
+@if (control().orientation === 'inline') {
+  <div class="d-flex align-items-center gap-2">
+    <mat-slide-toggle [formControl]="$any(control())"
+                      [id]="control().id">
+      <span class="col-form-label fw-semibold fs-8 text-nowrap">{{ control().label }}</span>
+    </mat-slide-toggle>
+  </div>
+} @else {
+  <mat-slide-toggle [formControl]="$any(control())">{{ control().label }}</mat-slide-toggle>
+}
+
+@if (control().errors !== null) {
+  <div invalidFeedback3 [(control)]="control" [submitted]="root().submitted"></div>
+}
+@if (control().hint !== null) {
+  <div helpBlock3
+       [(control)]="control"></div>
+}

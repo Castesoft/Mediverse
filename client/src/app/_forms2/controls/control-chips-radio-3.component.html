@@ -1,0 +1,71 @@
+<!-- <code class="json">{{control().value | json}}</code> -->
+
+@if(control().orientation === 'inline') {
+  <div class="d-flex align-items-center gap-2" [style.min-height.px]="40">
+    @if (control().showLabel) {
+      <label [for]="control().id"
+             class="form-label fw-semibold fs-8 text-nowrap">
+        {{ control().label }}
+        {{ control().required ? '*' : null }}
+        @if (control().optional) {
+          @if (validation.isOptional(control()) || !control().isReadonly) {
+            <span optionalSpan3></span>
+          }
+        }
+        @if (control().isNew) {
+          <span newBadge3></span>
+        }
+      </label>
+    }
+    <mat-chip-listbox [attr.aria-label]="control().label + ' input'">
+      @for (selectOption of control().selectOptions; track selectOption) {
+        @if(control().selectOptionOptions.showDisabled ? true : selectOption.enabled) {
+          <mat-chip-option
+          (click)="handleValueChange(selectOption)"
+          [selected]="control().value && selectOption.code === $any(control().value).code"
+          [disabled]="control().disabled || control().isReadonly"
+        >
+          @if(control().showCodeSpan) {
+            ({{selectOption.code}})
+          }{{selectOption.name}}
+        </mat-chip-option>
+        }
+      }
+    </mat-chip-listbox>
+  </div>
+} @else {
+  @if (control().showLabel) {
+    <label [for]="control().id"
+           class="form-label fw-semibold fs-8 text-nowrap">
+      {{ control().label }}
+      {{ control().required ? '*' : null }}
+      @if (control().optional) {
+        @if (validation.isOptional(control()) || !control().isReadonly) {
+          <span optionalSpan3></span>
+        }
+      }
+      @if (control().isNew) {
+        <span newBadge3></span>
+      }
+    </label>
+  }
+  <mat-chip-listbox [attr.aria-label]="control().label + ' input'">
+    @for (selectOption of control().selectOptions; track selectOption) {
+      <mat-chip-option
+        (click)="handleValueChange(selectOption)"
+        [selected]="control().value && selectOption.code === $any(control().value).code"
+        [disabled]="control().disabled"
+      >
+        @if(control().showCodeSpan) {
+          ({{selectOption.code}})
+        }{{selectOption.name}}
+      </mat-chip-option>
+    }
+  </mat-chip-listbox>
+}
+@if(control().hint !== null) {
+  <mat-hint>{{control().hint}}</mat-hint>
+}
+@if (control().errors !== null) {
+  <div invalidFeedback3 [(control)]="control" [submitted]="root().submitted"></div>
+}

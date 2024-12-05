@@ -1,16 +1,19 @@
 /// <reference types="@types/google.maps" />
+
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, input, effect } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
+import { debounceTime, distinctUntilChanged } from "rxjs";
+import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { SearchForm } from "src/app/_models/search/searchForm";
+import { Search } from "src/app/_models/search/search";
+import { SearchService } from "src/app/_services/search.service";
+import { SpecialtiesService } from "src/app/specialties/specialties.config";
+
 // declare var google: any;
-import { CommonModule } from '@angular/common';
-import { Component, effect, inject, input, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
-import { SelectOption } from 'src/app/_forms/form';
-import { DoctorResult } from 'src/app/_models/doctorResult';
-import { Search, SearchForm } from 'src/app/_models/search';
-import { SearchService } from 'src/app/_services/search.service';
-import { SpecialtiesService } from 'src/app/specialties/specialties.config';
 
 @Component({
   selector: 'div[searchForm]',
@@ -87,7 +90,7 @@ export class SearchFormComponent implements OnInit {
   }
 
   onSubmit() {
-    this.router.navigate(['/search'], { queryParams: this.form.params });
+    this.router.navigate(['/search'], { queryParams: this.form.getParams() });
 
     this.service.search.set(new Search({ ...this.form.value, result: new DoctorResult({ ...this.form.controls.result.value, } as any) }));
     this.service.getSearchResults({ ignoreCache: true }).subscribe();

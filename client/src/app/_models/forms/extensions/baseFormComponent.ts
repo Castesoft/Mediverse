@@ -9,6 +9,7 @@ import { BadRequest } from "src/app/_models/forms/error";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Sections } from "src/app/_models/sections/sectionTypes";
+import { CompactTableService } from "src/app/_services/compact-table.service";
 import { DevService } from "src/app/_services/dev.service";
 import { ValidationService } from "src/app/_services/validation.service";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
@@ -161,6 +162,7 @@ export class BaseRouteCatalog<
 > {
   router = inject(Router);
   validation = inject(ValidationService);
+  compact = inject(CompactTableService);
   service: Z;
 
   item = signal(null);

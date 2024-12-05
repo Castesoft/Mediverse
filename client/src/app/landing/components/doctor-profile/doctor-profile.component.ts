@@ -4,7 +4,7 @@ import { UserProfilePictureComponent } from 'src/app/users/components/user-profi
 import { SearchService } from 'src/app/_services/search.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ShareModalComponent } from './share-modal/share-modal.component'; // You'll need to create this component
-import { DoctorResult } from 'src/app/_models/doctorResult';
+import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';

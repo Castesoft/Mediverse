@@ -1,8 +1,8 @@
-import { CurrencyPipe, NgClass, PercentPipe } from '@angular/common';
-import { Component, inject, input, model, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Product } from 'src/app/_models/product';
-import { ProductsService } from 'src/app/_services/products.service';
+import { CommonModule } from "@angular/common";
+import { Component, inject, model, OnInit } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { Product } from "src/app/_models/products/product";
+import { ProductsService } from "src/app/products/products.config";
 
 @Component({
   selector: 'td[productDiscount]',
@@ -14,7 +14,7 @@ import { ProductsService } from 'src/app/_services/products.service';
   }
   `,
   standalone: true,
-  imports: [ NgClass, PercentPipe, ],
+  imports: [ CommonModule, ],
 })
 export class ProductTableHasAccountCellComponent {
   item = model.required<Product>();
@@ -29,7 +29,7 @@ export class ProductTableHasAccountCellComponent {
     </div> -->
   `,
   standalone: true,
-  imports: [ NgClass ],
+  imports: [ CommonModule, ],
 })
 export class ProductTableSexCellComponent {
   item = model.required<Product>();
@@ -64,7 +64,7 @@ export class ProductTableSexCellComponent {
     }
   `,
   standalone: true,
-  imports: [RouterModule, CurrencyPipe],
+  imports: [RouterModule, CommonModule, ],
 })
 export class ProductTableCellComponent implements OnInit {
   service = inject(ProductsService);

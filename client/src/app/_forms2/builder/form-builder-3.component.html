@@ -1,0 +1,10 @@
+<div [grid]="cols()"
+     [orientation]="orientation()"
+     controlsRow3>
+  @for (control of controls(); let idx = $index; track idx) {
+    @if (control && !control.hidden) {
+      <div controlsWrapper3 [(control)]="controls()[idx]"></div>
+    }
+  }
+  <ng-content></ng-content>
+</div>

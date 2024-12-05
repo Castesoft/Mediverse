@@ -1,0 +1,23 @@
+<div class="d-flex align-items-center column-gap-2">
+  <label>{{control().label}}: </label>
+  <span>
+    {{ min() | number }}
+  </span>
+  <span class="flex-grow-1">
+    <mat-slider [min]="control().ranges.min" [max]="control().ranges.max" style="width: 100%;" showTickMarks discrete>
+      <input [(ngModel)]="min" (ngModelChange)="updateMin($event)" matSliderStartThumb>
+      <input [(ngModel)]="max" (ngModelChange)="updateMax($event)" matSliderEndThumb>
+    </mat-slider>
+  </span>
+  <span class="ms-3">
+    {{ max() | number }}
+  </span>
+</div>
+
+<!-- <mat-slider [min]="control().ranges.min" [max]="control().ranges.max" style="width: 100%;" showTickMarks discrete>
+  <input [(ngModel)]="min" (ngModelChange)="updateMin($event)" matSliderStartThumb>
+  <input [(ngModel)]="max" (ngModelChange)="updateMax($event)" matSliderEndThumb>
+</mat-slider>
+{{ max() | number }} -->
+
+<!-- <code class="json">{{ control().value | json }}</code> -->

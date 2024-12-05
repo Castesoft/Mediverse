@@ -10,7 +10,7 @@
   </div>
 </div> -->
 
-<div catalogCardHeader>
+<!-- <div catalogCardHeader>
   <div class="card-title">
     <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
       <div searchText formControlName="search" [naming]="service.dictionary"></div>
@@ -22,8 +22,8 @@
     }
     @if(!service.hasSelected(key())) {
       <div class="d-flex justify-content-end">
-        <button filterMenuBtn ></button> <!-- (click)="service.showFiltersModal(key())" -->
-        <!-- <products-filter-menu></products-filter-menu> -->
+        <button filterMenuBtn ></button>
+        <products-filter-menu></products-filter-menu>
         <button exportBtn (click)="service.downloadXLSX$(key())"></button>
         <button createBtn [naming]="service.dictionary" (click)="router.navigate(['create'], {relativeTo: route})"></button>
       </div>
@@ -53,13 +53,13 @@
     </h4>
     @if (service.hasSelected$(key())) {
       <div tableWrapper class="mb-4">
-        <!-- <table
+        <table
           productsTable
           [data]="mode() === 'select' ? service.getSelected$(key()) : []"
           [key]="key()"
           [mode]="'readonly'"
           [showHeaders]="false"
-        ></table> -->
+        ></table>
       </div>
     } @else {
       @switch (mode()) {
@@ -112,12 +112,12 @@
             criterios de búsqueda.
           </p>
           <p class="mb-4">
-            <!-- <button
+            <button
               class="btn btn-phoenix-secondary me-2"
               (click)="service.resetForm(key(), form)"
             >
               Restablecer los filtros
-            </button> -->
+            </button>
           </p>
         </alert>
       </div>
@@ -125,4 +125,4 @@
   } @else {
     <div tableLoadingPlaceholder></div>
   }
-</div>
+</div> -->

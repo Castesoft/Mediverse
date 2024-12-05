@@ -1,4 +1,4 @@
-<form class="prescription-pad bg-body" [id]="form.id" (ngSubmit)="onSubmit()">
+<form class="prescription-pad bg-body" [id]="form.id" (ngSubmit)="onSubmit(view, use)">
   <div class="prescription-header">
     <div class="logo">
       @if (use() === 'create') {

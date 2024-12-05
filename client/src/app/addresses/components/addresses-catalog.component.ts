@@ -12,8 +12,9 @@ import { Subject } from "rxjs";
 import { createId } from "@paralleldrive/cuid2";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { AddressParams, AddressesService } from "src/app/addresses/addresses.config";
-import { Address } from "src/app/_models/address";
+import { AddressesService } from "src/app/addresses/addresses.config";
+import { AddressParams } from 'src/app/_models/addresses/addressParams';
+import { Address } from "src/app/_models/addresses/address";
 
 @Component({
   host: { class: 'mb-9', },

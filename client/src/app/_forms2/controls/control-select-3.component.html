@@ -1,0 +1,31 @@
+<mat-form-field [appearance]="'outline'" style="width: 100%;" class="hide-bottom">
+  <mat-label>{{control().label}}</mat-label>
+  <mat-select [(value)]="control().value" (valueChange)="optionChanged($event)">
+
+    <mat-option [value]="null">Ninguno</mat-option>
+
+    @if(control().value !== null && control().value!.name !== null) {
+    <mat-option selected [value]="control().value">
+        {{ control().value!.name }}
+      </mat-option>
+    }
+
+
+    @if (control().selectOptions && control().selectOptions.length && control().selectOptions.length > 0) {
+      @for (option of control().selectOptions; let idx = $index; track idx; ) {
+        @if (control().value?.code !== option.code) {
+          <mat-option [value]="option | json"
+                  [disabled]="!option.enabled">
+            @if ((control().value?.code !== option.code) && control().showCodeSpan) {
+              ({{ option.code }})
+            }
+            {{ option.name }}
+          </mat-option>
+        }
+      }
+    }
+
+  </mat-select>
+</mat-form-field>
+
+<!-- <span class="code">{{control().value | json}}</span> -->

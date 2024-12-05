@@ -1,23 +1,23 @@
-import { Component, effect, inject, model, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { take } from 'rxjs';
-import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
-import { AccountService } from 'src/app/_services/account.service';
-import { EventsService } from 'src/app/_services/events.service';
-import { MaterialModule } from 'src/app/_shared/material.module';
-import { AddPaymentMethodComponent } from 'src/app/account/components/account-billing/add-payment-method/add-payment-method.component';
-import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
-import { DoctorScheduleForm } from 'src/app/_models/doctorSchedule';
-import { SearchService } from 'src/app/_services/search.service';
-import { CommonModule } from '@angular/common';
-import { AvailableDay } from 'src/app/_models/availableDay';
-import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
-import { BadRequest } from 'src/app/_models/types';
-import { Search } from 'src/app/_models/search';
-import { StepperIconComponent } from 'src/app/search/utils/stepper-icon.component';
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, model, effect } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+import { Router, ActivatedRoute } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { take } from "rxjs";
+import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { ControlCheckComponent } from "src/app/_forms/control-check.component";
+import { ControlSelectComponent } from "src/app/_forms/control-select.component";
+import { AvailableDay } from "src/app/_models/availableDay";
+import { DoctorScheduleForm } from "src/app/_models/doctorSchedules/doctorScheduleForm";
+import { BadRequest } from "src/app/_models/forms/error";
+import { Search } from "src/app/_models/search/search";
+import { AccountService } from "src/app/_services/account.service";
+import { EventsService } from "src/app/_services/events.service";
+import { SearchService } from "src/app/_services/search.service";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { AddPaymentMethodComponent } from "src/app/account/components/account-billing/add-payment-method/add-payment-method.component";
+import { SignInBasicFormComponent } from "src/app/auth/components/sign-in-basic-form.component";
+import { StepperIconComponent } from "src/app/search/utils/stepper-icon.component";
 
 @Component({
   selector: 'div[doctorScheduleWindow]',
@@ -96,7 +96,7 @@ export class DoctorScheduleWindowComponent implements OnInit {
 
     this.eventsService.createInSearch(this.form.payload).subscribe({
       next: response => {
-        
+
         // if (!this.service.selected()!.hasPatientInformationAccess) {
         //   this.accountService.updateCurrentUser();
         // }

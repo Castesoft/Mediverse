@@ -1,6 +1,7 @@
 import { SelectOption } from "src/app/_forms/form";
 import { FormInfo, FormGroup2 } from "src/app/_forms/form2";
-import { Service, serviceInfo } from "src/app/_models/service";
+import { serviceFormInfo } from "./services/serviceConstants";
+import { Service } from "./services/service";
 import { Entity, baseInfo } from "src/app/_models/types";
 
 export class PaymentBilling extends Entity {
@@ -21,7 +22,7 @@ export class PaymentBilling extends Entity {
 
 export const paymentBillingInfo: FormInfo<PaymentBilling> = {
   ...baseInfo,
-  services: serviceInfo,
+  services: serviceFormInfo,
   paymentMethod: { label: 'Método de pago', type: 'select', },
   billingAddress: { label: 'Dirección de facturación', type: 'text', },
   insuranceProvider: { label: 'Proveedor de seguro', type: 'text', },

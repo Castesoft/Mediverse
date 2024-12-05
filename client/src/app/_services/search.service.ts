@@ -4,9 +4,9 @@ import { environment } from 'src/environments/environment';
 import { Observable, tap } from 'rxjs';
 import { SearchResults } from 'src/app/_models/doctorSearchResults';
 import { PaginatedResult, Pagination } from 'src/app/_models/pagination';
-import { Search } from 'src/app/_models/search';
+import { Search } from "../_models/search/search";
 import { getPaginatedResult } from 'src/app/_utils/util';
-import { DoctorResult } from 'src/app/_models/doctorResult';
+import { DoctorResult } from "../_models/doctorResults/doctorResult";
 import { UtilsService } from 'src/app/_services/utils.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 

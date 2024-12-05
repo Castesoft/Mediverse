@@ -1,5 +1,5 @@
 import { Component, input, effect } from "@angular/core";
-import { OrderDeliveryStatus } from "src/app/_models/order";
+import { OrderDeliveryStatus } from "src/app/_models/orders/orderTypes";
 import { parseOrderDeliveryStatus, parseOrderDeliveryStatusBadgeColor } from "src/app/orders/orders-util";
 
 @Component({

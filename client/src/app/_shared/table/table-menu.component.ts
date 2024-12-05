@@ -1,21 +1,15 @@
-import { CommonModule } from '@angular/common';
-import {
-  Component,
-  effect,
-  HostBinding,
-  inject,
-  input,
-  model,
-  TemplateRef,
-} from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { createId } from '@paralleldrive/cuid2';
-import { Entity, NamingSubject, TableCellItem } from 'src/app/_models/types';
-import { IconsService } from 'src/app/_services/icons.service';
-import { CdkModule } from 'src/app/_shared/cdk.module';
-import { MaterialModule } from 'src/app/_shared/material.module';
+import { CommonModule } from "@angular/common";
+import { Component, model, input, HostBinding, effect, inject, TemplateRef } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { createId } from "@paralleldrive/cuid2";
+import { Entity } from "src/app/_models/base/entity";
+import { NamingSubject } from "src/app/_models/base/namingSubject";
+import { TableCellItem } from "src/app/_models/tables/tableCellItem";
+import { IconsService } from "src/app/_services/icons.service";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
 
 @Component({
   selector: 'td[tableCell]',
@@ -135,6 +129,7 @@ export class TableCellComponent {
 })
 export class TableCell2Component {
   item = model.required<TableCellItem<any, any>>();
+  isCompact = model.required<boolean>();
   value = input.required<any>();
   guid = createId();
 
@@ -196,6 +191,7 @@ export class TableMenuCellComponent {
 
   contextMenu = input.required<TemplateRef<any>>();
   item = model.required<Entity>();
+  isCompact = model.required<boolean>();
 
   class =
     'align-middle white-space-nowrap text-end pe-0 btn-reveal-trigger text-center';
@@ -228,8 +224,8 @@ export class TableMenuCellComponent {
   imports: [FormsModule],
 })
 export class TableCheckCellComponent {
-  idx = input.required<number>();
-  dictionary = input.required<NamingSubject>();
+  idx = model.required<number>();
+  dictionary = model.required<NamingSubject>();
 
   selected = model.required<boolean>();
 

@@ -1,0 +1,18 @@
+@if(dev.isDev()) {
+  <mat-checkbox
+    [matTooltip]="validation.helpText"
+    [(ngModel)]="validation.active"
+    >Validación de formulario: {{ validation.active() ? 'activada' : 'desactivada'}}</mat-checkbox>
+  <div class="d-flex flex-1"></div>
+} @else {
+  <div class="d-flex flex-1"></div>
+}
+
+<button [attr.form]="form().id" type="submit" mat-fab extended class="shadow-none">
+  <mat-icon>save</mat-icon>
+  @if (form().use === "create") {
+    Crear {{ dictionary().singular }}
+  } @else if (form().use === "edit") {
+    Guardar cambios
+  }
+</button>

@@ -36,7 +36,7 @@
     @if (service.pagination()) {
     <div tablePager [currentPage]="service.pagination()!.currentPage"
       [itemsPerPage]="service.pagination()!.itemsPerPage" [totalItems]="service.pagination()!.totalItems"
-      (pageChanged)="service.onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true"></div>
+      (pageChanged)="service.onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true" [isCompact]="false"></div>
     }
   </div>
   } @else {

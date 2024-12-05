@@ -3,7 +3,7 @@ import { Component, effect, inject, input, model, OnInit, signal } from '@angula
 import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
 import { User } from "src/app/_models/users/user";
-import { UsersService } from 'src/app/_services/users.service';
+import { UsersService } from "../users.config";
 import { UserProfilePictureComponent } from './user-profile-picture/user-profile-picture.component';
 import { Account } from 'src/app/_models/account';
 

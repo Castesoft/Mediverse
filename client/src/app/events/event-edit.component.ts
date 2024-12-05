@@ -10,15 +10,15 @@ import { ClinicSummaryCardComponent } from "src/app/clinics/clinic-summary-card.
 import { NurseSummaryCardComponent } from "src/app/nurses/nurse-summary-card.component";
 import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
 import { ServicesService } from "src/app/services/services.config";
-import { UsersService } from "src/app/_services/users.service";
+import { UsersService } from "../users/users.config";
 import { IconsService } from "src/app/_services/icons.service";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { User } from "../_models/users/user";
-import { Product } from "src/app/_models/product";
-import { Event } from "src/app/_models/event";
+import { Product } from "../_models/products/product";
+import { Event } from "../_models/events/event";
 import { ServiceCardCompactComponent } from "src/app/services/components/service-card-compact.component";
-import { Service } from "src/app/_models/service";
-import { Address } from "src/app/_models/address";
+import { Service } from "../_models/services/service";
+import { Address } from "../_models/addresses/address";
 
 @Component({
   selector: 'div[eventEditView]',

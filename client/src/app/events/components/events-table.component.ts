@@ -1,19 +1,20 @@
-import { Component, OnInit, Input, inject, input, OnDestroy, model } from "@angular/core";
-import { CatalogMode, Role } from "src/app/_models/types";
-import { IconsService } from "src/app/_services/icons.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import {CdkModule} from "src/app/_shared/cdk.module";
-import {MaterialModule} from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { CommonModule, DatePipe, DecimalPipe, NgClass } from "@angular/common";
+import { CommonModule } from "@angular/common";
+import { Component, inject, Input, input, model, OnDestroy, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Event, EventParams } from "src/app/_models/event";
-import { Subscription } from "rxjs";
-import { EventsService } from "src/app/_services/events.service";
-import {PatientTableCellComponent, PatientTableHasAccountCellComponent, PatientTableSexCellComponent} from "src/app/_shared/components/patient-table-cell.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { createId } from "@paralleldrive/cuid2";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import { Subscription } from "rxjs";
+import { CatalogMode } from "src/app/_models/base/types";
+import { EventParams } from "src/app/_models/events/eventParams";
+import { Event } from "src/app/_models/events/event";
+import { EventsService } from "src/app/_services/events.service";
+import { IconsService } from "src/app/_services/icons.service";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { PatientTableCellComponent, PatientTableSexCellComponent, PatientTableHasAccountCellComponent } from "src/app/_shared/components/patient-table-cell.component";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },

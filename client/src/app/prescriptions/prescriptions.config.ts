@@ -1,188 +1,333 @@
-import { Component, inject, NgModule, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ActivatedRoute, ResolveFn, RouterModule } from "@angular/router";
-import { CardComponent, LayoutModule } from "src/app/_shared/layout.module";
-import { CatalogMode, FormUse, View } from "src/app/_models/types";
-import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
+import { Component, inject, Injectable, ModelSignal, model, effect, NgModule } from "@angular/core";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { RouterModule } from "@angular/router";
+import { ControlsModule } from "src/app/_forms/controls.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import { CatalogMode, View } from "src/app/_models/base/types";
+import { BaseDetail, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
+import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { Prescription } from "src/app/_models/prescriptions/prescription";
+import { prescriptionDictionary, prescriptionColumns } from "src/app/_models/prescriptions/prescriptionConstants";
+import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescriptionFiltersForm";
+import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
+import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
+import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
+import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
-import { Prescription } from "src/app/_models/prescription";
-import { CompactTableService } from "src/app/_services/compact-table.service";
-import { PrescriptionsService } from "src/app/_services/prescriptions.service";
-import { createId } from "@paralleldrive/cuid2";
+import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
+
+@Component({
+  selector: 'prescriptions-catalog-modal',
+  template: `
+  @defer {
+    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+    <mat-dialog-content>
+    <div
+      prescriptionsCatalog
+      [(mode)]="data.mode"
+      [(key)]="data.key"
+      [(view)]="data.view"
+      [(isCompact)]="data.isCompact"
+      [(item)]="data.item"
+      [(params)]="data.params"
+    ></div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </mat-dialog-actions>
+}
+`,
+  standalone: true,
+  imports: [PrescriptionsCatalogComponent, MaterialModule, CdkModule,],
+})
+export class PrescriptionsCatalogModalComponent {
+  data = inject<CatalogModalType<Prescription, PrescriptionParams>>(MAT_DIALOG_DATA);
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PrescriptionsService extends ServiceHelper<Prescription, PrescriptionParams, FormGroup2<PrescriptionParams>> {
+  constructor() {
+    super(PrescriptionParams, 'prescriptions', prescriptionDictionary, prescriptionColumns);
+  }
+
+  showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
+    this.matDialog.open<
+      PrescriptionsCatalogModalComponent,
+      CatalogModalType<Prescription, PrescriptionParams>
+    >(PrescriptionsCatalogModalComponent, {
+      data: {
+        isCompact: true,
+        key: key,
+        mode: mode,
+        params: new PrescriptionParams(key),
+        view: view,
+        title: this.dictionary.title,
+        item: null,
+      },
+      disableClose: true,
+      hasBackdrop: false,
+      panelClass: [ "window" ]
+    });
+  };
+
+  clickLink(
+    item: Prescription | null = null,
+    key: string | null = null,
+    use: FormUse = 'detail',
+    view: View,
+    title: string | null = null
+  )
+  {
+  if (view === 'modal') {
+    this.matDialog.open<
+      PrescriptionDetailModalComponent,
+      DetailModalType<Prescription>
+    >(PrescriptionDetailModalComponent, {
+      data: {
+        item: item,
+        key: key,
+        use: use,
+        view: 'modal',
+        title: this.getFormHeaderText(use, item),
+      },
+      disableClose: true,
+      hasBackdrop: false,
+      panelClass: [ 'window' ]
+    });
+
+  } else {
+    switch (use) {
+      case 'create':
+        this.router.navigate([this.dictionary.createRoute]);
+        break;
+      case 'edit':
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
+        break;
+      case 'detail':
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
+        break;
+      }
+    }
+  }
+}
+
+@Component({
+  selector: 'div[prescriptionDetail]',
+  template: `
+  <div container3 [type]="'inline'">
+    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
+  </div>
+  <div prescriptionForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+  `,
+  standalone: true,
+  imports: [PrescriptionFormComponent, ControlsModule, Forms2Module,],
+})
+export class PrescriptionDetailComponent
+  extends BaseDetail<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
+  implements DetailInputSignals<Prescription>
+{
+  use: ModelSignal<FormUse> = model.required();
+  view: ModelSignal<View> = model.required();
+  item: ModelSignal<Prescription | null> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  title: ModelSignal<string | null> = model.required();
+
+  constructor() {
+    super(PrescriptionsService);
+  }
+
+}
+
+@Component({
+  selector: 'prescription-detail-modal',
+  template: `
+  @defer {
+    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+    <mat-dialog-content>
+    <div
+      prescriptionDetail
+      [(use)]="data.use"
+      [(view)]="data.view"
+      [(key)]="data.key"
+      [(item)]="data.item"
+      [(title)]="data.title"
+    ></div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </mat-dialog-actions>
+}
+`,
+  standalone: true,
+  imports: [PrescriptionDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+})
+export class PrescriptionDetailModalComponent {
+  data = inject<DetailModalType<Prescription>>(MAT_DIALOG_DATA);
+}
+
 
 @Component({
   selector: 'prescriptions-route',
-  template: `<router-outlet></router-outlet>`,
   standalone: false,
+  template: `
+  <router-outlet></router-outlet>
+  `,
 })
-export class PrescriptionsComponent implements OnInit {
-  ngOnInit(): void { }
-}
+export class PrescriptionsComponent {}
 
 @Component({
-  selector: 'prescription-catalog-route',
+  selector: 'prescriptions-catalog-route',
   template: `
-    <div card>
-      <div prescriptionsCatalog
-        [mode]="mode"
-        [key]="key"
-        [view]="view"
-      ></div>
-    </div>`,
-  standalone: true,
-  imports: [CardComponent, PrescriptionsCatalogComponent]
-})
-export class CatalogComponent {
-  prescription = inject(PrescriptionsService);
-  compact = inject(CompactTableService);
-
-  isCompact = false;
-  view: View = 'page';
-  mode: CatalogMode = 'view';
-  key = createId();
-  label: string;
-
-  constructor() {
-    this.label = this.prescription.dictionary.title;
-  }
-
-  ngOnInit(): void {
-    this.compact.mode$.subscribe({ next: (mode) => (this.isCompact = mode) });
-  }
-}
-
-@Component({
-  selector: 'app-prescription-detail',
-  template: `
-@if (item()) {
-<div prescriptionForm [(use)]="use" [(view)]="view" [(item)]="item"></div>
-}
+  <div
+    prescriptionsCatalog
+    [(mode)]="mode"
+    [(key)]="key"
+    [(view)]="view"
+    [(isCompact)]="compact.isCompact"
+    [(item)]="item"
+    [(params)]="params"
+  ></div>
   `,
   standalone: true,
-  imports: [PrescriptionFormComponent],
+  imports: [RouterModule, PrescriptionsCatalogComponent, BreadcrumbsModule, ],
 })
-export class PrescriptionDetailComponent {
-  private route = inject(ActivatedRoute);
-
-  use = signal<FormUse>('detail');
-  view = signal<View>('page');
-  item = signal<Prescription | null>(null);
-
+export class CatalogComponent extends BaseRouteCatalog<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> {
   constructor() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.route.data.subscribe({
-        next: (data) => {
-          this.item = data['item'];
+    super(PrescriptionsService, 'prescriptions');
+
+    effect(() => {
+      console.log('key', this.key());
+    });
+  }
+}
+
+@Component({
+  selector: 'prescription-detail-route',
+  template: `<div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  standalone: true,
+  imports: [RouterModule, PrescriptionDetailComponent, BreadcrumbsModule,],
+})
+export class DetailComponent extends BaseRouteDetail<Prescription> {
+  constructor() {
+    super('prescriptions', 'detail');
+
+    effect(() => {
+      this.route.paramMap.subscribe({
+        next: params => {
+          if (params.has('id')) {
+            this.id.set(+params.get('id')!);
+          }
         },
       });
-    }
-  }
-}
-
-@Component({
-  selector: 'app-prescription-edit',
-  template: `
-@if (item()) {
-<div prescriptionForm [(use)]="use" [(view)]="view" [(item)]="item"></div>
-}
-
-  `,
-  standalone: true,
-  imports: [PrescriptionFormComponent],
-})
-export class PrescriptionEditComponent {
-  private route = inject(ActivatedRoute);
-
-  use = signal<FormUse>('edit');
-  view = signal<View>('page');
-  item = signal<Prescription | null>(null);
-
-  constructor() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
       this.route.data.subscribe({
         next: (data) => {
-          this.item = data['item'];
+          this.item.set(data['item']);
         },
       });
-    }
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+    });
   }
 }
 
 @Component({
-  selector: 'app-prescription-new',
-  template: `
-    <div prescriptionForm [(use)]="use" [(view)]="view" [(item)]="item"></div>
-  `,
+  selector: 'prescription-edit-route',
+  template: `<div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
   standalone: true,
-  imports: [PrescriptionFormComponent, CommonModule,],
+  imports: [PrescriptionDetailComponent, RouterModule, BreadcrumbsModule,],
 })
-export class PrescriptionNewComponent {
-  use = signal<FormUse>('create');
-  view = signal<View>('page');
-  item = signal<Prescription | null>(null);
+export class EditComponent extends BaseRouteDetail<Prescription> {
+  constructor() {
+    super('prescriptions', 'edit');
+
+    effect(() => {
+      this.route.paramMap.subscribe({
+        next: params => {
+          if (params.has('id')) {
+            this.id.set(+params.get('id')!);
+          }
+        },
+      });
+      this.route.data.subscribe({
+        next: (data) => {
+          this.item.set(data['item']);
+        },
+      });
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+    });
+  }
 }
 
+@Component({
+  selector: 'prescription-new-route',
+  template: `<div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  standalone: true,
+  imports: [PrescriptionDetailComponent, RouterModule, BreadcrumbsModule,],
+})
+export class NewComponent extends BaseRouteDetail<Prescription> {
+  constructor() {
+    super('prescriptions', 'create');
 
-export const itemResolver: ResolveFn<Prescription | null> = (route, state) => {
-  const prescription = inject(PrescriptionsService);
-  const id = +route.paramMap.get('id')!;
-  const edited = route.queryParamMap.get('edited');
-  return prescription.getById(id, { noCache: edited ? true : false });
-};
-
-export const titleDetailResolver: ResolveFn<string> = (route, state) => {
-  const prescription = inject(PrescriptionsService);
-  const id = +route.paramMap.get('id')!;
-  prescription.getById(id).subscribe();
-  const item = prescription.getCurrent();
-  if (!item) return 'Detalle de receta';
-  const title = `Detalle de receta - ${item.id}`;
-  return title;
-}
-
-export const titleEditResolver: ResolveFn<string> = (route, state) => {
-  const prescription = inject(PrescriptionsService);
-  const id = +route.paramMap.get('id')!;
-  prescription.getById(id).subscribe();
-  const item = prescription.getCurrent();
-  if (!item) return 'Editar receta';
-  const title = `Editar receta - ${item.id}`;
-  return title;
+    effect(() => {
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+    });
+  }
 }
 
 @NgModule({
   imports: [RouterModule.forChild([
     {
-      path: '', title: 'Recetas', data: { breadcrumb: 'Recetas', },
+      path: '', title: 'Ganaderías', data: { breadcrumb: 'Ganaderías', },
       component: PrescriptionsComponent, runGuardsAndResolvers: 'always',
       children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de recetas', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'create', component: PrescriptionNewComponent, title: 'Crear nueva receta', data: { breadcrumb: 'Nuevo', }, },
+        { path: '', component: CatalogComponent, title: 'Catálogo de ganaderías', data: { breadcrumb: 'Catálogo', }, },
+        { path: 'nuevo', component: NewComponent, title: 'Crear nueva ganadería', data: { breadcrumb: 'Nuevo', }, },
         {
-          path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
-          component: PrescriptionDetailComponent,
-          resolve: { item: itemResolver },
+          path: ':id', data: { breadcrumb: 'Detalle', },
+          component: DetailComponent,
+          resolve: { item: createItemResolver(PrescriptionsService) },
         },
         {
-          path: ':id/edit', title: titleEditResolver, data: { breadcrumb: 'Editar', },
-          component: PrescriptionEditComponent,
-          resolve: { item: itemResolver },
+          path: ':id/editar', data: { breadcrumb: 'Editar', },
+          component: EditComponent,
+          resolve: { item: createItemResolver(PrescriptionsService) },
         },
       ],
     },
   ])],
   exports: [RouterModule]
 })
-export class PrescriptionsRoutingModule {
-}
+export class PrescriptionsRoutingModule { }
 
 @NgModule({
   declarations: [
     PrescriptionsComponent,
   ],
-  imports: [CommonModule, PrescriptionsRoutingModule, LayoutModule,]
+  imports: [ CommonModule, PrescriptionsRoutingModule, ]
 })
-export class PrescriptionsModule {
-}
+export class PrescriptionsModule { }

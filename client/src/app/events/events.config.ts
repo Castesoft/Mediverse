@@ -5,7 +5,7 @@ import {ActivatedRoute, ResolveFn, Router, RouterModule, Routes} from "@angular/
 import {CatalogMode, FormUse, Role, Sections, View} from "src/app/_models/types";
 import {CompactTableService} from "src/app/_services/compact-table.service";
 import {EventsService} from "src/app/_services/events.service";
-import {Event} from "src/app/_models/event";
+import { Event } from "../_models/events/event";
 import {LayoutModule} from "src/app/_shared/layout.module";
 import {EventNewComponent} from "src/app/events/views";
 import {EventDetailComponent} from "src/app/events/components/event-detail/event-detail.component";

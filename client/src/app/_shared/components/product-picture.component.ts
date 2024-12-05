@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, OnInit } from '@angular/core';
-import { Product } from 'src/app/_models/product';
+import { Product } from "src/app/_models/products/product";
 import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({

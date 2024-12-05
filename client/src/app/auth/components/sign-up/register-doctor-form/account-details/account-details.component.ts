@@ -4,7 +4,7 @@ import { ControlCheckListComponent } from 'src/app/_forms/control-check-list.com
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
-import { PaymentMethodType } from 'src/app/_models/paymentMethodType';
+import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 import { Specialty } from 'src/app/_models/specialty';
 import { AccountService } from 'src/app/_services/account.service';
 import { AddressesService } from 'src/app/_services/addresses.service';
@@ -35,7 +35,7 @@ export class AccountDetailsComponent {
   specialties: Specialty[] = [];
   paymentMethodTypes: PaymentMethodType[] = [];
   neighborhoods: ZipcodeAddressOption[] = [];
-  
+
   ngOnInit() {
     this.myForm = <FormGroup>this.controlContainer.control;
 

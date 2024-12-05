@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, model } from '@angular/core';
-import { Product } from 'src/app/_models/product';
+import { Product } from "src/app/_models/products/product";
 
 @Component({
   selector: 'order-products-summary, tr[orderProductsSummary]',

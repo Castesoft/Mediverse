@@ -13,7 +13,8 @@ import {
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { Event, CreateForm, EditForm, DetailForm, EventDoctorFields } from 'src/app/_models/event';
+import { CreateForm, EditForm, DetailForm, EventDoctorFields } from 'src/app/_models/event';
+import { Event } from "src/app/_models/events/event";
 import { BadRequest, FormUse, Role, View } from 'src/app/_models/types';
 import { User } from "src/app/_models/users/user";
 import { FormsService } from 'src/app/_services/forms.service';
@@ -23,7 +24,7 @@ import { AlertModule } from 'ngx-bootstrap/alert';
 import { CurrencyPipe, DatePipe, JsonPipe } from '@angular/common';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import { EventsService } from 'src/app/_services/events.service';
-import { UsersService } from 'src/app/_services/users.service';
+import { UsersService } from "src/app/users/users.config";
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { calcDateDiff } from 'src/app/_utils/util';
 import { UserCardCompactComponent } from 'src/app/users/components/user-card-compact.component';
@@ -38,7 +39,7 @@ import { AddressesService } from 'src/app/addresses/addresses.config';
 import { ServiceCardCompactComponent } from 'src/app/services/components/service-card-compact.component';
 import { ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
 import { Address } from 'cluster';
-import { Service } from 'src/app/_models/service';
+import { Service } from "src/app/_models/services/service";
 
 @Component({
   host: { class: 'pb-3' },

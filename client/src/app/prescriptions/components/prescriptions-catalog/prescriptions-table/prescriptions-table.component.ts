@@ -1,34 +1,35 @@
-import { Component, OnInit, Input, inject, input, OnDestroy, output, signal, model } from "@angular/core";
-import { CatalogMode } from "src/app/_models/types";
-import { IconsService } from "src/app/_services/icons.service";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, OnDestroy, inject, Input, model, input, output, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { createId } from "@paralleldrive/cuid2";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import { Subscription } from "rxjs";
+import { Account } from "src/app/_models/account";
+import { CatalogMode } from "src/app/_models/base/types";
+import { Prescription } from "src/app/_models/prescriptions/prescription";
+import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
+import { IconsService } from "src/app/_services/icons.service";
+import { BootstrapModule } from "src/app/_shared/bootstrap.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { CurrencyPipe, DatePipe, DecimalPipe, NgClass } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Prescription, PrescriptionParams } from "src/app/_models/prescription";
-import { Subscription } from "rxjs";
-import { PrescriptionsService } from "src/app/_services/prescriptions.service";
-import { PrescriptionTableCellComponent, PrescriptionTableHasAccountCellComponent, PrescriptionTableSexCellComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component";
-import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
-import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { Account } from "src/app/_models/account";
-import { createId } from "@paralleldrive/cuid2";
 import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
+import { PrescriptionTableCellComponent, PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
+import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_prescriptions', },
   selector: 'table[prescriptionsTable]',
   standalone: true,
   templateUrl: './prescriptions-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, PrescriptionTableCellComponent, DatePipe,
-    PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent, MaterialModule, CdkModule, CurrencyPipe, UserTableCellComponent, BootstrapModule, PrescriptionFormComponent,
+  imports: [FontAwesomeModule, TableHeaderComponent, CommonModule, FormsModule, RouterModule, BsDropdownModule, PrescriptionTableCellComponent,
+    PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent, MaterialModule, CdkModule, UserTableCellComponent, BootstrapModule, PrescriptionFormComponent,
     UserProfilePictureComponent
   ],
 })
@@ -54,8 +55,7 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
   cuid: string = createId();
 
   ngOnInit(): void {
-    const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
-    this.subscriptions.push(paramsSubscription);
+
   }
 
   ngOnDestroy(): void {
@@ -63,10 +63,10 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
   }
 
   deleteItem(item: Prescription) {
-    const deleteSubscription = this.service.delete$(item).subscribe(() => {
-      this.onReloadData.emit();
-    });
-    this.subscriptions.push(deleteSubscription);
+    // const deleteSubscription = this.service.delete$(item).subscribe(() => {
+    //   this.onReloadData.emit();
+    // });
+    // this.subscriptions.push(deleteSubscription);
   }
 
   toggleCollapsed(item: Prescription) {

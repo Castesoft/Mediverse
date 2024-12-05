@@ -1,0 +1,8 @@
+  <label>{{control().label}}: </label>
+  <mat-button-toggle-group [appearance]="'standard'" [formControl]="control()" aria-label="Ingredients" multiple class="hide-bottom" style="display: flex;">
+    @for(option of control().selectOptions; track option) {
+    <mat-button-toggle [value]="option">
+      {{option.name}}
+    </mat-button-toggle>
+    }
+  </mat-button-toggle-group>

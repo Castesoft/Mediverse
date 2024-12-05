@@ -1,0 +1,13 @@
+@switch(use()) {
+  @case("create") {
+    Crear {{ dictionary().singular }}
+  }
+  @case("edit") {
+    Editar {{ dictionary().singular }} #{{ id() | number }}
+  }
+  @case("detail") {
+    @if(id()) {
+      {{ dictionary().singularTitlecase }} #{{ id() | number }}
+    }
+  }
+}

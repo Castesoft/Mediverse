@@ -1,5 +1,6 @@
 import { Entity } from "src/app/_models/base/entity";
 import { SelectOption } from "src/app/_models/base/selectOption";
+import { Event } from "../events/event";
 import { Payment } from "src/app/_models/payment";
 import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
 import { MedicalRecord } from "src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-form.component";

@@ -1,16 +1,13 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompactTableService {
-  private mode = new BehaviorSubject<boolean>(true);
-  mode$ = this.mode.asObservable();
-
+  isCompact = signal<boolean>(true);
 
   label = 'Tabla compacta';
-  subject = 'compactTableMode';
+  subject = 'is-table-compact';
   inputId = `${this.subject}Switch`;
   sliderHelp = `${this.subject}Help`;
   helpText = 'Cuando este modo está activado, se activa el modo de tabla compacta. En este modo se activa la tabla compacta y se desactiva la tabla normal.';
@@ -22,18 +19,18 @@ export class CompactTableService {
   init() {
     const mode = this.getLocalStorage();
     this.setLocalStorage(mode);
-    this.mode.next(mode);
+    this.isCompact.set(mode);
   }
 
-  get = (): boolean => this.mode.value;
+  get = (): boolean => this.isCompact();
   set(value: boolean) {
     this.setLocalStorage(value);
-    this.mode.next(value);
+    this.isCompact.set(value);
   }
 
   toggle() {
-    this.setLocalStorage(!this.mode.value);
-    this.mode.next(!this.mode.value);
+    this.setLocalStorage(!this.isCompact());
+    this.isCompact.set(!this.isCompact());
   }
 
   private existsInLocalStorage = () => {

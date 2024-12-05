@@ -1,371 +1,131 @@
-import { Component, inject, input, model, OnDestroy, OnInit } from "@angular/core";
+import { LayoutModule } from "@angular/cdk/layout";
+import { CommonModule } from "@angular/common";
+import { Component, OnDestroy, OnInit, ModelSignal, model, inject } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { IconsService } from "src/app/_services/icons.service";
+import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { Subject } from "rxjs";
-import { DecimalPipe, NgClass } from "@angular/common";
 import { AlertModule } from "ngx-bootstrap/alert";
-import { CatalogMode, Role, View } from "src/app/_models/types";
-import { Router, RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { UserParams } from "src/app/_models/users/userParams";
-import { User } from "src/app/_models/users/user";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import { View, CatalogMode } from "src/app/_models/base/types";
+import { BaseCatalog } from "src/app/_models/forms/extensions/baseFormComponent";
+import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { User } from "src/app/_models/users/user";
+import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
+import { UserParams } from "src/app/_models/users/userParams";
+import { IconsService } from "src/app/_services/icons.service";
 import { CatalogModule } from "src/app/_shared/catalog.module";
-import { UsersFilterMenuComponent } from "src/app/users/components/users-filter-menu.component";
-import { UsersTableComponent } from "src/app/users/components/users-table.component";
-import { UsersService } from "src/app/_services/users.service";
-import { LayoutModule } from "src/app/_shared/layout.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
-import { createId } from "@paralleldrive/cuid2";
-import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
-
-@Component({
-  host: { class: 'mh-300px scroll-y me-n7 pe-7', },
-  selector: 'div[usersListSelect]',
-  template: `
-  <!-- @if(data && pagination) {
-    <div class="fs-6 fw-semibold mb-2 mt-5">{{service.namingDictionary.get(role())!.title}}</div>
-    @for(item of data; let idx = $index; track idx; let last = $last) {
-      <div class="d-flex flex-stack py-4"
-           [ngClass]="{'border-bottom border-gray-300 border-bottom-dashed': !last}"
-      [cdkContextMenuTriggerFor]="context_menu">
-      <div class="d-flex align-items-center">
-        @switch(mode()) {
-          @case ("select") {
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="radio"
-                [name]="service.namingDictionary.get(role())!.singular"
-                [checked]="item.isSelected"
-                (change)="service.setSelected$(key(), item)"
-              />
-            </div>
-          }
-          @case ("multiselect") {
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                [name]="service.namingDictionary.get(role())!.singular"
-                [checked]="item.isSelected"
-                [id]="cuid + 'tableCheck' + idx"
-                (change)="service.addSelected$(key(), item)"
-              />
-            </div>
-          }
-        }
-          <div class="symbol symbol-35px symbol-circle ms-4">
-            @if (item.photoUrl) {
-            <img [src]="item.photoUrl" [alt]="item.fullName" />
-            } @else {
-            <div class="symbol-label fs-3 bg-light-danger text-danger">
-              {{ item.firstName[0] }}
-            </div>
-            }
-          </div>
-          <div class="ms-5">
-            <a (click)="service.clickLink(role(), item.id, item, key(), 'detail', 'modal')" class="fs-5 fw-bold text-primary-900 text-hover-primary mb-2">{{item.fullName}}</a>
-            <div class="fs-6 fw-bold">
-              {{item.email}}
-            </div>
-            <div class="fw-semibold text-muted">
-              {{item.education}}, {{item.post}}
-            </div>
-          </div>
-        </div>
-        <div class="ms-2 w-100px">
-        <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"
-           [cdkContextMenuTriggerFor]="context_menu" [cdkMenuTriggerFor]="context_menu"
-           [id]="'dropdown' + item.fullName + item.id" type="button"
-           [attr.aria-controls]="'dropdown' + item.fullName + item.id">
-          Opciones
-          <i class="ki-duotone ki-down fs-5 ms-1"></i>
-        </a>
-				</div>
-      </div>
-      <ng-template #context_menu>
-        <div
-          class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4 show"
-          cdkMenu>
-          <div cdkMenuItem class="menu-item px-3">
-            <a [routerLink]="[service.namingDictionary.get(role())!.catalogRoute,item.id]" class="menu-link">Ver</a>
-          </div>
-          <div cdkMenuItem class="menu-item px-3">
-            <a [routerLink]="[service.namingDictionary.get(role())!.catalogRoute, item.id, 'edit']" class="menu-link">Editar</a>
-          </div>
-          <button cdkMenuItem class="menu-item px-3 text-danger" (click)="service.delete$(item, role())">
-            <a class="menu-link">Eliminar</a>
-          </button>
-        </div>
-      </ng-template>
-    }
-
-  } -->
-  `,
-  standalone: true,
-  imports: [BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
-    UsersTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, UsersFilterMenuComponent, LayoutModule, CdkModule, NgClass,
-  ],
-})
-export class UsersListSelectComponent implements OnInit, OnDestroy {
-  router = inject(Router);
-  service = inject(UsersService);
-  icons = inject(IconsService);
-
-  key = model.required<string>();
-  mode = model.required<CatalogMode>();
-  view = model.required<View>();
-  role = model.required<Role>();
-
-  data?: User[];
-  params!: UserParams;
-  pagination?: Pagination;
-  // form = new FilterForm();
-  loading = true;
-  cuid = createId();
-  private ngUnsubscribe = new Subject<void>();
-
-  ngOnInit(): void {
-    this.params = new UserParams(this.key());
-
-    // this.service.setParam$(this.key(), this.params);
-
-    // this.service.param$(this.key())
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe((params) => {
-    //     console.log(params);
-
-    //     this.params = params;
-    //     this.loadData(params);
-    //     this.form.patchValue(params);
-    //   });
-
-    // this.service.loading$(this.key())
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe((loading) => (this.loading = loading));
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  private loadData(params: UserParams) {
-    // this.service.loadPagedList(this.role(), this.key(), params).subscribe({
-    //   next: (response) => {
-    //     const { result, pagination } = response;
-    //     this.data = result;
-    //     this.pagination = pagination;
-    //   },
-    // });
-  }
-}
+import { MaterialModule } from "src/app/_shared/material.module";
+import { TableModule } from "src/app/_shared/table/table.module";
+import { UsersTableComponent } from "src/app/users/components/users-table.component";
+import { UsersService } from "src/app/users/users.config";
 
 @Component({
   host: {  },
   selector: 'div[usersCatalog]',
   template: `
-    <!-- <div catalogCardHeader>
-      <div class="card-title">
-        <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
-          <div searchText formControlName="search" [naming]="service.namingDictionary.get(role())!"></div>
-        </form>
-      </div>
-      <div class="card-toolbar">
-        @if (service.hasSelected(key()) && mode() === 'view') {
-          <div deleteSelectedBtn [count]="service.selectedCount(key())"
-                (click)="service.deleteRange$(key(), role())"></div>
+  <div class="py-2">
+  @if(view() === 'page'){<h1 class="mb-4">{{ service.dictionary.title}}</h1>}
+  <div class="row justify-content-between mb-2 row-gap-1">
+    <div class="col-auto">
+      <div class="d-flex align-items-center column-gap-3">
+        <a mat-fab extended type="button" class="shadow-none" (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute">
+          <fa-icon [icon]="icons.faPlus" class="me-1" />
+          Crear {{ service.dictionary.singular }}
+        </a>
+        @if (service.hasSelected(key(), mode()) | async) {
+        @if (service.selectedCount(key(), mode()) | async; as count) {
+        <button mat-raised-button [matBadge]="count" matBadgePosition="after" (click)="service.deleteRange$(key())">
+          Eliminar {{ count > 1 ? service.dictionary.plural : service.dictionary.singular }}
+        </button>
         }
-        @if (!service.hasSelected(key())) {
-          <div class="d-flex justify-content-end">
-            <button filterMenuBtn (click)="service.showFiltersModal(key(), role())"></button>
-            <users-filter-menu></users-filter-menu>
-            <button exportBtn (click)="service.downloadXLSX$(key(), role())"></button>
-            <button createBtn [naming]="service.namingDictionary.get(role())!"
-                    (click)="service.clickLink(role(), null, null, key(), 'create', view())"
-            ></button>
-          </div>
         }
       </div>
     </div>
+    <form (ngSubmit)="onSubmit(key())" [id]="form.id" class="col-12 col-lg d-flex justify-content-end">
+      <div class="row d-flex column-gap-3 row-gap-1 align-items-center">
+        <div controlSearchText3 [(fromWrapper)]="fromWrapper" [(control)]="form.controls.search"></div>
+        <button mat-button class="col-auto" type="button" (click)="form.resetForm()">Limpiar</button>
+        <button mat-flat-button class="col-auto" type="submit" [attr.form]="form.id">Buscar</button>
+        <div class="col-auto px-0">
+          <div>
+            <mat-button-toggle-group name="ingredients" aria-label="Ingredients" multiple>
+              <mat-button-toggle (click)="toggle.set(!toggle())" [value]="toggle()" [checked]="toggle()">
+                <mat-icon>filter_alt</mat-icon>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
-    <div cardBody>
-      @if (mode() === "select" || mode() === "multiselect") {
-        <h4>
-          @switch (mode()) {
-            @case ("select") {
-              {{ service.namingDictionary.get(role())?.singularTitlecase }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
-                seleccionado
-              } @else {
-                seleccionada
-              }
-            }
-            @case ("multiselect") {
-              {{ service.namingDictionary.get(role())?.pluralTitlecase }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
-                seleccionados
-              } @else {
-                seleccionadas
-              }
-            }
-          }
-        </h4>
-        @if (service.hasSelected$(key())) {
-          <div tableWrapper class="mb-4">
-            <table
-              usersTable
-              [data]="mode() === 'select' ? service.getSelected$(key()) : []"
-              [role]="role()"
-              [view]="view()"
-              [key]="key()"
-              [mode]="'readonly'"
-              [showHeaders]="false"
-            ></table>
-          </div>
-        } @else {
-          @switch (mode()) {
-            @case ("select") {
-              No tienes {{ service.namingDictionary.get(role())!.articles.undefinedSingular }} {{ service.namingDictionary.get(role())!.singular }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
-                seleccionado
-              } @else {
-                seleccionada
-              }.
-            }
-            @case ("multiselect") {
-              No tienes {{ service.namingDictionary.get(role())!.plural }} @if (service.namingDictionary.get(role())?.articleSex === 'masculine') {
-                seleccionados
-              } @else {
-                seleccionadas
-              }.
-            }
-          }
-        }
-      }
+<form (ngSubmit)="onSubmit(key())" [id]="form.id" class="mb-2">
+  <mat-accordion class="example-headers-align" [displayMode]="'flat'">
+    <mat-expansion-panel hideToggle class="border" [(expanded)]="toggle">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Filtros</mat-panel-title>
+      </mat-expansion-panel-header>
+      <!-- <div formBuilder3 [cols]="4" [controls]="[
 
-      @if (data && pagination) {
-        @if (data.length > 0) {
-          <div tableWrapper>
-            <table
-              usersTable
-              [data]="data"
-              [mode]="mode()"
-              [key]="key()"
-              [role]="role()"
-              [view]="view()"
-            ></table>
-          </div>
-          <div
-            tablePager
-            [currentPage]="pagination.currentPage"
-            (pageChanged)="service.onPageChanged(key(), $event)"
-            [itemsPerPage]="pagination.itemsPerPage"
-            [totalItems]="pagination.totalItems"
-            (loadMore)="service.loadMore(key())"
-            (loadLess)="service.loadLess(key())"
-          ></div>
-        } @else {
-          <div style="border-radius: 0.7em" class="bg-white border">
-            <alert type="unknown" class="mb-0 text-center">
-              <h4 class="alert-heading mt-4 pt-4 mb-4 fw-bold">
-                {{ service.namingDictionary.get(role())!.pluralTitlecase }} no encontrados
-              </h4>
-              <p class="mb-4">
-                No se encontraron {{ service.namingDictionary.get(role())!.plural }} que coincidan con los
-                criterios de búsqueda.
-              </p>
-              <p class="mb-4">
-                <button
-                  class="btn btn-phoenix-secondary me-2"
-                  (click)="service.resetForm(key(), form)"
-                >
-                  Restablecer los filtros
-                </button>
-              </p>
-            </alert>
-          </div>
-        }
-      } @else {
-        <div tableLoadingPlaceholder></div>
-      }
-    </div> -->
+      ]"></div> -->
+
+    <div class="row d-flex column-gap-3 row-gap-1 align-items-center">
+      <div controlSelect3 [(control)]="form.controls.sort" [(fromWrapper)]="fromWrapper"></div>
+      <div controlSlide3 [(control)]="form.controls.isSortAscending" [(fromWrapper)]="fromWrapper"></div>
+    </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</form>
+
+<div tableWrapper>
+  <div tableResponsive>
+    @if(service.list$(key(), mode()) | async; as _list) {
+    <table usersTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view">
+    </table>
+    }
+  </div>
+  @if(service.pagination$(key()) | async; as _pagination) {
+  <div tablePager [(isCompact)]="isCompact" [currentPage]="_pagination.currentPage"
+    [itemsPerPage]="_pagination.itemsPerPage" [totalItems]="_pagination.totalItems" (loadMore)="service.loadMore(key())"
+    (loadLess)="service.loadLess(key())" (pageChanged)="service.onPageChanged(key(), $event)"></div>
+  }
+</div>
   `,
   standalone: true,
-  imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, DecimalPipe,
+  imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, CommonModule,
     UsersTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, UsersFilterMenuComponent, LayoutModule,
+    LayoutModule, LayoutModule, MaterialModule, CdkModule, Forms2Module,
    ],
 })
-export class UsersCatalogComponent implements OnInit, OnDestroy {
-  router = inject(Router);
-  service = inject(UsersService);
+export class UsersCatalogComponent
+  extends BaseCatalog<User, UserParams, UserFiltersForm, UsersService>
+  implements OnDestroy, OnInit, CatalogInputSignals<User, UserParams>
+{
   icons = inject(IconsService);
 
-  key = model.required<string>();
-  mode = model.required<CatalogMode>();
-  view = model.required<View>();
-  role = model.required<Role>();
+  item: ModelSignal<User | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<UserParams> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
 
-  data?: User[];
-  params!: UserParams;
-  pagination?: Pagination;
-  // form = new FilterForm();
-  loading = true;
-  private ngUnsubscribe = new Subject<void>();
-
-  ngOnInit(): void {
-    this.params = new UserParams(this.key());
-
-    // this.service.setParam$(this.key(), this.params);
-
-    // this.service.param$(this.key())
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe((params) => {
-    //     this.params = params;
-    //     this.loadData(params);
-    //     this.form.patchValue(params);
-    //   });
-
-    // this.form.group.valueChanges
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe(this.handleFormValueChange.bind(this));
-
-    // this.service.loading$(this.key())
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe((loading) => (this.loading = loading));
+  constructor() {
+    super(UsersService, UserFiltersForm);
   }
 
-  ngOnDestroy() {
+  ngOnInit(): void {
+    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
+    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
+  }
+
+  ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
-  private loadData(params: UserParams) {
-    console.log(this.role(), this.key());
-    // this.service.loadPagedList(this.role(), this.key(), params).subscribe({
-    //   next: (response) => {
-    //     const { result, pagination } = response;
-    //     this.data = result;
-    //     this.pagination = pagination;
-    //   },
-    // });
-  }
-
-  private handleFormValueChange = () => {
-    // const { controls, value } = this.form.group;
-    // const { dateRange } = controls;
-
-    // this.params.updateFromPartial({
-    //   ...value,
-    //   dateFrom: dateRange.value[0],
-    //   dateTo: dateRange.value[1],
-    // });
-  };
-
-  onSubmit() {
-    // this.service.setParam$(this.key(), this.params);
-    // this.form.patchValue(this.params);
-  }
 }

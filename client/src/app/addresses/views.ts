@@ -7,7 +7,7 @@ import { AddressesService } from "src/app/addresses/addresses.config";
 import { CommonModule } from "@angular/common";
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
 import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
-import { Address } from "src/app/_models/address";
+import { Address } from "../_models/addresses/address";
 
 @Component({
   selector: "[addressForm]",

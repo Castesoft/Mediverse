@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { SearchService } from 'src/app/_services/search.service';
-import { Search } from 'src/app/_models/search';
+import { Search } from "src/app/_models/search/search";
 import { Component, inject, signal } from '@angular/core';
 import { SearchFormComponent } from 'src/app/search/components/search-form.component';
 

@@ -4,7 +4,7 @@ import { AddressDetailComponent } from "src/app/addresses/views";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { AddressesFilterFormComponent } from './components/addresses-filter-form.component';
 import { AddressesCatalogComponent } from './components/addresses-catalog.component';
-import { Address } from "src/app/_models/address";
+import { Address } from "../_models/addresses/address";
 
 @Component({
   selector: 'address-detail-modal',

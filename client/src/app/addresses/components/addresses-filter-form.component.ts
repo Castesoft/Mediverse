@@ -10,12 +10,14 @@ import { FilterFormGroupActions, FormComponent } from "src/app/_forms/form";
 import { CommonModule } from "@angular/common";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { AddressesService, AddressParams, sortOptions } from "src/app/addresses/addresses.config";
+import { AddressesService } from "src/app/addresses/addresses.config";
+import { sortOptions } from 'src/app/_models/addresses/addressConstants';
+import { AddressParams } from 'src/app/_models/addresses/addressParams';
 import { omitKeys } from "src/app/_utils/util";
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
 import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
 import { createId } from "@paralleldrive/cuid2";
-import { Address } from "src/app/_models/address";
+import { Address } from "src/app/_models/addresses/address";
 
 @Component({
   selector: '[addressesFilterForm]',

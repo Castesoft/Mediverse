@@ -1,7 +1,12 @@
 import { Units } from "src/app/_models/base/types";
-import { TableCells } from "src/app/_models/tables/tableCellTypes";
 import { TableCellItemJustification } from "./tableCellTypes";
+import { Entity } from "src/app/_models/base/entity";
 
+
+export type CellsOf<T> = {
+  [K in keyof T]: TableCellItem<T[K], K>;
+};
+export type PartialCellsOf<T> = CellsOf<Partial<T>>;
 
 export class TableCellItem<T, TKey extends keyof any> {
   key: TKey;
@@ -53,3 +58,36 @@ export class TableCellItem<T, TKey extends keyof any> {
     }
   }
 }
+
+export type TableCells = "string" |
+  "number" |
+  "boolean" |
+  "date" |
+  "code" |
+  "currency" |
+  "codePair"
+;
+
+export const tableCellCreatedAt: TableCellItem<Date, 'createdAt'> = new TableCellItem<Date, "createdAt">("createdAt", "date", { fullDate: true });
+export const tableCellCescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");
+export const tableCellEnabled: TableCellItem<boolean, 'enabled'> = new TableCellItem<boolean, "enabled">("enabled", "boolean");
+export const tableCellName: TableCellItem<string, 'name'> = new TableCellItem<string, "name">("name", "string");
+export const tableCellCode: TableCellItem<string, 'code'> = new TableCellItem<string, "code">("code", "string");
+export const tableCellVisible: TableCellItem<boolean, 'visible'> = new TableCellItem<boolean, "visible">("visible", "boolean");
+export const tableCellId: TableCellItem<number, 'id'> = new TableCellItem<number, "id">("id", "number");
+export const tableCellCodeNumber: TableCellItem<number, 'codeNumber'> = new TableCellItem<number, "codeNumber">("codeNumber", "number");
+export const tableCellIsSelected: TableCellItem<boolean, 'isSelected'> = new TableCellItem<boolean, "isSelected">("isSelected", "boolean");
+export const tableCellDescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");
+
+
+export const baseTableCells: PartialCellsOf<Entity> = {
+  tableCellCreatedAt,
+  tableCellCescription,
+  tableCellEnabled,
+  tableCellName,
+  tableCellCode,
+  tableCellVisible,
+  tableCellId,
+  tableCellCodeNumber,
+  tableCellIsSelected,
+} as PartialCellsOf<Entity>;

@@ -1,9 +1,10 @@
-import {CurrencyPipe, DecimalPipe} from "@angular/common";
-import {Component, inject, input, model, OnInit} from "@angular/core";
-import {Router, RouterLink} from "@angular/router";
-import {Role, View} from "src/app/_models/types";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, model } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
+import { View } from "src/app/_models/base/types";
+import { Role } from "src/app/_models/types";
 import { User } from "src/app/_models/users/user";
-import {UsersService} from "src/app/_services/users.service";
+import { UsersService } from "../users.config";
 
 @Component({
   host: { class: 'card', },
@@ -46,7 +47,7 @@ import {UsersService} from "src/app/_services/users.service";
     } -->
   `,
   standalone: true,
-  imports: [DecimalPipe, CurrencyPipe, RouterLink,],
+  imports: [CommonModule, RouterModule,],
 })
 export class UserCardCompactComponent implements OnInit {
   service = inject(UsersService);

@@ -1,29 +1,36 @@
-import { Component, effect, HostBinding, inject, model, OnDestroy, signal, ViewChild } from '@angular/core';
-import { Prescription, PrescriptionForm } from 'src/app/_models/prescription';
-import { BadRequest, FormUse, View } from 'src/app/_models/types';
-import { ProductsService } from 'src/app/_services/products.service';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconsService } from 'src/app/_services/icons.service';
-import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
-import { EventSelectDisplayCardComponent } from 'src/app/events/event-select-display-card.component';
-import { EventSelectTypeaheadComponent } from 'src/app/events/event-select-typeahead.component';
-import { Subject, takeUntil } from 'rxjs';
-import { ConfirmService } from 'src/app/_services/confirm.service';
-import { AccountService } from 'src/app/_services/account.service';
-import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TabDirective, TabsetComponent } from "ngx-bootstrap/tabs";
-import { CommonModule } from '@angular/common';
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
-import { Account } from 'src/app/_models/account';
-import { SelectOption } from 'src/app/_forms/form';
-import { UsersService } from 'src/app/_services/users.service';
-import { TableHeaderComponent } from 'src/app/_shared/table/table-header.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PatientsService } from 'src/app/patients/patients.config';
-import { ClinicsService } from 'src/app/clinics/clinics.config';
+import { CommonModule } from "@angular/common";
+import { Component, effect, HostBinding, inject, model, ModelSignal, signal, ViewChild } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Router, ActivatedRoute } from "@angular/router";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { TabsetComponent, TabDirective } from "ngx-bootstrap/tabs";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
+import { Subject, takeUntil } from "rxjs";
+import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { Account } from "src/app/_models/account";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { View } from "src/app/_models/base/types";
+import { BadRequest } from "src/app/_models/forms/error";
+import { BaseForm } from "src/app/_models/forms/extensions/baseFormComponent";
+import { FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { Prescription } from "src/app/_models/prescriptions/prescription";
+import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescriptionFiltersForm";
+import { PrescriptionForm } from "src/app/_models/prescriptions/prescriptionForm";
+import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
+import { AccountService } from "src/app/_services/account.service";
+import { ConfirmService } from "src/app/_services/confirm.service";
+import { IconsService } from "src/app/_services/icons.service";
+import { BootstrapModule } from "src/app/_shared/bootstrap.module";
+import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
+import { ClinicsService } from "src/app/clinics/clinics.config";
+import { EventSelectDisplayCardComponent } from "src/app/events/event-select-display-card.component";
+import { EventSelectTypeaheadComponent } from "src/app/events/event-select-typeahead.component";
+import { PatientsService } from "src/app/patients/patients.config";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
+import { ProductsService } from "src/app/products/products.config";
+import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { UsersService } from "src/app/users/users.config";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -37,11 +44,12 @@ import { ClinicsService } from 'src/app/clinics/clinics.config';
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss'
 })
-export class PrescriptionFormComponent implements OnDestroy {
+export class PrescriptionFormComponent
+  extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService>
+  implements FormInputSignals<Prescription>
+{
   accountService = inject(AccountService);
   icons = inject(IconsService);
-  router = inject(Router);
-  service = inject(PrescriptionsService);
 
   private productsService = inject(ProductsService);
   private usersService = inject(UsersService);
@@ -50,7 +58,6 @@ export class PrescriptionFormComponent implements OnDestroy {
   private clinicsService = inject(ClinicsService);
 
   private ngUnsubscribe = new Subject<void>();
-  private route = inject(ActivatedRoute);
 
   @ViewChild("memberTabs", { static: false }) memberTabs?: TabsetComponent;
   @HostBinding('class') get hostClass() {
@@ -61,9 +68,10 @@ export class PrescriptionFormComponent implements OnDestroy {
   use = model.required<FormUse>();
   view = model.required<View>();
   item = model.required<Prescription | null>();
+  key: ModelSignal<string | null> = model.required();
+
 
   activeTab?: TabDirective;
-  form = new PrescriptionForm();
   account = signal<Account | null>(null);
 
   productOptions = signal<SelectOption[]>([]);
@@ -71,6 +79,8 @@ export class PrescriptionFormComponent implements OnDestroy {
   clinicOptions = signal<SelectOption[]>([]);
 
   constructor() {
+    super(PrescriptionsService, PrescriptionForm);
+
     this.productsService.getOptions().subscribe();
     this.patientsService.getOptions().subscribe();
     this.clinicsService.getOptions().subscribe();
@@ -129,45 +139,4 @@ export class PrescriptionFormComponent implements OnDestroy {
       queryParamsHandling: "merge"
     });
   };
-
-  onSubmit() {
-    this.form.submitted = true;
-    switch (this.use()) {
-      case 'create':
-        this.create();
-        break;
-      case 'edit':
-        this.update();
-        break;
-    }
-  }
-
-  onCancel() {
-    this.form.submitted = false;
-    if (this.use() === 'create') {
-      this.form.reset();
-    } else if (this.use() === 'edit') {
-      this.form.reset();
-    }
-  }
-
-  create() {
-    this.service.create(this.form.payload, this.view()).subscribe({
-      next: response => {
-        this.form.onSuccess(response);
-        this.use.set('detail');
-      },
-      error: (error: BadRequest) => this.form.error = error
-    });
-  }
-
-  update() {
-    this.service.update(this.item()!.id!, this.form.payload, this.view()).subscribe({
-      next: response => {
-        this.form.onSuccess(response);
-        this.use.set('detail');
-      },
-      error: (error: BadRequest) => this.form.error = error
-    });
-  }
 }

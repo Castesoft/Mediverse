@@ -1,0 +1,4 @@
+@if (control().showLabel) {
+  <label controlLabel3 [(control)]="control"></label>
+}
+<input class="form-control form-control-solid" (change)="onFileChange($event)" [type]="'file'" [id]="control().id" multiple>

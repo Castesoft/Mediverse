@@ -1,12 +1,15 @@
-import { Component, effect, inject, input, model, OnInit, output, ViewEncapsulation } from "@angular/core";
-import { CatalogMode, Column, EntityParams, SortOptions } from "src/app/_models/types";
-import { faSort, faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
-import { EnvService } from "src/app/_services/env.service";
-import { IconsService } from "src/app/_services/icons.service";
 import { NgClass } from "@angular/common";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { createId } from "@paralleldrive/cuid2";
+import { Component, effect, inject, input, model, OnInit, output, ViewEncapsulation } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { faSortUp, faSortDown, faSort } from "@fortawesome/free-solid-svg-icons";
+import { createId } from "@paralleldrive/cuid2";
+import { Column } from "src/app/_models/base/column";
+import { EntityParams } from "src/app/_models/base/entityParams";
+import { CatalogMode } from "src/app/_models/base/types";
+import { SortOptions } from "src/app/_models/types";
+import { DevService } from "src/app/_services/dev.service";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   selector: "thead[tableHeader]",
@@ -16,7 +19,7 @@ import { FormsModule } from "@angular/forms";
   imports: [NgClass, FontAwesomeModule, FormsModule]
 })
 export class TableHeaderComponent implements OnInit {
-  private devService = inject(EnvService);
+  private dev = inject(DevService);
   icons = inject(IconsService);
 
   // inputs
@@ -45,7 +48,7 @@ export class TableHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.devService.mode$.subscribe({ next: mode => this.isDev = mode });
+    
   }
 
   selectAllItems(event: Event) {

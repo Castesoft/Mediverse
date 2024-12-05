@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, HostListener, inject, model } from "@angular/core";
-import { DoctorResult } from "src/app/_models/doctorResult";
+import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
 import { SearchService } from "src/app/_services/search.service";
 import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
 

@@ -1,0 +1,19 @@
+@switch(type()) {
+  @case('edit') {
+    <mat-icon>edit</mat-icon>
+    <span class="d-none d-sm-inline">Editar</span>
+  }
+  @case('cancel') {
+    <mat-icon>cancel</mat-icon>
+    <span class="d-none d-sm-inline">Cancelar</span>
+  }
+  @case('delete') {
+    <mat-icon>delete</mat-icon>
+      Eliminar
+      {{ dictionary().singular }}
+  }
+  @case('create') {
+    <mat-icon>add</mat-icon>
+    Nuevo
+  }
+}

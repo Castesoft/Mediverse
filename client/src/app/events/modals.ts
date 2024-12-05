@@ -1,7 +1,7 @@
 import { CdkDrag } from "@angular/cdk/drag-drop";
 import { Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
-import { Event } from "src/app/_models/event";
+import { Event } from "../_models/events/event";
 import { CatalogModal, DetailModal, FilterModal } from "src/app/_shared/table/table.module";
 import { EventDetailComponent } from "src/app/events/components/event-detail/event-detail.component";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog/events-catalog.component";

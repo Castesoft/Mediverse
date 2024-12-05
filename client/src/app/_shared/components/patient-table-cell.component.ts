@@ -2,7 +2,7 @@ import { NgClass } from '@angular/common';
 import { Component, inject, input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { User } from "src/app/_models/users/user";
-import { UsersService } from "src/app/_services/users.service";
+import { UsersService } from "src/app/users/users.config";
 
 @Component({
   selector: 'td[patientHasAccount]',

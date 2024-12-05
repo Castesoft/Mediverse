@@ -179,6 +179,7 @@ export interface CatalogInputSignals<T extends Entity | object, U extends Entity
   item: ModelSignal<T | null>;
   view: ModelSignal<View>;
   key: ModelSignal<string | null>;
+  isCompact: ModelSignal<boolean>;
   mode: ModelSignal<CatalogMode>;
   params: ModelSignal<U>;
 }

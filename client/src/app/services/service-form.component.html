@@ -1,0 +1,30 @@
+<form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+  <div container3 [type]="'card'">
+    @if (form.error) {
+      <div errorsAlert3 [(error)]="form.error"></div>
+    }
+    <div formBuilder3 [controls]="[
+      form.controls.id,
+      form.controls.createdAt,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.code,
+      form.controls.name,
+    ]" [cols]="2"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.description,
+    ]" [cols]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.enabled,
+    ]" [cols]="1"></div>
+    <div formBuilder3 [controls]="[
+      form.controls.visible,
+    ]" [cols]="1"></div>
+  </div>
+
+  @if(use() !== 'detail') {
+    <div container3 [type]="'inline'">
+      <div detailFooter2 [(view)]="view" [(dictionary)]="service.dictionary" [(form)]="form"></div>
+    </div>
+  }
+</form>

@@ -5,7 +5,7 @@ import { PopoverModule } from "ngx-bootstrap/popover";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.component";
 import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
-import { UsersService } from "src/app/_services/users.service";
+import { UsersService } from "src/app/users/users.config";
 import { IconsService } from "src/app/_services/icons.service";
 import { UserParams } from "src/app/_models/users/userParams";
 import { User } from "src/app/_models/users/user";

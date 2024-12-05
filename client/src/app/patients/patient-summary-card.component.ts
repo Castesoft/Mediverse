@@ -2,7 +2,7 @@ import {Component, effect, inject, input, model, OnInit, signal} from "@angular/
 import {BootstrapModule} from "../_shared/bootstrap.module";
 import {DatePipe} from "@angular/common";
 import { User } from "../_models/users/user";
-import {UsersService} from "../_services/users.service";
+import { UsersService } from "../users/users.config";
 import {Subject, takeUntil} from "rxjs";
 import { UserProfilePictureComponent } from "../users/components/user-profile-picture/user-profile-picture.component";
 import { Router } from '@angular/router';

@@ -7,7 +7,9 @@ import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, 
 import { Modal } from "src/app/_models/modal";
 import { PaginatedResult } from "src/app/_models/pagination";
 import { CatalogMode, Column, FormUse, LoadingTypes, NamingSubject, Role, SortOptions, View } from "src/app/_models/types";
-import { FilterForm, Event, EventParams, EventDoctorFields } from "src/app/_models/event";
+import { FilterForm, EventDoctorFields } from "src/app/_models/event";
+import { EventParams } from "../_models/events/eventParams";
+import { Event } from "../_models/events/event";
 import { ConfirmService } from "src/app/_services/confirm.service";
 import { downloadExcelFile, getItemsByKey, getPaginatedResult } from "src/app/_utils/util";
 import { EventDetailModalComponent, EventsCatalogModalComponent, EventsFilterModalComponent } from "src/app/events/modals";

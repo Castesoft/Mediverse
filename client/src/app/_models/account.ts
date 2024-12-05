@@ -1,7 +1,8 @@
 import { createId } from "@paralleldrive/cuid2";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Role } from "src/app/_models/types";
-import { PaymentMethodType, paymentMethodTypeInfo } from './paymentMethodType';
+import { paymentMethodTypeFormInfo } from "./paymentMethodTypes/paymentMethodTypeConstants";
+import { PaymentMethodType } from "./paymentMethodTypes/paymentMethodType";
 import { WorkSchedule, workScheduleInfo } from './workSchedule';
 import { FormGroup2, FormInfo } from "src/app/_forms/form2";
 import { MedicalLicense, medicalLicenseInfo } from "src/app/_models/medicalLicense";
@@ -91,7 +92,7 @@ export const accountInfo: FormInfo<Account> = {
   linkedGoogle: { label: 'Google vinculado', type: 'checkbox' },
   mainSpecialty: { label: 'Especialidad principal', type: 'text' },
   medicalLicenses: medicalLicenseInfo,
-  paymentMethodTypes: paymentMethodTypeInfo,
+  paymentMethodTypes: paymentMethodTypeFormInfo,
   permissions: {  },
   phoneNumber: { label: 'Teléfono', type: 'text' },
   phoneNumberCountryCode: { label: 'Código de país de teléfono', type: 'text' },

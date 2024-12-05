@@ -1,8 +1,8 @@
-import { CommonModule, CurrencyPipe, NgClass, PercentPipe } from '@angular/common';
-import { Component, inject, input, model, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Prescription } from 'src/app/_models/prescription';
-import { PrescriptionsService } from 'src/app/_services/prescriptions.service';
+import { CommonModule } from "@angular/common";
+import { Component, model, OnInit, inject } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { Prescription } from "src/app/_models/prescriptions/prescription";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
 
 @Component({
   selector: 'td[prescriptionDiscount]',
@@ -29,7 +29,7 @@ export class PrescriptionTableHasAccountCellComponent {
     </div> -->
   `,
   standalone: true,
-  imports: [ NgClass ],
+  imports: [ CommonModule, ],
 })
 export class PrescriptionTableSexCellComponent {
   item = model.required<Prescription>();
@@ -64,7 +64,7 @@ export class PrescriptionTableSexCellComponent {
     } -->
   `,
   standalone: true,
-  imports: [RouterModule, CurrencyPipe],
+  imports: [RouterModule, CommonModule, ],
 })
 export class PrescriptionTableCellComponent implements OnInit {
   service = inject(PrescriptionsService);

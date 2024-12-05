@@ -1,6 +1,6 @@
 import { Component, inject, input, model, OnDestroy, OnInit } from "@angular/core";
 import { FormUse, Role, View } from "src/app/_models/types";
-import { Order } from "src/app/_models/order";
+import { Order } from "../_models/orders/order";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Subject } from "rxjs";
 import { DatePipe } from "@angular/common";

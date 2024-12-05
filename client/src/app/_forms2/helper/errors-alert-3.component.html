@@ -1,0 +1,33 @@
+@switch(error().error.status) {
+  @case (400) {
+    <h4>Errores: </h4>
+    @if(error().type === 'ValidationError') {
+    <ul>
+      @for(error of error().validationErrors; let idx = $index; track idx) {
+      <li>{{error}}</li>
+      }
+    </ul>
+    }@else if(error().type === 'BadRequest') {
+    <p>{{error().message}}</p>
+    }
+  }
+  @case(401) {
+    <h4>Error de Autenticación</h4>
+    <p>{{ error().message }}</p>
+  }
+  @case(404) {
+    <h4>No Encontrado</h4>
+    <p>{{ error().message }}</p>
+  }
+  @case(500) {
+    <h4>Error Interno de Servidor</h4>
+    <h5 class="text-danger">Error: {{ error().error.message }}</h5>
+    <code class="mt-5">
+      {{ error().error.error.details }}
+    </code>
+  }
+  @default {
+    <h4>Error</h4>
+    <p>{{ error().error.message }}</p>
+  }
+}

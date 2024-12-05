@@ -3,7 +3,7 @@ import { FormUse, View } from "src/app/_models/types";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { IconsService } from "src/app/_services/icons.service";
 import { Subject } from "rxjs";
-import { Order } from "src/app/_models/order";
+import { Order } from "../_models/orders/order";
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { EventServicesSummaryComponent } from "src/app/events/components/event-services-summary.component";
 import { OrderProductsSummaryComponent } from "src/app/orders/components/order-items-summary.component";

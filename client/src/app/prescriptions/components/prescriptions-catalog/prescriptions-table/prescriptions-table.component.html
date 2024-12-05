@@ -1,6 +1,6 @@
 <thead
-(onParamsChange)="service.onSortOptionsChange(key(), $event)"
-(onSelectAll)="service.selectAll(key(), $event)"
+(onParamsChange)="service.onSortOptionsChange(key(), $any($event))"
+(onSelectAll)="service.onSelectAll(key(), mode(), $event)"
 [columns]="columns"
 [mode]="mode()"
 [params]="params"
@@ -34,7 +34,6 @@ tableHeader
                 type="radio"
                 [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
-                (change)="service.setSelected$(key(), item)"
                 (click)="stopPropagation($event)"
               />
             </div>
@@ -49,8 +48,6 @@ tableHeader
                 [name]="service.dictionary.singular"
                 [checked]="item.isSelected"
                 [id]="cuid + 'tableCheck' + idx"
-                (change)="service.addSelected$(key(), item)"
-                (click)="stopPropagation($event)"
               />
             </div>
           </td>
@@ -145,12 +142,12 @@ tableHeader
         <td colspan="100" style="padding: 0;">
             <div [collapse]="!item.isCollapsed" [id]="'collapseBasic' + item.id" [isAnimated]="true">
               <div class="p-4">
-                <div prescriptionForm
+                <!-- <div prescriptionForm
                   [id]="null"
                   [use]="'detail'"
                   [view]="'inline'"
                   [(item)]="data[idx]"
-                ></div>
+                ></div> -->
               </div>
             </div>
         </td>

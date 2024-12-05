@@ -1,4 +1,5 @@
-import { Service, serviceInfo } from 'src/app/_models/service';
+import { serviceFormInfo } from "./services/serviceConstants";
+import { Service } from "./services/service";
 import { baseInfo, Entity } from 'src/app/_models/types';
 import { SelectOption } from 'src/app/_forms/form';
 import { FormGroup2, FormInfo } from 'src/app/_forms/form2';

@@ -1,4 +1,5 @@
-import { OrderDeliveryStatus, OrderStatus } from "src/app/_models/order";
+import { OrderDeliveryStatus } from "../_models/orders/orderTypes";
+import { OrderStatus } from "../_models/orders/orderTypes";
 
 const orderStatusMap: { [key in OrderStatus]: string } = {
   pending: 'Pendiente',

@@ -4,7 +4,7 @@ import {Subject} from "rxjs";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
 import { AddressesService } from "src/app/addresses/addresses.config";
-import { Address } from "src/app/_models/address";
+import { Address } from "../_models/addresses/address";
 
 @Component({
   selector: 'div[clinicSummaryCard]',
