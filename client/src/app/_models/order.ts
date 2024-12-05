@@ -2,7 +2,7 @@ import { HttpParams } from "@angular/common/http";
 import { FormGroup } from "@angular/forms";
 import { OrdersService } from "src/app/_services/orders.service";
 import { getPaginationHeaders } from "src/app/_utils/util";
-import { User } from "src/app/_models/user";
+import { User } from "./users/user";
 import { Product } from "src/app/_models/product";
 import { Address } from "src/app/_models/address";
 

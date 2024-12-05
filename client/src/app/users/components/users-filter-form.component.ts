@@ -1,6 +1,6 @@
 import { Component, inject, input, model, OnInit } from '@angular/core';
 import { BsModalRef, ModalModule } from 'ngx-bootstrap/modal';
-import { UserParams } from 'src/app/_models/user';
+import { UserParams } from "src/app/_models/users/userParams";
 import { ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { Role } from 'src/app/_models/types';

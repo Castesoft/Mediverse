@@ -5,7 +5,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {CdkModule} from "src/app/_shared/cdk.module";
 import {MaterialModule} from "src/app/_shared/material.module";
 import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { DatePipe, DecimalPipe, NgClass } from "@angular/common";
+import { CommonModule, DatePipe, DecimalPipe, NgClass } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
@@ -20,7 +20,7 @@ import { createId } from "@paralleldrive/cuid2";
   selector: 'table[eventsTable]',
   standalone: true,
   templateUrl: './events-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, PatientTableCellComponent, DatePipe,
+  imports: [FontAwesomeModule, TableHeaderComponent, CommonModule, FormsModule, RouterModule, BsDropdownModule, PatientTableCellComponent,
     PatientTableSexCellComponent, PatientTableHasAccountCellComponent, MaterialModule, CdkModule,
   ],
 })

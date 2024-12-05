@@ -1,15 +1,17 @@
-import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
-import { Component, HostBinding, inject, input, model, OnInit, viewChild } from "@angular/core";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { FormUse, Role, View } from "src/app/_models/types";
-import { User } from "src/app/_models/user";
+import { CommonModule } from "@angular/common";
+import { Component, HostBinding, inject, input, model, viewChild } from "@angular/core";
+import { RouterModule, ActivatedRoute, Router } from "@angular/router";
+import { View } from "src/app/_models/base/types";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { Role } from "src/app/_models/types";
+import { User } from "../_models/users/user";
 import { AccountService } from "src/app/_services/account.service";
+import { PaymentsTableComponent } from "src/app/_shared/components/payments-table/payments-table.component";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
+import { ClinicalHistoryFormComponent } from "src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-form.component";
+import { EventsTableComponent } from "src/app/events/components/events-table.component";
 import { UserFormComponent } from "src/app/users/components/user-form.component";
-import { UserProfilePictureComponent } from "./components/user-profile-picture/user-profile-picture.component";
-import { PaymentsTableComponent } from '../_shared/components/payments-table/payments-table.component';
-import { EventsTableComponent } from '../events/components/events-table/events-table.component';
-import { ClinicalHistoryFormComponent } from '../account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
+import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
 
 @Component({
   selector: 'div[userNewView]',

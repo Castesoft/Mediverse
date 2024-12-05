@@ -15,7 +15,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Event, CreateForm, EditForm, DetailForm, EventDoctorFields } from 'src/app/_models/event';
 import { BadRequest, FormUse, Role, View } from 'src/app/_models/types';
-import { User } from 'src/app/_models/user';
+import { User } from "src/app/_models/users/user";
 import { FormsService } from 'src/app/_services/forms.service';
 import { IconsService } from 'src/app/_services/icons.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';

@@ -1,28 +1,28 @@
-import { Component, OnInit, Input, inject, input, OnDestroy, model } from "@angular/core";
-import { CatalogMode, Role } from "src/app/_models/types";
-import { IconsService } from "src/app/_services/icons.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import {CdkModule} from "src/app/_shared/cdk.module";
-import {MaterialModule} from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { DatePipe, DecimalPipe, NgClass } from "@angular/common";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, OnDestroy, inject, Input, model, input } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Event, EventParams } from "src/app/_models/event";
-import { Subscription } from "rxjs";
-import { EventsService } from "src/app/_services/events.service";
-import {PatientTableCellComponent, PatientTableHasAccountCellComponent, PatientTableSexCellComponent} from "src/app/_shared/components/patient-table-cell.component";
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { UtilsService } from 'src/app/_services/utils.service';
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { createId } from "@paralleldrive/cuid2";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
+import { Subscription } from "rxjs";
+import { CatalogMode } from "src/app/_models/base/types";
+import { Event, EventParams } from "src/app/_models/event";
+import { EventsService } from "src/app/_services/events.service";
+import { IconsService } from "src/app/_services/icons.service";
+import { UtilsService } from "src/app/_services/utils.service";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { PatientTableCellComponent, PatientTableSexCellComponent, PatientTableHasAccountCellComponent } from "src/app/_shared/components/patient-table-cell.component";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },
   selector: 'table[eventsTable]',
   standalone: true,
   templateUrl: './events-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, NgClass, FormsModule, RouterModule, DecimalPipe, BsDropdownModule, PatientTableCellComponent, DatePipe,
+  imports: [FontAwesomeModule, TableHeaderComponent, FormsModule, RouterModule, BsDropdownModule, PatientTableCellComponent, CommonModule,
     PatientTableSexCellComponent, PatientTableHasAccountCellComponent, MaterialModule, CdkModule,
     TooltipModule
   ],

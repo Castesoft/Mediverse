@@ -2,7 +2,7 @@ import { NgClass } from '@angular/common';
 import { Component, effect, inject, input, model, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
-import { User } from 'src/app/_models/user';
+import { User } from "src/app/_models/users/user";
 import { UsersService } from 'src/app/_services/users.service';
 import { UserProfilePictureComponent } from './user-profile-picture/user-profile-picture.component';
 import { Account } from 'src/app/_models/account';

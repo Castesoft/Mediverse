@@ -2,7 +2,7 @@ import { HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FormGroup2 } from "src/app/_forms/form2";
 import { Column, EntityParams, IParams, NamingSubject } from "src/app/_models/types";
-import { User } from "src/app/_models/user";
+import { User } from "../_models/users/user";
 import { ServiceHelper } from "src/app/_services/serviceHelper";
 import { buildHttpParams, omitKeys } from "src/app/_utils/util";
 

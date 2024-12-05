@@ -2,7 +2,8 @@ import { Injectable } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { FormGroup2 } from "src/app/_forms/form2";
 import { NamingSubject } from "src/app/_models/types";
-import { User, UserParams } from "src/app/_models/user";
+import { UserParams } from "../_models/users/userParams";
+import { User } from "../_models/users/user";
 import { ServiceHelper } from "src/app/_services/serviceHelper";
 import {
   UserDetailModalComponent,

@@ -7,7 +7,8 @@ import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.compon
 import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
 import { UsersService } from "src/app/_services/users.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { User, UserParams } from "src/app/_models/user";
+import { UserParams } from "src/app/_models/users/userParams";
+import { User } from "src/app/_models/users/user";
 import { TypeaheadComplexOption } from "src/app/_models/types";
 import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";

@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { createId } from "@paralleldrive/cuid2";
 import { Account } from "src/app/_models/account";
 import { CatalogMode, FormUse, Role, Sections, View } from "src/app/_models/types";
-import { User } from "src/app/_models/user";
+import { User } from "../_models/users/user";
 import { AccountService } from "src/app/_services/account.service";
 import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
 import { CompactTableService } from "src/app/_services/compact-table.service";

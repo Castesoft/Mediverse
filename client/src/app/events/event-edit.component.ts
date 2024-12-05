@@ -13,7 +13,7 @@ import { ServicesService } from "src/app/services/services.config";
 import { UsersService } from "src/app/_services/users.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { FormUse, Role, View } from "src/app/_models/types";
-import { User } from "src/app/_models/user";
+import { User } from "../_models/users/user";
 import { Product } from "src/app/_models/product";
 import { Event } from "src/app/_models/event";
 import { ServiceCardCompactComponent } from "src/app/services/components/service-card-compact.component";

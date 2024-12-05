@@ -2,7 +2,7 @@ import { CdkDrag } from "@angular/cdk/drag-drop";
 import { Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { Role } from "src/app/_models/types";
-import { User } from "src/app/_models/user";
+import { User } from "../_models/users/user";
 import { CatalogModal, DetailModal, FilterModal } from "src/app/_shared/table/table.module";
 import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
 import { UsersFilterFormComponent } from "src/app/users/components/users-filter-form.component";

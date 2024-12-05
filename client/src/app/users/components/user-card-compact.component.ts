@@ -2,7 +2,7 @@ import {CurrencyPipe, DecimalPipe} from "@angular/common";
 import {Component, inject, input, model, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
 import {Role, View} from "src/app/_models/types";
-import {User} from "src/app/_models/user";
+import { User } from "src/app/_models/users/user";
 import {UsersService} from "src/app/_services/users.service";
 
 @Component({
