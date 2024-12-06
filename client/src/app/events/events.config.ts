@@ -1,18 +1,17 @@
-import {CommonModule} from "@angular/common";
-import {NgModule, signal} from "@angular/core";
-import {Component, inject, OnInit} from "@angular/core";
-import {ActivatedRoute, ResolveFn, Router, RouterModule, Routes} from "@angular/router";
-import {CatalogMode, FormUse, Role, Sections, View} from "src/app/_models/types";
-import {CompactTableService} from "src/app/_services/compact-table.service";
-import {EventsService} from "src/app/_services/events.service";
-import { Event } from "../_models/events/event";
-import {LayoutModule} from "src/app/_shared/layout.module";
-import {EventNewComponent} from "src/app/events/views";
-import {EventDetailComponent} from "src/app/events/components/event-detail/event-detail.component";
-import {createId} from "@paralleldrive/cuid2";
-import {Subject, takeUntil} from "rxjs";
-import {EventEditComponent} from "./event-edit.component";
-import { EventsDisplayComponent } from './components/events-display/events-display.component';
+import { LayoutModule } from "@angular/cdk/layout";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, signal, NgModule } from "@angular/core";
+import { RouterModule, ActivatedRoute, Router, ResolveFn } from "@angular/router";
+import { createId } from "@paralleldrive/cuid2";
+import { Subject, takeUntil } from "rxjs";
+import { View } from "src/app/_models/base/types";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { Sections } from "src/app/_models/sections/sectionTypes";
+import { Role } from "src/app/_models/types";
+import { EventsService } from "src/app/_services/events.service";
+import { EventDetailComponent } from "src/app/events/components/event-detail/event-detail.component";
+import { EventsDisplayComponent } from "src/app/events/components/events-display/events-display.component";
+import { EventNewComponent } from "src/app/events/views";
 
 @Component({
   selector: 'events-route',

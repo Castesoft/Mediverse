@@ -1,5 +1,6 @@
 import { FormInfo } from "src/app/_forms/form2";
-import { Account, accountInfo } from "src/app/_models/account";
+import { accountFormInfo } from "./account/accountConstants";
+import { Account } from "./account/account";
 
 export class DoctorReview {
   rating: number | null = null;
@@ -13,7 +14,7 @@ export class DoctorReview {
 }
 
 export const doctorReviewInfo: FormInfo<DoctorReview> = {
-  account: accountInfo,
+  account: accountFormInfo,
   comment: { label: 'Comentario', type: 'text' },
   createdAt: { label: 'Creado en', type: 'date' },
   rating: { label: 'Calificación', type: 'number' },

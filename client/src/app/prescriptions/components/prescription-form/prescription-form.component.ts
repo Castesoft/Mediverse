@@ -7,7 +7,7 @@ import { TabsetComponent, TabDirective } from "ngx-bootstrap/tabs";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { Subject, takeUntil } from "rxjs";
 import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
-import { Account } from "src/app/_models/account";
+import { Account } from "src/app/_models/account/account";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { View } from "src/app/_models/base/types";
 import { BadRequest } from "src/app/_models/forms/error";

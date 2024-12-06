@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { Account } from 'src/app/_models/account';
+import { Account } from "src/app/_models/account/account";
 import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { AccountService } from 'src/app/_services/account.service';
 import { LayoutModule } from 'src/app/_shared/layout.module';

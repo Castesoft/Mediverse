@@ -1,7 +1,7 @@
 import { LayoutModule } from "@angular/cdk/layout";
 import {Component, inject, input, OnInit} from "@angular/core";
 import {RouterModule} from "@angular/router";
-import {Account} from "src/app/_models/account";
+import { Account } from "src/app/_models/account/account";
 import {SymbolComponent} from "src/app/_shared/layout.module";
 import { UserProfilePictureComponent } from "../../users/components/user-profile-picture/user-profile-picture.component";
 import { AccountService } from 'src/app/_services/account.service';

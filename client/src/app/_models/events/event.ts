@@ -1,7 +1,7 @@
 import { Address } from "src/app/_models/addresses/address";
 import { Entity } from "src/app/_models/base/entity";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { Payment } from "src/app/_models/payment";
+import { Payment } from "../payments/payment";
 import { Prescription } from "../prescriptions/prescription";
 import { Service } from "src/app/_models/services/service";
 import { User } from "src/app/_models/users/user";

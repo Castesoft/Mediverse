@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { Payment } from 'src/app/_models/payment';
+import { Payment } from "src/app/_models/payments/payment";
 
 @Component({
   selector: 'app-payments-table',

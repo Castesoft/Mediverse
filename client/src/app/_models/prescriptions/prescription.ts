@@ -1,4 +1,4 @@
-import { Account } from "src/app/_models/account";
+import { Account } from "../account/account";
 import { Entity } from "src/app/_models/base/entity";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { Clinic } from "src/app/_models/clinics/clinic";

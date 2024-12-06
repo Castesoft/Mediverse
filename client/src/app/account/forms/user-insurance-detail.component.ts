@@ -1,11 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, model, signal } from "@angular/core";
+import { Component, inject, model, signal, effect } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
-import { Account } from "src/app/_models/account";
-import { InsuranceForm } from "src/app/_models/insurance";
-import { BadRequest, FormUse, View } from "src/app/_models/types";
+import { Account } from "src/app/_models/account/account";
+import { View } from "src/app/_models/base/types";
+import { BadRequest } from "src/app/_models/forms/error";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { InsuranceForm } from "src/app/_models/insurances/insuranceForm";
 import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
 import { AccountService } from "src/app/_services/account.service";
 import { InsuranceDocumentItemComponent } from "src/app/account/utils/insurance-document-item.component";

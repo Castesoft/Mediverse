@@ -1,8 +1,7 @@
-import {Component, NgModule, inject, input, output, HostBinding, model} from "@angular/core";
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {BsModalRef, ModalModule} from "ngx-bootstrap/modal";
-import {BaseForm} from "src/app/_models/types";
-import {IconsService} from "src/app/_services/icons.service";
+import { Component, inject, input, HostBinding, output, NgModule } from "@angular/core";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ModalModule, BsModalRef } from "ngx-bootstrap/modal";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   host: {class: 'modal-content border',},

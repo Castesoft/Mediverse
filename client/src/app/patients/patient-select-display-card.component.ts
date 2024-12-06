@@ -5,7 +5,7 @@ import { User } from "../_models/users/user";
 import { IconsService } from "../_services/icons.service";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
 import { UserProfilePictureComponent } from '../users/components/user-profile-picture/user-profile-picture.component';
-import { Account } from "src/app/_models/account";
+import { Account } from "../_models/account/account";
 
 @Component({
   selector: '[patientSelectDisplayCard]',

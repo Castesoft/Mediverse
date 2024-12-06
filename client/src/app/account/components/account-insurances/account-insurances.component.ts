@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { SelectOption } from 'src/app/_forms/form';
-import { Account } from 'src/app/_models/account';
+import { Account } from "src/app/_models/account/account";
 import { AccountService } from 'src/app/_services/account.service';
 import { InsuranceCompanyItemComponent } from 'src/app/account/utils/insurance-company-item.component';
 import { InsuranceCompanySwitchComponent } from 'src/app/account/utils/insurance-company-switch.component';

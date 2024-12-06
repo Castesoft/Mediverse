@@ -1,14 +1,14 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { Observable, tap } from 'rxjs';
-import { SearchResults } from 'src/app/_models/doctorSearchResults';
-import { PaginatedResult, Pagination } from 'src/app/_models/pagination';
-import { Search } from "../_models/search/search";
-import { getPaginatedResult } from 'src/app/_utils/util';
-import { DoctorResult } from "../_models/doctorResults/doctorResult";
-import { UtilsService } from 'src/app/_services/utils.service';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { HttpClient } from "@angular/common/http";
+import { Injectable, inject, signal } from "@angular/core";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Observable, tap } from "rxjs";
+import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { SearchResults } from "src/app/_models/doctorSearchResults";
+import { Search } from "src/app/_models/search/search";
+import { UtilsService } from "src/app/_services/utils.service";
+import { PaginatedResult, getPaginatedResult } from "src/app/_utils/serviceHelper/pagination/paginatedResult";
+import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
+import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: 'root'

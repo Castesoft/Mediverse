@@ -1,8 +1,8 @@
-import {Component, HostBinding, inject, input, model, NgModule, OnInit} from "@angular/core";
-import {ActivatedRoute, Router, RouterModule} from "@angular/router";
-import { Account } from "src/app/_models/account";
-import {NamingSubject} from "src/app/_models/types";
-import { AsideComponent } from "src/app/_shared/layout/aside.component";
+import { Component, input, inject, HostBinding, OnInit, model, NgModule } from "@angular/core";
+import { RouterModule, Router, ActivatedRoute } from "@angular/router";
+import { Account } from "src/app/_models/account/account";
+import { NamingSubject } from "src/app/_models/base/namingSubject";
+import { UtilsService } from "src/app/_services/utils.service";
 import { HeaderSearchComponent } from "src/app/_shared/layout/header-search.component";
 import { HeaderComponent } from "src/app/_shared/layout/header.component";
 import { NotificationsDropdownComponent } from "src/app/_shared/layout/notifications-dropdown.component";
@@ -10,7 +10,7 @@ import { QuickLinksDropdownComponent } from "src/app/_shared/layout/quick-links-
 import { ScrolltopComponent } from "src/app/_shared/layout/scrolltop.component";
 import { ThemeDropdownComponent } from "src/app/_shared/layout/theme-dropdown.component";
 import { UserDropdownComponent } from "src/app/_shared/layout/user-dropdown.component";
-import { UtilsService } from '../_services/utils.service';
+import { AsideComponent } from "src/app/auth/components/aside.component";
 
 // root
 @Component({

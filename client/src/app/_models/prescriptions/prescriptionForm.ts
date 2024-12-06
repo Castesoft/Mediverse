@@ -1,5 +1,5 @@
 import { Validators } from "@angular/forms";
-import { Account } from "src/app/_models/account";
+import { Account } from "../account/account";
 import { Address } from "src/app/_models/addresses/address";
 import { Column } from "src/app/_models/base/column";
 import { SelectOption } from "src/app/_models/base/selectOption";

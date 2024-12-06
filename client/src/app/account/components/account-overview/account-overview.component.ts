@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Account } from 'src/app/_models/account';
+import { Account } from "src/app/_models/account/account";
 import { AccountService } from 'src/app/_services/account.service';
 import { LayoutModule } from 'src/app/_shared/layout.module';
 

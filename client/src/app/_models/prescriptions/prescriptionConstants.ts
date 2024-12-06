@@ -1,4 +1,4 @@
-import { accountInfo } from "src/app/_models/account";
+import { accountFormInfo } from "../account/accountConstants";
 import { addressInfo } from "src/app/_models/addresses/addressConstants";
 import { baseColumns, Column } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
@@ -13,7 +13,7 @@ import { userInfo } from "src/app/_models/users/userConstants";
 
 export const prescriptionFormInfo: FormInfo<Prescription> = {
   ...baseInfo,
-  doctor: accountInfo,
+  doctor: accountFormInfo,
   exchangeAmount: { label: 'Monto de cambio', type: 'number', },
   isCollapsed: { label: 'Colapsado', type: 'checkbox', },
   items: prescriptionItemInfo,

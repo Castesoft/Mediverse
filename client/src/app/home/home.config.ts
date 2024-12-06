@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, NgModule, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Account } from "src/app/_models/account";
+import { Account } from "../_models/account/account";
 import { AccountService } from "src/app/_services/account.service";
 import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
 import { BootstrapModule } from "src/app/_shared/bootstrap.module";

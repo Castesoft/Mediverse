@@ -6,7 +6,7 @@ import { UsersService } from "../users/users.config";
 import {Subject, takeUntil} from "rxjs";
 import { UserProfilePictureComponent } from "../users/components/user-profile-picture/user-profile-picture.component";
 import { Router } from '@angular/router';
-import { Account } from "src/app/_models/account";
+import { Account } from "../_models/account/account";
 
 @Component({
   selector: 'div[patientSummaryCard]',

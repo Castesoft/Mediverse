@@ -1,14 +1,15 @@
-import { Component, effect, inject, output } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { LayoutModule } from "@angular/cdk/layout";
+import { Component, inject, output, effect } from "@angular/core";
+import { Validators } from "@angular/forms";
+import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { AccountForm } from "src/app/_models/account/accountForm";
+import { Account } from "src/app/_models/account/account";
+import { BadRequest } from "src/app/_models/forms/error";
+import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
-import { Specialty } from 'src/app/_models/specialty';
-import { AccountService } from 'src/app/_services/account.service';
-import { LayoutModule } from 'src/app/_shared/layout.module';
-import { Account, AccountForm } from 'src/app/_models/account';
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
-import { FormControl2 } from 'src/app/_forms/form2';
-import { BadRequest } from 'src/app/_models/types';
-import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
+import { Specialty } from "src/app/_models/specialties/specialty";
+import { AccountService } from "src/app/_services/account.service";
+import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
 
 @Component({
   selector: 'app-card-profile-details',
@@ -113,10 +114,10 @@ export class CardProfileDetailsComponent {
 
     formData.append('json', jsonData);
     if (this.form.controls.photoFile.value) {
-      formData.append('photo', this.form.controls.photoFile.value);
+      // formData.append('photo', this.form.controls.photoFile.value);
     }
     if (this.form.controls.certificateFile.value) {
-      formData.append('file', this.form.controls.certificateFile.value);
+      // formData.append('file', this.form.controls.certificateFile.value);
     }
 
     this.accountService.updateAccountDetails(formData).subscribe({

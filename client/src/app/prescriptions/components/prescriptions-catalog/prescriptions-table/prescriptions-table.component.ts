@@ -8,7 +8,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { createId } from "@paralleldrive/cuid2";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { Subscription } from "rxjs";
-import { Account } from "src/app/_models/account";
+import { Account } from "src/app/_models/account/account";
 import { CatalogMode } from "src/app/_models/base/types";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";

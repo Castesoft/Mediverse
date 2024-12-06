@@ -2,7 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { AccountService } from 'src/app/_services/account.service';
-import { ClinicalHistoryFormComponent, MedicalRecord } from './clinical-history-form/clinical-history-form.component';
+import { ClinicalHistoryFormComponent } from './clinical-history-form/clinical-history-form.component';
+import { MedicalRecord } from "src/app/_models/medicalRecords/medicalRecord";
 
 @Component({
   selector: 'app-account-clinical-history',

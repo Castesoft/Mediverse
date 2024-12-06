@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, model } from '@angular/core';
-import { Account } from 'src/app/_models/account';
+import { Account } from "src/app/_models/account/account";
 import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({

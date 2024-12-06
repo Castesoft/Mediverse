@@ -5,7 +5,7 @@ import { Role } from 'src/app/_models/types';
 import { User } from "src/app/_models/users/user";
 import { UsersService } from "../users.config";
 import { UserProfilePictureComponent } from './user-profile-picture/user-profile-picture.component';
-import { Account } from 'src/app/_models/account';
+import { Account } from "src/app/_models/account/account";
 
 @Component({
   selector: 'td[userHasAccount]',
