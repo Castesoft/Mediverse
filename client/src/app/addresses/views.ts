@@ -1,13 +1,13 @@
-import { Component, effect, inject, input, InputSignal, model, ModelSignal, OnInit } from "@angular/core";
-import { FormUse, View } from "src/app/_models/types";
-import { ControlsModule } from "src/app/_forms/controls.module";
-import { FormComponent, FormGroupActions } from "src/app/_forms/form";
-import { RouterModule } from "@angular/router";
-import { AddressesService } from "src/app/addresses/addresses.config";
 import { CommonModule } from "@angular/common";
-import { FormGroup2, FormInfo } from "src/app/_forms/form2";
-import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
-import { Address } from "../_models/addresses/address";
+import { Component, OnInit, ModelSignal, model, effect, inject } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { ControlsModule } from "src/app/_forms/controls.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import { View } from "src/app/_models/base/types";
+import { FormGroupActions } from "src/app/_models/forms/formComponentInterfaces";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
+import { FormUse, FormInfo } from "src/app/_models/forms/formTypes";
+import { AddressesService } from "src/app/_services/addresses.service";
 
 @Component({
   selector: "[addressForm]",
@@ -53,94 +53,10 @@ import { Address } from "../_models/addresses/address";
 
   `,
   standalone: true,
-  imports: [ CommonModule, RouterModule, ControlsModule, FormNewModule, ]
+  imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, ]
 })
-export class AddressFormComponent extends FormComponent<AddressesService> implements OnInit, FormGroupActions<Address, FormGroup2<Address>> {
-  item: ModelSignal<Address | null> = model.required();
-  use: ModelSignal<FormUse> = model.required();
-  view: ModelSignal<View> = model.required();
-  key: ModelSignal<string> = model.required();
-
-  info: FormInfo<Address> = {
-    city: { label: 'Ciudad', placeholder: 'Ciudad', type: 'text', },
-    country: { label: 'País', placeholder: 'País', type: 'text', },
-    createdAt: { label: 'Creado', placeholder: 'Creado', type: 'date', isDisabled: true, },
-    description: { label: 'Descripción', placeholder: 'Descripción', type: 'textarea', },
-    enabled: { label: 'Habilitado', type: 'slideToggle', placeholder: 'Habilitado', },
-    id: { label: 'Dirección', placeholder: 'Dirección', type: 'number', isDisabled: true },
-    isSelected: { label: 'Seleccionado', placeholder: 'Seleccionado', type: 'slideToggle' },
-    name: { label: 'Nombre', placeholder: 'Nombre', type: 'text' },
-    visible: { label: 'Visible', type: 'slideToggle' },
-    exteriorNumber: { label: 'Número exterior', placeholder: 'Número exterior', type: 'text' },
-    interiorNumber: { label: 'Número interior', placeholder: 'Número interior', type: 'text' },
-    isMain: { label: 'Principal', type: 'slideToggle' },
-    zipcode: { label: 'Código postal', placeholder: 'Código postal', type: 'text' },
-    neighborhood: { label: 'Colonia', placeholder: 'Colonia', type: 'text' },
-    state: { label: 'Estado', placeholder: 'Estado', type: 'select', },
-    street: { label: 'Calle', placeholder: 'Calle', type: 'text' },
-  } as FormInfo<Address>;
-
-  form: FormGroup2<Address> = new FormGroup2<Address>(Address, new Address(), this.info);
-
-  constructor() {
-    super(AddressesService);
-
-    effect(() => {
-      const value = this.item();
-
-      if (value) {
-        this.form = new FormGroup2<Address>(Address, value, this.info, { orientation: 'inline' });
-
-      }
-
-      this.form.setUse(this.use());
-    });
-  }
-
-  ngOnInit(): void {
-    this.formsService.mode$.subscribe({ next: validation => {
-      this.form.validation = validation;
-    } });
-  }
-
-  onSubmit() {
-    this.form.submitted = true;
-    console.log(this.form);
-    switch (this.use()) {
-      case 'create':
-        this.create();
-        break;
-      case 'edit':
-        this.update();
-        break;
-    }
-  }
-
-  onCancel() {
-    this.form.submitted = false;
-    if (this.use() === 'create') {
-      this.form.reset();
-    } else if (this.use() === 'edit') {
-      this.form.reset();
-    }
-  }
-
-  create() {
-    // if (this.form.submittable) {
-    //   this.service.create(this.form.getRawValue(), 'clinic').subscribe({
-    //     next: item => this.form.submitted = false,
-    //     error: (error: BadRequest) => this.form.error = error });
-    // }
-  }
-
-  update() {
-    // if (this.form.submittable) {
-    //   this.service.update(+this.form.getRawValue().id!, this.form.getRawValue()).subscribe({
-    //     next: () => this.form.submitted = false,
-    //     error: (error: BadRequest) => this.form.error = error
-    //   });
-    // }
-  }
+export class AddressFormComponent {
+  
 }
 
 @Component({

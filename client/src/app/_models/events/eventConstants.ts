@@ -1,5 +1,7 @@
+import { baseColumns, Column } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
+import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { Event } from "src/app/_models/events/event";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { FormInfo } from "src/app/_models/forms/formTypes";
@@ -28,4 +30,15 @@ export const eventFiltersFormInfo: FormInfo<EventParams> = {
   ...baseFilterFormInfo,
 } as FormInfo<EventParams>;
 
+export const eventDictionary: NamingSubject = new NamingSubject(
+  'masculine',
+  'cita',
+  'citas',
+  'Citas',
+  'events',
+  ['home', 'events'],
+);
 
+export const eventColumns: Column[] = [
+  ...baseColumns,
+];

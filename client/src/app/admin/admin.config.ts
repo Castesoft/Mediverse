@@ -1,8 +1,7 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, NgModule } from "@angular/core";
-import { Router, RouterModule, Routes } from "@angular/router";
-import { View } from "src/app/_models/types";
-import { OccupationsCatalogComponent } from "src/app/occupations/occupations.config";
+import { CommonModule } from '@angular/common';
+import { Component, inject, NgModule } from '@angular/core';
+import { RouterModule, Router, Routes } from '@angular/router';
+import { View } from 'src/app/_models/base/types';
 
 @Component({
   selector: 'admin-home-route',

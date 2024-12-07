@@ -19,7 +19,6 @@ import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { CdkTreeModule } from '@angular/cdk/tree';
-import { CdkMenuNestedContextExample, CdkMenuStandaloneMenuExample, CdkMenuStandaloneStatefulMenuExample, CdkMenuContextExample, TableStickyComplexFlexExample, StepperOverviewExample, StepperVerticalExample, StepperHeaderPositionExample } from 'src/app/_shared/cdk-examples/cdk-examples.component';
 
 @NgModule({
   imports: [
@@ -41,14 +40,6 @@ import { CdkMenuNestedContextExample, CdkMenuStandaloneMenuExample, CdkMenuStand
     CdkTableModule,
     TextFieldModule,
     CdkTreeModule,
-    CdkMenuNestedContextExample,
-    CdkMenuStandaloneMenuExample,
-    CdkMenuStandaloneStatefulMenuExample,
-    CdkMenuContextExample,
-    TableStickyComplexFlexExample,
-    StepperOverviewExample,
-    StepperVerticalExample,
-    StepperHeaderPositionExample,
   ],
   exports: [
     A11yModule,
@@ -69,14 +60,6 @@ import { CdkMenuNestedContextExample, CdkMenuStandaloneMenuExample, CdkMenuStand
     CdkTableModule,
     TextFieldModule,
     CdkTreeModule,
-    CdkMenuNestedContextExample,
-    CdkMenuStandaloneMenuExample,
-    CdkMenuStandaloneStatefulMenuExample,
-    CdkMenuContextExample,
-    TableStickyComplexFlexExample,
-    StepperOverviewExample,
-    StepperVerticalExample,
-    StepperHeaderPositionExample,
   ],
 })
 export class CdkModule {}

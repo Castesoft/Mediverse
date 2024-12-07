@@ -1,16 +1,17 @@
-declare var google: any;
-import { AfterViewInit, Component, inject, input, OnInit } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { AccountService } from 'src/app/_services/account.service';
-import { UtilsService } from 'src/app/_services/utils.service';
-import { FormsService } from 'src/app/_services/forms.service';
-import { MaterialModule } from 'src/app/_shared/material.module';
-import { SnackbarService } from 'src/app/_services/snackbar.service';
-import { FormGroup2, FormInfo } from 'src/app/_forms/form2';
-import { FormNewModule } from 'src/app/_forms/_new/forms-new.module';
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, AfterViewInit, inject, input } from "@angular/core";
+import { Validators } from "@angular/forms";
+import { RouterModule, Router, ActivatedRoute } from "@angular/router";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
+import { FormInfo } from "src/app/_models/forms/formTypes";
+import { AccountService } from "src/app/_services/account.service";
+import { FormsService } from "src/app/_services/forms.service";
+import { SnackbarService } from "src/app/_services/snackbar.service";
+import { UtilsService } from "src/app/_services/utils.service";
+import { MaterialModule } from "src/app/_shared/material.module";
 
+declare var google: any;
 export class Login {
   email: string | null = null;
   password: string | null = null;
@@ -60,7 +61,7 @@ export class LoginForm extends FormGroup2<Login> {
   selector: '[signInBasicForm]',
   templateUrl: './sign-in-basic-form.component.html',
   standalone: true,
-  imports: [ RouterModule, FormNewModule, CommonModule, MaterialModule, ],
+  imports: [ RouterModule, Forms2Module, CommonModule, MaterialModule, ],
 })
 export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   accountService = inject(AccountService);

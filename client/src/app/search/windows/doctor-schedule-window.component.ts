@@ -4,26 +4,26 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { Router, ActivatedRoute } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { take } from "rxjs";
-import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
 import { ControlCheckComponent } from "src/app/_forms/control-check.component";
 import { ControlSelectComponent } from "src/app/_forms/control-select.component";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { AvailableDay } from "src/app/_models/availableDay";
 import { DoctorScheduleForm } from "src/app/_models/doctorSchedules/doctorScheduleForm";
 import { BadRequest } from "src/app/_models/forms/error";
 import { Search } from "src/app/_models/search/search";
 import { AccountService } from "src/app/_services/account.service";
-import { EventsService } from "src/app/_services/events.service";
 import { SearchService } from "src/app/_services/search.service";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { AddPaymentMethodComponent } from "src/app/account/components/account-billing/add-payment-method/add-payment-method.component";
 import { SignInBasicFormComponent } from "src/app/auth/components/sign-in-basic-form.component";
+import { EventsService } from "src/app/events/events.config";
 import { StepperIconComponent } from "src/app/search/utils/stepper-icon.component";
 
 @Component({
   selector: 'div[doctorScheduleWindow]',
   standalone: true,
-  imports: [MaterialModule, ControlSelectComponent, ReactiveFormsModule, SignInBasicFormComponent, ControlCheckComponent, CommonModule,
-    FormNewModule, StepperIconComponent,
+  imports: [MaterialModule, ReactiveFormsModule, SignInBasicFormComponent, CommonModule,
+    StepperIconComponent, Forms2Module,
   ],
   templateUrl: './doctor-schedule-window.component.html',
   styleUrl: './doctor-schedule-window.component.scss'
@@ -94,26 +94,26 @@ export class DoctorScheduleWindowComponent implements OnInit {
   onSubmit() {
     this.form.submitted = true;
 
-    this.eventsService.createInSearch(this.form.payload).subscribe({
-      next: response => {
+    // this.eventsService.createInSearch(this.form.payload).subscribe({
+    //   next: response => {
 
-        // if (!this.service.selected()!.hasPatientInformationAccess) {
-        //   this.accountService.updateCurrentUser();
-        // }
+    //     // if (!this.service.selected()!.hasPatientInformationAccess) {
+    //     //   this.accountService.updateCurrentUser();
+    //     // }
 
-        // const selectedSchedule = this.selectedSchedule();
+    //     // const selectedSchedule = this.selectedSchedule();
 
-        // if (selectedSchedule) {
-        //   this.router.navigate([], {
-        //     relativeTo: this.route,
-        //     queryParams: { day: selectedSchedule.dayNumber },
-        //     queryParamsHandling: 'merge',
-        //   });
-        // }
-      },
-      error: (error: BadRequest) => {
-        this.form.error = error;
-      }
-    });
+    //     // if (selectedSchedule) {
+    //     //   this.router.navigate([], {
+    //     //     relativeTo: this.route,
+    //     //     queryParams: { day: selectedSchedule.dayNumber },
+    //     //     queryParamsHandling: 'merge',
+    //     //   });
+    //     // }
+    //   },
+    //   error: (error: BadRequest) => {
+    //     this.form.error = error;
+    //   }
+    // });
   }
 }

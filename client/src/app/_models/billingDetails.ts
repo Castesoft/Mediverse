@@ -1,5 +1,5 @@
-import { FormInfo } from "src/app/_forms/form2";
-import { Entity } from "src/app/_models/types";
+import { Entity } from "src/app/_models/base/entity";
+import { FormInfo } from "src/app/_models/forms/formTypes";
 
 export class BillingDetails {
   userAddresses: UserAddress[] = [];

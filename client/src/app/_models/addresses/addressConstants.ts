@@ -5,6 +5,7 @@ import { AddressParams } from './addressParams';
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { Column } from "src/app/_models/base/column";
+import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 
 
 export const addressInfo: FormInfo<Address> = {
@@ -27,7 +28,7 @@ export const addressInfo: FormInfo<Address> = {
 } as FormInfo<Address>;
 
 export const addressFiltersFormInfo: FormInfo<AddressParams> = {
-
+  ...baseFilterFormInfo,
 } as FormInfo<AddressParams>;
 
 export const sortOptions: SelectOption[] = Object.values({

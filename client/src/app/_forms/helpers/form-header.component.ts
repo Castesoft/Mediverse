@@ -1,10 +1,12 @@
-import { DecimalPipe, NgClass } from "@angular/common";
-import { Component, HostBinding, HostListener, inject, input, model, output } from "@angular/core";
-import { Router, RouterModule } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { Component, inject, input, model, output, HostBinding, HostListener } from "@angular/core";
+import { RouterModule, Router } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { FormUse, NamingSubject, View } from "src/app/_models/types";
-import { EnvService } from "src/app/_services/env.service";
+import { NamingSubject } from "src/app/_models/base/namingSubject";
+import { View } from "src/app/_models/base/types";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { DevService } from "src/app/_services/dev.service";
 import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
 
@@ -122,7 +124,7 @@ export class DetailLinkComponent {
   }
   `,
   standalone: true,
-  imports: [FontAwesomeModule, DecimalPipe, DetailLinkComponent,],
+  imports: [FontAwesomeModule, CommonModule, DetailLinkComponent,],
 })
 export class FormHeaderComponent {
   dictionary = input.required<NamingSubject>();
@@ -174,7 +176,7 @@ export class DetailHeaderComponent {
   selector: 'div[detailFooter]',
   template: `
 
-  @if(dev) {
+  @if(dev.isDev() === true) {
     <span class="badge badge-phoenix me-2 badge-phoenix-primary">Validación</span>
     <div class="d-flex align-items-center flex-1">
       <fa-icon [icon]="icons.faCircle" class="me-1 pointer" [ngClass]="validation ? 'text-success' : 'text-danger'" (click)="form.toggle()"></fa-icon>
@@ -194,12 +196,12 @@ export class DetailHeaderComponent {
   </button>
   `,
   standalone: true,
-  imports: [FontAwesomeModule, NgClass,],
+  imports: [FontAwesomeModule, CommonModule,],
 })
 export class DetailFooterComponent {
   icons = inject(IconsService);
   router = inject(Router);
-  env = inject(EnvService);
+  dev = inject(DevService);
   form = inject(FormsService);
 
   use = model.required<FormUse>();
@@ -208,14 +210,10 @@ export class DetailFooterComponent {
   dictionary = input.required<NamingSubject>();
   formId = input.required<string>();
 
-  dev = false;
   validation = false;
   label: 'Desactivado' | 'Activado' = 'Desactivado';
 
   constructor() {
-    this.env.mode$.subscribe({ next: mode => {
-      this.dev = mode;
-    } });
     this.form.mode$.subscribe({ next: validation => {
       this.validation = validation;
       this.label = validation ? 'Activado' : 'Desactivado';

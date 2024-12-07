@@ -9,7 +9,7 @@ export class FormComponent2<T, U extends Entity | object, V extends FormGroup2<U
   protected route = inject(ActivatedRoute);
   protected router = inject(Router);
   protected matSnackBar = inject(MatSnackBar);
-  dev = inject(EnvService);
+  dev = inject(DevService);
 
   service: T;
   form: V;

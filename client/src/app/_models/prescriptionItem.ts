@@ -1,6 +1,7 @@
-import { SelectOption } from "src/app/_forms/form";
-import { FormGroup2, FormInfo } from "src/app/_forms/form2";
-import { Product } from "./products/product";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
+import { FormInfo } from "src/app/_models/forms/formTypes";
+import { Product } from "src/app/_models/products/product";
 
 export class PrescriptionItem {
   quantity: number | null = null;

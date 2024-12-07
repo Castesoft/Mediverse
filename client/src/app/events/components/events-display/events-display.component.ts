@@ -3,8 +3,8 @@ import { Role, View } from 'src/app/_models/types';
 import { CatalogMode } from 'src/app/_models/types';
 import { EventsService } from 'src/app/_services/events.service';
 import { CreateBtnComponent } from 'src/app/_shared/layout.module';
-import { EventsCatalogComponent } from '../events-catalog/events-catalog.component';
-import { EventsCalendarComponent } from '../events-calendar/events-calendar.component';
+import { EventsCatalogComponent } from '../events-catalog.component';
+import { EventsCalendarComponent } from '../events-calendar.component';
 
 @Component({
   selector: 'app-events-display',

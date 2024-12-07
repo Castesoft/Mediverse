@@ -1,9 +1,9 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
-import { catchError } from 'rxjs';
-import { BadRequest } from 'src/app/_models/types';
+import { HttpInterceptorFn, HttpErrorResponse } from "@angular/common/http";
+import { inject } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Router } from "@angular/router";
+import { catchError } from "rxjs";
+import { BadRequest } from "src/app/_models/forms/error";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);

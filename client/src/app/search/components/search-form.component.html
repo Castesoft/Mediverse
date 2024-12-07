@@ -11,14 +11,14 @@
           <span class="path1"></span>
           <span class="path2"></span>
         </i>
-        <div controlTypeahead3 [(control)]="form.controls.specialty" class="col"></div>
+        <div controlTypeahead3 [(fromWrapper)]="fromWrapper" [(control)]="form.controls.specialty" class="col"></div>
       </div>
       <div class="col-lg-12 d-flex align-items-center">
         <i class="ki-duotone ki-geolocation fs-1 text-gray-500 me-1">
           <span class="path1"></span>
           <span class="path2"></span>
         </i>
-        <div [(control)]="form.controls.location" controlTypeahead3 class="col"></div>
+        <div [(fromWrapper)]="fromWrapper" [(control)]="form.controls.location" controlTypeahead3 class="col"></div>
       </div>
     </div>
     <div class="text-end align-self-center">
@@ -45,7 +45,7 @@
           <span class="path1"></span>
           <span class="path2"></span>
         </i>
-        <div controlTypeahead3 [(control)]="form.controls.specialty" class="col"></div>
+        <div controlTypeahead3 [(fromWrapper)]="fromWrapper" [(control)]="form.controls.specialty" class="col"></div>
       </div>
       <div class="col-lg-6 d-flex align-items-center">
         <div
@@ -55,7 +55,7 @@
           <span class="path1"></span>
           <span class="path2"></span>
         </i>
-        <div controlTypeahead3 [(control)]="form.controls.location" class="col"></div>
+        <div controlTypeahead3 [(fromWrapper)]="fromWrapper" [(control)]="form.controls.location" class="col"></div>
       </div>
     </div>
     <div class="min-w-150px text-end">

@@ -183,7 +183,7 @@ export class AddressesTableComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   service = inject(AddressesService);
   icons = inject(IconsService);
-  dev = inject(EnvService);
+  dev = inject(DevService);
 
   data = input.required<Address[]>();
   mode = model.required<CatalogMode>();

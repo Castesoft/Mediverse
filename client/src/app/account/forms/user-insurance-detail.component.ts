@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, model, signal, effect } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Account } from "src/app/_models/account/account";
 import { View } from "src/app/_models/base/types";
 import { BadRequest } from "src/app/_models/forms/error";
@@ -17,7 +17,7 @@ import { MedicalInsuranceCompaniesService } from "src/app/medicalInsuranceCompan
   selector: 'div[userInsuranceDetail]',
   templateUrl: './user-insurance-detail.component.html',
   standalone: true,
-  imports: [ FormNewModule, CommonModule, InsuranceDocumentItemComponent ],
+  imports: [ Forms2Module, CommonModule, InsuranceDocumentItemComponent ],
 })
 export class UserInsuranceDetailComponent {
   service = inject(AccountService);

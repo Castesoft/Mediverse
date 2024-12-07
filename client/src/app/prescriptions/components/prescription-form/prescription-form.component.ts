@@ -1,16 +1,14 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, HostBinding, inject, model, ModelSignal, signal, ViewChild } from "@angular/core";
+import { Component, inject, ViewChild, HostBinding, model, ModelSignal, signal, effect } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { TabsetComponent, TabDirective } from "ngx-bootstrap/tabs";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { Subject, takeUntil } from "rxjs";
-import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Account } from "src/app/_models/account/account";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { View } from "src/app/_models/base/types";
-import { BadRequest } from "src/app/_models/forms/error";
 import { BaseForm } from "src/app/_models/forms/extensions/baseFormComponent";
 import { FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormUse } from "src/app/_models/forms/formTypes";
@@ -38,7 +36,7 @@ import { UsersService } from "src/app/users/users.config";
   imports: [
     FaIconComponent, BootstrapModule,
     EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, CommonModule,
-    UserProfilePictureComponent, FormNewModule, TableHeaderComponent,
+    UserProfilePictureComponent, Forms2Module, TableHeaderComponent,
     TooltipModule, FormsModule, ReactiveFormsModule,
   ],
   templateUrl: './prescription-form.component.html',

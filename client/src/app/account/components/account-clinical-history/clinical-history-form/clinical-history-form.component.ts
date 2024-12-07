@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, model, effect } from "@angular/core";
-import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { BadRequest } from "src/app/_models/forms/error";
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { MedicalRecord } from "src/app/_models/medicalRecords/medicalRecord";
@@ -19,7 +19,7 @@ import { SubstancesService } from "src/app/substances/substances.config";
 @Component({
   selector: 'div[clinicalHistoryForm]',
   standalone: true,
-  imports: [ CommonModule, FormNewModule, ],
+  imports: [ CommonModule, Forms2Module, ],
   templateUrl: './clinical-history-form.component.html'
 })
 export class ClinicalHistoryFormComponent {

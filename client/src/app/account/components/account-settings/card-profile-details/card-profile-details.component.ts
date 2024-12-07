@@ -1,9 +1,9 @@
 import { LayoutModule } from "@angular/cdk/layout";
 import { Component, inject, output, effect } from "@angular/core";
 import { Validators } from "@angular/forms";
-import { FormNewModule } from "src/app/_forms/_new/forms-new.module";
-import { AccountForm } from "src/app/_models/account/accountForm";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Account } from "src/app/_models/account/account";
+import { AccountForm } from "src/app/_models/account/accountForm";
 import { BadRequest } from "src/app/_models/forms/error";
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
@@ -14,7 +14,7 @@ import { UserProfilePictureComponent } from "src/app/users/components/user-profi
 @Component({
   selector: 'app-card-profile-details',
   standalone: true,
-  imports: [LayoutModule, UserProfilePictureComponent, FormNewModule, ],
+  imports: [LayoutModule, UserProfilePictureComponent, Forms2Module, ],
   templateUrl: './card-profile-details.component.html',
 })
 export class CardProfileDetailsComponent {

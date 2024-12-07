@@ -1,11 +1,12 @@
-import { HttpParams, HttpClient } from '@angular/common/http';
-import { AbstractControl, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
-import { debounceTime, finalize, map, of, switchMap, take } from 'rxjs';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { Range } from 'src/app/_models/date-range';
-import { AccountService } from 'src/app/_services/account.service';
-import { Entity, Identifiable } from 'src/app/_models/types';
-import { SelectOption } from 'src/app/_forms/form';
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { AbstractControl, AsyncValidatorFn, ValidatorFn } from "@angular/forms";
+import { BsDatepickerConfig } from "ngx-bootstrap/datepicker";
+import { debounceTime, finalize, map, of, switchMap, take } from "rxjs";
+import { Entity } from "src/app/_models/base/entity";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { Range } from "src/app/_models/date-range";
+import { AccountService } from "src/app/_services/account.service";
+import { PaginatedResponse } from "src/app/_utils/serviceHelper/pagination/paginatedResponse";
 
 export function downloadExcelFile(
   response: any,

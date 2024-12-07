@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
-import { SelectOption } from 'src/app/_forms/form';
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, signal, effect } from "@angular/core";
 import { Account } from "src/app/_models/account/account";
-import { AccountService } from 'src/app/_services/account.service';
-import { InsuranceCompanyItemComponent } from 'src/app/account/utils/insurance-company-item.component';
-import { InsuranceCompanySwitchComponent } from 'src/app/account/utils/insurance-company-switch.component';
-import { MedicalInsuranceCompaniesService } from 'src/app/medicalInsuranceCompanies/medicalInsuranceCompanies.config';
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { AccountService } from "src/app/_services/account.service";
+import { InsuranceCompanyItemComponent } from "src/app/account/utils/insurance-company-item.component";
+import { InsuranceCompanySwitchComponent } from "src/app/account/utils/insurance-company-switch.component";
+import { MedicalInsuranceCompaniesService } from "src/app/medicalInsuranceCompanies/medicalInsuranceCompanies.config";
 
 @Component({
   selector: 'app-account-insurances',

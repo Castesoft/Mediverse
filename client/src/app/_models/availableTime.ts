@@ -1,4 +1,4 @@
-import { FormInfo } from "src/app/_forms/form2";
+import { FormInfo } from "src/app/_models/forms/formTypes";
 
 export class AvailableTime {
   start: string | null = null;
