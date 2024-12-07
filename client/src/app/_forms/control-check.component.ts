@@ -1,22 +1,22 @@
 import { Component, ElementRef, inject, input, Input, OnInit, Renderer2, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { KeyValuePipe, NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
-import { FormsService } from 'src/app/_services/forms.service';
+import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   host: { class: 'fv-row mb-9', },
   selector: 'div[controlCheck]',
   templateUrl: './control-check.component.html',
   standalone: true,
-  imports: [ KeyValuePipe, NgClass, ReactiveFormsModule, HelpBlockComponent, InvalidFeedbackComponent, ],
+  imports: [ CommonModule, ReactiveFormsModule, HelpBlockComponent, InvalidFeedbackComponent, ],
 })
 export class ControlCheckComponent implements ControlValueAccessor, OnInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   errors = input<{ [key: string]: string }>({});
-  formText = input<string>();
+  formText = input<string | null>(null);
   submitted = input<boolean>(false);
 
   @Input() id?: string;

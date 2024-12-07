@@ -1,4 +1,4 @@
-import { doctorResultInfo } from "../doctorResults/doctorResultConstants";
+import { doctorResultInfo } from "../doctors/doctorResults/doctorResultConstants";
 import { FormInfo } from "src/app/_models/forms/formTypes";
 import { Search } from "src/app/_models/search/search";
 

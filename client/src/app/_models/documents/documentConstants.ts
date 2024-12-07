@@ -1,23 +1,8 @@
-import { FormInfo } from "src/app/_forms/form2";
+import { Document } from "src/app/_models/documents/document";
+import { FormInfo } from "src/app/_models/forms/formTypes";
 
-export class Document {
-  url: string | null = null;
-  publicId: string | null = null;
-  size: number | null = null;
-  thumbnailUrl: string | null = null;
-  thumbnailPublicId: string | null = null;;
-  thumbnailSize: number | null = null;
-  name: string | null = null;
-  description: string | null = null;
-  id: number | null = null;
-  createdAt: Date | null = null;
 
-  constructor(init?: Partial<Document>) {
-    Object.assign(this, init);
-  }
-}
-
-export const documentInfo: FormInfo<Document> = {
+export const documentFormInfo: FormInfo<Document> = {
   createdAt: { label: 'Creado en', type: 'date' },
   description: { label: 'Descripción', type: 'textarea' },
   id: { label: 'ID', type: 'number' },

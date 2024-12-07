@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, model, signal } from "@angular/core";
+import { Component, effect, inject, model } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { SelectOption } from "src/app/_forms/form";
+import { SelectOption } from "src/app/_models/base/selectOption";
 import { AccountService } from "src/app/_services/account.service";
 
 @Component({

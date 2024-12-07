@@ -1,7 +1,7 @@
 import { HttpParams } from "@angular/common/http";
 import { ParamMap, Params } from "@angular/router";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { DoctorResult } from "../doctorResults/doctorResult";
+import { DoctorResult } from "../doctors/doctorResults/doctorResult";
 
 
 export class Search {

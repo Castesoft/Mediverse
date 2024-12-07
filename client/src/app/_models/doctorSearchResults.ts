@@ -1,6 +1,6 @@
-import { FormInfo } from "src/app/_forms/form2";
-import { doctorResultInfo } from "./doctorResults/doctorResultConstants";
-import { DoctorResult } from "./doctorResults/doctorResult";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
+import { doctorResultInfo } from "src/app/_models/doctors/doctorResults/doctorResultConstants";
+import { FormInfo } from "src/app/_models/forms/formTypes";
 
 export class SearchResults {
   doctors: DoctorResult[] = [];

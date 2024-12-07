@@ -11,7 +11,7 @@ import { ValidationService } from "src/app/_services/validation.service";
   imports: [OptionalSpan3Component, ],
 })
 export class GroupLabelComponent {
-  service = inject(ValidationService);
+  validation = inject(ValidationService);
 
   group = model.required<FormGroup2<SelectOptionPair>>();
 

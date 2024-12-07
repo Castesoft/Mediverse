@@ -1,5 +1,5 @@
 @if(form.error) {
-  <div errorsAlert3 [(form)]="form"></div>
+  <div errorsAlert3 [(error)]="form.error"></div>
 }
 
 <form class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" [id]="form.id" (ngSubmit)="onSubmit()"

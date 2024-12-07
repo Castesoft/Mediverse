@@ -1,5 +1,5 @@
-import { FormInfo } from "src/app/_forms/form2";
 import { AvailableTime, availableTimeInfo } from "src/app/_models/availableTime";
+import { FormInfo } from "src/app/_models/forms/formTypes";
 
 export class AvailableDay {
   day: string | null = null;

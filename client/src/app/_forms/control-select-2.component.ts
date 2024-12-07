@@ -1,13 +1,14 @@
-import { Component, effect, inject, model, OnDestroy } from "@angular/core";
-import { CommonModule, DatePipe } from "@angular/common";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
-import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
-import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
-import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
-import { FormsService } from "src/app/_services/forms.service";
+import { DatePipe, CommonModule } from "@angular/common";
+import { Component, OnDestroy, inject, model, effect } from "@angular/core";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Subject } from "rxjs";
-import { Control, SelectOption } from "src/app/_forms/form";
+import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
+import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
+import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
+import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { Control } from "src/app/_models/forms/deprecated/control";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   host: { class: "fw-semibold mb-0 w-100" },
@@ -28,13 +29,12 @@ import { Control, SelectOption } from "src/app/_forms/form";
 export class ControlSelect2Component implements OnDestroy {
   private ngUnsubscribe = new Subject<void>();
 
-  service = inject(FormsService);
+  validation = inject(ValidationService);
   control = model.required<Control<SelectOption>>();
-  validation = false;
 
   constructor() {
     effect(() => {
-      this.subscribeToValidationMode();
+      this.control.set(this.control().setValidation(this.validation.active()));
     })
   }
 
@@ -42,13 +42,6 @@ export class ControlSelect2Component implements OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
-  private subscribeToValidationMode = (): void => {
-    this.service.mode$.subscribe({
-      next: validation =>
-        this.control.set(this.control().setValidation(validation))
-    });
-  };
 
   optionChanged(option: string): void {
     const value: SelectOption = JSON.parse(option);

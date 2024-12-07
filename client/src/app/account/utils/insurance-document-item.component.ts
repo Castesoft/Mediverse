@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, model } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Document } from "src/app/_models/document";
+import { Document } from "src/app/_models/documents/document";
 import { FileSizePipe } from "src/app/_pipes/file-size.pipe";
 import { AccountService } from "src/app/_services/account.service";
 

@@ -1,12 +1,12 @@
-import { NgClass, KeyValuePipe, NgStyle } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, inject, model, effect } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { Control } from "src/app/_forms/form";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
 import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
 import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
-import { FormsService } from "src/app/_services/forms.service";
+import { Control } from "src/app/_models/forms/deprecated/control";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   host: { class: 'fw-semibold mb-0 w-100', },
@@ -16,7 +16,7 @@ import { FormsService } from "src/app/_services/forms.service";
 <label [for]="control().id" class="form-label fw-semibold ">
   {{ control().label }}
   {{ control().required ? '*' : null}}
-  @if(control().optional){@if (service.isOptional(control().formControl) || !control().isReadonly) {
+  @if(control().optional){@if (validation.isOptional(control().formControl) || !control().isReadonly) {
   <span optionalSpan></span>
   }}
   @if (control().isNew) {
@@ -48,19 +48,17 @@ import { FormsService } from "src/app/_services/forms.service";
 
   `,
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, NgStyle, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent]
+  imports: [ReactiveFormsModule, CommonModule, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent]
 })
 export class ControlTextarea2Component {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   control = model.required<Control<string>>();
-
-  validation = false;
 
   constructor() {
 
     effect(() => {
-      this.service.mode$.subscribe({ next: validation => this.control.set(this.control().setValidation(validation)) });
+      this.control.set(this.control().setValidation(this.validation.active()));
     })
 
   }

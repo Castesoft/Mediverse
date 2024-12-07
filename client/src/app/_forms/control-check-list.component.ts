@@ -1,19 +1,19 @@
 import { Component, Input, inject, input } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
-import { KeyValuePipe } from '@angular/common';
-import { FormsService } from 'src/app/_services/forms.service';
+import { CommonModule } from '@angular/common';
 import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
 import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
 import { InvalidFeedbackComponent } from './helpers/invalid-feedback.component';
+import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   selector: '[controlCheckList]',
   templateUrl: './control-check-list.component.html',
   standalone: true,
-  imports: [KeyValuePipe, OptionalSpanComponent, NewBadgeComponent, InvalidFeedbackComponent]
+  imports: [CommonModule, OptionalSpanComponent, NewBadgeComponent, InvalidFeedbackComponent]
 })
 export class ControlCheckListComponent implements ControlValueAccessor {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   isNew = input<boolean>(false);
 
@@ -72,7 +72,7 @@ export class ControlCheckListComponent implements ControlValueAccessor {
       return this.isOptionSelected(option.id);
     }
 
-    
+
     const selectedOptions = (this.control.value || '').split(',').filter((v: string) => !!v);
     return selectedOptions.includes(option.toString());
   }

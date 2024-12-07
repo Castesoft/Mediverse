@@ -5,6 +5,10 @@ export const sectionDictionary: SectionDictionary = {
     label: 'Admin',
     route: '/admin',
   },
+  orders: {
+    label: 'Órdenes',
+    route: '/admin/orders',
+  },
   nurses: {
     label: 'Enfermeras',
     route: '/admin/nurses',

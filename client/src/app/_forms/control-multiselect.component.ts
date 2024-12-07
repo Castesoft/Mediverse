@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, Self, inject, 
 import Choices from 'choices.js';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MultiselectOption } from 'src/app/_models/types';
-import { FormsService } from 'src/app/_services/forms.service';
+import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   selector: '[controlMultiselect]',
@@ -11,7 +11,7 @@ import { FormsService } from 'src/app/_services/forms.service';
   imports: [ ReactiveFormsModule ],
 })
 export class ControlMultiselectComponent implements ControlValueAccessor, OnInit, AfterViewInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
   private renderer = inject(Renderer2);
   private el = inject(ElementRef);
 

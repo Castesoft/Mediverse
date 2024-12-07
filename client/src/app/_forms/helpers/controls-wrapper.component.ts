@@ -1,7 +1,7 @@
 import { NgClass } from "@angular/common";
-import { Component, effect, HostBinding, inject, input, OnInit } from "@angular/core";
+import { Component, effect, HostBinding, inject, input } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ControlOrientation, ControlRows } from "src/app/_forms/form";
+import { ControlRows, ControlOrientation } from "src/app/_models/forms/formTypes";
 import { IconsService } from "src/app/_services/icons.service";
 
 @Component({

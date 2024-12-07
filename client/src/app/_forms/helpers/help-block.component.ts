@@ -7,7 +7,7 @@ import { Component, OnInit, input } from "@angular/core";
   standalone: true,
 })
 export class HelpBlockComponent implements OnInit {
-  formText = input.required<string | undefined>();
+  formText = input.required<string | null>();
   controlName = input.required<string>();
 
   id!: string;

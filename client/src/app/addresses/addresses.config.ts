@@ -1,9 +1,53 @@
-import { Injectable } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Component, inject, Injectable, ModelSignal, model, effect, NgModule } from "@angular/core";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { RouterModule } from "@angular/router";
+import { ControlsModule } from "src/app/_forms/controls.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Address } from "src/app/_models/addresses/address";
 import { addressDictionary, addressColumns } from "src/app/_models/addresses/addressConstants";
-import { AddressFiltersForm } from "src/app/_models/addresses/addressForm";
 import { AddressParams } from "src/app/_models/addresses/addressParams";
+import { CatalogMode, View } from "src/app/_models/base/types";
+import { BaseForm, BaseDetail, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
+import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
+import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
+import { AddressesCatalogComponent } from "src/app/addresses/components/addresses-catalog.component";
+import { AddressForm } from "src/app/_models/addresses/addressForm";
+import { AddressFiltersForm } from "src/app/_models/addresses/addressFiltersForm";
+import { ZipcodeAddressOption } from "src/app/_models/billingDetails";
+
+@Component({
+  selector: 'addresses-catalog-modal',
+  template: `
+  @defer {
+    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+    <mat-dialog-content>
+    <!-- <div
+      addresssCatalog
+      [(mode)]="data.mode"
+      [(key)]="data.key"
+      [(view)]="data.view"
+      [(isCompact)]="data.isCompact"
+      [(item)]="data.item"
+      [(params)]="data.params"
+    ></div> -->
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </mat-dialog-actions>
+}
+`,
+  standalone: true,
+  imports: [AddressesCatalogComponent, MaterialModule, CdkModule,],
+})
+export class AddressesCatalogModalComponent {
+  data = inject<CatalogModalType<Address, AddressParams>>(MAT_DIALOG_DATA);
+}
 
 @Injectable({
   providedIn: 'root',
@@ -12,4 +56,316 @@ export class AddressesService extends ServiceHelper<Address, AddressParams, Addr
   constructor() {
     super(AddressParams, 'addresses', addressDictionary, addressColumns);
   }
+
+  showCatalogModal(address: MouseEvent, key: string, mode: CatalogMode, view: View): void {
+    this.matDialog.open<
+      AddressesCatalogModalComponent,
+      CatalogModalType<Address, AddressParams>
+    >(AddressesCatalogModalComponent, {
+      data: {
+        isCompact: true,
+        key: key,
+        mode: mode,
+        params: new AddressParams(key),
+        view: view,
+        title: this.dictionary.title,
+        item: null,
+      },
+      disableClose: true,
+      hasBackdrop: false,
+      panelClass: [ "window" ]
+    });
+  };
+
+  clickLink(
+    item: Address | null = null,
+    key: string | null = null,
+    use: FormUse = 'detail',
+    view: View,
+    title: string | null = null
+  )
+  {
+  if (view === 'modal') {
+    this.matDialog.open<
+      AddressDetailModalComponent,
+      DetailModalType<Address>
+    >(AddressDetailModalComponent, {
+      data: {
+        item: item,
+        key: key,
+        use: use,
+        view: 'modal',
+        title: this.getFormHeaderText(use, item),
+      },
+      disableClose: true,
+      hasBackdrop: false,
+      panelClass: [ 'window' ]
+    });
+
+  } else {
+    switch (use) {
+      case 'create':
+        this.router.navigate([this.dictionary.createRoute]);
+        break;
+      case 'edit':
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
+        break;
+      case 'detail':
+        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
+        break;
+      }
+    }
+  }
+
+  getAddressesByZipcode(zipcode: string) {
+    return this.http.get<ZipcodeAddressOption[]>(`${this.baseUrl}zipcodes/${zipcode}`);
+  }
+
 }
+
+@Component({
+  selector: "[addressForm]",
+  // template: ``,
+  templateUrl: './address-form.component.html',
+  standalone: true,
+  imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]
+})
+export class AddressFormComponent
+  extends BaseForm<
+    Address, AddressParams, AddressFiltersForm, AddressForm, AddressesService
+  >
+  implements FormInputSignals<Address> {
+  item: ModelSignal<Address | null> = model.required();
+  use: ModelSignal<FormUse> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+
+  constructor() {
+    super(AddressesService, AddressForm);
+
+    effect(() => {
+      this.form
+        .setUse(this.use())
+        .setValidation(this.validation.active());
+
+      const value = this.item();
+
+      if (value !== null) {
+        this.form.patchValue(value);
+      }
+    });
+  }
+}
+
+@Component({
+  selector: 'div[addressDetail]',
+  template: `
+  <div container3 [type]="'inline'">
+    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
+  </div>
+  <div addressForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+  `,
+  standalone: true,
+  imports: [AddressFormComponent, ControlsModule, Forms2Module,],
+})
+export class AddressDetailComponent
+  extends BaseDetail<Address, AddressParams, AddressFiltersForm, AddressesService>
+  implements DetailInputSignals<Address>
+{
+  use: ModelSignal<FormUse> = model.required();
+  view: ModelSignal<View> = model.required();
+  item: ModelSignal<Address | null> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  title: ModelSignal<string | null> = model.required();
+
+  constructor() {
+    super(AddressesService);
+  }
+
+}
+
+@Component({
+  selector: 'address-detail-modal',
+  template: `
+  @defer {
+    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+    <mat-dialog-content>
+    <div
+      addressDetail
+      [(use)]="data.use"
+      [(view)]="data.view"
+      [(key)]="data.key"
+      [(item)]="data.item"
+      [(title)]="data.title"
+    ></div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </mat-dialog-actions>
+}
+`,
+  standalone: true,
+  imports: [AddressDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+})
+export class AddressDetailModalComponent {
+  data = inject<DetailModalType<Address>>(MAT_DIALOG_DATA);
+}
+
+
+@Component({
+  selector: 'addresses-route',
+  standalone: false,
+  template: `
+  <router-outlet></router-outlet>
+  `,
+})
+export class AddressesComponent {}
+
+@Component({
+  selector: 'addresses-catalog-route',
+  template: `
+  <div
+    addressesCatalog
+    [(mode)]="mode"
+    [(key)]="key"
+    [(view)]="view"
+    [(isCompact)]="compact.isCompact"
+    [(item)]="item"
+    [(params)]="params"
+  ></div>
+  `,
+  standalone: true,
+  imports: [RouterModule, AddressesCatalogComponent, ],
+})
+export class CatalogComponent extends BaseRouteCatalog<Address, AddressParams, AddressFiltersForm, AddressesService> {
+  constructor() {
+    super(AddressesService, 'addresses');
+
+    effect(() => {
+      console.log('key', this.key());
+    });
+  }
+}
+
+@Component({
+  selector: 'address-detail-route',
+  template: `<div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  standalone: true,
+  imports: [RouterModule, AddressDetailComponent,],
+})
+export class DetailComponent extends BaseRouteDetail<Address> {
+  constructor() {
+    super('addresses', 'detail');
+
+    effect(() => {
+      this.route.paramMap.subscribe({
+        next: params => {
+          if (params.has('id')) {
+            this.id.set(+params.get('id')!);
+          }
+        },
+      });
+      this.route.data.subscribe({
+        next: (data) => {
+          this.item.set(data['item']);
+        },
+      });
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+    });
+  }
+}
+
+@Component({
+  selector: 'address-edit-route',
+  template: `<div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  standalone: true,
+  imports: [AddressDetailComponent, RouterModule,],
+})
+export class EditComponent extends BaseRouteDetail<Address> {
+  constructor() {
+    super('addresses', 'edit');
+
+    effect(() => {
+      this.route.paramMap.subscribe({
+        next: params => {
+          if (params.has('id')) {
+            this.id.set(+params.get('id')!);
+          }
+        },
+      });
+      this.route.data.subscribe({
+        next: (data) => {
+          this.item.set(data['item']);
+        },
+      });
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+    });
+  }
+}
+
+@Component({
+  selector: 'address-new-route',
+  template: `<div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  standalone: true,
+  imports: [AddressDetailComponent, RouterModule,],
+})
+export class NewComponent extends BaseRouteDetail<Address> {
+  constructor() {
+    super('addresses', 'create');
+
+    effect(() => {
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+    });
+  }
+}
+
+@NgModule({
+  imports: [RouterModule.forChild([
+    {
+      path: '', title: 'Ganaderías', data: { breadcrumb: 'Ganaderías', },
+      component: AddressesComponent, runGuardsAndResolvers: 'always',
+      children: [
+        { path: '', component: CatalogComponent, title: 'Catálogo de ganaderías', data: { breadcrumb: 'Catálogo', }, },
+        { path: 'nuevo', component: NewComponent, title: 'Crear nueva ganadería', data: { breadcrumb: 'Nuevo', }, },
+        {
+          path: ':id', data: { breadcrumb: 'Detalle', },
+          component: DetailComponent,
+          resolve: { item: createItemResolver(AddressesService) },
+        },
+        {
+          path: ':id/editar', data: { breadcrumb: 'Editar', },
+          component: EditComponent,
+          resolve: { item: createItemResolver(AddressesService) },
+        },
+      ],
+    },
+  ])],
+  exports: [RouterModule]
+})
+export class AddressesRoutingModule { }
+
+@NgModule({
+  declarations: [
+    AddressesComponent,
+  ],
+  imports: [ CommonModule, AddressesRoutingModule, ]
+})
+export class AddressesModule { }

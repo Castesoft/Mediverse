@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, model } from "@angular/core";
-import { FormUse } from "src/app/_models/types";
-import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { UserMedicalInsuranceCompany } from "src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
 import { AccountService } from "src/app/_services/account.service";
 
 @Component({

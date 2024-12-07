@@ -1,26 +1,8 @@
-import { FormInfo } from "src/app/_forms/form2";
+import { DoctorClinic } from "src/app/_models/doctors/doctorClinics/doctorClinic";
+import { FormInfo } from "src/app/_models/forms/formTypes";
 
-export class DoctorClinic {
-  id: number | null = null;
-  isMain: boolean = false;
-  street: string | null = null;
-  neighborhood: string | null = null;
-  exteriorNumber: string | null = null;
-  interiorNumber: string | null = null;
-  city: string | null = null;
-  state: string | null = null;
-  country: string | null = null;
-  zipcode: string | null = null;
-  latitude: number | null = null;
-  longitude: number | null = null;
-  logoUrl: string | null = null;
 
-  constructor(init?: Partial<DoctorClinic>) {
-    Object.assign(this, init);
-  }
-}
-
-export const doctorClinicInfo: FormInfo<DoctorClinic> = {
+export const doctorClinicFormInfo: FormInfo<DoctorClinic> = {
   city: { label: 'Ciudad', type: 'text' },
   country: { label: 'País', type: 'text' },
   exteriorNumber: { label: 'Número exterior', type: 'text' },

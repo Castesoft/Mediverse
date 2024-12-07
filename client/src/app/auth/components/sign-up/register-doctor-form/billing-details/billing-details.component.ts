@@ -5,8 +5,8 @@ import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
-import { AddressesService } from 'src/app/_services/addresses.service';
 import { UtilsService } from 'src/app/_services/utils.service';
+import { AddressesService } from 'src/app/addresses/addresses.config';
 import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-billing-details',

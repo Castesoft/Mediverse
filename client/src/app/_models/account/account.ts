@@ -1,12 +1,12 @@
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { Doctor } from "src/app/_models/doctor";
-import { DoctorClinic } from "src/app/_models/doctorClinic";
-import { MedicalLicense } from "src/app/_models/medicalLicense";
+import { Doctor } from "../doctors/doctor";
+import { DoctorClinic } from "../doctors/doctorClinics/doctorClinic";
+import { MedicalLicense } from "../medicalLicenses/medicalLicense";
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 import { Role } from "src/app/_models/types";
-import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
-import { WorkSchedule } from "src/app/_models/workSchedule";
-import { WorkScheduleSettings } from "src/app/_models/workScheduleSettings";
+import { UserMedicalInsuranceCompany } from "../users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
+import { WorkSchedule } from "../workSchedules/workSchedule";
+import { WorkScheduleSettings } from "../workSchedules/workScheduleSettings/workScheduleSettings";
 
 
 export class Account {

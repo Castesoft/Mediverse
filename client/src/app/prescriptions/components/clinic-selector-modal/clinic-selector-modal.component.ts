@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { AccountService } from 'src/app/_services/account.service';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 import { CommonModule } from '@angular/common';
-import { DoctorClinic } from 'src/app/_models/doctorClinic';
+import { DoctorClinic } from "src/app/_models/doctors/doctorClinics/doctorClinic";
 
 @Component({
   selector: 'app-clinic-selector-modal',

@@ -19,11 +19,13 @@ export class FormBuilder3Component {
   controls = model.required<FormControl2<any>[]>();
   cols = input<ControlRows>("responsive");
 
+  gap = input<any>();
+
   orientation = computed(() => (this.controls()[0].root as FormGroup2<any>).orientation!);
 
   constructor() {
     effect(() => {
-      
+
     })
   }
 }

@@ -1,7 +1,7 @@
 import { CommonModule, KeyValuePipe } from "@angular/common";
 import { Component, effect, model } from "@angular/core";
 import { AbstractControl, FormControl } from "@angular/forms";
-import { ControlErrors } from "src/app/_forms/form";
+import { ControlErrors } from "src/app/_models/forms/formTypes";
 
 @Component({
   host: { class: '', },

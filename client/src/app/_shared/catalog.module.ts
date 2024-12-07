@@ -1,5 +1,6 @@
 import { Component, input, model, NgModule } from '@angular/core';
-import { CatalogMode, NamingSubject } from 'src/app/_models/types';
+import { NamingSubject } from 'src/app/_models/base/namingSubject';
+import { CatalogMode } from 'src/app/_models/base/types';
 
 @Component({
   host: { class: 'mb-4' },

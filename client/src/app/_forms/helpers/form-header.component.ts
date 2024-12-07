@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, model, output, HostBinding, HostListener } from "@angular/core";
+import { Component, inject, input, model, output, HostBinding, HostListener, effect, signal } from "@angular/core";
 import { RouterModule, Router } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -7,8 +7,8 @@ import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { View } from "src/app/_models/base/types";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { DevService } from "src/app/_services/dev.service";
-import { FormsService } from "src/app/_services/forms.service";
 import { IconsService } from "src/app/_services/icons.service";
+import { ValidationService } from "src/app/_services/validation.service";
 
 export type DetailActions = 'edit' | 'cancel' | 'delete' | 'create';
 
@@ -179,8 +179,8 @@ export class DetailHeaderComponent {
   @if(dev.isDev() === true) {
     <span class="badge badge-phoenix me-2 badge-phoenix-primary">Validación</span>
     <div class="d-flex align-items-center flex-1">
-      <fa-icon [icon]="icons.faCircle" class="me-1 pointer" [ngClass]="validation ? 'text-success' : 'text-danger'" (click)="form.toggle()"></fa-icon>
-      <span class="fw-bold fs-9 text-body pointer" (click)="form.toggle()">{{label}}</span>
+      <fa-icon [icon]="icons.faCircle" class="me-1 pointer" [ngClass]="validation ? 'text-success' : 'text-danger'" (click)="validation.toggle()"></fa-icon>
+      <span class="fw-bold fs-9 text-body pointer" (click)="validation.toggle()">{{label()}}</span>
     </div>
   } @else {
     <div class="d-flex flex-1"></div>
@@ -202,7 +202,7 @@ export class DetailFooterComponent {
   icons = inject(IconsService);
   router = inject(Router);
   dev = inject(DevService);
-  form = inject(FormsService);
+  validation = inject(ValidationService);
 
   use = model.required<FormUse>();
   view = model.required<View>();
@@ -210,13 +210,11 @@ export class DetailFooterComponent {
   dictionary = input.required<NamingSubject>();
   formId = input.required<string>();
 
-  validation = false;
-  label: 'Desactivado' | 'Activado' = 'Desactivado';
+  label = signal<'Desactivado' | 'Activado'>('Desactivado');
 
   constructor() {
-    this.form.mode$.subscribe({ next: validation => {
-      this.validation = validation;
-      this.label = validation ? 'Activado' : 'Desactivado';
-    }});
+    effect(() => {
+      this.label.set(this.validation.active() ? 'Activado' : 'Desactivado');
+    });
   }
 }

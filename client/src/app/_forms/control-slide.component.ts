@@ -1,16 +1,16 @@
-import { Component, effect, inject, model } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
-import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import { FormsService } from 'src/app/_services/forms.service';
-import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
-import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
-import { Control } from 'src/app/_forms/form';
-import { LegacyControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
-import { InputComponent } from 'src/app/_forms/helpers/input.component';
-import { CommonModule } from '@angular/common';
-import { CdkModule } from 'src/app/_shared/cdk.module';
-import { MaterialModule } from 'src/app/_shared/material.module';
+import { CommonModule } from "@angular/common";
+import { Component, inject, model, effect } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
+import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
+import { InputComponent } from "src/app/_forms/helpers/input.component";
+import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
+import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
+import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
+import { Control } from "src/app/_models/forms/deprecated/control";
+import { ValidationService } from "src/app/_services/validation.service";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
 
 @Component({
   host: { class: 'fw-semibold mb-0 w-100 text-body' },
@@ -58,18 +58,13 @@ import { MaterialModule } from 'src/app/_shared/material.module';
   ],
 })
 export class ControlSlideComponent {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   control = model.required<Control<boolean>>();
 
-  validation = false;
-
   constructor() {
     effect(() => {
-      this.service.mode$.subscribe({
-        next: (validation) =>
-          this.control.set(this.control().setValidation(validation)),
-      });
+      this.control.set(this.control().setValidation(this.validation.active()));
     });
   }
 }

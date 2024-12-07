@@ -5,7 +5,6 @@ import { PopoverModule } from "ngx-bootstrap/popover";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.component";
 import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
-import { EventsService } from "src/app/_services/events.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { EventParams } from "../_models/events/eventParams";
 import { Event } from "../_models/events/event";
@@ -15,7 +14,8 @@ import { AlertModule } from "ngx-bootstrap/alert";
 import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
 import { EventSelectDisplayCardComponent } from "src/app/events/event-select-display-card.component";
-import { EventSummary } from "src/app/_models/eventSummary";
+import { EventSummary } from "../_models/events/eventSummary/eventSummary";
+import { EventsService } from "src/app/events/events.config";
 
 interface EventTypeaheadOptions extends TypeaheadComplexOption {
   data: EventSummary,
@@ -77,12 +77,12 @@ export class EventSelectTypeaheadComponent implements OnInit, OnChanges {
   }
 
   private subscribeToSelectedEvent(): void {
-    this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (event) => {
-        this.item.set(event || null);
-        this.setInputStatusAndValue();
-      }
-    });
+    // this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    //   next: (event) => {
+    //     this.item.set(event || null);
+    //     this.setInputStatusAndValue();
+    //   }
+    // });
   }
 
   private initForm = (): void => {
@@ -95,15 +95,15 @@ export class EventSelectTypeaheadComponent implements OnInit, OnChanges {
 
     eventParams.search = formValue.eventTypeahead;
 
-    this.eventSummaries$ = this.service.getSummaryByValue(this.key(), eventParams)
-      .pipe(map((response: EventSummary[]) => {
-        this.events = response;
+    // this.eventSummaries$ = this.service.getSummaryByValue(this.key(), eventParams)
+    //   .pipe(map((response: EventSummary[]) => {
+    //     this.events = response;
 
-        return response.map((event: EventSummary) => {
-            return { name: event.patient?.fullName ?? '', value: event.id, data: event };
-          }
-        );
-      }));
+    //     return response.map((event: EventSummary) => {
+    //         return { name: event.patient?.fullName ?? '', value: event.id, data: event };
+    //       }
+    //     );
+    //   }));
   };
 
   private setInputStatusAndValue = () => {
@@ -154,13 +154,13 @@ export class EventSelectTypeaheadComponent implements OnInit, OnChanges {
     if (!data.item.value) return;
 
     this.loading = true;
-    this.service.getById(data.item.value)
-      .pipe(finalize(() => {
-        this.loading = false;
-      }))
-      .subscribe((event) => {
-        this.service.setSelected$(this.key(), event);
-      });
+    // this.service.getById(data.item.value)
+    //   .pipe(finalize(() => {
+    //     this.loading = false;
+    //   }))
+    //   .subscribe((event) => {
+    //     this.service.setSelected$(this.key(), event);
+    //   });
   };
 
   onTypeaheadLoading = (loading: boolean) => this.loading = loading;

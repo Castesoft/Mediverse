@@ -11,7 +11,7 @@ import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Search } from "src/app/_models/search/search";
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 import { SearchFormComponent } from 'src/app/search/components/search-form.component';
-import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchAuthComponent } from 'src/app/search/components/search-auth.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Subject, takeUntil } from 'rxjs';

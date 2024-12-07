@@ -1,7 +1,7 @@
 import { AvailableDay } from "src/app/_models/availableDay";
 import { Options } from "src/app/_models/base/options";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { DoctorResult } from "../doctorResults/doctorResult";
+import { DoctorResult } from "../doctors/doctorResults/doctorResult";
 import { doctorScheduleFormInfo } from "./doctorScheduleConstants";
 import { DoctorSchedule } from "src/app/_models/doctorSchedules/doctorSchedule";
 import { DoctorScheduleFormPayload } from "src/app/_models/doctorSchedules/doctorScheduleFormPayload";

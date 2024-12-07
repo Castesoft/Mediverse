@@ -1,13 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, OnInit, effect, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { PasswordResetForm } from 'src/app/_models/account';
 import { FormErrorModalService } from 'src/app/_services/form-error-modal.service';
 import { UtilsService } from 'src/app/_services/utils.service';
-import { FormsService } from 'src/app/_services/forms.service';
 import { AccountService } from 'src/app/_services/account.service';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
+import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   selector: '[passwordResetForm]',
@@ -15,24 +15,19 @@ import { SnackbarService } from 'src/app/_services/snackbar.service';
   standalone: true,
   imports: [ RouterModule, ReactiveFormsModule, FormsModule, InputControlComponent,  ],
 })
-export class PasswordResetFormComponent implements OnInit {
+export class PasswordResetFormComponent {
   utils = inject(UtilsService);
-  private fs = inject(FormsService);
+  private validation = inject(ValidationService);
   private errorModal = inject(FormErrorModalService);
   private accountService = inject(AccountService);
   private snackbarService = inject(SnackbarService)
 
 
   form = new PasswordResetForm();
-  validationMode = false;
 
-  ngOnInit(): void {
-    this.fs.mode$.subscribe({
-      next: mode => {
-        console.log('mode', mode);
-        this.validationMode = mode;
-        this.form.setValidators(mode);
-      }
+  constructor() {
+    effect(() => {
+      this.form.setValidators(this.validation.active());
     });
   }
 

@@ -5,10 +5,10 @@ import { ControlSelectComponent } from 'src/app/_forms/control-select.component'
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
-import { Specialty } from 'src/app/_models/specialty';
+import { Specialty } from 'src/app/_models/specialties/specialty';
 import { AccountService } from 'src/app/_services/account.service';
-import { AddressesService } from 'src/app/_services/addresses.service';
 import { UtilsService } from 'src/app/_services/utils.service';
+import { AddressesService } from 'src/app/addresses/addresses.config';
 
 @Component({
   selector: 'app-account-details',

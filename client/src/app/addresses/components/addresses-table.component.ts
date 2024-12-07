@@ -1,36 +1,22 @@
-import { CommonModule } from '@angular/common';
-import {
-  Component, InputSignal,
-  ModelSignal,
-  OnDestroy,
-  OnInit,
-  effect,
-  inject,
-  input,
-  model
-} from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { createId } from '@paralleldrive/cuid2';
-import { Subject, takeUntil } from 'rxjs';
-import { ControlsModule } from 'src/app/_forms/controls.module';
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, ModelSignal, model, OnDestroy, inject, input, effect } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { createId } from "@paralleldrive/cuid2";
+import { Subject } from "rxjs";
+import { ControlsModule } from "src/app/_forms/controls.module";
 import { Address } from "src/app/_models/addresses/address";
-import {
-  CatalogMode,
-  ITableMenu,
-  TableMenu,
-  TableRow,
-  View,
-} from 'src/app/_models/types';
-import { EnvService } from 'src/app/_services/env.service';
-import { IconsService } from 'src/app/_services/icons.service';
-import { CdkModule } from 'src/app/_shared/cdk.module';
-import { MaterialModule } from 'src/app/_shared/material.module';
-import { TableModule } from 'src/app/_shared/table/table.module';
-import {
-  AddressesService,
-} from 'src/app/addresses/addresses.config';
-import { AddressParams } from 'src/app/_models/addresses/addressParams';
+import { AddressParams } from "src/app/_models/addresses/addressParams";
+import { CatalogMode, View } from "src/app/_models/base/types";
+import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
+import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
+import { TableRow } from "src/app/_models/tables/tableRow";
+import { DevService } from "src/app/_services/dev.service";
+import { IconsService } from "src/app/_services/icons.service";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { TableModule } from "src/app/_shared/table/table.module";
+import { AddressesService } from "src/app/addresses/addresses.config";
 
 @Component({
   selector: 'div[addressesTableMenu]',
@@ -83,7 +69,7 @@ export class AddressesTableMenuComponent
   implements OnInit, ITableMenu<Address>
 {
   item: ModelSignal<Address> = model.required();
-  key: ModelSignal<string> = model.required();
+  key: ModelSignal<string | null> = model.required();
 
   constructor() {
     super(AddressesService);

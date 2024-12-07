@@ -1,17 +1,18 @@
 import { LiveAnnouncer } from "@angular/cdk/a11y";
-import { Component, computed, effect, inject, model, Signal, signal, WritableSignal } from "@angular/core";
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Component, inject, model, effect } from "@angular/core";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InputComponent } from "src/app/_forms/helpers/input.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
-import { FormsService } from "src/app/_services/forms.service";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { Control } from "src/app/_models/forms/deprecated/control";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { Control, SelectOption } from "src/app/_forms/form";
+import { ENTER, COMMA } from "@angular/cdk/keycodes";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   host: { class: 'w-100 text-body', },
@@ -74,11 +75,10 @@ import { Control, SelectOption } from "src/app/_forms/form";
   imports: [ ReactiveFormsModule, FormsModule, CdkModule, MaterialModule, HelpBlockComponent, InvalidFeedbackComponent, InputComponent, LegacyControlLabelComponent, ],
 })
 export class ControlChipsComponent {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   control = model.required<Control<SelectOption[]>>();
 
-  validation = false;
   get unselectedItems() {
     const selectedItems = this.control().value;
     if (selectedItems) {
@@ -89,7 +89,7 @@ export class ControlChipsComponent {
 
   constructor() {
     effect(() => {
-      this.service.mode$.subscribe({ next: validation => this.control.set(this.control().setValidation(validation)) });
+      this.control.set(this.control().setValidation(this.validation.active()));
     })
   }
 

@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import {NamingSubject} from "src/app/_models/types";
-import { FormsService } from 'src/app/_services/forms.service';
 import { IconsService } from 'src/app/_services/icons.service';
+import { ValidationService } from 'src/app/_services/validation.service';
+import { NamingSubject } from 'src/app/_models/base/namingSubject';
 
 @Component({
   host: { class: 'd-flex align-items-center position-relative my-1', },
@@ -17,7 +17,7 @@ import { IconsService } from 'src/app/_services/icons.service';
 })
 export class SearchTextComponent implements ControlValueAccessor, OnInit {
   icons = inject(IconsService);
-  service = inject(FormsService);
+  validation = inject(ValidationService);
   private renderer = inject(Renderer2);
   private el = inject(ElementRef);
 
@@ -27,7 +27,7 @@ export class SearchTextComponent implements ControlValueAccessor, OnInit {
   label = input<string | null | 'Encontrar...'>(null);
   placeholder = model<string>('Encontrar...');
   autofocus = input<boolean>(false);
-  formText = input<string>();
+  formText = input<string | null>(null);
   naming = input<NamingSubject>();
 
   get control(): FormControl { return this.ngControl.control as FormControl; }

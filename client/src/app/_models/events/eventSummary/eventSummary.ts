@@ -1,5 +1,6 @@
-import { Entity } from "src/app/_models/types";
-import { UserSummary } from "src/app/_models/userSummary";
+import { Entity } from "src/app/_models/base/entity";
+import { UserSummary } from "../../users/userSummary/userSummary";
+
 
 export class EventSummary extends Entity {
   allDay = false;

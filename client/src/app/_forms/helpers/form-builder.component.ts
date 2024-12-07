@@ -12,8 +12,10 @@ import { ControlSelect2Component } from "src/app/_forms/control-select-2.compone
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { ControlTextarea2Component } from 'src/app/_forms/control-textarea2.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { Control, ControlRows, Form } from 'src/app/_forms/form';
-import { EntityParams } from 'src/app/_models/types';
+import { EntityParams } from 'src/app/_models/base/entityParams';
+import { Control } from 'src/app/_models/forms/deprecated/control';
+import { Form } from 'src/app/_models/forms/deprecated/form';
+import { ControlRows } from 'src/app/_models/forms/formTypes';
 
 @Component({
   selector: 'div[formBuilder]',
@@ -31,11 +33,11 @@ import { EntityParams } from 'src/app/_models/types';
                      [(control)]="item.control"
                 ></div>
               }
-              @case ('select2') {
+              <!-- @case ('select2') {
                 <div controlSelect2
                      [(control)]="item.control"
                 ></div>
-              }
+              } -->
               @case ('chips') {
                 <div controlChips
                      [(control)]="item.control"></div>

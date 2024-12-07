@@ -2,9 +2,9 @@ import { Component, inject, model } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { createId } from '@paralleldrive/cuid2';
-import { Form } from 'src/app/_forms/form';
-import { EntityParams } from 'src/app/_models/types';
-import { FormsService } from 'src/app/_services/forms.service';
+import { EntityParams } from 'src/app/_models/base/entityParams';
+import { Form } from 'src/app/_models/forms/deprecated/form';
+import { ValidationService } from 'src/app/_services/validation.service';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 
@@ -47,12 +47,10 @@ import { MaterialModule } from 'src/app/_shared/material.module';
   providers: [provideNativeDateAdapter()],
 })
 export class ControlDateRangeComponent {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   form = model.required<Form<any extends EntityParams<any> ? any : any>>();
   id = createId();
-
-  validation = false;
 
   constructor() {}
 }

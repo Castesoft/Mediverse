@@ -8,7 +8,7 @@ import { View } from "src/app/_models/base/types";
 import { BadRequest } from "src/app/_models/forms/error";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { InsuranceForm } from "src/app/_models/insurances/insuranceForm";
-import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
+import { UserMedicalInsuranceCompany } from "src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
 import { AccountService } from "src/app/_services/account.service";
 import { InsuranceDocumentItemComponent } from "src/app/account/utils/insurance-document-item.component";
 import { MedicalInsuranceCompaniesService } from "src/app/medicalInsuranceCompanies/medicalInsuranceCompanies.config";

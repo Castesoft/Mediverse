@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, model, signal } from '@angular/core';
-import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 
 @Component({
   selector: 'div[doctorGeneralTab]',

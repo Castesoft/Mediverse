@@ -1,5 +1,5 @@
 import { accountFormInfo } from "../account/accountConstants";
-import { addressInfo } from "src/app/_models/addresses/addressConstants";
+import { addressFormInfo } from "src/app/_models/addresses/addressConstants";
 import { baseColumns, Column } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
@@ -22,7 +22,7 @@ export const prescriptionFormInfo: FormInfo<Prescription> = {
   notes: { label: 'Notas', type: 'textarea', },
   orderId: { label: 'ID de pedido', type: 'number', },
   patient: userInfo,
-  clinic: addressInfo,
+  clinic: addressFormInfo,
 } as FormInfo<Prescription>;
 
 export const prescriptionFiltersFormInfo: FormInfo<PrescriptionParams> = {

@@ -1,0 +1,36 @@
+<!-- <div class="pb-2">
+  <h1 class="mb-4">{{ service.dictionary['Clinic'].title}}</h1>
+  <div>
+    <div class="row align-items-center justify-content-between g-3 mb-2">
+      <div class="col-12 col-md-auto">
+        <a type="button" class="btn btn-primary me-4" (click)="service.clickLink(undefined, key(), 'create', 'page')">
+          <fa-icon [icon]="icons.faPlus" class="me-1" />
+          Crear {{ service.dictionary['Clinic'].singular }}
+        </a>
+        @if (service.hasSelected(key(), mode()) | async) {
+        @if (service.selectedCount(key(), mode()) | async; as count) {
+        <button mat-raised-button [matBadge]="count" matBadgePosition="after" (click)="service.deleteRange$(key())">
+          Eliminar {{ count > 1 ? service.dictionary['Clinic'].plural : service.dictionary['Clinic'].singular }}
+        </button>
+        }
+        }
+      </div>
+      <div class="col-12 col-md-auto d-flex">
+        <div addressesFilterForm [formId]="formId" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'"
+          [view]="'inline'" [role]="'compact'" [mode]="mode()"></div>
+      </div>
+    </div>
+    <div addressesFilterForm [formId]="formId" [mode]="mode()" [(toggle)]="toggle" [item]="null" [key]="key()" [use]="'filter'" [view]="'inline'" [role]="'collapse'"></div>
+  </div>
+</div>
+<div tableWrapper>
+  @if(service.list$(key(), mode()) | async; as _list) {
+  <table addressesTable [mode]="mode()" [data]="_list" [key]="key()" [view]="view()">
+  </table>
+  }
+  @if(service.pagination$(key()) | async; as _pagination) {
+  <div tablePager [currentPage]="_pagination.currentPage"
+    [itemsPerPage]="_pagination.itemsPerPage" [totalItems]="_pagination.totalItems" (loadMore)="service.loadMore(key())"
+    (loadLess)="service.loadLess(key())" (pageChanged)="service.onPageChanged(key(), $event)"></div>
+  }
+</div> -->

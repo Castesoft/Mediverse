@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { debounceTime, distinctUntilChanged } from "rxjs";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchForm } from "src/app/_models/search/searchForm";
 import { Search } from "src/app/_models/search/search";
 import { SearchService } from "src/app/_services/search.service";

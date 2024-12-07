@@ -6,7 +6,7 @@ import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { AccountService } from 'src/app/_services/account.service';
 import { LayoutModule } from 'src/app/_shared/layout.module';
 import { AddPaymentMethodComponent } from './add-payment-method/add-payment-method.component';
-import { AddressModalComponent } from './address-modal/address-modal.component';
+import { AddressDetailModalComponent } from 'src/app/addresses/addresses.config';
 
 @Component({
   selector: 'app-account-billing',
@@ -54,11 +54,11 @@ export class AccountBillingComponent {
   }
 
   openAddAddressModal() {
-    this.bsModalService.show(AddressModalComponent, {
-      initialState: {
-        title: 'Añadir dirección',
-      },
-    });
+    // this.bsModalService.show(AddressDetailModalComponent, {
+    //   initialState: {
+    //     title: 'Añadir dirección',
+    //   },
+    // });
   }
 
   deleteAddress(id: number) {
@@ -69,12 +69,12 @@ export class AccountBillingComponent {
   }
 
   openEditAddressModal(address: UserAddress) {
-    this.bsModalService.show(AddressModalComponent, {
-      initialState: {
-        title: 'Editar dirección',
-        address,
-        type: 'edit',
-      },
-    });
+    // this.bsModalService.show(AddressDetailModalComponent, {
+    //   initialState: {
+    //     title: 'Editar dirección',
+    //     address,
+    //     type: 'edit',
+    //   },
+    // });
   }
 }

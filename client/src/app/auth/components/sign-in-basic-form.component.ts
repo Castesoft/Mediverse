@@ -1,14 +1,14 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, AfterViewInit, inject, input } from "@angular/core";
+import { Component, OnInit, AfterViewInit, inject, input, effect } from "@angular/core";
 import { Validators } from "@angular/forms";
 import { RouterModule, Router, ActivatedRoute } from "@angular/router";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormInfo } from "src/app/_models/forms/formTypes";
 import { AccountService } from "src/app/_services/account.service";
-import { FormsService } from "src/app/_services/forms.service";
 import { SnackbarService } from "src/app/_services/snackbar.service";
 import { UtilsService } from "src/app/_services/utils.service";
+import { ValidationService } from "src/app/_services/validation.service";
 import { MaterialModule } from "src/app/_shared/material.module";
 
 declare var google: any;
@@ -68,7 +68,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
   route = inject(ActivatedRoute);
   utils = inject(UtilsService);
-  forms = inject(FormsService);
+  validation = inject(ValidationService);
   snackbarService = inject(SnackbarService)
 
   form = new LoginForm();
@@ -83,10 +83,8 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   noRedirect = input<boolean>(false);
 
   constructor() {
-    this.forms.mode$.subscribe({
-      next: mode => {
-        this.form.validation = mode;
-      }
+    effect(() => {
+      this.form.setValidation(this.validation.active());
     });
 
     this.route.queryParams.subscribe({

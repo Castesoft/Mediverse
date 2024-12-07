@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
   cookiesAccepted = 'true';
 
   constructor() {
-    
+
   }
 
   ngOnInit(): void {
@@ -136,10 +136,6 @@ export const appConfig: ApplicationConfig = {
           {
             path: 'home',
             loadChildren: () => import('./home/home.config').then(x => x.HomeModule),
-          },
-          {
-            path: 'admin',
-            loadChildren: () => import('./admin/admin.config').then(x => x.AdminModule),
           },
         ]
       },

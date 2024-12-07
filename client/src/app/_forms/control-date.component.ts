@@ -1,35 +1,33 @@
-import {Component, ElementRef, inject, input, Input, OnInit, Renderer2, Self} from '@angular/core';
-import {ControlValueAccessor, NgControl, FormControl, ReactiveFormsModule} from '@angular/forms';
-import {KeyValuePipe, NgClass} from '@angular/common';
-import {FlatpickrModule} from "angularx-flatpickr";
-import {HelpBlockComponent} from "src/app/_forms/helpers/help-block.component";
-import {InvalidFeedbackComponent} from "src/app/_forms/helpers/invalid-feedback.component";
-import {FormControlStyles} from "src/app/_models/types";
-import {FormsService} from 'src/app/_services/forms.service';
-import {OptionalSpanComponent} from "./helpers/optional-span.component";
-import {NewBadgeComponent} from "./helpers/new-badge.component";
+import { CommonModule } from "@angular/common";
+import { Component, ElementRef, inject, Input, input, OnInit, Renderer2, Self } from "@angular/core";
+import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from "@angular/forms";
+import { FlatpickrModule } from "angularx-flatpickr";
+import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
+import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
+import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
+import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   host: {class: 'fv-row mb-9',},
   selector: '[controlDate]',
   templateUrl: './control-date.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, OptionalSpanComponent, NewBadgeComponent, HelpBlockComponent,
+  imports: [ReactiveFormsModule, CommonModule, OptionalSpanComponent, NewBadgeComponent, HelpBlockComponent,
     InvalidFeedbackComponent, FlatpickrModule,],
 })
 export class ControlDateComponent implements ControlValueAccessor, OnInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
   private renderer = inject(Renderer2);
   private el = inject(ElementRef);
 
   errors = input<{ [key: string]: string }>({});
-  formText = input<string>();
+  formText = input<string | null>(null);
   submitted = input<boolean>(false);
   autofocus = input<boolean>(false);
   isNew = input<boolean>(false);
   optional = input<boolean>(false);
   timepicker = input<boolean>(false);
-  style = input<FormControlStyles>('solid');
 
   @Input() id?: string;
   @Input() label: string = '';

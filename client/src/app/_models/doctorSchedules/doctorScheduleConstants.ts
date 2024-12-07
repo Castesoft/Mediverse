@@ -1,5 +1,5 @@
 import { Validators } from "@angular/forms";
-import { doctorResultInfo } from "../doctorResults/doctorResultConstants";
+import { doctorResultInfo } from "../doctors/doctorResults/doctorResultConstants";
 import { DoctorSchedule } from "src/app/_models/doctorSchedules/doctorSchedule";
 import { FormInfo } from "src/app/_models/forms/formTypes";
 

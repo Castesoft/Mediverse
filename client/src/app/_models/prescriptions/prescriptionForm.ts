@@ -4,7 +4,8 @@ import { Address } from "src/app/_models/addresses/address";
 import { Column } from "src/app/_models/base/column";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { MedicalLicense, medicalLicenseInfo } from "src/app/_models/medicalLicense";
+import { medicalLicenseFormInfo } from "../medicalLicenses/medicalLicenseConstants";
+import { MedicalLicense } from "../medicalLicenses/medicalLicense";
 import { PrescriptionItem, prescriptionItemInfo } from "src/app/_models/prescriptionItem";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { prescriptionFormInfo } from "src/app/_models/prescriptions/prescriptionConstants";
@@ -92,7 +93,7 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
             specialtyId: license.specialtyId,
             specialtyLicense: license.specialtyLicense,
             specialtyName: license.specialtyName,
-          }), medicalLicenseInfo));
+          }), medicalLicenseFormInfo));
         });
       }
     }

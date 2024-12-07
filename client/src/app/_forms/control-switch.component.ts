@@ -1,24 +1,24 @@
-import { AfterViewInit, Component, ElementRef, inject, input, Input, Renderer2, Self } from '@angular/core';
-import { ControlValueAccessor, FormControl, FormGroup, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { distinctUntilChanged } from 'rxjs';
-import { NgClass, KeyValuePipe } from '@angular/common';
-import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
-import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
-import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
-import { FormsService } from 'src/app/_services/forms.service';
+import { CommonModule } from "@angular/common";
+import { Component, AfterViewInit, inject, input, Input, Self, Renderer2, ElementRef } from "@angular/core";
+import { ReactiveFormsModule, ControlValueAccessor, NgControl, FormControl, FormGroup } from "@angular/forms";
+import { distinctUntilChanged } from "rxjs";
+import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
+import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
+import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
+import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   selector: '[controlSwitch]',
   templateUrl: './control-switch.component.html',
   standalone: true,
-  imports: [ ReactiveFormsModule, NgClass, KeyValuePipe, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent, ],
+  imports: [ ReactiveFormsModule, CommonModule, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent, ],
 })
 export class ControlSwitchComponent implements ControlValueAccessor, AfterViewInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   autofocus = input<boolean>(false);
-  formText = input<string>();
+  formText = input<string | null>(null);
   submitted = input<boolean>(false);
   errors = input<{ [key: string]: string }>({});
 

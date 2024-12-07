@@ -1,7 +1,7 @@
 import { Address } from "src/app/_models/addresses/address";
 import { AvailableDay } from "src/app/_models/availableDay";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { DoctorReview } from "src/app/_models/doctorReview";
+import { DoctorReview } from "../doctorReviews/doctorReview";
 
 
 export class DoctorResult {

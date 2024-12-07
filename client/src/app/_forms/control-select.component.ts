@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, inject, input, Input, OnChanges, output, Renderer2, Self, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgClass, KeyValuePipe, TitleCasePipe } from '@angular/common';
-import { FormsService } from 'src/app/_services/forms.service';
 import { OptionalSpanComponent } from "./helpers/optional-span.component";
 import { NewBadgeComponent } from "./helpers/new-badge.component";
+import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   selector: '[controlSelect]',
@@ -12,7 +12,7 @@ import { NewBadgeComponent } from "./helpers/new-badge.component";
   imports: [ReactiveFormsModule, NgClass, KeyValuePipe, OptionalSpanComponent, NewBadgeComponent, TitleCasePipe]
 })
 export class ControlSelectComponent implements ControlValueAccessor, AfterViewInit, OnChanges {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   autofocus = input<boolean>(false);
   isNew = input<boolean>(false);

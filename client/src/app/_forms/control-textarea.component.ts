@@ -1,19 +1,18 @@
-import { KeyValuePipe, NgClass, NgStyle } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, inject, input, Input, Renderer2, Self } from '@angular/core';
-import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
-import {FormControlStyles} from "src/app/_models/types";
-import { FormsService } from 'src/app/_services/forms.service';
-import { OptionalSpanComponent } from "./helpers/optional-span.component";
-import { NewBadgeComponent } from "./helpers/new-badge.component";
+import { CommonModule } from "@angular/common";
+import { Component, AfterViewInit, inject, input, Input, Self, Renderer2, ElementRef } from "@angular/core";
+import { ReactiveFormsModule, ControlValueAccessor, FormControl, NgControl } from "@angular/forms";
+import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
+import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
+import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
+import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   host: { class: 'fv-row mb-7', },
   selector: '[controlTextarea]',
   templateUrl: './control-textarea.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, NgStyle, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent],
+  imports: [ReactiveFormsModule, CommonModule, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent],
   styles: `
 .invalid-feedback.show-feedback {
   display: block !important;
@@ -30,14 +29,13 @@ import { NewBadgeComponent } from "./helpers/new-badge.component";
 }`
 })
 export class ControlTextareaComponent implements ControlValueAccessor, AfterViewInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   autofocus = input<boolean>(false);
   isNew = input<boolean>(false);
   errors = input<{ [key: string]: string }>({});
   submitted = input<boolean>(false);
-  formText = input<string>();
-  style = input<FormControlStyles>('solid');
+  formText = input<string | null>(null);
   placeholder = input<string>('');
 
   @Input() id?: string;

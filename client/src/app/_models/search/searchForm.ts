@@ -1,5 +1,5 @@
 import { Params } from "@angular/router";
-import { DoctorResult } from "../doctorResults/doctorResult";
+import { DoctorResult } from "../doctors/doctorResults/doctorResult";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { Search } from "src/app/_models/search/search";
 import { searchInfo } from "src/app/_models/search/searchConstants";

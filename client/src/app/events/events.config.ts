@@ -8,6 +8,7 @@ import { CatalogMode, View } from "src/app/_models/base/types";
 import { Event } from "src/app/_models/events/event";
 import { eventColumns, eventDictionary } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
+import { EventForm } from "src/app/_models/events/eventForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { BaseDetail, BaseForm, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
 import { DetailInputSignals, FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
@@ -17,6 +18,7 @@ import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
+import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 
 @Component({
   selector: 'events-catalog-modal',
@@ -153,7 +155,7 @@ export class EventFormComponent
   selector: 'div[eventDetail]',
   template: `
   <div container3 [type]="'inline'">
-    <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div>
+    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
   </div>
   <div eventForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
@@ -275,15 +277,7 @@ export class DetailComponent extends BaseRouteDetail<Event> {
 
 @Component({
   selector: 'event-edit-route',
-  template: `
-  <nav breadcrumbs>
-    <li sectionItem [section]="'admin'"></li>
-      <li sectionItem [section]="'maintenance'"></li>
-      <li sectionItem [(section)]="section"></li>
-      <li active [(label)]="label" [(item)]="item"></li>
-    </nav>
-    <div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  `,
+  template: `<div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
   standalone: true,
   imports: [EventDetailComponent, RouterModule,],
 })

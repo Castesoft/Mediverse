@@ -7,7 +7,7 @@
              class="form-label fw-semibold  ps-0 text-nowrap">
         {{ control().label }}
         {{ control().required ? '*' : null }}
-        @if (control().optional && (service.isOptional(control().formControl) || !control().isReadonly)) {
+        @if (control().optional && (validation.isOptional(control().formControl) || !control().isReadonly)) {
           <span optionalSpan></span>
         }
         @if (control().isNew) {

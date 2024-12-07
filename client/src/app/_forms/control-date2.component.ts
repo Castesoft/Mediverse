@@ -1,7 +1,6 @@
 import { Component, effect, inject, input, model, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule, DatePipe } from "@angular/common";
-import { FormsService } from "src/app/_services/forms.service";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
 import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
@@ -26,7 +25,7 @@ import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-labe
   standalone: true,
 })
 export class ControlDate2Component {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
   icons = inject(IconsService);
   private datePipe = inject(DatePipe);
 

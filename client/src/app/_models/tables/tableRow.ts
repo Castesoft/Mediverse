@@ -1,7 +1,5 @@
 import { Entity } from "src/app/_models/base/entity";
-import { CellsOf } from "src/app/_models/tables/tableCellTypes";
-import { TableCellItem } from "./tableCellItem";
-
+import { CellsOf, TableCellItem } from "src/app/_models/tables/tableCellItem";
 
 export class TableRow<T extends Entity | object> {
   items: CellsOf<T>;

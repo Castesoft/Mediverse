@@ -1,8 +1,9 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, HostBinding, inject, model } from "@angular/core";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { Control, SelectOption } from "src/app/_forms/form";
-import { FormsService } from "src/app/_services/forms.service";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { Control } from "src/app/_models/forms/deprecated/control";
+import { ValidationService } from "src/app/_services/validation.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 
@@ -17,16 +18,15 @@ import { MaterialModule } from "src/app/_shared/material.module";
   imports: [ ReactiveFormsModule, FormsModule, CommonModule, CdkModule, MaterialModule, ],
 })
 export class InputComponent {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   control = model.required<Control<string | SelectOption | SelectOption[]>>();
 
-  validation = false;
   baseClass = 'form-control text-body ';
 
   constructor() {
     effect(() => {
-      this.service.mode$.subscribe({ next: validation => this.control.set(this.control().setValidation(validation)) });
+      this.control.set(this.control().setValidation(this.validation.active()));
     })
   }
 

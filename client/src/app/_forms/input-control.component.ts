@@ -1,32 +1,30 @@
-import { AfterViewInit, Component, ElementRef, inject, input, Input, OnInit, output, Renderer2, Self } from '@angular/core';
-import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
-import {FormControlStyles} from 'src/app/_models/types';
-import { NgClass } from '@angular/common';
-import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
-import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import { PopoverProps } from 'src/app/_models/popover';
-import { FormsService } from 'src/app/_services/forms.service';
-import { InputTypes } from 'src/app/_forms/form';
+import { CommonModule } from "@angular/common";
+import { Component, AfterViewInit, OnInit, inject, input, output, Input, Self, Renderer2, ElementRef, effect } from "@angular/core";
+import { ReactiveFormsModule, ControlValueAccessor, FormControl, NgControl } from "@angular/forms";
+import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
+import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
+import { InputTypes } from "src/app/_models/forms/formTypes";
+import { PopoverProps } from "src/app/_models/popover";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   host: { class: 'd-flex flex-column fv-row', },
   selector: 'div[inputControl]',
   templateUrl: './input-control.component.html',
   standalone: true,
-  imports: [ ReactiveFormsModule, NgClass,
+  imports: [ ReactiveFormsModule, CommonModule,
     InvalidFeedbackComponent, HelpBlockComponent,
    ],
 })
 export class InputControlComponent implements ControlValueAccessor, AfterViewInit, OnInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   errors = input<{ [key: string]: string }>({});
-  formText = input<string>();
+  formText = input<string | null>(null);
   submitted = input<boolean>(false);
   autofocus = input<boolean>(false);
   isNew = input<boolean>(false);
   optional = input<boolean>(false);
-  style = input<FormControlStyles>('solid');
 
   onChange = output<any>();
 
@@ -57,11 +55,13 @@ export class InputControlComponent implements ControlValueAccessor, AfterViewIni
 
   constructor(@Self() public ngControl: NgControl, private renderer: Renderer2, private el: ElementRef) {
     this.ngControl.valueAccessor = this;
+
+    effect(() => {
+      this.control.updateValueAndValidity();
+    })
   }
 
   ngOnInit(): void {
-    this.service.mode$.subscribe({ next: _ => this.control.updateValueAndValidity() });
-
     if (this.ngControl.control) {
       if (this.isReadonly && this.ngControl.control) {
         if (this.popoverText === undefined) this.popoverText = this.ngControl.control!.value;

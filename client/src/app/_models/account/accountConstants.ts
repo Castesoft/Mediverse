@@ -1,15 +1,15 @@
 import { Account } from "src/app/_models/account/account";
-import { doctorInfo } from "src/app/_models/doctor";
+import { doctorFormInfo } from "../doctors/doctorConstants";
 import { FormInfo } from "src/app/_models/forms/formTypes";
-import { medicalLicenseInfo } from "src/app/_models/medicalLicense";
+import { medicalLicenseFormInfo } from "../medicalLicenses/medicalLicenseConstants";
 import { paymentMethodTypeFormInfo } from "src/app/_models/paymentMethodTypes/paymentMethodTypeConstants";
-import { userMedicalInsuranceCompanyInfo } from "src/app/_models/userMedicalInsuranceCompany";
-import { workScheduleInfo } from "src/app/_models/workSchedule";
-import { workScheduleSettingsInfo } from "src/app/_models/workScheduleSettings";
+import { userMedicalInsuranceCompanyFormInfo } from "../users/userMedicalInsuranceCompany/userMedicalInsuranceCompanyConstants";
+import { workScheduleFormInfo } from "../workSchedules/workScheduleConstants";
+import { workScheduleSettingsFormInfo } from "../workSchedules/workScheduleSettings/workScheduleSettingsConstants";
 
 
 export const accountFormInfo: FormInfo<Account> = {
-  medicalInsuranceCompanies: userMedicalInsuranceCompanyInfo,
+  medicalInsuranceCompanies: userMedicalInsuranceCompanyFormInfo,
   certificateFile: { label: 'Cédula/Certificación', type: 'file' },
   licenseNumber: { label: 'Cédula Profesional', type: 'text' },
   photoFile: { label: 'Archivo de foto', type: 'file' },
@@ -33,7 +33,7 @@ export const accountFormInfo: FormInfo<Account> = {
   linkedEmail: { label: 'Email vinculado', type: 'checkbox' },
   linkedGoogle: { label: 'Google vinculado', type: 'checkbox' },
   mainSpecialty: { label: 'Especialidad principal', type: 'text' },
-  medicalLicenses: medicalLicenseInfo,
+  medicalLicenses: medicalLicenseFormInfo,
   paymentMethodTypes: paymentMethodTypeFormInfo,
   permissions: {},
   phoneNumber: { label: 'Teléfono', type: 'text' },
@@ -43,12 +43,12 @@ export const accountFormInfo: FormInfo<Account> = {
   requiresTwoFactor: { label: 'Requiere autenticación de dos factores', type: 'checkbox' },
   roles: {},
   sex: { label: 'Sexo', type: 'select' },
-  sharedDoctors: doctorInfo,
+  sharedDoctors: doctorFormInfo,
   specialty: { label: 'Especialidad', type: 'select' },
   state: { label: 'Estado', type: 'text' },
   token: { label: 'Token', type: 'text' },
   twoFactorEnabled: { label: 'Dos factores habilitados', type: 'checkbox' },
   username: { label: 'Nombre de usuario', type: 'text' },
-  workSchedules: workScheduleInfo,
-  workScheduleSettings: workScheduleSettingsInfo,
+  workSchedules: workScheduleFormInfo,
+  workScheduleSettings: workScheduleSettingsFormInfo,
 } as FormInfo<Account>;

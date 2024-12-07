@@ -1,7 +1,7 @@
 import { Component, input, output, effect, inject, signal, model } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
-import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { Search } from "src/app/_models/search/search";
 import { SearchService } from 'src/app/_services/search.service';
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';

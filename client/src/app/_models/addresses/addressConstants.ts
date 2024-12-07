@@ -8,7 +8,7 @@ import { Column } from "src/app/_models/base/column";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 
 
-export const addressInfo: FormInfo<Address> = {
+export const addressFormInfo: FormInfo<Address> = {
   ...baseInfo,
   city: { label: 'Ciudad', type: 'text' },
   country: { label: 'País', type: 'text' },

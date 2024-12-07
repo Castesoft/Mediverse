@@ -3,15 +3,16 @@ import { PopoverProps } from "src/app/_models/popover";
 import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { TypeaheadMatch, TypeaheadModule } from "ngx-bootstrap/typeahead";
-import { FormsService } from "src/app/_services/forms.service";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
 import { OptionalSpanComponent } from "./helpers/optional-span.component";
 import { NewBadgeComponent } from "./helpers/new-badge.component";
 import { Observable } from "rxjs";
 import { createId } from "@paralleldrive/cuid2";
-import { ControlOrientation, SelectOption } from "src/app/_forms/form";
 import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
+import { ValidationService } from "src/app/_services/validation.service";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { ControlOrientation } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: "div[controlTypeahead]",
@@ -23,7 +24,7 @@ import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-labe
   ]
 })
 export class ControlTypeaheadComponent {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   control = model.required<AbstractControl<SelectOption | null | undefined | any, SelectOption | null | undefined | any>>();
   name = input.required<string>();
@@ -49,7 +50,7 @@ export class ControlTypeaheadComponent {
   type = input<string>("text");
   popoverProps = input<PopoverProps>();
   label = input<string>("");
-  formText = input<string>();
+  formText = input<string | null>(null);
   showLabel = input<boolean>(false);
   optional = input<boolean>(false);
   orientation = input<ControlOrientation>("block");

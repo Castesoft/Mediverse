@@ -15,7 +15,7 @@ import { AlertModule } from "ngx-bootstrap/alert";
 import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
 import { UserProfilePictureComponent } from "../../users/components/user-profile-picture/user-profile-picture.component";
-import { UserSummary } from "src/app/_models/userSummary";
+import { UserSummary } from "src/app/_models/users/userSummary/userSummary";
 
 interface PatientTypeaheadOptions extends TypeaheadComplexOption {
   data: UserSummary,

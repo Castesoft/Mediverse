@@ -3,7 +3,7 @@ import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { Account } from "../_models/account/account";
-import { FormUse, Role, View } from "src/app/_models/types";
+import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { SnackbarService } from './snackbar.service';
@@ -11,11 +11,12 @@ import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billi
 import { Payment } from "../_models/payments/payment";
 import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
 import { MedicalRecord } from "../_models/medicalRecords/medicalRecord";
-import { UserMedicalInsuranceCompany } from "src/app/_models/userMedicalInsuranceCompany";
-import { SelectOption } from "src/app/_forms/form";
+import { UserMedicalInsuranceCompany } from "../_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
 import { UserInsuranceModalComponent } from "src/app/account/modals/user-insurance-modal.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { View } from "src/app/_models/base/types";
 
 
 @Injectable({

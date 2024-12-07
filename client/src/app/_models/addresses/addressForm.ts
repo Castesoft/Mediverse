@@ -1,10 +1,9 @@
-import { createId } from "@paralleldrive/cuid2";
-import { addressFiltersFormInfo } from "src/app/_models/addresses/addressConstants";
-import { AddressParams } from "src/app/_models/addresses/addressParams";
+import { Address } from "src/app/_models/addresses/address";
+import { addressFormInfo } from "src/app/_models/addresses/addressConstants";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 
-export class AddressFiltersForm extends FormGroup2<AddressParams> {
+export class AddressForm extends FormGroup2<Address> {
   constructor() {
-    super(AddressParams as any, new AddressParams(createId()), addressFiltersFormInfo);
+    super(Address, new Address(), addressFormInfo);
   }
 }

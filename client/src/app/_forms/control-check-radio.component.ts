@@ -1,15 +1,15 @@
-import { Component, Injector, Input, OnInit, forwardRef, inject, input } from '@angular/core';
+import { Component, Injector, OnInit, forwardRef, inject, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
-import { KeyValuePipe, NgClass } from '@angular/common';
-import {HelpBlockComponent} from "src/app/_forms/helpers/help-block.component";
-import {InvalidFeedbackComponent} from "src/app/_forms/helpers/invalid-feedback.component";
-import { FormsService } from 'src/app/_services/forms.service';
+import { CommonModule } from '@angular/common';
+import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
+import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
+import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   selector: '[controlCheckRadio]',
   templateUrl: './control-check-radio.component.html',
   standalone: true,
-  imports: [NgClass, KeyValuePipe, HelpBlockComponent, InvalidFeedbackComponent],
+  imports: [CommonModule, HelpBlockComponent, InvalidFeedbackComponent],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => ControlCheckRadioComponent),
@@ -17,12 +17,12 @@ import { FormsService } from 'src/app/_services/forms.service';
   }]
 })
 export class ControlCheckRadioComponent implements ControlValueAccessor, OnInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   autofocus = input<boolean>(false);
   id = input<string>();
   label = input.required<string | undefined>();
-  formText = input<string>();
+  formText = input<string | null>(null);
   options = input.required<{id:string,value:string}[]>();
   isReadonly = input<boolean>(false);
   submitted = input<boolean>(false);

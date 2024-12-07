@@ -1,10 +1,11 @@
 import { Component, effect, HostBinding, inject, input, model } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
-import { Control, ControlOrientation } from "src/app/_forms/form";
 import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
 import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
-import { FormsService } from "src/app/_services/forms.service";
 import { createId } from "@paralleldrive/cuid2";
+import { ValidationService } from "src/app/_services/validation.service";
+import { Control } from "src/app/_models/forms/deprecated/control";
+import { ControlOrientation } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: "label[controlLabel]",
@@ -13,7 +14,7 @@ import { createId } from "@paralleldrive/cuid2";
     {{ control().label }}
     {{ control().required ? '*' : null }}
     @if (control().optional) {
-      @if (service.isOptional(control().formControl) || !control().isReadonly) {
+      @if (validation.isOptional(control().formControl) || !control().isReadonly) {
         <span optionalSpan></span>
       }
     }
@@ -25,7 +26,7 @@ import { createId } from "@paralleldrive/cuid2";
   imports: [OptionalSpanComponent, NewBadgeComponent]
 })
 export class ControlLabelComponent {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   control = model.required<Control<Date | string | boolean>>();
 
@@ -46,7 +47,7 @@ export class ControlLabelComponent {
     {{ label() }}
     {{ !optional() ? '*' : null }}
     @if (optional()) {
-      @if (service.isOptional(control()) || !isReadonly()) {
+      @if (validation.isOptional(control()) || !isReadonly()) {
         <span optionalSpan></span>
       }
     }
@@ -58,7 +59,7 @@ export class ControlLabelComponent {
   imports: [OptionalSpanComponent, NewBadgeComponent]
 })
 export class LegacyControlLabelComponent {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   control = input.required<AbstractControl<string | null | undefined, string | null | undefined>>();
   name = input.required<string>();
@@ -69,7 +70,7 @@ export class LegacyControlLabelComponent {
   isNew = input<boolean>(false);
   errors = input<{ [key: string]: string }>({});
   submitted = input<boolean>(false);
-  formText = input<string>();
+  formText = input<string | null>(null);
 
   label = input<string>("");
   isReadonly = input<boolean>(false);

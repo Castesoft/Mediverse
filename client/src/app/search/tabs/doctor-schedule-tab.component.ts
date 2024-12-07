@@ -3,7 +3,7 @@ import { Component, output, inject, effect, model, signal, OnInit } from '@angul
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { AvailableTime } from 'src/app/_models/availableTime';
-import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { Search } from "src/app/_models/search/search";
 import { SearchService } from 'src/app/_services/search.service';
 

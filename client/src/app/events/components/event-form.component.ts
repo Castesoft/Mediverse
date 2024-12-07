@@ -17,7 +17,6 @@ import { CreateForm, EditForm, DetailForm, EventDoctorFields } from 'src/app/_mo
 import { Event } from "src/app/_models/events/event";
 import { BadRequest, FormUse, Role, View } from 'src/app/_models/types';
 import { User } from "src/app/_models/users/user";
-import { FormsService } from 'src/app/_services/forms.service';
 import { IconsService } from 'src/app/_services/icons.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AlertModule } from 'ngx-bootstrap/alert';
@@ -68,7 +67,7 @@ import { Service } from "src/app/_models/services/service";
 })
 export class EventFormComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
-  private formsService = inject(FormsService);
+  private formsvalidation = inject(ValidationService);
   private router = inject(Router);
   snackbarService = inject(SnackbarService)
   eventsService = inject(EventsService);

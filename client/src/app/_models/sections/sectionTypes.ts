@@ -6,6 +6,7 @@ export type Section = {
 export type Sections =
 'admin' |
 'nurses' |
+'orders' |
 'patients' |
 'specialties' |
 'diseases' |

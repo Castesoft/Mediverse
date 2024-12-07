@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, inject, signal } from "@angular/core";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { Observable, tap } from "rxjs";
-import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchResults } from "src/app/_models/doctorSearchResults";
 import { Search } from "src/app/_models/search/search";
 import { UtilsService } from "src/app/_services/utils.service";

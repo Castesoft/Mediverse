@@ -1,12 +1,12 @@
-import { addressInfo } from "src/app/_models/addresses/addressConstants";
+import { addressFormInfo } from "src/app/_models/addresses/addressConstants";
 import { availableDayInfo } from "src/app/_models/availableDay";
-import { DoctorResult } from "src/app/_models/doctorResults/doctorResult";
-import { doctorReviewInfo } from "src/app/_models/doctorReview";
+import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
+import { doctorReviewFormInfo } from "../doctorReviews/doctorReviewConstants";
 import { FormInfo } from "src/app/_models/forms/formTypes";
 
 
 export const doctorResultInfo: FormInfo<DoctorResult> = {
-  addresses: addressInfo,
+  addresses: addressFormInfo,
   email: { label: 'Email', type: 'text' },
   firstName: { label: 'Nombre', type: 'text' },
   fullName: { label: 'Nombre completo', type: 'text' },
@@ -19,7 +19,7 @@ export const doctorResultInfo: FormInfo<DoctorResult> = {
   phoneNumber: { label: 'Número de teléfono', type: 'text' },
   photoUrl: { label: 'URL de foto', type: 'text' },
   requireAnticipatedCardPayments: { label: 'Requiere pagos con tarjeta anticipados', type: 'checkbox' },
-  reviews: doctorReviewInfo,
+  reviews: doctorReviewFormInfo,
   services: { label: 'Servicios', type: 'select' },
   specialties: { label: 'Especialidades', type: 'select' },
   title: { label: 'Título', type: 'text' },

@@ -5,6 +5,7 @@ import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { FormInfo } from "src/app/_models/forms/formTypes";
 import { Order } from "src/app/_models/orders/order";
 import { OrderParams } from "src/app/_models/orders/orderParams";
+import { baseTableCells, PartialCellsOf } from "src/app/_models/tables/tableCellItem";
 
 export const orderDictionary: NamingSubject = new NamingSubject(
   'masculine',
@@ -31,3 +32,7 @@ export const orderFormInfo: FormInfo<Order> = {
 export const orderFiltersFormInfo: FormInfo<OrderParams> = {
   ...baseFilterFormInfo,
 } as FormInfo<OrderParams>;
+
+export const orderCells: PartialCellsOf<Order> = {
+  ...baseTableCells,
+} as PartialCellsOf<Order>;

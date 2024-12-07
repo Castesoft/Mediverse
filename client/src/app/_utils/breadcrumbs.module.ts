@@ -1,6 +1,6 @@
 import { Component, inject, input, NgModule, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Sections } from "src/app/_models/types";
+import { Sections } from "src/app/_models/sections/sectionTypes";
 import { SectionsService } from "src/app/_services/sections.service";
 
 @Component({

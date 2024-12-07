@@ -22,7 +22,7 @@
     @if (accountService.current()) {
 
     @if(form.error) {
-    <div errorsAlert3 [(form)]="form"></div>
+    <div errorsAlert3 [(error)]="form.error"></div>
     }
 
     <div class="stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid gap-10">

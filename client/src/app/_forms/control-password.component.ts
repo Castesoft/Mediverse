@@ -1,16 +1,16 @@
 import { Component, AfterViewInit, Input, Self, Renderer2, ElementRef, input, inject } from "@angular/core";
 import { ControlValueAccessor, NgControl, FormControl, ReactiveFormsModule } from "@angular/forms";
-import { KeyValuePipe, NgClass } from "@angular/common";
-import { FormsService } from "src/app/_services/forms.service";
+import { CommonModule } from "@angular/common";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   selector: '[controlPassword]',
   templateUrl: './control-password.component.html',
   standalone: true,
-  imports: [ ReactiveFormsModule, NgClass, KeyValuePipe, ],
+  imports: [ ReactiveFormsModule, CommonModule, ],
 })
 export class ControlPasswordComponent implements ControlValueAccessor, AfterViewInit {
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   autofocus = input<boolean>(false);
 

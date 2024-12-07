@@ -7,7 +7,7 @@ import { IconsService } from 'src/app/_services/icons.service';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
 import { DatepickerService } from 'src/app/_services/datepicker.service';
-import { FormsService } from 'src/app/_services/forms.service';
+import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   host: { class: '', },
@@ -21,14 +21,14 @@ import { FormsService } from 'src/app/_services/forms.service';
 export class SearchDateRangeComponent implements ControlValueAccessor {
   icons = inject(IconsService);
   datepicker = inject(DatepickerService);
-  service = inject(FormsService);
+  validation = inject(ValidationService);
 
   label = input<string | null | 'Rango de fechas'>(null);
   datepickerConfig = input<Partial<BsDatepickerConfig>>(this.datepicker.config);
   placeholder = input<string>('Rango de fechas');
   errors = input<{ [key: string]: string }>({});
   id = input<string>();
-  formText = input<string>();
+  formText = input<string | null>(null);
   submitted = input<boolean>(false);
   labelClass = input<string>('form-label fw-semi-bold fs--1');
   inputClass = input<string>('form-control search-input search');
