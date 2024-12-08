@@ -1,24 +1,25 @@
-import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject, NgModule, OnInit } from '@angular/core';
-import { ActivatedRoute, ResolveFn, RouterModule } from '@angular/router';
-import { Account } from "../_models/account/account";
+import { CommonModule, CurrencyPipe } from "@angular/common";
+import { Component, OnInit, inject, NgModule } from "@angular/core";
+import { ResolveFn, RouterModule } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { Account } from "src/app/_models/account/account";
+import { SatisfactionSurvey } from "src/app/_models/satisfactionSurvey";
 import { AccountService } from "src/app/_services/account.service";
-import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
-import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
-import { CdkModule } from 'src/app/_shared/cdk.module';
+import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
+import { UtilsService } from "src/app/_services/utils.service";
+import { BootstrapModule } from "src/app/_shared/bootstrap.module";
+import { CdkModule } from "src/app/_shared/cdk.module";
 import { LayoutModule } from "src/app/_shared/layout.module";
-import { AccountCardComponent } from 'src/app/account/components/account-card.component';
-import { AccountOverviewComponent } from './components/account-overview/account-overview.component';
-import { AccountSettingsComponent } from './components/account-settings/account-settings.component';
-import { AccountBillingComponent } from './components/account-billing/account-billing.component';
-import { AccountPaymentsComponent } from './components/account-payments/account-payments.component';
-import { AccountInsurancesComponent } from './components/account-insurances/account-insurances.component';
-import { AccountSchedulesComponent } from './components/account-schedules/account-schedules.component';
-import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { SatisfactionSurveyModalComponent } from './components/satisfaction-survey-modal/satisfaction-survey-modal.component';
-import { AccountClinicalHistoryComponent } from './components/account-clinical-history/account-clinical-history.component';
-import { UtilsService } from '../_services/utils.service';
+import { MainAsideComponent } from "src/app/_shared/layout/main-aside.component";
+import { AccountBillingComponent } from "src/app/account/components/account-billing/account-billing.component";
+import { AccountCardComponent } from "src/app/account/components/account-card.component";
+import { AccountClinicalHistoryComponent } from "src/app/account/components/account-clinical-history/account-clinical-history.component";
+import { AccountInsurancesComponent } from "src/app/account/components/account-insurances/account-insurances.component";
+import { AccountOverviewComponent } from "src/app/account/components/account-overview/account-overview.component";
+import { AccountPaymentsComponent } from "src/app/account/components/account-payments/account-payments.component";
+import { AccountSchedulesComponent } from "src/app/account/components/account-schedules/account-schedules.component";
+import { AccountSettingsComponent } from "src/app/account/components/account-settings/account-settings.component";
+import { SatisfactionSurveyModalComponent } from "src/app/account/components/satisfaction-survey-modal/satisfaction-survey-modal.component";
 
 @Component({
   selector: 'account-main-route',
@@ -26,7 +27,7 @@ import { UtilsService } from '../_services/utils.service';
   <div root>
     <div page>
       @if (!utilsService.sidebarCollapsed()){
-        <div aside></div>
+        <div mainAside></div>
       }
       <div wrapper>
         <div header></div>
@@ -129,7 +130,7 @@ export class AccountRoutingModule {}
   ],
   imports: [
     AccountRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
-    LayoutModule, CurrencyPipe, AccountCardComponent, LayoutModule,
+    LayoutModule, AccountCardComponent, MainAsideComponent,
   ]
 })
 export class AccountModule { }

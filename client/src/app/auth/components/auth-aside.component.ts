@@ -3,11 +3,11 @@ import { RouterModule } from '@angular/router';
 import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
-  selector: '[aside]',
-  templateUrl: './aside.component.html',
+  selector: '[authAside]',
+  templateUrl: './auth-aside.component.html',
   standalone: true,
   imports: [ RouterModule, ],
 })
-export class AsideComponent {
+export class AuthAsideComponent {
   utils = inject(UtilsService);
 }

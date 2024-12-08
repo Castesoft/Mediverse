@@ -7,6 +7,9 @@ import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { BaseCatalog } from "src/app/_models/forms/extensions/baseFormComponent";
 import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { LayoutModule } from "src/app/_shared/layout.module";
+import { TableModule } from "src/app/_shared/table/table.module";
+import { EventsTableComponent } from "src/app/events/components/events-table.component";
 import { EventsService } from "src/app/events/events.config";
 
 @Component({
@@ -15,7 +18,7 @@ import { EventsService } from "src/app/events/events.config";
   templateUrl: './events-catalog.component.html',
   standalone: true,
   imports: [
-    CommonModule, Forms2Module,
+    CommonModule, Forms2Module, TableModule, LayoutModule, EventsTableComponent,
   ],
 })
 export class EventsCatalogComponent

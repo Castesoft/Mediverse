@@ -1,124 +1,29 @@
-<!-- <div catalogCardHeader>
+<div catalogCardHeader>
   <div class="card-title">
-    <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
-      <div searchText formControlName="search" [naming]="service.dictionary"></div>
+    <form (ngSubmit)="onSubmit(key())" [id]="form.id">
+
+      <div controlText3 [(control)]="form.controls.search" [(fromWrapper)]="fromWrapper"></div>
     </form>
   </div>
   <div class="card-toolbar">
     @if (mode() === 'view') {
-      @if (service.hasSelected(key())) {
-        <div deleteSelectedBtn [count]="service.selectedCount(key())" (click)="service.deleteRange$(key())"></div>
-      } @else {
-        <div class="d-flex justify-content-end">
-          <button filterMenuBtn (click)="service.showFiltersModal(key())"></button>
-          <events-filter-menu></events-filter-menu>
-          <button exportBtn (click)="service.downloadXLSX$(key())"></button>
 
-          @if (!hideAddButton()) {
-            <button createBtn [naming]="service.dictionary"
-                    (click)="service.clickLink(null, key(), 'create', 'modal')"
-            ></button>
-          }
-        </div>
-      }
     }
   </div>
 </div>
 
 <div cardBody>
-  @if (mode() === "select" || mode() === "multiselect") {
-    <h4>
-      @switch (mode()) {
-        @case ("select") {
-          {{ service.dictionary.singularTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionado
-          } @else {
-            seleccionada
-          }
-        }
-        @case ("multiselect") {
-          {{ service.dictionary.pluralTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionados
-          } @else {
-            seleccionadas
-          }
-        }
+  <div tableWrapper>
+    <div tableResponsive>
+      @if(service.list$(key(), mode()) | async; as _list) {
+      <table eventsTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view">
+      </table>
       }
-    </h4>
-    @if (service.hasSelected$(key())) {
-      <div tableWrapper class="mb-4">
-        <table
-          eventsTable
-          [data]="mode() === 'select' ? service.getSelected$(key()) : []"
-
-          [key]="key()"
-          [mode]="'readonly'"
-          [showHeaders]="false"
-        ></table>
-      </div>
-    } @else {
-      @switch (mode()) {
-        @case ("select") {
-          No tienes {{ service.dictionary.articles.undefinedSingular }} {{ service.dictionary.singular }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionado
-          } @else {
-            seleccionada
-          }.
-        }
-        @case ("multiselect") {
-          No tienes {{ service.dictionary.plural }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionados
-          } @else {
-            seleccionadas
-          }.
-        }
-      }
+    </div>
+    @if(service.pagination$(key()) | async; as _pagination) {
+    <div tablePager [(isCompact)]="isCompact" [currentPage]="_pagination.currentPage"
+      [itemsPerPage]="_pagination.itemsPerPage" [totalItems]="_pagination.totalItems" (loadMore)="service.loadMore(key())"
+      (loadLess)="service.loadLess(key())" (pageChanged)="service.onPageChanged(key(), $event)"></div>
     }
-  }
-
-  @if (data && pagination) {
-    @if (data.length > 0) {
-      <div tableWrapper>
-        <table
-          eventsTable
-          [data]="data"
-
-          [mode]="mode()"
-          [key]="key()"
-        ></table>
-      </div>
-      <div
-        tablePager
-
-        [currentPage]="pagination.currentPage"
-        (pageChanged)="service.onPageChanged(key(), $event)"
-        [itemsPerPage]="pagination.itemsPerPage"
-        [totalItems]="pagination.totalItems"
-        (loadMore)="service.loadMore(key())"
-        (loadLess)="service.loadLess(key())"
-      ></div>
-    } @else {
-      <div style="border-radius: 0.7em" class="bg-white border">
-        <alert type="unknown" class="mb-0 text-center">
-          <h4 class="alert-heading mt-4 pt-4 mb-4 fw-bold">
-            {{ service.dictionary.pluralTitlecase }} no encontrados
-          </h4>
-          <p class="mb-4">
-            No se encontraron {{ service.dictionary.plural }} que coincidan con los
-            criterios de búsqueda.
-          </p>
-          <p class="mb-4">
-            <button
-              class="btn btn-phoenix-secondary me-2"
-              (click)="service.resetForm(key(), form)"
-            >
-              Restablecer los filtros
-            </button>
-          </p>
-        </alert>
-      </div>
-    }
-  } @else {
-    <div tableLoadingPlaceholder></div>
-  }
-</div> -->
+  </div>
+</div>

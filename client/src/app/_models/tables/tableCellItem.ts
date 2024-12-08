@@ -69,7 +69,7 @@ export type TableCells = "string" |
 ;
 
 export const tableCellCreatedAt: TableCellItem<Date, 'createdAt'> = new TableCellItem<Date, "createdAt">("createdAt", "date", { fullDate: true });
-export const tableCellCescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");
+export const tableCellDescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");
 export const tableCellEnabled: TableCellItem<boolean, 'enabled'> = new TableCellItem<boolean, "enabled">("enabled", "boolean");
 export const tableCellName: TableCellItem<string, 'name'> = new TableCellItem<string, "name">("name", "string");
 export const tableCellCode: TableCellItem<string, 'code'> = new TableCellItem<string, "code">("code", "string");
@@ -77,17 +77,16 @@ export const tableCellVisible: TableCellItem<boolean, 'visible'> = new TableCell
 export const tableCellId: TableCellItem<number, 'id'> = new TableCellItem<number, "id">("id", "number");
 export const tableCellCodeNumber: TableCellItem<number, 'codeNumber'> = new TableCellItem<number, "codeNumber">("codeNumber", "number");
 export const tableCellIsSelected: TableCellItem<boolean, 'isSelected'> = new TableCellItem<boolean, "isSelected">("isSelected", "boolean");
-export const tableCellDescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");
 
 
 export const baseTableCells: PartialCellsOf<Entity> = {
-  tableCellCreatedAt,
-  tableCellCescription,
-  tableCellEnabled,
-  tableCellName,
-  tableCellCode,
-  tableCellVisible,
-  tableCellId,
-  tableCellCodeNumber,
-  tableCellIsSelected,
+  createdAt: tableCellCreatedAt,
+  description: tableCellDescription,
+  enabled: tableCellEnabled,
+  name: tableCellName,
+  code: tableCellCode,
+  visible: tableCellVisible,
+  id: tableCellId,
+  codeNumber: tableCellCodeNumber,
+  isSelected: tableCellIsSelected,
 } as PartialCellsOf<Entity>;

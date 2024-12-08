@@ -9,12 +9,12 @@ import { Subscription } from "rxjs";
 import { CatalogMode } from "src/app/_models/base/types";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { Event } from "src/app/_models/events/event";
-import { EventsService } from "src/app/_services/events.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { PatientTableCellComponent, PatientTableSexCellComponent, PatientTableHasAccountCellComponent } from "src/app/_shared/components/patient-table-cell.component";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
+import { EventsService } from "src/app/events/events.config";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },
@@ -32,6 +32,7 @@ export class EventsTableComponent implements OnInit, OnDestroy {
   @Input() data: Event[] = [];
   key = model.required<string>();
   mode = model.required<CatalogMode>();
+  isCompact = model.required<boolean>();
   showHeaders = input<boolean>(true);
 
   sortAscending = false;

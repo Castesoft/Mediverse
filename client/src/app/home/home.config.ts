@@ -8,6 +8,8 @@ import { BootstrapModule } from "src/app/_shared/bootstrap.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { BreadcrumbLinkComponent, LayoutModule } from "src/app/_shared/layout.module";
 import { UtilsService } from '../_services/utils.service';
+import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
+import { HomeEventsCatalogRouteComponent } from "src/app/home/components/home-events-catalog-route.component";
 
 @Component({
   selector: 'home-route',
@@ -88,7 +90,7 @@ export class HomeComponent implements OnInit {
         },
         {
           path: 'events',
-          loadChildren: () => import('../events/events.config').then(x => x.EventsModule)
+          component: HomeEventsCatalogRouteComponent,
         },
         {
           path: 'services',
@@ -121,9 +123,9 @@ export class HomeComponent implements OnInit {
 export class HomeRoutingModule {}
 
 @NgModule({
-  declarations: [HomeComponent],
+  declarations: [HomeComponent, HomeEventsCatalogRouteComponent],
   imports: [HomeRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
-    LayoutModule, BreadcrumbLinkComponent,],
+    LayoutModule, BreadcrumbLinkComponent, EventsCatalogComponent,],
   exports: [
     HomeComponent
   ]

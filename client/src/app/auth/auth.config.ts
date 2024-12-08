@@ -1,6 +1,6 @@
 import { Component, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AsideComponent } from 'src/app/auth/components/aside.component';
+import { AuthAsideComponent } from 'src/app/auth/components/auth-aside.component';
 import { BottomLinksComponent } from 'src/app/auth/components/bottom-links.component';
 import { PasswordResetFormComponent } from 'src/app/auth/components/password-reset-form.component';
 import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';
@@ -65,7 +65,7 @@ export class MultiStepsComponent {}
   template: `
     <div class="d-flex flex-column flex-lg-row flex-column-fluid">
       <div
-        aside
+        authAside
         class="d-flex flex-column flex-lg-row-auto bg-primary w-xl-600px positon-xl-relative"
       ></div>
       <div class="d-flex flex-column flex-lg-row-fluid py-10">
@@ -82,7 +82,7 @@ export class MultiStepsComponent {}
     </div>
   `,
   standalone: true,
-  imports: [BottomLinksComponent, SignInBasicFormComponent, AsideComponent],
+  imports: [BottomLinksComponent, SignInBasicFormComponent, AuthAsideComponent],
 })
 export class SignInBasicComponent {}
 
@@ -111,7 +111,7 @@ export class SignInBasicComponent {}
     </div>
   `,
   standalone: true,
-  imports: [BottomLinksComponent, PasswordResetFormComponent, AsideComponent],
+  imports: [BottomLinksComponent, PasswordResetFormComponent, AuthAsideComponent],
 })
 export class PasswordResetComponent {}
 

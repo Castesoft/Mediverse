@@ -10,7 +10,7 @@ import { QuickLinksDropdownComponent } from "src/app/_shared/layout/quick-links-
 import { ScrolltopComponent } from "src/app/_shared/layout/scrolltop.component";
 import { ThemeDropdownComponent } from "src/app/_shared/layout/theme-dropdown.component";
 import { UserDropdownComponent } from "src/app/_shared/layout/user-dropdown.component";
-import { AsideComponent } from "src/app/auth/components/aside.component";
+import { AuthAsideComponent } from "src/app/auth/components/auth-aside.component";
 
 // root
 @Component({
@@ -391,7 +391,7 @@ export class FormWrapperComponent {}
     RootComponent,
     PageComponent,
     FooterComponent,
-    AsideComponent,
+    AuthAsideComponent,
     HeaderSearchComponent,
     HeaderComponent,
     NotificationsDropdownComponent,
@@ -431,7 +431,7 @@ export class FormWrapperComponent {}
     RootComponent,
     PageComponent,
     FooterComponent,
-    AsideComponent,
+    AuthAsideComponent,
     HeaderSearchComponent,
     HeaderComponent,
     NotificationsDropdownComponent,

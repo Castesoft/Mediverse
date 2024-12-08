@@ -215,3 +215,29 @@ export function createItemResolver<T>(
     return service.getById(id);
   };
 }
+
+export class BaseTable<
+  T extends Entity, U extends EntityParams<U>, V extends FormGroup2<U>,
+  Z extends ServiceHelper<T, U, V>
+> {
+  protected route = inject(ActivatedRoute);
+  protected router = inject(Router);
+  protected validation = inject(ValidationService);
+  protected matSnackBar = inject(MatSnackBar);
+
+  service: Z;
+
+  pagination = signal<Pagination | null>(null);
+  list = signal<T[]>([]);
+  toggle = signal(false);
+  fromWrapper = signal(false);
+
+  ngUnsubscribe = new Subject<void>();
+
+  constructor(
+    serviceToken: new (...args: any[]) => Z,
+  ) {
+    this.service = inject(serviceToken);
+  }
+
+}
