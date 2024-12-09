@@ -10,6 +10,7 @@ using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
+using MainService.Models.Entities.Addresses;
 
 namespace MainService.Infrastructure.Data;
 
@@ -63,10 +64,10 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
 
         switch (param.Type)
         {
-            case Addresses.Account:
+            case AddressesEnum.Account:
                 query = query.Where(x => x.UserAddress.UserId == userId);
                 break;
-            case Addresses.Clinic:
+            case AddressesEnum.Clinic:
                 if (!roles.Contains("Doctor") && !roles.Contains("Nurse")) return null;
                 int doctorId = userId;
 
@@ -78,73 +79,48 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            query = query.Where(x =>
-                EF.Functions.Like(x.Name.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.Description.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.Zipcode.ToString(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.City.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.Neighborhood.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.InteriorNumber.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.ExteriorNumber.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.Street.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.State.ToLower(), $"%{param.Search}%"));
+            string term = param.Search.ToLower();
+            
+            query = query.Where(
+                x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Street) && x.Street.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.InteriorNumber) && x.InteriorNumber.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.ExteriorNumber) && x.ExteriorNumber.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Neighborhood) && x.Neighborhood.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.City) && x.City.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.State) && x.State.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Country) && x.Country.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Zipcode) && x.Zipcode.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Notes) && x.Notes.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.CrossStreet1) && x.CrossStreet1.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.CrossStreet2) && x.CrossStreet2.ToLower().Contains(term)
+            );
         }
 
         if (!string.IsNullOrEmpty(param.Sort))
         {
-            var lowerSort = param.Sort.ToLower().Trim();
-
-            switch (lowerSort)
+            query = param.Sort.ToLower() switch
             {
-                case "name":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Name)
-                        : query.OrderByDescending(x => x.Name);
-                    break;
-                case "description":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Description)
-                        : query.OrderByDescending(x => x.Description);
-                    break;
-                case "zipcode":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Zipcode)
-                        : query.OrderByDescending(x => x.Zipcode);
-                    break;
-                case "city":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.City)
-                        : query.OrderByDescending(x => x.City);
-                    break;
-                case "neighborhood":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Neighborhood)
-                        : query.OrderByDescending(x => x.Neighborhood);
-                    break;
-                case "interiorNumber":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.InteriorNumber)
-                        : query.OrderByDescending(x => x.InteriorNumber);
-                    break;
-                case "exteriorNumber":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.ExteriorNumber)
-                        : query.OrderByDescending(x => x.ExteriorNumber);
-                    break;
-                case "street":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Street)
-                        : query.OrderByDescending(x => x.Street);
-                    break;
-                case "state":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.State)
-                        : query.OrderByDescending(x => x.State);
-                    break;
-                default:
-                    query = query.OrderByDescending(x => x.DoctorClinic.IsMain);
-                    break;
-            }
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
+                "street" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Street) : query.OrderByDescending(x => x.Street),
+                "interiornumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.InteriorNumber) : query.OrderByDescending(x => x.InteriorNumber),
+                "exteriornumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.ExteriorNumber) : query.OrderByDescending(x => x.ExteriorNumber),
+                "neighborhood" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Neighborhood) : query.OrderByDescending(x => x.Neighborhood),
+                "city" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.City) : query.OrderByDescending(x => x.City),
+                "state" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.State) : query.OrderByDescending(x => x.State),
+                "country" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Country) : query.OrderByDescending(x => x.Country),
+                "zipcode" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Zipcode) : query.OrderByDescending(x => x.Zipcode),
+                "notes" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Notes) : query.OrderByDescending(x => x.Notes),
+                "crossstreet1" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CrossStreet1) : query.OrderByDescending(x => x.CrossStreet1),
+                "crossstreet2" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CrossStreet2) : query.OrderByDescending(x => x.CrossStreet2),
+                _ => query.OrderByDescending(x => x.CreatedAt),
+            };
+        } else {
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         return await PagedList<AddressDto>.CreateAsync(

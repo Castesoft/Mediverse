@@ -9,6 +9,6 @@ public class EventClinic
     
     public int EventId { get; set; }
     public int ClinicId { get; set; }
-    public Event Event { get; set; }
-    public Address Clinic { get; set; }
+    public Event Event { get; set; } = null!;
+    public Address Clinic { get; set; } = null!;
 }

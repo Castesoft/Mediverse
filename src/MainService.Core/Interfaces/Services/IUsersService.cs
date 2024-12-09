@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using MainService.Core.DTOs.User;
 using MainService.Models.Entities;

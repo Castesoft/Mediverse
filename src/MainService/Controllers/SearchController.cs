@@ -1,4 +1,5 @@
 using MainService.Core.DTOs.Search;
+using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
@@ -6,6 +7,7 @@ using MainService.Extensions;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
 
@@ -16,21 +18,20 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
     [HttpGet]
     public async Task<ActionResult<DoctorSearchResultsDto>> GetPagedListAsync([FromQuery] SearchParams param)
     {
-        if (User.Identity.IsAuthenticated)
+        int userId = User.GetUserId();
+        
+        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        if (user != null)
         {
-            var user = await userManager.GetUserAsync(User);
-            if (user != null)
-            {
-                param.PatientId = user.Id;
-            }
+            param.PatientId = user.Id;
         }
 
-        var pagedList = await uow.SearchRepository.GetPagedListAsync(param);
+        PagedList<DoctorSearchResultDto> pagedList = await uow.SearchRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));
 
-        foreach (var doctor in pagedList)
+        foreach (DoctorSearchResultDto doctor in pagedList)
         {
             doctor.AvailableDays = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Now.AddDays(i))
@@ -45,13 +46,16 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                         .Where(ws => ws.DayOfWeek == (int)date.DayOfWeek)
                         .Select(ws =>
                         {
-                            var startTime = ws.StartTime.ToTimeSpan();
-                            var endTime = ws.EndTime.ToTimeSpan();
-                            var localDate = date.Date;
-                            var conflictingEvent = doctor.DoctorEvents.FirstOrDefault(e =>
-                                e.DateFrom.Date == localDate &&
-                                e.DateFrom.ToLocalTime().TimeOfDay < endTime &&
-                                e.DateTo.ToLocalTime().TimeOfDay > startTime);
+                            TimeSpan startTime = ws.StartTime.ToTimeSpan();
+                            TimeSpan endTime = ws.EndTime.ToTimeSpan();
+                            DateTime localDate = date.Date;
+                            Event? conflictingEvent = doctor.DoctorEvents.FirstOrDefault(e =>
+                                e.DateFrom.HasValue &&
+                                e.DateTo.HasValue &&
+                                e.DateFrom.Value.Date == localDate &&
+                                e.DateFrom.Value.ToLocalTime().TimeOfDay < endTime &&
+                                e.DateTo.Value.ToLocalTime().TimeOfDay > startTime
+                            );
 
                             return new AvailableTimeDto
                             {
@@ -108,13 +112,16 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                         .Where(ws => ws.DayOfWeek == (int)date.DayOfWeek)
                         .Select(ws =>
                         {
-                            var startTime = ws.StartTime.ToTimeSpan();
-                            var endTime = ws.EndTime.ToTimeSpan();
-                            var localDate = date.Date;
-                            var conflictingEvent = doctor.DoctorEvents.FirstOrDefault(e =>
-                                e.DateFrom.Date == localDate &&
-                                e.DateFrom.ToLocalTime().TimeOfDay < endTime &&
-                                e.DateTo.ToLocalTime().TimeOfDay > startTime);
+                            TimeSpan startTime = ws.StartTime.ToTimeSpan();
+                            TimeSpan endTime = ws.EndTime.ToTimeSpan();
+                            DateTime localDate = date.Date;
+                            Event? conflictingEvent = doctor.DoctorEvents.FirstOrDefault(e =>
+                                e.DateFrom.HasValue &&
+                                e.DateTo.HasValue &&
+                                e.DateFrom.Value.Date == localDate &&
+                                e.DateFrom.Value.ToLocalTime().TimeOfDay < endTime &&
+                                e.DateTo.Value.ToLocalTime().TimeOfDay > startTime
+                            );
 
                             return new AvailableTimeDto
                             {

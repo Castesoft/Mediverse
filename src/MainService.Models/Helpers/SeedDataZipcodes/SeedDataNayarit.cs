@@ -1,9 +1,11 @@
-namespace MainService.Models.Helpers;
+using MainService.Models.Entities.Addresses;
+
+namespace MainService.Models.Helpers.SeedDataZipcodes;
 public class SeedDataNayarit
 {
-  public static readonly IEnumerable<Entities.State> state =
+  public static readonly IEnumerable<State> state =
   [
-    new Entities.State { Name = "Nayarit", StateCities = [
+    new State { Name = "Nayarit", StateCities = [
       new () { City = new () { Name = "Tepic", CityNeighborhoods = [
         new () { Neighborhood = new () { Name = "Esteban Baca Calderón", Zipcode = "63000", Settlement = "Unidad habitacional" } },
         new () { Neighborhood = new () { Name = "Amado Nervo", Zipcode = "63010", Settlement = "Colonia" } },

@@ -2,6 +2,7 @@ using MainService.Core.Interfaces.Services;
 using MainService.Models;
 using MainService.Models.Entities;
 using MainService.Models.Helpers;
+using MainService.Models.Helpers.SeedDataZipcodes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -649,7 +650,7 @@ public static class Seed
                 Age = Random.Shared.Next(18, 101),
                 Sex = user.Sex,
                 BirthPlace = mexicoStates[Random.Shared.Next(mexicoStates.Count)].Name,
-                BirthDate = user.DateOfBirth.ToDateTime(TimeOnly.MinValue).ToUniversalTime(),
+                BirthDate = user.DateOfBirth?.ToDateTime(TimeOnly.MinValue).ToUniversalTime(),
                 YearsOfSchooling = Random.Shared.Next(6, 22),
                 HandDominance = Random.Shared.Next(2) == 0 ? "Diestro" : "Zurdo",
                 CurrentLivingSituation = GetRandomLivingSituation(),

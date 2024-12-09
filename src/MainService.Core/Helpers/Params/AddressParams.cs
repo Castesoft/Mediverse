@@ -1,12 +1,10 @@
-#nullable enable
-
-using MainService.Models.Entities;
+using MainService.Models.Entities.Addresses;
 
 namespace MainService.Core.Helpers.Params;
 public class AddressParams : BaseParams
 {
-    public string? Types { get; set; } = null;
-    public Addresses Type { get; set; }
+    public string? Types { get; set; }
+    public AddressesEnum? Type { get; set; }
 
-    public int? DoctorId { get; set; } = null;
+    public int? DoctorId { get; set; }
 }

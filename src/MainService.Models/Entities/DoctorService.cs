@@ -18,7 +18,7 @@ public class DoctorService
     }
     
     public int DoctorId { get; set; }
-    public AppUser Doctor { get; set; }
+    public AppUser Doctor { get; set; } = null!;
     public int ServiceId { get; set; }
-    public Service Service { get; set; }
+    public Service Service { get; set; } = null!;
 }

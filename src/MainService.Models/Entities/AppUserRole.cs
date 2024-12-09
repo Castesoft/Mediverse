@@ -3,6 +3,6 @@ using Microsoft.AspNetCore.Identity;
 namespace MainService.Models.Entities;
 public class AppUserRole : IdentityUserRole<int>
 {
-    public AppUser User { get; set; }
-    public AppRole Role { get; set; }
+    public AppUser User { get; set; } = null!;
+    public AppRole Role { get; set; } = null!;
 }

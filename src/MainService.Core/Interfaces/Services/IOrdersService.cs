@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using MainService.Models.Entities;
 

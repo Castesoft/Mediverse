@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;

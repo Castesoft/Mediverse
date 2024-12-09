@@ -44,30 +44,40 @@ public class DocumentRepository(DataContext context, IMapper mapper) : IDocument
     {
         IQueryable<Document> query = context.Documents.AsQueryable();
 
-        if (!string.IsNullOrEmpty(param.Name)) query = query.Where(x => x.Name.Contains(param.Name));
-        if (!string.IsNullOrEmpty(param.Description)) query = query.Where(x => x.Description.Contains(param.Description));
-
-        if (param.Sort != null && !string.IsNullOrEmpty(param.Sort.Code))
+        if (!string.IsNullOrEmpty(param.Sort))
         {
-            query = param.Sort.Code.ToLower() switch
+            query = param.Sort.ToLower() switch
             {
-                "id" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Id)
-                                        : query.OrderByDescending(x => x.Id),
-                "name" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Name)
-                                        : query.OrderByDescending(x => x.Name),
-                "description" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Description)
-                                        : query.OrderByDescending(x => x.Description),
-                _ => query.OrderBy(x => x.Id),
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
+                "url" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Url) : query.OrderByDescending(x => x.Url),
+                "publicid" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.PublicId) : query.OrderByDescending(x => x.PublicId),
+                "thumbnailurl" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.ThumbnailUrl) : query.OrderByDescending(x => x.ThumbnailUrl),
+                "thumbnailpublicid" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.ThumbnailPublicId) : query.OrderByDescending(x => x.ThumbnailPublicId),
+                "thumbnailsize" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.ThumbnailSize) : query.OrderByDescending(x => x.ThumbnailSize),
+                "size" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Size) : query.OrderByDescending(x => x.Size),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                _ => query.OrderByDescending(x => x.CreatedAt),
             };
+        } else {
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
+            string term = param.Search.ToLower();
+            
             query = query.Where(
-                x => EF.Functions.Like(x.Name.ToLower(), $"%{param.Search}%")
+                x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Url) && x.Url.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.PublicId) && x.PublicId.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.ThumbnailUrl) && x.ThumbnailUrl.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.ThumbnailPublicId) && x.ThumbnailPublicId.ToLower().Contains(term) ||
+                    x.Size.HasValue && x.Size.Value.ToString().ToLower().Contains(term) ||
+                    x.ThumbnailSize.HasValue && x.ThumbnailSize.Value.ToString().ToLower().Contains(term)
             );
         }
 

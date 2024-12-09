@@ -125,7 +125,7 @@ public class EmailService : IEmailService
                           <strong>¡Cuentanos sobre tu experiencia!</strong>
                         </div>
                         <div style="padding-bottom: 20px">Expecialista: {{doctor.FirstName}} {{doctor.LastName}}</div>
-                        <div style="padding-bottom: 20px">Fecha: {{@event.DateFrom.ToLocalTime()}}</div>
+                        <div style="padding-bottom: 20px">Fecha: {{@event.DateFrom!.Value.ToLocalTime()}}</div>
                         <div style="padding-bottom: 40px">Servicio: {{@event.EventService.Service.Name}}</div>
                         <a href="https://localhost:4400/account" rel="noopener" target="_blank">Clic aquí para completar la encuesta</a>.
                         <!--end:Email content-->

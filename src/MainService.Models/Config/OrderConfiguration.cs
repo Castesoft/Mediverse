@@ -37,10 +37,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
     private T GetEnumFromMemberValue<T>(string value) where T : Enum
     {
-        var type = typeof(T);
-        foreach (var field in type.GetFields())
+        Type type = typeof(T);
+        foreach (FieldInfo field in type.GetFields())
         {
-            var attribute = field.GetCustomAttribute<EnumMemberAttribute>();
+            EnumMemberAttribute? attribute = field.GetCustomAttribute<EnumMemberAttribute>();
+
             if (attribute != null && attribute.Value == value)
             {
                 return (T)field.GetValue(null);

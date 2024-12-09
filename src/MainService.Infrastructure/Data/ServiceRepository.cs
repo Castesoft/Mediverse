@@ -72,58 +72,42 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
 
     public async Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user)
     {
-        var query = context.Services
+        IQueryable<Service> query = context.Services
             .Include(x => x.DoctorService)
-            .AsQueryable();
+            .AsQueryable()
+        ;
 
         int userId = user.GetUserId();
 
         query = query.Where(x => x.DoctorService.DoctorId == userId);
 
-        if (param.DateFrom != DateTime.MinValue)
-            query = query.Where(x => x.CreatedAt >= param.DateFrom);
-
-        if (param.DateTo != DateTime.MaxValue)
-            query = query.Where(x => x.CreatedAt <= param.DateTo);
-
         if (!string.IsNullOrEmpty(param.Search))
         {
             string term = param.Search.ToLower();
-
-            query = query.Where(x =>
-                EF.Functions.Like(x.Name, $"%{term}%") ||
-                EF.Functions.Like(x.Description, $"%{term}%")
+            
+            query = query.Where(
+                x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
+                    x.Price.HasValue && x.Price.Value.ToString().ToLower().Contains(term) ||
+                    x.Discount.HasValue && x.Discount.Value.ToString().ToLower().Contains(term)
             );
         }
 
         if (!string.IsNullOrEmpty(param.Sort))
         {
-            switch (param.Sort)
+            query = param.Sort.ToLower() switch
             {
-                case "id":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Id)
-                        : query.OrderByDescending(x => x.Id);
-                    break;
-                case "name":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Name)
-                        : query.OrderByDescending(x => x.Name);
-                    break;
-                case "price":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Price)
-                        : query.OrderByDescending(x => x.Price);
-                    break;
-                case "discount":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Discount)
-                        : query.OrderByDescending(x => x.Discount);
-                    break;
-                default:
-                    query = query.OrderByDescending(x => x.CreatedAt);
-                    break;
-            }
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
+                "price" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Price) : query.OrderByDescending(x => x.Price),
+                "discount" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Discount) : query.OrderByDescending(x => x.Discount),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                _ => query.OrderByDescending(x => x.CreatedAt),
+            };
+        } else {
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         return await PagedList<ServiceDto>.CreateAsync(

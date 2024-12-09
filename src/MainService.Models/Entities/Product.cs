@@ -13,7 +13,7 @@ public class Product : BaseEntity
     /// This constructor is mainly used for development purposes.
     /// The price and discount of the product are randomized.
     /// </remarks>
-    public Product(string name, string description)
+    public Product(string? name, string? description)
     {
         Name = name;
         Description = description;
@@ -21,7 +21,7 @@ public class Product : BaseEntity
         Discount = new Random().NextDouble();
     }
 
-    public Product(string name, string description, decimal price, double discount)
+    public Product(string? name, string? description, decimal? price, double? discount)
     {
         Name = name;
         Description = description;
@@ -29,17 +29,28 @@ public class Product : BaseEntity
         Discount = discount;
     }
     
-    public double Dosage { get; set; }
-    public string Unit { get; set; }
-    public string Manufacturer { get; set; }
-    public string LotNumber { get; set; }
-    public decimal Price { get; set; }
-    public double Discount { get; set; }
+    public double? Dosage { get; set; }
+    public string? Unit { get; set; }
+    public string? Manufacturer { get; set; }
+    public string? LotNumber { get; set; }
+    public decimal? Price { get; set; }
+    public double? Discount { get; set; }
 
-    public DoctorProduct DoctorProduct { get; set; }
+    public DoctorProduct DoctorProduct { get; set; } = null!;
     public List<ProductPhoto> ProductPhotos { get; set; } = [];
     public List<PrescriptionItem> PrescriptionItems { get; set; } = [];
     public List<OrderItem> OrderItems { get; set; } = [];
 
-    public string GetPhotoUrl() => ProductPhotos.FirstOrDefault()?.Photo.Url;
+    public string GetPhotoUrl() {
+        if (ProductPhotos.Count() > 0) {
+            Photo photo = ProductPhotos.First().Photo;
+
+            string? url = photo.Url;
+
+            if (string.IsNullOrEmpty(url)) return "img/placeholder.png";
+            else return url;
+        }
+
+        return "img/placeholder.png";
+    }
 }

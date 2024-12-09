@@ -7,12 +7,15 @@ public static class UserManagerExtensions
 {
     public static async Task<IEnumerable<string>> GetPermissionsAsync(this UserManager<AppUser> userManager, AppUser user)
     {
-        var appUser = await userManager.Users
+        AppUser? appUser = await userManager.Users
             .Include(x => x.UserPermissions)
                 .ThenInclude(x => x.Permission)
-            .SingleOrDefaultAsync(x => x.Id == user.Id);
+            .SingleOrDefaultAsync(x => x.Id == user.Id)
+        ;
 
-        var permissions = appUser.UserPermissions.Select(x => x.Permission.Name).ToList();
+        if (appUser == null) throw new Exception("User not found");
+
+        List<string> permissions = appUser.UserPermissions.Select(x => x.Permission.Name).ToList();
 
         return permissions;
     }

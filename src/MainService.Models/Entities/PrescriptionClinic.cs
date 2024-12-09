@@ -5,7 +5,9 @@ namespace MainService.Models.Entities
         public PrescriptionClinic() { }
         public PrescriptionClinic(int clinicId) => ClinicId = clinicId;
 
-        public Address Clinic { get; set; } public int ClinicId { get; set; }
-        public Prescription Prescription { get; set; } public int PrescriptionId { get; set; }
+        public int ClinicId { get; set; }
+        public int PrescriptionId { get; set; }
+        public Address Clinic { get; set; } = null!;
+        public Prescription Prescription { get; set; } = null!;
     }
 }

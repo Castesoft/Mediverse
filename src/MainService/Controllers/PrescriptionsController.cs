@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using AutoMapper;
 using MainService.Core.DTOs.Prescription;
@@ -67,6 +67,12 @@ public class PrescriptionsController(
         [FromBody] PrescriptionCreateDto request
     )
     {
+        if (request.Patient == null) return BadRequest("El paciente es requerido");
+        if (!request.Patient.Id.HasValue) return BadRequest("El paciente es requerido");
+        if (request.Clinic == null) return BadRequest("La clínica es requerida");
+        if (!request.Clinic.Id.HasValue) return BadRequest("La clínica es requerida");
+        if (string.IsNullOrEmpty(request.Notes)) return BadRequest("Las notas son requeridas");
+        
         int doctorId = User.GetUserId();
         
         if (request.Patient == null)
@@ -75,34 +81,35 @@ public class PrescriptionsController(
         if (string.IsNullOrEmpty(request.Notes))
         return BadRequest("Las notas son requeridas");
 
-        if (!await uow.UserRepository.ExistsByIdAsync(request.Patient.Id))
-        return NotFound($"El paciente con Id {request.Patient.Id} no existe");
+        if (!await uow.UserRepository.ExistsByIdAsync(request.Patient.Id.Value))
+        return NotFound($"El paciente con Id {request.Patient.Id.Value} no existe");
         
-        if (!await uow.UserRepository.PatientExistsAsync(request.Patient.Id, doctorId))
-        return BadRequest($"El paciente {request.Patient.Id} no corresponde al doctor {doctorId}.");
+        if (!await uow.UserRepository.PatientExistsAsync(request.Patient.Id.Value, doctorId))
+        return BadRequest($"El paciente {request.Patient.Id.Value} no corresponde al doctor {doctorId}.");
         
         if (request.Event != null) {
-            if (!await uow.EventRepository.ExistsByIdAsync(request.Event.Id))
+            if (!request.Event.Id.HasValue) return BadRequest("La cita es requerida");
+            
+            if (!await uow.EventRepository.ExistsByIdAsync(request.Event.Id.Value))
             return NotFound($"La cita con Id {request.Event.Id} no existe");
 
-            if (!await uow.EventRepository.DoctorHasEventAsync(doctorId, request.Event.Id))
-            return BadRequest($"La cita {request.Event.Id} no corresponde al doctor {doctorId}.");
+            if (!await uow.EventRepository.DoctorHasEventAsync(doctorId, request.Event.Id.Value))
+            return BadRequest($"La cita {request.Event.Id.Value} no corresponde al doctor {doctorId}.");
         }
 
-        if (request.Clinic == null)
-        return BadRequest("La clínica es requerida");
+        if (request.Clinic == null) return BadRequest("La clínica es requerida");
+        if (!request.Clinic.Id.HasValue) return BadRequest("La clínica es requerida");
 
-        if (!await uow.AddressRepository.ExistsByIdAsync(request.Clinic.Id))
-        return NotFound($"La clínica con Id {request.Clinic.Id} no existe");
+        if (!await uow.AddressRepository.ExistsByIdAsync(request.Clinic.Id.Value))
+        return NotFound($"La clínica con Id {request.Clinic.Id.Value} no existe");
 
-        if (!await uow.AddressRepository.DoctorHasAddressAsync(doctorId, request.Clinic.Id))
-        return BadRequest($"La clínica {request.Clinic.Id} no corresponde al doctor {doctorId}.");
+        if (!await uow.AddressRepository.DoctorHasAddressAsync(doctorId, request.Clinic.Id.Value))
+        return BadRequest($"La clínica {request.Clinic.Id.Value} no corresponde al doctor {doctorId}.");
 
-        if (request.Items.Count() == 0)
-        return BadRequest("Los medicamentos son requeridos");
+        if (request.Items.Count() == 0) return BadRequest("Los medicamentos son requeridos");
 
-        int patientId = request.Patient.Id;
-        int clinicId = request.Clinic.Id;
+        int patientId = request.Patient.Id.Value;
+        int clinicId = request.Clinic.Id.Value;
         string notes = request.Notes;
 
         AppUser? patient = await uow.UserRepository.GetByIdAsNoTrackingAsync(patientId);
@@ -116,19 +123,24 @@ public class PrescriptionsController(
         prescriptionToCreate.PatientPrescription = new(patientId);
         prescriptionToCreate.DoctorPrescription = new(doctorId);
         prescriptionToCreate.PrescriptionClinic = new(clinicId);
-        if (request.Event != null) prescriptionToCreate.EventPrescription = new(request.Event.Id);
+        if (
+            request.Event != null &&
+            request.Event.Id.HasValue
+        ) prescriptionToCreate.EventPrescription = new(request.Event.Id.Value);
 
         List<OrderItem> globalProducts = [];
 
         foreach (PrescriptionItemCreateDto item in request.Items)
         {
             if (item.Product != null) {
-                if (!await uow.ProductRepository.ExistsByIdAsync(item.Product.Id))
-                return NotFound($"Producto {item.Product.Id} no existe");
+                if (!item.Product.Id.HasValue) return BadRequest("El medicamento es requerido");
+                
+                if (!await uow.ProductRepository.ExistsByIdAsync(item.Product.Id.Value))
+                return NotFound($"Producto {item.Product.Id.Value} no existe");
 
-                Product product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item.Product.Id);
+                Product product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item.Product.Id.Value);
 
-                if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id)) {
+                if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id.Value)) {
                     PrescriptionItem itemToAdd = new();
 
                     if (!string.IsNullOrEmpty(item.Instructions)) itemToAdd.Instructions = item.Instructions;
@@ -141,7 +153,7 @@ public class PrescriptionsController(
 
                     prescriptionToCreate.PrescriptionItems.Add(itemToAdd);
                     
-                } else if (await uow.ProductRepository.IsGlobalAsync(item.Product.Id)) {
+                } else if (await uow.ProductRepository.IsGlobalAsync(item.Product.Id.Value)) {
                     OrderItem orderItemToAdd = new();
 
                     if (item.Quantity.HasValue) orderItemToAdd.Quantity = item.Quantity.Value;

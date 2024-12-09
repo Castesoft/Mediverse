@@ -9,6 +9,6 @@ public class EventService
     
     public int EventId { get; set; }
     public int ServiceId { get; set; }
-    public Event Event { get; set; }
-    public Service Service { get; set; }
+    public Event Event { get; set; } = null!;
+    public Service Service { get; set; } = null!;
 }

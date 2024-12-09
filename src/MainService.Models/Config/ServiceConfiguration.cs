@@ -8,10 +8,8 @@ public class ServiceConfiguration : IEntityTypeConfiguration<Service>
 {
     public void Configure(EntityTypeBuilder<Service> builder)
     {
-        builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-        builder.Property(x => x.Description).IsRequired().HasMaxLength(500);
-        builder.Property(x => x.Price).IsRequired();
-        builder.Property(x => x.Discount).IsRequired();
+        builder.Property(x => x.Name).HasMaxLength(100);
+        builder.Property(x => x.Description).HasMaxLength(500);
 
         builder
             .HasMany(x => x.ServicePhotos)

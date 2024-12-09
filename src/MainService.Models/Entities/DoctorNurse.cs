@@ -2,9 +2,9 @@ namespace MainService.Models.Entities;
 public class DoctorNurse
 {
     public int DoctorId { get; set; }
-    public AppUser Doctor { get; set; }
+    public AppUser Doctor { get; set; } = null!;
     public int NurseId { get; set; }
-    public AppUser Nurse { get; set; }
+    public AppUser Nurse { get; set; } = null!;
     
     public DoctorNurse() {}
     

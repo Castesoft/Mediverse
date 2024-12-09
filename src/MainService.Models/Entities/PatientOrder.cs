@@ -12,6 +12,6 @@ public class PatientOrder
     
     public int PatientId { get; set; }
     public int OrderId { get; set; }
-    public AppUser Patient { get; set; }
-    public Order Order { get; set; }
+    public AppUser Patient { get; set; } = null!;
+    public Order Order { get; set; } = null!;
 }

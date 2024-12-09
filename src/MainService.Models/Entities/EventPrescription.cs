@@ -7,6 +7,6 @@ public class EventPrescription
     
     public int EventId { get; set; }
     public int PrescriptionId { get; set; }
-    public Event Event { get; set; }
-    public Prescription Prescription { get; set; }
+    public Event Event { get; set; } = null!;
+    public Prescription Prescription { get; set; } = null!;
 }

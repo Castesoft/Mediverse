@@ -118,57 +118,49 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
 
     public async Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user)
     {
-        var query = context.Products
+        IQueryable<Product> query = context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
-            .AsQueryable();
+            .AsQueryable()
+        ;
 
         query = query.Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null);
-
-        if (param.DateFrom != DateTime.MinValue)
-            query = query.Where(x => x.CreatedAt >= param.DateFrom);
-
-        if (param.DateTo != DateTime.MaxValue)
-            query = query.Where(x => x.CreatedAt <= param.DateTo);
 
         if (!string.IsNullOrEmpty(param.Search))
         {
             string term = param.Search.ToLower();
-
-            query = query.Where(x =>
-                EF.Functions.Like(x.Name, $"%{term}%") ||
-                EF.Functions.Like(x.Description, $"%{term}%")
+            
+            query = query.Where(
+                x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Unit) && x.Unit.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Manufacturer) && x.Manufacturer.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.LotNumber) && x.LotNumber.ToLower().Contains(term) ||
+                    x.Price.HasValue && x.Price.Value.ToString().ToLower().Contains(term) ||
+                    x.Discount.HasValue && x.Discount.Value.ToString().ToLower().Contains(term) ||
+                    x.Dosage.HasValue && x.Dosage.Value.ToString().ToLower().Contains(term)
             );
         }
 
         if (!string.IsNullOrEmpty(param.Sort))
         {
-            switch (param.Sort)
+            query = param.Sort.ToLower() switch
             {
-                case "id":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Id)
-                        : query.OrderByDescending(x => x.Id);
-                    break;
-                case "name":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Name)
-                        : query.OrderByDescending(x => x.Name);
-                    break;
-                case "price":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Price)
-                        : query.OrderByDescending(x => x.Price);
-                    break;
-                case "discount":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Discount)
-                        : query.OrderByDescending(x => x.Discount);
-                    break;
-                default:
-                    query = query.OrderByDescending(x => x.CreatedAt);
-                    break;
-            }
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
+                "unit" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Unit) : query.OrderByDescending(x => x.Unit),
+                "manufacturer" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Manufacturer) : query.OrderByDescending(x => x.Manufacturer),
+                "lotnumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.LotNumber) : query.OrderByDescending(x => x.LotNumber),
+                "price" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Price) : query.OrderByDescending(x => x.Price),
+                "discount" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Discount) : query.OrderByDescending(x => x.Discount),
+                "dosage" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Dosage) : query.OrderByDescending(x => x.Dosage),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                _ => query.OrderByDescending(x => x.CreatedAt),
+            };
+        } else {
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         return await PagedList<ProductDto>.CreateAsync(

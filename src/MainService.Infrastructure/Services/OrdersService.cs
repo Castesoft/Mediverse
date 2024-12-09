@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using MainService.Core.Interfaces.Services;
 using MainService.Models;

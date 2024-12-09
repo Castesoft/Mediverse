@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;

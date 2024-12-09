@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241204163030_InitialCreate")]
+    [Migration("20241209221654_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -86,6 +86,110 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("Addresses");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.CityNeighborhood", b =>
+                {
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NeighborhoodId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CityId", "NeighborhoodId");
+
+                    b.HasIndex("NeighborhoodId")
+                        .IsUnique();
+
+                    b.ToTable("CityNeighborhood");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.Neighborhood", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Settlement")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Zipcode")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Neighborhoods");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.State", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("States");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.StateCity", b =>
+                {
+                    b.Property<int>("StateId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("StateId", "CityId");
+
+                    b.HasIndex("CityId")
+                        .IsUnique();
+
+                    b.ToTable("StateCity");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.AppPermission", b =>
                 {
                     b.Property<int>("Id")
@@ -95,9 +199,11 @@ namespace MainService.Postgres.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -173,7 +279,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateOnly>("DateOfBirth")
+                    b.Property<DateOnly?>("DateOfBirth")
                         .HasMaxLength(100)
                         .HasColumnType("date");
 
@@ -259,7 +365,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("RecommendedBy")
                         .HasColumnType("text");
 
-                    b.Property<bool>("RequireAnticipatedCardPayments")
+                    b.Property<bool?>("RequireAnticipatedCardPayments")
                         .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
@@ -324,44 +430,6 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Cities");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.CityNeighborhood", b =>
-                {
-                    b.Property<int>("CityId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("NeighborhoodId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CityId", "NeighborhoodId");
-
-                    b.HasIndex("NeighborhoodId")
-                        .IsUnique();
-
-                    b.ToTable("CityNeighborhood");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
                 {
                     b.Property<int>("AddressId")
@@ -407,7 +475,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -447,13 +515,13 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("integer");
 
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -541,7 +609,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -581,7 +649,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -637,7 +705,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("ClinicId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsMain")
+                    b.Property<bool?>("IsMain")
                         .HasColumnType("boolean");
 
                     b.HasKey("DoctorId", "ClinicId");
@@ -915,13 +983,13 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("PublicId")
                         .HasColumnType("text");
 
-                    b.Property<int>("Size")
+                    b.Property<int?>("Size")
                         .HasColumnType("integer");
 
                     b.Property<string>("ThumbnailPublicId")
                         .HasColumnType("text");
 
-                    b.Property<int>("ThumbnailSize")
+                    b.Property<int?>("ThumbnailSize")
                         .HasColumnType("integer");
 
                     b.Property<string>("ThumbnailUrl")
@@ -946,7 +1014,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -986,10 +1054,10 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DateFrom")
+                    b.Property<DateTime?>("DateFrom")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DateTo")
+                    b.Property<DateTime?>("DateTo")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -1201,7 +1269,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -1241,7 +1309,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -1377,14 +1445,13 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("BirthPlace")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Comments")
@@ -1394,26 +1461,21 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CurrentAddress")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CurrentLivingSituation")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("EconomicDependence")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("HandDominance")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("HasCompanion")
@@ -1423,24 +1485,21 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("MobilePhone")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("PatientName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Sex")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("UsesGlassesOrHearingAid")
+                    b.Property<bool?>("UsesGlassesOrHearingAid")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("YearsOfSchooling")
+                    b.Property<int?>("YearsOfSchooling")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -1680,34 +1739,6 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("MedicalRecordSubstances");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Settlement")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Zipcode")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Neighborhoods");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.Property<int>("NurseId")
@@ -1734,7 +1765,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -1771,10 +1802,10 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("AmountDue")
+                    b.Property<decimal?>("AmountDue")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("AmountPaid")
+                    b.Property<decimal?>("AmountPaid")
                         .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1788,7 +1819,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<double>("Discount")
+                    b.Property<double?>("Discount")
                         .HasColumnType("double precision");
 
                     b.Property<string>("Name")
@@ -1799,13 +1830,13 @@ namespace MainService.Postgres.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<decimal>("Subtotal")
+                    b.Property<decimal?>("Subtotal")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("Tax")
+                    b.Property<decimal?>("Tax")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("Total")
+                    b.Property<decimal?>("Total")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
@@ -1839,10 +1870,10 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("integer");
 
-                    b.Property<double>("Discount")
+                    b.Property<double?>("Discount")
                         .HasColumnType("double precision");
 
-                    b.Property<double>("Dosage")
+                    b.Property<double?>("Dosage")
                         .HasColumnType("double precision");
 
                     b.Property<string>("Instructions")
@@ -1851,10 +1882,10 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
                         .HasColumnType("integer");
 
                     b.Property<string>("Unit")
@@ -1923,7 +1954,7 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal?>("Amount")
                         .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1966,10 +1997,10 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("DisplayName")
                         .HasColumnType("text");
 
-                    b.Property<int>("ExpirationMonth")
+                    b.Property<int?>("ExpirationMonth")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ExpirationYear")
+                    b.Property<int?>("ExpirationYear")
                         .HasColumnType("integer");
 
                     b.Property<string>("Last4")
@@ -1997,7 +2028,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -2138,7 +2169,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("PublicId")
                         .HasColumnType("text");
 
-                    b.Property<int>("Size")
+                    b.Property<int?>("Size")
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
@@ -2163,7 +2194,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("ExchangeAmount")
+                    b.Property<int?>("ExchangeAmount")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -2209,7 +2240,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<double>("Dosage")
+                    b.Property<double?>("Dosage")
                         .HasColumnType("double precision");
 
                     b.Property<int>("Id")
@@ -2221,7 +2252,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
                         .HasColumnType("integer");
 
                     b.Property<string>("Unit")
@@ -2265,14 +2296,13 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<double>("Discount")
+                    b.Property<double?>("Discount")
                         .HasColumnType("double precision");
 
-                    b.Property<double>("Dosage")
+                    b.Property<double?>("Dosage")
                         .HasColumnType("double precision");
 
                     b.Property<string>("LotNumber")
@@ -2282,11 +2312,10 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Unit")
@@ -2324,7 +2353,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -2373,7 +2402,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("Rating")
+                    b.Property<int?>("Rating")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -2393,19 +2422,17 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<double>("Discount")
+                    b.Property<double?>("Discount")
                         .HasColumnType("double precision");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
@@ -2456,7 +2483,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -2500,44 +2527,6 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("SpecialtyService");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.State", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("States");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.StateCity", b =>
-                {
-                    b.Property<int>("StateId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CityId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("StateId", "CityId");
-
-                    b.HasIndex("CityId")
-                        .IsUnique();
-
-                    b.ToTable("StateCity");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
                 {
                     b.Property<int>("Id")
@@ -2571,7 +2560,7 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<int>("CodeNumber")
+                    b.Property<int?>("CodeNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Color")
@@ -2795,19 +2784,19 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("DayOfWeek")
+                    b.Property<int?>("DayOfWeek")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<TimeOnly>("EndTime")
+                    b.Property<TimeOnly?>("EndTime")
                         .HasColumnType("time without time zone");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<TimeOnly>("StartTime")
+                    b.Property<TimeOnly?>("StartTime")
                         .HasColumnType("time without time zone");
 
                     b.HasKey("Id");
@@ -2829,16 +2818,16 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<TimeSpan>("EndTime")
+                    b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("interval");
 
-                    b.Property<int>("MinutesPerBlock")
+                    b.Property<int?>("MinutesPerBlock")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<TimeSpan>("StartTime")
+                    b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("interval");
 
                     b.HasKey("Id");
@@ -2934,6 +2923,44 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.CityNeighborhood", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Addresses.City", "City")
+                        .WithMany("CityNeighborhoods")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Addresses.Neighborhood", "Neighborhood")
+                        .WithOne("CityNeighborhood")
+                        .HasForeignKey("MainService.Models.Entities.Addresses.CityNeighborhood", "NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("Neighborhood");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.StateCity", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Addresses.City", "City")
+                        .WithOne("StateCity")
+                        .HasForeignKey("MainService.Models.Entities.Addresses.StateCity", "CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Addresses.State", "State")
+                        .WithMany("StateCities")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("State");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.AppRolePermission", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppPermission", "Permission")
@@ -2989,25 +3016,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.CityNeighborhood", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.City", "City")
-                        .WithMany("CityNeighborhoods")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.Neighborhood", "Neighborhood")
-                        .WithOne("CityNeighborhood")
-                        .HasForeignKey("MainService.Models.Entities.CityNeighborhood", "NeighborhoodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-
-                    b.Navigation("Neighborhood");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ClinicLogo", b =>
@@ -4108,25 +4116,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Specialty");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.StateCity", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.City", "City")
-                        .WithOne("StateCity")
-                        .HasForeignKey("MainService.Models.Entities.StateCity", "CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.State", "State")
-                        .WithMany("StateCities")
-                        .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-
-                    b.Navigation("State");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Address", "Address")
@@ -4324,11 +4313,13 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Address", b =>
                 {
-                    b.Navigation("ClinicLogo");
+                    b.Navigation("ClinicLogo")
+                        .IsRequired();
 
                     b.Navigation("ClinicNurses");
 
-                    b.Navigation("DoctorClinic");
+                    b.Navigation("DoctorClinic")
+                        .IsRequired();
 
                     b.Navigation("EventClinics");
 
@@ -4336,7 +4327,27 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("PrescriptionClinics");
 
-                    b.Navigation("UserAddress");
+                    b.Navigation("UserAddress")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.City", b =>
+                {
+                    b.Navigation("CityNeighborhoods");
+
+                    b.Navigation("StateCity")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.Neighborhood", b =>
+                {
+                    b.Navigation("CityNeighborhood")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Addresses.State", b =>
+                {
+                    b.Navigation("StateCities");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.AppPermission", b =>
@@ -4357,7 +4368,8 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Navigation("ClinicNurses");
 
-                    b.Navigation("DoctorBannerPhoto");
+                    b.Navigation("DoctorBannerPhoto")
+                        .IsRequired();
 
                     b.Navigation("DoctorClinics");
 
@@ -4383,9 +4395,11 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("DoctorServices");
 
-                    b.Navigation("DoctorSignature");
+                    b.Navigation("DoctorSignature")
+                        .IsRequired();
 
-                    b.Navigation("DoctorWorkScheduleSettings");
+                    b.Navigation("DoctorWorkScheduleSettings")
+                        .IsRequired();
 
                     b.Navigation("DoctorWorkSchedules");
 
@@ -4409,26 +4423,21 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("UserMedicalLicenses");
 
-                    b.Navigation("UserMedicalRecord");
+                    b.Navigation("UserMedicalRecord")
+                        .IsRequired();
 
                     b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
 
-                    b.Navigation("UserPhoto");
+                    b.Navigation("UserPhoto")
+                        .IsRequired();
 
                     b.Navigation("UserReviews");
 
                     b.Navigation("UserRoles");
 
                     b.Navigation("UserTaxRegimes");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.City", b =>
-                {
-                    b.Navigation("CityNeighborhoods");
-
-                    b.Navigation("StateCity");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
@@ -4438,11 +4447,14 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Companion", b =>
                 {
-                    b.Navigation("CompanionOccupation");
+                    b.Navigation("CompanionOccupation")
+                        .IsRequired();
 
-                    b.Navigation("CompanionRelativeType");
+                    b.Navigation("CompanionRelativeType")
+                        .IsRequired();
 
-                    b.Navigation("MedicalRecordCompanion");
+                    b.Navigation("MedicalRecordCompanion")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ConsumptionLevel", b =>
@@ -4459,9 +4471,11 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Document", b =>
                 {
-                    b.Navigation("MedicalLicenseDocument");
+                    b.Navigation("MedicalLicenseDocument")
+                        .IsRequired();
 
-                    b.Navigation("UserMedicalInsuranceCompany");
+                    b.Navigation("UserMedicalInsuranceCompany")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.EducationLevel", b =>
@@ -4471,25 +4485,32 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Event", b =>
                 {
-                    b.Navigation("DoctorEvent");
+                    b.Navigation("DoctorEvent")
+                        .IsRequired();
 
-                    b.Navigation("EventClinic");
+                    b.Navigation("EventClinic")
+                        .IsRequired();
 
-                    b.Navigation("EventMedicalInsuranceCompany");
+                    b.Navigation("EventMedicalInsuranceCompany")
+                        .IsRequired();
 
-                    b.Navigation("EventPaymentMethodType");
+                    b.Navigation("EventPaymentMethodType")
+                        .IsRequired();
 
-                    b.Navigation("EventPaymentStatus");
+                    b.Navigation("EventPaymentStatus")
+                        .IsRequired();
 
                     b.Navigation("EventPayments");
 
                     b.Navigation("EventPrescriptions");
 
-                    b.Navigation("EventService");
+                    b.Navigation("EventService")
+                        .IsRequired();
 
                     b.Navigation("NurseEvents");
 
-                    b.Navigation("PatientEvent");
+                    b.Navigation("PatientEvent")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
@@ -4525,9 +4546,11 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalLicense", b =>
                 {
-                    b.Navigation("MedicalLicenseDocument");
+                    b.Navigation("MedicalLicenseDocument")
+                        .IsRequired();
 
-                    b.Navigation("MedicalLicenseSpecialty");
+                    b.Navigation("MedicalLicenseSpecialty")
+                        .IsRequired();
 
                     b.Navigation("MedicalLicenseSubSpecialties");
                 });
@@ -4561,11 +4584,6 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Neighborhood", b =>
-                {
-                    b.Navigation("CityNeighborhood");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
                 {
                     b.Navigation("CompanionOccupations");
@@ -4575,31 +4593,39 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Order", b =>
                 {
-                    b.Navigation("DoctorOrder");
+                    b.Navigation("DoctorOrder")
+                        .IsRequired();
 
-                    b.Navigation("OrderAddress");
+                    b.Navigation("OrderAddress")
+                        .IsRequired();
 
                     b.Navigation("OrderItems");
 
-                    b.Navigation("PatientOrder");
+                    b.Navigation("PatientOrder")
+                        .IsRequired();
 
-                    b.Navigation("PrescriptionOrder");
+                    b.Navigation("PrescriptionOrder")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Payment", b =>
                 {
-                    b.Navigation("EventPayment");
+                    b.Navigation("EventPayment")
+                        .IsRequired();
 
-                    b.Navigation("PaymentPaymentMethod");
+                    b.Navigation("PaymentPaymentMethod")
+                        .IsRequired();
 
-                    b.Navigation("PaymentPaymentMethodType");
+                    b.Navigation("PaymentPaymentMethodType")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>
                 {
                     b.Navigation("PaymentPaymentMethods");
 
-                    b.Navigation("UserPaymentMethod");
+                    b.Navigation("UserPaymentMethod")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethodType", b =>
@@ -4623,39 +4649,52 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>
                 {
-                    b.Navigation("ClinicLogo");
+                    b.Navigation("ClinicLogo")
+                        .IsRequired();
 
-                    b.Navigation("DoctorBannerPhoto");
+                    b.Navigation("DoctorBannerPhoto")
+                        .IsRequired();
 
-                    b.Navigation("DoctorSignature");
+                    b.Navigation("DoctorSignature")
+                        .IsRequired();
 
-                    b.Navigation("MedicalInsuranceCompanyPhoto");
+                    b.Navigation("MedicalInsuranceCompanyPhoto")
+                        .IsRequired();
 
-                    b.Navigation("ProductPhoto");
+                    b.Navigation("ProductPhoto")
+                        .IsRequired();
 
-                    b.Navigation("ServicePhoto");
+                    b.Navigation("ServicePhoto")
+                        .IsRequired();
 
-                    b.Navigation("UserPhoto");
+                    b.Navigation("UserPhoto")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Prescription", b =>
                 {
-                    b.Navigation("DoctorPrescription");
+                    b.Navigation("DoctorPrescription")
+                        .IsRequired();
 
-                    b.Navigation("EventPrescription");
+                    b.Navigation("EventPrescription")
+                        .IsRequired();
 
-                    b.Navigation("PatientPrescription");
+                    b.Navigation("PatientPrescription")
+                        .IsRequired();
 
-                    b.Navigation("PrescriptionClinic");
+                    b.Navigation("PrescriptionClinic")
+                        .IsRequired();
 
                     b.Navigation("PrescriptionItems");
 
-                    b.Navigation("PrescriptionOrder");
+                    b.Navigation("PrescriptionOrder")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
                 {
-                    b.Navigation("DoctorProduct");
+                    b.Navigation("DoctorProduct")
+                        .IsRequired();
 
                     b.Navigation("OrderItems");
 
@@ -4675,14 +4714,17 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Review", b =>
                 {
-                    b.Navigation("DoctorReview");
+                    b.Navigation("DoctorReview")
+                        .IsRequired();
 
-                    b.Navigation("UserReview");
+                    b.Navigation("UserReview")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Service", b =>
                 {
-                    b.Navigation("DoctorService");
+                    b.Navigation("DoctorService")
+                        .IsRequired();
 
                     b.Navigation("EventServices");
 
@@ -4700,14 +4742,10 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("SpecialtyServices");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.State", b =>
-                {
-                    b.Navigation("StateCities");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.SubSpecialty", b =>
                 {
-                    b.Navigation("SpecialitySubSpecialty");
+                    b.Navigation("SpecialitySubSpecialty")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
@@ -4717,12 +4755,14 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.TaxRegime", b =>
                 {
-                    b.Navigation("UserTaxRegime");
+                    b.Navigation("UserTaxRegime")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.WorkSchedule", b =>
                 {
-                    b.Navigation("DoctorWorkSchedule");
+                    b.Navigation("DoctorWorkSchedule")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

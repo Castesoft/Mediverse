@@ -8,6 +8,6 @@ public class EventMedicalInsuranceCompany
     
     public int EventId { get; set; }
     public int MedicalInsuranceCompanyId { get; set; }
-    public Event Event { get; set; }
-    public MedicalInsuranceCompany MedicalInsuranceCompany { get; set; }
+    public Event Event { get; set; } = null!;
+    public MedicalInsuranceCompany MedicalInsuranceCompany { get; set; } = null!;
 }

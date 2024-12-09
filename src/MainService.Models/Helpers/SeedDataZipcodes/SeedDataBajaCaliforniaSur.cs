@@ -1,9 +1,11 @@
-namespace MainService.Models.Helpers;
+using MainService.Models.Entities.Addresses;
+
+namespace MainService.Models.Helpers.SeedDataZipcodes;
 public class SeedDataBajaCaliforniaSur
 {
-  public static readonly IEnumerable<Entities.State> state =
+  public static readonly IEnumerable<State> state =
   [
-    new Entities.State { Name = "Baja California Sur", StateCities = [
+    new State { Name = "Baja California Sur", StateCities = [
       new () { City = new () { Name = "La Paz", CityNeighborhoods = [
         new () { Neighborhood = new () { Name = "Puerta de Hierro", Zipcode = "23000", Settlement = "Fraccionamiento" } },
         new () { Neighborhood = new () { Name = "Love", Zipcode = "23000", Settlement = "Fraccionamiento" } },

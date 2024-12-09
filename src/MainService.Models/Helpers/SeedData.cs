@@ -73,50 +73,52 @@ namespace MainService.Models.Helpers
 
             if (!hasPayment) return new List<EventPayment>();
 
-            var paymentCount = random.Next(1, 4);
-            var totalAmount = @event.EventService.Service.Price;
-            var remainingAmount = totalAmount;
-            var payments = new List<EventPayment>();
+            int paymentCount = random.Next(1, 4);
+            decimal? totalAmount = @event.EventService.Service.Price;
+            decimal? remainingAmount = totalAmount;
+            List<EventPayment> payments = [];
 
-            for (int i = 0; i < paymentCount; i++)
-            {
-                var isLastPayment = i == paymentCount - 1;
-                var paymentAmount = isLastPayment
-                    ? remainingAmount // En el último pago, asignar todo el monto restante
-                    : random.Next(1, (int)remainingAmount); // Asegurarse de que el valor mínimo sea menor que el valor máximo
-
-                var paymentMethodType = GetRandomPaymentMethodType();
-
-                var payment = new EventPayment
+            if (totalAmount.HasValue && remainingAmount.HasValue) {
+                for (int i = 0; i < paymentCount; i++)
                 {
-                    Payment = new()
+                    bool isLastPayment = i == paymentCount - 1;
+                    decimal? paymentAmount = isLastPayment
+                        ? remainingAmount // En el último pago, asignar todo el monto restante
+                        : random.Next(1, (int)remainingAmount); // Asegurarse de que el valor mínimo sea menor que el valor máximo
+
+                    var paymentMethodType = GetRandomPaymentMethodType();
+
+                    var payment = new EventPayment
                     {
-                        Amount = paymentAmount,
-                        PaymentPaymentMethodType = new()
+                        Payment = new()
                         {
-                            PaymentMethodTypeId = paymentMethodType.Id
+                            Amount = paymentAmount,
+                            PaymentPaymentMethodType = new()
+                            {
+                                PaymentMethodTypeId = paymentMethodType.Id
+                            }
+                        }
+                    };
+
+                    if (paymentMethodType.Name == "Tarjeta de Crédito" || paymentMethodType.Name == "Tarjeta de Débito")
+                    {
+                        if (user.UserPaymentMethods.Any()) // Verificar si hay métodos de pago disponibles
+                        {
+                            payment.Payment.PaymentPaymentMethod = new()
+                            {
+                                PaymentMethodId = user.UserPaymentMethods.ElementAt(random.Next(user.UserPaymentMethods.Count)).PaymentMethodId
+                            };
+                        }
+                        else
+                        {
+                            // Manejar el caso en el que no haya métodos de pago disponibles
+                            payment.Payment.PaymentPaymentMethod = null!; // o alguna lógica alternativa
                         }
                     }
-                };
 
-                if (paymentMethodType.Name == "Tarjeta de Crédito" || paymentMethodType.Name == "Tarjeta de Débito")
-                {
-                    if (user.UserPaymentMethods.Any()) // Verificar si hay métodos de pago disponibles
-                    {
-                        payment.Payment.PaymentPaymentMethod = new()
-                        {
-                            PaymentMethodId = user.UserPaymentMethods.ElementAt(random.Next(user.UserPaymentMethods.Count)).PaymentMethodId
-                        };
-                    }
-                    else
-                    {
-                        // Manejar el caso en el que no haya métodos de pago disponibles
-                        payment.Payment.PaymentPaymentMethod = null; // o alguna lógica alternativa
-                    }
+                    payments.Add(payment);
+                    remainingAmount -= paymentAmount;
                 }
-
-                payments.Add(payment);
-                remainingAmount -= paymentAmount;
             }
 
             return payments;
@@ -927,16 +929,10 @@ namespace MainService.Models.Helpers
 
             if (sex == "Masculino")
             {
-                int randomIndex = random.Next(malePhotos.Count);
-                return malePhotos[randomIndex];
+                return malePhotos[random.Next(malePhotos.Count)];
             }
-            else if (sex == "Femenino")
-            {
-                int randomIndex = random.Next(femalePhotos.Count);
-                return femalePhotos[randomIndex];
-            }
-
-            return null;
+            int randomIndex = random.Next(femalePhotos.Count);
+            return femalePhotos[randomIndex];
         }
 
         public static string GetRandomFirstName(string sex)

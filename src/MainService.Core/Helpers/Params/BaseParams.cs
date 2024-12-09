@@ -3,14 +3,14 @@ using MainService.Core.Helpers.Pagination;
 namespace MainService.Core.Helpers.Params;
 public class BaseParams : PaginationParams
 {
-    public string Sort { get; set; }
-    private string _search;
-    public bool IsSortAscending { get; set; }
-    public DateTime DateFrom { get; set; } = DateTime.MinValue;
-    public DateTime DateTo { get; set; } = DateTime.MaxValue;
-    public string Search
+    public string? Sort { get; set; }
+    public bool? IsSortAscending { get; set; }
+    public DateTime? DateFrom { get; set; }
+    public DateTime? DateTo { get; set; }
+    private string? _search;
+    public string? Search
     {
         get => _search;
-        set => _search = value.ToLower();
+        set => _search = value?.ToLower();
     }
 }

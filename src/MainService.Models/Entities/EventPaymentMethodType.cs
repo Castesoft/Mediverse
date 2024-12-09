@@ -8,6 +8,6 @@ public class EventPaymentMethodType
     
     public int EventId { get; set; }
     public int PaymentMethodTypeId { get; set; }
-    public Event Event { get; set; }
-    public PaymentMethodType PaymentMethodType { get; set; }
+    public Event Event { get; set; } = null!;
+    public PaymentMethodType PaymentMethodType { get; set; } = null!;
 }

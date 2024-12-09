@@ -1,5 +1,6 @@
 using System.Reflection;
 using MainService.Models.Entities;
+using MainService.Models.Entities.Addresses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

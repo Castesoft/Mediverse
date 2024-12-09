@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using MainService.Models.Entities.Aggregate;
 
@@ -20,4 +20,3 @@ namespace MainService.Models.Entities
     public class MedicalInsuranceCompanyUpdateDto : BaseCodeManageDto {}
 }
 
-#nullable disable

@@ -8,6 +8,6 @@ public class NurseEvent
     
     public int NurseId { get; set; }
     public int EventId { get; set; }
-    public AppUser Nurse { get; set; }
-    public Event Event { get; set; }    
+    public AppUser Nurse { get; set; } = null!;
+    public Event Event { get; set; } = null!;
 }

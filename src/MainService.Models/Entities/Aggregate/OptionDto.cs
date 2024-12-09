@@ -25,16 +25,16 @@ public class OptionDto
         Name = name;
     }
 
-    public int Id { get; set; } = 0;
-    public string Code { get; set; }
-    public string Name { get; set; }
-    public Options Options { get; set; } = null;
-    public bool Enabled { get; set; } = true;
-    public bool Visible { get; set; } = true;
+    public int? Id { get; set; }
+    public string? Code { get; set; }
+    public string? Name { get; set; }
+    public Options? Options { get; set; }
+    public bool? Enabled { get; set; }
+    public bool? Visible { get; set; }
     
 }
 
-#nullable enable
+
 
 public class Options
 {
@@ -49,4 +49,4 @@ public class Options
     public bool? IsMain { get; set; } = null;
 }
 
-#nullable disable
+

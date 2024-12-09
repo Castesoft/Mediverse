@@ -12,8 +12,8 @@ public class UserPaymentMethod
     
     public int UserId { get; set; }
     public int PaymentMethodId { get; set; }
-    public AppUser User { get; set; }
-    public PaymentMethod PaymentMethod { get; set; }
+    public AppUser User { get; set; } = null!;
+    public PaymentMethod PaymentMethod { get; set; } = null!;
 
     public bool IsMain { get; set; } = false;
 }

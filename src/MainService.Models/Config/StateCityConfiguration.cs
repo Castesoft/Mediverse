@@ -1,4 +1,4 @@
-using MainService.Models.Entities;
+using MainService.Models.Entities.Addresses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

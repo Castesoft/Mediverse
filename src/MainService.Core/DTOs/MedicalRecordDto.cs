@@ -137,7 +137,7 @@ namespace MainService.Core.DTOs
     public class ConsumptionLevelParams : BaseCodeParams {}
     public class DocumentParams : BaseCodeParams {}
 
-    #nullable enable
+    
 
     public class MedicalRecordUpdateFamilyMemberDto {
         public int? Age { get; set; } = null;
@@ -254,5 +254,5 @@ namespace MainService.Core.DTOs
         public List<MedicalRecordUpdateFamilyDiseaseDto> FamilyMedicalHistory { get; set; } = [];
     }
 
-    #nullable disable
+    
 }

@@ -21,8 +21,8 @@
             }
         }
 
-        public DateTime DateFrom { get; set; }
-        public DateTime DateTo { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
         public bool IsServiceRecommended { get; set; } = false;
         public bool IsSatisfactionSurveyEmailSent { get; set; } = false;
         public bool IsSatisfactionSurveyCompleted { get; set; } = false;
@@ -31,18 +31,18 @@
         /// Pagado, Parcialmente Pagado, Reembolsado, Pendiente... etc
         /// Gestionable en la plataforma por el administrador
         /// </summary>
-        public EventPaymentStatus EventPaymentStatus { get; set; }
-        public EventService EventService { get; set; }
-        public EventClinic EventClinic { get; set; }
-        public DoctorEvent DoctorEvent { get; set; }
-        public PatientEvent PatientEvent { get; set; }
-        public EventPaymentMethodType EventPaymentMethodType { get; set; }
-        public EventMedicalInsuranceCompany EventMedicalInsuranceCompany { get; set; }
+        public EventPaymentStatus EventPaymentStatus { get; set; } = null!;
+        public EventService EventService { get; set; } = null!;
+        public EventClinic EventClinic { get; set; } = null!;
+        public DoctorEvent DoctorEvent { get; set; } = null!;
+        public PatientEvent PatientEvent { get; set; } = null!;
+        public EventPaymentMethodType EventPaymentMethodType { get; set; } = null!;
+        public EventMedicalInsuranceCompany EventMedicalInsuranceCompany { get; set; } = null!;
         public List<NurseEvent> NurseEvents { get; set; } = [];
         public List<EventPrescription> EventPrescriptions { get; set; } = [];
         public List<EventPayment> EventPayments { get; set; } = [];
-        public string Evolution { get; set; }
-        public string NextSteps { get; set; }
+        public string? Evolution { get; set; }
+        public string? NextSteps { get; set; }
     }
 
     public class EventPaymentStatus
@@ -51,8 +51,8 @@
 
         public int EventId { get; set; }
         public int PaymentStatusId { get; set; }
-        public Event Event { get; set; }
-        public PaymentStatus PaymentStatus { get; set; }
+        public Event Event { get; set; } = null!;
+        public PaymentStatus PaymentStatus { get; set; } = null!;
     }
 
     public class PaymentStatus : BaseEntity
@@ -66,7 +66,7 @@
             Description = description;
         }
 
-        public string Color { get; set; }
+        public string? Color { get; set; }
 
         public List<EventPaymentStatus> EventPaymentStatuses { get; set; } = [];
     }
@@ -75,12 +75,12 @@
     {
         public Payment() {}
         
-        public decimal Amount { get; set; }
-        public string StripePaymentIntent { get; set; }
+        public decimal? Amount { get; set; }
+        public string? StripePaymentIntent { get; set; }
         
-        public EventPayment EventPayment { get; set; }
-        public PaymentPaymentMethod PaymentPaymentMethod { get; set; }
-        public PaymentPaymentMethodType PaymentPaymentMethodType { get; set; }
+        public EventPayment EventPayment { get; set; } = null!;
+        public PaymentPaymentMethod PaymentPaymentMethod { get; set; } = null!;
+        public PaymentPaymentMethodType PaymentPaymentMethodType { get; set; } = null!;
     }
 
     public class PaymentPaymentMethod
@@ -95,8 +95,8 @@
         
         public int PaymentId { get; set; }
         public int PaymentMethodId { get; set; }
-        public Payment Payment { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
+        public Payment Payment { get; set; } = null!;
+        public PaymentMethod PaymentMethod { get; set; } = null!;
     }
 
     public class PaymentPaymentMethodType
@@ -107,8 +107,8 @@
         
         public int PaymentId { get; set; }
         public int PaymentMethodTypeId { get; set; }
-        public Payment Payment { get; set; }
-        public PaymentMethodType PaymentMethodType { get; set; }
+        public Payment Payment { get; set; } = null!;
+        public PaymentMethodType PaymentMethodType { get; set; } = null!;
     }
 
     public class EventPayment
@@ -122,8 +122,8 @@
         }
         
         public int EventId { get; set; }
-        public Event Event { get; set; }
+        public Event Event { get; set; } = null!;
         public int PaymentId { get; set; }
-        public Payment Payment { get; set; }
+        public Payment Payment { get; set; } = null!;
     }
 }

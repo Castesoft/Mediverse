@@ -1,4 +1,4 @@
-#nullable enable
+
 
 namespace MainService.Core.Helpers.Params;
 public class SearchParams : BaseParams

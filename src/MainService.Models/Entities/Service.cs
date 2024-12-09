@@ -6,7 +6,7 @@ public class Service : BaseEntity
 
     public Service(int id) => Id = id;
 
-    public Service(string name, string description)
+    public Service(string? name, string? description)
     {
         Name = name;
         Description = description;
@@ -22,10 +22,10 @@ public class Service : BaseEntity
         Discount = discount;
     }
 
-    public decimal Price { get; set; }
-    public double Discount { get; set; }
+    public decimal? Price { get; set; }
+    public double? Discount { get; set; }
 
-    public DoctorService DoctorService { get; set; }
+    public DoctorService DoctorService { get; set; } = null!;
     public List<ServicePhoto> ServicePhotos { get; set; } = [];
     public List<EventService> EventServices { get; set; } = [];
     public List<SpecialtyService> SpecialtyServices { get; set; } = [];

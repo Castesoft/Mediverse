@@ -1,4 +1,4 @@
-#nullable enable
+
 
 using System.Security.Claims;
 using AutoMapper;

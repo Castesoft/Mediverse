@@ -14,7 +14,12 @@ namespace MainService.Models.Entities
         public AppRole(string name, Dictionary<string, string> permissions)
         {
             Name = name;
-            RolePermissions = permissions.Select(x => new AppRolePermission { Permission = new AppPermission(x.Key.Trim().Replace(" ", ""), x.Value) }).ToList();
+            RolePermissions = permissions.Select(x => {
+                return new AppRolePermission { Permission = new AppPermission() {
+                    Name = x.Key.Trim().Replace(" ", ""),
+                    Description = x.Value
+                } };
+            }).ToList();
         }
 
         public List<AppUserRole> UserRoles { get; set; } = [];

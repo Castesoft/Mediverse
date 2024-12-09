@@ -47,51 +47,32 @@ public class PaymentMethodTypeRepository(DataContext context, IMapper mapper) : 
     {
         IQueryable<PaymentMethodType> query = context.PaymentMethodTypes.AsQueryable();
 
-        if (!string.IsNullOrEmpty(param.Name)) query = query.Where(x => x.Name.Contains(param.Name));
-        if (!string.IsNullOrEmpty(param.Code)) query = query.Where(x => x.Code.Contains(param.Code));
-        if (!string.IsNullOrEmpty(param.LastName)) query = query.Where(x => x.LastName.Contains(param.LastName));
-        if (!string.IsNullOrEmpty(param.Description)) query = query.Where(x => x.Description.Contains(param.Description));
-        if (!string.IsNullOrEmpty(param.Color)) query = query.Where(x => x.Color.Contains(param.Color));
-        if (param.CodeNumber > 0) query = query.Where(x => x.CodeNumber == param.CodeNumber);
-
-        if (param.Sort != null && !string.IsNullOrEmpty(param.Sort.Code))
+        if (!string.IsNullOrEmpty(param.Sort))
         {
-            query = param.Sort.Code.ToLower() switch
+            query = param.Sort.ToLower() switch
             {
-                "id" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Id)
-                                        : query.OrderByDescending(x => x.Id),
-                "name" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Name)
-                                        : query.OrderByDescending(x => x.Name),
-                "lastname" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.LastName)
-                                        : query.OrderByDescending(x => x.LastName),
-                "code" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Code)
-                                        : query.OrderByDescending(x => x.Code),
-                "codenumber" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.CodeNumber)
-                                        : query.OrderByDescending(x => x.CodeNumber),
-                "color" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Color)
-                                        : query.OrderByDescending(x => x.Color),
-                "description" => param.IsSortAscending
-                                        ? query.OrderBy(x => x.Description)
-                                        : query.OrderByDescending(x => x.Description),
-                _ => query.OrderBy(x => x.Id),
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
+                "code" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Code) : query.OrderByDescending(x => x.Code),
+                "codenumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CodeNumber) : query.OrderByDescending(x => x.CodeNumber),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                _ => query.OrderByDescending(x => x.CreatedAt),
             };
+        } else {
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
+            string term = param.Search.ToLower();
+            
             query = query.Where(
-                x => EF.Functions.Like(x.Name.ToLower(), $"%{param.Search}%")
-                     || EF.Functions.Like(x.Code.ToLower(), $"%{param.Search}%")
-                     || EF.Functions.Like(x.CodeNumber.ToString(), $"%{param.Search}%")
-                     || EF.Functions.Like(x.Color.ToString(), $"%{param.Search}%")
-                     || EF.Functions.Like(x.Description.ToString(), $"%{param.Search}%")
-                     || EF.Functions.Like(x.LastName.ToString(), $"%{param.Search}%")
+                x =>
+                    !string.IsNullOrEmpty(x.Code) && x.Code.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
+                    x.CodeNumber.HasValue && x.CodeNumber.Value.ToString().ToLower().Contains(term)
             );
         }
 

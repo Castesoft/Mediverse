@@ -1,4 +1,4 @@
-﻿#nullable enable
+﻿
 
 using System.Security.Cryptography;
 using System.Text;
@@ -1216,23 +1216,17 @@ public class AccountController(
     {
         int userId = User.GetUserId();
 
+        if (request.MedicalInsuranceCompany == null) return BadRequest("No se ha enviado la compañía de seguro médico.");
+        if (!request.MedicalInsuranceCompany.Id.HasValue) return BadRequest("No se ha enviado el ID de la compañía de seguro médico.");
+        if (!request.IsMain.HasValue) return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
+        if (request.File == null) return BadRequest("No se ha enviado el documento.");
+        if (string.IsNullOrEmpty(request.PolicyNumber)) return BadRequest("No se ha enviado el número de póliza.");
+
         if (!await uow.UserRepository.ExistsByIdAsync(userId))
         return BadRequest($"Usuario de ID {userId} no fue encontrado.");
 
-        if (!request.IsMain.HasValue)
-        return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
-
-        if (request.MedicalInsuranceCompany == null)
-        return BadRequest("No se ha enviado la compañía de seguro médico.");
-
-        if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(request.MedicalInsuranceCompany.Id))
-        return BadRequest($"Compañía de seguro médico de ID {request.MedicalInsuranceCompany.Id} no fue encontrada.");
-
-        if (string.IsNullOrEmpty(request.PolicyNumber))
-        return BadRequest("No se ha enviado el número de póliza.");
-
-        if (request.File == null)
-        return BadRequest("No se ha enviado el documento.");
+        if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(request.MedicalInsuranceCompany.Id.Value))
+        return BadRequest($"Compañía de seguro médico de ID {request.MedicalInsuranceCompany.Id.Value} no fue encontrada.");
 
         IFormFile file = request.File;
         bool isMain = request.IsMain.Value;
@@ -1265,12 +1259,12 @@ public class AccountController(
 
         if (isMain)
         {
-            UserMedicalInsuranceCompany? mainMedicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.IsMain);
+            UserMedicalInsuranceCompany? mainMedicalInsuranceCompany = user.UserMedicalInsuranceCompanies.FirstOrDefault(x => x.IsMain);
             if (mainMedicalInsuranceCompany != null) mainMedicalInsuranceCompany.IsMain = false;
         }
 
         user.UserMedicalInsuranceCompanies.Add(new() {
-            MedicalInsuranceCompanyId = medicalInsuranceCompany.Id,
+            MedicalInsuranceCompanyId = medicalInsuranceCompany.Id.Value,
             IsMain = isMain,
             PolicyNumber = request.PolicyNumber,
             Document = new() {
@@ -1777,10 +1771,17 @@ public class AccountController(
         itemToCreate.UsesGlassesOrHearingAid = request.UsesGlassesOrHearingAid ?? false;
         itemToCreate.Comments = request.Comments;
 
-        if (request.EducationLevel != null) itemToCreate.MedicalRecordEducationLevel = new(request.EducationLevel.Id);
-        if (request.ColorBlindness != null) itemToCreate.MedicalRecordColorBlindness = new(request.ColorBlindness.Id);
-        if (request.Occupation != null) itemToCreate.MedicalRecordOccupation = new(request.Occupation.Id);
-        if (request.MaritalStatus != null) itemToCreate.MedicalRecordMaritalStatus = new(request.MaritalStatus.Id);
+        if (request.EducationLevel != null && request.EducationLevel.Id.HasValue) 
+            itemToCreate.MedicalRecordEducationLevel = new(request.EducationLevel.Id.Value);
+
+        if (request.ColorBlindness != null && request.ColorBlindness.Id.HasValue) 
+            itemToCreate.MedicalRecordColorBlindness = new(request.ColorBlindness.Id.Value);
+
+        if (request.Occupation != null && request.Occupation.Id.HasValue) 
+            itemToCreate.MedicalRecordOccupation = new(request.Occupation.Id.Value);
+
+        if (request.MaritalStatus != null && request.MaritalStatus.Id.HasValue) 
+            itemToCreate.MedicalRecordMaritalStatus = new(request.MaritalStatus.Id.Value);
 
         if (request.HasCompanion.HasValue && request.HasCompanion.Value == true && request?.Companion == null)
         return BadRequest("Si el paciente asiste solo, debe proporcionar información del acompañante.");
@@ -1795,8 +1796,8 @@ public class AccountController(
             if (!string.IsNullOrEmpty(request.Companion.HomePhone)) companion.HomePhone = request.Companion.HomePhone;
             if (!string.IsNullOrEmpty(request.Companion.PhoneNumber)) companion.PhoneNumber = request.Companion.PhoneNumber;
             if (!string.IsNullOrEmpty(request.Companion.Email)) companion.Email = request.Companion.Email;
-            if (request.Companion.Occupation != null) companion.CompanionOccupation = new(request.Companion.Occupation.Id);
-            if (request.Companion.RelativeType != null) companion.CompanionRelativeType = new(request.Companion.RelativeType.Id);
+            if (request.Companion.Occupation != null && request.Companion.Occupation.Id.HasValue) companion.CompanionOccupation = new(request.Companion.Occupation.Id.Value);
+            if (request.Companion.RelativeType != null && request.Companion.RelativeType.Id.HasValue) companion.CompanionRelativeType = new(request.Companion.RelativeType.Id.Value);
 
             itemToCreate.MedicalRecordCompanion = new() { Companion = companion };
         }
@@ -1817,7 +1818,7 @@ public class AccountController(
 
                 if (!string.IsNullOrEmpty(fm.Name)) medicalRecordFamilyMemberToCreate.FamilyMember.Name = fm.Name;
                 if (fm.Age.HasValue) medicalRecordFamilyMemberToCreate.FamilyMember.Age = fm.Age.Value;
-                if (fm.RelativeType?.Id != null) medicalRecordFamilyMemberToCreate.FamilyMember.MedicalRecordFamilyMemberRelativeType = new(fm.RelativeType.Id);
+                if (fm.RelativeType != null && fm.RelativeType.Id.HasValue) medicalRecordFamilyMemberToCreate.FamilyMember.MedicalRecordFamilyMemberRelativeType = new(fm.RelativeType.Id.Value);
 
                 medicalRecordFamilyMembers.Add(medicalRecordFamilyMemberToCreate);
             }
@@ -1838,7 +1839,7 @@ public class AccountController(
                 MedicalRecordPersonalDisease medicalRecordPersonalDiseaseToCreate = new();
 
                 if (!string.IsNullOrEmpty(pd.Description)) medicalRecordPersonalDiseaseToCreate.Description = pd.Description;
-                if (pd.Disease?.Id != null) medicalRecordPersonalDiseaseToCreate.DiseaseId = pd.Disease.Id;
+                if (pd.Disease != null && pd.Disease.Id.HasValue) medicalRecordPersonalDiseaseToCreate.DiseaseId = pd.Disease.Id.Value;
 
                 medicalRecordPersonalDiseases.Add(medicalRecordPersonalDiseaseToCreate);
             }
@@ -1887,7 +1888,7 @@ public class AccountController(
                 MedicalRecordFamilyDisease medicalRecordFamilyDiseaseToCreate = new();
 
                 if (fd.Disease != null) medicalRecordFamilyDiseaseToCreate.DiseaseId = fd.Disease.Id;
-                if (fd.RelativeType != null) medicalRecordFamilyDiseaseToCreate.RelativeTypeId = fd.RelativeType.Id;
+                if (fd.RelativeType != null && fd.RelativeType.Id.HasValue) medicalRecordFamilyDiseaseToCreate.RelativeTypeId = fd.RelativeType.Id.Value;
 
                 medicalRecordFamilyDiseases.Add(medicalRecordFamilyDiseaseToCreate);
             }

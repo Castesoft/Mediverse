@@ -1,5 +1,3 @@
-#nullable enable
-
 using System.ComponentModel.DataAnnotations;
 using MainService.Models.Entities.Aggregate;
 using Microsoft.AspNetCore.Http;
@@ -20,4 +18,5 @@ namespace MainService.Core.DTOs.User
         [Required(ErrorMessage = "El número de póliza es requerido.")]
         public string? PolicyNumber { get; set; } = null;
     }
-}
+}//reportar con el director de monterrey, que lo van a contactar para ayudarle
+// 

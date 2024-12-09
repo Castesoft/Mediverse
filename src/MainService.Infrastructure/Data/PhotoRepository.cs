@@ -62,44 +62,39 @@ public class PhotoRepository(DataContext context, IMapper mapper) : IPhotoReposi
 
     public async Task<PagedList<PhotoDto>> GetPagedListAsync(PhotoParams param)
     {
-        var query = context.Photos
-            .AsQueryable();
+        IQueryable<Photo> query = context.Photos
+            .AsQueryable()
+        ;
 
-        if (param.DateFrom != DateTime.MinValue)
-            query = query.Where(x => x.CreatedAt >= param.DateFrom);
-
-        if (param.DateTo != DateTime.MaxValue)
-            query = query.Where(x => x.CreatedAt <= param.DateTo);
+        if (!string.IsNullOrEmpty(param.Sort))
+        {
+            query = param.Sort.ToLower() switch
+            {
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
+                "url" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Url) : query.OrderByDescending(x => x.Url),
+                "publicid" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.PublicId) : query.OrderByDescending(x => x.PublicId),
+                "size" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Size) : query.OrderByDescending(x => x.Size),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                _ => query.OrderByDescending(x => x.CreatedAt),
+            };
+        } else {
+            query = query.OrderByDescending(x => x.CreatedAt);
+        }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
             string term = param.Search.ToLower();
-
-            query = query.Where(x =>
-                EF.Functions.Like(x.Name, $"%{term}%") ||
-                EF.Functions.Like(x.Size.ToString(), $"%{term}%") ||
-                EF.Functions.Like(x.PublicId, $"%{term}%")
+            
+            query = query.Where(
+                x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Url) && x.Url.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.PublicId) && x.PublicId.ToLower().Contains(term) ||
+                    x.Size.HasValue && x.Size.Value.ToString().ToLower().Contains(term)
             );
-        }
-
-        if (!string.IsNullOrEmpty(param.Sort))
-        {
-            switch (param.Sort)
-            {
-                case "id":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Id)
-                        : query.OrderByDescending(x => x.Id);
-                    break;
-                case "name":
-                    query = param.IsSortAscending
-                        ? query.OrderBy(x => x.Name)
-                        : query.OrderByDescending(x => x.Name);
-                    break;
-                default:
-                    query = query.OrderByDescending(x => x.CreatedAt);
-                    break;
-            }
         }
 
         return await PagedList<PhotoDto>.CreateAsync(
