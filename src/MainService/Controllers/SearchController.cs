@@ -5,12 +5,14 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
 
+[AllowAnonymous]
 public class SearchController(IUnitOfWork uow, IUsersService usersService, UserManager<AppUser> userManager
 // ,IMapper mapper, 
 ) : BaseApiController
@@ -18,14 +20,16 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
     [HttpGet]
     public async Task<ActionResult<DoctorSearchResultsDto>> GetPagedListAsync([FromQuery] SearchParams param)
     {
-        int userId = User.GetUserId();
+        var identity = User.Identity;
         
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
-        if (user != null)
-        {
-            param.PatientId = user.Id;
+        if (User.Identity != null && User.Identity.IsAuthenticated) {
+            AppUser? user = await userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                param.PatientId = user.Id;
+            }
         }
-
+        
         PagedList<DoctorSearchResultDto> pagedList = await uow.SearchRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,

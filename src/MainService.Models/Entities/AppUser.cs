@@ -14,19 +14,19 @@ public class AppUser : IdentityUser<int>
 
     // Properties
     
+    public byte[]? EmailVerificationCodeHash { get; set; }
+    public byte[]? EmailVerificationCodeSalt { get; set; }
+    public byte[]? PhoneNumberVerificationCodeHash { get; set; }
+    public byte[]? PhoneNumberVerificationCodeSalt { get; set; }
+    
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Sex { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime LastActive { get; set; } = DateTime.UtcNow;
-    
     public string? PhoneNumberCountryCode { get; set; } = "+52";
-    public byte[]? EmailVerificationCodeHash { get; set; }
-    public byte[]? EmailVerificationCodeSalt { get; set; }
     public DateTime? EmailVerificationExpiryTime { get; set; }
-    public byte[]? PhoneNumberVerificationCodeHash { get; set; }
-    public byte[]? PhoneNumberVerificationCodeSalt { get; set; }
     public DateTime? PhoneNumberVerificationExpiryTime { get; set; }
     public string? StripeCustomerId { get; set; }
     public string? RecommendedBy { get; set; }
@@ -52,12 +52,12 @@ public class AppUser : IdentityUser<int>
     // Medical Properties
     public string? Education { get; set; }
     public string? Post { get; set; }
+    public string? StripeConnectAccountId { get; set; }
+    public bool? RequireAnticipatedCardPayments { get; set; }
     public List<ClinicNurse> ClinicNurses { get; set; } = [];
     public List<NurseEvent> NurseEvents { get; set; } = [];
     public List<UserMedicalLicense> UserMedicalLicenses { get; set; } = [];
     public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];
-    public string? StripeConnectAccountId { get; set; }
-    public bool? RequireAnticipatedCardPayments { get; set; }
     public List<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
     public List<DoctorWorkSchedule> DoctorWorkSchedules { get; set; } = [];
     public DoctorWorkScheduleSettings DoctorWorkScheduleSettings { get; set; } = null!;

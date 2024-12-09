@@ -24,7 +24,7 @@ public interface IUserRepository
     Task<AppUser?> GetByIdAsNoTrackingAsync(int id);
     Task<List<AppUser>> GetAllAsync();
     Task<List<UserDto>> GetAllDtoAsync(UserParams param);
-    Task<PagedList<UserDto>?> GetPagedListAsync(UserParams param, ClaimsPrincipal user);
+    Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user);
     Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync();
     Task<List<SpecialtyDto>> GetSpecialtiesAsync();
     Task<List<MedicalInsuranceCompanyDto>> GetMedicalInsuranceCompaniesAsync();

@@ -23,11 +23,11 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
         
     public async Task<ActionResult<PagedList<UserDto>>> GetPagedListAsync([FromQuery] UserParams param)
     {
-        var pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
+        PagedList<UserDto> pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
 
         foreach (var item in pagedList)
         {
-            item.DoctorEvents = item.DoctorEvents.Where(e => e.Doctor.Id == User.GetUserId()).ToList();
+            item.DoctorEvents = item.DoctorEvents.Where(e => e.Doctor != null && e.Doctor.Id == User.GetUserId()).ToList();
             item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();
         }
 

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MainService.Core.Helpers.Pagination;
 public class PagedList<T> : List<T>
 {
+
     public PagedList(IEnumerable<T> items, int count, int pageNumber, int pageSize)
     {
         CurrentPage = pageNumber;
@@ -17,8 +18,10 @@ public class PagedList<T> : List<T>
     public int PageSize { get; set; }
     public int TotalCount { get; set; }
 
-    public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source,
-        int pageNumber, int pageSize)
+    // Pagination
+    // Creates a paged list asynchronously based on the provided source, page number, and page size.
+    public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, 
+    int pageSize)
     {
         var count = await source.CountAsync();
         var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
