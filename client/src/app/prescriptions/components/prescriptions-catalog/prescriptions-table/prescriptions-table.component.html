@@ -1,8 +1,8 @@
 <thead
-(onParamsChange)="service.onSortOptionsChange(key(), $any($event))"
 (onSelectAll)="service.onSelectAll(key(), mode(), $event)"
+[isCompact]="false"
 [columns]="columns"
-[mode]="mode()"
+[(mode)]="mode"
 [params]="params"
 [show]="showHeaders()"
 tableHeader

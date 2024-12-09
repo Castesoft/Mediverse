@@ -224,7 +224,8 @@ export class TableMenuCellComponent {
   imports: [FormsModule],
 })
 export class TableCheckCellComponent {
-  idx = model.required<number>();
+  isCompact = model.required<boolean>();
+  idx = input.required<number>();
   dictionary = model.required<NamingSubject>();
 
   selected = model.required<boolean>();

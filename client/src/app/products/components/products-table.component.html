@@ -1,9 +1,9 @@
 <thead
       tableHeader
       [columns]="service.columns"
-      [params]="params"
-      (onParamsChange)="service.onSortOptionsChange(key(), $any($event))"
-      [mode]="mode()"
+      [(params)]="params"
+      [(mode)]="mode"
+      [(isCompact)]="isCompact"
       (selectedChange)="service.onSelectAll(key(), mode(), $event)"
       [selected]="(service.areAllSelected(key()) | async)!"
     ></thead>
@@ -16,6 +16,7 @@
           <td
             tableCheckCell
             [idx]="idx"
+            [(isCompact)]="isCompact"
             [(dictionary)]="service.dictionary"
             [(selected)]="item.isSelected"
             (click)="service.onSelect(key(), mode(), item)"

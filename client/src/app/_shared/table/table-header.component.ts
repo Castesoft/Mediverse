@@ -24,8 +24,9 @@ export class TableHeaderComponent implements OnInit {
 
   // inputs
   // required
-  columns = input.required<Column[]>();
-  params = input.required<EntityParams<any> | any | undefined>();
+  columns = model.required<Column[]>();
+  params = model.required<EntityParams<any> | any | null>();
+  isCompact = model.required<boolean>();
   mode = model.required<CatalogMode>();
   show = input<boolean>(true);
   disableFirstCellPadding = input<boolean>(false);
@@ -48,7 +49,7 @@ export class TableHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
   }
 
   selectAllItems(event: Event) {
