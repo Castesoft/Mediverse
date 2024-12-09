@@ -7,9 +7,9 @@ import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { Subject, takeUntil } from "rxjs";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Account } from "src/app/_models/account/account";
+import BaseForm from "src/app/_models/base/components/extensions/baseForm";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { View } from "src/app/_models/base/types";
-import { BaseForm } from "src/app/_models/forms/extensions/baseFormComponent";
 import { FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
@@ -17,7 +17,6 @@ import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescript
 import { PrescriptionForm } from "src/app/_models/prescriptions/prescriptionForm";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
 import { AccountService } from "src/app/_services/account.service";
-import { ConfirmService } from "src/app/_services/confirm.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { BootstrapModule } from "src/app/_shared/bootstrap.module";
 import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
@@ -28,7 +27,6 @@ import { PatientsService } from "src/app/patients/patients.config";
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
 import { ProductsService } from "src/app/products/products.config";
 import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
-import { UsersService } from "src/app/users/users.config";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -47,11 +45,8 @@ export class PrescriptionFormComponent
   implements FormInputSignals<Prescription>
 {
   accountService = inject(AccountService);
-  icons = inject(IconsService);
 
   private productsService = inject(ProductsService);
-  private usersService = inject(UsersService);
-  private confirmService = inject(ConfirmService);
   private patientsService = inject(PatientsService);
   private clinicsService = inject(ClinicsService);
 

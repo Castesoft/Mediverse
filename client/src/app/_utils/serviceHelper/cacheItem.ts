@@ -1,13 +1,13 @@
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
+import { EntityParams } from "src/app/_models/base/entityParams";
+import { Entity } from "src/app/_models/base/entity";
 import { Item } from "src/app/_utils/serviceHelper/pagination/item";
 import { PaginatedResponse } from "src/app/_utils/serviceHelper/pagination/paginatedResponse";
-import { Entity } from "src/app/_models/base/entity";
-import { EntityParams } from "src/app/_models/base/entityParams";
 
 export class CacheItem<T extends Entity, U extends EntityParams<U>> {
   current = false;
   params: U;
-  pagination?: Pagination;
+  pagination: Pagination | null = null;
   ids: Item[] = [];
 
   constructor(params: U) {

@@ -10,6 +10,7 @@ import { BreadcrumbLinkComponent, LayoutModule } from "src/app/_shared/layout.mo
 import { UtilsService } from '../_services/utils.service';
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 import { HomeEventsCatalogRouteComponent } from "src/app/home/components/home-events-catalog-route.component";
+import { MainAsideComponent } from "src/app/_shared/layout/main-aside.component";
 
 @Component({
   selector: 'home-route',
@@ -17,7 +18,7 @@ import { HomeEventsCatalogRouteComponent } from "src/app/home/components/home-ev
     <div root>
       <div page>
         @if (!utilsService.sidebarCollapsed()){
-          <div aside></div>
+          <div mainAside></div>
         }
         <div wrapper>
           <div header></div>
@@ -125,7 +126,7 @@ export class HomeRoutingModule {}
 @NgModule({
   declarations: [HomeComponent, HomeEventsCatalogRouteComponent],
   imports: [HomeRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
-    LayoutModule, BreadcrumbLinkComponent, EventsCatalogComponent,],
+    LayoutModule, BreadcrumbLinkComponent, EventsCatalogComponent, MainAsideComponent, ],
   exports: [
     HomeComponent
   ]

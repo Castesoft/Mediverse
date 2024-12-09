@@ -9,7 +9,7 @@ import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
  */
 export class PaginatedResult<T> {
   result?: T;
-  pagination?: Pagination;
+  pagination: Pagination | null = null;
 }
 
 /**

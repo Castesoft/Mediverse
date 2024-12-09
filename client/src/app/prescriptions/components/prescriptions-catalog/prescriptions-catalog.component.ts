@@ -1,33 +1,31 @@
-import { LayoutModule } from "@angular/cdk/layout";
 import { CommonModule } from "@angular/common";
-import { Component, effect, model, ModelSignal, OnDestroy, OnInit } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
+import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { AlertModule } from "ngx-bootstrap/alert";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { ControlsModule } from "src/app/_forms/controls.module";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
 import { View, CatalogMode } from "src/app/_models/base/types";
-import { BaseCatalog } from "src/app/_models/forms/extensions/baseFormComponent";
 import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescriptionFiltersForm";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
-import { CatalogModule } from "src/app/_shared/catalog.module";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { PrescriptionsTableComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component";
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
 
 @Component({
-  host: { class: 'pb-6', },
-  selector: 'div[prescriptionsCatalog]',
-  templateUrl: 'prescriptions-catalog.component.html',
+  selector: '[prescriptionsCatalog]',
+  template: ``,
+  // templateUrl: './prescriptions-catalog.component.html',
   standalone: true,
-  imports: [
-    BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, CommonModule,
-    AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, LayoutModule, PrescriptionsTableComponent
-  ]
+  imports: [ FontAwesomeModule,
+    PrescriptionsTableComponent, CommonModule,
+    RouterModule, ControlsModule, TableModule,
+    CdkModule, MaterialModule, Forms2Module,
+   ],
 })
 export class PrescriptionsCatalogComponent
   extends BaseCatalog<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
@@ -39,6 +37,8 @@ export class PrescriptionsCatalogComponent
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<PrescriptionParams> = model.required();
+
+  animalId = input<number>();
 
   constructor() {
     super(PrescriptionsService, PrescriptionFiltersForm);
@@ -60,6 +60,7 @@ export class PrescriptionsCatalogComponent
   }
 
   ngOnInit(): void {
+    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
     this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
     this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
   }

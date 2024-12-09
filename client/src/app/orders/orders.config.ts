@@ -4,19 +4,26 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
+import BaseForm from "src/app/_models/base/components/extensions/baseForm";
+import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
+import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
+import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
+import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { BaseForm, BaseDetail, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
 import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Order } from "src/app/_models/orders/order";
-import { orderColumns, orderDictionary } from "src/app/_models/orders/orderConstants";
+import { orderDictionary, orderColumns } from "src/app/_models/orders/orderConstants";
 import { OrderFiltersForm } from "src/app/_models/orders/orderFiltersForm";
 import { OrderForm } from "src/app/_models/orders/orderForm";
 import { OrderParams } from "src/app/_models/orders/orderParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
+import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
+import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { OrdersCatalogComponent } from "src/app/orders/orders-catalog.component";
 
@@ -45,21 +52,21 @@ import { OrdersCatalogComponent } from "src/app/orders/orders-catalog.component"
   imports: [OrdersCatalogComponent, MaterialModule, CdkModule,],
 })
 export class OrdersCatalogModalComponent {
-  data = inject<CatalogModalType<Order, OrderParams>>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Order, OrderParams>>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class OrdersService extends ServiceHelper<Order, OrderParams, OrderFiltersForm> {
+export class OrdersService extends ServiceHelper<Order, OrderParams, FormGroup2<OrderParams>> {
   constructor() {
     super(OrderParams, 'orders', orderDictionary, orderColumns);
   }
 
-  showCatalogModal(order: MouseEvent, key: string, mode: CatalogMode, view: View): void {
+  showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       OrdersCatalogModalComponent,
-      CatalogModalType<Order, OrderParams>
+      CatalogDialog<Order, OrderParams>
     >(OrdersCatalogModalComponent, {
       data: {
         isCompact: true,
@@ -87,7 +94,7 @@ export class OrdersService extends ServiceHelper<Order, OrderParams, OrderFilter
   if (view === 'modal') {
     this.matDialog.open<
       OrderDetailModalComponent,
-      DetailModalType<Order>
+      DetailDialog<Order>
     >(OrderDetailModalComponent, {
       data: {
         item: item,
@@ -155,7 +162,7 @@ export class OrderFormComponent
   selector: 'div[orderDetail]',
   template: `
   <div container3 [type]="'inline'">
-    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
+    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
   </div>
   <div orderForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
@@ -202,7 +209,7 @@ export class OrderDetailComponent
   imports: [OrderDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })
 export class OrderDetailModalComponent {
-  data = inject<DetailModalType<Order>>(MAT_DIALOG_DATA);
+  data = inject<DetailDialog<Order>>(MAT_DIALOG_DATA);
 }
 
 
@@ -229,7 +236,7 @@ export class OrdersComponent {}
   ></div>
   `,
   standalone: true,
-  imports: [RouterModule, OrdersCatalogComponent, ],
+  imports: [RouterModule, OrdersCatalogComponent, BreadcrumbsModule, ],
 })
 export class CatalogComponent extends BaseRouteCatalog<Order, OrderParams, OrderFiltersForm, OrdersService> {
   constructor() {
@@ -243,9 +250,11 @@ export class CatalogComponent extends BaseRouteCatalog<Order, OrderParams, Order
 
 @Component({
   selector: 'order-detail-route',
-  template: `<div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
-  imports: [RouterModule, OrderDetailComponent,],
+  imports: [RouterModule, OrderDetailComponent, BreadcrumbsModule,],
 })
 export class DetailComponent extends BaseRouteDetail<Order> {
   constructor() {
@@ -277,9 +286,11 @@ export class DetailComponent extends BaseRouteDetail<Order> {
 
 @Component({
   selector: 'order-edit-route',
-  template: `<div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
-  imports: [OrderDetailComponent, RouterModule,],
+  imports: [OrderDetailComponent, RouterModule, BreadcrumbsModule,],
 })
 export class EditComponent extends BaseRouteDetail<Order> {
   constructor() {
@@ -311,9 +322,11 @@ export class EditComponent extends BaseRouteDetail<Order> {
 
 @Component({
   selector: 'order-new-route',
-  template: `<div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+`,
   standalone: true,
-  imports: [OrderDetailComponent, RouterModule,],
+  imports: [OrderDetailComponent, RouterModule, BreadcrumbsModule,],
 })
 export class NewComponent extends BaseRouteDetail<Order> {
   constructor() {

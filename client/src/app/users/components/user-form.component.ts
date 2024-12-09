@@ -3,8 +3,8 @@ import { Component, ModelSignal, model, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseForm from "src/app/_models/base/components/extensions/baseForm";
 import { View } from "src/app/_models/base/types";
-import { BaseForm } from "src/app/_models/forms/extensions/baseFormComponent";
 import { FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { User } from "src/app/_models/users/user";
@@ -36,8 +36,7 @@ export class UserFormComponent
     effect(() => {
       this.form
         .setUse(this.use())
-        .setValidation(this.validation.active())
-      ;
+        .setValidation(this.validation.active());
 
       const value = this.item();
 

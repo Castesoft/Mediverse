@@ -4,8 +4,12 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
+import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
+import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
+import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
+import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { BaseDetail, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
 import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
@@ -16,8 +20,8 @@ import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionPa
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
 import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
+import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
 import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
@@ -47,7 +51,7 @@ import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/
   imports: [PrescriptionsCatalogComponent, MaterialModule, CdkModule,],
 })
 export class PrescriptionsCatalogModalComponent {
-  data = inject<CatalogModalType<Prescription, PrescriptionParams>>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Prescription, PrescriptionParams>>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
@@ -61,7 +65,7 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       PrescriptionsCatalogModalComponent,
-      CatalogModalType<Prescription, PrescriptionParams>
+      CatalogDialog<Prescription, PrescriptionParams>
     >(PrescriptionsCatalogModalComponent, {
       data: {
         isCompact: true,
@@ -89,7 +93,7 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
   if (view === 'modal') {
     this.matDialog.open<
       PrescriptionDetailModalComponent,
-      DetailModalType<Prescription>
+      DetailDialog<Prescription>
     >(PrescriptionDetailModalComponent, {
       data: {
         item: item,
@@ -123,7 +127,7 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
   selector: 'div[prescriptionDetail]',
   template: `
   <div container3 [type]="'inline'">
-    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
+    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
   </div>
   <div prescriptionForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
@@ -170,7 +174,7 @@ export class PrescriptionDetailComponent
   imports: [PrescriptionDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })
 export class PrescriptionDetailModalComponent {
-  data = inject<DetailModalType<Prescription>>(MAT_DIALOG_DATA);
+  data = inject<DetailDialog<Prescription>>(MAT_DIALOG_DATA);
 }
 
 
@@ -211,7 +215,9 @@ export class CatalogComponent extends BaseRouteCatalog<Prescription, Prescriptio
 
 @Component({
   selector: 'prescription-detail-route',
-  template: `<div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
   imports: [RouterModule, PrescriptionDetailComponent, BreadcrumbsModule,],
 })
@@ -245,7 +251,9 @@ export class DetailComponent extends BaseRouteDetail<Prescription> {
 
 @Component({
   selector: 'prescription-edit-route',
-  template: `<div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
   imports: [PrescriptionDetailComponent, RouterModule, BreadcrumbsModule,],
 })
@@ -279,7 +287,9 @@ export class EditComponent extends BaseRouteDetail<Prescription> {
 
 @Component({
   selector: 'prescription-new-route',
-  template: `<div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+`,
   standalone: true,
   imports: [PrescriptionDetailComponent, RouterModule, BreadcrumbsModule,],
 })

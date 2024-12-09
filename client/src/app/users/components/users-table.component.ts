@@ -1,68 +1,117 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, inject, model, input, effect } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { createId } from "@paralleldrive/cuid2";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Subject } from "rxjs";
-import { CatalogMode, View } from "src/app/_models/base/types";
+import { ControlsModule } from "src/app/_forms/controls.module";
+import BaseTable from "src/app/_models/base/components/extensions/baseTable";
+import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
+import { View, CatalogMode } from "src/app/_models/base/types";
+import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
+import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { User } from "src/app/_models/users/user";
+import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
 import { UserParams } from "src/app/_models/users/userParams";
-import { IconsService } from "src/app/_services/icons.service";
-import { UsersService } from "../users.config";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { UserTableCellComponent, UserTableSexCellComponent, UserTableHasAccountCellComponent } from "src/app/users/components/user-table-cell.component";
-import { TableRow } from "src/app/_models/tables/tableRow";
-import { DevService } from "src/app/_services/dev.service";
-import { PartialCellsOf } from "src/app/_models/tables/tableCellItem";
-import { userCells } from "src/app/_models/users/userConstants";
+import { TableModule } from "src/app/_shared/table/table.module";
+import { UsersService } from "src/app/users/users.config";
 
 @Component({
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_users', },
-  selector: 'table[usersTable]',
+  selector: 'div[usersTableMenu]',
+  host: { class: '' },
+  template: `
+    <div class="dropdown-menu d-block" cdkMenu>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          service.clickLink(item(), key(), 'detail', 'page');
+          $event.preventDefault()
+        "
+      >
+        Ver {{ service.dictionary.singular }}
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          $event.preventDefault();
+          service.clickLink(item(), key(), 'detail', 'modal')
+        "
+      >
+        Abrir {{ service.dictionary.singular }} en pantalla modal
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
+      >
+        Editar
+      </a>
+      <button
+        cdkMenuItem
+        class="dropdown-item px-3 text-danger"
+        (click)="service.delete$(item())"
+      >
+        Eliminar
+      </button>
+    </div>
+  `,
   standalone: true,
-  templateUrl: './users-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, FormsModule, RouterModule, BsDropdownModule, UserTableCellComponent, CommonModule,
-    UserTableSexCellComponent, UserTableHasAccountCellComponent, MaterialModule, CdkModule,
-  ],
+  imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class UsersTableComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
-  service = inject(UsersService);
-  icons = inject(IconsService);
-  dev = inject(DevService);
-
-  data = input.required<User[]>();
-  isCompact = model.required<boolean>();
-  mode = model.required<CatalogMode>();
-  key = model.required<string | null>();
-  view = model.required<View>();
-
-  sortAscending = false;
-  params!: UserParams;
-  cuid = createId();
-  selected = false;
-  row: TableRow<User> = new TableRow<User>(new User());
-
-  cells: PartialCellsOf<User> = userCells;
+export class UsersTableMenuComponent
+  extends TableMenu<UsersService>
+  implements OnInit, ITableMenu<User>
+{
+  item: ModelSignal<User> = model.required();
+  key: ModelSignal<string | null> = model.required();
 
   constructor() {
-    effect(() => {
-      this.params = new UserParams(this.key());
-      this.service.param$(this.key(), this.mode()).subscribe({
-        next: (params) => {
-          this.params = params;
-        },
-      });
-    });
+    super(UsersService);
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+}
 
+@Component({
+  host: { class: 'table fs-9 mb-0 border-translucent' },
+  selector: 'table[usersTable]',
+  // template: ``,
+  templateUrl: './users-table.component.html',
+  standalone: true,
+  imports: [
+    TableModule,
+    ControlsModule,
+    RouterModule,
+    FontAwesomeModule,
+    CdkModule,
+    MaterialModule,
+    CommonModule,
+    UsersTableMenuComponent,
+  ],
+})
+export class UsersTableComponent
+  extends BaseTable<User, UserParams, UserFiltersForm, UsersService>
+  implements OnInit, OnDestroy, TableInputSignals<User, UserParams>
+{
+  item: ModelSignal<User | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<UserParams> = model.required();
+  data: ModelSignal<User[]> = model.required();
+
+  constructor() {
+    super(UsersService, User);
+
+    effect(() => {});
   }
+
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

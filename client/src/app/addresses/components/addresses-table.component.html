@@ -1,13 +1,15 @@
-<thead
+<!-- <thead
       tableHeader
       [columns]="service.columns"
-      [params]="params"
-      (onParamsChange)="service.onSortOptionsChange(key(), $any($event))"
-      [mode]="mode()"
+      [(params)]="params"
+      (onParamsChange)="service.onSortOptionsChange(key(), $event)"
+      [(mode)]="mode"
+      [(isCompact)]="isCompact"
       (selectedChange)="service.onSelectAll(key(), mode(), $event)"
       [selected]="(service.areAllSelected(key()) | async)!"
     ></thead>
-    <tbody class="list" id="leal-tables-body">
+    <tbody class="list"
+           id="leal-tables-body">
       @for (item of data(); track item.id; let idx = $index) {
         <tr
           class="hover-actions-trigger btn-reveal-trigger position-static"
@@ -15,6 +17,7 @@
         >
           <td
             tableCheckCell
+            [(isCompact)]="isCompact"
             [idx]="idx"
             [(dictionary)]="service.dictionary"
             [(selected)]="item.isSelected"
@@ -30,29 +33,18 @@
                 [routerLink]="[service.dictionary.catalogRoute, item.id]"
                 [href]="[service.dictionary.catalogRoute, item.id]"
                 class="fw-semibold text-primary"
-                >#{{ item.id | number }}</a
+              >#{{ item.id | number }}</a
               >
             </div>
           </td>
 
-          @for (
-            cell of row().getItems([
-              'code',
-              'name',
-              'description',
-              'createdAt',
-              'visible',
-              'enabled',
-            ]);
+          @for (cell of row().getItems([
+            'code',
+            'name',
+          ]);
             let idx = $index;
-            track idx
-          ) {
-            <td
-              tableCell2
-              [item]="cells()[cell.item.key]!"
-              [(isCompact)]="isCompact"
-              [value]="item[cell.item.key]"
-            ></td>
+            track idx) {
+            <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
           }
 
           <td
@@ -62,8 +54,10 @@
             [(isCompact)]="isCompact"
           ></td>
           <ng-template #context_menu>
-            <div productsTableMenu [item]="item" [key]="key()"></div>
+            <div addressesTableMenu
+                 [item]="item"
+                 [key]="key()"></div>
           </ng-template>
         </tr>
       }
-    </tbody>
+    </tbody> -->

@@ -22,7 +22,7 @@ export class ControlFiles3Component {
   });
 
   file: File | null = null;
-  files: File[] | [] = []; 
+  files: File[] | [] = [];
   class = 'mb-0';
 
   @HostBinding('class') get hostClass() {
@@ -47,10 +47,10 @@ export class ControlFiles3Component {
       const files: FileList | null = target.files;
       if (files !== null) {
         let filenews: File[] = [];
-        for(const file of files) {
-          const filenew = new File([file as Blob], file?.name, { type: file?.type });
-          filenews.push(filenew);
-        }
+        // for(const file of files) {
+        //   const filenew = new File([file as Blob], file?.name, { type: file?.type });
+        //   filenews.push(filenew);
+        // }
         const control = this.control();
         control.patchValue(filenews);
         this.control.set(control);

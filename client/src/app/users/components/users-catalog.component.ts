@@ -1,21 +1,15 @@
-import { LayoutModule } from "@angular/cdk/layout";
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, OnInit, ModelSignal, model, inject } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
+import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { AlertModule } from "ngx-bootstrap/alert";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
 import { View, CatalogMode } from "src/app/_models/base/types";
-import { BaseCatalog } from "src/app/_models/forms/extensions/baseFormComponent";
 import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { User } from "src/app/_models/users/user";
 import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
 import { UserParams } from "src/app/_models/users/userParams";
-import { IconsService } from "src/app/_services/icons.service";
-import { CatalogModule } from "src/app/_shared/catalog.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TableModule } from "src/app/_shared/table/table.module";
@@ -23,15 +17,14 @@ import { UsersTableComponent } from "src/app/users/components/users-table.compon
 import { UsersService } from "src/app/users/users.config";
 
 @Component({
-  host: {  },
-  selector: 'div[usersCatalog]',
+  selector: '[usersCatalog]',
   template: `
-  <div class="py-2">
+<div class="py-2">
   @if(view() === 'page'){<h1 class="mb-4">{{ service.dictionary.title}}</h1>}
   <div class="row justify-content-between mb-2 row-gap-1">
     <div class="col-auto">
       <div class="d-flex align-items-center column-gap-3">
-        <a mat-fab extended type="button" class="shadow-none" (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute">
+        <a mat-fab extended type="button" (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute">
           <fa-icon [icon]="icons.faPlus" class="me-1" />
           Crear {{ service.dictionary.singular }}
         </a>
@@ -84,7 +77,7 @@ import { UsersService } from "src/app/users/users.config";
 <div tableWrapper>
   <div tableResponsive>
     @if(service.list$(key(), mode()) | async; as _list) {
-    <table usersTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view">
+    <table usersTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params">
     </table>
     }
   </div>
@@ -95,35 +88,53 @@ import { UsersService } from "src/app/users/users.config";
   }
 </div>
   `,
+  // templateUrl: './users-catalog.component.html',
   standalone: true,
-  imports: [ BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, CommonModule,
-    UsersTableComponent, AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, LayoutModule, MaterialModule, CdkModule, Forms2Module,
+  imports: [ FontAwesomeModule,
+    UsersTableComponent, CommonModule,
+    RouterModule, ControlsModule, TableModule,
+    CdkModule, MaterialModule, Forms2Module,
    ],
 })
 export class UsersCatalogComponent
   extends BaseCatalog<User, UserParams, UserFiltersForm, UsersService>
-  implements OnDestroy, OnInit, CatalogInputSignals<User, UserParams>
+  implements OnInit, OnDestroy, CatalogInputSignals<User, UserParams>
 {
-  icons = inject(IconsService);
-
   item: ModelSignal<User | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<UserParams> = model.required();
-  isCompact: ModelSignal<boolean> = model.required();
+
+  animalId = input<number>();
 
   constructor() {
     super(UsersService, UserFiltersForm);
+
+    effect(() => {
+      this.form
+        .setForm(this.params())
+        .setValidation(this.validation.active())
+      ;
+
+      this.service.createEntry(this.key(), this.params(), this.mode());
+
+      this.service.cache$.subscribe({
+        next: cache => {
+          this.service.loadPagedList(this.key(), this.params()).subscribe();
+        }
+      });
+    });
   }
 
   ngOnInit(): void {
+    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
     this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
     this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }

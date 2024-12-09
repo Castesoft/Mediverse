@@ -1,5 +1,5 @@
-import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
+import { Entity } from "src/app/_models/base/entity";
 
 export class ParamRecord<T extends Entity, U extends EntityParams<U>> {
   entries: Record<string, U> = {};

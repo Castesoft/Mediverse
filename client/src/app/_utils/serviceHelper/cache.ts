@@ -1,6 +1,6 @@
-import { Entity } from "src/app/_models/base/entity";
-import { EntityParams } from "src/app/_models/base/entityParams";
 import { CatalogMode } from "src/app/_models/base/types";
+import { EntityParams } from "src/app/_models/base/entityParams";
+import { Entity } from "src/app/_models/base/entity";
 import { CacheEntry } from "src/app/_utils/serviceHelper/cacheEntry";
 import { CacheItem } from "src/app/_utils/serviceHelper/cacheItem";
 import { PaginatedResponse } from "src/app/_utils/serviceHelper/pagination/paginatedResponse";
@@ -38,7 +38,11 @@ export class Cache<T extends Entity, U extends EntityParams<U>> {
   }
 
   hasEntry(key: string): boolean {
-    return !!this.entries[key];
+    if (Object.keys(this.entries).length === 0) return false;
+    for (const k of Object.keys(this.entries)) {
+      if (k === key) return true;
+    }
+    return false;
   }
 
   hasPagedList(key: string, paramsValue: string): boolean {
@@ -56,7 +60,13 @@ export class Cache<T extends Entity, U extends EntityParams<U>> {
   }
 
   getParam(key: string): U {
-    return this.entries[key].getParam();
+    if (!this.hasEntry(key)) {
+      throw new Error('No entry found');
+    }
+
+    const entry: CacheEntry<T, U> = this.entries[key];
+
+    return entry.getParam();
   }
 
   disableParam(key: string, param: string): Cache<T, U> {
@@ -86,7 +96,11 @@ export class Cache<T extends Entity, U extends EntityParams<U>> {
   }
 
   hasParam(key: string, param: string): boolean {
-    return !!this.entries[key].entries[param];
+    if (!this.hasEntry(key)) return false;
+
+    const entry: CacheEntry<T, U> = this.entries[key];
+
+    return entry.hasEntry(param);
   }
 
   get count(): number {

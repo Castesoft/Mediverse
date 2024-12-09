@@ -1,7 +1,6 @@
-
-import { Entity } from "src/app/_models/base/entity";
-import { EntityParams } from "src/app/_models/base/entityParams";
 import { CatalogMode } from "src/app/_models/base/types";
+import { EntityParams } from "src/app/_models/base/entityParams";
+import { Entity } from "src/app/_models/base/entity";
 import { CacheItem } from "src/app/_utils/serviceHelper/cacheItem";
 import { PaginatedResponse } from "src/app/_utils/serviceHelper/pagination/paginatedResponse";
 
@@ -50,25 +49,38 @@ export class CacheEntry<T extends Entity, U extends EntityParams<U>> {
   }
 
   getParam(): U {
-    const current = Object.values(this.entries).find(a => a.current)!;
+    const cacheItem: CacheItem<T, U>[] = Object.values(this.entries);
+    const current: CacheItem<T, U> | undefined = cacheItem.find(a => a.current);
+    console.log(this);
+    if (!current) throw new Error('No current item found');
     return current.params;
   }
 
-  getCurrent(): CacheItem<T, U> | undefined {
-    return Object.values(this.entries).find(a => a.current);
+  getCurrent(): CacheItem<T, U> {
+    const cacheItem: CacheItem<T, U>[] = Object.values(this.entries);
+    const current: CacheItem<T, U> | undefined = cacheItem.find(a => a.current);
+    if (current === undefined) throw new Error('No current item found');
+    return current;
   }
 
   get hasCurrent(): boolean {
-    return !!Object.values(this.entries).find(a => a.current);
+    const cacheItem: CacheItem<T, U>[] = Object.values(this.entries);
+    const current: CacheItem<T, U> | undefined = cacheItem.find(a => a.current);
+    if (current === undefined) return false;
+    return true;
   }
 
   getCurrentEntry(): CacheItem<T, U> {
-    return Object.values(this.entries).find(a => a.current)!;
+    const cacheItem: CacheItem<T, U>[] = Object.values(this.entries);
+    const current: CacheItem<T, U> | undefined = cacheItem.find(a => a.current);
+    if (current === undefined) throw new Error('No current item found');
+    return current;
   }
 
-  getByValue(paramValue: string): CacheItem<T, U> | undefined {
-    if (!this.hasParam(paramValue)) return undefined;
-    return this.entries[paramValue];
+  getByValue(paramValue: string): CacheItem<T, U> {
+    if (this.hasEntry(paramValue) === false) throw new Error('No entry found');
+    const current: CacheItem<T, U> = this.entries[paramValue];
+    return current;
   }
 
   hasIds(): boolean {
@@ -78,11 +90,15 @@ export class CacheEntry<T extends Entity, U extends EntityParams<U>> {
   }
 
   get count(): number {
-    return Object.keys(this.entries).length;
+    const cacheItem: CacheItem<T, U>[] = Object.values(this.entries);
+    if (cacheItem.length === 0) return 0;
+    return cacheItem.length;
   }
 
   get keys(): string[] {
-    return Object.keys(this.entries);
+    const cacheItem: CacheItem<T, U>[] = Object.values(this.entries);
+    const keys: string[] = cacheItem.map(a => a.params.paramsValue);
+    return keys;
   }
 
   get values(): U[] {

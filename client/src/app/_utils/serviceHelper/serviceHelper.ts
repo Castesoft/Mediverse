@@ -4,34 +4,35 @@ import { AbstractControl, AsyncValidatorFn } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Observable, of, tap, map, switchMap, catchError, debounceTime, take, finalize } from "rxjs";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { Modal } from "src/app/_models/modal";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
-import { downloadExcelFile } from "src/app/_utils/util";
+import { View } from "src/app/_models/base/types";
+import { SortOptions } from "src/app/_models/base/sortOptions";
+import { Column } from "src/app/_models/base/column";
+import { CatalogMode } from "src/app/_models/base/types";
+import { NamingSubject } from "src/app/_models/base/namingSubject";
+import { EntityParams } from "src/app/_models/base/entityParams";
+import { Entity } from "src/app/_models/base/entity";
 import { environment } from "src/environments/environment";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { MatDialog } from "@angular/material/dialog";
+import { transformToHttpParams } from "src/app/_models/base/paramUtils";
+import { transform } from "src/app/_models/base/paramUtils";
 import { CacheItem } from "src/app/_utils/serviceHelper/cacheItem";
 import { ParamRecord } from "src/app/_utils/serviceHelper/paramRecord";
 import { Cache } from "src/app/_utils/serviceHelper/cache";
 import { getPaginatedResponse, PaginatedResponse } from "src/app/_utils/serviceHelper/pagination/paginatedResponse";
-import { SelectOption } from "src/app/_models/base/selectOption";
-import { NamingSubject } from "src/app/_models/base/namingSubject";
-import { Column } from "src/app/_models/base/column";
-import { CatalogMode, View } from "src/app/_models/base/types";
-import { SortOptions } from "src/app/_models/base/sortOptions";
-import { transform, transformToHttpParams } from "src/app/_models/base/paramUtils";
-import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { EntityParams } from "src/app/_models/base/entityParams";
-import { Entity } from "src/app/_models/base/entity";
-import { SubmitOptions } from "src/app/_models/forms/extensions/baseFormComponent";
-import { FormUse } from "src/app/_models/forms/formTypes";
 import { getFormHeaderText } from "src/app/_models/forms/formUtils";
-import { ConfirmService } from "src/app/_services/confirm.service";
-import { Modal } from "src/app/_models/modal";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { ConfirmService } from "src/app/_services/confirm/confirm.service";
+import downloadExcelFile from "src/app/_utils/serviceHelper/functions/downloadExcelFile";
 
 /**
  * A helper class that provides common service functionalities for handling entities, parameters, forms, and caching.
  *
  * @template T - The entity type that extends `Entity`.
- * @template U - The parameter type that extends `EntityParams<U>`.
+ * @template U - The parameter type that extends `EntityParams<U>` and implements `IParams`.
  * @template V - The form group type that extends `FormGroup2<U>`.
  *
  * @remarks
@@ -61,22 +62,6 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   protected confirm = inject(ConfirmService);
   protected matSnackBar = inject(MatSnackBar);
 
-  constructor(
-    private paramsConstructor: new (key: string) => U,
-    controller: string,
-    dictionary: NamingSubject,
-    columns: Column[]
-  ) {
-    this.baseUrl = `${environment.apiUrl}${controller.toLowerCase()}/`;
-    this.dictionary = dictionary;
-    this.columns = columns;
-
-    this.params = new BehaviorSubject<ParamRecord<T, U>>(new ParamRecord<T,U>(this.paramsConstructor));
-    this.cache = new BehaviorSubject<Cache<T, U>>(new Cache<T, U>(this.paramsConstructor));
-    this.params$ = this.params.asObservable();
-    this.cache$ = this.cache.asObservable();
-  }
-
   baseUrl: string;
   dictionary: NamingSubject;
   columns: Column[];
@@ -86,12 +71,22 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   options = signal<SelectOption[]>([]);
 
-  params: BehaviorSubject<ParamRecord<T, U>>;
-  params$: Observable<ParamRecord<T, U>>;
+  params = new BehaviorSubject<ParamRecord<T, U>>(new ParamRecord<T,U>(this.paramsConstructor));
+  params$ = this.params.asObservable();
 
-  cache: BehaviorSubject<Cache<T, U>>;
-  cache$: Observable<Cache<T, U>>;
+  cache = new BehaviorSubject<Cache<T, U>>(new Cache<T, U>(this.paramsConstructor));
+  cache$ = this.cache.asObservable();
 
+  constructor(
+    private paramsConstructor: new (key: string) => U,
+    controller: string,
+    dictionary: NamingSubject,
+    columns: Column[]
+  ) {
+    this.baseUrl = `${environment.apiUrl}${controller.toLowerCase()}/`;
+    this.dictionary = dictionary;
+    this.columns = columns;
+  }
 
   setKey(key: string): void {
     if (!this.cache.value.hasEntry(key)) {
@@ -149,6 +144,12 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     if (!this.cache.value.hasEntry(key)) {
       this.cache.next(this.cache.value.add(key, type));
     }
+
+    console.log('this.cache.value', this.cache.value);
+
+    console.log('this.cache.value.entries[key]', this.cache.value.entries[key]);
+
+
 
     return this.cache$.pipe(
       map(cache => {
@@ -233,26 +234,21 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   create(form: FormGroup2<T>, view: View, model?: any): Observable<T> {
     return this.http.post<T>(this.baseUrl, model ?? form.value).pipe(
       tap(response => {
-        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} creado correctamente`, 'Cerrar', { duration: 3000 });
-        this.router.navigate([this.dictionary.catalogRoute, response.id]);
-        this.data.next([...this.data.value, response]);
+        // this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} creado correctamente`, 'Cerrar', { duration: 3000 });
+        // this.router.navigate([this.dictionary.catalogRoute, response.id]);
+        // this.data.next([...this.data.value, response]);
       })
     );
   }
 
-  update(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}${_options?.id ?? form.controls.id.value}`, _options?.value ?? form.value).pipe(
+  update(form: FormGroup2<T>, view: View, id?: number, model?: any): Observable<T> {
+    return this.http.put<T>(`${this.baseUrl}${id ?? form.controls.id.value}`, model ?? form.value).pipe(
       tap(response => {
         if (view === 'page') {
           this.router.navigate([this.dictionary.catalogRoute, response.id]);
         }
         this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`, 'Cerrar', { duration: 3000 });
-
-        const id = _options?.id;
-
-        if (id !== undefined) {
-          this.data.next(this.data.value.map(a => a.id === (id ?? form.controls.id.value) ? response : a));
-        }
+        this.data.next(this.data.value.map(a => a.id === (id ?? form.controls.id.value) ? response : a));
 
         const options = this.options();
         const index = options.findIndex(o => o.id === id);
@@ -299,9 +295,9 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   onPageChanged(key: string | null, event: any) {
     if (key === null) throw new Error('Key cannot be null');
     let current = this.cache.value.getParam(key);
-    if (current.pageNumber !== event.pageIndex + 1) {
+    if (current.pageNumber !== event) {
       let target = current;
-      target.pageNumber = event.pageIndex + 1;
+      target.pageNumber = event;
       if (!this.cache.value.entries[key].hasEntry(target.paramsValue)) {
         this.cache.value.entries[key].entries[target.paramsValue] = new CacheItem<T, U>(target);
       }
@@ -327,7 +323,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
     const payload = transformToHttpParams(transform(param));
 
-    return this.http.get(`${this.baseUrl}xlsx`, { responseType: "blob", params: payload, }).pipe(
+    return this.http.get(`${this.baseUrl}xlsx`, { responseType: "blob", params: payload }).pipe(
       map(response => {
         downloadExcelFile(response, this.dictionary.title);
       }),
@@ -382,8 +378,15 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     return this.cache$.pipe(
       map(cache => {
         if (cache.hasEntry(key)) {
-          const items = cache.entries[key].getCurrent()!.ids;
-          return items.length > 0 && items.every(item => item.isSelected);
+          const variable = cache.entries[key];
+          if (variable) {
+            if (variable.hasCurrent) {
+              const current: CacheItem<T, U> = cache.entries[key].getCurrent();
+              if (current.ids && current.ids.length && current.ids.length > 0) {
+                return current.ids.every(item => item.isSelected === true);
+              }
+            }
+          }
         }
         return false;
       })
@@ -423,18 +426,20 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   onSortOptionsChange = (key: string | null, options: SortOptions): void => {
     if (key === null) throw new Error('Key cannot be null');
+    // TODO: Implement sorting
     // const params = this.cache.value.getParam(key);
     // params.sort = options.sort;
     // params.isSortAscending = options.isSortAscending;
     // this.cache.value.createEntry(key, params);
-  };
+  }
 
   submitForm(key: string | null, params: U) {
     if (key === null) throw new Error('Key cannot be null');
+    let inputParams = new EntityParams<U>(key, {...params});
     let current = this.cache.value.getParam(key);
-    if (current.paramsValue !== params.paramsValue) {
+    if (current.paramsValue !== inputParams.paramsValue) {
       let target = current;
-      Object.assign(target, params);
+      Object.assign(target, inputParams);
       if (!this.cache.value.entries[key].hasEntry(target.paramsValue)) {
         this.cache.value.entries[key].entries[target.paramsValue] = new CacheItem<T, U>(target);
       }
@@ -484,10 +489,9 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   deleteRange$(key: string | null) {
     if (key === null) throw new Error('Key cannot be null');
-    if (this.cache.value.hasEntry(key)) {
-      this.deleteRangeByIds$(this.cache.value.entries[key].selected).subscribe();
-    }
+
   }
+
   deleteRangeByIds$(ids: number[]): Observable<boolean> {
     return this.confirm.confirm(this.getConfirmDeleteRange(ids.length)).pipe(
       switchMap(result => {
@@ -552,6 +556,5 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   protected getFormHeaderText(use: FormUse, item: T | null): string {
     return getFormHeaderText(this.dictionary, use, item === null ? null : item.id);
   }
-
 
 }

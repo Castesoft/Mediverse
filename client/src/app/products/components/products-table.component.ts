@@ -1,68 +1,117 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, inject, input, model, effect } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { createId } from "@paralleldrive/cuid2";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Subject } from "rxjs";
-import { CatalogMode, View } from "src/app/_models/base/types";
+import { ControlsModule } from "src/app/_forms/controls.module";
+import BaseTable from "src/app/_models/base/components/extensions/baseTable";
+import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
+import { View, CatalogMode } from "src/app/_models/base/types";
 import { Product } from "src/app/_models/products/product";
-import { productCells } from "src/app/_models/products/productConstants";
+import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm";
 import { ProductParams } from "src/app/_models/products/productParams";
-import { PartialCellsOf } from "src/app/_models/tables/tableCellItem";
-import { TableRow } from "src/app/_models/tables/tableRow";
-import { DevService } from "src/app/_services/dev.service";
-import { IconsService } from "src/app/_services/icons.service";
+import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
+import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
-import { ProductTableCellComponent, ProductTableSexCellComponent, ProductTableHasAccountCellComponent } from "src/app/products/components/product-table-cell.component";
+import { TableModule } from "src/app/_shared/table/table.module";
 import { ProductsService } from "src/app/products/products.config";
 
 @Component({
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_products', },
-  selector: 'table[productsTable]',
+  selector: 'div[productsTableMenu]',
+  host: { class: '' },
+  template: `
+    <div class="dropdown-menu d-block" cdkMenu>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          service.clickLink(item(), key(), 'detail', 'page');
+          $event.preventDefault()
+        "
+      >
+        Ver {{ service.dictionary.singular }}
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          $event.preventDefault();
+          service.clickLink(item(), key(), 'detail', 'modal')
+        "
+      >
+        Abrir {{ service.dictionary.singular }} en pantalla modal
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
+      >
+        Editar
+      </a>
+      <button
+        cdkMenuItem
+        class="dropdown-item px-3 text-danger"
+        (click)="service.delete$(item())"
+      >
+        Eliminar
+      </button>
+    </div>
+  `,
   standalone: true,
-  templateUrl: './products-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, CommonModule, FormsModule, RouterModule, BsDropdownModule, ProductTableCellComponent,
-    ProductTableSexCellComponent, ProductTableHasAccountCellComponent, MaterialModule, CdkModule,
-  ],
+  imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class ProductsTableComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
-  service = inject(ProductsService);
-  icons = inject(IconsService);
-  dev = inject(DevService);
-
-  data = input.required<Product[]>();
-  isCompact = model.required<boolean>();
-  mode = model.required<CatalogMode>();
-  key = model.required<string | null>();
-  view = model.required<View>();
-
-  sortAscending = false;
-  params!: ProductParams;
-  cuid = createId();
-  selected = false;
-  row: TableRow<Product> = new TableRow<Product>(new Product());
-
-  cells: PartialCellsOf<Product> = productCells;
+export class ProductsTableMenuComponent
+  extends TableMenu<ProductsService>
+  implements OnInit, ITableMenu<Product>
+{
+  item: ModelSignal<Product> = model.required();
+  key: ModelSignal<string | null> = model.required();
 
   constructor() {
-    effect(() => {
-      this.params = new ProductParams(this.key());
-      this.service.param$(this.key(), this.mode()).subscribe({
-        next: (params) => {
-          this.params = params;
-        },
-      });
-    });
+    super(ProductsService);
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+}
 
+@Component({
+  host: { class: 'table fs-9 mb-0 border-translucent' },
+  selector: 'table[productsTable]',
+  // template: ``,
+  templateUrl: './products-table.component.html',
+  standalone: true,
+  imports: [
+    TableModule,
+    ControlsModule,
+    RouterModule,
+    FontAwesomeModule,
+    CdkModule,
+    MaterialModule,
+    CommonModule,
+    ProductsTableMenuComponent,
+  ],
+})
+export class ProductsTableComponent
+  extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService>
+  implements OnInit, OnDestroy, TableInputSignals<Product, ProductParams>
+{
+  item: ModelSignal<Product | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<ProductParams> = model.required();
+  data: ModelSignal<Product[]> = model.required();
+
+  constructor() {
+    super(ProductsService, Product);
+
+    effect(() => {});
   }
+
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

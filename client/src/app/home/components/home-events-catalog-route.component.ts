@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
+import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
 import { Event } from "src/app/_models/events/event";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
-import { BaseRouteCatalog } from "src/app/_models/forms/extensions/baseFormComponent";
 import { EventsService } from "src/app/events/events.config";
 
 @Component({

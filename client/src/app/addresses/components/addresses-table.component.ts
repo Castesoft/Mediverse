@@ -1,18 +1,16 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ModelSignal, model, OnDestroy, inject, input, effect } from "@angular/core";
+import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { createId } from "@paralleldrive/cuid2";
-import { Subject } from "rxjs";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Address } from "src/app/_models/addresses/address";
+import { AddressFiltersForm } from "src/app/_models/addresses/addressFiltersForm";
 import { AddressParams } from "src/app/_models/addresses/addressParams";
-import { CatalogMode, View } from "src/app/_models/base/types";
+import BaseTable from "src/app/_models/base/components/extensions/baseTable";
+import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
+import { View, CatalogMode } from "src/app/_models/base/types";
 import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
 import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
-import { TableRow } from "src/app/_models/tables/tableRow";
-import { DevService } from "src/app/_services/dev.service";
-import { IconsService } from "src/app/_services/icons.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TableModule } from "src/app/_shared/table/table.module";
@@ -22,44 +20,44 @@ import { AddressesService } from "src/app/addresses/addresses.config";
   selector: 'div[addressesTableMenu]',
   host: { class: '' },
   template: `
-    <!-- <div class="dropdown-menu d-block" cdkMenu>
+    <div class="dropdown-menu d-block" cdkMenu>
       <a
         cdkMenuItem
         class="dropdown-item px-3"
-        [href]="service.dictionary['Clinic'].catalogRoute + '/' + item().id"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
         (click)="
           service.clickLink(item(), key(), 'detail', 'page');
           $event.preventDefault()
         "
       >
-        Ver {{ service.dictionary['Clinic'].singular }}
+        Ver {{ service.dictionary.singular }}
       </a>
       <a
         cdkMenuItem
         class="dropdown-item px-3"
-        [href]="service.dictionary['Clinic'].catalogRoute + '/' + item().id"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
         (click)="
           $event.preventDefault();
           service.clickLink(item(), key(), 'detail', 'modal')
         "
       >
-        Abrir {{ service.dictionary['Clinic'].singular }} en pantalla modal
+        Abrir {{ service.dictionary.singular }} en pantalla modal
       </a>
       <a
         cdkMenuItem
         class="dropdown-item px-3"
-        [routerLink]="[service.dictionary['Clinic'].catalogRoute, item().id, 'editar']"
+        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
       >
         Editar
       </a>
       <button
         cdkMenuItem
         class="dropdown-item px-3 text-danger"
-        (click)="service.delete$(item(), 'Clinic')"
+        (click)="service.delete$(item())"
       >
         Eliminar
       </button>
-    </div> -->
+    </div>
   `,
   standalone: true,
   imports: [RouterModule, CdkModule, MaterialModule],
@@ -79,80 +77,10 @@ export class AddressesTableMenuComponent
 }
 
 @Component({
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable' },
+  host: { class: 'table fs-9 mb-0 border-translucent' },
   selector: 'table[addressesTable]',
-  template: `
-    <!-- <thead
-      tableHeader
-      [columns]="service.columns['Clinic']"
-      [params]="params"
-      (onParamsChange)="service.onSortOptionsChange(key(), $event)"
-      [mode]="mode()"
-      (selectedChange)="service.onSelectAll(key(), mode(), $event)"
-      [selected]="(service.areAllSelected(key()) | async)!"
-    ></thead>
-    <tbody class="list" id="leal-tables-body">
-      @for (item of data(); track item.id; let idx = $index) {
-        <tr
-          class="hover-actions-trigger btn-reveal-trigger position-static"
-          [cdkContextMenuTriggerFor]="context_menu"
-        >
-          <td
-            tableCheckCell
-            [idx]="idx"
-            [dictionary]="service.dictionary['Clinic']"
-            [(selected)]="item.isSelected"
-            (click)="service.onSelect(key(), mode(), item)"
-          ></td>
-
-          <td
-            class="name align-middle white-space-nowrap px-0 py-0"
-          >
-            <div class="d-flex align-items-center justify-content-start px-0">
-              <a
-                [routerLink]="[service.dictionary['Clinic'].catalogRoute, item.id]"
-                [href]="[service.dictionary['Clinic'].catalogRoute, item.id]"
-                class="fw-semibold text-primary"
-                >{{ item.name }}</a
-              >
-            </div>
-          </td>
-
-          @for (
-            address of row.getItems([
-              'street',
-              'exteriorNumber',
-              'interiorNumber',
-              'neighborhood',
-              'zipcode',
-              'city',
-              'state',
-              'country',
-              'nursesCount',
-              'isMain',
-            ]);
-            let idx = $index;
-            track idx
-          ) {
-            <td
-              tableCell
-              [item]="address.item"
-              [value]="item[address.item.key]"
-            ></td>
-          }
-
-          <td
-            tableMenuCell
-            [item]="item"
-            [contextMenu]="context_menu"
-          ></td>
-          <ng-template #context_menu>
-            <div addressesTableMenu [item]="item" [key]="key()"></div>
-          </ng-template>
-        </tr>
-      }
-    </tbody> -->
-  `,
+  // template: ``,
+  templateUrl: './addresses-table.component.html',
   standalone: true,
   imports: [
     TableModule,
@@ -165,43 +93,28 @@ export class AddressesTableMenuComponent
     AddressesTableMenuComponent,
   ],
 })
-export class AddressesTableComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
-  service = inject(AddressesService);
-  icons = inject(IconsService);
-  dev = inject(DevService);
-
-  data = input.required<Address[]>();
-  mode = model.required<CatalogMode>();
-  key = model.required<string>();
-  view = model.required<View>();
-
-  sortAscending = false;
-  devMode = false;
-  params!: AddressParams;
-  cuid = createId();
-  selected = false;
-  row: TableRow<Address> = new TableRow<Address>(new Address());
+export class AddressesTableComponent
+  extends BaseTable<Address, AddressParams, AddressFiltersForm, AddressesService>
+  implements OnInit, OnDestroy, TableInputSignals<Address, AddressParams>
+{
+  item: ModelSignal<Address | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<AddressParams> = model.required();
+  data: ModelSignal<Address[]> = model.required();
 
   constructor() {
-    effect(() => {
-      this.params = new AddressParams(this.key());
-      // this.service.param$(this.key(), this.mode()).subscribe({
-      //   next: (params) => {
-      //     this.params = params;
-      //   },
-      // });
-    });
+    super(AddressesService, Address);
+
+    effect(() => {});
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
-
 }

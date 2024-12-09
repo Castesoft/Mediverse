@@ -6,20 +6,27 @@ import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Address } from "src/app/_models/addresses/address";
 import { addressDictionary, addressColumns } from "src/app/_models/addresses/addressConstants";
+import { AddressFiltersForm } from "src/app/_models/addresses/addressFiltersForm";
+import { AddressForm } from "src/app/_models/addresses/addressForm";
 import { AddressParams } from "src/app/_models/addresses/addressParams";
+import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
+import BaseForm from "src/app/_models/base/components/extensions/baseForm";
+import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
+import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
+import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
+import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { BaseForm, BaseDetail, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
+import { ZipcodeAddressOption } from "src/app/_models/billingDetails";
 import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
+import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
+import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { AddressesCatalogComponent } from "src/app/addresses/components/addresses-catalog.component";
-import { AddressForm } from "src/app/_models/addresses/addressForm";
-import { AddressFiltersForm } from "src/app/_models/addresses/addressFiltersForm";
-import { ZipcodeAddressOption } from "src/app/_models/billingDetails";
 
 @Component({
   selector: 'addresses-catalog-modal',
@@ -27,15 +34,15 @@ import { ZipcodeAddressOption } from "src/app/_models/billingDetails";
   @defer {
     <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
     <mat-dialog-content>
-    <!-- <div
-      addresssCatalog
+    <div
+      addressesCatalog
       [(mode)]="data.mode"
       [(key)]="data.key"
       [(view)]="data.view"
       [(isCompact)]="data.isCompact"
       [(item)]="data.item"
       [(params)]="data.params"
-    ></div> -->
+    ></div>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>Cerrar</button>
@@ -46,21 +53,21 @@ import { ZipcodeAddressOption } from "src/app/_models/billingDetails";
   imports: [AddressesCatalogComponent, MaterialModule, CdkModule,],
 })
 export class AddressesCatalogModalComponent {
-  data = inject<CatalogModalType<Address, AddressParams>>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Address, AddressParams>>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class AddressesService extends ServiceHelper<Address, AddressParams, AddressFiltersForm> {
+export class AddressesService extends ServiceHelper<Address, AddressParams, FormGroup2<AddressParams>> {
   constructor() {
     super(AddressParams, 'addresses', addressDictionary, addressColumns);
   }
 
-  showCatalogModal(address: MouseEvent, key: string, mode: CatalogMode, view: View): void {
+  showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       AddressesCatalogModalComponent,
-      CatalogModalType<Address, AddressParams>
+      CatalogDialog<Address, AddressParams>
     >(AddressesCatalogModalComponent, {
       data: {
         isCompact: true,
@@ -88,7 +95,7 @@ export class AddressesService extends ServiceHelper<Address, AddressParams, Addr
   if (view === 'modal') {
     this.matDialog.open<
       AddressDetailModalComponent,
-      DetailModalType<Address>
+      DetailDialog<Address>
     >(AddressDetailModalComponent, {
       data: {
         item: item,
@@ -161,7 +168,7 @@ export class AddressFormComponent
   selector: 'div[addressDetail]',
   template: `
   <div container3 [type]="'inline'">
-    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
+    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
   </div>
   <div addressForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
@@ -208,7 +215,7 @@ export class AddressDetailComponent
   imports: [AddressDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })
 export class AddressDetailModalComponent {
-  data = inject<DetailModalType<Address>>(MAT_DIALOG_DATA);
+  data = inject<DetailDialog<Address>>(MAT_DIALOG_DATA);
 }
 
 
@@ -235,7 +242,7 @@ export class AddressesComponent {}
   ></div>
   `,
   standalone: true,
-  imports: [RouterModule, AddressesCatalogComponent, ],
+  imports: [RouterModule, AddressesCatalogComponent, BreadcrumbsModule, ],
 })
 export class CatalogComponent extends BaseRouteCatalog<Address, AddressParams, AddressFiltersForm, AddressesService> {
   constructor() {
@@ -249,9 +256,11 @@ export class CatalogComponent extends BaseRouteCatalog<Address, AddressParams, A
 
 @Component({
   selector: 'address-detail-route',
-  template: `<div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
-  imports: [RouterModule, AddressDetailComponent,],
+  imports: [RouterModule, AddressDetailComponent, BreadcrumbsModule,],
 })
 export class DetailComponent extends BaseRouteDetail<Address> {
   constructor() {
@@ -283,9 +292,11 @@ export class DetailComponent extends BaseRouteDetail<Address> {
 
 @Component({
   selector: 'address-edit-route',
-  template: `<div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
-  imports: [AddressDetailComponent, RouterModule,],
+  imports: [AddressDetailComponent, RouterModule, BreadcrumbsModule,],
 })
 export class EditComponent extends BaseRouteDetail<Address> {
   constructor() {
@@ -317,9 +328,11 @@ export class EditComponent extends BaseRouteDetail<Address> {
 
 @Component({
   selector: 'address-new-route',
-  template: `<div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+`,
   standalone: true,
-  imports: [AddressDetailComponent, RouterModule,],
+  imports: [AddressDetailComponent, RouterModule, BreadcrumbsModule,],
 })
 export class NewComponent extends BaseRouteDetail<Address> {
   constructor() {

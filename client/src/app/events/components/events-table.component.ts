@@ -1,57 +1,120 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, Input, input, model, OnDestroy, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { createId } from "@paralleldrive/cuid2";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Subscription } from "rxjs";
-import { CatalogMode } from "src/app/_models/base/types";
-import { EventParams } from "src/app/_models/events/eventParams";
+import { ControlsModule } from "src/app/_forms/controls.module";
+import BaseTable from "src/app/_models/base/components/extensions/baseTable";
+import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
+import { View, CatalogMode } from "src/app/_models/base/types";
 import { Event } from "src/app/_models/events/event";
-import { IconsService } from "src/app/_services/icons.service";
+import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
+import { EventParams } from "src/app/_models/events/eventParams";
+import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
+import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
-import { PatientTableCellComponent, PatientTableSexCellComponent, PatientTableHasAccountCellComponent } from "src/app/_shared/components/patient-table-cell.component";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
+import { TableModule } from "src/app/_shared/table/table.module";
 import { EventsService } from "src/app/events/events.config";
 
 @Component({
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },
-  selector: 'table[eventsTable]',
+  selector: 'div[eventsTableMenu]',
+  host: { class: '' },
+  template: `
+    <div class="dropdown-menu d-block" cdkMenu>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          service.clickLink(item(), key(), 'detail', 'page');
+          $event.preventDefault()
+        "
+      >
+        Ver {{ service.dictionary.singular }}
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          $event.preventDefault();
+          service.clickLink(item(), key(), 'detail', 'modal')
+        "
+      >
+        Abrir {{ service.dictionary.singular }} en pantalla modal
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
+      >
+        Editar
+      </a>
+      <button
+        cdkMenuItem
+        class="dropdown-item px-3 text-danger"
+        (click)="service.delete$(item())"
+      >
+        Eliminar
+      </button>
+    </div>
+  `,
   standalone: true,
-  templateUrl: './events-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, CommonModule, FormsModule, RouterModule, BsDropdownModule, PatientTableCellComponent,
-    PatientTableSexCellComponent, PatientTableHasAccountCellComponent, MaterialModule, CdkModule,
-  ],
+  imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class EventsTableComponent implements OnInit, OnDestroy {
-  service = inject(EventsService);
-  icons = inject(IconsService);
+export class EventsTableMenuComponent
+  extends TableMenu<EventsService>
+  implements OnInit, ITableMenu<Event>
+{
+  item: ModelSignal<Event> = model.required();
+  key: ModelSignal<string | null> = model.required();
 
-  @Input() data: Event[] = [];
-  key = model.required<string>();
-  mode = model.required<CatalogMode>();
-  isCompact = model.required<boolean>();
-  showHeaders = input<boolean>(true);
-
-  sortAscending = false;
-  columns = this.service.columns;
-  devMode = false;
-  params!: EventParams;
-
-  subscriptions: Subscription[] = [];
-
-  cuid: string = createId();
-  constructor() {}
-
-  ngOnInit(): void {
-    console.log(this.data);
-    const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
-    this.subscriptions.push(paramsSubscription);
+  constructor() {
+    super(EventsService);
   }
 
+  ngOnInit(): void {}
+}
+
+@Component({
+  host: { class: 'table fs-9 mb-0 border-translucent' },
+  selector: 'table[eventsTable]',
+  // template: ``,
+  templateUrl: './events-table.component.html',
+  standalone: true,
+  imports: [
+    TableModule,
+    ControlsModule,
+    RouterModule,
+    FontAwesomeModule,
+    CdkModule,
+    MaterialModule,
+    CommonModule,
+    EventsTableMenuComponent,
+  ],
+})
+export class EventsTableComponent
+  extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
+  implements OnInit, OnDestroy, TableInputSignals<Event, EventParams>
+{
+  item: ModelSignal<Event | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<EventParams> = model.required();
+  data: ModelSignal<Event[]> = model.required();
+
+  constructor() {
+    super(EventsService, Event);
+
+    effect(() => {});
+  }
+
+  ngOnInit(): void {}
+
   ngOnDestroy(): void {
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }

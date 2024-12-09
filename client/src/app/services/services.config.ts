@@ -1,12 +1,18 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, Injectable, model, ModelSignal, NgModule } from "@angular/core";
+import { Component, inject, Injectable, ModelSignal, model, effect, NgModule } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
+import BaseForm from "src/app/_models/base/components/extensions/baseForm";
+import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
+import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
+import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
+import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { BaseForm, BaseDetail, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
 import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Service } from "src/app/_models/services/service";
 import { serviceDictionary, serviceColumns } from "src/app/_models/services/serviceConstants";
@@ -16,8 +22,8 @@ import { ServiceParams } from "src/app/_models/services/serviceParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
 import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
+import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { ServicesCatalogComponent } from "src/app/services/components/services-catalog.component";
 
@@ -46,13 +52,13 @@ import { ServicesCatalogComponent } from "src/app/services/components/services-c
   imports: [ServicesCatalogComponent, MaterialModule, CdkModule,],
 })
 export class ServicesCatalogModalComponent {
-  data = inject<CatalogModalType<Service, ServiceParams>>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Service, ServiceParams>>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class ServicesService extends ServiceHelper<Service, ServiceParams, ServiceFiltersForm> {
+export class ServicesService extends ServiceHelper<Service, ServiceParams, FormGroup2<ServiceParams>> {
   constructor() {
     super(ServiceParams, 'services', serviceDictionary, serviceColumns);
   }
@@ -60,7 +66,7 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, Servi
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       ServicesCatalogModalComponent,
-      CatalogModalType<Service, ServiceParams>
+      CatalogDialog<Service, ServiceParams>
     >(ServicesCatalogModalComponent, {
       data: {
         isCompact: true,
@@ -88,7 +94,7 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, Servi
   if (view === 'modal') {
     this.matDialog.open<
       ServiceDetailModalComponent,
-      DetailModalType<Service>
+      DetailDialog<Service>
     >(ServiceDetailModalComponent, {
       data: {
         item: item,
@@ -156,7 +162,7 @@ export class ServiceFormComponent
   selector: 'div[serviceDetail]',
   template: `
   <div container3 [type]="'inline'">
-    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
+    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
   </div>
   <div serviceForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
@@ -203,20 +209,31 @@ export class ServiceDetailComponent
   imports: [ServiceDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })
 export class ServiceDetailModalComponent {
-  data = inject<DetailModalType<Service>>(MAT_DIALOG_DATA);
+  data = inject<DetailDialog<Service>>(MAT_DIALOG_DATA);
 }
+
 
 @Component({
   selector: 'services-route',
   standalone: false,
-  template: `<router-outlet></router-outlet>`,
+  template: `
+  <router-outlet></router-outlet>
+  `,
 })
 export class ServicesComponent {}
 
 @Component({
   selector: 'services-catalog-route',
   template: `
-  <div servicesCatalog [(mode)]="mode" [(key)]="key" [(view)]="view" [(isCompact)]="compact.isCompact" [(item)]="item" [(params)]="params"></div>
+  <div
+    servicesCatalog
+    [(mode)]="mode"
+    [(key)]="key"
+    [(view)]="view"
+    [(isCompact)]="compact.isCompact"
+    [(item)]="item"
+    [(params)]="params"
+  ></div>
   `,
   standalone: true,
   imports: [RouterModule, ServicesCatalogComponent, BreadcrumbsModule, ],
@@ -226,14 +243,16 @@ export class CatalogComponent extends BaseRouteCatalog<Service, ServiceParams, S
     super(ServicesService, 'services');
 
     effect(() => {
-
+      console.log('key', this.key());
     });
   }
 }
 
 @Component({
   selector: 'service-detail-route',
-  template: `<div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
   imports: [RouterModule, ServiceDetailComponent, BreadcrumbsModule,],
 })
@@ -267,7 +286,9 @@ export class DetailComponent extends BaseRouteDetail<Service> {
 
 @Component({
   selector: 'service-edit-route',
-  template: `<div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
   imports: [ServiceDetailComponent, RouterModule, BreadcrumbsModule,],
 })
@@ -301,7 +322,9 @@ export class EditComponent extends BaseRouteDetail<Service> {
 
 @Component({
   selector: 'service-new-route',
-  template: `<div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+`,
   standalone: true,
   imports: [ServiceDetailComponent, RouterModule, BreadcrumbsModule,],
 })

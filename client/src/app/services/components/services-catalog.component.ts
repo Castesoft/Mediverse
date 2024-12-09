@@ -1,16 +1,15 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect, inject } from "@angular/core";
+import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
 import { View, CatalogMode } from "src/app/_models/base/types";
-import { BaseCatalog } from "src/app/_models/forms/extensions/baseFormComponent";
 import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { Service } from "src/app/_models/services/service";
 import { ServiceFiltersForm } from "src/app/_models/services/serviceFiltersForm";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
-import { IconsService } from "src/app/_services/icons.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TableModule } from "src/app/_shared/table/table.module";
@@ -25,7 +24,7 @@ import { ServicesService } from "src/app/services/services.config";
   <div class="row justify-content-between mb-2 row-gap-1">
     <div class="col-auto">
       <div class="d-flex align-items-center column-gap-3">
-        <a mat-fab extended type="button" class="shadow-none" (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute">
+        <a mat-fab extended type="button" (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute">
           <fa-icon [icon]="icons.faPlus" class="me-1" />
           Crear {{ service.dictionary.singular }}
         </a>
@@ -78,12 +77,12 @@ import { ServicesService } from "src/app/services/services.config";
 <div tableWrapper>
   <div tableResponsive>
     @if(service.list$(key(), mode()) | async; as _list) {
-    <table servicesTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view">
+    <table servicesTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params">
     </table>
     }
   </div>
   @if(service.pagination$(key()) | async; as _pagination) {
-  <div tablePager [isCompact]="isCompact()" [currentPage]="_pagination.currentPage"
+  <div tablePager [(isCompact)]="isCompact" [currentPage]="_pagination.currentPage"
     [itemsPerPage]="_pagination.itemsPerPage" [totalItems]="_pagination.totalItems" (loadMore)="service.loadMore(key())"
     (loadLess)="service.loadLess(key())" (pageChanged)="service.onPageChanged(key(), $event)"></div>
   }
@@ -101,14 +100,14 @@ export class ServicesCatalogComponent
   extends BaseCatalog<Service, ServiceParams, ServiceFiltersForm, ServicesService>
   implements OnInit, OnDestroy, CatalogInputSignals<Service, ServiceParams>
 {
-  icons = inject(IconsService);
-
   item: ModelSignal<Service | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<ServiceParams> = model.required();
+
+  animalId = input<number>();
 
   constructor() {
     super(ServicesService, ServiceFiltersForm);
@@ -126,7 +125,7 @@ export class ServicesCatalogComponent
           this.service.loadPagedList(this.key(), this.params()).subscribe();
         }
       });
-    })
+    });
   }
 
   ngOnInit(): void {

@@ -4,8 +4,13 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
+import BaseForm from "src/app/_models/base/components/extensions/baseForm";
+import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
+import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
+import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
+import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { BaseForm, BaseDetail, BaseRouteCatalog, BaseRouteDetail, createItemResolver } from "src/app/_models/forms/extensions/baseFormComponent";
 import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
@@ -17,8 +22,8 @@ import { ProductParams } from "src/app/_models/products/productParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { CatalogModalType, DetailModalType } from "src/app/_shared/table/table.module";
 import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
+import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { ProductsCatalogComponent } from "src/app/products/components/products-catalog.component";
 
@@ -47,7 +52,7 @@ import { ProductsCatalogComponent } from "src/app/products/components/products-c
   imports: [ProductsCatalogComponent, MaterialModule, CdkModule,],
 })
 export class ProductsCatalogModalComponent {
-  data = inject<CatalogModalType<Product, ProductParams>>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Product, ProductParams>>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
@@ -61,7 +66,7 @@ export class ProductsService extends ServiceHelper<Product, ProductParams, FormG
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       ProductsCatalogModalComponent,
-      CatalogModalType<Product, ProductParams>
+      CatalogDialog<Product, ProductParams>
     >(ProductsCatalogModalComponent, {
       data: {
         isCompact: true,
@@ -89,7 +94,7 @@ export class ProductsService extends ServiceHelper<Product, ProductParams, FormG
   if (view === 'modal') {
     this.matDialog.open<
       ProductDetailModalComponent,
-      DetailModalType<Product>
+      DetailDialog<Product>
     >(ProductDetailModalComponent, {
       data: {
         item: item,
@@ -157,7 +162,7 @@ export class ProductFormComponent
   selector: 'div[productDetail]',
   template: `
   <div container3 [type]="'inline'">
-    <div detailHeader [(use)]="use" [(view)]="view" [dictionary]="service.dictionary" [id]="$any(item() !== null ? item()!.id : null)" (onDelete)="service.delete$(item()!)"></div>
+    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
   </div>
   <div productForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
@@ -204,7 +209,7 @@ export class ProductDetailComponent
   imports: [ProductDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })
 export class ProductDetailModalComponent {
-  data = inject<DetailModalType<Product>>(MAT_DIALOG_DATA);
+  data = inject<DetailDialog<Product>>(MAT_DIALOG_DATA);
 }
 
 
@@ -245,7 +250,9 @@ export class CatalogComponent extends BaseRouteCatalog<Product, ProductParams, P
 
 @Component({
   selector: 'product-detail-route',
-  template: `<div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
   imports: [RouterModule, ProductDetailComponent, BreadcrumbsModule,],
 })
@@ -279,7 +286,9 @@ export class DetailComponent extends BaseRouteDetail<Product> {
 
 @Component({
   selector: 'product-edit-route',
-  template: `<div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
   standalone: true,
   imports: [ProductDetailComponent, RouterModule, BreadcrumbsModule,],
 })
@@ -313,7 +322,9 @@ export class EditComponent extends BaseRouteDetail<Product> {
 
 @Component({
   selector: 'product-new-route',
-  template: `<div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>`,
+  template: `
+    <div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+`,
   standalone: true,
   imports: [ProductDetailComponent, RouterModule, BreadcrumbsModule,],
 })

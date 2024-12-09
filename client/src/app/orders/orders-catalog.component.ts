@@ -1,33 +1,31 @@
-import { LayoutModule } from "@angular/cdk/layout";
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, inject, model, ModelSignal } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
+import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { AlertModule } from "ngx-bootstrap/alert";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { CatalogMode, View } from "src/app/_models/base/types";
-import { BaseCatalog } from "src/app/_models/forms/extensions/baseFormComponent";
+import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
+import { View, CatalogMode } from "src/app/_models/base/types";
 import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { Order } from "src/app/_models/orders/order";
 import { OrderFiltersForm } from "src/app/_models/orders/orderFiltersForm";
 import { OrderParams } from "src/app/_models/orders/orderParams";
-import { IconsService } from "src/app/_services/icons.service";
-import { CatalogModule } from "src/app/_shared/catalog.module";
+import { CdkModule } from "src/app/_shared/cdk.module";
+import { MaterialModule } from "src/app/_shared/material.module";
 import { TableModule } from "src/app/_shared/table/table.module";
 import { OrdersTableComponent } from "src/app/orders/orders-table.component";
 import { OrdersService } from "src/app/orders/orders.config";
-import { ProductsTableComponent } from "src/app/products/components/products-table.component";
 
 @Component({
-  host: { class: 'pb-6', },
-  selector: 'div[ordersCatalog]',
-  templateUrl: './orders-catalog.component.html',
+  selector: '[ordersCatalog]',
+  template: ``,
+  // templateUrl: './orders-catalog.component.html',
   standalone: true,
-  imports: [BsDropdownModule, RouterModule, ReactiveFormsModule, FontAwesomeModule, CommonModule, AlertModule, ControlsModule, TableModule, CatalogModule,
-    LayoutModule, LayoutModule, OrdersTableComponent, ProductsTableComponent, OrdersTableComponent
-  ],
+  imports: [ FontAwesomeModule,
+    OrdersTableComponent, CommonModule,
+    RouterModule, ControlsModule, TableModule,
+    CdkModule, MaterialModule, Forms2Module,
+   ],
 })
 export class OrdersCatalogComponent
   extends BaseCatalog<Order, OrderParams, OrderFiltersForm, OrdersService>
@@ -40,21 +38,36 @@ export class OrdersCatalogComponent
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<OrderParams> = model.required();
 
-  icons = inject(IconsService);
-
-  data?: Order[];
-  loading = true;
+  animalId = input<number>();
 
   constructor() {
     super(OrdersService, OrderFiltersForm);
+
+    effect(() => {
+      this.form
+        .setForm(this.params())
+        .setValidation(this.validation.active())
+      ;
+
+      this.service.createEntry(this.key(), this.params(), this.mode());
+
+      this.service.cache$.subscribe({
+        next: cache => {
+          this.service.loadPagedList(this.key(), this.params()).subscribe();
+        }
+      });
+    });
   }
 
   ngOnInit(): void {
-
+    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
+    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
+    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
   }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
+
 }
