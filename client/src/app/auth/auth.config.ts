@@ -1,6 +1,6 @@
 import { Component, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthAsideComponent } from 'src/app/auth/components/auth-aside.component';
+import { AuthAsideComponent } from '../_shared/template/components/auth-aside.component';
 import { BottomLinksComponent } from 'src/app/auth/components/bottom-links.component';
 import { PasswordResetFormComponent } from 'src/app/auth/components/password-reset-form.component';
 import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';

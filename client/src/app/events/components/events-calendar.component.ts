@@ -13,13 +13,13 @@ import { FilterForm } from 'src/app/_models/event';
 import { EventParams } from "src/app/_models/events/eventParams";
 import { Event } from "src/app/_models/events/event";
 import { ControlsModule } from 'src/app/_forms/controls.module';
-import { TableModule } from 'src/app/_shared/table/table.module';
+import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { CatalogModule } from 'src/app/_shared/catalog.module';
 import { calcDateDiff } from 'src/app/_utils/util';
 import { EventsFilterMenuComponent } from 'src/app/events/components/events-filter-menu.component';
 import { EventsTableComponent } from 'src/app/events/components/events-table.component';
 import { EventsService } from 'src/app/_services/events.service';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { Calendar, CalendarOptions, DateSelectArg, DatesSetArg, EventClickArg, } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridDayPlugin from '@fullcalendar/timegrid';
@@ -43,11 +43,11 @@ import { AccountService } from 'src/app/_services/account.service';
     EventsTableComponent,
     AlertModule,
     ControlsModule,
-    TableModule,
+    TablesModule,
     CatalogModule,
-    LayoutModule,
+    TemplateModule,
     EventsFilterMenuComponent,
-    LayoutModule,
+    TemplateModule,
     FullCalendarModule,
     ButtonsModule,
     CommonModule,

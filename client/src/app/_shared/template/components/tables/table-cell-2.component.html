@@ -1,0 +1,55 @@
+<!-- {{ item() | json }} -->
+<!-- {{value() | json}} -->
+
+@if(item().isLink && item().key === 'id') {
+<div class="d-flex align-items-center">
+  <a [routerLink]="[item().baseUrl, value()]" [href]="[item().baseUrl, value()]"
+    class="text-gray-800 text-hover-primary fs-5 fw-bold">
+    @if(item().key === 'id') {
+    #
+    }
+    {{value() | number}}</a>
+</div>
+}@else if(item().isLink && item().type === 'code' && value()) {
+<div class="d-flex align-items-center">
+  <a [routerLink]="[item().baseUrl, value()!.id]" [href]="[item().baseUrl, value()!.id]"
+    class="text-gray-800 text-hover-primary fs-5 fw-bold">
+    @if(value()!.id !== 0) {#}
+    @if(value()!.code !== value()!.name) {({{ value()!.code}})}
+    {{value()!.name}}
+  </a>
+</div>
+}@else {
+@if(value()) {
+  <span class="fw-bold">
+@switch(item().type) {
+@case ('code') {
+@if(value()!.id !== 0) {#}
+@if(value()!.code !== value()!.name) {
+({{ value()!.code}})} {{value()!.name}}
+}
+@case('date') {
+{{ value() | date : "dd/MM/yyyy" : "" : "es-MX" }}
+}
+@case ('number') {
+{{ value() | number }}
+}
+@case('currency') {
+{{ value() | currency : 'MXN' : 'symbol' : '1.2-2' }}
+}
+@case('boolean') {
+<div class="form-check mb-0 d-flex justify-content-center">
+  <input class="form-check-input" type="checkbox" [id]="guid" [checked]="value()" disabled />
+  <label class="form-check-label" [for]="guid"></label>
+</div>
+}
+@default {
+{{ value() }}
+}
+}
+@if(item().unit) {
+{{ item().unit }}
+}
+</span>
+}
+}

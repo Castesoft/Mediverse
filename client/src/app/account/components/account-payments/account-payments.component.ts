@@ -3,12 +3,12 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Account } from "src/app/_models/account/account";
 import { AccountService } from 'src/app/_services/account.service';
 import { PaymentsTableComponent } from 'src/app/_shared/components/payments-table/payments-table.component';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 
 @Component({
   selector: 'app-account-payments',
   standalone: true,
-  imports: [LayoutModule, RouterModule, PaymentsTableComponent],
+  imports: [TemplateModule, RouterModule, PaymentsTableComponent],
   templateUrl: './account-payments.component.html',
   styleUrl: './account-payments.component.scss'
 })

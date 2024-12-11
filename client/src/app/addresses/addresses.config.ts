@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, Injectable, ModelSignal, model, effect, NgModule } from "@angular/core";
+import { Component, inject, Injectable, ModelSignal, model, effect } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -11,8 +11,6 @@ import { AddressForm } from "src/app/_models/addresses/addressForm";
 import { AddressParams } from "src/app/_models/addresses/addressParams";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
 import BaseForm from "src/app/_models/base/components/extensions/baseForm";
-import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
-import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
@@ -23,8 +21,6 @@ import { FormUse } from "src/app/_models/forms/formTypes";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
-import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { AddressesCatalogComponent } from "src/app/addresses/components/addresses-catalog.component";
 
@@ -217,168 +213,3 @@ export class AddressDetailComponent
 export class AddressDetailModalComponent {
   data = inject<DetailDialog<Address>>(MAT_DIALOG_DATA);
 }
-
-
-@Component({
-  selector: 'addresses-route',
-  standalone: false,
-  template: `
-  <router-outlet></router-outlet>
-  `,
-})
-export class AddressesComponent {}
-
-@Component({
-  selector: 'addresses-catalog-route',
-  template: `
-  <div
-    addressesCatalog
-    [(mode)]="mode"
-    [(key)]="key"
-    [(view)]="view"
-    [(isCompact)]="compact.isCompact"
-    [(item)]="item"
-    [(params)]="params"
-  ></div>
-  `,
-  standalone: true,
-  imports: [RouterModule, AddressesCatalogComponent, BreadcrumbsModule, ],
-})
-export class CatalogComponent extends BaseRouteCatalog<Address, AddressParams, AddressFiltersForm, AddressesService> {
-  constructor() {
-    super(AddressesService, 'addresses');
-
-    effect(() => {
-      console.log('key', this.key());
-    });
-  }
-}
-
-@Component({
-  selector: 'address-detail-route',
-  template: `
-    <div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  `,
-  standalone: true,
-  imports: [RouterModule, AddressDetailComponent, BreadcrumbsModule,],
-})
-export class DetailComponent extends BaseRouteDetail<Address> {
-  constructor() {
-    super('addresses', 'detail');
-
-    effect(() => {
-      this.route.paramMap.subscribe({
-        next: params => {
-          if (params.has('id')) {
-            this.id.set(+params.get('id')!);
-          }
-        },
-      });
-      this.route.data.subscribe({
-        next: (data) => {
-          this.item.set(data['item']);
-        },
-      });
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
-    });
-  }
-}
-
-@Component({
-  selector: 'address-edit-route',
-  template: `
-    <div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  `,
-  standalone: true,
-  imports: [AddressDetailComponent, RouterModule, BreadcrumbsModule,],
-})
-export class EditComponent extends BaseRouteDetail<Address> {
-  constructor() {
-    super('addresses', 'edit');
-
-    effect(() => {
-      this.route.paramMap.subscribe({
-        next: params => {
-          if (params.has('id')) {
-            this.id.set(+params.get('id')!);
-          }
-        },
-      });
-      this.route.data.subscribe({
-        next: (data) => {
-          this.item.set(data['item']);
-        },
-      });
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
-    });
-  }
-}
-
-@Component({
-  selector: 'address-new-route',
-  template: `
-    <div addressDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-`,
-  standalone: true,
-  imports: [AddressDetailComponent, RouterModule, BreadcrumbsModule,],
-})
-export class NewComponent extends BaseRouteDetail<Address> {
-  constructor() {
-    super('addresses', 'create');
-
-    effect(() => {
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
-    });
-  }
-}
-
-@NgModule({
-  imports: [RouterModule.forChild([
-    {
-      path: '', title: 'Ganaderías', data: { breadcrumb: 'Ganaderías', },
-      component: AddressesComponent, runGuardsAndResolvers: 'always',
-      children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de ganaderías', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'nuevo', component: NewComponent, title: 'Crear nueva ganadería', data: { breadcrumb: 'Nuevo', }, },
-        {
-          path: ':id', data: { breadcrumb: 'Detalle', },
-          component: DetailComponent,
-          resolve: { item: createItemResolver(AddressesService) },
-        },
-        {
-          path: ':id/editar', data: { breadcrumb: 'Editar', },
-          component: EditComponent,
-          resolve: { item: createItemResolver(AddressesService) },
-        },
-      ],
-    },
-  ])],
-  exports: [RouterModule]
-})
-export class AddressesRoutingModule { }
-
-@NgModule({
-  declarations: [
-    AddressesComponent,
-  ],
-  imports: [ CommonModule, AddressesRoutingModule, ]
-})
-export class AddressesModule { }

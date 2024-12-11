@@ -1,0 +1,12 @@
+<div class="font-sans-serif btn-reveal-trigger dropdown">
+  <button
+    class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2"
+    [cdkContextMenuTriggerFor]="contextMenu()"
+    [cdkMenuTriggerFor]="contextMenu()"
+    [id]="'dropdown' + item().name + item().id"
+    type="button"
+    [attr.aria-controls]="'dropdown' + item().name + item().id"
+  >
+    <fa-icon [icon]="icons.faEllipsisH" class="fs-6"></fa-icon>
+  </button>
+</div>

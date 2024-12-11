@@ -1,14 +1,14 @@
 <thead
   tableHeader
   [columns]="service.columns"
+  [(dictionary)]="service.dictionary"
   [(params)]="params"
   [(mode)]="mode"
   [(isCompact)]="isCompact"
   (selectedChange)="service.onSelectAll(key(), mode(), $event)"
   [selected]="(service.areAllSelected(key()) | async)!"
 ></thead>
-<tbody class="list"
-        id="leal-tables-body">
+<tbody templateTableBody>
   @for (item of data(); track item.id; let idx = $index) {
     <tr
       class="hover-actions-trigger btn-reveal-trigger position-static"
@@ -38,8 +38,9 @@
       </td>
 
       @for (cell of row().getItems([
-        'code',
-        'name',
+        'email',
+        'fullName',
+        'createdAt',
       ]);
         let idx = $index;
         track idx) {

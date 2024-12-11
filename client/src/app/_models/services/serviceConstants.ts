@@ -1,11 +1,12 @@
-import { baseColumns, Column } from "src/app/_models/base/column";
+import { baseColumns, Column, columnCreatedAt, columnDescription, columnId, columnName } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { FormInfo } from "src/app/_models/forms/formTypes";
+import { ColumnOptions } from "src/app/_models/forms/options/columnOptions";
 import { Service } from "src/app/_models/services/service";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
-import { PartialCellsOf, tableCellCode, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellId, tableCellName, tableCellVisible } from "src/app/_models/tables/tableCellItem";
+import { PartialCellsOf, tableCellCode, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellId, TableCellItem, tableCellName, tableCellVisible } from "src/app/_models/tables/tableCellItem";
 
 
 export const serviceFormInfo: FormInfo<Service> = {
@@ -27,17 +28,24 @@ export const serviceCells: PartialCellsOf<Service> = {
   code: tableCellCode,
   visible: tableCellVisible,
   id: tableCellId,
+  price: new TableCellItem<number, 'price'>('price', 'currency'),
+  discount: new TableCellItem<number, 'discount'>('discount', 'number'),
 };
 
 export const serviceDictionary: NamingSubject = new NamingSubject(
-  'feminine',
-  'especialidad',
-  'especialidades',
-  'Especialidades',
+  'masculine',
+  'servicio',
+  'servicios',
+  'Servicios',
   'services',
-  ['admin', 'utilerias', 'codigos'],
+  ['home'],
 );
 
 export const serviceColumns: Column[] = [
-  ...baseColumns,
+  columnId,
+  columnName,
+  columnDescription,
+  new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', })}),
+  columnCreatedAt,
 ];

@@ -1,12 +1,12 @@
 import { Component, inject, output } from '@angular/core';
 import { AccountService } from 'src/app/_services/account.service';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
 
 @Component({
   selector: 'app-card-overview',
   standalone: true,
-  imports: [LayoutModule, UserProfilePictureComponent],
+  imports: [TemplateModule, UserProfilePictureComponent],
   templateUrl: './card-overview.component.html',
   styleUrl: './card-overview.component.scss'
 })

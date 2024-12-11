@@ -2,7 +2,7 @@ import { Component, inject, input, model } from '@angular/core';
 import { Role, View } from 'src/app/_models/types';
 import { CatalogMode } from 'src/app/_models/types';
 import { EventsService } from 'src/app/_services/events.service';
-import { CreateBtnComponent } from 'src/app/_shared/layout.module';
+import { CreateBtnComponent } from "src/app/_shared/template/components/buttons/create-btn.component";
 import { EventsCatalogComponent } from '../events-catalog.component';
 import { EventsCalendarComponent } from '../events-calendar.component';
 

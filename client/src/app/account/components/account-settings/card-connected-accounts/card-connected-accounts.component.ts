@@ -3,12 +3,12 @@ import { Component, inject, output, ViewChild, AfterViewInit  } from '@angular/c
 import { AbstractControlOptions, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 
 @Component({
   selector: 'app-card-connected-accounts',
   standalone: true,
-  imports: [LayoutModule, ReactiveFormsModule, InputControlComponent],
+  imports: [TemplateModule, ReactiveFormsModule, InputControlComponent],
   templateUrl: './card-connected-accounts.component.html',
   styleUrl: './card-connected-accounts.component.scss'
 })
@@ -18,7 +18,7 @@ export class CardConnectedAccountsComponent implements AfterViewInit {
   onSelectSection = output<string>();
 
   @ViewChild('googleButton') googleButton!: any;
-  
+
   submitted = false;
   hideSetPasswordForm = true;
   setPasswordForm = this.fb.group({

@@ -17,7 +17,7 @@ export class Column {
 
 export const columnCode: Column = new Column('code', 'Código');
 export const columnCodeNumber: Column = new Column('codeNumber', 'Número de Código');
-export const columnCreatedAt: Column = new Column('createdAt', 'Creado');
+export const columnCreatedAt: Column = new Column('createdAt', 'Creado', { options: new ColumnOptions({ justify: 'end' }) });
 export const columnDescription: Column = new Column('description', 'Descripción');
 export const columnEnabled: Column = new Column('enabled', 'Habilitado');
 export const columnId: Column = new Column('id', 'ID');

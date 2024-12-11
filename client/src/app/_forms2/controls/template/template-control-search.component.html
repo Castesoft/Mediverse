@@ -1,0 +1,10 @@
+<i duotoneMagnifier></i>
+<input
+  type="text"
+  class="form-control form-control-solid w-250px ps-12"
+  [placeholder]="'Encontrar ' + dictionary().singular"
+  [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
+  [attr.aria-label]="control().label + ' input'"
+  [id]="control().id"
+  [formControl]="$any(control())"
+>

@@ -18,7 +18,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { EventsService } from 'src/app/_services/events.service';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { PrescriptionFormComponent } from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { PrescriptionsTableComponent } from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component';
 
 @Component({
@@ -29,7 +29,7 @@ import { PrescriptionsTableComponent } from 'src/app/prescriptions/components/pr
   imports: [
     DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule,
     EventServicesSummaryComponent, UserProfilePictureComponent, PaymentsTableComponent, EventSummaryComponent, QuillModule, ReactiveFormsModule,
-    PrescriptionFormComponent, LayoutModule, PrescriptionsTableComponent, UserProfilePictureComponent
+    PrescriptionFormComponent, TemplateModule, PrescriptionsTableComponent, UserProfilePictureComponent
   ]
 })
 export class EventDetailComponent implements OnInit {

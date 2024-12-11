@@ -12,7 +12,7 @@ import { OrderFiltersForm } from "src/app/_models/orders/orderFiltersForm";
 import { OrderParams } from "src/app/_models/orders/orderParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { TablesModule } from "../_shared/template/components/tables/tables.module";
 import { OrdersTableComponent } from "src/app/orders/orders-table.component";
 import { OrdersService } from "src/app/orders/orders.config";
 
@@ -23,7 +23,7 @@ import { OrdersService } from "src/app/orders/orders.config";
   standalone: true,
   imports: [ FontAwesomeModule,
     OrdersTableComponent, CommonModule,
-    RouterModule, ControlsModule, TableModule,
+    RouterModule, ControlsModule, TablesModule,
     CdkModule, MaterialModule, Forms2Module,
    ],
 })

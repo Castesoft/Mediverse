@@ -1,0 +1,31 @@
+@if (show()) {
+<tr [class]="trClass" role="row">
+  @if (mode() !== 'readonly') {
+  <th tableHeaderCheckCell [(isCompact)]="isCompact" [(dictionary)]="dictionary" [(mode)]="mode"
+    [(selected)]="selected"></th>
+
+  }
+  @for (column of columns(); track column; let idx = $index; let last = $last; let first = $first) {
+  @if (!column.devModeOnly || (column.devModeOnly && isDev)) {
+  <th (click)="onClick(column.name)" class="dt-orderable-asc dt-orderable-desc"
+    [tabIndex]="mode() === 'readonly' ? -1 : 0" rowspan="1" colspan="1" [attr.aria-label]="(column.label + ': ' + (column.name === params()?.sort ?
+      (params()?.isSortAscending ? 'Activate to invert sorting' : 'Activate to remove sorting') :
+      'Activate to sort'))" [ngClass]="{
+              'text-end pe-2': column.options?.justify === 'end',
+              'dt-ordering-asc': params()?.isSortAscending && column.name === params()?.sort,
+              'dt-ordering-desc': !params()?.isSortAscending && column.name === params()?.sort,
+            }">
+
+    <span class="dt-column-title" role="button">{{ column.label }}</span>
+    <span class="dt-column-order"></span>
+  </th>
+  }
+  }
+
+  @if (showActions() === true) {
+  <th class="text-end dt-orderable-none" rowspan="1" colspan="1" aria-label="Actions">
+    <span class="dt-column-title">Opciones</span><span class="dt-column-order"></span>
+  </th>
+  }
+</tr>
+}

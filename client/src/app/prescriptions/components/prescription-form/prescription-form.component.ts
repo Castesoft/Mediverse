@@ -19,7 +19,7 @@ import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionPa
 import { AccountService } from "src/app/_services/account.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { BootstrapModule } from "src/app/_shared/bootstrap.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
+import { TableHeaderComponent } from "src/app/_shared/template/components/tables/table-header.component";
 import { ClinicsService } from "src/app/clinics/clinics.config";
 import { EventSelectDisplayCardComponent } from "src/app/events/event-select-display-card.component";
 import { EventSelectTypeaheadComponent } from "src/app/events/event-select-typeahead.component";

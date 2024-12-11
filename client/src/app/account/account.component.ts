@@ -9,8 +9,8 @@ import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
 import { UtilsService } from "src/app/_services/utils.service";
 import { BootstrapModule } from "src/app/_shared/bootstrap.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
-import { LayoutModule } from "src/app/_shared/layout.module";
-import { MainAsideComponent } from "src/app/_shared/layout/main-aside.component";
+import { TemplateModule } from "src/app/_shared/template/template.module";
+import { MainAsideComponent } from "../_shared/template/components/main-aside.component";
 import { AccountBillingComponent } from "src/app/account/components/account-billing/account-billing.component";
 import { AccountCardComponent } from "src/app/account/components/account-card.component";
 import { AccountClinicalHistoryComponent } from "src/app/account/components/account-clinical-history/account-clinical-history.component";
@@ -130,7 +130,7 @@ export class AccountRoutingModule {}
   ],
   imports: [
     AccountRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
-    LayoutModule, AccountCardComponent, MainAsideComponent,
+    TemplateModule, AccountCardComponent, MainAsideComponent,
   ]
 })
 export class AccountModule { }

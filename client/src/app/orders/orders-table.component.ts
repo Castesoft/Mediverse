@@ -17,7 +17,7 @@ import { IconsService } from "src/app/_services/icons.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { PatientTableCellComponent } from "src/app/_shared/components/patient-table-cell.component";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
+import { TableHeaderComponent } from "../_shared/template/components/tables/table-header.component";
 import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-deilvery-status-badge.component";
 import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
 import { OrdersService } from "src/app/orders/orders.config";

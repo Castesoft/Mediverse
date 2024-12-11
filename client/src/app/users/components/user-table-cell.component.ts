@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { Component, effect, inject, input, model, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
@@ -17,7 +17,7 @@ import { Account } from "src/app/_models/account/account";
   }
   `,
   standalone: true,
-  imports: [ NgClass ],
+  imports: [ CommonModule, ],
 })
 export class UserTableHasAccountCellComponent {
   user = input.required<User>();

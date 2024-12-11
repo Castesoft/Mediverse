@@ -3,10 +3,10 @@ import { Component, effect, HostListener, inject, OnInit, signal } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SearchResults } from 'src/app/_models/doctorSearchResults';
 import { SearchService } from 'src/app/_services/search.service';
-import { TablePagerComponent } from 'src/app/_shared/table/table-pager.component';
+import { TablePagerComponent } from 'src/app/_shared/template/components/tables/table-pager.component';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
-import { UserDropdownComponent } from 'src/app/_shared/layout/user-dropdown.component';
+import { UserDropdownComponent } from 'src/app/_shared/template/components/user-dropdown.component';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Search } from "src/app/_models/search/search";
 import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';

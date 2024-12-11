@@ -2,12 +2,12 @@ import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Account } from "src/app/_models/account/account";
 import { AccountService } from 'src/app/_services/account.service';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 
 @Component({
   selector: 'app-account-overview',
   standalone: true,
-  imports: [LayoutModule, RouterModule],
+  imports: [TemplateModule, RouterModule],
   templateUrl: './account-overview.component.html',
   styleUrl: './account-overview.component.scss'
 })

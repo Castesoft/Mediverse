@@ -7,13 +7,14 @@ import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { View, CatalogMode } from "src/app/_models/base/types";
 import { Service } from "src/app/_models/services/service";
+import { serviceCells } from "src/app/_models/services/serviceConstants";
 import { ServiceFiltersForm } from "src/app/_models/services/serviceFiltersForm";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
 import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
 import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { ServicesService } from "src/app/services/services.config";
 
 @Component({
@@ -77,13 +78,13 @@ export class ServicesTableMenuComponent
 }
 
 @Component({
-  host: { class: 'table fs-9 mb-0 border-translucent' },
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[servicesTable]',
   // template: ``,
   templateUrl: './services-table.component.html',
   standalone: true,
   imports: [
-    TableModule,
+    TablesModule,
     ControlsModule,
     RouterModule,
     FontAwesomeModule,
@@ -106,7 +107,7 @@ export class ServicesTableComponent
   data: ModelSignal<Service[]> = model.required();
 
   constructor() {
-    super(ServicesService, Service);
+    super(ServicesService, Service, { tableCells: serviceCells, });
 
     effect(() => {});
   }

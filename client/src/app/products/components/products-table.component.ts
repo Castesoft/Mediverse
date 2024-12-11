@@ -7,13 +7,14 @@ import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { View, CatalogMode } from "src/app/_models/base/types";
 import { Product } from "src/app/_models/products/product";
+import { productCells } from "src/app/_models/products/productConstants";
 import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm";
 import { ProductParams } from "src/app/_models/products/productParams";
 import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
 import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { ProductsService } from "src/app/products/products.config";
 
 @Component({
@@ -77,13 +78,13 @@ export class ProductsTableMenuComponent
 }
 
 @Component({
-  host: { class: 'table fs-9 mb-0 border-translucent' },
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[productsTable]',
   // template: ``,
   templateUrl: './products-table.component.html',
   standalone: true,
   imports: [
-    TableModule,
+    TablesModule,
     ControlsModule,
     RouterModule,
     FontAwesomeModule,
@@ -106,7 +107,7 @@ export class ProductsTableComponent
   data: ModelSignal<Product[]> = model.required();
 
   constructor() {
-    super(ProductsService, Product);
+    super(ProductsService, Product, { tableCells: productCells, });
 
     effect(() => {});
   }

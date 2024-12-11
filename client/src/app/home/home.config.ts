@@ -1,16 +1,25 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, NgModule, OnInit } from "@angular/core";
-import { RouterModule } from "@angular/router";
-import { Account } from "../_models/account/account";
-import { AccountService } from "src/app/_services/account.service";
-import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
-import { BootstrapModule } from "src/app/_shared/bootstrap.module";
-import { CdkModule } from "src/app/_shared/cdk.module";
-import { BreadcrumbLinkComponent, LayoutModule } from "src/app/_shared/layout.module";
-import { UtilsService } from '../_services/utils.service';
-import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
-import { HomeEventsCatalogRouteComponent } from "src/app/home/components/home-events-catalog-route.component";
-import { MainAsideComponent } from "src/app/_shared/layout/main-aside.component";
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Account } from 'src/app/_models/account/account';
+import { AccountService } from 'src/app/_services/account.service';
+import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
+import { UtilsService } from 'src/app/_services/utils.service';
+import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
+import { CdkModule } from 'src/app/_shared/cdk.module';
+import { BreadcrumbLinkComponent } from 'src/app/_shared/template/components/breadcrumbs/breadcrumb-link.component';
+import { MainAsideComponent } from 'src/app/_shared/template/components/main-aside.component';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
+import { AddressesCatalogComponent } from 'src/app/addresses/components/addresses-catalog.component';
+import { EventsCatalogComponent } from 'src/app/events/components/events-catalog.component';
+import { HomeClinicsCatalogRouteComponent } from 'src/app/home/components/home-clinics-catalog-route.component';
+import { HomeEventsCatalogRouteComponent } from 'src/app/home/components/home-events-catalog-route.component';
+import { HomePatientsCatalogRouteComponent } from 'src/app/home/components/home-patients-catalog-route.component';
+import { HomeProductsCatalogRouteComponent } from 'src/app/home/components/home-products-catalog-route.component';
+import { HomeServicesCatalogRouteComponent } from 'src/app/home/components/home-services-catalog-route.component';
+import { ProductsCatalogComponent } from 'src/app/products/components/products-catalog.component';
+import { ServicesCatalogComponent } from 'src/app/services/components/services-catalog.component';
+import { UsersCatalogComponent } from 'src/app/users/components/users-catalog.component';
 
 @Component({
   selector: 'home-route',
@@ -86,35 +95,34 @@ export class HomeComponent implements OnInit {
           loadChildren: () => import('../search/search.config').then(x => x.SearchModule)
         },
         {
-          path: 'patients',
-          loadChildren: () => import('../users/users.config').then(x => x.PatientsModule)
+          path: 'pacientes',
+          component: HomePatientsCatalogRouteComponent,
         },
         {
-          path: 'events',
+          path: 'citas',
           component: HomeEventsCatalogRouteComponent,
         },
         {
-          path: 'services',
-          loadChildren: () => import('../services/services.config').then(x => x.ServicesModule)
+          path: 'servicios',
+          component: HomeServicesCatalogRouteComponent,
         },
         {
-          path: 'products',
-          loadChildren: () => import('../products/products.config').then(x => x.ProductsModule)
+          path: 'productos',
+          component: HomeProductsCatalogRouteComponent,
         }, {
-          path: 'orders',
+          path: 'pedidos',
           loadChildren: () => import('../orders/orders.config').then(x => x.OrdersModule)
         },
         {
           path: 'prescriptions',
           loadChildren: () => import('../prescriptions/prescriptions.config').then(x => x.PrescriptionsModule)
         },
+        // {
+        //   path: 'nurses',
+        // },
         {
-          path: 'nurses',
-          loadChildren: () => import('../users/users.config').then(x => x.NursesModule)
-        },
-        {
-          path: 'clinics',
-          loadChildren: () => import('../addresses/addresses.config').then(x => x.AddressesModule)
+          path: 'clinicas',
+          component: HomeClinicsCatalogRouteComponent,
         },
       ],
     },
@@ -124,9 +132,9 @@ export class HomeComponent implements OnInit {
 export class HomeRoutingModule {}
 
 @NgModule({
-  declarations: [HomeComponent, HomeEventsCatalogRouteComponent],
+  declarations: [HomeComponent, HomeEventsCatalogRouteComponent, HomePatientsCatalogRouteComponent, HomeServicesCatalogRouteComponent, HomeProductsCatalogRouteComponent, HomeClinicsCatalogRouteComponent, ],
   imports: [HomeRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
-    LayoutModule, BreadcrumbLinkComponent, EventsCatalogComponent, MainAsideComponent, ],
+    TemplateModule, BreadcrumbLinkComponent, EventsCatalogComponent, MainAsideComponent, UsersCatalogComponent, ServicesCatalogComponent, ProductsCatalogComponent, AddressesCatalogComponent, ],
   exports: [
     HomeComponent
   ]

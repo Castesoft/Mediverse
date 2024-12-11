@@ -134,7 +134,7 @@ export const appConfig: ApplicationConfig = {
             loadChildren: () => import('./account/account.component').then(m => m.AccountModule)
            },
           {
-            path: 'home',
+            path: 'inicio',
             loadChildren: () => import('./home/home.config').then(x => x.HomeModule),
           },
         ]

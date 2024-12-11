@@ -9,11 +9,12 @@ import { View, CatalogMode } from "src/app/_models/base/types";
 import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
 import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { User } from "src/app/_models/users/user";
+import { userCells } from "src/app/_models/users/userConstants";
 import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
 import { UserParams } from "src/app/_models/users/userParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { UsersService } from "src/app/users/users.config";
 
 @Component({
@@ -77,13 +78,13 @@ export class UsersTableMenuComponent
 }
 
 @Component({
-  host: { class: 'table fs-9 mb-0 border-translucent' },
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[usersTable]',
   // template: ``,
   templateUrl: './users-table.component.html',
   standalone: true,
   imports: [
-    TableModule,
+    TablesModule,
     ControlsModule,
     RouterModule,
     FontAwesomeModule,
@@ -106,7 +107,7 @@ export class UsersTableComponent
   data: ModelSignal<User[]> = model.required();
 
   constructor() {
-    super(UsersService, User);
+    super(UsersService, User, { tableCells: userCells, });
 
     effect(() => {});
   }

@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Forms2BuilderModule } from "src/app/_forms2/builder/forms-2-builder.module";
 import { Forms2ControlsModule } from "src/app/_forms2/controls/forms-2-controls.module";
+import { TemplateFormsModule } from "src/app/_forms2/controls/template/template-forms.module";
 import { Forms2DetailModule } from "src/app/_forms2/detail/forms-2-detail.module";
 import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module";
 
@@ -13,6 +14,7 @@ import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module
     ReactiveFormsModule,
     Forms2DetailModule,
     FormsModule,
+    TemplateFormsModule,
   ],
   exports: [
     Forms2BuilderModule,
@@ -21,6 +23,7 @@ import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module
     ReactiveFormsModule,
     Forms2DetailModule,
     FormsModule,
+    TemplateFormsModule,
   ],
 })
 export class Forms2Module {}

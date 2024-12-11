@@ -3,7 +3,7 @@ import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { FormInfo } from "src/app/_models/forms/formTypes";
-import { baseTableCells, PartialCellsOf } from "src/app/_models/tables/tableCellItem";
+import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/tables/tableCellItem";
 import { User } from "src/app/_models/users/user";
 import { UserParams } from "src/app/_models/users/userParams";
 
@@ -28,19 +28,24 @@ export const userDictionary: NamingSubject = new NamingSubject(
   'usuarios',
   'Usuarios',
   'users',
-  ['home', 'patients'],
+  ['home'],
 );
 
 export const userColumns: Column[] = [
   columnId,
   new Column('email', 'Correo electrónico'),
   columnName,
-  new Column('lastName', 'Apellido'),
-  new Column('role', 'Rol'),
-  columnEnabled,
   columnCreatedAt,
 ];
 
 export const userCells: PartialCellsOf<User> = {
   ...baseTableCells,
+  age: new TableCellItem<number, 'age'>('age', 'number'),
+  city: new TableCellItem<string, 'city'>('city', 'string'),
+  country: new TableCellItem<string, 'country'>('country', 'string'),
+  dateOfBirth: new TableCellItem<Date, 'dateOfBirth'>('dateOfBirth', 'date'),
+  email: new TableCellItem<string, 'email'>('email', 'string'),
+  firstName: new TableCellItem<string, 'firstName'>('firstName', 'string'),
+  education: new TableCellItem<string, 'education'>('education', 'string'),
+  fullName: new TableCellItem<string, 'fullName'>('fullName', 'string'),
 } as PartialCellsOf<User>;

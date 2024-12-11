@@ -16,7 +16,7 @@ import { IconsService } from "src/app/_services/icons.service";
 import { BootstrapModule } from "src/app/_shared/bootstrap.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
+import { TableHeaderComponent } from "src/app/_shared/template/components/tables/table-header.component";
 import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
 import { PrescriptionTableCellComponent, PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component";
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";

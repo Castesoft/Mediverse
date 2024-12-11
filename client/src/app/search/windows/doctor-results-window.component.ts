@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { SearchService } from "src/app/_services/search.service";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { LoadingPlaceholderComponent } from "src/app/search/components/loading-placeholder.component";
 import { NoResultScreenComponent } from "src/app/search/components/no-result-screen.component";
 import { ResultRowComponent } from "src/app/search/components/result-row.component";
@@ -15,7 +15,7 @@ import { SearchResultCounterComponent } from "src/app/search/components/search-r
   templateUrl: './doctor-results-window.component.html',
   styleUrl: './doctor-results-window.component.scss',
   standalone: true,
-  imports: [ CommonModule, ResultRowComponent, SearchFormComponent, NoResultScreenComponent, LoadingPlaceholderComponent, TableModule,
+  imports: [ CommonModule, ResultRowComponent, SearchFormComponent, NoResultScreenComponent, LoadingPlaceholderComponent, TablesModule,
     SearchResultCounterComponent, RouterModule,
    ],
 })

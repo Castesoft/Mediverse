@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import {  RouterLink, RouterModule } from '@angular/router';
 import { Account } from "src/app/_models/account/account";
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { CardOverviewComponent } from './card-overview/card-overview.component';
@@ -14,7 +14,7 @@ import { CardDeactivateComponent } from './card-deactivate/card-deactivate.compo
 @Component({
   selector: 'app-account-settings',
   standalone: true,
-  imports: [LayoutModule, RouterModule, NavMenuComponent, RouterLink, CardOverviewComponent, CardSigninMethodComponent,
+  imports: [TemplateModule, RouterModule, NavMenuComponent, RouterLink, CardOverviewComponent, CardSigninMethodComponent,
     CardProfileDetailsComponent, CardConnectedAccountsComponent, CardNotificationsComponent, CardDeactivateComponent],
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss'

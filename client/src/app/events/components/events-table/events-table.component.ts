@@ -16,7 +16,7 @@ import { UtilsService } from "src/app/_services/utils.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { PatientTableCellComponent, PatientTableSexCellComponent, PatientTableHasAccountCellComponent } from "src/app/_shared/components/patient-table-cell.component";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/table/table-header.component";
+import { TableHeaderComponent } from "src/app/_shared/template/components/tables/table-header.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },

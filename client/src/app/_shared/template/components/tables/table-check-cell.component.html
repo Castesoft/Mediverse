@@ -1,0 +1,9 @@
+<div [class]="divClass">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    [(ngModel)]="selected"
+    [name]="dictionary().singular"
+    [id]="cuid + 'tableCheck' + idx()"
+  />
+</div>

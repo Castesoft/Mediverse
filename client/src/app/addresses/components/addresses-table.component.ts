@@ -13,7 +13,7 @@ import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExten
 import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { AddressesService } from "src/app/addresses/addresses.config";
 
 @Component({
@@ -77,13 +77,13 @@ export class AddressesTableMenuComponent
 }
 
 @Component({
-  host: { class: 'table fs-9 mb-0 border-translucent' },
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[addressesTable]',
   // template: ``,
   templateUrl: './addresses-table.component.html',
   standalone: true,
   imports: [
-    TableModule,
+    TablesModule,
     ControlsModule,
     RouterModule,
     FontAwesomeModule,

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, NgModule, OnInit } from '@angular/core';
 import { ResolveFn, RouterModule } from '@angular/router';
-import { LayoutModule } from '../_shared/layout.module';
+import { TemplateModule } from '../_shared/template/template.module';
 import { HomeSearchComponent } from './components/home-search.component';
 
 @Component({
@@ -70,7 +70,7 @@ import { HomeSearchComponent } from './components/home-search.component';
     declarations: [
       SearchComponent,
     ],
-    imports: [CommonModule, SearchRoutingModule, LayoutModule,]
+    imports: [CommonModule, SearchRoutingModule, TemplateModule,]
   })
   export class SearchModule {
   }

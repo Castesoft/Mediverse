@@ -1,0 +1,11 @@
+@if(item().isLink) {
+  <div class="d-flex align-items-center px-0" [ngClass]="linkClass">
+    <a [routerLink]="[item().baseUrl, value()]" [href]="[item().baseUrl, value()]" class="fw-semibold text-primary me-2">
+      @if(item().key === 'id') {
+        #
+      }
+      {{value() | number}}</a>
+  </div>
+}@else {
+  {{value()}}
+}

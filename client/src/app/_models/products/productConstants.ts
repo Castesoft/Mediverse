@@ -3,6 +3,7 @@ import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { FormInfo } from "src/app/_models/forms/formTypes";
+import { ColumnOptions } from "src/app/_models/forms/options/columnOptions";
 import { Product } from "src/app/_models/products/product";
 import { ProductParams } from "src/app/_models/products/productParams";
 import { PartialCellsOf, tableCellCode, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellId, TableCellItem, tableCellName, tableCellVisible } from "src/app/_models/tables/tableCellItem";
@@ -31,25 +32,23 @@ export const productDictionary: NamingSubject = new NamingSubject(
   'productos',
   'Productos',
   'products',
-  ['home', 'products']
+  ['home']
 );
 
 export const productColumns: Column[] = [
   columnId,
   columnName,
   columnDescription,
-  new Column('price', 'Precio'),
-  new Column('quantity', 'Cantidad'),
-  new Column('unit', 'Unidad'),
-  new Column('discount', 'Descuento'),
-  new Column('dosage', 'Dosis'),
-  new Column('lotNumber', 'Número de lote'),
-  new Column('manufacturer', 'Fabricante'),
-  new Column('photoUrl', 'URL de la foto'),
-  new Column('isInternal', 'Interno'),
-  columnCreatedAt,
+  new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('quantity', 'Cantidad', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('dosage', 'Dosis', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('unit', 'Unidad', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('lotNumber', 'Número de lote', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('manufacturer', 'Fabricante', { options: new ColumnOptions({ justify: 'start', })}),
   columnEnabled,
   columnVisible,
+  columnCreatedAt,
 ];
 
 export const productCells: PartialCellsOf<Product> = {
@@ -60,4 +59,11 @@ export const productCells: PartialCellsOf<Product> = {
   code: tableCellCode,
   visible: tableCellVisible,
   id: tableCellId,
+  price: new TableCellItem<number, 'price'>('price', 'currency', { justification: 'end', }),
+  quantity: new TableCellItem<number, 'quantity'>('quantity', 'number', { justification: 'end', }),
+  discount: new TableCellItem<number, 'discount'>('discount', 'number', { justification: 'end', }),
+  dosage: new TableCellItem<string, 'dosage'>('dosage', 'string', { justification: 'end', }),
+  unit: new TableCellItem<string, 'unit'>('unit', 'string'),
+  lotNumber: new TableCellItem<string, 'lotNumber'>('lotNumber', 'string'),
+  manufacturer: new TableCellItem<string, 'manufacturer'>('manufacturer', 'string'),
 } as PartialCellsOf<Product>;

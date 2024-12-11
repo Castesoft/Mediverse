@@ -12,7 +12,7 @@ import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescript
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableModule } from "src/app/_shared/table/table.module";
+import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { PrescriptionsTableComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component";
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
 
@@ -23,7 +23,7 @@ import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config
   standalone: true,
   imports: [ FontAwesomeModule,
     PrescriptionsTableComponent, CommonModule,
-    RouterModule, ControlsModule, TableModule,
+    RouterModule, ControlsModule, TablesModule,
     CdkModule, MaterialModule, Forms2Module,
    ],
 })

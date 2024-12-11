@@ -16,14 +16,12 @@
   <div tableWrapper>
     <div tableResponsive>
       @if(service.list$(key(), mode()) | async; as _list) {
-      <table eventsTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view">
+      <table eventsTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params">
       </table>
       }
     </div>
     @if(service.pagination$(key()) | async; as _pagination) {
-    <div tablePager [(isCompact)]="isCompact" [currentPage]="_pagination.currentPage"
-      [itemsPerPage]="_pagination.itemsPerPage" [totalItems]="_pagination.totalItems" (loadMore)="service.loadMore(key())"
-      (loadLess)="service.loadLess(key())" (pageChanged)="service.onPageChanged(key(), $event)"></div>
+    <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
     }
   </div>
 </div>

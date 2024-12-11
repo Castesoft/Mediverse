@@ -4,14 +4,14 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { Account } from "src/app/_models/account/account";
 import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { AccountService } from 'src/app/_services/account.service';
-import { LayoutModule } from 'src/app/_shared/layout.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { AddPaymentMethodComponent } from './add-payment-method/add-payment-method.component';
 import { AddressDetailModalComponent } from 'src/app/addresses/addresses.config';
 
 @Component({
   selector: 'app-account-billing',
   standalone: true,
-  imports: [LayoutModule, RouterModule],
+  imports: [TemplateModule, RouterModule],
   templateUrl: './account-billing.component.html',
   styleUrl: './account-billing.component.scss'
 })

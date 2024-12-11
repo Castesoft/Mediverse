@@ -4,8 +4,8 @@ import { User } from "src/app/_models/users/user";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { DetailModalType } from "src/app/_shared/table/table.module";
 import { UserDetailComponent } from "./user-detail.component";
+import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 
 
 @Component({
@@ -32,5 +32,5 @@ import { UserDetailComponent } from "./user-detail.component";
   imports: [UserDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })
 export class UserDetailModalComponent {
-  data = inject<DetailModalType<User>>(MAT_DIALOG_DATA);
+  data = inject<DetailDialog<User>>(MAT_DIALOG_DATA);
 }
