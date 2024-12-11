@@ -1,14 +1,14 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect } from "@angular/core";
+import { Component, OnInit, OnDestroy, ModelSignal, model, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
-import { Clinic } from "src/app/_models/clinics/clinic";
-import { ClinicFiltersForm } from "src/app/_models/clinics/clinicFiltersForm";
-import { ClinicParams } from "src/app/_models/clinics/clinicParams";
 import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
 import { View, CatalogMode } from "src/app/_models/base/types";
+import Clinic from "src/app/_models/clinics/clinic";
+import ClinicFiltersForm from "src/app/_models/clinics/clinicFiltersForm";
+import ClinicParams from "src/app/_models/clinics/clinicParams";
 import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";

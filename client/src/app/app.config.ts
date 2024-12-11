@@ -135,7 +135,7 @@ export const appConfig: ApplicationConfig = {
            },
           {
             path: 'inicio',
-            loadChildren: () => import('./home/home.config').then(x => x.HomeModule),
+            loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
           },
         ]
       },

@@ -3,13 +3,13 @@ import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angul
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { Clinic } from "src/app/_models/clinics/clinic";
-import { clinicCells } from "src/app/_models/clinics/clinicConstants";
-import { ClinicFiltersForm } from "src/app/_models/clinics/clinicFiltersForm";
-import { ClinicParams } from "src/app/_models/clinics/clinicParams";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { View, CatalogMode } from "src/app/_models/base/types";
+import Clinic from "src/app/_models/clinics/clinic";
+import { clinicCells } from "src/app/_models/clinics/clinicConstants";
+import ClinicFiltersForm from "src/app/_models/clinics/clinicFiltersForm";
+import ClinicParams from "src/app/_models/clinics/clinicParams";
 import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
 import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";

@@ -1,43 +1,27 @@
 using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MainService.Core.DTOs.Addresses;
+using MainService.Core.DTOs.Clinics;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Core.Extensions;
 using MainService.Models;
-using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
-using MainService.Models.Entities.Addresses;
+using MainService.Models.Entities;
 
 namespace MainService.Infrastructure.Data;
 
-public class AddressRepository(DataContext context, IMapper mapper) : IAddressRepository
+public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepository
 {
-    public void Add(Address item) => context.Addresses.Remove(item);
-    public void Delete(Address item) => context.Addresses.Remove(item);
-    public async Task<List<Address>> GetAllAsync() => await context.Addresses.ToListAsync();
-
-    public async Task<List<AddressDto>> GetAllDtoAsync(AddressParams param) =>
+    public async Task<List<ClinicDto>> GetAllDtoAsync(ClinicParams param) =>
         await context.Addresses
             .AsNoTracking()
-            .ProjectTo<AddressDto>(mapper.ConfigurationProvider)
+            .ProjectTo<ClinicDto>(mapper.ConfigurationProvider)
             .ToListAsync()
         ;
         
-
-    public async Task<Address?> GetByIdAsNoTrackingAsync(int id) => 
-        await context.Addresses
-            .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
-
-    public async Task<Address?> GetByIdAsync(int id) => 
-        await context.Addresses
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
 
     public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId) =>
         await context.Addresses
@@ -45,14 +29,14 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
             .AnyAsync(x => x.Id == id && x.DoctorClinic.DoctorId == doctorId)
         ;
 
-    public async Task<AddressDto?> GetDtoByIdAsync(int id) => 
+    public async Task<ClinicDto?> GetDtoByIdAsync(int id) => 
         await context.Addresses
             .AsNoTracking()
-            .ProjectTo<AddressDto>(mapper.ConfigurationProvider)
+            .ProjectTo<ClinicDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id)
         ;
 
-    public async Task<PagedList<AddressDto>> GetPagedListAsync(AddressParams param, ClaimsPrincipal user)
+    public async Task<PagedList<ClinicDto>> GetPagedListAsync(ClinicParams param, ClaimsPrincipal user)
     {
         var query = context.Addresses
             .Include(x => x.DoctorClinic)
@@ -60,21 +44,6 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
 
         IEnumerable<string> roles = user.GetRoles();
         int userId = user.GetUserId();
-
-        switch (param.Type)
-        {
-            case AddressesEnum.Account:
-                query = query.Where(x => x.UserAddress.UserId == userId);
-                break;
-            case AddressesEnum.Clinic:
-                // if (!roles.Contains("Doctor") && !roles.Contains("Nurse")) return null;
-                int doctorId = userId;
-
-                query = query.Where(x => x.DoctorClinic.DoctorId == doctorId);
-                break;
-            default:
-                break;
-        }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
@@ -122,28 +91,10 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
             query = query.OrderByDescending(x => x.CreatedAt);
         }
 
-        return await PagedList<AddressDto>.CreateAsync(
-            query.AsNoTracking().ProjectTo<AddressDto>(mapper.ConfigurationProvider),
+        return await PagedList<ClinicDto>.CreateAsync(
+            query.AsNoTracking().ProjectTo<ClinicDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
     }
-
-    public async Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode) =>
-        await context.Neighborhoods
-            .Include(x => x.CityNeighborhood.City)
-            .Include(x => x.CityNeighborhood.City.StateCity.State)
-            .AsNoTracking()
-            .Where(x => x.Zipcode == zipcode)
-            .Select(x => new ZipcodeAddressOption
-            {
-                Neighborhood = x.Name,
-                City = x.CityNeighborhood.City.Name,
-                State = x.CityNeighborhood.City.StateCity.State.Name,
-                Settlement = x.Settlement
-            })
-            .ToListAsync()
-        ;
-
-    public async Task<bool> ExistsByIdAsync(int id) => await context.Addresses.AnyAsync(x => x.Id == id);
 
     public async Task<bool> DoctorHasAddressAsync(int doctorId, int addressId) =>
         await context.Addresses

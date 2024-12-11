@@ -1,6 +1,7 @@
 using AutoMapper;
 using MainService.Core.DTOs;
 using MainService.Core.DTOs.Addresses;
+using MainService.Core.DTOs.Clinics;
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Orders;
 using MainService.Core.DTOs.Prescription;
@@ -72,7 +73,8 @@ public class MappingProfiles : Profile
 
         CreateMap<Address, AddressDto>()
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
-            .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count));
+            .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
+        ;
 
         CreateMap<UserAddressCreateDto, Address>();
         CreateMap<UserAddressUpdateDto, Address>();
@@ -98,6 +100,11 @@ public class MappingProfiles : Profile
 
         CreateMap<ServiceCreateDto, Service>();
         CreateMap<ProductCreateDto, Product>();
+
+        CreateMap<Address, ClinicDto>()
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
+            .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
+        ;
 
         CreateMap<AppUser, AccountDto>()
             .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.GetSex()))

@@ -1,0 +1,39 @@
+<div root>
+  <div page>
+    @if (!utilsService.sidebarCollapsed()){
+      <div mainAside></div>
+    }
+    <div wrapper>
+      <div header></div>
+      <div content>
+        <div toolbar>
+          <div toolbarContainer>
+            <div toolbarInfo>
+              <h1 toolbarTitle
+                  [title]="'Mi Cuenta'"></h1>
+              <ul breadcrumb>
+                <li breadcrumbLink
+                    [label]="'Inicio'"
+                    [url]="'/'"></li>
+                <li breadcrumbLink
+                    [label]="'Cuenta'"
+                    [url]="'/account'"></li>
+                @if (label) {
+                  <li breadcrumbLink
+                      [label]="label"
+                      [active]="true">{{ label }}
+                  </li>
+                }
+              </ul>
+            </div>
+            <div toolbarActions></div>
+          </div>
+        </div>
+        <div post>
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+      <div footer></div>
+    </div>
+  </div>
+</div>
