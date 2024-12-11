@@ -7,6 +7,7 @@ import { MaterialModule } from "src/app/_shared/material.module";
 
 
 @Component({
+  host: { class: 'text-end pe-0', },
   selector: 'td[tableMenuCell]',
   // template: ``,
   templateUrl: './table-menu-cell.component.html',
@@ -20,15 +21,9 @@ export class TableMenuCellComponent {
   item = model.required<Entity>();
   isCompact = model.required<boolean>();
 
-  class = 'align-middle white-space-nowrap text-end pe-0 btn-reveal-trigger text-center';
-
-  @HostBinding('class') get hostClasses() {
-    return this.class;
-  }
-
   constructor() {
     effect(() => {
-      this.class = `${this.class} py-1 fs-6 pe-3 ps-1 border-none`;
+      
     });
   }
 }

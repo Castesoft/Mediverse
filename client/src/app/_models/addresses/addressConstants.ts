@@ -4,8 +4,9 @@ import { FormInfo } from "src/app/_models/forms/formTypes";
 import { AddressParams } from './addressParams';
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
-import { Column } from "src/app/_models/base/column";
+import { Column, columnCreatedAt, columnId } from "src/app/_models/base/column";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
+import { PartialCellsOf, tableCellCode, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellId, TableCellItem, tableCellName, tableCellVisible } from "src/app/_models/tables/tableCellItem";
 
 
 export const addressFormInfo: FormInfo<Address> = {
@@ -61,10 +62,11 @@ export const addressDictionary: NamingSubject = new NamingSubject(
   'direcciones',
   'Dirección',
   'addresses',
-  ['home', 'clinics']
+  ['inicio']
 );
 
 export const addressColumns: Column[] = [
+  columnId,
   new Column('name', 'Clínica'),
   new Column('street', 'Calle'),
   new Column('exteriorNumber', 'Número exterior'),
@@ -76,4 +78,28 @@ export const addressColumns: Column[] = [
   new Column('country', 'País'),
   new Column('nursesCount', 'Número de enfermeras'),
   new Column('isMain', 'Principal'),
+  columnCreatedAt,
 ];
+
+export const addressCells: PartialCellsOf<Address> = {
+  createdAt: tableCellCreatedAt,
+  description: tableCellDescription,
+  enabled: tableCellEnabled,
+  name: tableCellName,
+  code: tableCellCode,
+  visible: tableCellVisible,
+  id: tableCellId,
+  city: new TableCellItem<string, 'city'>('city', 'string'),
+  country: new TableCellItem<string, 'country'>('country', 'string'),
+  latitude: new TableCellItem<number, 'latitude'>('latitude', 'number'),
+  longitude: new TableCellItem<number, 'longitude'>('longitude', 'number'),
+  nursesCount: new TableCellItem<number, 'nursesCount'>('nursesCount', 'number'),
+  state: new TableCellItem<string, 'state'>('state', 'string'),
+  isMain: new TableCellItem<boolean, 'isMain'>('isMain', 'boolean'),
+  zipcode: new TableCellItem<string, 'zipcode'>('zipcode', 'string'),
+  street: new TableCellItem<string, 'street'>('street', 'string'),
+  exteriorNumber: new TableCellItem<string, 'exteriorNumber'>('exteriorNumber', 'string'),
+  interiorNumber: new TableCellItem<string, 'interiorNumber'>('interiorNumber', 'string'),
+  neighborhood: new TableCellItem<string, 'neighborhood'>('neighborhood', 'string'),
+} as PartialCellsOf<Address>;
+

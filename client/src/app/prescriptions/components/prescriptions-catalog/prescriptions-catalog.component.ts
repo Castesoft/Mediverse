@@ -38,7 +38,6 @@ export class PrescriptionsCatalogComponent
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<PrescriptionParams> = model.required();
 
-  animalId = input<number>();
 
   constructor() {
     super(PrescriptionsService, PrescriptionFiltersForm);

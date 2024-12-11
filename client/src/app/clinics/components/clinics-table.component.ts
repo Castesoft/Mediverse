@@ -3,10 +3,10 @@ import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angul
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
-import { Address } from "src/app/_models/addresses/address";
-import { addressCells } from "src/app/_models/addresses/addressConstants";
-import { AddressFiltersForm } from "src/app/_models/addresses/addressFiltersForm";
-import { AddressParams } from "src/app/_models/addresses/addressParams";
+import { Clinic } from "src/app/_models/clinics/clinic";
+import { clinicCells } from "src/app/_models/clinics/clinicConstants";
+import { ClinicFiltersForm } from "src/app/_models/clinics/clinicFiltersForm";
+import { ClinicParams } from "src/app/_models/clinics/clinicParams";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { View, CatalogMode } from "src/app/_models/base/types";
@@ -15,10 +15,10 @@ import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInte
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
-import { AddressesService } from "src/app/addresses/addresses.config";
+import { ClinicsService } from "src/app/clinics/clinics.config";
 
 @Component({
-  selector: 'div[addressesTableMenu]',
+  selector: 'div[clinicsTableMenu]',
   host: { class: '' },
   template: `
     <div class="dropdown-menu d-block" cdkMenu>
@@ -63,15 +63,15 @@ import { AddressesService } from "src/app/addresses/addresses.config";
   standalone: true,
   imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class AddressesTableMenuComponent
-  extends TableMenu<AddressesService>
-  implements OnInit, ITableMenu<Address>
+export class ClinicsTableMenuComponent
+  extends TableMenu<ClinicsService>
+  implements OnInit, ITableMenu<Clinic>
 {
-  item: ModelSignal<Address> = model.required();
+  item: ModelSignal<Clinic> = model.required();
   key: ModelSignal<string | null> = model.required();
 
   constructor() {
-    super(AddressesService);
+    super(ClinicsService);
   }
 
   ngOnInit(): void {}
@@ -79,9 +79,9 @@ export class AddressesTableMenuComponent
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
-  selector: 'table[addressesTable]',
+  selector: 'table[clinicsTable]',
   // template: ``,
-  templateUrl: './addresses-table.component.html',
+  templateUrl: './clinics-table.component.html',
   standalone: true,
   imports: [
     TablesModule,
@@ -91,23 +91,23 @@ export class AddressesTableMenuComponent
     CdkModule,
     MaterialModule,
     CommonModule,
-    AddressesTableMenuComponent,
+    ClinicsTableMenuComponent,
   ],
 })
-export class AddressesTableComponent
-  extends BaseTable<Address, AddressParams, AddressFiltersForm, AddressesService>
-  implements OnInit, OnDestroy, TableInputSignals<Address, AddressParams>
+export class ClinicsTableComponent
+  extends BaseTable<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService>
+  implements OnInit, OnDestroy, TableInputSignals<Clinic, ClinicParams>
 {
-  item: ModelSignal<Address | null> = model.required();
+  item: ModelSignal<Clinic | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
-  params: ModelSignal<AddressParams> = model.required();
-  data: ModelSignal<Address[]> = model.required();
+  params: ModelSignal<ClinicParams> = model.required();
+  data: ModelSignal<Clinic[]> = model.required();
 
   constructor() {
-    super(AddressesService, Address, { tableCells: addressCells, });
+    super(ClinicsService, Clinic, { tableCells: clinicCells, });
 
     effect(() => {});
   }

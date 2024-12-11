@@ -38,7 +38,6 @@ export class UsersCatalogComponent
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<UserParams> = model.required();
 
-  animalId = input<number>();
 
   constructor() {
     super(UsersService, UserFiltersForm);

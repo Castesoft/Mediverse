@@ -32,7 +32,7 @@ export const productDictionary: NamingSubject = new NamingSubject(
   'productos',
   'Productos',
   'products',
-  ['home']
+  ['inicio']
 );
 
 export const productColumns: Column[] = [

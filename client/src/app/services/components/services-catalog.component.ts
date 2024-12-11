@@ -38,7 +38,6 @@ export class ServicesCatalogComponent
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<ServiceParams> = model.required();
 
-  animalId = input<number>();
 
   constructor() {
     super(ServicesService, ServiceFiltersForm);

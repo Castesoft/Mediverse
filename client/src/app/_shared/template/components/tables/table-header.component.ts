@@ -5,8 +5,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faSortUp, faSortDown, faSort } from "@fortawesome/free-solid-svg-icons";
 import { createId } from "@paralleldrive/cuid2";
 import { Column } from "src/app/_models/base/column";
+import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
+import { SelectOption } from "src/app/_models/base/selectOption";
 import { CatalogMode } from "src/app/_models/base/types";
 import { SortOptions } from "src/app/_models/types";
 import { DevService } from "src/app/_services/dev.service";
@@ -59,9 +61,9 @@ export class TableHeaderComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  selectAllItems(event: Event) {
-    const input = event.target as EventTarget as HTMLInputElement;
-    this.onSelectAll.emit(input.checked);
+  selectAllItems(event: boolean) {
+    this.selected.set(event);
+    this.onSelectAll.emit(event);
   }
 
   getIcon(columnName: string) {
@@ -75,5 +77,12 @@ export class TableHeaderComponent implements OnInit {
     }
   }
 
-  onClick = (name: string) => this.onParamsChange.emit(new SortOptions(name, !this.params().isSortAscending));
+  onClick(name: string) {
+    this.params.update((oldValues: EntityParams<Entity>) => {
+      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
+      newValues.sort = new SelectOption({ name: name, code: name });
+      newValues.isSortAscending = !oldValues.isSortAscending;
+      return newValues;
+    });
+  }
 }

@@ -1,13 +1,13 @@
 @if (!hideShowing()) {
   <div class="col-auto d-flex">
-    <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900">
+    <!-- <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900">
       Mostrando
       {{(pagination().currentPage - 1) * pagination().itemsPerPage + 1 | number}}
       a
       {{pagination().currentPage * pagination().itemsPerPage < pagination().totalItems ? pagination().currentPage * pagination().itemsPerPage : pagination().totalItems | number}}
       de
       {{pagination().totalItems | number}}
-    </p>
+    </p> -->
     @if (!isLastPage && !hideShowAll()) {
       @if (pagination().totalItems <= 50) {
         <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadMore()">

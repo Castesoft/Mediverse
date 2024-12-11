@@ -38,7 +38,7 @@ export const serviceDictionary: NamingSubject = new NamingSubject(
   'servicios',
   'Servicios',
   'services',
-  ['home'],
+  ['inicio'],
 );
 
 export const serviceColumns: Column[] = [

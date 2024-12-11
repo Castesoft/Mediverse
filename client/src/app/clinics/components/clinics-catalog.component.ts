@@ -4,43 +4,43 @@ import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
+import { Clinic } from "src/app/_models/clinics/clinic";
+import { ClinicFiltersForm } from "src/app/_models/clinics/clinicFiltersForm";
+import { ClinicParams } from "src/app/_models/clinics/clinicParams";
 import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
 import { View, CatalogMode } from "src/app/_models/base/types";
 import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
-import { Product } from "src/app/_models/products/product";
-import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm";
-import { ProductParams } from "src/app/_models/products/productParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
-import { ProductsTableComponent } from "src/app/products/components/products-table.component";
-import { ProductsService } from "src/app/products/products.config";
+import { ClinicsService } from "src/app/clinics/clinics.config";
+import { ClinicsTableComponent } from "src/app/clinics/components/clinics-table.component";
 
 @Component({
-  selector: '[productsCatalog]',
+  selector: '[clinicsCatalog]',
   // template: ``,
-  templateUrl: './products-catalog.component.html',
+  templateUrl: './clinics-catalog.component.html',
   standalone: true,
   imports: [ FontAwesomeModule,
-    ProductsTableComponent, CommonModule,
+    ClinicsTableComponent, CommonModule,
     RouterModule, ControlsModule, TablesModule,
     CdkModule, MaterialModule, Forms2Module,
    ],
 })
-export class ProductsCatalogComponent
-  extends BaseCatalog<Product, ProductParams, ProductFiltersForm, ProductsService>
-  implements OnInit, OnDestroy, CatalogInputSignals<Product, ProductParams>
+export class ClinicsCatalogComponent
+  extends BaseCatalog<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService>
+  implements OnInit, OnDestroy, CatalogInputSignals<Clinic, ClinicParams>
 {
-  item: ModelSignal<Product | null> = model.required();
+  item: ModelSignal<Clinic | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
-  params: ModelSignal<ProductParams> = model.required();
+  params: ModelSignal<ClinicParams> = model.required();
 
 
   constructor() {
-    super(ProductsService, ProductFiltersForm);
+    super(ClinicsService, ClinicFiltersForm);
 
     effect(() => {
       this.form

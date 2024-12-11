@@ -38,7 +38,6 @@ export class AddressesCatalogComponent
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<AddressParams> = model.required();
 
-  animalId = input<number>();
 
   constructor() {
     super(AddressesService, AddressFiltersForm);

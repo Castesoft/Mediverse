@@ -38,7 +38,6 @@ export class EventsCatalogComponent
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<EventParams> = model.required();
 
-  animalId = input<number>();
 
   constructor() {
     super(EventsService, EventFiltersForm);
