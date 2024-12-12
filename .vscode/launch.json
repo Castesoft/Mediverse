@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/MainService/bin/Debug/net8.0/MainService.dll",
+            "program": "${workspaceFolder}/src/MainService/bin/Debug/net9.0/MainService.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/MainService",
             "stopAtEntry": false,
