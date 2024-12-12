@@ -1,10 +1,11 @@
-import { baseColumns, Column } from "src/app/_models/base/column";
+import { baseColumns, Column, columnCreatedAt, columnId } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { Event } from "src/app/_models/events/event";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { FormInfo } from "src/app/_models/forms/formTypes";
+import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/tables/tableCellItem";
 
 
 export const eventFormInfo: FormInfo<Event> = {
@@ -36,9 +37,32 @@ export const eventDictionary: NamingSubject = new NamingSubject(
   'citas',
   'Citas',
   'events',
-  ['home', 'events'],
+  ['inicio'],
 );
 
 export const eventColumns: Column[] = [
-  ...baseColumns,
+  columnId,
+  new Column('patient', 'Paciente'),
+  new Column('doctor', 'Doctor'),
+  new Column('service', 'Servicio'),
+  new Column('clinic', 'Clínica'),
+  new Column('date', 'Fecha'),
+  new Column('dateFrom', 'Inicio'),
+  new Column('dateTo', 'Fin'),
+  new Column('allDay', 'Todo el día'),
+  new Column('evolution', 'Evolución'),
+  new Column('nextSteps', 'Próximos pasos'),
+  new Column('nursesCount', 'Enfermeras'),
+  columnCreatedAt,
+  // ...baseColumns,
 ];
+
+export const eventCells: PartialCellsOf<Event> = {
+  ...baseTableCells,
+
+  allDay: new TableCellItem<boolean, 'allDay'>('allDay', 'boolean'),
+  evolution: new TableCellItem<string, 'evolution'>('evolution', 'string'),
+  nextSteps: new TableCellItem<string, 'nextSteps'>('nextSteps', 'string'),
+  nursesCount: new TableCellItem<number, 'nursesCount'>('nursesCount', 'number'),
+
+} as PartialCellsOf<Event>;

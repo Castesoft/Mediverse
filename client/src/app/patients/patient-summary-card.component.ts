@@ -4,7 +4,7 @@ import {DatePipe} from "@angular/common";
 import { User } from "../_models/users/user";
 import { UsersService } from "../users/users.config";
 import {Subject, takeUntil} from "rxjs";
-import { UserProfilePictureComponent } from "../users/components/user-profile-picture/user-profile-picture.component";
+import { ProfilePictureComponent } from "../users/components/profile-picture/profile-picture.component";
 import { Router } from '@angular/router';
 import { Account } from "../_models/account/account";
 
@@ -14,7 +14,7 @@ import { Account } from "../_models/account/account";
   imports: [
     BootstrapModule,
     DatePipe,
-    UserProfilePictureComponent
+    ProfilePictureComponent
 ],
   standalone: true,
 })

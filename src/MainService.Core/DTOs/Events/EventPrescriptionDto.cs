@@ -1,4 +1,5 @@
 using MainService.Core.DTOs.Addresses;
+using MainService.Core.DTOs.Patients;
 using MainService.Core.DTOs.User;
 
 namespace MainService.Core.DTOs.Prescription;

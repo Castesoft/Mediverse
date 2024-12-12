@@ -1,9 +1,8 @@
-
-
 using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs;
+using MainService.Core.DTOs.Patients;
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
@@ -13,7 +12,6 @@ using MainService.Models;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace MainService.Infrastructure.Data;
 
@@ -85,12 +83,6 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .Include(x => x.Doctors)
         ;
 
-    public async Task<PatientDto?> GetPatientDtoByIdAsync(int id) =>
-        await context.Users
-            .AsNoTracking()
-            .ProjectTo<PatientDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
-
     public async Task<List<UserSummaryDto>> GetSummaryDtosAsync(UserParams param, ClaimsPrincipal user)
     {
         var query = context.Users
@@ -126,12 +118,6 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .AnyAsync(x => x.Id == id);
     }
 
-    public async Task<bool> PatientExistsAsync(int id, int doctorId)
-    {
-        return await context.Users
-            .Include(x => x.Doctors)
-            .AnyAsync(x => x.Id == id && x.Doctors.Any(x => x.DoctorId == doctorId));
-    }
     public async Task<bool> NurseExistsAsync(int id, int doctorId)
     {
         return await context.Users

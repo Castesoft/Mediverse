@@ -1,6 +1,6 @@
 import { HttpParams } from "@angular/common/http";
 
-export type Units = "kg" | "días" | "ha";
+export type Units = "kg" | "días" | "ha" | "años";
 export type CatalogMode = "view" | "select" | "multiselect" | "readonly";
 export type View = 'page' | 'modal' | 'inline';
 export type NumberRange = { min: number; max: number; };

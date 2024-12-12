@@ -24,6 +24,7 @@ export class Event extends Entity {
   nurses: User[] = [];
   payments: Payment[] = [];
   prescriptions: Prescription[] = [];
+  nursesCount: number | null = null;
 
   select: SelectOption | null = null;
 

@@ -19,6 +19,9 @@ import { ProductsCatalogComponent } from 'src/app/products/components/products-c
 import { ServicesCatalogComponent } from 'src/app/services/components/services-catalog.component';
 import { UsersCatalogComponent } from 'src/app/users/components/users-catalog.component';
 import { ClinicsCatalogComponent } from 'src/app/clinics/components/clinics-catalog.component';
+import { PatientsCatalogComponent } from 'src/app/patients/components/patients-catalog.component';
+import { HomePatientDetailRouteComponent } from 'src/app/home/components/home-patient-detail-route.component';
+import { PatientDetailComponent } from "../patients/components/patient-detail.component";
 
 @NgModule({
   declarations: [
@@ -28,6 +31,7 @@ import { ClinicsCatalogComponent } from 'src/app/clinics/components/clinics-cata
     HomeServicesCatalogRouteComponent,
     HomeProductsCatalogRouteComponent,
     HomeClinicsCatalogRouteComponent,
+    HomePatientDetailRouteComponent,
   ],
   imports: [
     HomeRoutingModule,
@@ -44,6 +48,8 @@ import { ClinicsCatalogComponent } from 'src/app/clinics/components/clinics-cata
     ProductsCatalogComponent,
     AddressesCatalogComponent,
     ClinicsCatalogComponent,
+    PatientsCatalogComponent,
+    PatientDetailComponent,
   ],
   exports: [HomeComponent],
 })

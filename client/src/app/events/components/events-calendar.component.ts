@@ -1,34 +1,32 @@
-import { Component, forwardRef, inject, input, model, OnDestroy, OnInit, viewChild, } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { IconsService } from 'src/app/_services/icons.service';
-import { Pagination } from 'src/app/_models/pagination';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Subject, takeUntil } from 'rxjs';
-import { CommonModule, DatePipe, DecimalPipe, JsonPipe } from '@angular/common';
-import { AlertModule } from 'ngx-bootstrap/alert';
-import { CatalogMode, Role, View } from 'src/app/_models/types';
-import { Router, RouterModule } from '@angular/router';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { FilterForm } from 'src/app/_models/event';
-import { EventParams } from "src/app/_models/events/eventParams";
-import { Event } from "src/app/_models/events/event";
-import { ControlsModule } from 'src/app/_forms/controls.module';
-import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
-import { CatalogModule } from 'src/app/_shared/catalog.module';
-import { calcDateDiff } from 'src/app/_utils/util';
-import { EventsFilterMenuComponent } from 'src/app/events/components/events-filter-menu.component';
-import { EventsTableComponent } from 'src/app/events/components/events-table.component';
-import { EventsService } from 'src/app/_services/events.service';
-import { TemplateModule } from 'src/app/_shared/template/template.module';
-import { Calendar, CalendarOptions, DateSelectArg, DatesSetArg, EventClickArg, } from '@fullcalendar/core';
+import esLocale from '@fullcalendar/core/locales/es';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridDayPlugin from '@fullcalendar/timegrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import interactionPlugin, { DateClickArg, EventDragStopArg, } from '@fullcalendar/interaction';
+import { CommonModule } from '@angular/common';
+import { Component, forwardRef, inject, model, ModelSignal, OnDestroy, OnInit, viewChild } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import { ButtonsModule } from "ngx-bootstrap/buttons";
-import esLocale from '@fullcalendar/core/locales/es';
+import { Calendar, CalendarOptions, DateSelectArg, DatesSetArg, EventClickArg } from '@fullcalendar/core';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ControlsModule } from 'src/app/_forms/controls.module';
+import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
+import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
+import { CatalogMode, View } from 'src/app/_models/base/types';
+import { Event } from 'src/app/_models/events/event';
+import { EventFiltersForm } from 'src/app/_models/events/eventFiltersForm';
+import { EventParams } from 'src/app/_models/events/eventParams';
 import { AccountService } from 'src/app/_services/account.service';
+import { CatalogModule } from 'src/app/_shared/catalog.module';
+import { TablesModule } from 'src/app/_shared/template/components/tables/tables.module';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
+import { EventsTableComponent } from 'src/app/events/components/events-table.component';
+import { EventsService } from 'src/app/events/events.config';
+import { calcDateDiff } from 'src/app/_utils/util';
 
 @Component({
   host: { class: 'pb-6' },
@@ -46,8 +44,6 @@ import { AccountService } from 'src/app/_services/account.service';
     TablesModule,
     CatalogModule,
     TemplateModule,
-    EventsFilterMenuComponent,
-    TemplateModule,
     FullCalendarModule,
     ButtonsModule,
     CommonModule,
@@ -60,24 +56,23 @@ import { AccountService } from 'src/app/_services/account.service';
     }
   `
 })
-export class EventsCalendarComponent implements OnInit, OnDestroy {
+export class EventsCalendarComponent
+  extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
+  implements OnInit, OnDestroy, TableInputSignals<Event, EventParams>
+{
+  item: ModelSignal<Event | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<EventParams> = model.required();
+  data: ModelSignal<Event[]> = model.required();
+
   accountService = inject(AccountService);
-  router = inject(Router);
-  service = inject(EventsService);
-  icons = inject(IconsService);
 
-  key = model.required<string>();
-  mode = model.required<CatalogMode>();
-  view = model.required<View>();
-  role = model.required<Role>();
-
-  calendarView = 'calendar';
-  data?: Event[];
-  params!: EventParams;
-  pagination?: Pagination;
-  form = new FilterForm();
-  loading = true;
-  private ngUnsubscribe = new Subject<void>();
+  constructor() {
+    super(EventsService, Event);
+  }
 
   calendarOptions: CalendarOptions = {
     plugins: [
@@ -97,7 +92,6 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     eventClick: this.handleEventClick.bind(this),
     eventDragStop: this.handleEventDragStop.bind(this),
     select: this.handleSelect.bind(this),
-    datesSet: this.handleDatesSet.bind(this),
     locale: esLocale,
     eventOverlap: false,
   };
@@ -106,30 +100,6 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
   fullcalendar = viewChild.required<FullCalendarComponent>('fullcalendar');
 
   ngOnInit(): void {
-    this.params = new EventParams(this.key());
-
-    this.service.setParam$(this.key(), this.params);
-
-    this.params.isCalendarView = true;
-
-    this.service
-      .param$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params) => {
-        this.params = params;
-        this.loadData(params);
-        this.form.patchValue(params);
-      });
-
-    this.form.group.valueChanges
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(this.handleFormValueChange.bind(this));
-
-    this.service
-      .loading$(this.key())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((loading) => (this.loading = loading));
-
     forwardRef(() => Calendar);
   }
 
@@ -153,59 +123,16 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
     return baseColor;
   }
 
-  private loadData(params: EventParams) {
-    this.service.loadPagedList(this.role(), this.key(), params).subscribe({
-      next: (response) => {
-        const { result, pagination } = response;
-        this.data = result;
-        this.pagination = pagination;
-        if (this.calendarOptions && result) {
-          this.calendarOptions.events = result!.map((event) => {
-            return {
-              patient: `${event.patient?.firstName} ${event.patient?.lastName || ''}`,
-              doctor: `${event.doctor?.firstName} ${event.doctor?.lastName || ''}`,
-              description: `${event.service?.name}`,
-              start: event.dateFrom,
-              end: event.dateTo,
-              id: event.id,
-              className: this.getBgColorClass(event.patient?.firstName || '', new Date(event.dateFrom!), new Date(event.dateTo!)),
-            } as any;
-          });
-        }
-      },
-    });
-  }
-
   handleViewChange = (event: any) => {
     console.log(event);
   }
 
-  private handleFormValueChange = () => {
-    const { controls, value } = this.form.group;
-    const { dateRange } = controls;
-
-    this.params.updateFromPartial({
-      ...value,
-      dateFrom: dateRange.value[0],
-      dateTo: dateRange.value[1],
-    });
-  };
-
-  onSubmit() {
-    this.service.setParam$(this.key(), this.params);
-    this.form.patchValue(this.params);
-  }
-
   handleDateClick(arg: DateClickArg) {
-    // this.service.clickLink(
-    //   null,
-    //   null,
-    //   this.key(),
-    //   'create',
-    //   'modal',
-    //   arg.date,
-    //   arg.date
-    // );
+    this.service.clickLink(new Event({
+      allDay: arg.allDay,
+      dateFrom: arg.date,
+      dateTo: arg.date,
+    }), this.key(), 'create', 'modal');
   }
 
   formatTimeRange = (start: Date, end: Date): string => {
@@ -265,14 +192,4 @@ export class EventsCalendarComponent implements OnInit, OnDestroy {
       },
     ];
   }
-
-  handleDatesSet(arg: DatesSetArg) {
-    this.params.updateFromPartial({
-      dateFrom: arg.start,
-      dateTo: arg.end,
-    });
-    this.service.setParam$(this.key(), this.params);
-  }
-
-  protected readonly FormGroup = FormGroup;
 }

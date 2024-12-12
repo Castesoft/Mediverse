@@ -1,6 +1,6 @@
 import { Component, inject, input, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { Event } from "src/app/_models/events/event";
 import { Router, RouterLink } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -8,7 +8,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-event-summary',
   standalone: true,
-  imports: [CommonModule, UserProfilePictureComponent, RouterLink],
+  imports: [CommonModule, ProfilePictureComponent, RouterLink],
   templateUrl: './event-summary.component.html',
 })
 export class EventSummaryComponent {

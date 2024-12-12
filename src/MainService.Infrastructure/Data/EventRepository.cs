@@ -100,42 +100,42 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
     public async Task<PagedList<EventDto>> GetPagedListAsync(EventParams param, ClaimsPrincipal user)
     {
-        var query = context.Events
+        if (!param.Role.HasValue) throw new ArgumentNullException();
+        
+        IQueryable<Event> query = context.Events
             .Include(x => x.EventService)
             .Include(x => x.EventClinic)
             .Include(x => x.DoctorEvent)
-            .Include(x => x.PatientEvent)
-                .ThenInclude(x => x.Patient)
+            .Include(x => x.PatientEvent).ThenInclude(x => x.Patient)
             .Include(x => x.NurseEvents)
-            .Include(x => x.EventPrescriptions)
-                .ThenInclude(x => x.Prescription)
+            .Include(x => x.EventPrescriptions).ThenInclude(x => x.Prescription)
             .Include(x => x.EventPaymentMethodType)
             .Include(x => x.EventMedicalInsuranceCompany)
-            .Include(x => x.EventPayments)
-                .ThenInclude(x => x.Payment)
-                .ThenInclude(x => x.PaymentPaymentMethod)
-                .ThenInclude(x => x.PaymentMethod)
-            .Include(x => x.EventPayments)
-                .ThenInclude(x => x.Payment)
-                .ThenInclude(x => x.PaymentPaymentMethodType)
-                .ThenInclude(x => x.PaymentMethodType)
-            .Include(x => x.EventPaymentStatus)
-                .ThenInclude(x => x.PaymentStatus)
-            .AsQueryable();
-
-        if (param.DateFrom != DateTime.MinValue)
-            query = query.Where(x => x.CreatedAt >= param.DateFrom);
-
-        if (param.DateTo != DateTime.MaxValue)
-            query = query.Where(x => x.CreatedAt <= param.DateTo);
+            .Include(x => x.EventPayments).ThenInclude(x => x.Payment.PaymentPaymentMethod.PaymentMethod)
+            .Include(x => x.EventPayments).ThenInclude(x => x.Payment.PaymentPaymentMethodType.PaymentMethodType)
+            .Include(x => x.EventPaymentStatus.PaymentStatus)
+            .AsQueryable()
+        ;
 
         IEnumerable<string> roles = user.GetRoles();
 
-        if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
-        else if (roles.Contains("Nurse")) query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == user.GetUserId()));
-        else if (roles.Contains("Patient")) query = query.Where(x => x.PatientEvent.PatientId == user.GetUserId());
-        else return null;
+        // if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
+        // else if (roles.Contains("Nurse")) query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == user.GetUserId()));
+        // else if (roles.Contains("Patient")) query = query.Where(x => x.PatientEvent.PatientId == user.GetUserId());
+        // else return null;
 
+        switch (param.Role)
+        {
+            case Roles.Doctor:
+                query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        if (param.PatientId.HasValue) {
+            query = query.Where(x => x.PatientEvent.PatientId == param.PatientId);
+        }
 
         return await PagedList<EventDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<EventDto>(mapper.ConfigurationProvider),

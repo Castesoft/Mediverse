@@ -25,6 +25,7 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public IServiceRepository ServiceRepository => new ServiceRepository(context, mapper);
     public IPhotoRepository PhotoRepository => new PhotoRepository(context, mapper);
     public IUserRepository UserRepository => new UserRepository(context, mapper);
+    public IPatientRepository PatientRepository => new PatientRepository(context, mapper);
     public IAddressRepository AddressRepository => new AddressRepository(context, mapper);
     public IClinicRepository ClinicRepository => new ClinicRepository(context, mapper);
     public IEventRepository EventRepository => new EventRepository(context, mapper);

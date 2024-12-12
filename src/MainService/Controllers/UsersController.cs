@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using MainService.Core.DTOs.Patients;
 
 namespace MainService.Controllers;
 
@@ -49,8 +50,8 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetByIdAsync([FromRoute]int id)
     {
-        var item = await uow.UserRepository.GetDtoByIdAsync(id);
-        var patient = await uow.UserRepository.GetPatientDtoByIdAsync(id);
+        UserDto? item = await uow.UserRepository.GetDtoByIdAsync(id);
+        PatientDto? patient = await uow.PatientRepository.GetDtoByIdAsync(id);
 
         item.HasPatientInformationAccess = item.SharedDoctors.Any(x => x.DoctorId == User.GetUserId() && x.HasPatientInformationAccess);
         item.SharedDoctors = [];

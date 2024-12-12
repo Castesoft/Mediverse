@@ -12,8 +12,7 @@
                 @if (form.controls.photoUrl.value !== null) {
                   <img [src]="form.controls.photoUrl.value" class="mw-100 mh-100 rounded" alt="photo" />
                 } @else {
-                  <div userProfilePicture userProfilePicture
-                    [(account)]="accountService.current"
+                  <div userProfilePicture [fullName]="form.controls.fullName.value" [photoUrl]="form.controls.photoUrl.value"
                     shape="square" size="md2"
                   ></div>
                 }

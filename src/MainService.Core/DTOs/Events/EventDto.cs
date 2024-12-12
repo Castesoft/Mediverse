@@ -1,4 +1,5 @@
 ﻿using MainService.Core.DTOs.Addresses;
+using MainService.Core.DTOs.Patients;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.DTOs.Services;
 using MainService.Core.DTOs.User;

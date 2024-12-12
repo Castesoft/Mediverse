@@ -4,6 +4,7 @@ using MainService.Core.DTOs.Addresses;
 using MainService.Core.DTOs.Clinics;
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Orders;
+using MainService.Core.DTOs.Patients;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.DTOs.Products;
 using MainService.Core.DTOs.Search;
@@ -82,7 +83,8 @@ public class MappingProfiles : Profile
         CreateMap<ClinicCreateDto, Address>();
 
         CreateMap<PatientCreateDto, AppUser>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+        ;
 
         CreateMap<Payment, PaymentDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -317,7 +319,13 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
             .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count() > 0))
             .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
-            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+            .ForMember(dest => dest.DoctorPayments, opt => opt.MapFrom(src => src.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment))))
+            .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
+            .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count()))
+            .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count()))
+            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()))
+        ;
 
         CreateMap<AppUser, UserDto>()
             .ForMember(dest => dest.Street,

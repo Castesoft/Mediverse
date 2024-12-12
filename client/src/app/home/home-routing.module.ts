@@ -6,6 +6,9 @@ import { HomePatientsCatalogRouteComponent } from 'src/app/home/components/home-
 import { HomeProductsCatalogRouteComponent } from 'src/app/home/components/home-products-catalog-route.component';
 import { HomeServicesCatalogRouteComponent } from 'src/app/home/components/home-services-catalog-route.component';
 import { HomeComponent } from './home.component';
+import { HomePatientDetailRouteComponent } from 'src/app/home/components/home-patient-detail-route.component';
+import createItemResolver from 'src/app/_utils/serviceHelper/functions/createItemResolver';
+import { PatientsService } from 'src/app/patients/patients.config';
 
 
 @NgModule({
@@ -21,6 +24,11 @@ import { HomeComponent } from './home.component';
         {
           path: 'pacientes',
           component: HomePatientsCatalogRouteComponent,
+        },
+        {
+          path: 'pacientes/:id',
+          component: HomePatientDetailRouteComponent,
+          resolve: { item: createItemResolver(PatientsService), },
         },
         {
           path: 'citas',

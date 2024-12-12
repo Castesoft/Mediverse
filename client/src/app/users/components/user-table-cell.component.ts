@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
 import { User } from "src/app/_models/users/user";
 import { UsersService } from "../users.config";
-import { UserProfilePictureComponent } from './user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
 import { Account } from "src/app/_models/account/account";
 
 @Component({
@@ -46,9 +46,7 @@ export class UserTableSexCellComponent {
     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
       <a [routerLink]="[routerLink]">
         <div class="symbol-label">
-          <div userProfilePicture userProfilePicture
-          [(account)]="account"
-          ></div>
+          <div userProfilePicture [fullName]="user().fullName" [photoUrl]="user().photoUrl"></div>
         </div>
       </a>
     </div>
@@ -63,7 +61,7 @@ export class UserTableSexCellComponent {
     }
   `,
   standalone: true,
-  imports: [RouterModule, UserProfilePictureComponent],
+  imports: [RouterModule, ProfilePictureComponent],
 })
 export class UserTableCellComponent implements OnInit {
   service = inject(UsersService);

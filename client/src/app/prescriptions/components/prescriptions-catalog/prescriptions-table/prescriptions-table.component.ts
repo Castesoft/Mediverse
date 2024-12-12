@@ -20,7 +20,7 @@ import { TableHeaderComponent } from "src/app/_shared/template/components/tables
 import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
 import { PrescriptionTableCellComponent, PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component";
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
-import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
 
 @Component({
@@ -30,7 +30,7 @@ import { UserTableCellComponent } from "src/app/users/components/user-table-cell
   templateUrl: './prescriptions-table.component.html',
   imports: [FontAwesomeModule, TableHeaderComponent, CommonModule, FormsModule, RouterModule, BsDropdownModule, PrescriptionTableCellComponent,
     PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent, MaterialModule, CdkModule, UserTableCellComponent, BootstrapModule, PrescriptionFormComponent,
-    UserProfilePictureComponent
+    ProfilePictureComponent
   ],
 })
 export class PrescriptionsTableComponent implements OnInit, OnDestroy {

@@ -101,3 +101,7 @@ export const dateRanges: Range[] = [
     label: (today.getFullYear() - 1).toString(),
   },
 ];
+
+export const calcDateDiff = (dateFrom: Date, dateTo: Date) => {
+  return Math.floor((Date.UTC(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()) - Date.UTC(dateTo.getFullYear(), dateTo.getMonth(), dateTo.getDate()) ) /(1000 * 60 * 60 * 24));
+}

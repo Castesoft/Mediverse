@@ -10,8 +10,9 @@ import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
 import { UserParams } from "src/app/_models/users/userParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
+import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
-import { UserDetailModalComponent } from "src/app/users/components/user-detail-modal.component";
+import { UserDetailComponent } from "src/app/users/components/user-detail.component";
 import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
 
 @Component({
@@ -41,6 +42,34 @@ import { UsersCatalogComponent } from "src/app/users/components/users-catalog.co
 export class UsersCatalogModalComponent {
   data = inject<CatalogDialog<User, UserParams>>(MAT_DIALOG_DATA);
 }
+
+@Component({
+  selector: 'user-detail-modal',
+  template: `
+  @defer {
+    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+    <mat-dialog-content>
+    <div
+      userDetail
+      [(use)]="data.use"
+      [(view)]="data.view"
+      [(key)]="data.key"
+      [(item)]="data.item"
+      [(title)]="data.title"
+    ></div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </mat-dialog-actions>
+}
+`,
+  standalone: true,
+  imports: [UserDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+})
+export class UserDetailModalComponent {
+  data = inject<DetailDialog<User>>(MAT_DIALOG_DATA);
+}
+
 
 @Injectable({
   providedIn: "root",

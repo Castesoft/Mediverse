@@ -84,7 +84,7 @@ public class PrescriptionsController(
         if (!await uow.UserRepository.ExistsByIdAsync(request.Patient.Id.Value))
         return NotFound($"El paciente con Id {request.Patient.Id.Value} no existe");
         
-        if (!await uow.UserRepository.PatientExistsAsync(request.Patient.Id.Value, doctorId))
+        if (!await uow.PatientRepository.ExistsAsync(request.Patient.Id.Value, doctorId))
         return BadRequest($"El paciente {request.Patient.Id.Value} no corresponde al doctor {doctorId}.");
         
         if (request.Event != null) {

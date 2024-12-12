@@ -7,12 +7,12 @@ import { SearchService } from 'src/app/_services/search.service';
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
 import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
 @Component({
   selector: 'div[doctorDetailWindow]',
   standalone: true,
-  imports: [UserProfilePictureComponent, UserProfilePictureComponent, DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent],
+  imports: [ProfilePictureComponent, ProfilePictureComponent, DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent],
   templateUrl: './doctor-detail-window.component.html',
   styleUrl: './doctor-detail-window.component.scss'
 })

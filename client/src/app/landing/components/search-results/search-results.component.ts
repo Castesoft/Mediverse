@@ -9,7 +9,7 @@ import { AccountService } from 'src/app/_services/account.service';
 import { UserDropdownComponent } from 'src/app/_shared/template/components/user-dropdown.component';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Search } from "src/app/_models/search/search";
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { SearchFormComponent } from 'src/app/search/components/search-form.component';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchAuthComponent } from 'src/app/search/components/search-auth.component';
@@ -25,7 +25,7 @@ import { Theme, ThemeService } from 'src/app/_services/theme.service';
   selector: 'div[searchResults]',
   host: { class: 'h-100 d-flex mobile-view', },
   standalone: true,
-  imports: [TablePagerComponent, SearchFormComponent, UserProfilePictureComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule,
+  imports: [TablePagerComponent, SearchFormComponent, ProfilePictureComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule,
     SearchAuthComponent, DoctorDetailWindowComponent, DoctorScheduleWindowComponent, DoctorResultsWindowComponent,
   ],
   providers: [ BsDropdownDirective, ],
@@ -62,7 +62,7 @@ export class SearchResultsComponent implements OnInit {
     streetViewControl: false,
     rotateControl: false,
     fullscreenControl: false,
-    mapId: "49526df74cd05e3a",
+    mapId: "8aab1a49ed502607",
   } as google.maps.MapOptions;
 
   constructor() {

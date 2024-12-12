@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
+import { Component, OnInit, ModelSignal, model, OnDestroy, effect, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -7,6 +7,7 @@ import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { View, CatalogMode } from "src/app/_models/base/types";
 import { Event } from "src/app/_models/events/event";
+import { eventCells } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
@@ -105,8 +106,10 @@ export class EventsTableComponent
   params: ModelSignal<EventParams> = model.required();
   data: ModelSignal<Event[]> = model.required();
 
+  showHeaders = input<boolean>(true);
+
   constructor() {
-    super(EventsService, Event);
+    super(EventsService, Event, { tableCells: eventCells, });
 
     effect(() => {});
   }

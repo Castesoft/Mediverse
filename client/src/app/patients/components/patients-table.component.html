@@ -1,0 +1,71 @@
+<thead
+  tableHeader
+  [columns]="service.columns"
+  [(dictionary)]="service.dictionary"
+  [(params)]="params"
+  [(mode)]="mode"
+  [(isCompact)]="isCompact"
+  (selectedChange)="service.onSelectAll(key(), mode(), $event)"
+  [selected]="(service.areAllSelected(key()) | async)!"
+></thead>
+<tbody templateTableBody>
+  @for (item of data(); track item.id; let idx = $index) {
+    <tr
+      class="hover-actions-trigger btn-reveal-trigger position-static"
+      [cdkContextMenuTriggerFor]="context_menu"
+    >
+      <td
+        tableCheckCell
+        [(isCompact)]="isCompact"
+        [idx]="idx"
+        [(dictionary)]="service.dictionary"
+        [(selected)]="item.isSelected"
+        (click)="service.onSelect(key(), mode(), item)"
+      ></td>
+
+      <td
+        class="name align-middle white-space-nowrap px-0 py-0"
+        [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+      >
+        <div class="d-flex align-items-center justify-content-start px-0">
+          <a
+            [routerLink]="[service.dictionary.catalogRoute, item.id]"
+            [href]="[service.dictionary.catalogRoute, item.id]"
+            class="fw-semibold text-primary"
+          >#{{ item.id | number }}</a
+          >
+        </div>
+      </td>
+
+      @for (cell of row().getItems([
+        'fullName',
+        'email',
+        'phoneNumber',
+        'age',
+        'sex',
+        'dateOfBirth',
+        'taxId',
+        'eventsCount',
+        'prescriptionsCount',
+        'ordersCount',
+        'createdAt',
+      ]);
+        let idx = $index;
+        track idx) {
+        <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
+      }
+
+      <td
+        tableMenuCell
+        [item]="item"
+        [contextMenu]="context_menu"
+        [(isCompact)]="isCompact"
+      ></td>
+      <ng-template #context_menu>
+        <div patientsTableMenu
+              [item]="item"
+              [key]="key()"></div>
+      </ng-template>
+    </tr>
+  }
+</tbody>

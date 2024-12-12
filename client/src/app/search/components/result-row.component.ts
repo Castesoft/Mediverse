@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, HostListener, inject, model } from "@angular/core";
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchService } from "src/app/_services/search.service";
-import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 
 /*
 
@@ -16,7 +16,7 @@ import { UserProfilePictureComponent } from "src/app/users/components/user-profi
   selector: 'div[resultRow]',
   templateUrl: './result-row.component.html',
   standalone: true,
-  imports: [CommonModule, UserProfilePictureComponent,],
+  imports: [CommonModule, ProfilePictureComponent,],
 })
 export class ResultRowComponent {
   service = inject(SearchService);

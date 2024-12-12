@@ -9,7 +9,7 @@ import {FormUse, View} from "src/app/_models/types";
 import {IconsService} from "../../../_services/icons.service";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EventServicesSummaryComponent } from 'src/app/events/components/event-services-summary.component';
-import { UserProfilePictureComponent } from '../../../users/components/user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from '../../../users/components/profile-picture/profile-picture.component';
 import { PaymentsTableComponent } from '../../../_shared/components/payments-table/payments-table.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { EventSummaryComponent } from './event-summary/event-summary.component';
@@ -28,8 +28,8 @@ import { PrescriptionsTableComponent } from 'src/app/prescriptions/components/pr
   standalone: true,
   imports: [
     DatePipe, RouterModule, BootstrapModule, NgSwitch, NgSwitchCase, DashboardModule, CurrencyPipe, FontAwesomeModule,
-    EventServicesSummaryComponent, UserProfilePictureComponent, PaymentsTableComponent, EventSummaryComponent, QuillModule, ReactiveFormsModule,
-    PrescriptionFormComponent, TemplateModule, PrescriptionsTableComponent, UserProfilePictureComponent
+    EventServicesSummaryComponent, ProfilePictureComponent, PaymentsTableComponent, EventSummaryComponent, QuillModule, ReactiveFormsModule,
+    PrescriptionFormComponent, TemplateModule, PrescriptionsTableComponent, ProfilePictureComponent
   ]
 })
 export class EventDetailComponent implements OnInit {

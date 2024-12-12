@@ -14,16 +14,16 @@
     [class.symbol-160px]="size() === 'lg'"
     [class.min-w-160px]="size() === 'lg'"
 >
-    @if (account()?.photoUrl !== null) {
-        <img [src]="account()!.photoUrl" [alt]="account()?.firstName" class="w-100" />
+    @if (photoUrl() !== null && fullName() !== null && fullName() !== '') {
+        <img [src]="photoUrl()" [alt]="fullName()" class="w-100" />
     } @else {
-      @if(account()!.firstName !== null) {
+      @if(fullName() !== null) {
         <div
-        [class]="'symbol-label fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(account()?.firstName!) + ' text-' + utilsService.getBootstrapClass(account()?.firstName!)"
+        [class]="'symbol-label fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(fullName()!) + ' text-' + utilsService.getBootstrapClass(fullName()!)"
         [class.fs-3]="size() === 'sm'"
         [class.fs-2x]="size() === 'md' || size() === 'md2' || size() === 'lg'"
     >
-        {{ account()?.firstName![0] }}
+        {{ fullName()![0] }}
     </div>
       }
     }

@@ -14,7 +14,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
 import { DatePipe, JsonPipe } from "@angular/common";
-import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 import { ProductProfilePictureComponent } from "src/app/_shared/components/product-picture.component";
 import { ProductSummary } from "src/app/_models/productSummary";
 
@@ -42,7 +42,7 @@ class ProductTypeaheadOptions implements TypeaheadComplexOption {
     AlertModule,
     JsonPipe,
     DatePipe,
-    UserProfilePictureComponent,
+    ProfilePictureComponent,
     ProductProfilePictureComponent,
   ],
   standalone: true

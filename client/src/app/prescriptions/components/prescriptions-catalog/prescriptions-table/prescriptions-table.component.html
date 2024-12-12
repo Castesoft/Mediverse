@@ -58,8 +58,7 @@ tableHeader
         <div class="symbol symbol-circle symbol-50px overflow-hidden me-3 flex-shrink-0">
           <a>
             <div class="symbol-label">
-              <div userProfilePicture userProfilePicture
-                [account]="$any(item.patient)"
+              <div userProfilePicture [fullName]="item.patient.fullName" [photoUrl]="item.patient.photoUrl"
               ></div>
             </div>
           </a>

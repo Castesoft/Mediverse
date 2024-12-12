@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, inject, Input, model, input } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject, Input, model, input, ModelSignal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -7,16 +7,20 @@ import { createId } from "@paralleldrive/cuid2";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { Subscription } from "rxjs";
-import { CatalogMode } from "src/app/_models/base/types";
-import { EventParams } from "src/app/_models/events/eventParams";
+import BaseTable from "src/app/_models/base/components/extensions/baseTable";
+import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
+import { CatalogMode, View } from "src/app/_models/base/types";
 import { Event } from "src/app/_models/events/event";
-import { EventsService } from "src/app/_services/events.service";
+import { eventCells } from "src/app/_models/events/eventConstants";
+import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
+import { EventParams } from "src/app/_models/events/eventParams";
 import { IconsService } from "src/app/_services/icons.service";
 import { UtilsService } from "src/app/_services/utils.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { PatientTableCellComponent, PatientTableSexCellComponent, PatientTableHasAccountCellComponent } from "src/app/_shared/components/patient-table-cell.component";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TableHeaderComponent } from "src/app/_shared/template/components/tables/table-header.component";
+import { EventsService } from "src/app/events/events.config";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_events', },
@@ -28,34 +32,40 @@ import { TableHeaderComponent } from "src/app/_shared/template/components/tables
     TooltipModule
   ],
 })
-export class EventsTableComponent implements OnInit, OnDestroy {
-  service = inject(EventsService);
-  icons = inject(IconsService);
+export class EventsTableComponent
+  extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
+  implements OnInit, OnDestroy, TableInputSignals<Event, EventParams>
+{
+  item: ModelSignal<Event | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<EventParams> = model.required();
+  data: ModelSignal<Event[]> = model.required();
+
   utils = inject(UtilsService);
 
-  @Input() data: Event[] = [];
-  key = model.required<string>();
-  mode = model.required<CatalogMode>();
   showHeaders = input<boolean>(true);
   location = input<'events-catalog' | 'user-detail'>('events-catalog');
 
   sortAscending = false;
   columns = this.service.columns;
   devMode = false;
-  params!: EventParams;
 
   subscriptions: Subscription[] = [];
 
   cuid: string = createId();
-  constructor() {}
 
-  ngOnInit(): void {
-    const paramsSubscription = this.service.param$(this.key()).subscribe({ next: params => this.params = params });
-    this.subscriptions.push(paramsSubscription);
+  constructor() {
+    super(EventsService, Event, { tableCells: eventCells, });
   }
 
+  ngOnInit(): void {}
+
   ngOnDestroy(): void {
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   getContrastColor(hexColor: string): string {

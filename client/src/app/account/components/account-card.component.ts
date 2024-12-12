@@ -3,7 +3,7 @@ import {Component, inject, input, OnInit} from "@angular/core";
 import {RouterModule} from "@angular/router";
 import { Account } from "src/app/_models/account/account";
 import { SymbolComponent } from "src/app/_shared/template/components/symbols/symbol.component";
-import { UserProfilePictureComponent } from "../../users/components/user-profile-picture/user-profile-picture.component";
+import { ProfilePictureComponent } from "../../users/components/profile-picture/profile-picture.component";
 import { AccountService } from 'src/app/_services/account.service';
 
 @Component({
@@ -49,8 +49,7 @@ import { AccountService } from 'src/app/_services/account.service';
           }
           <div class="me-7 mb-3 pt-9 ps-9 position-relative min-h-lg-200px min-w-lg-200px min-h-175px min-w-175px">
             <div class="symbol border border-3 border-white">
-              <div userProfilePicture userProfilePicture
-                [(account)]="accountService.current"
+              <div userProfilePicture [fullName]="accountService.current()!.fullName" [photoUrl]="accountService.current()!.photoUrl"
                 shape="square" size="lg" [showOnline]=true
               ></div>
             </div>
@@ -169,7 +168,7 @@ import { AccountService } from 'src/app/_services/account.service';
     </div>
   `,
   standalone: true,
-  imports: [RouterModule, LayoutModule, SymbolComponent, UserProfilePictureComponent],
+  imports: [RouterModule, LayoutModule, SymbolComponent, ProfilePictureComponent],
 })
 export class AccountCardComponent implements OnInit {
   accountService = inject(AccountService);

@@ -34,9 +34,10 @@ public class EventsController(
     private static readonly string subjectArticle = "La";
 
 
+    [HttpGet]
     public async Task<ActionResult<PagedList<EventDto>>> GetPagedListAsync([FromQuery] EventParams param)
     {
-        if (param.IsCalendarView)
+        if (param.IsCalendarView.HasValue && param.IsCalendarView.Value == true)
         {
             var list = await uow.EventRepository.GetAllDtoAsync(param, User);
             return Ok(list);
@@ -300,7 +301,7 @@ public class EventsController(
             doctorId = user.Id;
             doctor = user;
 
-            if (!await uow.UserRepository.PatientExistsAsync(request.PatientId.Value, doctorId))
+            if (!await uow.PatientRepository.ExistsAsync(request.PatientId.Value, doctorId))
                 return BadRequest($"Paciente de ID {request.PatientId.Value} no fue encontrado o no existe para el doctor actual.");
 
             if (!string.IsNullOrEmpty(request.NursesIds)) {
@@ -342,7 +343,7 @@ public class EventsController(
                 if (payment.Status != "succeeded") return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
             }
 
-            bool patientExists = await uow.UserRepository.PatientExistsAsync(user.Id, doctorId);
+            bool patientExists = await uow.PatientRepository.ExistsAsync(user.Id, doctorId);
             Console.WriteLine($"PatientExists: {patientExists}");
             if (!request.HasPatientInformationAccess.HasValue) return BadRequest("Es requerido el acceso a la información del paciente.");
             if (!patientExists)

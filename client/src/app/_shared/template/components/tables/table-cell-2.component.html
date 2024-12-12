@@ -28,8 +28,11 @@
 @if(value()!.code !== value()!.name) {
 ({{ value()!.code}})} {{value()!.name}}
 }
-@case('date') {
-{{ value() | date : "dd/MM/yyyy" : "" : "es-MX" }}
+@case ('date') {
+  {{ value() | date : "dd/MM/yyyy" : "" : "es-MX" }}
+  @if (item().fullDate === true) {
+    <span class="fw-light">{{ value() | date : "h:mm a" : "" : "es-MX" }}</span>
+  }
 }
 @case ('number') {
 {{ value() | number }}

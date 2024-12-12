@@ -26,7 +26,7 @@ import { EventSelectTypeaheadComponent } from "src/app/events/event-select-typea
 import { PatientsService } from "src/app/patients/patients.config";
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
 import { ProductsService } from "src/app/products/products.config";
-import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -34,7 +34,7 @@ import { UserProfilePictureComponent } from "src/app/users/components/user-profi
   imports: [
     FaIconComponent, BootstrapModule,
     EventSelectDisplayCardComponent, EventSelectTypeaheadComponent, CommonModule,
-    UserProfilePictureComponent, Forms2Module, TableHeaderComponent,
+    ProfilePictureComponent, Forms2Module, TableHeaderComponent,
     TooltipModule, FormsModule, ReactiveFormsModule,
   ],
   templateUrl: './prescription-form.component.html',

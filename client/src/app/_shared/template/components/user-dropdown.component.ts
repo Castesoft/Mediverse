@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { AccountService } from 'src/app/_services/account.service';
 import { ThemeService } from 'src/app/_services/theme.service';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
 
 @Component({
@@ -12,7 +12,7 @@ import { UserProfilePictureComponent } from 'src/app/users/components/user-profi
   templateUrl: './user-dropdown.component.html',
   // template: ``,
   standalone: true,
-  imports: [BootstrapModule, RouterModule, UserProfilePictureComponent],
+  imports: [BootstrapModule, RouterModule, ProfilePictureComponent],
 })
 export class UserDropdownComponent {
   service = inject(AccountService);

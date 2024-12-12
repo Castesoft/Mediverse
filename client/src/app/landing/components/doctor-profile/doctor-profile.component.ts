@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserProfilePictureComponent } from 'src/app/users/components/user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { SearchService } from 'src/app/_services/search.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ShareModalComponent } from './share-modal/share-modal.component'; // You'll need to create this component
@@ -15,7 +15,7 @@ import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-sch
   selector: 'app-doctor-profile',
   standalone: true,
   imports: [
-    UserProfilePictureComponent,
+    ProfilePictureComponent,
     DoctorGeneralTabComponent,
     DoctorReviewsTabComponent,
     DoctorScheduleTabComponent,

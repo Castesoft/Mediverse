@@ -1,65 +1,62 @@
-<!-- <thead
+<thead
   tableHeader
-  [show]="showHeaders()"
-  [columns]="columns"
-  [params]="params"
-  (onSelectAll)="service.selectAll(key(), $event)"
-
-  [mode]="mode()"
-  (onParamsChange)="service.onSortOptionsChange(key(), $event)"
+  [columns]="service.columns"
+  [(dictionary)]="service.dictionary"
+  [(params)]="params"
+  [(mode)]="mode"
+  [(isCompact)]="isCompact"
+  (selectedChange)="service.onSelectAll(key(), mode(), $event)"
+  [selected]="(service.areAllSelected(key()) | async)!"
 ></thead>
-<tbody class="text-gray-600 fw-semibold">
-  @for (item of data; track item.id; let idx = $index) {
-    <tr class="hover-actions-trigger btn-reveal-trigger position-static" [cdkContextMenuTriggerFor]="context_menu">
-      @switch (mode()) {
-        @case ("view") {
-          <td
-            class="py-1 fs--1 pe-3 ps-1 border-none"
+<tbody templateTableBody>
+  @for (item of data(); track item.id; let idx = $index) {
+    <tr
+      class="hover-actions-trigger btn-reveal-trigger position-static"
+      [cdkContextMenuTriggerFor]="context_menu"
+    >
+      <td
+        tableCheckCell
+        [(isCompact)]="isCompact"
+        [idx]="idx"
+        [(dictionary)]="service.dictionary"
+        [(selected)]="item.isSelected"
+        (click)="service.onSelect(key(), mode(), item)"
+      ></td>
+
+      <td
+        class="name align-middle white-space-nowrap px-0 py-0"
+        [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+      >
+        <div class="d-flex align-items-center justify-content-start px-0">
+          <a
+            [routerLink]="[service.dictionary.catalogRoute, item.id]"
+            [href]="[service.dictionary.catalogRoute, item.id]"
+            class="fw-semibold text-primary"
+          >#{{ item.id | number }}</a
           >
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                [name]="service.dictionary.singular"
-                [(ngModel)]="item.isSelected"
-                [id]="cuid + 'tableCheck' + idx"
-              />
-            </div>
-          </td>
-        }
-        @case ("select") {
-          <td class="fs--1 align-middle">
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="radio"
-                [name]="service.dictionary.singular"
-                [checked]="item.isSelected"
-                (change)="service.setSelected$(key(), item)"
-              />
-            </div>
-          </td>
-        }
-        @case ("multiselect") {
-          <td class="py-1 fs--1 pe-3 ps-1 border-none" >
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                [name]="service.dictionary.singular"
-                [checked]="item.isSelected"
-                [id]="cuid + 'tableCheck' + idx"
-                (change)="service.addSelected$(key(), item)"
-              />
-            </div>
-          </td>
-        }
+        </div>
+      </td>
+
+      <td>{{ item.patient?.fullName }}</td>
+      <td>{{ item.doctor.fullName }}</td>
+      <td>{{ item.service?.name }}</td>
+      <td>{{ item.clinic?.name }}</td>
+      <td>{{ item.dateFrom | date : "dd/MM/yyyy" : "" : "es-MX" }}</td>
+      <td>{{ item.dateFrom | date : "h:mm a" : "" : "es-MX" }}</td>
+      <td>{{ item.dateTo | date : "h:mm a" : "" : "es-MX" }}</td>
+
+      @for (cell of row().getItems([
+        'allDay',
+        'evolution',
+        'nextSteps',
+        'nursesCount',
+        'createdAt',
+      ]);
+        let idx = $index;
+        track idx) {
+        <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
       }
-      <td patientCell [patient]="item.patient"></td>
-      <td>{{ item.patient.age }} años</td>
-      <td patientSex [patient]="item.patient"></td>
-      <td patientHasAccount [patient]="item.patient"></td>
-      <td>{{ item.patient.dateOfBirth | date }}</td>
+
       <td class="text-end">
         <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"
            [cdkContextMenuTriggerFor]="context_menu" [cdkMenuTriggerFor]="context_menu"
@@ -86,4 +83,4 @@
       </ng-template>
     </tr>
   }
-</tbody> -->
+</tbody>

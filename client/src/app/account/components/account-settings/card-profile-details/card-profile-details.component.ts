@@ -9,12 +9,12 @@ import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 import { Specialty } from "src/app/_models/specialties/specialty";
 import { AccountService } from "src/app/_services/account.service";
-import { UserProfilePictureComponent } from "src/app/users/components/user-profile-picture/user-profile-picture.component";
+import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 
 @Component({
   selector: 'app-card-profile-details',
   standalone: true,
-  imports: [LayoutModule, UserProfilePictureComponent, Forms2Module, ],
+  imports: [LayoutModule, ProfilePictureComponent, Forms2Module, ],
   templateUrl: './card-profile-details.component.html',
 })
 export class CardProfileDetailsComponent {

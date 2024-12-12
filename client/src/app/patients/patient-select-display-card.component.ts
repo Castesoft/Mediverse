@@ -4,7 +4,7 @@ import { RouterLink } from "@angular/router";
 import { User } from "../_models/users/user";
 import { IconsService } from "../_services/icons.service";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
-import { UserProfilePictureComponent } from '../users/components/user-profile-picture/user-profile-picture.component';
+import { ProfilePictureComponent } from '../users/components/profile-picture/profile-picture.component';
 import { Account } from "../_models/account/account";
 
 @Component({
@@ -13,7 +13,7 @@ import { Account } from "../_models/account/account";
   imports: [
     FaIconComponent,
     RouterLink,
-    UserProfilePictureComponent
+    ProfilePictureComponent
   ],
   standalone: true,
 })

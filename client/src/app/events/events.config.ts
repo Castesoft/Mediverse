@@ -16,6 +16,7 @@ import { eventDictionary, eventColumns } from "src/app/_models/events/eventConst
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventForm } from "src/app/_models/events/eventForm";
 import { EventParams } from "src/app/_models/events/eventParams";
+import { CalendarView } from "src/app/_models/events/eventTypes";
 import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
@@ -41,6 +42,7 @@ import { EventsCatalogComponent } from "src/app/events/components/events-catalog
       [(isCompact)]="data.isCompact"
       [(item)]="data.item"
       [(params)]="data.params"
+      [(calendarView)]="data.calendarView"
     ></div>
   </mat-dialog-content>
   <mat-dialog-actions>
@@ -52,7 +54,7 @@ import { EventsCatalogComponent } from "src/app/events/components/events-catalog
   imports: [EventsCatalogComponent, MaterialModule, CdkModule,],
 })
 export class EventsCatalogModalComponent {
-  data = inject<CatalogDialog<Event, EventParams>>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Event, EventParams> & { calendarView: CalendarView; }>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
@@ -211,169 +213,3 @@ export class EventDetailComponent
 export class EventDetailModalComponent {
   data = inject<DetailDialog<Event>>(MAT_DIALOG_DATA);
 }
-
-
-@Component({
-  selector: 'events-route',
-  standalone: false,
-  template: `
-  <router-outlet></router-outlet>
-  `,
-})
-export class EventsComponent {}
-
-@Component({
-  selector: 'events-catalog-route',
-  template: `
-  <div
-    eventsCatalog
-    [(mode)]="mode"
-    [(key)]="key"
-    [(view)]="view"
-    [(isCompact)]="compact.isCompact"
-    [(item)]="item"
-    [(params)]="params"
-  ></div>
-  `,
-  standalone: true,
-  imports: [RouterModule, EventsCatalogComponent, BreadcrumbsModule, ],
-})
-export class CatalogComponent extends BaseRouteCatalog<Event, EventParams, EventFiltersForm, EventsService> {
-  constructor() {
-    super(EventsService, 'events');
-
-    effect(() => {
-      console.log('key', this.key());
-    });
-  }
-}
-
-@Component({
-  selector: 'event-detail-route',
-  template: `
-    <div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  `,
-  standalone: true,
-  imports: [RouterModule, EventDetailComponent, BreadcrumbsModule,],
-})
-export class DetailComponent extends BaseRouteDetail<Event> {
-  constructor() {
-    super('events', 'detail');
-
-    effect(() => {
-      this.route.paramMap.subscribe({
-        next: params => {
-          if (params.has('id')) {
-            this.id.set(+params.get('id')!);
-          }
-        },
-      });
-      this.route.data.subscribe({
-        next: (data) => {
-          this.item.set(data['item']);
-        },
-      });
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
-    });
-  }
-}
-
-@Component({
-  selector: 'event-edit-route',
-  template: `
-    <div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  `,
-  standalone: true,
-  imports: [EventDetailComponent, RouterModule, BreadcrumbsModule,],
-})
-export class EditComponent extends BaseRouteDetail<Event> {
-  constructor() {
-    super('events', 'edit');
-
-    effect(() => {
-      this.route.paramMap.subscribe({
-        next: params => {
-          if (params.has('id')) {
-            this.id.set(+params.get('id')!);
-          }
-        },
-      });
-      this.route.data.subscribe({
-        next: (data) => {
-          this.item.set(data['item']);
-        },
-      });
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
-    });
-  }
-}
-
-@Component({
-  selector: 'event-new-route',
-  template: `
-    <div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-`,
-  standalone: true,
-  imports: [EventDetailComponent, RouterModule, BreadcrumbsModule,],
-})
-export class NewComponent extends BaseRouteDetail<Event> {
-  constructor() {
-    super('events', 'create');
-
-    effect(() => {
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
-    });
-  }
-}
-
-@NgModule({
-  imports: [RouterModule.forChild([
-    {
-      path: '', title: 'Ganaderías', data: { breadcrumb: 'Ganaderías', },
-      component: EventsComponent, runGuardsAndResolvers: 'always',
-      children: [
-        { path: '', component: CatalogComponent, title: 'Catálogo de ganaderías', data: { breadcrumb: 'Catálogo', }, },
-        { path: 'nuevo', component: NewComponent, title: 'Crear nueva ganadería', data: { breadcrumb: 'Nuevo', }, },
-        {
-          path: ':id', data: { breadcrumb: 'Detalle', },
-          component: DetailComponent,
-          resolve: { item: createItemResolver(EventsService) },
-        },
-        {
-          path: ':id/editar', data: { breadcrumb: 'Editar', },
-          component: EditComponent,
-          resolve: { item: createItemResolver(EventsService) },
-        },
-      ],
-    },
-  ])],
-  exports: [RouterModule]
-})
-export class EventsRoutingModule { }
-
-@NgModule({
-  declarations: [
-    EventsComponent,
-  ],
-  imports: [ CommonModule, EventsRoutingModule, ]
-})
-export class EventsModule { }
-
