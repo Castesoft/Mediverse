@@ -7,6 +7,6 @@ namespace MainService.Core.Interfaces.Data
     public interface ISearchRepository
     {
         Task<PagedList<DoctorSearchResultDto>> GetPagedListAsync(SearchParams param);
-        Task<DoctorSearchResultDto> GetDoctorByIdAsync(int id);
+        Task<DoctorSearchResultDto?> GetDoctorByIdAsync(int id);
     }
 }

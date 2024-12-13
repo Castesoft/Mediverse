@@ -4,7 +4,7 @@
     {
         public Event() {}
 
-        public Event(bool allDay, DateTime dateFrom, DateTime dateTo, string timeFrom, string timeTo)
+        public Event(bool allDay, DateTime dateFrom, DateTime dateTo, string? timeFrom, string? timeTo)
         {
             if (!allDay && !string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
             {

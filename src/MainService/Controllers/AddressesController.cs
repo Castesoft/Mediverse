@@ -39,7 +39,7 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service) : B
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<AddressDto>> GetByIdAsync([FromRoute]int id)
+    public async Task<ActionResult<AddressDto?>> GetByIdAsync([FromRoute]int id)
     {
         var item = await uow.AddressRepository.GetDtoByIdAsync(id);
 

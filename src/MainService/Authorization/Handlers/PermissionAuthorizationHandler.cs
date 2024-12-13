@@ -23,7 +23,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         else
         {
             string permissionDescription = await _permissionManager.GetPermissionDescriptionByName(requirement.Permission);
-            string email = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            string? email = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             throw new PermissionDeniedException(email, permissionDescription);
         }

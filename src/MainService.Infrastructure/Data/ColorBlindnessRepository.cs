@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class ColorBlindnessRepository(DataContext context, IMapper mapper) : IColorBlindnessRepository
 {
-    public async Task<ColorBlindnessDto> FindDtoByNameAsync(string name) => 
+    public async Task<ColorBlindnessDto?> FindDtoByNameAsync(string name) => 
         await context.ColorBlindnesses.ProjectTo<ColorBlindnessDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<ColorBlindness> GetByNameAsync(string name) =>
-        await context.ColorBlindnesses.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<ColorBlindness?> GetByNameAsync(string name) =>
+        await context.ColorBlindnesses.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<ColorBlindness> GetByCodeAsync(string code) =>
-        await context.ColorBlindnesses.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<ColorBlindness?> GetByCodeAsync(string code) =>
+        await context.ColorBlindnesses.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(ColorBlindness item) => context.ColorBlindnesses.Add(item);
     public void Delete(ColorBlindness item) => context.ColorBlindnesses.Remove(item);
@@ -29,16 +29,16 @@ public class ColorBlindnessRepository(DataContext context, IMapper mapper) : ICo
             .ProjectTo<ColorBlindnessDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<ColorBlindness> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<ColorBlindness?> GetAsNoTrackingByIdAsync(int id) =>
         await context.ColorBlindnesses
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<ColorBlindness> GetByIdAsync(int id) =>
+    public async Task<ColorBlindness?> GetByIdAsync(int id) =>
         await context.ColorBlindnesses
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<ColorBlindnessDto> GetDtoByIdAsync(int id) =>
+    public async Task<ColorBlindnessDto?> GetDtoByIdAsync(int id) =>
         await context.ColorBlindnesses
             .ProjectTo<ColorBlindnessDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

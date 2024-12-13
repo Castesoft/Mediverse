@@ -48,10 +48,13 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> GetByIdAsync([FromRoute]int id)
+    public async Task<ActionResult<UserDto?>> GetByIdAsync([FromRoute]int id)
     {
         UserDto? item = await uow.UserRepository.GetDtoByIdAsync(id);
         PatientDto? patient = await uow.PatientRepository.GetDtoByIdAsync(id);
+
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+        if (patient == null) return NotFound($"Paciente de ID {id} no fue encontrado.");
 
         item.HasPatientInformationAccess = item.SharedDoctors.Any(x => x.DoctorId == User.GetUserId() && x.HasPatientInformationAccess);
         item.SharedDoctors = [];
@@ -66,7 +69,7 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
         }
 
         var doctorEvents = item.DoctorEvents.ToList();
-        item.DoctorEvents = doctorEvents.Where(e => e.Doctor.Id == User.GetUserId()).ToList();
+        item.DoctorEvents = doctorEvents.Where(e => e.Doctor?.Id == User.GetUserId()).ToList();
         item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();
         foreach (var _event in item.DoctorEvents)
         {
@@ -124,18 +127,25 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
 
     // [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("edit-roles/{email}")]
-    public async Task<ActionResult<UserDto>> EditRolesAsync
+    public async Task<ActionResult<UserDto?>> EditRolesAsync
         ([FromRoute]string email, [FromQuery] string roles)
     {
         string[] requestedRoles = [.. roles.Split(',')];
         
-        var item = await userManager.Users
+        AppUser? item = await userManager.Users
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
-            .SingleOrDefaultAsync(x => x.Email == email);
+            .SingleOrDefaultAsync(x => x.Email == email)
+        ;
 
         if (item == null) return NotFound($"El {subject} de correo {email} no fue encontrado.");
 
-        List<string> userCurrentRoleNames = item.UserRoles.Select(ur => ur.Role.Name).ToList();
+        List<string> userCurrentRoleNames = item.UserRoles.Select(ur => {
+            if (ur.Role != null && !string.IsNullOrEmpty(ur.Role.Name)) {
+                return ur.Role.Name;
+            }
+            return "";
+        }).Distinct().ToList();
+
 
         List<string> rolesToAdd = requestedRoles.Except(userCurrentRoleNames).ToList();
         List<string> rolesToRemove = userCurrentRoleNames.Except(requestedRoles).ToList();
@@ -160,14 +170,24 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     [HttpPost("patient")]
     public async Task<ActionResult<UserDto>> CreateAsync([FromBody] PatientCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Email)) return BadRequest("Email es requerido.");
+        
+        string? email = User.GetEmail();
+
+        if (string.IsNullOrEmpty(email)) return BadRequest("Email del doctor es requerido.");
+        
         if (await service.EmailExistsAsync(request.Email))
         {
-            var patient = await userManager.Users
+            AppUser? patient = await userManager.Users
                 .Include(x => x.Doctors)
-                .SingleOrDefaultAsync(x => x.Email == request.Email);
+                .SingleOrDefaultAsync(x => x.Email == request.Email)
+            ;
 
-            if (patient.Email == User.GetEmail())
-                return BadRequest($"No puedes agregar tu propio email como paciente.");
+            if (patient == null) return NotFound($"Paciente con email {request.Email} no fue encontrado.");
+
+            if (string.IsNullOrEmpty(patient.Email)) return BadRequest($"Email del paciente con ID {patient.Id} es requerido.");
+
+            if (patient.Email == email) return BadRequest($"No puedes agregar tu propio email como paciente.");
 
             if (patient.Doctors.Any(x => x.DoctorId == User.GetUserId()))
                 return BadRequest($"El paciente con email {request.Email} ya está registrado.");

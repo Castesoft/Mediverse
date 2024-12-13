@@ -26,24 +26,59 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
     public async Task<List<EventSummaryDto>> GetSummaryDtosAsync(EventParams param, ClaimsPrincipal user)
     {
-        var query = context.Events
+        IQueryable<Event> query = context.Events
             .AsNoTracking()
             .Include(x => x.DoctorEvent)
             .Where(x => x.DoctorEvent.DoctorId == user.GetUserId())
-            .AsQueryable();
+            .AsQueryable()
+        ;
 
         query = query.OrderBy(x => x.DateFrom).ThenBy(x => x.DateTo);
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            string searchParam = param.Search.Replace(" ", "").ToLower();
+            string term = param.Search.ToLower();
+            
+            query = query.Where(
+                x =>
+                    (
+                        x.PatientEvent != null &&
+                        x.PatientEvent.Patient != null &&
+                        !string.IsNullOrEmpty(x.PatientEvent.Patient.FirstName) &&
+                        x.PatientEvent.Patient.FirstName.ToLower().Contains(term)
+                    ) ||
+                    (
+                        x.PatientEvent != null &&
+                        x.PatientEvent.Patient != null &&
+                        !string.IsNullOrEmpty(x.PatientEvent.Patient.LastName) &&
+                        x.PatientEvent.Patient.LastName.ToLower().Contains(term)
+                    ) ||
+                    (
+                        x.EventService != null &&
+                        x.EventService.Service != null &&
+                        !string.IsNullOrEmpty(x.EventService.Service.Name) &&
+                        x.EventService.Service.Name.ToLower().Contains(term)
+                    ) ||
+                    (
+                        x.EventClinic != null &&
+                        x.EventClinic.Clinic != null &&
+                        !string.IsNullOrEmpty(x.EventClinic.Clinic.Name) &&
+                        x.EventClinic.Clinic.Name.ToLower().Contains(term)
+                    ) ||
+                    (
+                        x.DoctorEvent != null &&
+                        x.DoctorEvent.Doctor != null &&
+                        !string.IsNullOrEmpty(x.DoctorEvent.Doctor.FirstName) &&
+                        x.DoctorEvent.Doctor.FirstName.ToLower().Contains(term)
+                    ) ||
+                    (
+                        x.DoctorEvent != null &&
+                        x.DoctorEvent.Doctor != null &&
+                        !string.IsNullOrEmpty(x.DoctorEvent.Doctor.LastName) &&
+                        x.DoctorEvent.Doctor.LastName.ToLower().Contains(term)
+                    )
 
-            query = query.Where(x =>
-                EF.Functions.Like(x.PatientEvent.Patient.FirstName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
-                EF.Functions.Like(x.PatientEvent.Patient.LastName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
-                EF.Functions.Like(
-                    (x.PatientEvent.Patient.FirstName + x.PatientEvent.Patient.LastName).Replace(" ", "").ToLower(),
-                    $"%{searchParam}%"));
+            );
         }
 
         query = query.Take(10);
@@ -68,35 +103,26 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         return await query.ToListAsync();
     }
 
-    public async Task<Event> GetByIdAsNoTrackingAsync(int id)
-    {
-        var item = await context.Events
+    public async Task<Event?> GetByIdAsNoTrackingAsync(int id) =>
+        await context.Events
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-        return item;
-    }
-
-    public async Task<Event> GetByIdAsync(int id)
-    {
-        var item = await context.Events
+    public async Task<Event?> GetByIdAsync(int id) =>
+        await context.Events
             .Include(x => x.PatientEvent)
             .Include(x => x.DoctorEvent)
                 .ThenInclude(x => x.Doctor)
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-        return item;
-    }
-
-    public async Task<EventDto> GetDtoByIdAsync(int id)
-    {
-        var item = await context.Events
+    public async Task<EventDto?> GetDtoByIdAsync(int id) =>
+        await context.Events
             .AsNoTracking()
             .ProjectTo<EventDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<PagedList<EventDto>> GetPagedListAsync(EventParams param, ClaimsPrincipal user)
     {
@@ -175,7 +201,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
         else if (roles.Contains("Nurse")) query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == user.GetUserId()));
         else if (roles.Contains("Patient")) query = query.Where(x => x.PatientEvent.PatientId == user.GetUserId());
-        else return null;
+        else return null!;
 
         return await query.AsNoTracking().ProjectTo<EventDto>(mapper.ConfigurationProvider).ToListAsync();
     }

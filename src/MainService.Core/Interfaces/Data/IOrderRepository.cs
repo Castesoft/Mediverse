@@ -9,10 +9,10 @@ public interface IOrderRepository
 {
     void Add(Order item);
     void Delete(Order item);
-    Task<Order> GetByIdAsync(int id);
+    Task<Order?> GetByIdAsync(int id);
     Task<Order> GetByNameAsync(string name, ClaimsPrincipal user);
     Task<bool> ExistsAsync(int id, ClaimsPrincipal user);
-    Task<OrderDto> GetDtoByIdAsync(int id);
+    Task<OrderDto?> GetDtoByIdAsync(int id);
     Task<Order> GetByIdAsNoTrackingAsync(int id);
     Task<List<Order>> GetAllAsync();
     Task<List<OrderDto>> GetAllDtoAsync(OrderParams param, ClaimsPrincipal user);

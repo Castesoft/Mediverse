@@ -18,9 +18,8 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
 
     public void Delete(Prescription item) => context.Prescriptions.Remove(item);
 
-    public async Task<PrescriptionDto> GetDtoByIdAsync(int id)
-    {
-        return await context.Prescriptions
+    public async Task<PrescriptionDto?> GetDtoByIdAsync(int id) =>
+        await context.Prescriptions
             .Include(x => x.DoctorPrescription)
                 .ThenInclude(x => x.Doctor)
             .Include(x => x.PrescriptionItems)
@@ -36,21 +35,18 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
             .Include(x => x.PrescriptionOrder)
                 .ThenInclude(x => x.Order)
             .ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-    public async Task<Prescription> GetByIdAsync(int id)
-    {
-        var item = await context.Prescriptions
+    public async Task<Prescription?> GetByIdAsync(int id) =>
+        await context.Prescriptions
             .Include(x => x.DoctorPrescription)
-            .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<PagedList<PrescriptionDto>> GetPagedListAsync(PrescriptionParams param, ClaimsPrincipal user)
     {
-        var query = context.Prescriptions
+        IQueryable<Prescription> query = context.Prescriptions
             .Include(x => x.PatientPrescription)
                 .ThenInclude(x => x.Patient)
             .Include(x => x.DoctorPrescription)
@@ -66,7 +62,8 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
                 .ThenInclude(x => x.Clinic)
                 .ThenInclude(x => x.ClinicLogo)
                 .ThenInclude(x => x.Photo)
-            .AsQueryable();
+            .AsQueryable()
+        ;
 
         IEnumerable<string> roles = user.GetRoles();
         int userId = user.GetUserId();
@@ -75,11 +72,7 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            query = query.Where(x =>
-                EF.Functions.Like(x.PatientPrescription.Patient.FirstName.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.PatientPrescription.Patient.LastName.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.PatientPrescription.Patient.Email.ToLower(), $"%{param.Search}%") ||
-                EF.Functions.Like(x.Notes.ToLower(), $"%{param.Search}%"));
+
         }
 
         return await PagedList<PrescriptionDto>.CreateAsync(
@@ -87,12 +80,9 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
             param.PageNumber, param.PageSize);
     }
 
-    public async Task<Prescription> GetByIdAsNoTrackingAsync(int id)
-    {
-        var item = await context.Prescriptions
+    public async Task<Prescription?> GetByIdAsNoTrackingAsync(int id) =>
+        await context.Prescriptions
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 }

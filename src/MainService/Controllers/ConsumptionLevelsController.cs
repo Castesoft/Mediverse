@@ -31,7 +31,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<ConsumptionLevelDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<ConsumptionLevelDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.ConsumptionLevelRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
         await uow.ConsumptionLevelRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ConsumptionLevelDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<ConsumptionLevelDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.ConsumptionLevelRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     }
 
     [HttpPost]
-    public async Task<ActionResult<ConsumptionLevelDto>> AddAsync([FromBody] ConsumptionLevelCreateDto request)
+    public async Task<ActionResult<ConsumptionLevelDto?>> AddAsync([FromBody] ConsumptionLevelCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.ConsumptionLevelRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class ConsumptionLevelsController(IUnitOfWork uow, IMapper mapper, IConsu
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<ConsumptionLevelDto>> UpdateAsync(
+    public async Task<ActionResult<ConsumptionLevelDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] ConsumptionLevelUpdateDto request
     )

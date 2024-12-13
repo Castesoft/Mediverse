@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class RelativeTypeRepository(DataContext context, IMapper mapper) : IRelativeTypeRepository
 {
-    public async Task<RelativeTypeDto> FindDtoByNameAsync(string name) => 
+    public async Task<RelativeTypeDto?> FindDtoByNameAsync(string name) => 
         await context.RelativeTypes.ProjectTo<RelativeTypeDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<RelativeType> GetByNameAsync(string name) =>
-        await context.RelativeTypes.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<RelativeType?> GetByNameAsync(string name) =>
+        await context.RelativeTypes.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<RelativeType> GetByCodeAsync(string code) =>
-        await context.RelativeTypes.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<RelativeType?> GetByCodeAsync(string code) =>
+        await context.RelativeTypes.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(RelativeType item) => context.RelativeTypes.Add(item);
     public void Delete(RelativeType item) => context.RelativeTypes.Remove(item);
@@ -29,16 +29,16 @@ public class RelativeTypeRepository(DataContext context, IMapper mapper) : IRela
             .ProjectTo<RelativeTypeDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<RelativeType> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<RelativeType?> GetAsNoTrackingByIdAsync(int id) =>
         await context.RelativeTypes
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<RelativeType> GetByIdAsync(int id) =>
+    public async Task<RelativeType?> GetByIdAsync(int id) =>
         await context.RelativeTypes
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<RelativeTypeDto> GetDtoByIdAsync(int id) =>
+    public async Task<RelativeTypeDto?> GetDtoByIdAsync(int id) =>
         await context.RelativeTypes
             .ProjectTo<RelativeTypeDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

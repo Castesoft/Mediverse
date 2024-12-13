@@ -28,9 +28,13 @@ namespace MainService.Infrastructure.Services;
     {
         if (user.EmailVerificationExpiryTime < DateTime.UtcNow) return false;
 
+        if (user.EmailVerificationCodeSalt == null) return false;
+
         using var hmac = new HMACSHA512(user.EmailVerificationCodeSalt);
 
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(code));
+        byte[] computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(code));
+
+        if (user.EmailVerificationCodeHash == null) return false;
 
         for (int i = 0; i < computedHash.Length; i++)
         {
@@ -44,9 +48,13 @@ namespace MainService.Infrastructure.Services;
     {
         if (user.PhoneNumberVerificationExpiryTime < DateTime.UtcNow) return false;
 
+        if (user.PhoneNumberVerificationCodeSalt == null) return false;
+
         using var hmac = new HMACSHA512(user.PhoneNumberVerificationCodeSalt);
 
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(code));
+
+        if (user.PhoneNumberVerificationCodeHash == null) return false;
 
         for (int i = 0; i < computedHash.Length; i++)
         {

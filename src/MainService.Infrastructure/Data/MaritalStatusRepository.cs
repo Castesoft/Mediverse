@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class MaritalStatusRepository(DataContext context, IMapper mapper) : IMaritalStatusRepository
 {
-    public async Task<MaritalStatusDto> FindDtoByNameAsync(string name) => 
+    public async Task<MaritalStatusDto?> FindDtoByNameAsync(string name) => 
         await context.MaritalStatuses.ProjectTo<MaritalStatusDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<MaritalStatus> GetByNameAsync(string name) =>
-        await context.MaritalStatuses.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<MaritalStatus?> GetByNameAsync(string name) =>
+        await context.MaritalStatuses.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<MaritalStatus> GetByCodeAsync(string code) =>
-        await context.MaritalStatuses.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<MaritalStatus?> GetByCodeAsync(string code) =>
+        await context.MaritalStatuses.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(MaritalStatus item) => context.MaritalStatuses.Add(item);
     public void Delete(MaritalStatus item) => context.MaritalStatuses.Remove(item);
@@ -29,16 +29,16 @@ public class MaritalStatusRepository(DataContext context, IMapper mapper) : IMar
             .ProjectTo<MaritalStatusDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<MaritalStatus> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<MaritalStatus?> GetAsNoTrackingByIdAsync(int id) =>
         await context.MaritalStatuses
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<MaritalStatus> GetByIdAsync(int id) =>
+    public async Task<MaritalStatus?> GetByIdAsync(int id) =>
         await context.MaritalStatuses
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<MaritalStatusDto> GetDtoByIdAsync(int id) =>
+    public async Task<MaritalStatusDto?> GetDtoByIdAsync(int id) =>
         await context.MaritalStatuses
             .ProjectTo<MaritalStatusDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

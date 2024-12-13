@@ -11,14 +11,14 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class MedicalInsuranceCompanyRepository(DataContext context, IMapper mapper) : IMedicalInsuranceCompanyRepository
 {
-    public async Task<MedicalInsuranceCompanyDto> FindDtoByNameAsync(string name) => 
+    public async Task<MedicalInsuranceCompanyDto?> FindDtoByNameAsync(string name) => 
         await context.MedicalInsuranceCompanies.ProjectTo<MedicalInsuranceCompanyDto>(mapper.ConfigurationProvider).AsNoTracking()
             .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<MedicalInsuranceCompany> GetByNameAsync(string name) =>
+    public async Task<MedicalInsuranceCompany?> GetByNameAsync(string name) =>
         await context.MedicalInsuranceCompanies.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<MedicalInsuranceCompany> GetByCodeAsync(string code) =>
+    public async Task<MedicalInsuranceCompany?> GetByCodeAsync(string code) =>
         await context.MedicalInsuranceCompanies.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(MedicalInsuranceCompany item) => context.MedicalInsuranceCompanies.Add(item);
@@ -29,16 +29,16 @@ public class MedicalInsuranceCompanyRepository(DataContext context, IMapper mapp
             .ProjectTo<MedicalInsuranceCompanyDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<MedicalInsuranceCompany> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<MedicalInsuranceCompany?> GetAsNoTrackingByIdAsync(int id) =>
         await context.MedicalInsuranceCompanies
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<MedicalInsuranceCompany> GetByIdAsync(int id) =>
+    public async Task<MedicalInsuranceCompany?> GetByIdAsync(int id) =>
         await context.MedicalInsuranceCompanies
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<MedicalInsuranceCompanyDto> GetDtoByIdAsync(int id) =>
+    public async Task<MedicalInsuranceCompanyDto?> GetDtoByIdAsync(int id) =>
         await context.MedicalInsuranceCompanies
             .ProjectTo<MedicalInsuranceCompanyDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

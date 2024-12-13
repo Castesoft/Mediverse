@@ -31,7 +31,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<RelativeTypeDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<RelativeTypeDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.RelativeTypeRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
         await uow.RelativeTypeRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<RelativeTypeDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<RelativeTypeDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.RelativeTypeRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     }
 
     [HttpPost]
-    public async Task<ActionResult<RelativeTypeDto>> AddAsync([FromBody] RelativeTypeCreateDto request)
+    public async Task<ActionResult<RelativeTypeDto?>> AddAsync([FromBody] RelativeTypeCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.RelativeTypeRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class RelativeTypesController(IUnitOfWork uow, IMapper mapper, IRelativeT
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<RelativeTypeDto>> UpdateAsync(
+    public async Task<ActionResult<RelativeTypeDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] RelativeTypeUpdateDto request
     )

@@ -38,7 +38,7 @@ public class PrescriptionsController(
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PrescriptionDto>> GetByIdAsync([FromRoute]int id)
+    public async Task<ActionResult<PrescriptionDto?>> GetByIdAsync([FromRoute]int id)
     {
         var item = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
 
@@ -48,7 +48,7 @@ public class PrescriptionsController(
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<PrescriptionDto>> UpdateAsync([FromRoute] int id, [FromBody] PrescriptionUpdateDto request)
+    public async Task<ActionResult<PrescriptionDto?>> UpdateAsync([FromRoute] int id, [FromBody] PrescriptionUpdateDto request)
     {
         var item = await uow.PrescriptionRepository.GetByIdAsync(id);
 
@@ -138,7 +138,9 @@ public class PrescriptionsController(
                 if (!await uow.ProductRepository.ExistsByIdAsync(item.Product.Id.Value))
                 return NotFound($"Producto {item.Product.Id.Value} no existe");
 
-                Product product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item.Product.Id.Value);
+                Product? product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item.Product.Id.Value);
+
+                if (product == null) return NotFound($"Producto {item.Product.Id.Value} no existe");
 
                 if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id.Value)) {
                     PrescriptionItem itemToAdd = new();

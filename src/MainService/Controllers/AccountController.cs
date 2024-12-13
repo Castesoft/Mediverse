@@ -141,7 +141,9 @@ public class AccountController(
 
         UserLoginInfo info = new(request.Provider, payload.Subject, request.Provider);
 
-        string email = User.GetEmail();
+        string? email = User.GetEmail();
+
+        if (string.IsNullOrEmpty(email)) return BadRequest("No se ha proporcionado un correo.");
 
         if (email != payload.Email) return BadRequest("El correo no coincide con el de la cuenta.");
 
@@ -194,7 +196,12 @@ public class AccountController(
         string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
         string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
 
-        await emailService.SendMail(user.Email, subject, htmlMessage);
+        string? email = user.Email;
+
+        if (!string.IsNullOrEmpty(email)) {
+            await emailService.SendMail(email, subject, htmlMessage);
+        }
+
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
         return itemToReturn;
@@ -318,7 +325,11 @@ public class AccountController(
 
             user.UserMedicalLicenses.Add(new (int.Parse(request.SpecialtyId), uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
 
-            string customerId = await stripeService.CreateCustomerAsync(user.Email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
+            string? email = user.Email;
+
+            if (string.IsNullOrEmpty(email)) return BadRequest("No se ha proporcionado un correo.");
+
+            string customerId = await stripeService.CreateCustomerAsync(email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
             user.StripeCustomerId = customerId;
 
             string emailVerificationCode = codeService.GenerateEmailCode();
@@ -335,7 +346,7 @@ public class AccountController(
             string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
             string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
 
-            await emailService.SendMail(user.Email, subject, htmlMessage);
+            await emailService.SendMail(email, subject, htmlMessage);
 
             var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
             return itemToReturn;
@@ -775,8 +786,13 @@ public class AccountController(
         string clientUrl = clientSettings.Value.Url;
         string subject = $"🔒 Verificación de correo para {user.FirstName}!";
         string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
-        await  emailService.SendMail(user.Email, subject, htmlMessage);
 
+        string? email = user.Email;
+
+        if (!string.IsNullOrEmpty(email)) {
+            await emailService.SendMail(email, subject, htmlMessage);
+        }
+        
         // return user
         return await usersService.GenerateAccountDtoAsync(user.Id);
     }
@@ -865,7 +881,13 @@ public class AccountController(
         string? clientUrl =  configuration.GetValue<string>("ClientUrl");
         string subject = $"🔒 Verificación de correo para {user.FirstName}!";
         string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
-        await  emailService.SendMail(user.Email, subject, htmlMessage);
+
+        string? email = user.Email;
+
+        if (!string.IsNullOrEmpty(email)) {
+            await emailService.SendMail(email, subject, htmlMessage);
+        }
+        
 
         return Ok();
     }
@@ -942,8 +964,13 @@ public class AccountController(
 
         if (user.UserPaymentMethods.Count == 0)
         {
-            string customerId = await stripeService.CreateCustomerAsync(user.Email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
-            user.StripeCustomerId = customerId;
+            string? email = user.Email;
+
+            if (!string.IsNullOrEmpty(email)) {
+                string customerId = await stripeService.CreateCustomerAsync(email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
+                user.StripeCustomerId = customerId;
+            }
+            
         }
 
         if (request.IsMain)
@@ -967,7 +994,12 @@ public class AccountController(
             }
         });
 
-        if (!await stripeService.AddPaymentMethodAsync(user.StripeCustomerId, request.StripePaymentMethodId, request.IsMain))
+        string? stripeCustomerId = user.StripeCustomerId;
+
+        if (string.IsNullOrEmpty(stripeCustomerId))
+            return BadRequest("No se ha encontrado un cliente de Stripe asociado a este usuario.");
+
+        if (!await stripeService.AddPaymentMethodAsync(stripeCustomerId, request.StripePaymentMethodId, request.IsMain))
             return BadRequest("Error agregando el método de pago a Stripe.");
 
         if (!await uow.Complete()) return BadRequest("Error guardando el método de pago.");
@@ -1025,7 +1057,12 @@ public class AccountController(
 
         paymentMethod.IsMain = true;
 
-        if (!await stripeService.SetMainPaymentMethodAsync(user.StripeCustomerId, paymentMethodId))
+        string? stripeCustomerId = user.StripeCustomerId;
+
+        if (string.IsNullOrEmpty(stripeCustomerId))
+            return BadRequest("No se ha encontrado un cliente de Stripe asociado a este usuario.");
+
+        if (!await stripeService.SetMainPaymentMethodAsync(stripeCustomerId, paymentMethodId))
             return BadRequest("Error actualizando el método de pago en Stripe.");
 
         if (!await uow.Complete()) return BadRequest("Error actualizando el método de pago.");
@@ -1355,7 +1392,7 @@ public class AccountController(
             }
         }
 
-        uow.DocumentRepository.Delete(document);
+        uow.DocumentRepository.Delete(document!);
 
         if (!await uow.Complete()) return BadRequest("Error eliminando el documento de la compañía de seguro médico.");
 
@@ -1431,7 +1468,10 @@ public class AccountController(
         if (user.DoctorMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == insuranceId))
         {
             DoctorMedicalInsuranceCompany? doctorMedicalInsuranceCompany = user.DoctorMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == insuranceId);
-            user.DoctorMedicalInsuranceCompanies.Remove(doctorMedicalInsuranceCompany);
+
+            if (doctorMedicalInsuranceCompany != null) {
+                user.DoctorMedicalInsuranceCompanies.Remove(doctorMedicalInsuranceCompany);
+            }
         }
         else
         {
@@ -1478,7 +1518,11 @@ public class AccountController(
         string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
         string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
-        await emailService.SendMail(user.Email, subject, htmlMessage);
+        string? email = user.Email;
+
+        if (string.IsNullOrEmpty(email)) return BadRequest("No se ha encontrado el correo del usuario.");
+
+        await emailService.SendMail(email, subject, htmlMessage);
 
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
@@ -1491,9 +1535,13 @@ public class AccountController(
     {
         if (request.NewPassword != request.ConfirmPassword) return BadRequest("Las contraseñas no coinciden.");
 
-        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
+        string? email = User.GetEmail();
 
-        if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
+        if (string.IsNullOrEmpty(email)) return BadRequest("No se ha encontrado el correo del usuario.");
+
+        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == email);
+
+        if (user == null) return NotFound($"El usuario de correo {email} no existe.");
 
         var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
 
@@ -1549,7 +1597,11 @@ public class AccountController(
 
                 if (prevMedicalLicense != null)
                 {
-                    var deletionResult = await cloudinaryService.DeleteAsync(prevMedicalLicense.MedicalLicenseDocument.Document.PublicId);
+                    string? publicId = prevMedicalLicense.MedicalLicenseDocument.Document.PublicId;
+                    
+                    if (string.IsNullOrEmpty(publicId)) return BadRequest("Error obteniendo el ID de la imagen.");
+                    
+                    var deletionResult = await cloudinaryService.DeleteAsync(publicId);
                     if (deletionResult.Error != null)
                         return BadRequest("Error eliminando la prueba de especialidad anterior.");
                 }
@@ -1572,7 +1624,12 @@ public class AccountController(
                     if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
                     var previousMedicalLicenseDocument = medicalLicense.MedicalLicense.MedicalLicenseDocument;
-                    var prevDocumentDeleteResult = await cloudinaryService.DeleteAsync(previousMedicalLicenseDocument.Document.PublicId);
+
+                    string? publicId = previousMedicalLicenseDocument.Document.PublicId;
+
+                    if (string.IsNullOrEmpty(publicId)) return BadRequest("Error obteniendo el ID de la imagen.");
+                    
+                    var prevDocumentDeleteResult = await cloudinaryService.DeleteAsync(publicId);
                     if (prevDocumentDeleteResult.Error != null) return BadRequest("Error eliminando la prueba de especialidad anterior.");
 
                     medicalLicense.MedicalLicense.MedicalLicenseDocument = new(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
@@ -1689,7 +1746,7 @@ public class AccountController(
             if (user.DoctorWorkScheduleSettings != null)
             {
                 await uow.UserRepository.DeleteDoctorWorkScheduleSettingsAsync(user.DoctorWorkScheduleSettings.WorkScheduleSettings);
-                user.DoctorWorkScheduleSettings = null;
+                user.DoctorWorkScheduleSettings = null!;
             }
 
             WorkScheduleSettings workScheduleSettings = new()
@@ -1711,25 +1768,21 @@ public class AccountController(
             if (!await uow.Complete()) return BadRequest("Error actualizando los horarios de trabajo.");
         }
 
-        var itemToReturn = await usersService.GenerateAccountDtoAsync(userId);
-
-        return itemToReturn;
+        return await usersService.GenerateAccountDtoAsync(userId);
     }
 
     [Authorize]
     [HttpGet("medical-record")]
-    public async Task<ActionResult<MedicalRecordDto>> GetMedicalRecord()
+    public async Task<ActionResult<MedicalRecordDto?>> GetMedicalRecord()
     {
         int userId = User.GetUserId();
 
-        var itemToReturn = await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
-
-        return itemToReturn;
+        return await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
     }
 
     [Authorize]
     [HttpPut("medical-record")]
-    public async Task<ActionResult<MedicalRecordDto>> UpdateMedicalRecord([FromBody] MedicalRecordUpdateDto request)
+    public async Task<ActionResult<MedicalRecordDto?>> UpdateMedicalRecord([FromBody] MedicalRecordUpdateDto request)
     {
         int userId = User.GetUserId();
 
@@ -1903,9 +1956,7 @@ public class AccountController(
             if (!await uow.Complete()) return BadRequest("Error actualizando el historial clínico.");
         }
 
-        var itemToReturn = await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
-
-        return itemToReturn;
+        return await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
     }
 
     [Authorize]
@@ -1931,7 +1982,8 @@ public class AccountController(
         var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        Event patientEvent = await uow.EventRepository.GetByIdAsync(request.EventId);
+        Event? patientEvent = await uow.EventRepository.GetByIdAsync(request.EventId);
+        
         if (patientEvent == null) return NotFound($"El evento con id {request.EventId} no existe.");
 
         patientEvent.IsServiceRecommended = request.IsServiceRecommended;
@@ -1968,7 +2020,8 @@ public class AccountController(
         var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        Event patientEvent = await uow.EventRepository.GetByIdAsync(eventId);
+        Event? patientEvent = await uow.EventRepository.GetByIdAsync(eventId);
+
         if (patientEvent == null) return NotFound($"El evento con id {eventId} no existe.");
 
         patientEvent.IsSatisfactionSurveyCompleted = true;

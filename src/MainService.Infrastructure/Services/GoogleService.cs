@@ -20,17 +20,31 @@ namespace MainService.Infrastructure.Services
 
         public async Task<(double? latitude, double? longitude)> GetAddressCoordinatesAsync(string address)
         {
-            var url = $"https://maps.googleapis.com/maps/api/place/textsearch/json?query={address}&key={_googleSettings.ApiKey}";
-            var response = await _httpClient.GetAsync(url);
+            string url = $"https://maps.googleapis.com/maps/api/place/textsearch/json?query={address}&key={_googleSettings.ApiKey}";
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<GooglePlacesTextSearchResponse>(json);
+                string json = await response.Content.ReadAsStringAsync();
 
-                if (result?.Status == "OK" && result.Results.Count > 0)
+                GooglePlacesTextSearchResponse? result = JsonConvert.DeserializeObject<GooglePlacesTextSearchResponse>(json);
+
+                if (
+                    result != null && 
+                    !string.IsNullOrEmpty(result.Status) && 
+                    result.Status == "OK" && 
+                    result.Results.Count() > 0
+                )
                 {
-                    var location = result.Results[0].Geometry.Location;
-                    return (location.Lat, location.Lng);
+                    Geometry? geometry = result.Results.First().Geometry;
+
+                    if (geometry != null) {
+                        Location? location = geometry.Location;
+
+                        if (location != null) {
+                            return (location.Lat, location.Lng);
+                        }
+                    }
                 }
             }
 
@@ -39,25 +53,25 @@ namespace MainService.Infrastructure.Services
 
         public string GetAddressText(Address item) => $"{item.Street} {item.ExteriorNumber}, {item.Neighborhood}, {item.City}, {item.State}, {item.Zipcode}";
 
-        public async Task<GooglePlacesDetailsResult> GetLocationByPlaceIdAsync(string placeId)
+        public async Task<GooglePlacesDetailsResult?> GetLocationByPlaceIdAsync(string placeId)
         {
             var url = $"https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&key={_googleSettings.ApiKey}";
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<GooglePlacesDetailsResponse>(json);
+                string? json = await response.Content.ReadAsStringAsync();
+                GooglePlacesDetailsResponse? result = JsonConvert.DeserializeObject<GooglePlacesDetailsResponse>(json);
 
-                if (result.Status == "OK")
+                if (result != null && !string.IsNullOrEmpty(result.Status) && result.Status == "OK")
                 {
                     return result.Result;
                 }
             }
 
-            return null;
+            return null!;
         }
 
-        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(string token)
+        public async Task<GoogleJsonWebSignature.Payload?> VerifyGoogleTokenAsync(string token)
         {
             try
             {

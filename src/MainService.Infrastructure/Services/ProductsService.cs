@@ -10,7 +10,9 @@ public class ProductsService(IUnitOfWork uow) : IProductsService
         // if (!await DeletePhotosAsync(advice)) return false;
         // if (!await DeleteInformationAsync(advice)) return false;
         
-        var itemToDelete = await uow.ProductRepository.GetByIdAsync(item.Id);
+        Product? itemToDelete = await uow.ProductRepository.GetByIdAsync(item.Id);
+
+        if (itemToDelete == null) return false;
 
         uow.ProductRepository.Delete(itemToDelete);
 

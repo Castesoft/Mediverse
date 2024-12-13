@@ -1,7 +1,6 @@
-
-
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using MainService.Core.DTOs.Google;
 using MainService.Core.DTOs.Search;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -40,37 +39,49 @@ namespace MainService.Infrastructure.Data
 
             if (!string.IsNullOrEmpty(param.Location))
             {
-                var location = await googleService.GetLocationByPlaceIdAsync(param.Location);
-                double latitude = location.Geometry.Location.Lat;
-                param.Latitude = latitude;
-                double longitude = location.Geometry.Location.Lng;
-                param.Longitude = longitude;
-                double radiusInKm = 50.0;
+                GooglePlacesDetailsResult? location = await googleService.GetLocationByPlaceIdAsync(param.Location);
 
-                query = query.Where(x => x.DoctorClinics.Any(a => 
-                    6371 * Math.Acos(
-                        Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude / 180) *
-                        Math.Cos(Math.PI * (double)a.Clinic.Longitude / 180 - Math.PI * longitude / 180) +
-                        Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
-                    ) <= radiusInKm
-                ));
+                if (location != null) {
+                    if (location.Geometry != null) {
+                        Geometry geometry = location.Geometry;
 
-                query = query.OrderBy(x => x.DoctorClinics
-                    .Min(a => 6371 * Math.Acos(
-                        Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude / 180) *
-                        Math.Cos(Math.PI * (double)a.Clinic.Longitude / 180 - Math.PI * longitude / 180) +
-                        Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
-                    ))
-                );
+                        if (
+                            geometry.Location != null &&
+                            geometry.Location.Lat.HasValue &&
+                            geometry.Location.Lng.HasValue
+                        ) {
+                            double latitude = geometry.Location.Lat.Value;
+                            param.Latitude = latitude;
+                            double longitude = geometry.Location.Lng.Value;
+                            param.Longitude = longitude;
+                            double radiusInKm = 50.0;
+
+                            query = query.Where(x => x.DoctorClinics.Any(a => 
+                                6371 * Math.Acos(
+                                    Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude! / 180) *
+                                    Math.Cos(Math.PI * (double)a.Clinic.Longitude! / 180 - Math.PI * longitude / 180) +
+                                    Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
+                                ) <= radiusInKm
+                            ));
+
+                            query = query.OrderBy(x => x.DoctorClinics
+                                .Min(a => 6371 * Math.Acos(
+                                    Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude! / 180) *
+                                    Math.Cos(Math.PI * (double)a.Clinic.Longitude! / 180 - Math.PI * longitude / 180) +
+                                    Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
+                                ))
+                            );
+                        }
+                    }
+                }
             }
 
             return await PagedList<DoctorSearchResultDto>.CreateAsync(
                 query.AsNoTracking().ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider),
                 param.PageNumber, param.PageSize);
         }
-        public async Task<DoctorSearchResultDto> GetDoctorByIdAsync(int id)
-        {
-            var query = context.Users
+        public async Task<DoctorSearchResultDto?> GetDoctorByIdAsync(int id) =>
+            await context.Users
                 .Include(x => x.UserMedicalLicenses)
                     .ThenInclude(x => x.MedicalLicense)
                     .ThenInclude(x => x.MedicalLicenseSpecialty)
@@ -90,10 +101,11 @@ namespace MainService.Infrastructure.Data
                 .Include(x => x.Patients)
                     .ThenInclude(x => x.Patient)
                 .Where(x => x.Id == id)
-                .AsQueryable();
-
-            return await query.AsNoTracking().ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
-        }
+                .AsQueryable()
+                .AsNoTracking()
+                .ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync()
+            ;
 
         private static IQueryable<AppUser> Includes(IQueryable<AppUser> query) =>
             query

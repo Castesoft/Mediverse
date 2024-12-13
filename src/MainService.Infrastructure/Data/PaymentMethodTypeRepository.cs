@@ -11,15 +11,17 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class PaymentMethodTypeRepository(DataContext context, IMapper mapper) : IPaymentMethodTypeRepository
 {
-    public async Task<PaymentMethodTypeDto> FindDtoByNameAsync(string name) => 
+    public async Task<PaymentMethodTypeDto?> FindDtoByNameAsync(string name) => 
         await context.PaymentMethodTypes.ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Name == name);
+            .SingleOrDefaultAsync(x => x.Name == name)
+        ;
 
-    public async Task<PaymentMethodType> GetByNameAsync(string name) =>
+    public async Task<PaymentMethodType?> GetByNameAsync(string name) =>
         await context.PaymentMethodTypes.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<PaymentMethodType> GetByCodeAsync(string code) =>
-        await context.PaymentMethodTypes.SingleOrDefaultAsync(x => x.Code == code);
+    public async Task<PaymentMethodType?> GetByCodeAsync(string code) =>
+        await context.PaymentMethodTypes.SingleOrDefaultAsync(x => x.Code == code)
+    ;
 
     public void Add(PaymentMethodType item) => context.PaymentMethodTypes.Add(item);
     public void Delete(PaymentMethodType item) => context.PaymentMethodTypes.Remove(item);
@@ -29,16 +31,16 @@ public class PaymentMethodTypeRepository(DataContext context, IMapper mapper) : 
             .ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<PaymentMethodType> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<PaymentMethodType?> GetAsNoTrackingByIdAsync(int id) =>
         await context.PaymentMethodTypes
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<PaymentMethodType> GetByIdAsync(int id) =>
+    public async Task<PaymentMethodType?> GetByIdAsync(int id) =>
         await context.PaymentMethodTypes
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<PaymentMethodTypeDto> GetDtoByIdAsync(int id) =>
+    public async Task<PaymentMethodTypeDto?> GetDtoByIdAsync(int id) =>
         await context.PaymentMethodTypes
             .ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

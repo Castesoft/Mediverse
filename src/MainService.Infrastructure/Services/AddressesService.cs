@@ -11,7 +11,9 @@ public class AddressesService(IUnitOfWork uow) : IAddressesService
         // if (!await DeletePhotosAsync(advice)) return false;
         // if (!await DeleteInformationAsync(advice)) return false;
         
-        var itemToDelete = await uow.AddressRepository.GetByIdAsync(item.Id);
+        Address? itemToDelete = await uow.AddressRepository.GetByIdAsync(item.Id);
+
+        if (itemToDelete == null) return false;
 
         uow.AddressRepository.Delete(itemToDelete);
 

@@ -30,7 +30,7 @@ public class SpecialtiesController(IUnitOfWork uow, IMapper mapper, ISpecialties
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<SpecialtyDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<SpecialtyDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.SpecialtyRepository.GetByIdAsync(id);
 
@@ -62,7 +62,7 @@ public class SpecialtiesController(IUnitOfWork uow, IMapper mapper, ISpecialties
         await uow.SpecialtyRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<SpecialtyDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<SpecialtyDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.SpecialtyRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -71,8 +71,11 @@ public class SpecialtiesController(IUnitOfWork uow, IMapper mapper, ISpecialties
     }
 
     [HttpPost]
-    public async Task<ActionResult<SpecialtyDto>> AddAsync([FromBody] SpecialtyCreateDto request)
+    public async Task<ActionResult<SpecialtyDto?>> AddAsync([FromBody] SpecialtyCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.SpecialtyRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -91,7 +94,7 @@ public class SpecialtiesController(IUnitOfWork uow, IMapper mapper, ISpecialties
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<SpecialtyDto>> UpdateAsync(
+    public async Task<ActionResult<SpecialtyDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] SpecialtyUpdateDto request
     )

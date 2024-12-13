@@ -10,15 +10,27 @@ namespace MainService.Infrastructure.Services
     {
         public async Task<(string, string)> GenerateTwoFactorTokenAsync(AppUser user)
         {
-            var unformattedKey = await userManager.GetAuthenticatorKeyAsync(user);
+            string? unformattedKey = await userManager.GetAuthenticatorKeyAsync(user);
+
             if (string.IsNullOrWhiteSpace(unformattedKey))
             {
                 await userManager.ResetAuthenticatorKeyAsync(user);
                 unformattedKey = await userManager.GetAuthenticatorKeyAsync(user);
             }
 
-            var sharedKey = FormatKey(unformattedKey);
-            var authenticatorUri = GenerateQrCodeUri(user.Email, unformattedKey);
+            if (string.IsNullOrEmpty(unformattedKey))
+            {
+                throw new InvalidOperationException("No se pudo generar la clave de autenticación de dos factores.");
+            }
+
+            string sharedKey = FormatKey(unformattedKey);
+
+            if (string.IsNullOrEmpty(user.Email))
+            {
+                throw new InvalidOperationException("El usuario debe tener un correo electrónico para usar la autenticación de dos factores.");
+            }
+
+            string authenticatorUri = GenerateQrCodeUri(user.Email, unformattedKey);
 
             return (sharedKey, authenticatorUri);
         }

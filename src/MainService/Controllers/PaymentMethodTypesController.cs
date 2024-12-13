@@ -30,7 +30,7 @@ public class PaymentMethodTypesController(IUnitOfWork uow, IMapper mapper, IPaym
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<PaymentMethodTypeDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<PaymentMethodTypeDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.PaymentMethodTypeRepository.GetByIdAsync(id);
 
@@ -62,7 +62,7 @@ public class PaymentMethodTypesController(IUnitOfWork uow, IMapper mapper, IPaym
         await uow.PaymentMethodTypeRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PaymentMethodTypeDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<PaymentMethodTypeDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.PaymentMethodTypeRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -71,8 +71,11 @@ public class PaymentMethodTypesController(IUnitOfWork uow, IMapper mapper, IPaym
     }
 
     [HttpPost]
-    public async Task<ActionResult<PaymentMethodTypeDto>> AddAsync([FromBody] PaymentMethodTypeCreateDto request)
+    public async Task<ActionResult<PaymentMethodTypeDto?>> AddAsync([FromBody] PaymentMethodTypeCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.PaymentMethodTypeRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -91,7 +94,7 @@ public class PaymentMethodTypesController(IUnitOfWork uow, IMapper mapper, IPaym
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<PaymentMethodTypeDto>> UpdateAsync(
+    public async Task<ActionResult<PaymentMethodTypeDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] PaymentMethodTypeUpdateDto request
     )

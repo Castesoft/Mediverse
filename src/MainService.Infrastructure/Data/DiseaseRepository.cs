@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class DiseaseRepository(DataContext context, IMapper mapper) : IDiseaseRepository
 {
-    public async Task<DiseaseDto> FindDtoByNameAsync(string name) => 
+    public async Task<DiseaseDto?> FindDtoByNameAsync(string name) => 
         await context.Diseases.ProjectTo<DiseaseDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Disease> GetByNameAsync(string name) =>
-        await context.Diseases.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<Disease?> GetByNameAsync(string name) =>
+        await context.Diseases.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Disease> GetByCodeAsync(string code) =>
-        await context.Diseases.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<Disease?> GetByCodeAsync(string code) =>
+        await context.Diseases.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(Disease item) => context.Diseases.Add(item);
     public void Delete(Disease item) => context.Diseases.Remove(item);
@@ -29,16 +29,16 @@ public class DiseaseRepository(DataContext context, IMapper mapper) : IDiseaseRe
             .ProjectTo<DiseaseDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<Disease> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<Disease?> GetAsNoTrackingByIdAsync(int id) =>
         await context.Diseases
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<Disease> GetByIdAsync(int id) =>
+    public async Task<Disease?> GetByIdAsync(int id) =>
         await context.Diseases
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<DiseaseDto> GetDtoByIdAsync(int id) =>
+    public async Task<DiseaseDto?> GetDtoByIdAsync(int id) =>
         await context.Diseases
             .ProjectTo<DiseaseDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

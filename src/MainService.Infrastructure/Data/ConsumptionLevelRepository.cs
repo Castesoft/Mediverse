@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class ConsumptionLevelRepository(DataContext context, IMapper mapper) : IConsumptionLevelRepository
 {
-    public async Task<ConsumptionLevelDto> FindDtoByNameAsync(string name) => 
+    public async Task<ConsumptionLevelDto?> FindDtoByNameAsync(string name) => 
         await context.ConsumptionLevels.ProjectTo<ConsumptionLevelDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<ConsumptionLevel> GetByNameAsync(string name) =>
-        await context.ConsumptionLevels.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<ConsumptionLevel?> GetByNameAsync(string name) =>
+        await context.ConsumptionLevels.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<ConsumptionLevel> GetByCodeAsync(string code) =>
-        await context.ConsumptionLevels.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<ConsumptionLevel?> GetByCodeAsync(string code) =>
+        await context.ConsumptionLevels.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(ConsumptionLevel item) => context.ConsumptionLevels.Add(item);
     public void Delete(ConsumptionLevel item) => context.ConsumptionLevels.Remove(item);
@@ -29,16 +29,16 @@ public class ConsumptionLevelRepository(DataContext context, IMapper mapper) : I
             .ProjectTo<ConsumptionLevelDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<ConsumptionLevel> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<ConsumptionLevel?> GetAsNoTrackingByIdAsync(int id) =>
         await context.ConsumptionLevels
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<ConsumptionLevel> GetByIdAsync(int id) =>
+    public async Task<ConsumptionLevel?> GetByIdAsync(int id) =>
         await context.ConsumptionLevels
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<ConsumptionLevelDto> GetDtoByIdAsync(int id) =>
+    public async Task<ConsumptionLevelDto?> GetDtoByIdAsync(int id) =>
         await context.ConsumptionLevels
             .ProjectTo<ConsumptionLevelDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

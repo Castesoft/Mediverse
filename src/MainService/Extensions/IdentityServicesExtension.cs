@@ -40,10 +40,14 @@ public static class IdentityServiceExtensions
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                string? key = config["TokenSettings:Key"];
+
+                if (string.IsNullOrEmpty(key)) throw new Exception("Key is missing in appsettings.json");
+                
                 options.TokenValidationParameters = new()
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenSettings:Key"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
@@ -55,12 +59,16 @@ public static class IdentityServiceExtensions
 
         services.AddAuthorization(options =>
         {
-            foreach (var role in SeedData.getRolesWithPermissions()) {
-                options.AddPolicy(role.Name, policy => {
-                    policy.RequireRole(role.Name);
-                    foreach (var permission in role.RolePermissions)
-                        policy.Requirements.Add(new PermissionRequirement(permission.Permission.Name));
-                });
+            foreach (AppRole role in SeedData.getRolesWithPermissions()) {
+
+                if (!string.IsNullOrEmpty(role.Name)) {
+                    options.AddPolicy(role.Name, policy => {
+                        policy.RequireRole(role.Name);
+                        foreach (var permission in role.RolePermissions)
+                            policy.Requirements.Add(new PermissionRequirement(permission.Permission.Name));
+                    });
+                }
+                
             }
         });
 

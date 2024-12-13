@@ -10,7 +10,9 @@ public class EventsService(IUnitOfWork uow) : IEventsService
         // if (!await DeletePhotosAsync(advice)) return false;
         // if (!await DeleteInformationAsync(advice)) return false;
         
-        var itemToDelete = await uow.EventRepository.GetByIdAsync(item.Id);
+        Event? itemToDelete = await uow.EventRepository.GetByIdAsync(item.Id);
+
+        if (itemToDelete == null) return false;
 
         uow.EventRepository.Delete(itemToDelete);
 

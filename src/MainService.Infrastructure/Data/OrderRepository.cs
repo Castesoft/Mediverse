@@ -22,10 +22,9 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
         throw new NotImplementedException();
     }
 
-    public async Task<Order> GetByIdAsync(int id)
-    {
-        return await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
-    }
+    public async Task<Order?> GetByIdAsync(int id) =>
+        await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync()
+    ;
 
     public Task<Order> GetByNameAsync(string name, ClaimsPrincipal user)
     {
@@ -37,17 +36,16 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
         throw new NotImplementedException();
     }
 
-    public Task<OrderDto> GetDtoByIdAsync(int id)
-    {
-        return context.Orders
+    public async Task<OrderDto?> GetDtoByIdAsync(int id) =>
+        await context.Orders
             .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
             .Include(x => x.OrderItems).ThenInclude(x => x.Item)
             .Include(x => x.OrderAddress).ThenInclude(x => x.Address)
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsNoTracking()
             .ProjectTo<OrderDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public Task<Order> GetByIdAsNoTrackingAsync(int id)
     {

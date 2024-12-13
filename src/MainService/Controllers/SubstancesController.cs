@@ -31,7 +31,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<SubstanceDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<SubstanceDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.SubstanceRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
         await uow.SubstanceRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<SubstanceDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<SubstanceDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.SubstanceRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     }
 
     [HttpPost]
-    public async Task<ActionResult<SubstanceDto>> AddAsync([FromBody] SubstanceCreateDto request)
+    public async Task<ActionResult<SubstanceDto?>> AddAsync([FromBody] SubstanceCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.SubstanceRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class SubstancesController(IUnitOfWork uow, IMapper mapper, ISubstancesSe
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<SubstanceDto>> UpdateAsync(
+    public async Task<ActionResult<SubstanceDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] SubstanceUpdateDto request
     )

@@ -10,7 +10,9 @@ public class PrescriptionsService(IUnitOfWork uow) : IPrescriptionsService
         // if (!await DeletePhotosAsync(advice)) return false;
         // if (!await DeleteInformationAsync(advice)) return false;
         
-        var itemToDelete = await uow.PrescriptionRepository.GetByIdAsync(item.Id);
+        Prescription? itemToDelete = await uow.PrescriptionRepository.GetByIdAsync(item.Id);
+
+        if (itemToDelete == null) return false;
 
         uow.PrescriptionRepository.Delete(itemToDelete);
 

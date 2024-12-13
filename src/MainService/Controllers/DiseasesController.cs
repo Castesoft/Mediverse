@@ -31,7 +31,7 @@ public class DiseasesController(IUnitOfWork uow, IMapper mapper, IDiseasesServic
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<DiseaseDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<DiseaseDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.DiseaseRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class DiseasesController(IUnitOfWork uow, IMapper mapper, IDiseasesServic
         await uow.DiseaseRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<DiseaseDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<DiseaseDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.DiseaseRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class DiseasesController(IUnitOfWork uow, IMapper mapper, IDiseasesServic
     }
 
     [HttpPost]
-    public async Task<ActionResult<DiseaseDto>> AddAsync([FromBody] DiseaseCreateDto request)
+    public async Task<ActionResult<DiseaseDto?>> AddAsync([FromBody] DiseaseCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.DiseaseRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class DiseasesController(IUnitOfWork uow, IMapper mapper, IDiseasesServic
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<DiseaseDto>> UpdateAsync(
+    public async Task<ActionResult<DiseaseDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] DiseaseUpdateDto request
     )

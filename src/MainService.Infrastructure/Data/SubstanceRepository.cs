@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class SubstanceRepository(DataContext context, IMapper mapper) : ISubstanceRepository
 {
-    public async Task<SubstanceDto> FindDtoByNameAsync(string name) => 
+    public async Task<SubstanceDto?> FindDtoByNameAsync(string name) => 
         await context.Substances.ProjectTo<SubstanceDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Substance> GetByNameAsync(string name) =>
-        await context.Substances.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<Substance?> GetByNameAsync(string name) =>
+        await context.Substances.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Substance> GetByCodeAsync(string code) =>
-        await context.Substances.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<Substance?> GetByCodeAsync(string code) =>
+        await context.Substances.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(Substance item) => context.Substances.Add(item);
     public void Delete(Substance item) => context.Substances.Remove(item);
@@ -29,16 +29,16 @@ public class SubstanceRepository(DataContext context, IMapper mapper) : ISubstan
             .ProjectTo<SubstanceDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<Substance> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<Substance?> GetAsNoTrackingByIdAsync(int id) =>
         await context.Substances
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<Substance> GetByIdAsync(int id) =>
+    public async Task<Substance?> GetByIdAsync(int id) =>
         await context.Substances
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<SubstanceDto> GetDtoByIdAsync(int id) =>
+    public async Task<SubstanceDto?> GetDtoByIdAsync(int id) =>
         await context.Substances
             .ProjectTo<SubstanceDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

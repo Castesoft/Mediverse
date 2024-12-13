@@ -14,12 +14,12 @@ namespace MainService.Core.DTOs.Search
     public class DoctorSearchResultDto
     {
         public int Id { get; set; }
-        public string FullName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Title { get; set; }
+        public string? FullName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Title { get; set; }
 
         public List<OptionDto> PaymentMethods { get; set; } = [];
         public List<OptionDto> Services { get; set; } = [];
@@ -32,16 +32,16 @@ namespace MainService.Core.DTOs.Search
         public List<Event> DoctorEvents { get; set; } = [];
         public List<AvailableDayDto> AvailableDays { get; set; } = [];
         public List<DoctorReviewDto> Reviews { get; set; } = [];
-        public string PhotoUrl { get; set; }
+        public string? PhotoUrl { get; set; }
         public List<DoctorPatientDto> Patients { get; set; } = [];
         public bool HasPatientInformationAccess { get; set; }
     }
 
     public class AvailableDayDto
     {
-        public string Day { get; set; }
+        public string? Day { get; set; }
         public int DayNumber { get; set; }
-        public string Month { get; set; }
+        public string? Month { get; set; }
         public int MonthNumber { get; set; }
         public int Year { get; set; }
         public List<AvailableTimeDto> AvailableTimes { get; set; } = [];
@@ -49,8 +49,8 @@ namespace MainService.Core.DTOs.Search
 
     public class AvailableTimeDto
     {
-        public string Start { get; set; }
-        public string End { get; set; }
+        public string? Start { get; set; }
+        public string? End { get; set; }
         public bool Available { get; set; }
     }
 }

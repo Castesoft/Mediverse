@@ -40,7 +40,7 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ServiceDto>> GetByIdAsync([FromRoute]int id)
+    public async Task<ActionResult<ServiceDto?>> GetByIdAsync([FromRoute]int id)
     {
         var item = await uow.ServiceRepository.GetDtoByIdAsync(id);
 
@@ -84,17 +84,19 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
     }
 
     [HttpPost]
-    public async Task<ActionResult<ServiceDto>> CreateAsync([FromBody] ServiceCreateDto request)
+    public async Task<ActionResult<ServiceDto?>> CreateAsync([FromBody] ServiceCreateDto request)
     {
-        var itemExists = await uow.ServiceRepository.GetByNameAsync(request.Name, User);
+        Service? itemExists = await uow.ServiceRepository.GetByNameAsync(request.Name, User);
 
-        if (itemExists != null) 
-        return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
+        if (itemExists != null) return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
 
-        var doctor = await userManager.Users
+        AppUser? doctor = await userManager.Users
             .Include(x => x.DoctorServices)
                 .ThenInclude(x => x.Service)
-            .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
+            .SingleOrDefaultAsync(x => x.Id == User.GetUserId())
+        ;
+
+        if (doctor == null) return BadRequest("No se encontró el doctor.");
 
         var item = mapper.Map<Service>(request);
 

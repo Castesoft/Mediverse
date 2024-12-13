@@ -11,14 +11,14 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class SpecialtyRepository(DataContext context, IMapper mapper) : ISpecialtyRepository
 {
-    public async Task<SpecialtyDto> FindDtoByNameAsync(string name) => 
+    public async Task<SpecialtyDto?> FindDtoByNameAsync(string name) => 
         await context.Specialties.ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider).AsNoTracking()
             .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Specialty> GetByNameAsync(string name) =>
+    public async Task<Specialty?> GetByNameAsync(string name) =>
         await context.Specialties.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Specialty> GetByCodeAsync(string code) =>
+    public async Task<Specialty?> GetByCodeAsync(string code) =>
         await context.Specialties.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(Specialty item) => context.Specialties.Add(item);
@@ -29,19 +29,22 @@ public class SpecialtyRepository(DataContext context, IMapper mapper) : ISpecial
             .ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<Specialty> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<Specialty?> GetAsNoTrackingByIdAsync(int id) =>
         await context.Specialties
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-    public async Task<Specialty> GetByIdAsync(int id) =>
+    public async Task<Specialty?> GetByIdAsync(int id) =>
         await context.Specialties
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-    public async Task<SpecialtyDto> GetDtoByIdAsync(int id) =>
+    public async Task<SpecialtyDto?> GetDtoByIdAsync(int id) =>
         await context.Specialties
             .ProjectTo<SpecialtyDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<PagedList<SpecialtyDto>> GetPagedListAsync(SpecialtyParams param, bool getAll = false)
     {

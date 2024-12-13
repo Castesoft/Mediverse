@@ -8,9 +8,9 @@ public interface IPhotoRepository
 {
     void Add(Photo item);
     void Delete(Photo item);
-    Task<Photo> GetByIdAsync(int id);
-    Task<Photo> GetByUserIdAsync(int userId);
-    Task<PhotoDto> GetDtoByIdAsync(int id);
+    Task<Photo?> GetByIdAsync(int id);
+    Task<Photo?> GetByUserIdAsync(int userId);
+    Task<PhotoDto?> GetDtoByIdAsync(int id);
     Task<List<PhotoDto>> GetAllDtoAsync();
     Task<List<Photo>> GetAllAsync();
     Task<PagedList<PhotoDto>> GetPagedListAsync(PhotoParams param);

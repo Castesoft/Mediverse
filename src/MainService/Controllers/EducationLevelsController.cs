@@ -31,7 +31,7 @@ public class EducationLevelsController(IUnitOfWork uow, IMapper mapper, IEducati
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<EducationLevelDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<EducationLevelDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.EducationLevelRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class EducationLevelsController(IUnitOfWork uow, IMapper mapper, IEducati
         await uow.EducationLevelRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<EducationLevelDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<EducationLevelDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.EducationLevelRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class EducationLevelsController(IUnitOfWork uow, IMapper mapper, IEducati
     }
 
     [HttpPost]
-    public async Task<ActionResult<EducationLevelDto>> AddAsync([FromBody] EducationLevelCreateDto request)
+    public async Task<ActionResult<EducationLevelDto?>> AddAsync([FromBody] EducationLevelCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.EducationLevelRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class EducationLevelsController(IUnitOfWork uow, IMapper mapper, IEducati
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<EducationLevelDto>> UpdateAsync(
+    public async Task<ActionResult<EducationLevelDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] EducationLevelUpdateDto request
     )

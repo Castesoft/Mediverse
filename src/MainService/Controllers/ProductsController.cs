@@ -50,7 +50,7 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProductDto>> GetByIdAsync([FromRoute]int id)
+    public async Task<ActionResult<ProductDto?>> GetByIdAsync([FromRoute]int id)
     {
         var item = await uow.ProductRepository.GetDtoByIdAsync(id);
 
@@ -60,7 +60,7 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<ProductDto>> UpdateAsync([FromRoute] int id, [FromBody] ProductUpdateDto request)
+    public async Task<ActionResult<ProductDto?>> UpdateAsync([FromRoute] int id, [FromBody] ProductUpdateDto request)
     {
         var item = await uow.ProductRepository.GetByIdAsync(id);
 
@@ -119,17 +119,19 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductDto>> CreateAsync([FromBody] ProductCreateDto request)
+    public async Task<ActionResult<ProductDto?>> CreateAsync([FromBody] ProductCreateDto request)
     {
-        var itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
+        Product? itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
 
-        if (itemExists != null) 
-        return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
+        if (itemExists != null)  return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
 
-        var doctor = await userManager.Users
+        AppUser? doctor = await userManager.Users
             .Include(x => x.DoctorProducts)
                 .ThenInclude(x => x.Product)
-            .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
+            .SingleOrDefaultAsync(x => x.Id == User.GetUserId())
+        ;
+
+        if (doctor == null) return BadRequest($"Error al crear {subjectArticle} {subject}.");
 
         var item = mapper.Map<Product>(request);
 

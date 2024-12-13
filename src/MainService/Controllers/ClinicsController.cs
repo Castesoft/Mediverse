@@ -40,7 +40,7 @@ public class ClinicsController(IUnitOfWork uow, IAddressesService service, UserM
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ClinicDto>> GetByIdAsync([FromRoute]int id)
+    public async Task<ActionResult<ClinicDto?>> GetByIdAsync([FromRoute]int id)
     {
         var item = await uow.ClinicRepository.GetDtoByIdAsync(id);
 

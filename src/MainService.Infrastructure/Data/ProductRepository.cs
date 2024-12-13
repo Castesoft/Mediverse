@@ -32,31 +32,25 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         return await query.ToListAsync();
     }
 
-    public async Task<Product> GetByIdAsNoTrackingAsync(int id)
-    {
-        var item = await context.Products
+    public async Task<Product?> GetByIdAsNoTrackingAsync(int id) =>
+        await context.Products
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-        return item;
-    }
-
-    public async Task<Product> GetByIdAsync(int id)
-    {
-        var item = await context.Products
+    public async Task<Product?> GetByIdAsync(int id) =>
+        await context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-        return item;
-    }
-
-    public async Task<Product> GetByNameAsync(string name, ClaimsPrincipal user)
-        => await context.Products
+    public async Task<Product?> GetByNameAsync(string name, ClaimsPrincipal user) => await context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .Where(x => x.DoctorProduct.DoctorId == user.GetUserId())
-            .SingleOrDefaultAsync(x => x.Name == name);
+            .SingleOrDefaultAsync(x => x.Name == name)
+        ;
 
     public async Task<bool> ExistsAsync(int id, ClaimsPrincipal user)
     {
@@ -66,7 +60,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
             .AnyAsync(x => x.Id == id && x.DoctorProduct.DoctorId == user.GetUserId());
     }
 
-    public async Task<ProductDto> GetDtoByIdAsync(int id)
+    public async Task<ProductDto?> GetDtoByIdAsync(int id)
     {
         var item = await context.Products
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)

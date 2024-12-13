@@ -30,28 +30,23 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
         return await query.ToListAsync();
     }
 
-    public async Task<Service> GetByIdAsNoTrackingAsync(int id)
-    {
-        var item = await context.Services
+    public async Task<Service?> GetByIdAsNoTrackingAsync(int id) =>
+        await context.Services
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-        return item;
-    }
+    public async Task<Service?> GetByIdAsync(int id) =>
+        await context.Services
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
-    public async Task<Service> GetByIdAsync(int id)
-    {
-        var item = await context.Services
-            .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
-
-    public async Task<Service> GetByNameAsync(string name, ClaimsPrincipal user)
-        => await context.Services
+    public async Task<Service?> GetByNameAsync(string name, ClaimsPrincipal user) => 
+        await context.Services
             .Include(x => x.DoctorService)
             .Where(x => x.DoctorService.DoctorId == user.GetUserId())
-            .SingleOrDefaultAsync(x => x.Name == name);
+            .SingleOrDefaultAsync(x => x.Name == name)
+        ;
 
     public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId)
     {
@@ -60,15 +55,12 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
             .AnyAsync(x => x.Id == id && x.DoctorService.DoctorId == doctorId);
     }
 
-    public async Task<ServiceDto> GetDtoByIdAsync(int id)
-    {
-        var item = await context.Services
+    public async Task<ServiceDto?> GetDtoByIdAsync(int id) =>
+        await context.Services
             .AsNoTracking()
             .ProjectTo<ServiceDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user)
     {

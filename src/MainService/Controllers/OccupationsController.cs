@@ -31,7 +31,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<OccupationDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<OccupationDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.OccupationRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
         await uow.OccupationRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<OccupationDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<OccupationDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.OccupationRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     }
 
     [HttpPost]
-    public async Task<ActionResult<OccupationDto>> AddAsync([FromBody] OccupationCreateDto request)
+    public async Task<ActionResult<OccupationDto?>> AddAsync([FromBody] OccupationCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.OccupationRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class OccupationsController(IUnitOfWork uow, IMapper mapper, IOccupations
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<OccupationDto>> UpdateAsync(
+    public async Task<ActionResult<OccupationDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] OccupationUpdateDto request
     )

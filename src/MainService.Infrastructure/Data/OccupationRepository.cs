@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class OccupationRepository(DataContext context, IMapper mapper) : IOccupationRepository
 {
-    public async Task<OccupationDto> FindDtoByNameAsync(string name) => 
+    public async Task<OccupationDto?> FindDtoByNameAsync(string name) => 
         await context.Occupations.ProjectTo<OccupationDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Occupation> GetByNameAsync(string name) =>
-        await context.Occupations.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<Occupation?> GetByNameAsync(string name) =>
+        await context.Occupations.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Occupation> GetByCodeAsync(string code) =>
-        await context.Occupations.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<Occupation?> GetByCodeAsync(string code) =>
+        await context.Occupations.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(Occupation item) => context.Occupations.Add(item);
     public void Delete(Occupation item) => context.Occupations.Remove(item);
@@ -29,16 +29,16 @@ public class OccupationRepository(DataContext context, IMapper mapper) : IOccupa
             .ProjectTo<OccupationDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<Occupation> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<Occupation?> GetAsNoTrackingByIdAsync(int id) =>
         await context.Occupations
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<Occupation> GetByIdAsync(int id) =>
+    public async Task<Occupation?> GetByIdAsync(int id) =>
         await context.Occupations
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<OccupationDto> GetDtoByIdAsync(int id) =>
+    public async Task<OccupationDto?> GetDtoByIdAsync(int id) =>
         await context.Occupations
             .ProjectTo<OccupationDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

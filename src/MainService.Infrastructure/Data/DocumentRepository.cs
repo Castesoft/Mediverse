@@ -11,11 +11,11 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class DocumentRepository(DataContext context, IMapper mapper) : IDocumentRepository
 {
-    public async Task<DocumentDto> FindDtoByNameAsync(string name) => 
+    public async Task<DocumentDto?> FindDtoByNameAsync(string name) => 
         await context.Documents.ProjectTo<DocumentDto>(mapper.ConfigurationProvider).AsNoTracking()
             .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<Document> GetByNameAsync(string name) =>
+    public async Task<Document?> GetByNameAsync(string name) =>
         await context.Documents.SingleOrDefaultAsync(x => x.Name == name);
 
     public void Add(Document item) => context.Documents.Add(item);
@@ -26,16 +26,16 @@ public class DocumentRepository(DataContext context, IMapper mapper) : IDocument
             .ProjectTo<DocumentDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<Document> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<Document?> GetAsNoTrackingByIdAsync(int id) =>
         await context.Documents
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<Document> GetByIdAsync(int id) =>
+    public async Task<Document?> GetByIdAsync(int id) =>
         await context.Documents
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<DocumentDto> GetDtoByIdAsync(int id) =>
+    public async Task<DocumentDto?> GetDtoByIdAsync(int id) =>
         await context.Documents
             .ProjectTo<DocumentDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

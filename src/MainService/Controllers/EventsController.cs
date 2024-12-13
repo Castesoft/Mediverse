@@ -1,5 +1,3 @@
-
-
 using System.Globalization;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -72,7 +70,7 @@ public class EventsController(
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<EventDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<EventDto?>> GetByIdAsync([FromRoute] int id)
     {
         var item = await uow.EventRepository.GetDtoByIdAsync(id);
 
@@ -125,7 +123,7 @@ public class EventsController(
     }
 
     [HttpPost("search")]
-    public async Task<ActionResult<EventDto>> PatientCreateAsync([FromBody] PatientCreateEventDto request)
+    public async Task<ActionResult<EventDto?>> PatientCreateAsync([FromBody] PatientCreateEventDto request)
     {
         int userId = User.GetUserId();
 
@@ -212,7 +210,9 @@ public class EventsController(
         OptionDto paymentMethodTypeOption = request.PaymentMethodType;
         OptionDto? medicalInsuranceCompanyOption = request.MedicalInsuranceCompany;
 
-        Models.Entities.Service serviceAsNoTracking = await uow.ServiceRepository.GetByIdAsNoTrackingAsync(request.Service.Id.Value);
+        Models.Entities.Service? serviceAsNoTracking = await uow.ServiceRepository.GetByIdAsNoTrackingAsync(request.Service.Id.Value);
+
+        if (serviceAsNoTracking == null) return BadRequest($"Tratamiento de ID {request.Service.Id.Value} no fue encontrado.");
 
         if ((request.PaymentMethodType.Id.Value == 1 || request.PaymentMethodType.Id.Value == 2) && doctorAsNoTracking.RequireAnticipatedCardPayments.HasValue && doctorAsNoTracking.RequireAnticipatedCardPayments.Value)
         {
@@ -268,7 +268,7 @@ public class EventsController(
     }
 
     [HttpPost]
-    public async Task<ActionResult<EventDto>> CreateAsync([FromBody] EventCreateDto request)
+    public async Task<ActionResult<EventDto?>> CreateAsync([FromBody] EventCreateDto request)
     {
         // TODO: que cuando el rol del usuario de la peticion, cuando este es nurse, obtener el ID del doctor para 
         // la propiedad de Event de DoctorEvent
@@ -293,7 +293,8 @@ public class EventsController(
 
         if (!request.ServiceId.HasValue) return BadRequest("El servicio es requerido.");
         
-        Models.Entities.Service doctorService = await uow.ServiceRepository.GetByIdAsync(request.ServiceId.Value);
+        Models.Entities.Service? doctorService = await uow.ServiceRepository.GetByIdAsync(request.ServiceId.Value);
+
         if (doctorService == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
 
         if (userRoles.Contains("Doctor") && request.Role == "Doctor")
@@ -337,10 +338,12 @@ public class EventsController(
                     doctor.StripeConnectAccountId = account.Id;
                 }
 
-                PaymentIntent payment = await stripeService.CreatePaymentIntentAsync(patient.StripeCustomerId, request.StripePaymentMethodId, doctor.StripeConnectAccountId, doctorService.Price.Value * 100, 5 * 100);
+                if (!string.IsNullOrEmpty(patient.StripeCustomerId) && doctorService.Price.HasValue) {
+                    PaymentIntent payment = await stripeService.CreatePaymentIntentAsync(patient.StripeCustomerId, request.StripePaymentMethodId, doctor.StripeConnectAccountId, doctorService.Price.Value * 100, 5 * 100);
 
-                if (payment == null) return BadRequest("Error al procesar el pago.");
-                if (payment.Status != "succeeded") return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
+                    if (payment == null) return BadRequest("Error al procesar el pago.");
+                    if (payment.Status != "succeeded") return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
+                }
             }
 
             bool patientExists = await uow.PatientRepository.ExistsAsync(user.Id, doctorId);
@@ -386,8 +389,11 @@ public class EventsController(
             EventClinic = new(request.ClinicId.Value),
             DoctorEvent = new(doctorId),
             EventPaymentMethodType = new(request.PaymentMethodTypeId.Value),
-            EventMedicalInsuranceCompany = request.MedicalInsuranceCompanyId.HasValue == true ? new(request.MedicalInsuranceCompanyId.Value) : null
         };
+
+        if (request.MedicalInsuranceCompanyId.HasValue) {
+            item.EventMedicalInsuranceCompany = new(request.MedicalInsuranceCompanyId.Value);
+        }
 
         uow.EventRepository.Add(item);
 
@@ -395,17 +401,23 @@ public class EventsController(
 
         string formattedDate = request.DateFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
         string emailSubject = $"Mediverse: Confirmación de tu cita!";
+
+        if (string.IsNullOrEmpty(doctorService.Name)) return BadRequest("El nombre del servicio es requerido.");
+        
         string htmlMessage =  emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName, formattedDate, request.TimeFrom + " - " + request.TimeTo, doctorService.Name);
 
-        await emailService.SendMail(patient.Email, emailSubject, htmlMessage);
+        string? patientEmail = patient.Email;
 
-        var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
+        if (!string.IsNullOrEmpty(patientEmail)) {
+            await emailService.SendMail(patientEmail, emailSubject, htmlMessage);
+        }
 
-        return itemDto;
+
+        return await uow.EventRepository.GetDtoByIdAsync(item.Id);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<EventDto>> UpdateAsync([FromRoute] int id, [FromBody] EventUpdateDto request)
+    public async Task<ActionResult<EventDto?>> UpdateAsync([FromRoute] int id, [FromBody] EventUpdateDto request)
     {
         var item = await uow.EventRepository.GetByIdAsync(id);
         if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");

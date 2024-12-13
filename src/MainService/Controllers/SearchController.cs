@@ -1,5 +1,4 @@
 using MainService.Core.DTOs.Search;
-using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
@@ -8,7 +7,6 @@ using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
 
@@ -68,7 +66,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                                 Available = conflictingEvent == null
                             };
                         })
-                        .Where(ws => TimeSpan.Parse(ws.Start) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
+                        .Where(ws => !string.IsNullOrEmpty(ws.Start) && TimeSpan.Parse(ws.Start) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
                         .OrderBy(ws => ws.Start)]
                 })
                 .ToList();
@@ -99,9 +97,11 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<DoctorSearchResultDto>> GetDoctorByIdAsync(int id)
+    public async Task<ActionResult<DoctorSearchResultDto?>> GetDoctorByIdAsync(int id)
     {
-        var doctor = await uow.SearchRepository.GetDoctorByIdAsync(id);
+        DoctorSearchResultDto? doctor = await uow.SearchRepository.GetDoctorByIdAsync(id);
+
+        if (doctor == null) return NotFound($"Doctor con ID {id} no encontrado.");
 
         doctor.AvailableDays = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Now.AddDays(i))
@@ -134,7 +134,7 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
                                 Available = conflictingEvent == null
                             };
                         })
-                        .Where(ws => TimeSpan.Parse(ws.Start) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
+                        .Where(ws => !string.IsNullOrEmpty(ws.Start) && TimeSpan.Parse(ws.Start!) > DateTime.Now.TimeOfDay || date.Date > DateTime.Today)
                         .OrderBy(ws => ws.Start)]
                 })
                 .ToList();

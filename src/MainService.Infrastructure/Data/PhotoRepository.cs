@@ -35,30 +35,22 @@ public class PhotoRepository(DataContext context, IMapper mapper) : IPhotoReposi
         return await query.ToListAsync();
     }
 
-    public async Task<Photo> GetByIdAsync(int id)
-    {
-        var item = await context.Photos
+    public async Task<Photo?> GetByIdAsync(int id) =>
+        await context.Photos
             .SingleOrDefaultAsync(x => x.Id == id);
 
-        return item;
-    }
-
-    public async Task<Photo> GetByUserIdAsync(int userId)
-    {
-        return await context.Photos
+    public async Task<Photo?> GetByUserIdAsync(int userId) =>
+        await context.Photos
             .Include(x => x.UserPhoto)
-            .FirstOrDefaultAsync(x => x.UserPhoto.UserId == userId);
-    }
+            .FirstOrDefaultAsync(x => x.UserPhoto.UserId == userId)
+        ;
 
-    public async Task<PhotoDto> GetDtoByIdAsync(int id)
-    {
-        var item = await context.Photos
+    public async Task<PhotoDto?> GetDtoByIdAsync(int id) =>
+        await context.Photos
             .AsNoTracking()
             .ProjectTo<PhotoDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
-
-        return item;
-    }
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<PagedList<PhotoDto>> GetPagedListAsync(PhotoParams param)
     {

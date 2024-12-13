@@ -32,7 +32,7 @@ public class OrdersController(IUnitOfWork uow
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<OrderDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<OrderDto?>> GetByIdAsync([FromRoute] int id)
     {
         var order = await uow.OrderRepository.GetDtoByIdAsync(id);
 
@@ -43,14 +43,18 @@ public class OrdersController(IUnitOfWork uow
 
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<OrderDto>> UpdateAsync([FromRoute] int id, [FromBody] OrderUpdateDto request)
+    public async Task<ActionResult<OrderDto?>> UpdateAsync([FromRoute] int id, [FromBody] OrderUpdateDto request)
     {
         var order = await uow.OrderRepository.GetByIdAsync(id);
 
         if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
 
-        order.Status = GetEnumFromMemberValue<OrderStatus>(request.Status);
-        order.DeliveryStatus = GetEnumFromMemberValue<OrderDeliveryStatus>(request.DeliveryStatus);
+        if (!string.IsNullOrEmpty(request.Status)) {
+            order.Status = GetEnumFromMemberValue<OrderStatus>(request.Status);
+        }
+        if (!string.IsNullOrEmpty(request.DeliveryStatus)) {
+            order.DeliveryStatus = GetEnumFromMemberValue<OrderDeliveryStatus>(request.DeliveryStatus);
+        }
 
         await uow.Complete();
 
@@ -58,7 +62,7 @@ public class OrdersController(IUnitOfWork uow
     }
 
     [HttpPut("{id}/approve")]
-    public async Task<ActionResult<OrderDto>> ApproveAsync([FromRoute] int id)
+    public async Task<ActionResult<OrderDto?>> ApproveAsync([FromRoute] int id)
     {
         var order = await uow.OrderRepository.GetByIdAsync(id);
 
@@ -80,7 +84,7 @@ public class OrdersController(IUnitOfWork uow
             var attribute = field.GetCustomAttribute<EnumMemberAttribute>();
             if (attribute != null && attribute.Value == value)
             {
-                return (T)field.GetValue(null);
+                return (T)field.GetValue(null)!;
             }
         }
 

@@ -31,7 +31,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<ColorBlindnessDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<ColorBlindnessDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.ColorBlindnessRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
         await uow.ColorBlindnessRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ColorBlindnessDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<ColorBlindnessDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.ColorBlindnessRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     }
 
     [HttpPost]
-    public async Task<ActionResult<ColorBlindnessDto>> AddAsync([FromBody] ColorBlindnessCreateDto request)
+    public async Task<ActionResult<ColorBlindnessDto?>> AddAsync([FromBody] ColorBlindnessCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.ColorBlindnessRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class ColorBlindnessesController(IUnitOfWork uow, IMapper mapper, IColorB
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<ColorBlindnessDto>> UpdateAsync(
+    public async Task<ActionResult<ColorBlindnessDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] ColorBlindnessUpdateDto request
     )

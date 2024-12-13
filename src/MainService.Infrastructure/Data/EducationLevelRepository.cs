@@ -11,15 +11,15 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Infrastructure.Data;
 public class EducationLevelRepository(DataContext context, IMapper mapper) : IEducationLevelRepository
 {
-    public async Task<EducationLevelDto> FindDtoByNameAsync(string name) => 
+    public async Task<EducationLevelDto?> FindDtoByNameAsync(string name) => 
         await context.EducationLevels.ProjectTo<EducationLevelDto>(mapper.ConfigurationProvider).AsNoTracking()
-            .SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+            .SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<EducationLevel> GetByNameAsync(string name) =>
-        await context.EducationLevels.SingleOrDefaultAsync(x => EF.Functions.Like(x.Name, name));
+    public async Task<EducationLevel?> GetByNameAsync(string name) =>
+        await context.EducationLevels.SingleOrDefaultAsync(x => x.Name == name);
 
-    public async Task<EducationLevel> GetByCodeAsync(string code) =>
-        await context.EducationLevels.SingleOrDefaultAsync(x => EF.Functions.Like(x.Code, code));
+    public async Task<EducationLevel?> GetByCodeAsync(string code) =>
+        await context.EducationLevels.SingleOrDefaultAsync(x => x.Code == code);
 
     public void Add(EducationLevel item) => context.EducationLevels.Add(item);
     public void Delete(EducationLevel item) => context.EducationLevels.Remove(item);
@@ -29,16 +29,16 @@ public class EducationLevelRepository(DataContext context, IMapper mapper) : IEd
             .ProjectTo<EducationLevelDto>(mapper.ConfigurationProvider)
             .ToListAsync();
 
-    public async Task<EducationLevel> GetAsNoTrackingByIdAsync(int id) =>
+    public async Task<EducationLevel?> GetAsNoTrackingByIdAsync(int id) =>
         await context.EducationLevels
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<EducationLevel> GetByIdAsync(int id) =>
+    public async Task<EducationLevel?> GetByIdAsync(int id) =>
         await context.EducationLevels
             .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<EducationLevelDto> GetDtoByIdAsync(int id) =>
+    public async Task<EducationLevelDto?> GetDtoByIdAsync(int id) =>
         await context.EducationLevels
             .ProjectTo<EducationLevelDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);

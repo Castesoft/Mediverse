@@ -31,7 +31,7 @@ public class MedicalInsuranceCompaniesController(IUnitOfWork uow, IMapper mapper
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<MedicalInsuranceCompanyDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<MedicalInsuranceCompanyDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.MedicalInsuranceCompanyRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class MedicalInsuranceCompaniesController(IUnitOfWork uow, IMapper mapper
         await uow.MedicalInsuranceCompanyRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<MedicalInsuranceCompanyDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<MedicalInsuranceCompanyDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class MedicalInsuranceCompaniesController(IUnitOfWork uow, IMapper mapper
     }
 
     [HttpPost]
-    public async Task<ActionResult<MedicalInsuranceCompanyDto>> AddAsync([FromBody] MedicalInsuranceCompanyCreateDto request)
+    public async Task<ActionResult<MedicalInsuranceCompanyDto?>> AddAsync([FromBody] MedicalInsuranceCompanyCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.MedicalInsuranceCompanyRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class MedicalInsuranceCompaniesController(IUnitOfWork uow, IMapper mapper
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<MedicalInsuranceCompanyDto>> UpdateAsync(
+    public async Task<ActionResult<MedicalInsuranceCompanyDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] MedicalInsuranceCompanyUpdateDto request
     )

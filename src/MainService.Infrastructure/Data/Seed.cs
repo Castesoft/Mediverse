@@ -256,14 +256,16 @@ public static class Seed
     {
         if (await roleManager.Roles.AnyAsync()) return;
 
-        var seedingRoles = SeedData.getRolesWithPermissions().ToList();
+        List<AppRole> seedingRoles = SeedData.getRolesWithPermissions().ToList();
 
         int idx = 1;
 
-        foreach (var role in seedingRoles)
+        foreach (AppRole role in seedingRoles)
         {
-            Log.Information($"({idx++}/{seedingRoles.Count()}) creating role: {role.Name}.");
-            await roleManager.CreateAsync(new(role.Name));
+            if (!string.IsNullOrEmpty(role.Name)) {
+                Log.Information($"({idx++}/{seedingRoles.Count()}) creating role: {role.Name}.");
+                await roleManager.CreateAsync(new(role.Name));
+            }
         }
 
         Log.Information($"{seedingRoles.Count()} roles created.");
@@ -404,11 +406,11 @@ public static class Seed
         List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(patientCount, Roles.Patient);
         int userIndex = 1;
 
-        var roles = await context.Roles.ToListAsync();
+        List<AppRole> roles = await context.Roles.ToListAsync();
 
-        foreach (var user in patientsForSeeding)
+        foreach (AppUser user in patientsForSeeding)
         {
-            List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Patient").ToList();
+            List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Patient").ToList()!;
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
             if (!createUserResult.Succeeded) return;
             foreach (var roleName in roleNames)
@@ -434,7 +436,7 @@ public static class Seed
             user.DoctorPaymentMethodTypes.AddRange(Utils.CreateDoctorPaymentMethodTypes(paymentMethodTypes));
             user.DoctorWorkSchedules.AddRange(Utils.CreateDoctorWorkSchedules());
             
-            List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Doctor").ToList();
+            List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Doctor").ToList()!;
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
             if (!createUserResult.Succeeded) return;
             foreach (var roleName in roleNames)

@@ -31,7 +31,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     }
 
     [HttpPut("toggleVisibility/{id}")]
-    public async Task<ActionResult<MaritalStatusDto>> ToggleVisibilityAsync([FromRoute] int id)
+    public async Task<ActionResult<MaritalStatusDto?>> ToggleVisibilityAsync([FromRoute] int id)
     {
         var item = await uow.MaritalStatusRepository.GetByIdAsync(id);
 
@@ -63,7 +63,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
         await uow.MaritalStatusRepository.ExistsByNameAsync(name);
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<MaritalStatusDto>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<MaritalStatusDto?>> GetByIdAsync([FromRoute] int id)
     {
         if (!await uow.MaritalStatusRepository.ExistsByIdAsync(id))
             return BadRequest($"La {EntityName} con ID {id} no existe.");
@@ -72,8 +72,11 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     }
 
     [HttpPost]
-    public async Task<ActionResult<MaritalStatusDto>> AddAsync([FromBody] MaritalStatusCreateDto request)
+    public async Task<ActionResult<MaritalStatusDto?>> AddAsync([FromBody] MaritalStatusCreateDto request)
     {
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Code)) return BadRequest("El código es requerido.");
+        
         if (!await uow.MaritalStatusRepository.ExistsByNameAsync(request.Name))
             return BadRequest($"El nombre {request.Name} ya existe.");
 
@@ -92,7 +95,7 @@ public class MaritalStatusesController(IUnitOfWork uow, IMapper mapper, IMarital
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<MaritalStatusDto>> UpdateAsync(
+    public async Task<ActionResult<MaritalStatusDto?>> UpdateAsync(
         [FromRoute] int id, 
         [FromBody] MaritalStatusUpdateDto request
     )
