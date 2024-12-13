@@ -95,12 +95,22 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            string searchParam = param.Search.Replace(" ", "").ToLower();
-
-            query = query.Where(x =>
-                EF.Functions.Like(x.FirstName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
-                EF.Functions.Like(x.LastName.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
-                EF.Functions.Like((x.FirstName + x.LastName).Replace(" ", "").ToLower(), $"%{searchParam}%"));
+            string term = param.Search.ToLower();
+            
+            query = query.Where(
+                x =>
+                    !string.IsNullOrEmpty(x.FirstName) && x.FirstName.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.LastName) && x.LastName.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Sex) && x.Sex.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.PhoneNumberCountryCode) && x.PhoneNumberCountryCode.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.RecommendedBy) && x.RecommendedBy.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.RFC) && x.RFC.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.CURP) && x.CURP.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.CommercialName) && x.CommercialName.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.LegalName) && x.LegalName.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Education) && x.Education.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Post) && x.Post.ToLower().Contains(term)
+            );
         }
 
         query = query.Take(10);

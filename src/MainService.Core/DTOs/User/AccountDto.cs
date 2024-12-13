@@ -4,13 +4,13 @@ namespace MainService.Core.DTOs.User;
 public class AccountDto
 {
     public int Id { get; set; }
-    public string Email { get; set; }
+    public string? Email { get; set; }
     public bool? IsEmailVerified { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? FullName { get; set; }
     public OptionDto? Sex { get; set; }
-    public string Username { get; set; }
+    public string? Username { get; set; }
     public string? PhoneNumber { get; set; }
     public string? PhoneNumberCountryCode { get; set; }
     public bool? IsPhoneNumberVerified { get; set; }
@@ -24,7 +24,7 @@ public class AccountDto
     public int? SpecialtyId { get; set; }
     public List<OptionDto> PaymentMethodTypes { get; set; } = [];
     public bool? RequireAnticipatedCardPayments { get; set; }
-    public string Country { get; set; } = "México";
+    public string? Country { get; set; } = "México";
     public string? State { get; set; }
     public string? City { get; set; }
     public string? Address { get; set; }
@@ -33,7 +33,7 @@ public class AccountDto
     public List<UserMedicalLicenseDto> MedicalLicenses { get; set; } = [];
     public List<WorkScheduleDto> WorkSchedules { get; set; } = [];
     public WorkScheduleSettingsDto? WorkScheduleSettings { get; set; }
-    public DoctorClinicDto[] DoctorClinics { get; set; }
+    public DoctorClinicDto[] DoctorClinics { get; set; } = [];
     public List<DoctorDto> SharedDoctors { get; set; } = [];
     public List<UserMedicalInsuranceCompanyDto> MedicalInsuranceCompanies { get; set; } = [];
     public List<OptionDto> DoctorInsuranceCompanies { get; set; } = [];

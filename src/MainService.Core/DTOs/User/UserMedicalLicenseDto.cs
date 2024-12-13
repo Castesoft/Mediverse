@@ -11,7 +11,7 @@ public class UserMedicalLicenseDto
     /// <para><strong>Emisión:</strong> Otorgada al concluir los estudios de licenciatura en medicina y cumplir con los requisitos de titulación.</para>
     /// <para><strong>Función:</strong> Autoriza al médico para ejercer la medicina en general en todo México.</para>
     /// </remarks>
-    public string LicenseNumber { get; set; }
+    public string? LicenseNumber { get; set; }
     /// <summary>
     /// Cédula de Especialidad
     /// </summary>
@@ -22,7 +22,7 @@ public class UserMedicalLicenseDto
     /// <para><strong>Función:</strong> Permite al médico ejercer su especialidad en todo el país. Es requerido para validar la especialización del médico en actividades específicas.</para>
     /// <para><strong>Nota:</strong> Cada médico tiene una cédula de especialidad única, incluso si comparten la misma área de especialización, como psiquiatría.</para>
     /// </remarks>
-    public string SpecialtyLicense { get; set; }
+    public string? SpecialtyLicense { get; set; }
     /// <summary>
     /// Documento asociado a la cédula profesional o de especialidad.
     /// </summary>
@@ -36,7 +36,7 @@ public class UserMedicalLicenseDto
     /// que pueda ser verificada por instituciones y organizaciones que necesiten confirmar la validez de la licencia médica.
     /// </para>
     /// </remarks>
-    public DocumentDto Document { get; set; }
+    public DocumentDto? Document { get; set; }
     public int SpecialtyId { get; set; }
-    public string SpecialtyName { get; set; }
+    public string? SpecialtyName { get; set; }
 }

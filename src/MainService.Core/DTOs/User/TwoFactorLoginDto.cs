@@ -5,8 +5,8 @@ namespace MainService.Core.DTOs.User
     public class TwoFactorLoginDto
     {
         [Required]
-        public string Email { get; set; }
+        public string? Email { get; set; }
         [Required]
-        public string VerificationCode { get; set; }
+        public string? VerificationCode { get; set; }
     }
 }

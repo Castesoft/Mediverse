@@ -6,106 +6,106 @@ public class DoctorRegisterDto
 {
     [Required]
     [StringLength(500, ErrorMessage = "Los nombres no deben exceder 500 caractéres.")]
-    public string FirstName { get; set; }
+    public string? FirstName { get; set; }
 
     [Required]
     [StringLength(500, ErrorMessage = "Los apellidos no deben exceder 500 caractéres.")]
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
     [Required]
-    public string Gender { get; set; }
-    public string OtherGender { get; set; }
+    public string? Gender { get; set; }
+    public string? OtherGender { get; set; }
 
     [Required]
     [EmailAddress(ErrorMessage = "Email inválido.")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [Required]
-    public DateOnly DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
     [Required]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
     [Required]
     [Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
-    public string ConfirmPassword { get; set; }
+    public string? ConfirmPassword { get; set; }
 
     [Required]
     [Range(typeof(bool), "true", "true", ErrorMessage = "Debes aceptar los términos y condiciones.")]
-    public bool AgreeTerms { get; set; }
+    public bool? AgreeTerms { get; set; }
 
     [Required]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 
     [Required]
-    public string State { get; set; }
+    public string? State { get; set; }
 
     [Required]
-    public string City { get; set; }
+    public string? City { get; set; }
 
     [Required]
-    public string Street { get; set; }
+    public string? Street { get; set; }
 
     [Required]
-    public string Zipcode { get; set; }
+    public string? Zipcode { get; set; }
 
     [Required]
-    public string Neighborhood { get; set; }
+    public string? Neighborhood { get; set; }
 
     [Required]
-    public string ExteriorNumber { get; set; }
-    public string InteriorNumber { get; set; }
+    public string? ExteriorNumber { get; set; }
+    public string? InteriorNumber { get; set; }
 
     [Required]
-    public string SpecialtyId { get; set; }
+    public string? SpecialtyId { get; set; }
 
     [Required]
-    public string AcceptedPaymentMethods { get; set; }
+    public string? AcceptedPaymentMethods { get; set; }
 
     [Required]
-    public bool RequireAnticipatedCardPayments { get; set; }
+    public bool? RequireAnticipatedCardPayments { get; set; }
 
     [Required]
-    public bool SameAddress { get; set; }
+    public bool? SameAddress { get; set; }
 
     [Required]
-    public string BillingState { get; set; }
+    public string? BillingState { get; set; }
 
     [Required]
-    public string BillingCity { get; set; }
+    public string? BillingCity { get; set; }
 
     [Required]
-    public string BillingAddress { get; set; }
+    public string? BillingAddress { get; set; }
 
     [Required]
-    public string BillingZipcode { get; set; }
+    public string? BillingZipcode { get; set; }
 
     [Required]
-    public string BillingNeighborhood { get; set; }
+    public string? BillingNeighborhood { get; set; }
 
     [Required]
-    public string BillingExteriorNumber { get; set; }
-    public string BillingInteriorNumber { get; set; }
+    public string? BillingExteriorNumber { get; set; }
+    public string? BillingInteriorNumber { get; set; }
 
     [Required]
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
 
     [Required]
-    public string StripePaymentMethodId { get; set; }
+    public string? StripePaymentMethodId { get; set; }
 
     [Required]
-    public string Last4 { get; set; }
+    public string? Last4 { get; set; }
 
     [Required]
-    public int ExpirationMonth { get; set; }
+    public int? ExpirationMonth { get; set; }
 
     [Required]
-    public int ExpirationYear { get; set; }
+    public int? ExpirationYear { get; set; }
 
     [Required]
-    public string Brand { get; set; }
+    public string? Brand { get; set; }
 
     [Required]
-    public string Country { get; set; }
+    public string? Country { get; set; }
 
 }

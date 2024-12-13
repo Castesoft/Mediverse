@@ -10,7 +10,9 @@ public class ServicesService(IUnitOfWork uow) : IServicesService
         // if (!await DeletePhotosAsync(advice)) return false;
         // if (!await DeleteInformationAsync(advice)) return false;
         
-        var itemToDelete = await uow.ServiceRepository.GetByIdAsync(item.Id);
+        Service? itemToDelete = await uow.ServiceRepository.GetByIdAsync(item.Id);
+
+        if (itemToDelete == null) return false;
 
         uow.ServiceRepository.Delete(itemToDelete);
 

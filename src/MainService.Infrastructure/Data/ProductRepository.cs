@@ -73,22 +73,33 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
 
     public async Task<List<ProductSummaryDto>> GetSummaryDtosAsync(ProductParams param, ClaimsPrincipal user)
     {
-        var query = context.Products
+        IQueryable<Product> query = context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
             .AsNoTracking()
-            .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider);
+        ;
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            string searchParam = param.Search.Replace(" ", "").ToLower();
-
-            query = query.Where(x =>
-                EF.Functions.Like(x.Name.Replace(" ", "").ToLower(), $"%{searchParam}%") ||
-                EF.Functions.Like(x.Description.Replace(" ", "").ToLower(), $"%{searchParam}%"));
+            string term = param.Search.ToLower();
+            
+            query = query.Where(
+                x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Unit) && x.Unit.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Manufacturer) && x.Manufacturer.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.LotNumber) && x.LotNumber.ToLower().Contains(term) ||
+                    x.Price.HasValue && x.Price.Value.ToString().ToLower().Contains(term) ||
+                    x.Discount.HasValue && x.Discount.Value.ToString().ToLower().Contains(term) ||
+                    x.Dosage.HasValue && x.Dosage.Value.ToString().ToLower().Contains(term)
+            );
         }
 
-        return await query.ToListAsync();
+        return await query
+            .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider)
+            .ToListAsync()
+        ;
     }
 
     public async Task<List<OptionDto>> GetOptionsAsync(ProductParams param)

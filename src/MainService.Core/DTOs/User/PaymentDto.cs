@@ -7,8 +7,8 @@ namespace MainService.Core.DTOs.User
         public int Id { get; set; }
         public decimal Amount { get; set; }
         public DateTime PaymentDate { get; set; }
-        public UserPaymentMethodDto PaymentMethod { get; set; }
-        public OptionDto PaymentMethodType { get; set; }
+        public UserPaymentMethodDto? PaymentMethod { get; set; }
+        public OptionDto? PaymentMethodType { get; set; }
         public int DoctorId { get; set; }
     }
 }
