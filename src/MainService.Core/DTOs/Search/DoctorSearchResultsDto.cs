@@ -7,8 +7,8 @@ namespace MainService.Core.DTOs.Search
     public class DoctorSearchResultsDto
     {
         public List<DoctorSearchResultDto> Doctors { get; set; } = [];
-        public double? Latitude { get; set; } = null;
-        public double? Longitude { get; set; } = null;
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 
     public class DoctorSearchResultDto

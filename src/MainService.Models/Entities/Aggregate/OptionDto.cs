@@ -38,15 +38,15 @@ public class OptionDto
 
 public class Options
 {
-    public int? Id { get; set; } = null;
-    public string? Sex { get; set; } = null;
-    public double? Dosage { get; set; } = null;
-    public string? Unit { get; set; } = null;
-    public string? Description { get; set; } = null;
-    public string? Race { get; set; } = null;
-    public decimal? Price { get; set; } = null;
-    public string? PhotoUrl { get; set; } = null;
-    public bool? IsMain { get; set; } = null;
+    public int? Id { get; set; }
+    public string? Sex { get; set; }
+    public double? Dosage { get; set; }
+    public string? Unit { get; set; }
+    public string? Description { get; set; }
+    public string? Race { get; set; }
+    public decimal? Price { get; set; }
+    public string? PhotoUrl { get; set; }
+    public bool? IsMain { get; set; }
 }
 
 

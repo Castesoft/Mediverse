@@ -22,8 +22,8 @@ namespace MainService.Infrastructure.Services
                 Tax = 0,
                 AmountPaid = 0,
                 AmountDue = 0,
-                PrescriptionOrder = null,
-                OrderAddress = null,
+                PrescriptionOrder = null!,
+                OrderAddress = null!,
                 OrderItems = [],
                 Status = OrderStatus.Pending,
                 DeliveryStatus = OrderDeliveryStatus.Pending
@@ -45,7 +45,7 @@ namespace MainService.Infrastructure.Services
 
             foreach (OrderItem orderItem in order.OrderItems)
             {
-                orderItem.Item = null;
+                orderItem.Item = null!;
             }
 
             order.Tax = order.Subtotal * (decimal)0.16;

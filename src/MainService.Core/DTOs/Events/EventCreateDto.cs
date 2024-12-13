@@ -41,33 +41,33 @@ namespace MainService.Core.DTOs.Events
     public class PatientCreateEventDto
     {
         [Required(ErrorMessage = "El servicio es requerido.")]
-        public OptionDto? Service { get; set; } = null;
+        public OptionDto? Service { get; set; }
 
         [Required(ErrorMessage = "La clínica es requerida.")]
-        public OptionDto? Clinic { get; set; } = null;
+        public OptionDto? Clinic { get; set; }
 
         [Required(ErrorMessage = "La fecha de inicio es requerida.")]
-        public DateTime? DateFrom { get; set; } = null;
+        public DateTime? DateFrom { get; set; }
 
         [Required(ErrorMessage = "La fecha de fin es requerida.")]
-        public DateTime? DateTo { get; set; } = null;
+        public DateTime? DateTo { get; set; }
 
         [Required(ErrorMessage = "La hora de inicio es requerida.")]
-        public string? TimeFrom { get; set; } = null;
+        public string? TimeFrom { get; set; }
 
         [Required(ErrorMessage = "La hora de fin es requerida.")]
-        public string? TimeTo { get; set; } = null;
+        public string? TimeTo { get; set; }
 
         [Required(ErrorMessage = "El doctor es requerido.")]
-        public OptionDto? Doctor { get; set; } = null;
+        public OptionDto? Doctor { get; set; }
 
         [Required(ErrorMessage = "El método de pago es requerido.")]
-        public OptionDto? PaymentMethodType { get; set; } = null;
+        public OptionDto? PaymentMethodType { get; set; }
 
         
-        public OptionDto? MedicalInsuranceCompany { get; set; } = null;
-        public string? StripePaymentMethodId { get; set; } = null;
-        public bool? HasPatientInformationAccess { get; set; } = null;
+        public OptionDto? MedicalInsuranceCompany { get; set; }
+        public string? StripePaymentMethodId { get; set; }
+        public bool? HasPatientInformationAccess { get; set; }
     }
 
     

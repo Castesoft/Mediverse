@@ -3,5 +3,5 @@
 namespace MainService.Core.Helpers.Params;
 public class ProductParams : BaseParams
 {
-    public int? DoctorId { get; set; } = null;
+    public int? DoctorId { get; set; }
 }

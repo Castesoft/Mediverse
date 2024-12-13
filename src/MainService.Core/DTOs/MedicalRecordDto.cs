@@ -140,113 +140,113 @@ namespace MainService.Core.DTOs
     
 
     public class MedicalRecordUpdateFamilyMemberDto {
-        public int? Age { get; set; } = null;
-        public string? Name { get; set; } = null;
-        public OptionDto? RelativeType { get; set; } = null;
+        public int? Age { get; set; }
+        public string? Name { get; set; }
+        public OptionDto? RelativeType { get; set; }
     }
 
     public class MedicalRecordUpdatePersonalDiseaseDto {
-        public OptionDto? Disease { get; set; } = null;
-        public string? Description { get; set; } = null;
-        public string? Other { get; set; } = null;
+        public OptionDto? Disease { get; set; }
+        public string? Description { get; set; }
+        public string? Other { get; set; }
     }
 
     public class MedicalRecordUpdateFamilyDiseaseDto {
-        public OptionDto? RelativeType { get; set; } = null;
-        public DiseaseDto? Disease { get; set; } = null;
-        public string? Description { get; set; } = null;
-        public string? Other { get; set; } = null;
+        public OptionDto? RelativeType { get; set; }
+        public DiseaseDto? Disease { get; set; }
+        public string? Description { get; set; }
+        public string? Other { get; set; }
     }
 
     public class MedicalRecordUpdatePersonalSubstanceDto {
-        public SubstanceDto? Substance { get; set; } = null;
-        public ConsumptionLevelDto? ConsumptionLevel { get; set; } = null;
-        public int? StartAge { get; set; } = null;
-        public int? EndAge { get; set; } = null;
-        public bool? IsCurrent { get; set; } = null;
-        public string? Other { get; set; } = null;
+        public SubstanceDto? Substance { get; set; }
+        public ConsumptionLevelDto? ConsumptionLevel { get; set; }
+        public int? StartAge { get; set; }
+        public int? EndAge { get; set; }
+        public bool? IsCurrent { get; set; }
+        public string? Other { get; set; }
     }
 
     public class MedicalRecordUpdateCompanionDto {
-        public int? Age { get; set; } = null;
-        public string? Name { get; set; } = null;
-        public OptionDto? Sex { get; set; } = null;
-        public string? Address { get; set; } = null;
-        public string? HomePhone { get; set; } = null;
-        public string? PhoneNumber { get; set; } = null;
-        public string? Email { get; set; } = null;
-        public OptionDto? RelativeType { get; set; } = null;
-        public OptionDto? Occupation { get; set; } = null;
+        public int? Age { get; set; }
+        public string? Name { get; set; }
+        public OptionDto? Sex { get; set; }
+        public string? Address { get; set; }
+        public string? HomePhone { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Email { get; set; }
+        public OptionDto? RelativeType { get; set; }
+        public OptionDto? Occupation { get; set; }
     }
 
     public class MedicalRecordUpdateDto {
         [Required(ErrorMessage = "El nombre es requerido.")]
         [StringLength(500, ErrorMessage = "El nombre no puede exceder los 500 caracteres.")]
-        public string? PatientName { get; set; } = null;
+        public string? PatientName { get; set; }
 
         [Required(ErrorMessage = "La edad es requerida.")]
         [Range(1, 150, ErrorMessage = "La edad debe estar entre 1 y 150 años.")]
-        public int? Age { get; set; } = null;
+        public int? Age { get; set; }
 
         [Required(ErrorMessage = "El sexo es requerido.")]
-        public OptionDto? Sex { get; set; } = null;
+        public OptionDto? Sex { get; set; }
 
         [Required(ErrorMessage = "El lugar de nacimiento es requerido.")]
         [StringLength(500, ErrorMessage = "El lugar de nacimiento no puede exceder los 500 caracteres.")]
-        public string? BirthPlace { get; set; } = null;
+        public string? BirthPlace { get; set; }
 
         [Required(ErrorMessage = "La fecha de nacimiento es requerida.")]
-        public DateTime? BirthDate { get; set; } = null;
+        public DateTime? BirthDate { get; set; }
 
         [Required(ErrorMessage = "Los años de escolaridad son requeridos.")]
         [Range(1, 50, ErrorMessage = "Los años de escolaridad deben estar entre 1 y 50 años.")]
-        public int? YearsOfSchooling { get; set; } = null;
+        public int? YearsOfSchooling { get; set; }
 
         [Required(ErrorMessage = "La dominancia manual es requerida.")]
-        public OptionDto? HandDominance { get; set; } = null;
+        public OptionDto? HandDominance { get; set; }
 
         [Required(ErrorMessage = "La situación de vida actual es requerida.")]
         [StringLength(500, ErrorMessage = "La situación de vida actual no puede exceder los 500 caracteres.")]
-        public string? CurrentLivingSituation { get; set; } = null;
+        public string? CurrentLivingSituation { get; set; }
 
         [Required(ErrorMessage = "La dirección actual es requerida.")]
         [StringLength(500, ErrorMessage = "La dirección actual no puede exceder los 500 caracteres.")]
-        public string? CurrentAddress { get; set; } = null;
+        public string? CurrentAddress { get; set; }
 
-        public string? HomePhone { get; set; } = null;
+        public string? HomePhone { get; set; }
 
         [Required(ErrorMessage = "El teléfono móvil es requerido.")]
         [StringLength(50, ErrorMessage = "El teléfono móvil no puede exceder los 50 caracteres.")]
-        public string? MobilePhone { get; set; } = null;
+        public string? MobilePhone { get; set; }
 
         [Required(ErrorMessage = "El correo electrónico es requerido.")]
         [StringLength(500, ErrorMessage = "El correo electrónico no puede exceder los 500 caracteres.")]
         [EmailAddress(ErrorMessage = "El correo electrónico no es válido.")]
-        public string? Email { get; set; } = null;
+        public string? Email { get; set; }
 
-        public string? EconomicDependence { get; set; } = null;
+        public string? EconomicDependence { get; set; }
 
         [Required(ErrorMessage = "La asistencia es requerida.")]
-        public bool? HasCompanion { get; set; } = null;
+        public bool? HasCompanion { get; set; }
 
         [Required(ErrorMessage = "El uso de lentes o audífonos es requerido.")]
-        public bool? UsesGlassesOrHearingAid { get; set; } = null;
-        public string? Comments { get; set; } = null;
+        public bool? UsesGlassesOrHearingAid { get; set; }
+        public string? Comments { get; set; }
 
-        public MedicalRecordUpdateCompanionDto? Companion { get; set; } = null;
+        public MedicalRecordUpdateCompanionDto? Companion { get; set; }
 
 
 
         [Required(ErrorMessage = "El nivel de educación es requerido.")]
-        public OptionDto? EducationLevel { get; set; } = null;
+        public OptionDto? EducationLevel { get; set; }
 
         [Required(ErrorMessage = "La ocupación es requerida.")]
-        public OptionDto? Occupation { get; set; } = null;
+        public OptionDto? Occupation { get; set; }
 
         [Required(ErrorMessage = "El estado civil es requerido.")]
-        public OptionDto? MaritalStatus { get; set; } = null;
+        public OptionDto? MaritalStatus { get; set; }
 
-        public OptionDto? ColorBlindness { get; set; } = null;
+        public OptionDto? ColorBlindness { get; set; }
 
         public List<MedicalRecordUpdateFamilyMemberDto> FamilyMembers { get; set; } = [];
         public List<MedicalRecordUpdatePersonalDiseaseDto> PersonalMedicalHistory { get; set; } = [];
