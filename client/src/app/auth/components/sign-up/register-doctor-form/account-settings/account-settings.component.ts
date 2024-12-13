@@ -17,7 +17,6 @@ export class AccountSettingsComponent {
   private bsModalService = inject(BsModalService);
   public controlContainer = inject(ControlContainer);
 
-  submitted = input.required<boolean>();
   myForm!: FormGroup;
 
   ngOnInit() {

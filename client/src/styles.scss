@@ -1,38 +1,91 @@
 @use '@angular/material' as mat;
+@use 'public/styles/m3-theme';
 
 mat.$theme-ignore-duplication-warnings: true;
 
 @include mat.core();
+@include mat.strong-focus-indicators();
 
-// Define a dark theme
-$dark-theme: mat.m2-define-dark-theme((
- color: (
-   primary: mat.m2-define-palette(mat.$m2-blue-grey-palette),
-   accent: mat.m2-define-palette(mat.$m2-blue-grey-palette),
- ),
-  typography: mat.m2-define-typography-config(),
-  density: 0,
-));
+:root {
+  @include mat.button-overrides((
+    protected-container-elevation-shadow: transparent,
+    protected-disabled-container-elevation-shadow: transparent,
+  ));
 
-// Define a light theme
-$light-theme: mat.m2-define-light-theme((
- color: (
-   primary: mat.m2-define-palette(mat.$m2-indigo-palette),
-   accent: mat.m2-define-palette(mat.$m2-indigo-palette),
- ),
-));
+  @include mat.fab-overrides((
+    container-elevation-shadow: transparent,
+    small-container-elevation-shadow: transparent,
+    extended-container-elevation-shadow: transparent,
+  ));
 
-@include mat.all-component-themes($light-theme);
+  @include mat.table-overrides((
+    row-item-outline-color: transparent,
+    // background-color: transparent,
+  ));
 
-.dark-theme {
-  @include mat.all-component-themes($dark-theme);
+
+
+  @include mat.expansion-overrides((
+    container-background-color: transparent,
+  ));
+
+
+//   @include mat.sidenav-overrides((
+//     container-background-color: orange,
+//     container-text-color: red,
+//   ));
+}
+
+html {
+  @include mat.system-level-colors(m3-theme.$light-theme);
+  @include mat.system-level-typography(m3-theme.$light-theme);
+  @include mat.all-component-themes(m3-theme.$light-theme);
+  @include mat.button-theme(m3-theme.$light-theme);
+  @include mat.strong-focus-indicators-theme(m3-theme.$light-theme);
+
+  .dark-theme {
+    @include mat.system-level-colors(m3-theme.$dark-theme);
+    @include mat.system-level-typography(m3-theme.$dark-theme);
+    @include mat.all-component-themes(m3-theme.$dark-theme);
+    @include mat.button-theme(m3-theme.$dark-theme);
+    @include mat.strong-focus-indicators-theme(m3-theme.$dark-theme);
+  }
 }
 
 /* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
 // body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(211, 211, 211, 0.5);
+  border-radius: 20px;
+  border: none;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
+html,
+body {
+  height: 100%;
+}
+
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 130px;
 }
 
 .menu-item{
@@ -146,5 +199,9 @@ html {
 }
 
 .mat-mdc-dialog-surface {
-  background-color: transparent!important;
+  // background-color: transparent!important;
+}
+
+.was-validated .form-control:invalid, .form-control.is-invalid {
+  border-color: var(--bs-form-invalid-border-color) !important;
 }

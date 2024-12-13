@@ -1,30 +1,72 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, effect, inject, signal, ViewChild } from '@angular/core';
 import { AsideStepperComponent } from './aside-stepper/aside-stepper.component';
 import { BottomLinksComponent } from '../bottom-links.component';
 import { FormActionsComponent } from './form-actions/form-actions.component';
-import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControlOptions, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccoutTypeSelectorComponent } from "./accout-type-selector/accout-type-selector.component";
 import { RegisterPatientFormComponent } from "./register-patient-form/register-patient-form.component";
 import { RegisterDoctorFormComponent } from './register-doctor-form/register-doctor-form.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { AccountCompletedComponent } from './account-completed/account-completed.component';
+import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ValidationService } from 'src/app/_services/validation.service';
+import { createId } from '@paralleldrive/cuid2';
+import { BadRequest } from 'src/app/_models/forms/error';
+import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [ReactiveFormsModule, AsideStepperComponent, FormActionsComponent, BottomLinksComponent, AccoutTypeSelectorComponent, RegisterPatientFormComponent, RegisterDoctorFormComponent, AccountCompletedComponent],
+  imports: [ReactiveFormsModule, FormsModule, AsideStepperComponent, FormActionsComponent, BottomLinksComponent, AccoutTypeSelectorComponent,
+    RegisterPatientFormComponent, RegisterDoctorFormComponent, AccountCompletedComponent, Forms2Module,],
   templateUrl: './sign-up.component.html',
-  styleUrl: './sign-up.component.scss'
 })
 export class SignUpComponent {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private validation = inject(ValidationService);
   private accountService = inject(AccountService);
   fb = inject(FormBuilder);
   @ViewChild('registerDoctor') registerDoctor!: RegisterDoctorFormComponent;
 
-  currentStep = 1;
-  accountType: 'patient' | 'doctor' = 'patient';
-  submitted = false;
-  isSubmittingApi = false;
+  currentStep = signal<number>(1);
+  accountType = signal<'patient' | 'doctor'>('patient');
+  formId = signal<string>(createId());
+  isSubmittingApi = signal<boolean>(false);
+
+  constructor() {
+    const type = this.route.snapshot.queryParams['type'];
+
+    if (type === 'doctor') {
+      this.accountType.set('doctor');
+    } else if (type === 'patient') {
+      this.accountType.set('patient');
+      this.formId.set(this.patientRegisterForm().id);
+    }
+
+    const step = this.route.snapshot.queryParams['step'];
+
+    if (step) {
+      this.currentStep.set(+step);
+    }
+
+    effect(() => {
+      const patientFormCopy = this.patientRegisterForm();
+      patientFormCopy.validation = this.validation.active();
+      this.patientRegisterForm.set(patientFormCopy);
+
+      if (this.accountType() === 'doctor') {
+        this.router.navigate([], { queryParams: { type: 'doctor' }, queryParamsHandling: 'merge' });
+      } else if (this.accountType() === 'patient') {
+        this.router.navigate([], { queryParams: { type: 'patient' }, queryParamsHandling: 'merge' });
+        this.formId.set(this.patientRegisterForm().id);
+      }
+
+      this.router.navigate([], { queryParams: { step: this.currentStep() }, queryParamsHandling: 'merge' });
+
+    });
+  }
 
   steps = [
     { number: 1, title: 'Tipo de cuenta', subtitle: 'Selecciona tu tipo de cuenta' }
@@ -44,17 +86,7 @@ export class SignUpComponent {
     { number: 5, title: 'Completada', subtitle: 'Su cuenta ha sido creada' },
   ]
 
-  patientForm: FormGroup = this.fb.group({
-    firstname            : [ '', [Validators.required, Validators.minLength(3)] ],
-    lastname             : [ '', [Validators.required, Validators.minLength(3)] ],
-    gender                : [ 'Masculino', [Validators.required] ],
-    email                 : [ '', [Validators.required, Validators.pattern(this.accountService.emailPattern)] ],
-    password              : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
-    confirmpassword               : [ '', [Validators.required] ],
-    agreeterms  : [false, [this.accountService.termsAndConditionsValidator] ]
-  },{
-    validators: [this.accountService.equalFields('password','confirmpassword')]
-  } as AbstractControlOptions);
+  patientRegisterForm = signal(new PatientRegisterForm());
 
   doctorForm: FormGroup = this.fb.group({
     accountSettingsForm: this.fb.group({
@@ -104,62 +136,81 @@ export class SignUpComponent {
   });
 
   get formSteps() {
-    if (this.currentStep === 1) return this.steps;
-    if (this.accountType === 'patient') return this.stepsPatient;
+    if (this.currentStep() === 1) return this.steps;
+    if (this.accountType() === 'patient') return this.stepsPatient;
     return this.stepsDoctor;
   }
 
   selectAccountType(type: string) {
-    this.accountType = type as "patient" | "doctor";
+    this.accountType.set(type as "patient" | "doctor");
   }
 
   onNextStep() {
-    if (this.accountType === 'doctor') {
-      if (this.currentStep === 2) {
-        this.submitted = true;
+    if (this.accountType() === 'doctor') {
+      if (this.currentStep() === 2) {
+        // this.submitted = true;
         if (!this.doctorForm.get('accountSettingsForm')?.valid) {
           return;
         }
-        this.submitted = false;
-      } else if (this.currentStep == 3) {
-        this.submitted = true;
+        // this.submitted = false;
+      } else if (this.currentStep() === 3) {
+        // this.submitted = true;
         if (!this.doctorForm.get('accountDetailsForm')?.valid) {
           return;
         }
-        this.submitted = false;
+        // this.submitted = false;
       }
     }
 
-    this.currentStep = this.currentStep + 1;
+    this.currentStep.set(this.currentStep() + 1);
   }
 
   onPreviousStep() {
-    this.submitted = false;
-    this.currentStep = this.currentStep - 1
+    // this.submitted = false;
+    this.currentStep.set(this.currentStep() - 1);
+  }
+
+  submitPatientRegisterForm() {
+    this.patientRegisterForm().submitted = true;
+    this.isSubmittingApi.set(true);
+    if (this.patientRegisterForm().submittable) {
+      this.accountService.register(this.patientRegisterForm().value).subscribe({
+        next: _ => {
+          this.currentStep.set(this.currentStep() + 1);
+          this.isSubmittingApi.set(false);
+        },
+        error: (error: BadRequest) => {
+          this.patientRegisterForm().error = error;
+          this.isSubmittingApi.set(false);
+        }
+      });
+    }
+  }
+
+  submitDoctorRegisterForm() {
+
   }
 
   async onSubmit() {
-    this.submitted = true;
-
-    if (this.accountType === 'patient') {
-      if (!this.patientForm.valid) {
-        return;
-      }
-      this.isSubmittingApi = true;
-
-      this.accountService.register(this.patientForm.value).subscribe({
-        next: _ => {
-          this.currentStep++;
-          this.isSubmittingApi = false;
-        },
-      });
+    switch (this.accountType()) {
+      case 'doctor':
+        this.submitDoctorRegisterForm();
+        break;
+      case 'patient':
+        this.submitPatientRegisterForm();
+        break;
+      default:
+        break;
     }
 
-    if (this.accountType === 'doctor') {
+    console.log('submit');
+
+    // this.submitted = true;
+    if (this.accountType() === 'doctor') {
       if (!this.doctorForm.valid || !this.registerDoctor.billingDetails.stripe || !this.registerDoctor.billingDetails.cardNumber) {
         return;
       }
-      this.isSubmittingApi = true;
+      this.isSubmittingApi.set(true);
 
       const paymentMethod = await this.registerDoctor.billingDetails.stripe?.createPaymentMethod({
         type: 'card',
@@ -194,8 +245,8 @@ export class SignUpComponent {
 
       this.accountService.registerDoctor(formData).subscribe({
         next: _ => {
-          this.currentStep++;
-          this.isSubmittingApi = false;
+          this.currentStep.set(this.currentStep() + 1);
+          this.isSubmittingApi.set(false);
         },
       });
     }

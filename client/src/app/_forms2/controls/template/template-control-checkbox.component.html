@@ -1,0 +1,17 @@
+<label class="form-check form-check-custom form-check-solid form-check-inline">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    [formControl]="control()" [id]="control().id">
+  <span class="form-check-label fw-semibold text-gray-700 fs-6">
+
+    @if(customLabel() === undefined) {
+      {{ control().label }}
+    } @else {
+      <div #customLabel>
+        <ng-content></ng-content>
+      </div>
+    }
+  </span>
+</label>
+<div templateInvalidFeedback [(control)]="control"></div>

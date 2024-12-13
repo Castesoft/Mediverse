@@ -10,14 +10,14 @@
                     </i>
                 </span> -->
             </h2>
-            <div class="text-muted fw-semibold fs-6">Si necesitas más información, entra a la 
+            <div class="text-muted fw-semibold fs-6">Si necesitas más información, entra a la
             <a href="#" class="link-primary fw-bold">Página de ayuda</a>.</div>
         </div>
         <div class="fv-row">
             <div class="row">
 
                 <div class="col-lg-6" (click)="selectAccountType('patient')">
-                    <input type="radio" class="btn-check" name="account_type" value="personal" [checked]="selectedAccountType() === 'patient'" id="kt_create_account_form_account_type_personal" />
+                    <input type="radio" class="btn-check" name="account_type" value="personal" [checked]="accountType() === 'patient'" id="kt_create_account_form_account_type_personal" />
                     <label class="btn btn-outline btn-outline-dashed btn-active-light-primary p-7 d-flex align-items-center mb-10" for="kt_create_account_form_account_type_personal">
                         <i class="ki-duotone ki-badge fs-3x me-5">
                             <span class="path1"></span>
@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="col-lg-6" (click)="selectAccountType('doctor')">
-                    <input type="radio" class="btn-check" name="account_type" value="corporate" [checked]="selectedAccountType() === 'doctor'" id="kt_create_account_form_account_type_corporate" />
+                    <input type="radio" class="btn-check" name="account_type" value="corporate" [checked]="accountType() === 'doctor'" id="kt_create_account_form_account_type_corporate" />
                     <label class="btn btn-outline btn-outline-dashed btn-active-light-primary p-7 d-flex align-items-center" for="kt_create_account_form_account_type_corporate">
                         <i class="ki-duotone ki-briefcase fs-3x me-5">
                             <span class="path1"></span>

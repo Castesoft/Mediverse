@@ -79,6 +79,7 @@
               "public/sass/style.scss",
               "public/sass/plugins.scss",
               "node_modules/quill/dist/quill.snow.css",
+              "public/styles/m3-theme.scss",
               "src/styles.scss"
             ],
             "scripts": [

@@ -13,7 +13,6 @@ import { environment } from 'src/environments/environment';
   standalone: true,
   imports: [ReactiveFormsModule, InputControlComponent, ControlCheckComponent, ControlSelectComponent],
   templateUrl: './billing-details.component.html',
-  styleUrl: './billing-details.component.scss'
 })
 export class BillingDetailsComponent implements OnInit {
   public controlContainer = inject(ControlContainer);
@@ -28,7 +27,6 @@ export class BillingDetailsComponent implements OnInit {
   cardCvc?: StripeCardCvcElement;
   cardErrors: any;
 
-  submitted = input.required<boolean>();
   myForm!: FormGroup;
 
   states: string[] = this.utilsService.states;

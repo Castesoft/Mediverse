@@ -1,4 +1,4 @@
-import { Component, inject, input, ViewChild } from '@angular/core';
+import { Component, inject, input, model, ViewChild } from '@angular/core';
 import { AccountSettingsComponent } from './account-settings/account-settings.component';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { BillingDetailsComponent } from './billing-details/billing-details.component';
@@ -9,15 +9,13 @@ import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms
   standalone: true,
   imports: [ReactiveFormsModule, AccountSettingsComponent, AccountDetailsComponent, BillingDetailsComponent],
   templateUrl: './register-doctor-form.component.html',
-  styleUrl: './register-doctor-form.component.scss'
 })
 export class RegisterDoctorFormComponent {
   public controlContainer = inject(ControlContainer);
   @ViewChild('billingDetails') billingDetails!: BillingDetailsComponent;
   @ViewChild('accountDetails') accountDetails!: AccountDetailsComponent;
-  
-  currentStep = input.required<number>();
-  submitted = input.required<boolean>();
+
+  currentStep = model.required<number>();
   myForm!: FormGroup;
 
   ngOnInit() {

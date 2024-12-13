@@ -15,7 +15,6 @@ import { AddressesService } from 'src/app/addresses/addresses.config';
   standalone: true,
   imports: [ReactiveFormsModule, InputControlComponent, ControlSelectComponent, ControlCheckListComponent],
   templateUrl: './account-details.component.html',
-  styleUrl: './account-details.component.scss'
 })
 export class AccountDetailsComponent {
   public controlContainer = inject(ControlContainer);
@@ -23,7 +22,6 @@ export class AccountDetailsComponent {
   private accountService = inject(AccountService);
   private addressesService = inject(AddressesService);
 
-  submitted = input.required<boolean>();
   myForm!: FormGroup;
   states: string[] = this.utilsService.states;
   get citiesList() {

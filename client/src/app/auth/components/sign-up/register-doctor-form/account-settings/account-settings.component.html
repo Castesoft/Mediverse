@@ -1,5 +1,5 @@
 <form
-    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" 
+    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
     novalidate="novalidate"
     id="kt_sign_up_form"
     [formGroup]="myForm">
@@ -26,7 +26,6 @@
                 [label]="'Nombre(s)'"
                 [type]="'text'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 [errors]="{
                     required: 'El nombre es requerido.'
                 }"
@@ -41,7 +40,6 @@
                 [label]="'Apellidos'"
                 [type]="'text'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 [errors]="{
                     required: 'Los apellidos son requeridos.'
                 }"
@@ -56,7 +54,6 @@
         [label]="'Correo electrónico'"
         [type]="'text'"
         [placeholder]="''"
-        [submitted]="submitted()"
         [errors]="{
             required: 'El correo electrónico es requerido.',
             pattern: 'El correo electrónico no es válido.'
@@ -70,7 +67,6 @@
         [label]="'Teléfono'"
         [type]="'tel'"
         [placeholder]="''"
-        [submitted]="submitted()"
         [errors]="{
             required: 'El teléfono es requerido.',
             pattern: 'El teléfono no es válido.'
@@ -86,7 +82,6 @@
             [label]="'Contraseña'"
             [type]="'password'"
             [placeholder]="''"
-            [submitted]="submitted()"
             [errors]="{
                 required: 'La contraseña es requerida.',
                 pattern: 'La contraseña debe contener una mayúscula, una minuscula, un número y un símbolo.'
@@ -117,14 +112,13 @@
         [label]="'Confirmar contraseña'"
         [type]="'password'"
         [placeholder]="''"
-        [submitted]="submitted()"
         [errors]="{
             required: 'La confirmación de contraseña es requerida.',
         }"
     ></div>
 
     <div class="fv-row fv-plugins-icon-container">
-        <div controlCheck formControlName="AgreeTerms" [submitted]="submitted()">
+        <div controlCheck formControlName="AgreeTerms">
             <span class="form-check-label fw-semibold text-gray-700 fs-6">
                 Estoy de acuerdo con los <a (click)="openTermsAndConditionsModal()" class="ms-1 link-primary" style="cursor: pointer;">Términos y condiciones</a>.
             </span>

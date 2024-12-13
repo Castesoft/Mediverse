@@ -1,11 +1,11 @@
 <div class="mr-2">
     @if (currentStep() === 1) {
-        <button type="button" class="btn btn-lg btn-light-primary me-4" data-kt-stepper-action="previous" (click)="navigateToLogin()">
+        <button type="button" class="btn btn-lg btn-light-primary me-4" (click)="navigateToLogin()">
             Ir a inicio de sesión
         </button>
     }
     @if (currentStep() > 1 && currentStep() < totalSteps()) {
-        <button type="button" [disabled]="isSubmittingApi()" class="btn btn-lg btn-light-primary me-4" data-kt-stepper-action="previous" (click)="previousStep()">
+        <button type="button" [disabled]="isSubmittingApi()" class="btn btn-lg btn-light-primary me-4" (click)="previousStep()">
             <i class="ki-duotone ki-arrow-left fs-4 me-1">
                 <span class="path1"></span>
                 <span class="path2"></span>
@@ -14,12 +14,12 @@
         </button>
     }
     @if (currentStep() === totalSteps() && totalSteps() !== 1) {
-        <a (click)="router.navigateByUrl('/account')" class="btn btn-lg btn-primary me-3" data-kt-stepper-action="final">Entrar a mi cuenta</a>
+        <a (click)="router.navigateByUrl('/account')" class="btn btn-lg btn-primary me-3">Entrar a mi cuenta</a>
     }
 </div>
 <div>
     @if (currentStep() === totalSteps() - 1) {
-        <button type="button" [disabled]="isSubmittingApi()" class="btn btn-lg btn-primary" style="width: 120px;" data-kt-stepper-action="submit" (click)="submit()">
+        <button type="submit" [disabled]="isSubmittingApi()" class="btn btn-lg btn-primary" style="width: 120px;" [attr.form]="formId()">
             @if (!isSubmittingApi()) {
                 <span class="indicator-label">
                     Enviar
@@ -34,7 +34,7 @@
         </button>
     }
     @if (currentStep() < totalSteps() - 1 || totalSteps() === 1) {
-        <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next" (click)="nextStep()">
+        <button type="button" class="btn btn-lg btn-primary" (click)="nextStep()">
             Continuar
             <i class="ki-duotone ki-arrow-right fs-4 ms-1">
                 <span class="path1"></span>

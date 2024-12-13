@@ -5,20 +5,20 @@ import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 import { MaterialModule } from "src/app/_shared/material.module";
 
 @Component({
-  host: { class: '', },
-  selector: 'div[invalidFeedback3]',
+  host: { class: 'fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback', },
+  selector: 'div[templateInvalidFeedback]',
   template: `
   @if(root().submitted === true) {
     @for(message of control().errorMessages; let idx = $index; track idx) {
-      <mat-error>{{ message }}</mat-error>
+      {{ message }}
     }
   }
   `,
   standalone: true,
-  imports: [ CommonModule, MaterialModule, ],
+  imports: [ CommonModule, ],
   providers: [ DatePipe ],
 })
-export class InvalidFeedback3Component {
+export class TemplateInvalidFeedbackComponent {
   datePipe = inject(DatePipe);
 
   root = computed<FormGroup2<any>>(() => {
@@ -35,3 +35,4 @@ export class InvalidFeedback3Component {
     });
   }
 }
+

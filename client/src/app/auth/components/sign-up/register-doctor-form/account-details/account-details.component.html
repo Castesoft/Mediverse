@@ -18,7 +18,6 @@
                 [label]="'Código postal'"
                 [type]="'tel'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 (input)="enterZipcode($event)"
                 [errors]="{
                     required: 'El código postal es requerido.'
@@ -34,7 +33,6 @@
                 [label]="'Colonia'"
                 [options]="neighborhoods"
                 [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
-                [submitted]="submitted()"
                 (change)="onNeighborhoodChange($event)"
                 [errors]="{
                     required: 'La colonia es requerida.'
@@ -51,7 +49,6 @@
                 formControlName="City"
                 [label]="'Ciudad'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 [isReadonly]="true"
                 [errors]="{
                     required: 'La ciudad es requerida.'
@@ -66,7 +63,6 @@
                 formControlName="State"
                 [label]="'Estado'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 [isReadonly]="true"
                 [errors]="{
                     required: 'El estado es requerido.'
@@ -84,7 +80,6 @@
                 [label]="'Calle'"
                 [type]="'text'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 [errors]="{
                     required: 'La calle es requerida.'
                 }"
@@ -98,7 +93,6 @@
                 [label]="'No. ext.'"
                 [type]="'tel'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 [errors]="{
                     required: 'El número exterior es requerido.'
                 }"
@@ -112,7 +106,6 @@
                 [label]="'No. int.'"
                 [type]="'tel'"
                 [placeholder]="''"
-                [submitted]="submitted()"
             ></div>
         </div>
     </div>
@@ -126,7 +119,6 @@
                 [label]="'Especialidad'"
                 [placeholder]="''"
                 [options]="specialties"
-                [submitted]="submitted()"
                 [errors]="{
                     required: 'La especialdiad es requerida.'
                 }"
@@ -141,7 +133,6 @@
                 [label]="'Cédula/Certificación'"
                 [type]="'file'"
                 [placeholder]="''"
-                [submitted]="submitted()"
                 [errors]="{
                     required: 'La cédula o certificación es requerida.'
                 }"
@@ -159,7 +150,6 @@
         formControlName="AcceptedPaymentMethods"
         [label]="'Métodos de Pago Aceptados'"
         [options]="$any(paymentMethodTypes)"
-        [submitted]="submitted()"
         [errors]="{
             required: 'Selecciona al menos un método de pago.'
         }"

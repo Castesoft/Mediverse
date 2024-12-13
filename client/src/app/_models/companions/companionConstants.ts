@@ -8,10 +8,13 @@ export const handDominanceOptions: SelectOption[] = [
   new SelectOption({ id: 1, code: 'right', name: 'Diestro' }),
   new SelectOption({ id: 2, code: 'left', name: 'Zurdo' }),
   new SelectOption({ id: 3, code: 'ambidextrous', name: 'Ambidiestro' }),
-];export const sexOptions: SelectOption[] = [
+];
+
+export const sexOptions: SelectOption[] = [
   new SelectOption({ id: 1, code: 'Masculino', name: 'Masculino' }),
   new SelectOption({ id: 2, code: 'Femenino', name: 'Femenino' }),
 ];
+
 export const companionFormInfo: FormInfo<Companion> = {
   id: { label: 'ID', type: 'number' },
   address: { label: 'Domicilio', type: 'text', validators: [Validators.required] },

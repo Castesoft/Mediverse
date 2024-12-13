@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconsService } from 'src/app/_services/icons.service';
 
@@ -13,7 +13,7 @@ import { IconsService } from 'src/app/_services/icons.service';
 })
 export class AsideStepperComponent {
   icons = inject(IconsService);
-  
-  currentStep = input.required<number>();
-  steps = input.required<{number: number, title: string, subtitle: string}[]>();
+
+  currentStep = model.required<number>();
+  steps = model.required<{number: number, title: string, subtitle: string}[]>();
 }

@@ -1,29 +1,26 @@
 declare var google: any;
-import { Component, inject, input } from '@angular/core';
-import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, model, signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
-import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { TermsAndConditionsModalComponent } from '../../terms-and-conditions-modal/terms-and-conditions-modal.component';
+import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
+import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 
 @Component({
   selector: 'app-register-patient-form',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, InputControlComponent, ControlCheckComponent],
+  imports: [RouterLink, ReactiveFormsModule, Forms2Module, ],
   templateUrl: './register-patient-form.component.html',
-  styleUrl: './register-patient-form.component.scss'
 })
 export class RegisterPatientFormComponent {
-  private bsModalService = inject(BsModalService);
-  public controlContainer = inject(ControlContainer);
+  form = model.required<PatientRegisterForm>();
 
-  submitted = input.required<boolean>();
-  myForm!: FormGroup;
+  fromWrapper = signal(false);
+
+  private bsModalService = inject(BsModalService);
 
   ngOnInit() {
-    this.myForm = <FormGroup>this.controlContainer.control;
-
     google.accounts.id.renderButton(document.getElementById('google-btn-signup'), {
       theme: 'outline',
       size: 'large',

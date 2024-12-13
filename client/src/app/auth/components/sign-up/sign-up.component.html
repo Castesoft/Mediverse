@@ -1,51 +1,37 @@
 <div class="d-flex flex-column flex-root h-100">
-    <div class="d-flex flex-column flex-lg-row flex-column-fluid">
-        <div asideStepper
-            [currentStep]="currentStep"
-            [steps]="formSteps"
-        ></div>
+  <div class="d-flex flex-column flex-lg-row flex-column-fluid">
+    <div asideStepper [(currentStep)]="currentStep" [steps]="formSteps"></div>
+    <div class="d-flex flex-column flex-lg-row-fluid py-10">
+      <div class="d-flex flex-center flex-column flex-column-fluid">
 
 
+        <form [id]="formId()" (ngSubmit)="onSubmit()">
+          <div class="w-lg-700px p-10 p-lg-15 mx-auto">
+            @if(patientRegisterForm().error !== null) {
+              <div errorsAlert3 [(error)]="patientRegisterForm().error!"></div>
+            }
 
-        <div class="d-flex flex-column flex-lg-row-fluid py-10">
-            <div class="d-flex flex-center flex-column flex-column-fluid">
-                <div class="w-lg-700px p-10 p-lg-15 mx-auto">
-                    
-                    @if (currentStep === 1) {
-                        <app-accout-type-selector 
-                            [selectedAccountType]="accountType"
-                            (onSelectAccountType)="selectAccountType($event)"
-                        ></app-accout-type-selector>
-                    } @else if (currentStep < formSteps.length) {
-                        @if (accountType === 'patient') {
-                            <app-register-patient-form 
-                                [formGroup]="patientForm"
-                                [submitted]="submitted"
-                            ></app-register-patient-form>
-                        } @else if (accountType === 'doctor') {
-                            <app-register-doctor-form
-                                #registerDoctor
-                                [currentStep]="currentStep"
-                                [formGroup]="doctorForm"
-                                [submitted]="submitted"
-                            ></app-register-doctor-form>
-                        }
-                    } @else {
-                        <app-account-completed></app-account-completed>
-                    }
+            @if (currentStep() === 1) {
+            <app-accout-type-selector [(accountType)]="accountType"></app-accout-type-selector>
+            } @else if (currentStep() < formSteps.length) { @if (accountType()==='patient' ) {
+              <app-register-patient-form [(form)]="patientRegisterForm"></app-register-patient-form>
+              } @else if (accountType() === 'doctor') {
+              <app-register-doctor-form #registerDoctor [(currentStep)]="currentStep"
+                [formGroup]="doctorForm"></app-register-doctor-form>
+              }
+              } @else {
+              <app-account-completed></app-account-completed>
+              }
 
-                    <div formActions
-                        [totalSteps]="formSteps.length"
-                        [currentStep]="currentStep"
-                        [isSubmittingApi]="isSubmittingApi"
-                        (onNextStep)="onNextStep()"
-                        (onPreviousStep)="onPreviousStep()"
-                        (onSubmit)="onSubmit()"
-                    ></div>
+              <div formActions [totalSteps]="formSteps.length" [(currentStep)]="currentStep"
+                [(isSubmittingApi)]="isSubmittingApi" (onNextStep)="onNextStep()" (onPreviousStep)="onPreviousStep()"
+                (onSubmit)="onSubmit()" [(accountType)]="accountType" [(patientRegisterForm)]="patientRegisterForm">
+              </div>
 
-                </div>
-            </div>
-            <div class="d-flex flex-center flex-wrap fs-6 p-5 pb-0" bottomLinks></div>
-        </div>
+          </div>
+        </form>
+      </div>
+      <div class="d-flex flex-center flex-wrap fs-6 p-5 pb-0" bottomLinks></div>
     </div>
+  </div>
 </div>

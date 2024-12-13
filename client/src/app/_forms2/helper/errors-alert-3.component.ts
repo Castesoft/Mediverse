@@ -5,7 +5,7 @@ import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 
 @Component({
-  host: { role: 'alert' },
+  host: { role: 'alert', class: 'alert alert-dismissible bg-light-danger border border-danger border-dashed d-flex flex-column flex-sm-row w-100 p-5 mb-10', },
   selector: 'div[errorsAlert3]',
   templateUrl: './errors-alert-3.component.html',
   // template: `

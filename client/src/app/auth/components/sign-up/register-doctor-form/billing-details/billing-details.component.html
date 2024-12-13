@@ -10,7 +10,7 @@
     </div>
 
     <div class="fv-row fv-plugins-icon-container">
-        <div controlCheck formControlName="SameAddress" [submitted]="submitted()">
+        <div controlCheck formControlName="SameAddress">
             <span class="form-check-label fw-semibold text-gray-700 fs-6">
                 Utilizar mi dirección como dirección de facturación.
             </span>
@@ -27,14 +27,13 @@
                     [label]="'Código postal'"
                     [type]="'tel'"
                     [placeholder]="''"
-                    [submitted]="submitted()"
                     (input)="enterZipcode($event)"
                     [errors]="{
                         required: 'El código postal es requerido.'
                     }"
                 ></div>
             </div>
-    
+
             <div class="col-xl-8">
                 <div
                     class="fv-row fv-plugins-icon-container"
@@ -43,7 +42,6 @@
                     [label]="'Colonia'"
                     [options]="neighborhoods"
                     [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
-                    [submitted]="submitted()"
                     (change)="onNeighborhoodChange($event)"
                     [errors]="{
                         required: 'La colonia es requerida.'
@@ -51,7 +49,7 @@
                 ></div>
             </div>
         </div>
-    
+
         <div class="row mb-5">
             <div class="col-xl-6">
                 <div
@@ -60,14 +58,13 @@
                     formControlName="BillingCity"
                     [label]="'Ciudad'"
                     [placeholder]="''"
-                    [submitted]="submitted()"
                     [isReadonly]="true"
                     [errors]="{
                         required: 'La ciudad es requerida.'
                     }"
                 ></div>
             </div>
-    
+
             <div class="col-xl-6">
                 <div
                     class="fv-row fv-plugins-icon-container"
@@ -75,7 +72,6 @@
                     formControlName="BillingState"
                     [label]="'Estado'"
                     [placeholder]="''"
-                    [submitted]="submitted()"
                     [isReadonly]="true"
                     [errors]="{
                         required: 'El estado es requerido.'
@@ -83,7 +79,7 @@
                 ></div>
             </div>
         </div>
-    
+
         <div class="row mb-5">
             <div class="col-xl-6">
                 <div
@@ -93,7 +89,6 @@
                     [label]="'Calle'"
                     [type]="'text'"
                     [placeholder]="''"
-                    [submitted]="submitted()"
                     [errors]="{
                         required: 'La calle es requerida.'
                     }"
@@ -107,7 +102,6 @@
                     [label]="'No. ext.'"
                     [type]="'tel'"
                     [placeholder]="''"
-                    [submitted]="submitted()"
                     [errors]="{
                         required: 'El número exterior es requerido.'
                     }"
@@ -121,7 +115,6 @@
                     [label]="'No. int.'"
                     [type]="'tel'"
                     [placeholder]="''"
-                    [submitted]="submitted()"
                 ></div>
             </div>
         </div>
@@ -134,7 +127,6 @@
         [label]="'Nombre en la tarjeta'"
         [type]="'text'"
         [placeholder]="''"
-        [submitted]="submitted()"
         [errors]="{
             required: 'El nombre es requerido.'
         }"

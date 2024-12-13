@@ -3,33 +3,33 @@ using System.ComponentModel.DataAnnotations;
 namespace MainService.Core.DTOs.User;
 public class RegisterDto
 {
-[Required]
+    [Required(ErrorMessage = "El nombre es requerido.")]
     [StringLength(500, ErrorMessage = "Los nombres no deben exceder 500 caractéres.")]
     public string? FirstName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Los apellidos son requeridos.")]
     [StringLength(500, ErrorMessage = "Los apellidos no deben exceder 500 caractéres.")]
     public string? LastName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "El sexo es requerido.")]
     public string? Gender { get; set; }
     public string? OtherGender { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "El email es requerido.")]
     [EmailAddress(ErrorMessage = "Email inválido.")]
     public string? Email { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "La fecha de nacimiento es requerida.")]
     public DateOnly? DateOfBirth { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "La contraseña es requerida.")]
     public string? Password { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Debes confirmar la contraseña.")]
     [Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
     public string? ConfirmPassword { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Debes aceptar los términos y condiciones.")]
     [Range(typeof(bool), "true", "true", ErrorMessage = "Debes aceptar los términos y condiciones.")]
     public bool? AgreeTerms { get; set; }
 }
