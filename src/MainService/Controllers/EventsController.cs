@@ -246,8 +246,8 @@ public class EventsController(
             }
         }
 
-        if (!await usersService.AddPatientToDoctorAsync(doctorAsNoTracking.Id, patientAsNoTracking.Id))
-            return BadRequest("Error al agregar el paciente al doctor.");
+        if (!await usersService.AddPatientToDoctorAsync(doctorAsNoTracking.Id, patientAsNoTracking.Id)) 
+        return BadRequest("Error al agregar el paciente al doctor.");
 
         eventToCreate.DateFrom = request.DateFrom.Value;
         eventToCreate.DateTo = request.DateTo.Value;

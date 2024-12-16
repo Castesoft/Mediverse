@@ -11,18 +11,18 @@ import { sortOptions } from "src/app/_models/forms/formConstants";
  * @template T - The type of the entity.
  */
 export class EntityParams<T> {
-  pageNumber = 1;
-  pageSize = 10;
+  pageNumber: number | null = 1;
+  pageSize: number | null = 10;
   search: string | null = null;
-  sort = new SelectOption({ name: "ID", code: "id" });
-  isSortAscending = true;
-  dateRange: DateRange = new DateRange();
+  sort: SelectOption | null = new SelectOption({ name: "ID", code: "id" });
+  isSortAscending: boolean | null = true;
+  dateRange: DateRange | null = new DateRange();
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
   name: string | null = null;
   description: string | null = null;
   key: string | null = null;
-  id = 0;
+  id: number | null = 0;
 
   constructor(key: string | null, init?: Partial<EntityParams<T>>) {
     if (key === null) throw new Error('Key cannot be null');

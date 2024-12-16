@@ -1,9 +1,8 @@
-import { doctorResultInfo } from "../doctors/doctorResults/doctorResultConstants";
-import { FormInfo } from "src/app/_models/forms/formTypes";
-import { Search } from "src/app/_models/search/search";
+import { doctorResultInfo } from 'src/app/_models/doctors/doctorResults/doctorResultConstants';
+import { FormInfo } from 'src/app/_models/forms/formTypes';
+import { Search } from 'src/app/_models/search/search';
 
-
-export const searchInfo: FormInfo<Search> = {
+export const searchFormInfo: FormInfo<Search> = {
   specialty: { type: 'select', label: 'Especialidad', showLabel: false, showCodeSpan: false, },
   location: { type: 'select', label: 'Ubicación', showLabel: false, showCodeSpan: false, },
   pageNumber: { type: 'number', label: 'Página', showLabel: false, },

@@ -1,20 +1,21 @@
 import { HttpParams } from "@angular/common/http";
 import { ParamMap, Params } from "@angular/router";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { DoctorResult } from "../doctors/doctorResults/doctorResult";
+import { EntityParams } from 'src/app/_models/base/entityParams';
+import { Entity } from 'src/app/_models/base/entity';
+import { DoctorResult } from 'src/app/_models/doctors/doctorResults/doctorResult';
 
 
-export class Search {
+export class Search extends EntityParams<Entity> {
   specialty: SelectOption | null = null;
   location: SelectOption | null = null;
   result: DoctorResult = new DoctorResult();
-  pageNumber: number | null = 1;
-  pageSize: number | null = 5;
   tab: string | null = 'general';
   dayNumber: number | null = null;
   scheduleOption: number | null = null;
 
-  constructor(init?: Partial<Omit<Search, 'setFromQueryParamMap' | 'params' | 'httpParams'>>) {
+  constructor(key: string | null, init?: Partial<Omit<Search, 'setFromQueryParamMap' | 'paramsValue'>>) {
+    super(key);
     Object.assign(this, init);
   }
 
@@ -48,57 +49,5 @@ export class Search {
     }
 
     return this;
-  }
-
-  get params(): Params {
-    const params: Params = {};
-
-    if (this.specialty?.id) params['specialtyId'] = this.specialty.id.toString();
-    else params['specialtyId'] = null;
-
-    if (this.specialty?.name) params['specialty'] = this.specialty.name;
-    else params['specialty'] = null;
-
-    if (this.location?.code) params['location'] = this.location.code;
-    else params['location'] = null;
-
-    if (this.location?.name) params['locationName'] = this.location.name;
-    else params['locationName'] = null;
-
-    if (this.result.id) params['doctorId'] = this.result.id.toString();
-    else params['doctorId'] = null;
-
-    if (this.result.fullName) params['doctorName'] = this.result.fullName;
-    else params['doctorName'] = null;
-
-    if (this.pageNumber) params['pageNumber'] = this.pageNumber.toString();
-    else params['pageNumber'] = null;
-
-    if (this.pageSize) params['pageSize'] = this.pageSize.toString();
-    else params['pageSize'] = null;
-
-    if (this.tab) params['tab'] = this.tab;
-    else params['tab'] = null;
-
-    if (this.dayNumber !== null) params['dayNumber'] = this.dayNumber;
-    else params['dayNumber'] = null;
-
-    if (this.scheduleOption !== null) params['scheduleOption'] = this.scheduleOption;
-    else params['scheduleOption'] = null;
-
-    return params;
-  }
-
-  get httpParams(): HttpParams {
-    let params = new HttpParams();
-
-    if (this.specialty?.id) params = params.append('specialtyId', this.specialty.id.toString());
-    if (this.specialty?.name) params = params.append('specialty', this.specialty.name);
-    if (this.location?.code) params = params.append('location', this.location.code);
-    if (this.location?.name) params = params.append('locationName', this.location.name);
-    if (this.pageNumber) params = params.append('pageNumber', this.pageNumber.toString());
-    if (this.pageSize) params = params.append('pageSize', this.pageSize.toString());
-
-    return params;
   }
 }

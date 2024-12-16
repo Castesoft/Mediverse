@@ -1,10 +1,12 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable, inject, signal } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Injectable, effect, inject, signal } from "@angular/core";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { createId } from '@paralleldrive/cuid2';
 import { Observable, tap } from "rxjs";
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchResults } from "src/app/_models/doctorSearchResults";
 import { Search } from "src/app/_models/search/search";
+import { getSearchHttpParams, getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
 import { UtilsService } from "src/app/_services/utils.service";
 import { PaginatedResult, getPaginatedResult } from "src/app/_utils/serviceHelper/pagination/paginatedResult";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
@@ -19,10 +21,14 @@ export class SearchService {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
+  constructor() {
+    
+  }
+
   baseUrl = `${environment.apiUrl}search/`;
   results = signal<SearchResults | null>(null);
   selected = signal<DoctorResult | null>(null);
-  search = signal<Search>(new Search());
+  search = signal<Search>(new Search(createId()));
   pagination = signal<Pagination | null>(null);
   cache = new Map();
   quantity = signal<number>(0);
@@ -35,7 +41,7 @@ export class SearchService {
   markersMap = signal<Map<DoctorResult, google.maps.marker.AdvancedMarkerElement[]>>(new Map<DoctorResult, google.maps.marker.AdvancedMarkerElement[]>());
 
   setSelected(doctor: DoctorResult | null) {
-    const search = new Search({ ...this.search() });
+    const search = new Search(this.search().key, { ...this.search() });
     if (doctor) {
       search.result = new DoctorResult({ id: doctor.id, fullName: doctor.fullName });
     } else {
@@ -51,7 +57,7 @@ export class SearchService {
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: this.search().params,
+      queryParams: getSearchRouteQueryParams(this.search()),
       queryParamsHandling: 'replace'
     });
   }
@@ -63,7 +69,7 @@ export class SearchService {
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: this.search().params,
+      queryParams: getSearchRouteQueryParams(this.search()),
       queryParamsHandling: 'merge'
     });
 
@@ -183,7 +189,9 @@ export class SearchService {
   getSearchResults(options: {ignoreCache: boolean} = {ignoreCache: false}): Observable<PaginatedResult<SearchResults>> {
     this.loading.set(true);
 
-    return getPaginatedResult<SearchResults>(`${this.baseUrl}`, this.search().httpParams, this.http).pipe(
+    const payloadParams: HttpParams = getSearchHttpParams(this.search());
+
+    return getPaginatedResult<SearchResults>(`${this.baseUrl}`, payloadParams, this.http).pipe(
       tap((results) => {
 
         this.loading.set(false);
@@ -191,9 +199,9 @@ export class SearchService {
         if (results.result) {
           this.results.set(results.result);
           this.cache.set(Object.values(this.search()).join('-'), results.result);
-          if (results.result.doctors.length === 0) this.search.set(new Search({ ...this.search(), pageNumber: 1 }));
+          if (results.result.doctors.length === 0) this.search.set(new Search(this.search().key, { ...this.search(), pageNumber: 1 }));
           if (results.result.doctors.length === 0) {
-            this.search.set(new Search({ ...this.search(), pageNumber: 1 }));
+            this.search.set(new Search(this.search().key, { ...this.search(), pageNumber: 1 }));
           } else {
             this.updateData(results.result.doctors);
           }
@@ -201,21 +209,6 @@ export class SearchService {
         if (results.pagination) this.pagination.set(results.pagination);
       })
     );
-  }
-
-  onPageChanged(page: number) {
-    this.search.set(new Search({
-      ...this.search(),
-      pageNumber: page,
-    }));
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { pageNumber: page },
-      queryParamsHandling: 'merge'
-    });
-
-    this.getSearchResults().subscribe();
   }
 
   isTabActive(tab: string): boolean {

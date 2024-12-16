@@ -1,37 +1,70 @@
-import { AvailableDay } from "src/app/_models/availableDay";
-import { Options } from "src/app/_models/base/options";
-import { SelectOption } from "src/app/_models/base/selectOption";
-import { DoctorResult } from "../doctors/doctorResults/doctorResult";
-import { doctorScheduleFormInfo } from "./doctorScheduleConstants";
-import { DoctorSchedule } from "src/app/_models/doctorSchedules/doctorSchedule";
-import { DoctorScheduleFormPayload } from "src/app/_models/doctorSchedules/doctorScheduleFormPayload";
-import { FormControl2 } from "src/app/_models/forms/formControl2";
-import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { MedicalInsuranceCompany } from "src/app/_models/medicalInsuranceCompanies/medicalInsuranceCompany";
-import { PaymentMethodType } from "../paymentMethodTypes/paymentMethodType";
-import { Service } from "src/app/_models/services/service";
-import { Address } from "src/app/_models/addresses/address";
+import { Address } from 'src/app/_models/addresses/address';
+import { AvailableDay } from 'src/app/_models/availableDay';
+import { Options } from 'src/app/_models/base/options';
+import { SelectOption } from 'src/app/_models/base/selectOption';
+import { DoctorResult } from 'src/app/_models/doctors/doctorResults/doctorResult';
+import { DoctorSchedule } from 'src/app/_models/doctorSchedules/doctorSchedule';
+import { doctorScheduleFormInfo } from 'src/app/_models/doctorSchedules/doctorScheduleConstants';
+import { DoctorScheduleFormPayload } from 'src/app/_models/doctorSchedules/doctorScheduleFormPayload';
+import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
+import { MedicalInsuranceCompany } from 'src/app/_models/medicalInsuranceCompanies/medicalInsuranceCompany';
+import { PaymentMethodType } from 'src/app/_models/paymentMethodTypes/paymentMethodType';
+import { Service } from 'src/app/_models/services/service';
 
 export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
+
+  doctorResult: DoctorResult | null = null;
 
   constructor() {
     super(DoctorSchedule, new DoctorSchedule(), doctorScheduleFormInfo);
   }
 
-  patch(value: DoctorResult, selectedSchedule: AvailableDay) {
-    console.log('value:', value);
+  setDoctorResult(value: DoctorResult | null): this {
+    if (value === null) throw new Error('Doctor result is null');
 
-    const doctor = new DoctorResult({ ...value, });
+    this.doctorResult = new DoctorResult({ ...value, });
 
-    this.controls.doctor.patchValue(doctor);
+    return this;
+  }
 
-    this.controls.clinic.selectOptions = doctor.addresses.map(address => {
+  patchDoctor(): this {
+    if (this.doctorResult === null) throw new Error('Doctor result is not set');
+
+    this.controls.doctor.patchValue(this.doctorResult);
+
+    this.controls.hasPatientInformationAccess.patchValue(this.doctorResult.hasPatientInformationAccess);
+
+    return this;
+  }
+
+  patchClinics(): this {
+    if (this.doctorResult === null) throw new Error('Doctor result is not set');
+
+    this.controls.clinic.selectOptions = this.doctorResult.addresses.map(address => {
       const constructedAddress = new Address({ ...address });
 
       return new SelectOption({ id: constructedAddress.id!, name: constructedAddress.address, code: constructedAddress.address, enabled: constructedAddress.enabled, visible: constructedAddress.visible });
     });
 
-    this.controls.service.selectOptions = doctor.services.map(service => {
+    if (this.doctorResult!.addresses.length === 1) {
+      const address = this.doctorResult!.addresses[0]!;
+
+      this.controls.clinic.patchValue(new SelectOption({
+        code: address.code!,
+        enabled: address.enabled,
+        id: address.id!,
+        name: address.name!,
+        visible: address.visible,
+      }));
+    }
+
+    return this;
+  }
+
+  patchServices(): this {
+    if (this.doctorResult === null) throw new Error('Doctor result is not set');
+
+    this.controls.service.selectOptions = this.doctorResult.services.map(service => {
       const constructedService = new Service({ ...service });
 
       let optionToReturn = new SelectOption({
@@ -46,11 +79,20 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
         optionToReturn.options = new Options({ price: service.options.price });
       }
 
-      // console.log(constructedService, service);
       return optionToReturn;
     });
 
-    this.controls.medicalInsuranceCompany.selectOptions = doctor.medicalInsuranceCompanies.map(medicalInsuranceCompany => {
+    if (this.doctorResult!.services.length === 1) {
+      this.controls.service.patchValue(new SelectOption({ ...this.doctorResult!.services[0] }));
+    }
+
+    return this;
+  }
+
+  patchMedicalInsuranceCompanies(): this {
+    if (this.doctorResult === null) throw new Error('Doctor result is not set');
+
+    this.controls.medicalInsuranceCompany.selectOptions = this.doctorResult.medicalInsuranceCompanies.map(medicalInsuranceCompany => {
       const constructedMedicalInsuranceCompany = new MedicalInsuranceCompany({ ...medicalInsuranceCompany });
 
       let optionToReturn = new SelectOption({
@@ -68,49 +110,39 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
       return optionToReturn;
     });
 
-    this.controls.paymentMethodType.selectOptions = doctor.paymentMethods.map(paymentMethod => {
+    if (this.doctorResult!.medicalInsuranceCompanies.length === 1) {
+      this.controls.medicalInsuranceCompany.patchValue(new SelectOption({ ...this.doctorResult!.medicalInsuranceCompanies[0] }));
+    }
+
+    return this;
+  }
+
+  patchPaymentMethods(): this {
+    if (this.doctorResult === null) throw new Error('Doctor result is not set');
+
+    this.controls.paymentMethodType.selectOptions = this.doctorResult.paymentMethods.map(paymentMethod => {
       const constructedPaymentMethod = new PaymentMethodType({ ...paymentMethod });
 
       return new SelectOption({ id: constructedPaymentMethod.id!, name: constructedPaymentMethod.name!, code: constructedPaymentMethod.name!, enabled: constructedPaymentMethod.enabled, visible: constructedPaymentMethod.visible });
     });
 
-    if (selectedSchedule) {
-
-      this.controls.dateFrom.patchValue(new Date(selectedSchedule.year!, selectedSchedule.monthNumber! - 1, selectedSchedule.dayNumber!));
-      this.controls.dateTo.patchValue(new Date(selectedSchedule.year!, selectedSchedule.monthNumber! - 1, selectedSchedule.dayNumber!));
-
-      this.controls.timeFrom.patchValue(selectedSchedule.availableTimes[0].start);
-      this.controls.timeTo.patchValue(selectedSchedule.availableTimes[0].end);
+    if (this.doctorResult!.paymentMethods.length === 1) {
+      this.controls.paymentMethodType.patchValue(new SelectOption({ ...this.doctorResult!.paymentMethods[0] }));
     }
 
-    if (value!.addresses.length === 1) {
-      const address = value!.addresses[0]!;
 
-      this.controls.clinic.patchValue(new SelectOption({
-        code: address.code!,
-        enabled: address.enabled,
-        id: address.id!,
-        name: address.name!,
-        visible: address.visible,
-      }));
-    }
+    return this;
+  }
 
-    if (value!.services.length === 1) {
-      this.controls.service.patchValue(new SelectOption({ ...value!.services[0] }));
-    }
+  patch(value: DoctorResult, selectedSchedule: AvailableDay) {
+    // this.controls.dateFrom.patchValue(new Date(selectedSchedule.year!, selectedSchedule.monthNumber! - 1, selectedSchedule.dayNumber!));
+    // this.controls.dateTo.patchValue(new Date(selectedSchedule.year!, selectedSchedule.monthNumber! - 1, selectedSchedule.dayNumber!));
 
-    if (value!.medicalInsuranceCompanies.length === 1) {
-      this.controls.medicalInsuranceCompany.patchValue(new SelectOption({ ...value!.medicalInsuranceCompanies[0] }));
-    }
+    // if (selectedSchedule.selectedTime.start !== null && selectedSchedule.selectedTime.start !== undefined)
+    // this.controls.timeFrom.patchValue(selectedSchedule.selectedTime.start);
 
-    if (value!.paymentMethods.length === 1) {
-      this.controls.paymentMethodType.patchValue(new SelectOption({ ...value!.paymentMethods[0] }));
-    }
-
-    if (value!.hasPatientInformationAccess) {
-      const hasPatientInformationAccessControl = this.controls.hasPatientInformationAccess as FormControl2<boolean>;
-      hasPatientInformationAccessControl.patchValue(true);
-    }
+    // if (selectedSchedule.selectedTime.end !== null)
+    // this.controls.timeTo.patchValue(selectedSchedule.selectedTime.end);
   }
 
   get payload(): DoctorScheduleFormPayload {
@@ -119,6 +151,32 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
     payload.setFromForm(this);
 
     return payload;
+  }
+
+  /*
+
+  <div class="stepper-desc fw-semibold">{{selectedSchedule()!.day }} {{selectedSchedule()!.dayNumber }} de
+                  {{selectedSchedule()!.month}} del {{selectedSchedule()!.year}}</div>
+
+  */
+  get dateText(): string {
+    if (this.controls.dateFrom.value === null) return 'Seleccione una fecha';
+
+    return `${this.controls.dateFrom.value.getDate()} de ${this.controls.dateFrom.value.toLocaleString('default', { month: 'long' })} del ${this.controls.dateFrom.value.getFullYear()}`;
+  }
+
+  get timeText(): string {
+    if (this.controls.timeFrom.value === null || this.controls.timeTo.value === null) return 'Seleccione una hora';
+
+    return `De las ${this.controls.timeFrom.value} a las ${this.controls.timeTo.value}`;
+  }
+
+  get hasDateAndTime(): boolean {
+    return this.controls.dateFrom.value !== null &&
+      this.controls.dateTo.value !== null &&
+      this.controls.timeFrom.value !== null &&
+      this.controls.timeTo.value !== null
+    ;
   }
 
 }

@@ -8,9 +8,11 @@ import { ControlCheckComponent } from "src/app/_forms/control-check.component";
 import { ControlSelectComponent } from "src/app/_forms/control-select.component";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { AvailableDay } from "src/app/_models/availableDay";
+import { AvailableTime } from 'src/app/_models/availableTime';
 import { DoctorScheduleForm } from "src/app/_models/doctorSchedules/doctorScheduleForm";
 import { BadRequest } from "src/app/_models/forms/error";
 import { Search } from "src/app/_models/search/search";
+import { getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
 import { AccountService } from "src/app/_services/account.service";
 import { SearchService } from "src/app/_services/search.service";
 import { MaterialModule } from "src/app/_shared/material.module";
@@ -37,15 +39,29 @@ export class DoctorScheduleWindowComponent implements OnInit {
   service = inject(SearchService);
 
   selectedSchedule = model.required<AvailableDay | null>();
+  selectedTime = model.required<AvailableTime | null>();
+
   isMobile = model.required<boolean>();
 
   form = new DoctorScheduleForm();
 
   constructor() {
     effect(() => {
-      if (this.service.selected() && this.accountService.current() && this.selectedSchedule()) {
+      if (this.accountService.current()) {
 
-        this.form.patch(this.service.selected()!, this.selectedSchedule()!);
+        // this.form.patch(this.service.selected()!, this.selectedSchedule()!);
+
+        this.form
+        .setDoctorResult(this.service.selected())
+          .patchDoctor()
+          .patchClinics()
+          .patchServices()
+          .patchMedicalInsuranceCompanies()
+          .patchPaymentMethods()
+        ;
+
+      } else {
+        throw new Error('User not authenticated');
       }
     })
   }
@@ -55,11 +71,11 @@ export class DoctorScheduleWindowComponent implements OnInit {
   }
 
   onClickClose() {
-    this.service.search.set(new Search({ ...this.service.search(), scheduleOption: null }));
+    this.service.search.set(new Search(this.service.search().key, { ...this.service.search(), scheduleOption: null }));
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: this.service.search().params,
+      queryParams: getSearchRouteQueryParams(this.service.search()),
       queryParamsHandling: 'merge'
     });
   }
@@ -94,26 +110,26 @@ export class DoctorScheduleWindowComponent implements OnInit {
   onSubmit() {
     this.form.submitted = true;
 
-    // this.eventsService.createInSearch(this.form.payload).subscribe({
-    //   next: response => {
+    this.eventsService.createInSearch(this.form.payload).subscribe({
+      next: response => {
 
-    //     // if (!this.service.selected()!.hasPatientInformationAccess) {
-    //     //   this.accountService.updateCurrentUser();
-    //     // }
+        if (!this.service.selected()!.hasPatientInformationAccess) {
+          this.accountService.updateCurrentUser();
+        }
 
-    //     // const selectedSchedule = this.selectedSchedule();
+        const selectedSchedule = this.selectedSchedule();
 
-    //     // if (selectedSchedule) {
-    //     //   this.router.navigate([], {
-    //     //     relativeTo: this.route,
-    //     //     queryParams: { day: selectedSchedule.dayNumber },
-    //     //     queryParamsHandling: 'merge',
-    //     //   });
-    //     // }
-    //   },
-    //   error: (error: BadRequest) => {
-    //     this.form.error = error;
-    //   }
-    // });
+        if (selectedSchedule) {
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { day: selectedSchedule.dayNumber },
+            queryParamsHandling: 'merge',
+          });
+        }
+      },
+      error: (error: BadRequest) => {
+        this.form.error = error;
+      }
+    });
   }
 }

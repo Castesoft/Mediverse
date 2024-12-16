@@ -21,4 +21,8 @@ import { SearchResultCounterComponent } from "src/app/search/components/search-r
 })
 export class DoctorResultsWindowComponent {
   service = inject(SearchService);
+
+  constructor() {
+    
+  }
 }

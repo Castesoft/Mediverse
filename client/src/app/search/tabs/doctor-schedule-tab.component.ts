@@ -5,6 +5,7 @@ import { AvailableDay } from 'src/app/_models/availableDay';
 import { AvailableTime } from 'src/app/_models/availableTime';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { Search } from "src/app/_models/search/search";
+import { getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
 import { SearchService } from 'src/app/_services/search.service';
 
 @Component({
@@ -25,6 +26,7 @@ export class DoctorScheduleTabComponent implements OnInit {
   selectedDay = signal<AvailableDay | null>(null);
   schedule = signal<AvailableDay[]>([]);
   selectedSchedule = model.required<AvailableDay | null>();
+  selectedTime = model.required<AvailableTime | null>();
 
   constructor() {
 
@@ -43,20 +45,25 @@ export class DoctorScheduleTabComponent implements OnInit {
       queryParamsHandling: 'merge'
     });
 
-    this.service.search.set(new Search({
+    this.service.search.set(new Search(this.service.search().key, {
       ...this.service.search(),
       dayNumber: day.dayNumber
     }));
   }
 
   scheduleAppointment(day: AvailableDay, time: AvailableTime) {
+    console.log('scheduleAppointment', day, time);
+
+
     this.selectedSchedule.set(new AvailableDay({ ...day, availableTimes: [time] }));
 
-    this.service.search.set(new Search({ ...this.service.search(), scheduleOption: day.findIndex(time) }));
+    this.service.search.update(oldValues => {
+      return new Search(oldValues.key, { ...oldValues, scheduleOption: day.findIndex(time) })
+    });
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: this.service.search().params,
+      queryParams: getSearchRouteQueryParams(this.service.search()),
       queryParamsHandling: 'merge'
     });
   }
@@ -72,7 +79,7 @@ export class DoctorScheduleTabComponent implements OnInit {
           } else {
             this.selectedDay.set(new AvailableDay({ ...schedule[0] }));
           }
-          this.service.search.set(new Search({ ...this.service.search(), dayNumber: this.selectedDay()!.dayNumber }));
+          this.service.search.set(new Search(this.service.search().key, { ...this.service.search(), dayNumber: this.selectedDay()!.dayNumber }));
         } else {
           this.router.navigate([], {
             relativeTo: this.route,

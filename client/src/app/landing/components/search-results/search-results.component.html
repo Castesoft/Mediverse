@@ -4,10 +4,10 @@
 
 @if (service.selected() !== null) {
   <div doctorDetailWindow [startingTab]="startingTab" (onClose)="service.close()" (onEventCreated)="onEventCreated()"
-    [(selectedSchedule)]="selectedSchedule" [(scheduleWindowOpen)]="scheduleWindowOpen"></div>
+    [(selectedSchedule)]="selectedSchedule" [(selectedTime)]="selectedTime" [(scheduleWindowOpen)]="scheduleWindowOpen"></div>
 }
 @if (scheduleWindowOpen()) {
-  <div doctorScheduleWindow [(isMobile)]="isMobile"
+  <div doctorScheduleWindow [(isMobile)]="isMobile" [(selectedTime)]="selectedTime"
     [(selectedSchedule)]="selectedSchedule"></div>
   <!-- <div [class]="!isMobile() ? 'schedule-modal' : 'schedule-modal-mobile'">
   </div> -->

@@ -40,22 +40,13 @@
             </div>
             <div class="stepper-line h-40px"></div>
           </div>
-          <div class="stepper-item" [class.completed]="
-            form.controls.dateFrom.valid &&
-            form.controls.dateTo.valid &&
-            form.controls.timeFrom.valid &&
-            form.controls.timeTo.valid
-          ">
+          <div class="stepper-item" [class.completed]="form.hasDateAndTime">
             <div class="stepper-wrapper">
               <div stepperIcon [index]="2"></div>
               <div class="stepper-label flex-grow-1">
                 <h3 class="stepper-title">Fecha y hora</h3>
-                @if(selectedSchedule()) {
-                <div class="stepper-desc fw-semibold">{{selectedSchedule()!.day }} {{selectedSchedule()!.dayNumber }} de
-                  {{selectedSchedule()!.month}} del {{selectedSchedule()!.year}}</div>
-                <div class="stepper-desc fw-semibold">De las {{selectedSchedule()!.availableTimes[0].start }} a las
-                  {{selectedSchedule()!.availableTimes[0].end }}</div>
-                }
+                {{ form.dateText}}
+                <div class="stepper-desc fw-semibold">{{ form.timeText }}</div>
               </div>
             </div>
             <div class="stepper-line h-40px"></div>
@@ -164,11 +155,11 @@
     <div signInBasicForm [noRedirect]="true"></div>
     }
   </div>
+  <div style="max-height: 300px; overflow: auto; min-height: 300px;"
+        class="border border-2 rounded-3 border-gray-700">
+        <strong>Form: </strong><code class="json">
+                {{form.value | json}}
+              </code>
+      </div>
 </div>
 
-<!-- <div style="max-height: 300px; overflow: auto; min-height: 300px;"
-      class="border border-2 rounded-3 border-gray-700">
-      <strong>Form: </strong><code class="json">
-              {{form.value | json}}
-            </code>
-    </div> -->

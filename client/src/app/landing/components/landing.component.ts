@@ -16,6 +16,4 @@ import { SearchFormComponent } from 'src/app/search/components/search-form.compo
   ],
   templateUrl: './landing.component.html',
 })
-export class LandingComponent {
-  search = signal<Search>(new Search());
-}
+export class LandingComponent {}

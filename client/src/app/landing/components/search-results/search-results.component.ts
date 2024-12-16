@@ -1,6 +1,6 @@
 /// <reference types="@types/google.maps" />
 import { Component, effect, HostListener, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { SearchResults } from 'src/app/_models/doctorSearchResults';
 import { SearchService } from 'src/app/_services/search.service';
 import { TablePagerComponent } from 'src/app/_shared/template/components/tables/table-pager.component';
@@ -20,6 +20,8 @@ import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-sch
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { DoctorResultsWindowComponent } from 'src/app/search/windows/doctor-results-window.component';
 import { Theme, ThemeService } from 'src/app/_services/theme.service';
+import { getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
+import { AvailableTime } from 'src/app/_models/availableTime';
 
 @Component({
   selector: 'div[searchResults]',
@@ -45,6 +47,7 @@ export class SearchResultsComponent implements OnInit {
   didSchedule = signal(false);
   scheduleWindowOpen = signal(false);
   selectedSchedule = signal<AvailableDay | null>(null);
+  selectedTime = signal<AvailableTime | null>(null);
 
   startingTab = 'general';
 
@@ -143,16 +146,51 @@ export class SearchResultsComponent implements OnInit {
         }
       }
     }
+
+    if (this.service.selected() !== null) {
+      const params: Params = getSearchRouteQueryParams(this.service.search());
+
+      if (this.service.search().result.availableDays.length > 0) {
+        let dayNumber = params['dayNumber'];
+        let scheduleOption = params['scheduleOption'];
+
+        console.log('dayNumber', dayNumber, 'scheduleOption', scheduleOption);
+
+
+        if (dayNumber && scheduleOption) {
+          dayNumber = parseInt(dayNumber);
+          scheduleOption = parseInt(scheduleOption);
+
+          if (this.service.search().result.availableDays.some(d => d.dayNumber === dayNumber)) {
+            const day = this.service.search().result.availableDays.find(d => d.dayNumber === dayNumber);
+
+            console.log('day', day, 'scheduleOption', scheduleOption);
+            if (day) {
+              if (day.availableTimes.length > scheduleOption) {
+                this.selectedSchedule.set(day);
+
+                this.selectedTime.set(day.availableTimes[scheduleOption]);
+              }
+            }
+          }
+        }
+
+      }
+
+      console.log('selectedSchedule', this.selectedSchedule());
+      console.log('selectedTime', this.selectedTime());
+    }
+
   }
 
   onSearchChange(event: Search) {
-    this.service.search.set(new Search({ ...event }));
+    this.service.search.set(new Search(this.service.search().key, { ...event }));
 
     this.service.resetMarkers();
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: this.service.search().params,
+      queryParams: getSearchRouteQueryParams(this.service.search()),
       queryParamsHandling: 'merge'
     });
 

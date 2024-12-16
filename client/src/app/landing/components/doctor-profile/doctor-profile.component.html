@@ -89,14 +89,16 @@
         </div>
         <div [hidden]="activeTab !== 'schedule'" class="row">
           <div [class.col-md-6]="!isMobile()" [class.col-12]="isMobile()">
-            <div doctorScheduleTab [(doctor)]="service.selected" [(selectedSchedule)]="selectedSchedule"></div>
+            <h1 class="text-danger">PENDIENTE</h1>
+            <!-- <div doctorScheduleTab [(doctor)]="service.selected" [(selectedSchedule)]="selectedSchedule"></div> -->
           </div>
           @if (isScheduling && !isMobile()) {
             <div class="col-md-6">
-              <div doctorScheduleWindow
+              <h1 class="text-danger">PENDIENTE</h1>
+              <!-- <div doctorScheduleWindow
               [(selectedSchedule)]="selectedSchedule"
               [isMobile]="isMobile()"
-              ></div>
+              ></div> -->
             </div>
           }
         </div>
@@ -109,10 +111,11 @@
              [style.z-index]="isMobile() ? '1050' : 'auto'" [style.background-color]="isMobile() ? 'rgba(0,0,0,0.5)' : 'transparent'">
           <div [class.modal-dialog]="isMobile()" [class.modal-fullscreen]="isMobile()">
             <div [class.modal-content]="isMobile()">
-              <div doctorScheduleWindow
+              <h1 class="text-danger">PENDIENTE</h1>
+              <!-- <div doctorScheduleWindow
                 [(selectedSchedule)]="selectedSchedule"
                 [isMobile]="isMobile()"
-              ></div>
+              ></div> -->
             </div>
           </div>
         </div>

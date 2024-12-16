@@ -1,6 +1,7 @@
 import { Component, input, output, effect, inject, signal, model } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
+import { AvailableTime } from 'src/app/_models/availableTime';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { Search } from "src/app/_models/search/search";
 import { SearchService } from 'src/app/_services/search.service';
@@ -26,6 +27,7 @@ export class DoctorDetailWindowComponent {
   onEventCreated = output();
   scheduleWindowOpen = model.required<boolean>();
   selectedSchedule = model.required<AvailableDay | null>();
+  selectedTime = model.required<AvailableTime | null>();
 
   constructor() {
     effect(() => {
@@ -51,7 +53,7 @@ export class DoctorDetailWindowComponent {
       queryParamsHandling: 'merge'
     });
 
-    this.service.search.set(new Search({
+    this.service.search.set(new Search(this.service.search().key, {
       ...this.service.search(),
       tab: tab
     }));

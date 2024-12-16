@@ -94,7 +94,7 @@ export class SearchFormComponent implements OnInit {
   onSubmit() {
     this.router.navigate(['/search'], { queryParams: this.form.getParams() });
 
-    this.service.search.set(new Search({ ...this.form.value, result: new DoctorResult({ ...this.form.controls.result.value, } as any) }));
+    this.service.search.set(new Search(this.service.search().key, { ...this.form.value, result: new DoctorResult({ ...this.form.controls.result.value, } as any) }));
     this.service.getSearchResults({ ignoreCache: true }).subscribe();
   }
 }

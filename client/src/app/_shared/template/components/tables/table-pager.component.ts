@@ -95,7 +95,7 @@ export class TablePagerComponent implements OnInit, OnChanges {
   onNext(): void {
     this.params.update((oldValues: EntityParams<Entity>) => {
       const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
-      newValues.pageNumber++;
+      if (newValues.pageNumber !== null) newValues.pageNumber++;
 
       return newValues;
     });
@@ -104,7 +104,7 @@ export class TablePagerComponent implements OnInit, OnChanges {
   onPrevious(): void {
     this.params.update((oldValues: EntityParams<Entity>) => {
       const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
-      newValues.pageNumber--;
+      if (newValues.pageNumber !== null) newValues.pageNumber--;
 
       return newValues;
     });

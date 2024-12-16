@@ -1,3 +1,5 @@
+@let pagination = service.pagination();
+
 @if (!service.loading()) {
   <div class="container">
     <h1 class="text-gray-800 fw-bold my-3 text-center">
@@ -33,11 +35,11 @@
     }
   </div>
   <div class="d-flex flex-center pb-6 container">
-    @if (service.pagination()) {
-      <h1 class="text-danger">PENDIENTE</h1>
+    @if (pagination !== null) {
     <!-- <div tablePager [currentPage]="service.pagination()!.currentPage" [(params)]="params"
       [itemsPerPage]="service.pagination()!.itemsPerPage" [totalItems]="service.pagination()!.totalItems"
       (pageChanged)="service.onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true" [isCompact]="false"></div> -->
+    <div tablePager [pagination]="pagination" [(params)]="service.search" (paramsChange)="service.getSearchResults().subscribe()" [hideShowAll]="true" [hideShowing]="true" [isCompact]="false"></div>
     }
   </div>
   } @else {

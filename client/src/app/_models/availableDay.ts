@@ -8,6 +8,7 @@ export class AvailableDay {
   monthNumber: number | null = null;
   year: number | null = null;
   availableTimes: AvailableTime[] = [];
+  selectedTime: AvailableTime = new AvailableTime();
 
   constructor(init?: Partial<Omit<AvailableDay, 'findIndex'>>) {
     Object.assign(this, init);
