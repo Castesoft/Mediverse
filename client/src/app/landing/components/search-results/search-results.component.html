@@ -8,7 +8,7 @@
 }
 @if (scheduleWindowOpen()) {
   <div doctorScheduleWindow [(isMobile)]="isMobile" [(selectedTime)]="selectedTime"
-    [(selectedSchedule)]="selectedSchedule"></div>
+    [(selectedSchedule)]="selectedSchedule" [(scheduleWindowOpen)]="scheduleWindowOpen"></div>
   <!-- <div [class]="!isMobile() ? 'schedule-modal' : 'schedule-modal-mobile'">
   </div> -->
   }

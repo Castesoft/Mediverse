@@ -121,14 +121,6 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
       }
     }
   }
-
-  createInSearch(model: any): Observable<Event> {
-    return this.http.post<Event>(`${this.baseUrl}search`, model).pipe(
-      tap(response => {
-
-      })
-    );
-  }
 }
 
 @Component({

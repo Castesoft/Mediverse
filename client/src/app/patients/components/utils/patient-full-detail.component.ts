@@ -11,7 +11,6 @@ import { PatientFiltersForm } from "src/app/_models/patients/patientFiltersForm"
 import { PatientParams } from "src/app/_models/patients/patientParams";
 import { PatientsService } from "src/app/patients/patients.config";
 import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
-import { EventsTableComponent } from 'src/app/events/components/events-table/events-table.component';
 import { ClinicalHistoryFormComponent } from 'src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 import { PaymentsTableComponent } from 'src/app/_shared/components/payments-table/payments-table.component';
 import { EventParams } from "src/app/_models/events/eventParams";
@@ -25,7 +24,7 @@ import { CalendarView } from "src/app/_models/events/eventTypes";
   templateUrl: './patient-full-detail.component.html',
   standalone: true,
   imports: [ CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ProfilePictureComponent,
-    EventsTableComponent, ClinicalHistoryFormComponent, PaymentsTableComponent, EventsCatalogComponent,
+    ClinicalHistoryFormComponent, PaymentsTableComponent, EventsCatalogComponent,
    ]
 })
 export class PatientFullDetailComponent

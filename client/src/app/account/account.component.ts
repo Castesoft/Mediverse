@@ -1,25 +1,25 @@
-import { CommonModule, CurrencyPipe } from "@angular/common";
-import { Component, OnInit, inject, NgModule } from "@angular/core";
-import { ResolveFn, RouterModule } from "@angular/router";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { Account } from "src/app/_models/account/account";
-import { SatisfactionSurvey } from "src/app/_models/satisfactionSurvey";
-import { AccountService } from "src/app/_services/account.service";
-import { BreadcrumbService } from "src/app/_services/breadcrumb.service";
-import { UtilsService } from "src/app/_services/utils.service";
-import { BootstrapModule } from "src/app/_shared/bootstrap.module";
-import { CdkModule } from "src/app/_shared/cdk.module";
-import { TemplateModule } from "src/app/_shared/template/template.module";
-import { MainAsideComponent } from "../_shared/template/components/main-aside.component";
-import { AccountBillingComponent } from "src/app/account/components/account-billing/account-billing.component";
-import { AccountCardComponent } from "src/app/account/components/account-card.component";
-import { AccountClinicalHistoryComponent } from "src/app/account/components/account-clinical-history/account-clinical-history.component";
-import { AccountInsurancesComponent } from "src/app/account/components/account-insurances/account-insurances.component";
-import { AccountOverviewComponent } from "src/app/account/components/account-overview/account-overview.component";
-import { AccountPaymentsComponent } from "src/app/account/components/account-payments/account-payments.component";
-import { AccountSchedulesComponent } from "src/app/account/components/account-schedules/account-schedules.component";
-import { AccountSettingsComponent } from "src/app/account/components/account-settings/account-settings.component";
-import { SatisfactionSurveyModalComponent } from "src/app/account/components/satisfaction-survey-modal/satisfaction-survey-modal.component";
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, NgModule } from '@angular/core';
+import { ResolveFn, RouterModule } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { Account } from 'src/app/_models/account/account';
+import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
+import { AccountService } from 'src/app/_services/account.service';
+import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
+import { UtilsService } from 'src/app/_services/utils.service';
+import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
+import { CdkModule } from 'src/app/_shared/cdk.module';
+import { MainAsideComponent } from 'src/app/_shared/template/components/main-aside.component';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
+import { AccountBillingComponent } from 'src/app/account/components/account-billing/account-billing.component';
+import { AccountCardComponent } from 'src/app/account/components/account-card.component';
+import { AccountClinicalHistoryComponent } from 'src/app/account/components/account-clinical-history/account-clinical-history.component';
+import { AccountInsurancesComponent } from 'src/app/account/components/account-insurances/account-insurances.component';
+import { AccountOverviewComponent } from 'src/app/account/components/account-overview/account-overview.component';
+import { AccountPaymentsComponent } from 'src/app/account/components/account-payments/account-payments.component';
+import { AccountSchedulesComponent } from 'src/app/account/components/account-schedules/account-schedules.component';
+import { AccountSettingsComponent } from 'src/app/account/components/account-settings/account-settings.component';
+import { SatisfactionSurveyModalComponent } from 'src/app/account/components/satisfaction-survey-modal/satisfaction-survey-modal.component';
 
 @Component({
   selector: 'account-main-route',
@@ -111,12 +111,12 @@ export const itemResolver: ResolveFn<Account | null> = (route, state) => {
     { path: '', component: AccountComponent, resolve: { item: itemResolver },
       children: [
         { path: '', component: AccountOverviewComponent, data: { breadcrumb: 'Mi Cuenta', }, title: 'Mi Cuenta',  },
-        { path: 'clinical-history', component: AccountClinicalHistoryComponent, data: { breadcrumb: 'Historial Clínico', }, title: 'Historial Clínico',  },
-        { path: 'settings', component: AccountSettingsComponent, data: { breadcrumb: 'Configuración', }, title: 'Configuración', },
-        { path: 'billing', component: AccountBillingComponent, data: { breadcrumb: 'Facturación', }, title: 'Facturación', },
-        { path: 'payments', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', },
-        { path: 'insurances', component: AccountInsurancesComponent, data: { breadcrumb: 'Seguros', }, title: 'Seguros', },
-        { path: 'schedules', component: AccountSchedulesComponent, data: { breadcrumb: 'Horarios', }, title: 'Horarios', },
+        { path: 'expediente', component: AccountClinicalHistoryComponent, data: { breadcrumb: 'Historial Clínico', }, title: 'Historial Clínico',  },
+        { path: 'configuracion', component: AccountSettingsComponent, data: { breadcrumb: 'Configuración', }, title: 'Configuración', },
+        { path: 'facturacion', component: AccountBillingComponent, data: { breadcrumb: 'Facturación', }, title: 'Facturación', },
+        { path: 'pagos', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', },
+        { path: 'seguros', component: AccountInsurancesComponent, data: { breadcrumb: 'Seguros', }, title: 'Seguros', },
+        { path: 'agenda', component: AccountSchedulesComponent, data: { breadcrumb: 'Horarios', }, title: 'Horarios', },
       ],
     },
   ])],

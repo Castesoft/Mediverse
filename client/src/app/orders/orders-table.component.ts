@@ -1,72 +1,118 @@
-import { CommonModule, DatePipe } from "@angular/common";
-import { Component, OnInit, OnDestroy, inject, input, model, effect } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { createId } from "@paralleldrive/cuid2";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { Subject } from "rxjs";
-import { CatalogMode, View } from "src/app/_models/base/types";
-import { Order } from "src/app/_models/orders/order";
-import { orderCells } from "src/app/_models/orders/orderConstants";
-import { OrderParams } from "src/app/_models/orders/orderParams";
-import { PartialCellsOf } from "src/app/_models/tables/tableCellItem";
-import { TableRow } from "src/app/_models/tables/tableRow";
-import { DevService } from "src/app/_services/dev.service";
-import { IconsService } from "src/app/_services/icons.service";
-import { CdkModule } from "src/app/_shared/cdk.module";
-import { PatientTableCellComponent } from "src/app/_shared/components/patient-table-cell.component";
-import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "../_shared/template/components/tables/table-header.component";
-import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-deilvery-status-badge.component";
-import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
-import { OrdersService } from "src/app/orders/orders.config";
-import { PatientSelectDisplayCardComponent } from "src/app/patients/patient-select-display-card.component";
-import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ControlsModule } from 'src/app/_forms/controls.module';
+import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
+import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
+import { View, CatalogMode } from 'src/app/_models/base/types';
+import { Order } from 'src/app/_models/orders/order';
+import { orderCells } from 'src/app/_models/orders/orderConstants';
+import { OrderFiltersForm } from 'src/app/_models/orders/orderFiltersForm';
+import { OrderParams } from 'src/app/_models/orders/orderParams';
+import { TableMenu } from 'src/app/_models/tables/extensions/tableComponentExtensions';
+import { ITableMenu } from 'src/app/_models/tables/interfaces/tableComponentInterfaces';
+import { CdkModule } from 'src/app/_shared/cdk.module';
+import { MaterialModule } from 'src/app/_shared/material.module';
+import { TablesModule } from 'src/app/_shared/template/components/tables/tables.module';
+import { OrdersService } from 'src/app/orders/orders.config';
 
 @Component({
-  selector: 'table[ordersTable]',
-  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable', id: 'kt_table_orders', },
-  // templateUrl: './orders-table.component.html',
-  template: ``,
-  styleUrls: ['./orders-table.component.scss'],
-  imports: [FontAwesomeModule, TableHeaderComponent, CommonModule, FormsModule, RouterModule, BsDropdownModule, MaterialModule, CdkModule, PatientSummaryCardComponent, PatientSelectDisplayCardComponent, PatientTableCellComponent, OrdersDeliveryStatusBadgeComponent, OrdersStatusBadgeComponent],
+  selector: 'div[ordersTableMenu]',
+  host: { class: '' },
+  template: `
+    <div class="dropdown-menu d-block" cdkMenu>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          service.clickLink(item(), key(), 'detail', 'page');
+          $event.preventDefault()
+        "
+      >
+        Ver {{ service.dictionary.singular }}
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [href]="service.dictionary.catalogRoute + '/' + item().id"
+        (click)="
+          $event.preventDefault();
+          service.clickLink(item(), key(), 'detail', 'modal')
+        "
+      >
+        Abrir {{ service.dictionary.singular }} en pantalla modal
+      </a>
+      <a
+        cdkMenuItem
+        class="dropdown-item px-3"
+        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
+      >
+        Editar
+      </a>
+      <button
+        cdkMenuItem
+        class="dropdown-item px-3 text-danger"
+        (click)="service.delete$(item())"
+      >
+        Eliminar
+      </button>
+    </div>
+  `,
   standalone: true,
+  imports: [RouterModule, CdkModule, MaterialModule],
 })
-export class OrdersTableComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
-  service = inject(OrdersService);
-  icons = inject(IconsService);
-  dev = inject(DevService);
-
-  data = input.required<Order[]>();
-  isCompact = model.required<boolean>();
-  mode = model.required<CatalogMode>();
-  key = model.required<string | null>();
-  view = model.required<View>();
-
-  sortAscending = false;
-  params!: OrderParams;
-  cuid = createId();
-  selected = false;
-  row: TableRow<Order> = new TableRow<Order>(new Order());
-
-  cells: PartialCellsOf<Order> = orderCells;
+export class OrdersTableMenuComponent
+  extends TableMenu<OrdersService>
+  implements OnInit, ITableMenu<Order>
+{
+  item: ModelSignal<Order> = model.required();
+  key: ModelSignal<string | null> = model.required();
 
   constructor() {
-    effect(() => {
-      this.params = new OrderParams(this.key());
-      this.service.param$(this.key(), this.mode()).subscribe({
-        next: (params) => {
-          this.params = params;
-        },
-      });
-    });
+    super(OrdersService);
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+}
 
+@Component({
+  host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
+  selector: 'table[ordersTable]',
+  // template: ``,
+  templateUrl: './orders-table.component.html',
+  standalone: true,
+  imports: [
+    TablesModule,
+    ControlsModule,
+    RouterModule,
+    FontAwesomeModule,
+    CdkModule,
+    MaterialModule,
+    CommonModule,
+    OrdersTableMenuComponent,
+  ],
+})
+export class OrdersTableComponent
+  extends BaseTable<Order, OrderParams, OrderFiltersForm, OrdersService>
+  implements OnInit, OnDestroy, TableInputSignals<Order, OrderParams>
+{
+  item: ModelSignal<Order | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<OrderParams> = model.required();
+  data: ModelSignal<Order[]> = model.required();
+
+  constructor() {
+    super(OrdersService, Order, { tableCells: orderCells, });
+
+    effect(() => {});
   }
+
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

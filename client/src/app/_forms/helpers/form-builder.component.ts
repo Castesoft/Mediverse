@@ -1,15 +1,11 @@
 import { Component, computed, input, model } from '@angular/core';
 import { ControlChipsComponent } from 'src/app/_forms/control-chips.component';
 import { ControlDateRangeComponent } from 'src/app/_forms/control-date-range.component';
-import { ControlDateComponent } from 'src/app/_forms/control-date.component';
-import { ControlSearchDateComponent } from 'src/app/_forms/control-search-date.component';
 import { ControlSearchTextComponent } from 'src/app/_forms/control-search-text.component';
 import { ControlSlideComponent } from 'src/app/_forms/control-slide.component';
 import { ControlTextComponent } from 'src/app/_forms/control-text.component';
 import { ControlsRowComponent, ControlsWrapperComponent } from 'src/app/_forms/helpers/controls-wrapper.component';
-import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { ControlSelect2Component } from "src/app/_forms/control-select-2.component";
-import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { ControlTextarea2Component } from 'src/app/_forms/control-textarea2.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { EntityParams } from 'src/app/_models/base/entityParams';
@@ -97,10 +93,9 @@ import { ControlRows } from 'src/app/_models/forms/formTypes';
     </div>
   `,
   standalone: true,
-  imports: [ InputControlComponent, ControlDateComponent, ReactiveFormsModule, FormsModule, ControlsWrapperComponent, ControlsRowComponent,
+  imports: [ ReactiveFormsModule, FormsModule, ControlsWrapperComponent, ControlsRowComponent,
     ControlTextComponent, ControlSelect2Component, ControlTextarea2Component, ControlChipsComponent, ControlSlideComponent,
-    ControlSearchTextComponent, ControlSearchDateComponent, ControlDateRangeComponent, ControlSelectComponent,
-  ],
+    ControlSearchTextComponent, ControlDateRangeComponent,   ],
 })
 export class FormBuilderComponent {
   controls = model.required<{control:Control<any>}[]>();

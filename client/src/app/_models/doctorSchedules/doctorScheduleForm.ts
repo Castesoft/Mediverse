@@ -1,5 +1,6 @@
 import { Address } from 'src/app/_models/addresses/address';
 import { AvailableDay } from 'src/app/_models/availableDay';
+import { AvailableTime } from 'src/app/_models/availableTime';
 import { Options } from 'src/app/_models/base/options';
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { DoctorResult } from 'src/app/_models/doctors/doctorResults/doctorResult';
@@ -130,6 +131,30 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
       this.controls.paymentMethodType.patchValue(new SelectOption({ ...this.doctorResult!.paymentMethods[0] }));
     }
 
+
+    return this;
+  }
+
+  patchSchedule(value: AvailableDay | null): this {
+    if (value !== null) {
+      this.controls.dateFrom.patchValue(new Date(value.year!, value.monthNumber! - 1, value.dayNumber!));
+      this.controls.dateTo.patchValue(new Date(value.year!, value.monthNumber! - 1, value.dayNumber!));
+    } else {
+      this.controls.dateFrom.patchValue(null);
+      this.controls.dateTo.patchValue(null);
+    }
+
+    return this;
+  }
+
+  patchTime(value: AvailableTime | null): this {
+    if (value !== null) {
+      this.controls.timeFrom.patchValue(value.start);
+      this.controls.timeTo.patchValue(value.end);
+    } else {
+      this.controls.timeFrom.patchValue(null);
+      this.controls.timeTo.patchValue(null);
+    }
 
     return this;
   }

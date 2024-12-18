@@ -2,12 +2,9 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, model, effect } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InputComponent } from "src/app/_forms/helpers/input.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
-import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
-import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
 import { Control } from "src/app/_models/forms/deprecated/control";
 import { IconsService } from "src/app/_services/icons.service";
 import { ValidationService } from "src/app/_services/validation.service";
@@ -51,9 +48,6 @@ import { MaterialModule } from "src/app/_shared/material.module";
     ReactiveFormsModule,
     InvalidFeedbackComponent,
     HelpBlockComponent,
-    OptionalSpanComponent,
-    NewBadgeComponent,
-    LegacyControlLabelComponent,
     InputComponent,
     CommonModule,
     FontAwesomeModule,

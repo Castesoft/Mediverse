@@ -1,8 +1,6 @@
 import { Component, Input, inject, input } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
-import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
 import { InvalidFeedbackComponent } from './helpers/invalid-feedback.component';
 import { ValidationService } from 'src/app/_services/validation.service';
 
@@ -10,7 +8,7 @@ import { ValidationService } from 'src/app/_services/validation.service';
   selector: '[controlCheckList]',
   templateUrl: './control-check-list.component.html',
   standalone: true,
-  imports: [CommonModule, OptionalSpanComponent, NewBadgeComponent, InvalidFeedbackComponent]
+  imports: [CommonModule, InvalidFeedbackComponent]
 })
 export class ControlCheckListComponent implements ControlValueAccessor {
   validation = inject(ValidationService);

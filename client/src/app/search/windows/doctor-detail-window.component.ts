@@ -30,18 +30,29 @@ export class DoctorDetailWindowComponent {
   selectedTime = model.required<AvailableTime | null>();
 
   constructor() {
+
     effect(() => {
+
+      console.log('selected', this.service.selected());
+
+
       let selected = this.service.selected();
       if (selected !== null && this.service.search().dayNumber !== null && this.service.search().scheduleOption !== null) {
         selected = new DoctorResult({...selected});
         const variable = selected.getAvailableDayByDayNumber(this.service.search().dayNumber!);
         this.selectedSchedule.set(variable);
-        this.scheduleWindowOpen.set(true);
+
+        if (this.selectedSchedule() !== null) {
+          this.scheduleWindowOpen.set(true);
+        } else if (this.selectedSchedule() === null && this.selectedTime() === null) {
+          this.scheduleWindowOpen.set(false);
+        }
       } else {
-        this.scheduleWindowOpen.set(false);
+        // this.scheduleWindowOpen.set(false);
       }
 
-      console.log('is open', this.scheduleWindowOpen());
+
+      // console.log('is open', this.scheduleWindowOpen());
 
     });
   }
@@ -79,14 +90,5 @@ export class DoctorDetailWindowComponent {
     if (this.service.selected()) {
       this.router.navigate(['/doctor', this.service.selected()!.id]);
     }
-  }
-
-  onSelectedScheduleChange(event: AvailableDay | null) {
-    if (event) {
-      this.scheduleWindowOpen.set(true);
-    }
-    // console.log('event', event!.availableTimes[0]);
-    // console.log('current', this.selectedSchedule()!.availableTimes[0]);
-
   }
 }

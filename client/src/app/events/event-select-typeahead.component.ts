@@ -1,21 +1,18 @@
-import { Component, computed, inject, input, model, OnChanges, OnInit, SimpleChanges } from "@angular/core";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { ControlTypeaheadComponent } from "src/app/_forms/control-typeahead.component";
-import { PopoverModule } from "ngx-bootstrap/popover";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.component";
-import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
-import { IconsService } from "src/app/_services/icons.service";
-import { EventParams } from "../_models/events/eventParams";
-import { Event } from "../_models/events/event";
-import { TypeaheadComplexOption } from "src/app/_models/types";
-import { createId } from "@paralleldrive/cuid2";
-import { AlertModule } from "ngx-bootstrap/alert";
-import { TypeaheadMatch } from "ngx-bootstrap/typeahead";
-import { DatePipe, JsonPipe } from "@angular/common";
-import { EventSelectDisplayCardComponent } from "src/app/events/event-select-display-card.component";
-import { EventSummary } from "../_models/events/eventSummary/eventSummary";
-import { EventsService } from "src/app/events/events.config";
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnChanges, inject, computed, input, model, SimpleChanges } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { createId } from '@paralleldrive/cuid2';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import { Subject, Observable, takeUntil } from 'rxjs';
+import { Event } from 'src/app/_models/events/event';
+import { EventParams } from 'src/app/_models/events/eventParams';
+import { EventSummary } from 'src/app/_models/events/eventSummary/eventSummary';
+import { TypeaheadComplexOption } from 'src/app/_models/types';
+import { IconsService } from 'src/app/_services/icons.service';
+import { EventsService } from 'src/app/events/events.config';
 
 interface EventTypeaheadOptions extends TypeaheadComplexOption {
   data: EventSummary,
@@ -25,15 +22,11 @@ interface EventTypeaheadOptions extends TypeaheadComplexOption {
   selector: '[eventSelectTypeahead]',
   templateUrl: './event-select-typeahead.component.html',
   imports: [
-    ControlTypeaheadComponent,
     FaIconComponent,
+    CommonModule,
     PopoverModule,
     ReactiveFormsModule,
-    ErrorsAlertComponent,
     AlertModule,
-    JsonPipe,
-    DatePipe,
-    EventSelectDisplayCardComponent
   ],
   standalone: true
 })

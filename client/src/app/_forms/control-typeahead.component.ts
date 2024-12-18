@@ -1,12 +1,8 @@
-import { Component, effect, inject, input, model, OnInit, output, signal } from "@angular/core";
+import { Component, effect, inject, input, model, output, signal } from "@angular/core";
 import { PopoverProps } from "src/app/_models/popover";
 import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { TypeaheadMatch, TypeaheadModule } from "ngx-bootstrap/typeahead";
-import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
-import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
-import { OptionalSpanComponent } from "./helpers/optional-span.component";
-import { NewBadgeComponent } from "./helpers/new-badge.component";
 import { Observable } from "rxjs";
 import { createId } from "@paralleldrive/cuid2";
 import { LegacyControlLabelComponent } from "src/app/_forms/helpers/control-label.component";
@@ -19,7 +15,6 @@ import { ControlOrientation } from "src/app/_models/forms/formTypes";
   templateUrl: "./control-typeahead.component.html",
   standalone: true,
   imports: [ReactiveFormsModule, TypeaheadModule, CommonModule,
-    InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent,
     LegacyControlLabelComponent
   ]
 })

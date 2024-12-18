@@ -187,7 +187,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
         context.DoctorPatients.Add(itemToAdd);
 
-        if (await context.SaveChangesAsync() > 0) return false;
+        if (!(await context.SaveChangesAsync() > 0)) return false;
 
         return true;
     }

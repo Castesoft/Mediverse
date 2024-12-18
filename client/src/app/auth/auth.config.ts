@@ -92,7 +92,7 @@ export class SignInBasicComponent {}
   template: `
     <div class="d-flex flex-column flex-lg-row flex-column-fluid">
       <div
-        aside
+        authAside
         class="d-flex flex-column flex-lg-row-auto bg-primary w-xl-600px positon-xl-relative"
       ></div>
 

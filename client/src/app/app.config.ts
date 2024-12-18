@@ -106,7 +106,7 @@ export class AppComponent implements OnInit {
     if (!userString) return;
     const user = JSON.parse(userString);
     this.accountService.setCurrentUser(user);
-    console.log('user', user);
+    // console.log('user', user);
 
   }
 }
@@ -130,7 +130,7 @@ export const appConfig: ApplicationConfig = {
         runGuardsAndResolvers: 'always',
         canActivate: [authGuard],
         children: [
-          { path: 'account',
+          { path: 'cuenta',
             loadChildren: () => import('./account/account.component').then(m => m.AccountModule)
            },
           {

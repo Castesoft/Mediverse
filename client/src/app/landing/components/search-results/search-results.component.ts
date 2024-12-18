@@ -3,13 +3,10 @@ import { Component, effect, HostListener, inject, OnInit, signal } from '@angula
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { SearchResults } from 'src/app/_models/doctorSearchResults';
 import { SearchService } from 'src/app/_services/search.service';
-import { TablePagerComponent } from 'src/app/_shared/template/components/tables/table-pager.component';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
-import { UserDropdownComponent } from 'src/app/_shared/template/components/user-dropdown.component';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Search } from "src/app/_models/search/search";
-import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { SearchFormComponent } from 'src/app/search/components/search-form.component';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchAuthComponent } from 'src/app/search/components/search-auth.component';
@@ -27,7 +24,7 @@ import { AvailableTime } from 'src/app/_models/availableTime';
   selector: 'div[searchResults]',
   host: { class: 'h-100 d-flex mobile-view', },
   standalone: true,
-  imports: [TablePagerComponent, SearchFormComponent, ProfilePictureComponent, CommonModule, RouterModule, UserDropdownComponent, BsDropdownModule,
+  imports: [SearchFormComponent, CommonModule, RouterModule, BsDropdownModule,
     SearchAuthComponent, DoctorDetailWindowComponent, DoctorScheduleWindowComponent, DoctorResultsWindowComponent,
   ],
   providers: [ BsDropdownDirective, ],
@@ -86,6 +83,10 @@ export class SearchResultsComponent implements OnInit {
 
     effect(() => {
       this.setMarkersAndPosition();
+
+      console.log('searchResults', this.service.search());
+
+
     });
   }
 
@@ -150,11 +151,13 @@ export class SearchResultsComponent implements OnInit {
     if (this.service.selected() !== null) {
       const params: Params = getSearchRouteQueryParams(this.service.search());
 
+      // console.log('params', params, 'search', this.service.search());
+
       if (this.service.search().result.availableDays.length > 0) {
         let dayNumber = params['dayNumber'];
         let scheduleOption = params['scheduleOption'];
 
-        console.log('dayNumber', dayNumber, 'scheduleOption', scheduleOption);
+        // console.log('dayNumber', dayNumber, 'scheduleOption', scheduleOption);
 
 
         if (dayNumber && scheduleOption) {
@@ -164,7 +167,7 @@ export class SearchResultsComponent implements OnInit {
           if (this.service.search().result.availableDays.some(d => d.dayNumber === dayNumber)) {
             const day = this.service.search().result.availableDays.find(d => d.dayNumber === dayNumber);
 
-            console.log('day', day, 'scheduleOption', scheduleOption);
+            // console.log('day', day, 'scheduleOption', scheduleOption);
             if (day) {
               if (day.availableTimes.length > scheduleOption) {
                 this.selectedSchedule.set(day);
@@ -177,8 +180,8 @@ export class SearchResultsComponent implements OnInit {
 
       }
 
-      console.log('selectedSchedule', this.selectedSchedule());
-      console.log('selectedTime', this.selectedTime());
+      // console.log('selectedSchedule', this.selectedSchedule());
+      // console.log('selectedTime', this.selectedTime());
     }
 
   }

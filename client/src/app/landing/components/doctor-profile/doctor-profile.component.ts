@@ -1,15 +1,13 @@
-import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
-import { SearchService } from 'src/app/_services/search.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { ShareModalComponent } from './share-modal/share-modal.component'; // You'll need to create this component
-import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { AvailableDay } from 'src/app/_models/availableDay';
+import { DoctorResult } from 'src/app/_models/doctors/doctorResults/doctorResult';
+import { SearchService } from 'src/app/_services/search.service';
+import { ShareModalComponent } from 'src/app/landing/components/doctor-profile/share-modal/share-modal.component';
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
-import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
-import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-schedule-window.component';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -18,8 +16,6 @@ import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-sch
     ProfilePictureComponent,
     DoctorGeneralTabComponent,
     DoctorReviewsTabComponent,
-    DoctorScheduleTabComponent,
-    DoctorScheduleWindowComponent
   ],
   templateUrl: './doctor-profile.component.html'
 })

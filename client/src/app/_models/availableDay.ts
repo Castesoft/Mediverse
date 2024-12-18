@@ -8,13 +8,19 @@ export class AvailableDay {
   monthNumber: number | null = null;
   year: number | null = null;
   availableTimes: AvailableTime[] = [];
-  selectedTime: AvailableTime = new AvailableTime();
 
   constructor(init?: Partial<Omit<AvailableDay, 'findIndex'>>) {
     Object.assign(this, init);
+    Object.setPrototypeOf(this, AvailableDay.prototype);
   }
 
-  findIndex(time: AvailableTime): number {
+  findIndex(time: AvailableTime | null): number | null {
+    if (time === null) return null;
+
+    const index = this.availableTimes.indexOf(time);
+
+    console.log('index', index);
+
     return this.availableTimes.indexOf(time);
   }
 }

@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
 import { AccountService } from 'src/app/_services/account.service';
-import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { ControlTextareaComponent } from 'src/app/_forms/control-textarea.component';
@@ -11,7 +10,7 @@ import { ControlTextareaComponent } from 'src/app/_forms/control-textarea.compon
 @Component({
   selector: 'app-satisfaction-survey-modal',
   standalone: true,
-  imports: [ModalWrapperModule, InputControlComponent, ReactiveFormsModule, ControlCheckComponent, ControlTextareaComponent],
+  imports: [ModalWrapperModule, ReactiveFormsModule, ControlCheckComponent, ControlTextareaComponent],
   templateUrl: './satisfaction-survey-modal.component.html',
   styleUrl: './satisfaction-survey-modal.component.scss'
 })
@@ -51,7 +50,7 @@ export class SatisfactionSurveyModalComponent implements OnInit {
       const survey: SatisfactionSurvey = this.surveyForm.value;
 
       console.log(survey);
-      
+
       this.accountService.submitReview(survey).subscribe({
         next: () => {
           this.bsModalRef.hide();

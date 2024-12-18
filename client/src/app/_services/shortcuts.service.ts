@@ -45,10 +45,12 @@ export class ShortcutsService {
 
   add = (key: string, callback: () => void) => this.shortcuts[key] = callback;
   remove = (key: string) => delete this.shortcuts[key];
-  log = () => console.log(this.shortcuts);
+  log = () => {
+    // console.log(this.shortcuts)
+  };
 
   constructor() {
-    console.log('ShortcutsService initialized');
+    // console.log('ShortcutsService initialized');
 
 
     this.listenToKeyboardEvents();

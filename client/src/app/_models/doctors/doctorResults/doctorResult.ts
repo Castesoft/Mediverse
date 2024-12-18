@@ -27,6 +27,7 @@ export class DoctorResult {
 
   constructor(init?: Partial<Omit<DoctorResult, 'getAvailableDayByIndex'>>) {
     Object.assign(this, init);
+    Object.setPrototypeOf(this, DoctorResult.prototype);
   }
 
   getAvailableDayByDayNumber(dayNumber: number): AvailableDay | null {
@@ -40,4 +41,27 @@ export class DoctorResult {
 
     return null;
   }
+
+  updateAvailableDayAndTime(day: number | null, time: number | null): this {
+    if (day === null) throw new Error('Day is null');
+    if (time === null) throw new Error('Time is null');
+    if (this.availableDays.length === 0) throw new Error('Available days is empty');
+
+    console.log('day', day);
+
+    const dayIndex = this.availableDays.findIndex(d => d.dayNumber === day);
+
+    console.log('availableDays', this.availableDays);
+
+    if (dayIndex === -1) throw new Error('Day not found');
+
+    const foundtime = this.availableDays[dayIndex].availableTimes.at(time);
+
+    if (!foundtime) throw new Error('Time not found');
+
+    this.availableDays[dayIndex].availableTimes[time].available = false;
+
+    return this;
+  }
+
 }

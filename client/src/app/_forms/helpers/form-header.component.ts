@@ -124,7 +124,7 @@ export class DetailLinkComponent {
   }
   `,
   standalone: true,
-  imports: [FontAwesomeModule, CommonModule, DetailLinkComponent,],
+  imports: [FontAwesomeModule, CommonModule,],
 })
 export class FormHeaderComponent {
   dictionary = input.required<NamingSubject>();

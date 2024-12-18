@@ -4,15 +4,13 @@ import { ReactiveFormsModule, ControlValueAccessor, NgControl, FormControl, Form
 import { distinctUntilChanged } from "rxjs";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
-import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
-import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
 import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   selector: '[controlSwitch]',
   templateUrl: './control-switch.component.html',
   standalone: true,
-  imports: [ ReactiveFormsModule, CommonModule, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent, ],
+  imports: [ ReactiveFormsModule, CommonModule, InvalidFeedbackComponent, HelpBlockComponent, ],
 })
 export class ControlSwitchComponent implements ControlValueAccessor, AfterViewInit {
   validation = inject(ValidationService);

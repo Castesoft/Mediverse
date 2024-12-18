@@ -2,8 +2,6 @@ import { Component, effect, inject, model } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
-import { OptionalSpanComponent } from 'src/app/_forms/helpers/optional-span.component';
-import { NewBadgeComponent } from 'src/app/_forms/helpers/new-badge.component';
 import { LegacyControlLabelComponent } from 'src/app/_forms/helpers/control-label.component';
 import { InputComponent } from 'src/app/_forms/helpers/input.component';
 import { CommonModule } from '@angular/common';
@@ -44,8 +42,6 @@ import { ValidationService } from 'src/app/_services/validation.service';
     ReactiveFormsModule,
     InvalidFeedbackComponent,
     HelpBlockComponent,
-    OptionalSpanComponent,
-    NewBadgeComponent,
     LegacyControlLabelComponent,
     InputComponent,
     CommonModule,

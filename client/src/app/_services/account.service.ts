@@ -68,7 +68,7 @@ export class AccountService {
     this.current.set(user);
     this.getCurrent().subscribe({
       next: response => {
-        console.log('response', response);
+        // console.log('response', response);
         this.current.set(response);
       }
     });
@@ -349,7 +349,7 @@ export class AccountService {
     params = params.append('insuranceId', insuranceId.toString());
     params = params.append('isActive', isActive);
 
-    console.log('params', params);
+    // console.log('params', params);
 
     return this.http.put<Account>(`${this.baseUrl}doctor-medical-insurance-company`, null, { params: params, }).pipe(
       tap(account => {

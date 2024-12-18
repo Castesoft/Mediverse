@@ -298,7 +298,11 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber));
 
         CreateMap<AppRole, RoleDto>();
-        CreateMap<AppUser, DoctorDto>();
+        CreateMap<AppUser, DoctorDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
+            .ForMember(dest => dest.Specialty, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault().MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
+        ;
+
         CreateMap<AppPermission, PermissionDto>();
 
         CreateMap<DoctorPatient, DoctorDto>()

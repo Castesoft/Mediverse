@@ -9,7 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import { Calendar, CalendarOptions, DateSelectArg, DatesSetArg, EventClickArg } from '@fullcalendar/core';
+import { Calendar, CalendarOptions, DateSelectArg, EventClickArg } from '@fullcalendar/core';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
@@ -24,7 +24,6 @@ import { AccountService } from 'src/app/_services/account.service';
 import { CatalogModule } from 'src/app/_shared/catalog.module';
 import { TablesModule } from 'src/app/_shared/template/components/tables/tables.module';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
-import { EventsTableComponent } from 'src/app/events/components/events-table.component';
 import { EventsService } from 'src/app/events/events.config';
 import { calcDateDiff } from 'src/app/_utils/util';
 
@@ -38,7 +37,6 @@ import { calcDateDiff } from 'src/app/_utils/util';
     RouterModule,
     ReactiveFormsModule,
     FontAwesomeModule,
-    EventsTableComponent,
     AlertModule,
     ControlsModule,
     TablesModule,

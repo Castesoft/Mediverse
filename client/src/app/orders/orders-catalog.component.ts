@@ -18,8 +18,8 @@ import { OrdersService } from "src/app/orders/orders.config";
 
 @Component({
   selector: '[ordersCatalog]',
-  template: ``,
-  // templateUrl: './orders-catalog.component.html',
+  // template: ``,
+  templateUrl: './orders-catalog.component.html',
   standalone: true,
   imports: [ FontAwesomeModule,
     OrdersTableComponent, CommonModule,

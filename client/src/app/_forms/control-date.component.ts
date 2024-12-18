@@ -4,8 +4,6 @@ import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } fro
 import { FlatpickrModule } from "angularx-flatpickr";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
-import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
-import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
 import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
@@ -13,7 +11,7 @@ import { ValidationService } from "src/app/_services/validation.service";
   selector: '[controlDate]',
   templateUrl: './control-date.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, OptionalSpanComponent, NewBadgeComponent, HelpBlockComponent,
+  imports: [ReactiveFormsModule, CommonModule, HelpBlockComponent,
     InvalidFeedbackComponent, FlatpickrModule,],
 })
 export class ControlDateComponent implements ControlValueAccessor, OnInit {

@@ -1,22 +1,24 @@
-import { HttpParams } from "@angular/common/http";
-import { ParamMap, Params } from "@angular/router";
+import { ParamMap } from "@angular/router";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { EntityParams } from 'src/app/_models/base/entityParams';
 import { Entity } from 'src/app/_models/base/entity';
 import { DoctorResult } from 'src/app/_models/doctors/doctorResults/doctorResult';
+import { SearchTabs } from 'src/app/_models/search/searchTypes';
 
 
 export class Search extends EntityParams<Entity> {
   specialty: SelectOption | null = null;
   location: SelectOption | null = null;
   result: DoctorResult = new DoctorResult();
-  tab: string | null = 'general';
+  tab: SearchTabs | null | string = 'general';
   dayNumber: number | null = null;
   scheduleOption: number | null = null;
+  eventId: number | null = null;
 
   constructor(key: string | null, init?: Partial<Omit<Search, 'setFromQueryParamMap' | 'paramsValue'>>) {
     super(key);
     Object.assign(this, init);
+    Object.setPrototypeOf(this, Search.prototype);
   }
 
   setFromQueryParamMap(params: ParamMap): this {
@@ -39,13 +41,17 @@ export class Search extends EntityParams<Entity> {
       }
     }
     if (params.has('tab')) {
-      this.tab = params.get('tab')!;
+      this.tab = params.get('tab')! as SearchTabs;
     }
     if (params.has('dayNumber')) {
       this.dayNumber = +params.get('dayNumber')!;
     }
     if (params.has('scheduleOption')) {
       this.scheduleOption = +params.get('scheduleOption')!;
+    }
+
+    if (params.has('eventId')) {
+      this.eventId = +params.get('eventId')!;
     }
 
     return this;

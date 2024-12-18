@@ -20,16 +20,24 @@ export class DoctorScheduleTabComponent implements OnInit {
 
   service = inject(SearchService);
 
-  onSelectSchedule = output<AvailableDay>();
   doctor = model.required<DoctorResult | null>();
-
-  selectedDay = signal<AvailableDay | null>(null);
-  schedule = signal<AvailableDay[]>([]);
   selectedSchedule = model.required<AvailableDay | null>();
   selectedTime = model.required<AvailableTime | null>();
 
-  constructor() {
+  selectedDay = signal<AvailableDay | null>(null);
+  schedule = signal<AvailableDay[]>([]);
 
+  constructor() {
+    effect(() => {
+      console.log('doctor', this.doctor());
+
+      if (this.doctor() !== null) {
+        // this.
+        // this.selectedDay.set(null);
+        this.selectedDay.set(this.doctor()!.availableDays.find(x => x.dayNumber === this.service.search().dayNumber) || null);
+      }
+
+    });
   }
 
   ngOnInit(): void {
@@ -37,29 +45,53 @@ export class DoctorScheduleTabComponent implements OnInit {
   }
 
   selectDay(day: AvailableDay) {
-    this.selectedDay.set(day);
+    Object.setPrototypeOf(day, AvailableDay.prototype);
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { dayNumber: day.dayNumber },
-      queryParamsHandling: 'merge'
-    });
+    if (this.selectedDay() !== day) {
+      this.selectedDay.set(day);
+      this.selectedTime.set(null);
+    }
 
     this.service.search.set(new Search(this.service.search().key, {
       ...this.service.search(),
-      dayNumber: day.dayNumber
+      dayNumber: day.dayNumber,
+      scheduleOption: day.findIndex(this.selectedTime())
     }));
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: getSearchRouteQueryParams(this.service.search()),
+      queryParamsHandling: 'merge'
+    });
   }
 
   scheduleAppointment(day: AvailableDay, time: AvailableTime) {
-    console.log('scheduleAppointment', day, time);
-
-
+    Object.setPrototypeOf(day, AvailableDay.prototype);
     this.selectedSchedule.set(new AvailableDay({ ...day, availableTimes: [time] }));
 
+
+    if (this.selectedTime() === time) {
+      this.selectedTime.set(null);
+    } else {
+      this.selectedTime.set(time);
+    }
+
+    // console.log('selected time', this.selectedTime());
+
     this.service.search.update(oldValues => {
-      return new Search(oldValues.key, { ...oldValues, scheduleOption: day.findIndex(time) })
+      const newValues = new Search(oldValues.key, { ...oldValues, scheduleOption: day.findIndex(this.selectedTime()) });
+
+      // if (this.selectedTime() === null) {
+      //   newValues.scheduleOption = null;
+      // } else {
+      //   newValues.scheduleOption = day.findIndex(time);
+      // }
+
+      return newValues;
     });
+
+    console.log('schedule appointment', this.service.search());
+
 
     this.router.navigate([], {
       relativeTo: this.route,

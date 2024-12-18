@@ -91,7 +91,6 @@ export class EventsTableMenuComponent
     CdkModule,
     MaterialModule,
     CommonModule,
-    EventsTableMenuComponent,
   ],
 })
 export class EventsTableComponent

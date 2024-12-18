@@ -2,7 +2,7 @@
   <div cardHeader>
     <div cardTitle [title]="'Detalles de perfil'"></div>
     <a
-      [routerLink]="['/account/settings']"
+      [routerLink]="['/cuenta/configuracion']"
       class="btn btn-sm btn-primary align-self-center"
       >Editar perfil</a
     >
@@ -67,21 +67,7 @@
         <span class="fw-bold fs-6 text-gray-800">{{ account.country }}</span>
       </div>
     </div>
-    <!-- <div class="row mb-7">
-          <label class="col-lg-4 fw-semibold text-muted">Communication</label>
-          <div class="col-lg-8">
-            <span class="fw-bold fs-6 text-gray-800">Email, Phone</span>
-          </div>
-        </div>
-        <div class="row mb-10">
-          <label class="col-lg-4 fw-semibold text-muted">Permitir cambios</label>
-          <div class="col-lg-8">
-            <span class="fw-semibold fs-6 text-gray-800">Sí</span>
-          </div>
-        </div> -->
-    <div
-      class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6"
-    >
+    <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6">
       <i class="ki-duotone ki-information fs-2tx text-warning me-4">
         <span class="path1"></span>
         <span class="path2"></span>
@@ -92,7 +78,7 @@
           <h4 class="text-gray-900 fw-bold">¡Requerimos su atención!</h4>
           <div class="fs-6 text-gray-700">
             Su pago fue rechazado. Para comenzar a usar Mediverse, favor de
-            <a class="fw-bold" [routerLink]="['/account/billing']"
+            <a class="fw-bold" [routerLink]="['/cuenta/facturacion']"
               >Agregar método de pago</a
             >.
           </div>

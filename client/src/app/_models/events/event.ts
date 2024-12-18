@@ -5,6 +5,7 @@ import { Payment } from "../payments/payment";
 import { Prescription } from "../prescriptions/prescription";
 import { Service } from "src/app/_models/services/service";
 import { User } from "src/app/_models/users/user";
+import { Doctor } from 'src/app/_models/doctors/doctor';
 
 
 export class Event extends Entity {
@@ -18,7 +19,7 @@ export class Event extends Entity {
   nextSteps: string | null = null;
 
   patient: User = new User();
-  doctor: User = new User();
+  doctor: Doctor = new Doctor();
   service: Service = new Service();
   clinic: Address = new Address();
   nurses: User[] = [];

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, inject, Input, model, input, ModelSignal } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject, model, input, ModelSignal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -14,12 +14,9 @@ import { Event } from "src/app/_models/events/event";
 import { eventCells } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
-import { IconsService } from "src/app/_services/icons.service";
 import { UtilsService } from "src/app/_services/utils.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
-import { PatientTableCellComponent, PatientTableSexCellComponent, PatientTableHasAccountCellComponent } from "src/app/_shared/components/patient-table-cell.component";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { TableHeaderComponent } from "src/app/_shared/template/components/tables/table-header.component";
 import { EventsService } from "src/app/events/events.config";
 
 @Component({
@@ -27,8 +24,8 @@ import { EventsService } from "src/app/events/events.config";
   selector: 'table[eventsTable]',
   standalone: true,
   templateUrl: './events-table.component.html',
-  imports: [FontAwesomeModule, TableHeaderComponent, FormsModule, RouterModule, BsDropdownModule, PatientTableCellComponent, CommonModule,
-    PatientTableSexCellComponent, PatientTableHasAccountCellComponent, MaterialModule, CdkModule,
+  imports: [FontAwesomeModule, FormsModule, RouterModule, BsDropdownModule, CommonModule,
+    MaterialModule, CdkModule,
     TooltipModule
   ],
 })

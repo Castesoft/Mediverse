@@ -1,11 +1,16 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, effect, inject, signal } from "@angular/core";
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { createId } from '@paralleldrive/cuid2';
 import { Observable, tap } from "rxjs";
+import { AvailableDay } from 'src/app/_models/availableDay';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
+import { DoctorScheduleFormPayload } from 'src/app/_models/doctorSchedules/doctorScheduleFormPayload';
 import { SearchResults } from "src/app/_models/doctorSearchResults";
+import { Event } from 'src/app/_models/events/event';
 import { Search } from "src/app/_models/search/search";
+import { SearchTabs } from 'src/app/_models/search/searchTypes';
 import { getSearchHttpParams, getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
 import { UtilsService } from "src/app/_services/utils.service";
 import { PaginatedResult, getPaginatedResult } from "src/app/_utils/serviceHelper/pagination/paginatedResult";
@@ -20,9 +25,10 @@ export class SearchService {
   private utilsService = inject(UtilsService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private matSnackBar = inject(MatSnackBar);
 
   constructor() {
-    
+
   }
 
   baseUrl = `${environment.apiUrl}search/`;
@@ -78,6 +84,12 @@ export class SearchService {
         if (search.result.id) {
           const foundDoctor = this.findDoctorById(search.result.id);
           this.selected.set(foundDoctor);
+          console.log('foundDoctor', foundDoctor);
+
+          if (foundDoctor !== null) search.result = foundDoctor;
+
+          this.search.set(search);
+
         }
       }
     });
@@ -215,6 +227,16 @@ export class SearchService {
     return this.search().tab === tab;
   }
 
+  setTab(tab: SearchTabs) {
+    this.search.set(new Search(this.search().key, { ...this.search(), tab: tab }));
+    
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: getSearchRouteQueryParams(this.search()),
+      queryParamsHandling: 'merge'
+    });
+  }
+
   getDoctorById(id: number): Observable<DoctorResult> {
     return this.http.get<DoctorResult>(`${this.baseUrl}${id}`);
   }
@@ -239,5 +261,37 @@ export class SearchService {
     const currentDoctors = this.data();
     const doctor = currentDoctors.find(d => d.id === id);
     return doctor || null;
+  }
+
+  createEvent(model: DoctorScheduleFormPayload): Observable<Event> {
+    return this.http.post<Event>(`${environment.apiUrl}events/search`, model).pipe(
+      tap(response => {
+        this.matSnackBar.open('Evento creado', 'Cerrar', { duration: 5000 });
+
+        // update search
+        this.search.update(oldValues => {
+
+          const newInstance = Object.setPrototypeOf(oldValues, Search.prototype) as Search;
+          newInstance.result = Object.setPrototypeOf(oldValues.result, DoctorResult.prototype) as DoctorResult;
+
+          console.log('oldValues', oldValues);
+          console.log('newInstance', newInstance);
+
+          newInstance.eventId = response.id;
+
+          newInstance.result.updateAvailableDayAndTime(oldValues.dayNumber, oldValues.scheduleOption);
+
+          return newInstance;
+        });
+
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: getSearchRouteQueryParams(this.search()),
+          queryParamsHandling: 'merge'
+        });
+
+        // update results
+      })
+    );
   }
 }

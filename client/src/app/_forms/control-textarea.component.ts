@@ -3,8 +3,6 @@ import { Component, AfterViewInit, inject, input, Input, Self, Renderer2, Elemen
 import { ReactiveFormsModule, ControlValueAccessor, FormControl, NgControl } from "@angular/forms";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
-import { NewBadgeComponent } from "src/app/_forms/helpers/new-badge.component";
-import { OptionalSpanComponent } from "src/app/_forms/helpers/optional-span.component";
 import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
@@ -12,7 +10,7 @@ import { ValidationService } from "src/app/_services/validation.service";
   selector: '[controlTextarea]',
   templateUrl: './control-textarea.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, InvalidFeedbackComponent, HelpBlockComponent, OptionalSpanComponent, NewBadgeComponent],
+  imports: [ReactiveFormsModule, CommonModule, InvalidFeedbackComponent, HelpBlockComponent,],
   styles: `
 .invalid-feedback.show-feedback {
   display: block !important;

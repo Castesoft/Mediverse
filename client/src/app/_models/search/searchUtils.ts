@@ -51,5 +51,8 @@ export function getSearchRouteQueryParams(search: Search): Params {
   if (search.scheduleOption !== null) params['scheduleOption'] = search.scheduleOption;
   else params['scheduleOption'] = null;
 
+  if (search.eventId !== null) params['eventId'] = search.eventId;
+  else params['eventId'] = null;
+
   return params;
 }

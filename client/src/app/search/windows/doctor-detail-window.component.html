@@ -71,7 +71,7 @@
       @if (service.isTabActive('general')) {
       <div doctorGeneralTab [(doctor)]="service.selected"></div>
       } @else if (service.isTabActive('schedule')) {
-      <div doctorScheduleTab [(doctor)]="service.selected" [(selectedSchedule)]="selectedSchedule" [(selectedTime)]="selectedTime" (selectedScheduleChange)="onSelectedScheduleChange($event)"></div>
+      <div doctorScheduleTab [(doctor)]="service.selected" [(selectedSchedule)]="selectedSchedule" [(selectedTime)]="selectedTime" (selectedScheduleChange)="scheduleWindowOpen.set(true)"></div>
       } @else if (service.isTabActive('reviews')) {
       <div doctorReviewsTab [(doctor)]="service.selected"></div>
       }

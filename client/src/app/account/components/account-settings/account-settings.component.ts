@@ -1,20 +1,20 @@
 import { Component, inject } from '@angular/core';
-import {  RouterLink, RouterModule } from '@angular/router';
-import { Account } from "src/app/_models/account/account";
-import { TemplateModule } from 'src/app/_shared/template/template.module';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { RouterModule } from '@angular/router';
+import { Account } from 'src/app/_models/account/account';
 import { AccountService } from 'src/app/_services/account.service';
-import { CardOverviewComponent } from './card-overview/card-overview.component';
-import { CardSigninMethodComponent } from './card-signin-method/card-signin-method.component';
-import { CardProfileDetailsComponent } from "./card-profile-details/card-profile-details.component";
-import { CardConnectedAccountsComponent } from "./card-connected-accounts/card-connected-accounts.component";
-import { CardNotificationsComponent } from "./card-notifications/card-notifications.component";
-import { CardDeactivateComponent } from './card-deactivate/card-deactivate.component';
+import { TemplateModule } from 'src/app/_shared/template/template.module';
+import { CardConnectedAccountsComponent } from 'src/app/account/components/account-settings/card-connected-accounts/card-connected-accounts.component';
+import { CardDeactivateComponent } from 'src/app/account/components/account-settings/card-deactivate/card-deactivate.component';
+import { CardNotificationsComponent } from 'src/app/account/components/account-settings/card-notifications/card-notifications.component';
+import { CardOverviewComponent } from 'src/app/account/components/account-settings/card-overview/card-overview.component';
+import { CardProfileDetailsComponent } from 'src/app/account/components/account-settings/card-profile-details/card-profile-details.component';
+import { CardSigninMethodComponent } from 'src/app/account/components/account-settings/card-signin-method/card-signin-method.component';
+import { NavMenuComponent } from 'src/app/account/components/account-settings/nav-menu/nav-menu.component';
 
 @Component({
   selector: 'app-account-settings',
   standalone: true,
-  imports: [TemplateModule, RouterModule, NavMenuComponent, RouterLink, CardOverviewComponent, CardSigninMethodComponent,
+  imports: [TemplateModule, RouterModule, NavMenuComponent, CardOverviewComponent, CardSigninMethodComponent,
     CardProfileDetailsComponent, CardConnectedAccountsComponent, CardNotificationsComponent, CardDeactivateComponent],
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss'

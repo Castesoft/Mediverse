@@ -1,9 +1,7 @@
-import {Component, ElementRef, inject, input, model, OnInit, Renderer2, Self} from '@angular/core';
+import { Component, ElementRef, inject, input, model, OnInit, Renderer2, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { InvalidFeedbackComponent } from 'src/app/_forms/helpers/invalid-feedback.component';
-import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
 import { IconsService } from 'src/app/_services/icons.service';
 import { ValidationService } from 'src/app/_services/validation.service';
 import { NamingSubject } from 'src/app/_models/base/namingSubject';
@@ -13,7 +11,7 @@ import { NamingSubject } from 'src/app/_models/base/namingSubject';
   selector: '[searchText]',
   templateUrl: './search-text.component.html',
   standalone: true,
-  imports: [ FormsModule, ReactiveFormsModule, CommonModule, FontAwesomeModule, InvalidFeedbackComponent, HelpBlockComponent, ]
+  imports: [ FormsModule, ReactiveFormsModule, CommonModule, FontAwesomeModule, ]
 })
 export class SearchTextComponent implements ControlValueAccessor, OnInit {
   icons = inject(IconsService);

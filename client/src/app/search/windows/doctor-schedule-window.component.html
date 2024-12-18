@@ -1,165 +1,216 @@
 <div class="card card-flush h-lg-100" [style]="isMobile() ? { width: '100%' } : { width: '420px' }">
-  <div class="card-header pt-7">
-    <div class="card-title">
-      <i class="ki-duotone ki-badge fs-1 me-2">
-        <span class="path1"></span>
-        <span class="path2"></span>
-        <span class="path3"></span>
-        <span class="path4"></span>
-        <span class="path5"></span>
-      </i>
-      <h2>Agendar cita</h2>
-    </div>
-    <div class="card-toolbar gap-3">
-      <i class="ki-duotone ki-cross fs-2" (click)="onClickClose()" style="cursor: pointer;">
-        <span class="path1"></span>
-        <span class="path2"></span>
-        <span class="path3"></span>
-      </i>
-    </div>
-  </div>
-  <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
-    @if (accountService.current()) {
-
-    @if(form.error) {
-    <div errorsAlert3 [(error)]="form.error"></div>
-    }
-
-    <div class="stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid gap-10">
-      <div class="stepper-nav">
-        <form (ngSubmit)="onSubmit()" [id]="form.id">
-          <div class="stepper-item" [class.completed]="form.controls.doctor.controls.id.value !== null">
-            <div class="stepper-wrapper">
-              <div stepperIcon [index]="1"></div>
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Especialista</h3>
-                <div class="stepper-desc fw-semibold">{{service.selected()?.firstName}} {{service.selected()?.lastName}}
-                </div>
-                <div class="stepper-desc fw-semibold">{{service.selected()?.specialties![0].name}}</div>
-              </div>
-            </div>
-            <div class="stepper-line h-40px"></div>
-          </div>
-          <div class="stepper-item" [class.completed]="form.hasDateAndTime">
-            <div class="stepper-wrapper">
-              <div stepperIcon [index]="2"></div>
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Fecha y hora</h3>
-                {{ form.dateText}}
-                <div class="stepper-desc fw-semibold">{{ form.timeText }}</div>
-              </div>
-            </div>
-            <div class="stepper-line h-40px"></div>
-          </div>
-          <div class="stepper-item" [class.completed]="form.controls.clinic.value?.id !== null">
-            <div class="stepper-wrapper">
-              <div stepperIcon [index]="3"></div>
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Dirección</h3>
-                @if (service.selected()?.addresses!.length > 1) {
-                <div class="stepper-desc fw-semibold">Selecciona una dirección</div>
-                <div controlsWrapper3 [(control)]="form.controls.clinic"></div>
-                } @else {
-                <div class="stepper-desc fw-semibold">
-                  {{service.selected()?.addresses![0].name}}
-                </div>
-                }
-              </div>
-            </div>
-            <div class="stepper-line h-40px"></div>
-          </div>
-          <div class="stepper-item" [class.completed]="form.controls.service.value?.id !== null">
-            <div class="stepper-wrapper">
-              <div stepperIcon [index]="4"></div>
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Servicio</h3>
-                @if (service.selected()?.services!.length > 1) {
-                <div class="stepper-desc fw-semibold">Selecciona el motivo de la cita</div>
-                <div controlsWrapper3 [(control)]="form.controls.service"></div>
-                } @else {
-                <div class="stepper-desc fw-semibold">{{service.selected()?.services![0].name}} -
-                  ${{service.selected()?.services![0].options?.price | currency}}</div>
-                }
-              </div>
-            </div>
-            <div class="stepper-line h-40px"></div>
-          </div>
-          <div class="stepper-item"
-            [class.completed]="service.selected()?.medicalInsuranceCompanies!.length > 0 ? form.get('medicalInsuranceCompanyId')?.valid : true">
-            <div class="stepper-wrapper">
-              <div class="stepper-icon w-40px h-40px">
-                <i class="ki-duotone ki-check fs-2 stepper-check"></i>
-                <span class="stepper-number">5</span>
-              </div>
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Aseguradora</h3>
-                @if (service.selected()?.medicalInsuranceCompanies!.length > 0) {
-                <div class="stepper-desc fw-semibold">Selecciona tu aseguradora</div>
-                <div controlsWrapper3 [(control)]="form.controls.medicalInsuranceCompany"></div>
-                } @else {
-                <div class="stepper-desc fw-semibold">
-                  Este especialista no acepta aseguradoras
-                </div>
-                }
-              </div>
-            </div>
-            <div class="stepper-line h-40px"></div>
-          </div>
-          <div class="stepper-item" [class.completed]="form.get('paymentMethodTypeId')?.valid">
-            <div class="stepper-wrapper">
-              <div stepperIcon [index]="6"></div>
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Método de pago</h3>
-                @if (service.selected()?.paymentMethods!.length > 1) {
-                <div class="stepper-desc fw-semibold">Selecciona el método de pago</div>
-                <div controlsWrapper3 [(control)]="form.controls.paymentMethodType"></div>
-                } @else {
-                <div class="stepper-desc fw-semibold">{{service.selected()?.paymentMethods![0].name}}</div>
-                }
-              </div>
-            </div>
-            <div class="stepper-line h-40px"></div>
-          </div>
-          <div class="stepper-item mark-completed">
-            <div class="stepper-wrapper">
-              <div stepperIcon [index]="5"></div>
-              @if ((form.controls.paymentMethodType.value?.id === 1 || form.controls.paymentMethodType.value?.id === 2)
-              && service.selected()!.requireAnticipatedCardPayments) {
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Pagar y confirmar</h3>
-                <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de realizar el pago
-                </div>
-
-                <button type="submit" class="btn btn-success">Pagar y agendar</button>
-              </div>
-              } @else {
-              <div class="stepper-label flex-grow-1">
-                <h3 class="stepper-title">Confirmar</h3>
-                <div class="stepper-desc fw-semibold mb-4">Confirma todos los datos seleccionados antes de agendar</div>
-                @if (!service.selected()?.hasPatientInformationAccess) {
-
-                } @else {
-                <span class="form-check-label fw-semibold text-gray-700 fs-7 mb-4">
-                  *Este especialista ya tiene acceso a tu información personal e historial clínico.
-                </span>
-                }
-                <button type="submit" [attr.form]="form.id" class="btn btn-success">Agendar</button>
-              </div>
-              }
-            </div>
-          </div>
-        </form>
+@if(selectedTime()?.available === true) {
+    <div class="card-header pt-7">
+      <div class="card-title">
+        <i class="ki-duotone ki-badge fs-1 me-2">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+          <span class="path4"></span>
+          <span class="path5"></span>
+        </i>
+        <h2>Agendar cita</h2>
+      </div>
+      <div class="card-toolbar gap-3">
+        <i class="ki-duotone ki-cross fs-2" (click)="onClickClose()" style="cursor: pointer;">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
       </div>
     </div>
-    } @else {
-    <div signInBasicForm [noRedirect]="true"></div>
-    }
-  </div>
-  <div style="max-height: 300px; overflow: auto; min-height: 300px;"
-        class="border border-2 rounded-3 border-gray-700">
-        <strong>Form: </strong><code class="json">
-                {{form.value | json}}
-              </code>
+    <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
+      @if (accountService.current()) {
+
+      @if(form.error) {
+      <div errorsAlert3 [(error)]="form.error"></div>
+      }
+
+      <div class="stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid gap-10">
+        <div class="stepper-nav">
+          <form (ngSubmit)="onSubmit()" [id]="form.id">
+            <div class="stepper-item" [class.completed]="form.controls.doctor.controls.id.value !== null">
+              <div class="stepper-wrapper">
+                <div stepperIcon [index]="1"></div>
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Especialista</h3>
+                  <div class="stepper-desc fw-semibold">{{service.selected()?.firstName}} {{service.selected()?.lastName}}
+                  </div>
+                  <div class="stepper-desc fw-semibold">{{service.selected()?.specialties![0].name}}</div>
+                </div>
+              </div>
+              <div class="stepper-line h-40px"></div>
+            </div>
+            <div class="stepper-item" [class.completed]="form.hasDateAndTime">
+              <div class="stepper-wrapper">
+                <div stepperIcon [index]="2"></div>
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Fecha y hora</h3>
+                  {{ form.dateText}}
+                  <div class="stepper-desc fw-semibold">{{ form.timeText }}</div>
+                </div>
+              </div>
+              <div class="stepper-line h-40px"></div>
+            </div>
+            <div class="stepper-item" [class.completed]="form.controls.clinic.value?.id !== null">
+              <div class="stepper-wrapper">
+                <div stepperIcon [index]="3"></div>
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Dirección</h3>
+                  @if (service.selected()?.addresses!.length > 1) {
+                  <div class="stepper-desc fw-semibold">Selecciona una dirección</div>
+                  <div controlsWrapper3 [(control)]="form.controls.clinic"></div>
+                  } @else {
+                  <div class="stepper-desc fw-semibold">
+                    {{service.selected()?.addresses![0].name}}
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="stepper-line h-40px"></div>
+            </div>
+            <div class="stepper-item" [class.completed]="form.controls.service.value?.id !== null">
+              <div class="stepper-wrapper">
+                <div stepperIcon [index]="4"></div>
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Servicio</h3>
+                  @if (service.selected()?.services!.length > 1) {
+                  <div class="stepper-desc fw-semibold">Selecciona el motivo de la cita</div>
+                  <div controlsWrapper3 [(control)]="form.controls.service"></div>
+                  } @else {
+                  <div class="stepper-desc fw-semibold">{{service.selected()?.services![0].name}} -
+                    ${{service.selected()?.services![0].options?.price | currency}}</div>
+                  }
+                </div>
+              </div>
+              <div class="stepper-line h-40px"></div>
+            </div>
+            <div class="stepper-item"
+              [class.completed]="service.selected()?.medicalInsuranceCompanies!.length > 0 ? form.get('medicalInsuranceCompanyId')?.valid : true">
+              <div class="stepper-wrapper">
+                <div class="stepper-icon w-40px h-40px">
+                  <i class="ki-duotone ki-check fs-2 stepper-check"></i>
+                  <span class="stepper-number">5</span>
+                </div>
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Aseguradora</h3>
+                  @if (service.selected()?.medicalInsuranceCompanies!.length > 0) {
+                  <div class="stepper-desc fw-semibold">Selecciona tu aseguradora</div>
+                  <div controlsWrapper3 [(control)]="form.controls.medicalInsuranceCompany"></div>
+                  } @else {
+                  <div class="stepper-desc fw-semibold">
+                    Este especialista no acepta aseguradoras
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="stepper-line h-40px"></div>
+            </div>
+            <div class="stepper-item" [class.completed]="form.get('paymentMethodTypeId')?.valid">
+              <div class="stepper-wrapper">
+                <div stepperIcon [index]="6"></div>
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Método de pago</h3>
+                  @if (service.selected()?.paymentMethods!.length > 1) {
+                  <div class="stepper-desc fw-semibold">Selecciona el método de pago</div>
+                  <div controlsWrapper3 [(control)]="form.controls.paymentMethodType"></div>
+                  } @else {
+                  <div class="stepper-desc fw-semibold">{{service.selected()?.paymentMethods![0].name}}</div>
+                  }
+                </div>
+              </div>
+              <div class="stepper-line h-40px"></div>
+            </div>
+            <div class="stepper-item mark-completed">
+              <div class="stepper-wrapper">
+                <div stepperIcon [index]="5"></div>
+                @if ((form.controls.paymentMethodType.value?.id === 1 || form.controls.paymentMethodType.value?.id === 2)
+                && service.selected()!.requireAnticipatedCardPayments) {
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Pagar y confirmar</h3>
+                  <div class="stepper-desc fw-semibold">Confirma todos los datos seleccionados antes de realizar el pago
+                  </div>
+
+                  <button type="submit" class="btn btn-success">Pagar y agendar</button>
+                </div>
+                } @else {
+                <div class="stepper-label flex-grow-1">
+                  <h3 class="stepper-title">Confirmar</h3>
+                  <div class="stepper-desc fw-semibold mb-4">Confirma todos los datos seleccionados antes de agendar</div>
+                  @if (!service.selected()?.hasPatientInformationAccess) {
+
+                  } @else {
+                  <span class="form-check-label fw-semibold text-gray-700 fs-7 mb-4">
+                    *Este especialista ya tiene acceso a tu información personal e historial clínico.
+                  </span>
+                  }
+                  <button type="submit" [attr.form]="form.id" class="btn btn-success">Agendar</button>
+                </div>
+                }
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
+      } @else {
+      <div signInBasicForm [noRedirect]="true"></div>
+      }
+    </div>
+    @if(dev.isDev()) {
+      <div style="max-height: 300px; overflow: auto; min-height: 300px;"
+          class="border border-2 rounded-3 border-gray-700">
+          <strong>Form: </strong><code class="json">
+                  {{form.value | json}}
+                </code>
+        </div>
+    }
+  } @else if(event() !== null) {
+
+    <div class="card-header pt-7">
+      <div class="card-title">
+        <i class="ki-duotone ki-badge fs-1 me-2">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+          <span class="path4"></span>
+          <span class="path5"></span>
+        </i>
+        <h2>Cita agendada</h2>
+      </div>
+      <div class="card-toolbar gap-3">
+        <i class="ki-duotone ki-cross fs-2" (click)="onClickClose()" style="cursor: pointer;">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+      </div>
+    </div>
+    <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
+      <div class="w-100">
+        <div class="mb-13">
+            <h2 class="mb-3">¡Cita agendada!</h2>
+
+            <div class="text-muted fw-semibold fs-5">
+                Para ver más servicios del {{ event()!.doctor.specialty }} {{ event()!.doctor.fullName }}
+                <a [routerLink]="[]" [queryParams]="{ tab: 'general' }" [queryParamsHandling]="'replace'" class="link-primary fw-bold" (click)="service.setTab('general')">servicios</a>.
+            </div>
+        </div>
+
+         <div class="d-flex flex-center pb-20">
+            <a [routerLink]="['/', 'doctor', event()!.doctor.id]" class="btn btn-lg btn-light me-3">
+              Ver especialista
+            </a>
+
+            <a href="#" class="btn btn-lg btn-primary"  >
+              Ver cita
+            </a>
+        </div>
+
+        <div class="text-center px-4">
+            <img src="media/illustrations/sigma-1/20.png" alt="" class="mw-100 mh-300px">
+        </div>
+    </div>
+    </div>
+  }
 </div>
 
