@@ -1,6 +1,6 @@
 import { Entity } from "src/app/_models/base/entity";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { Event } from "../events/event";
+import Event from "../events/event";
 import { Payment } from "../payments/payment";
 import { UserMedicalInsuranceCompany } from "./userMedicalInsuranceCompany/userMedicalInsuranceCompany";
 import { MedicalRecord } from "../medicalRecords/medicalRecord";

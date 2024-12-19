@@ -12,7 +12,7 @@ import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientReg
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationService } from 'src/app/_services/validation.service';
 import { createId } from '@paralleldrive/cuid2';
-import { BadRequest } from 'src/app/_models/forms/error';
+import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 
 @Component({

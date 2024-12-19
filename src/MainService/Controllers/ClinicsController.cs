@@ -11,6 +11,7 @@ using AutoMapper;
 using MainService.Core.DTOs.Clinics;
 using MainService.Core.Helpers.Params;
 using MainService.Core.DTOs.Addresses;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Controllers;
 
@@ -20,6 +21,7 @@ public class ClinicsController(IUnitOfWork uow, IAddressesService service, UserM
     private static readonly string subject = "clínica";
     private static readonly string subjectArticle = "La";
 
+    [HttpGet]
     public async Task<ActionResult<PagedList<ClinicDto>>> GetPagedListAsync([FromQuery] ClinicParams param)
     {
         var pagedList = await uow.ClinicRepository.GetPagedListAsync(param, User);
@@ -28,6 +30,13 @@ public class ClinicsController(IUnitOfWork uow, IAddressesService service, UserM
             pagedList.TotalCount, pagedList.TotalPages));
 
         return pagedList;
+    }
+
+    [HttpGet("options")]
+    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] ClinicParams param) {
+        param.DoctorId = User.GetUserId();
+        
+        return await uow.ClinicRepository.GetOptionsAsync(param);
     }
 
     [AllowAnonymous]

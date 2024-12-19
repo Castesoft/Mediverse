@@ -4,7 +4,7 @@ import { FormInfo } from "src/app/_models/forms/formTypes";
 import { Payment } from "src/app/_models/payments/payment";
 
 
-export const paymentInfo: FormInfo<Payment> = {
+export const paymentFormInfo: FormInfo<Payment> = {
   ...baseInfo,
   amount: { label: 'Cantidad', type: 'number', },
   date: { label: 'Fecha', type: 'date', },

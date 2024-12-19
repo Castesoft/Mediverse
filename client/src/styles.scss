@@ -205,3 +205,10 @@ html {
 .was-validated .form-control:invalid, .form-control.is-invalid {
   border-color: var(--bs-form-invalid-border-color) !important;
 }
+
+mat-form-field.hide-bottom {
+.mat-mdc-form-field-subscript-wrapper {
+  display: none!important;
+}
+}
+

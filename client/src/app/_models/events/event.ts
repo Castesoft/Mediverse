@@ -4,11 +4,12 @@ import { SelectOption } from "src/app/_models/base/selectOption";
 import { Payment } from "../payments/payment";
 import { Prescription } from "../prescriptions/prescription";
 import { Service } from "src/app/_models/services/service";
-import { User } from "src/app/_models/users/user";
 import { Doctor } from 'src/app/_models/doctors/doctor';
+import Patient from 'src/app/_models/patients/patient';
+import Nurse from 'src/app/_models/nurses/nurse';
 
 
-export class Event extends Entity {
+export default class Event extends Entity {
   allDay = false;
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
@@ -18,11 +19,12 @@ export class Event extends Entity {
   evolution: string | null = null;
   nextSteps: string | null = null;
 
-  patient: User = new User();
+  patient: Patient = new Patient();
   doctor: Doctor = new Doctor();
   service: Service = new Service();
   clinic: Address = new Address();
-  nurses: User[] = [];
+  nurses: Nurse[] = [];
+  nurseOptions: SelectOption[] = [];
   payments: Payment[] = [];
   prescriptions: Prescription[] = [];
   nursesCount: number | null = null;

@@ -77,7 +77,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   returnUrl: string = '/admin';
   focusOnEmail: boolean = false;
   focusOnPassword: boolean = false;
-  redirectUrl: string | null = "/account";
+  redirectUrl: string | null = "/cuenta";
   requiresTwoFactor: boolean = false;
 
   noRedirect = input<boolean>(false);

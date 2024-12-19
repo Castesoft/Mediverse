@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'appointments', component: AppointmentsComponent },
   { path: 'appointments/:id', component: AppointmentDetailsComponent },
   { path: 'payments', component: PaymentsComponent },
-  { path: 'account', component: AccountComponent },
+  { path: 'cuenta', component: AccountComponent },
   {
     path: 'logistics',
     component: LogisticsComponent,

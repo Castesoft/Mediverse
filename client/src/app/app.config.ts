@@ -3,7 +3,7 @@ import localeEsMX from '@angular/common/locales/es-MX';
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, Component, importProvidersFrom, inject, isDevMode, OnInit } from '@angular/core';
-import { provideNativeDateAdapter } from "@angular/material/core";
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from "@angular/material/core";
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, provideRouter, Router, RouterOutlet } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
           this.accountService.loginWithSocialAuth('GOOGLE', resp.credential).subscribe({
             next: () => {
               if (this.route.snapshot.queryParams['noredirect']) return;
-              this.router.navigate(['/account']);
+              this.router.navigate(['/cuenta']);
             }
           });
         } else {
@@ -115,6 +115,20 @@ registerLocaleData(localeEsMX, 'es-MX');
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: MAT_DATE_LOCALE, useValue: "es-MX" },
+    {
+      provide: MAT_DATE_FORMATS, useValue: {
+        parse: {
+          dateInput: "dd/MM/YYYY"
+        },
+        display: {
+          dateInput: "dd/MM/YYYY",
+          monthYearLabel: "MMM YYYY",
+          dateA11yLabel: "LL",
+          monthYearA11yLabel: "MMMM YYYY"
+        }
+      }
+    },
     provideRouter([
       {
         path: '',

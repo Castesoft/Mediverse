@@ -1,0 +1,34 @@
+import { Component, effect } from '@angular/core';
+import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
+import Event from 'src/app/_models/events/event';
+
+@Component({
+  host: { class: 'card card-flush' },
+  selector: 'div[homeEventCreateRoute]',
+  template: `
+    <div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+  `,
+  // templateUrl: './home-event-detail-route.component.html',
+  standalone: false,
+})
+export class HomeEventCreateRouteComponent
+  extends BaseRouteDetail<Event>
+
+{
+  constructor() {
+    super('events', 'create');
+
+    this.key.set(`${this.router.url}#event-create`);
+
+    effect(() => {
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+    });
+  }
+}
+

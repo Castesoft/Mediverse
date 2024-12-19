@@ -6,7 +6,7 @@ import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
 import { View, CatalogMode } from "src/app/_models/base/types";
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { CalendarView } from "src/app/_models/events/eventTypes";

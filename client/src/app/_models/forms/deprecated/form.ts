@@ -4,7 +4,7 @@ import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
 import { Control } from "src/app/_models/forms/deprecated/control";
 import { ControlOrientation } from "src/app/_models/forms/formTypes";
-import { BadRequest } from "../error";
+import { BadRequest } from '../badRequest';
 import { Column } from "../../base/column";
 import { FormUse } from "../formTypes";
 

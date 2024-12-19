@@ -3,7 +3,7 @@ import { inject } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { catchError } from "rxjs";
-import { BadRequest } from "src/app/_models/forms/error";
+import { BadRequest } from '../_models/forms/badRequest';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);

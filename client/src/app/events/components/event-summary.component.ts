@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 
 @Component({
   selector: 'appointment-summary',

@@ -3,6 +3,7 @@ using MainService.Core.DTOs.Services;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Models.Entities;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.Interfaces.Data;
 public interface IServiceRepository
@@ -16,6 +17,7 @@ public interface IServiceRepository
     Task<Service?> GetByIdAsNoTrackingAsync(int id);
     Task<List<Service>> GetAllAsync();
     Task<List<ServiceDto>> GetAllDtoAsync(ServiceParams param, ClaimsPrincipal user);
+    Task<List<OptionDto>> GetOptionsAsync(ServiceParams param);
     Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user);
     Task<bool> ExistsByIdAsync(int id);
 }

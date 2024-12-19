@@ -1,7 +1,7 @@
 import { Component, effect, inject, model, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { CalendarView } from "src/app/_models/events/eventTypes";

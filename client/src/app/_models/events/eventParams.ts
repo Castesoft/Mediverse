@@ -1,5 +1,5 @@
 import { EntityParams } from "src/app/_models/base/entityParams";
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 import { EventRoles } from "src/app/_models/events/eventTypes";
 
 

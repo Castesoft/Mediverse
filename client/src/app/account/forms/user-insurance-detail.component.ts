@@ -5,7 +5,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Account } from "src/app/_models/account/account";
 import { View } from "src/app/_models/base/types";
-import { BadRequest } from "src/app/_models/forms/error";
+import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { InsuranceForm } from "src/app/_models/insurances/insuranceForm";
 import { UserMedicalInsuranceCompany } from "src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";

@@ -12,6 +12,8 @@ import { SelectOption } from "src/app/_models/base/selectOption";
 import { FormUse } from "./formTypes";
 import { DateRange } from "../base/dateRange";
 import { MatFormFieldAppearance } from "@angular/material/form-field";
+import MaterialOptions from 'src/app/_models/forms/materialOptions';
+import DateOptions from 'src/app/_models/forms/dateOptions';
 
 
 /**
@@ -89,6 +91,8 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   appearance: MatFormFieldAppearance = 'outline';
   prefix: string | null = null;
   suffix: string | null = null;
+  materialOptions = new MaterialOptions();
+  dateOptions = new DateOptions();
 
   constructor(
     value: FormControlState<T> | T,

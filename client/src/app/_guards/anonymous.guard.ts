@@ -9,7 +9,7 @@ export const anonymousGuard: CanActivateFn = (route, state) => {
   if (!accountService.current()) {
     return true;
   } else {
-    router.navigateByUrl('/account');
+    router.navigateByUrl('/cuenta');
     return false;
   }
 };

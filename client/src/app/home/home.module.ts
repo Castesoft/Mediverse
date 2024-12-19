@@ -22,6 +22,9 @@ import { ClinicsCatalogComponent } from 'src/app/clinics/components/clinics-cata
 import { PatientsCatalogComponent } from 'src/app/patients/components/patients-catalog.component';
 import { HomePatientDetailRouteComponent } from 'src/app/home/components/home-patient-detail-route.component';
 import { PatientDetailComponent } from "../patients/components/patient-detail.component";
+import { EventDetailComponent } from 'src/app/events/events.config';
+import { HomeEventDetailRouteComponent } from 'src/app/home/components/home-event-detail-route.component';
+import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-event-create-route.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,8 @@ import { PatientDetailComponent } from "../patients/components/patient-detail.co
     HomeProductsCatalogRouteComponent,
     HomeClinicsCatalogRouteComponent,
     HomePatientDetailRouteComponent,
+    HomeEventDetailRouteComponent,
+    HomeEventCreateRouteComponent,
   ],
   imports: [
     HomeRoutingModule,
@@ -50,6 +55,7 @@ import { PatientDetailComponent } from "../patients/components/patient-detail.co
     ClinicsCatalogComponent,
     PatientsCatalogComponent,
     PatientDetailComponent,
+    EventDetailComponent,
   ],
   exports: [HomeComponent],
 })

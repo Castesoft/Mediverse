@@ -231,6 +231,10 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     );
   }
 
+  getByIdFromData(id: number): T | null {
+    return this.data.value.find(a => a.id === id) ?? null;
+  }
+
   create(form: FormGroup2<T>, view: View, model?: any): Observable<T> {
     return this.http.post<T>(this.baseUrl, model ?? form.value).pipe(
       tap(response => {

@@ -1,17 +1,15 @@
 import { Component, effect, inject, input, model, OnInit, signal } from "@angular/core";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { RouterLink } from "@angular/router";
-import { User } from "../_models/users/user";
-import { IconsService } from "../_services/icons.service";
-import { faEye } from "@fortawesome/free-regular-svg-icons";
-import { ProfilePictureComponent } from '../users/components/profile-picture/profile-picture.component';
-import { Account } from "../_models/account/account";
+import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { Account } from 'src/app/_models/account/account';
+import { User } from 'src/app/_models/users/user';
+import { IconsService } from 'src/app/_services/icons.service';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
 @Component({
   selector: '[patientSelectDisplayCard]',
   templateUrl: 'patient-select-display-card.component.html',
   imports: [
-    FaIconComponent,
     RouterLink,
     ProfilePictureComponent
   ],

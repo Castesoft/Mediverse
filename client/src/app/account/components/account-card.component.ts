@@ -1,9 +1,9 @@
-import { LayoutModule } from "@angular/cdk/layout";
-import { Component, inject, input, OnInit } from "@angular/core";
-import { RouterModule } from "@angular/router";
-import { Account } from "src/app/_models/account/account";
-import { ProfilePictureComponent } from "../../users/components/profile-picture/profile-picture.component";
+import { LayoutModule } from '@angular/cdk/layout';
+import { Component, OnInit, inject, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Account } from 'src/app/_models/account/account';
 import { AccountService } from 'src/app/_services/account.service';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
 @Component({
   host: { class: '', },

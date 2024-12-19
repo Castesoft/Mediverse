@@ -1,7 +1,10 @@
-<mat-form-field [subscriptSizing]="'fixed'" [appearance]="control().appearance" class="hide-bottom" style="display: flex;">
-  <mat-label>{{control().label}}</mat-label>
+<mat-form-field [subscriptSizing]="'fixed'" [appearance]="control().materialOptions.appearance" class="hide-bottom" style="display: flex;">
+  @if(control().showLabel === true){<mat-label>{{control().label}}</mat-label>}
   <input [formControl]="$any(control())" matInput [matDatepicker]="picker" (click)="picker.open()">
-  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+  @if(!control().disabled || (control().dateOptions.hideToggleButton !== null || control().dateOptions.hideToggleButton === false)) {
+  } @else {
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+  }
   <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
 @if(control().hint !== null) {

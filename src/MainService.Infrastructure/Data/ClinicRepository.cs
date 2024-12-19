@@ -122,4 +122,21 @@ public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepo
             .AsQueryable()
             .Include(x => x.DoctorClinic.Clinic.ClinicLogo.Photo)
     ;
+
+    public async Task<List<OptionDto>> GetOptionsAsync(ClinicParams param)
+    {
+        IQueryable<Address> query = context.Addresses
+            .Include(x => x.DoctorClinic)
+            .AsQueryable()
+        ;
+
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.DoctorClinic.DoctorId == param.DoctorId.Value);
+        }
+
+        return await query
+            .AsNoTracking()
+            .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 }

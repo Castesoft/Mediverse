@@ -1,3 +1,4 @@
+import { Validators } from '@angular/forms';
 import { Column, columnCreatedAt, columnId } from "src/app/_models/base/column"
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
@@ -10,6 +11,11 @@ import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/t
 
 export const patientFormInfo: FormInfo<Patient> = {
   ...baseInfo,
+
+  firstName: { label: 'Nombre(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ] },
+  lastName: { label: 'Apellido(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ] },
+  dateOfBirth: { label: 'Fecha de nacimiento', type: 'date', validators: [ Validators.required, Validators.maxLength(100), ], },
+  sex: { label: 'Sexo', type: 'radioChips', validators: [ Validators.required, ], },
 } as FormInfo<Patient>;
 
 export const patientFiltersFormInfo: FormInfo<PatientParams> = {

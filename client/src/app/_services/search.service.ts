@@ -8,7 +8,7 @@ import { AvailableDay } from 'src/app/_models/availableDay';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { DoctorScheduleFormPayload } from 'src/app/_models/doctorSchedules/doctorScheduleFormPayload';
 import { SearchResults } from "src/app/_models/doctorSearchResults";
-import { Event } from 'src/app/_models/events/event';
+import Event from 'src/app/_models/events/event';
 import { Search } from "src/app/_models/search/search";
 import { SearchTabs } from 'src/app/_models/search/searchTypes';
 import { getSearchHttpParams, getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
@@ -229,7 +229,7 @@ export class SearchService {
 
   setTab(tab: SearchTabs) {
     this.search.set(new Search(this.search().key, { ...this.search(), tab: tab }));
-    
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: getSearchRouteQueryParams(this.search()),

@@ -10,7 +10,7 @@ import { Subscription } from "rxjs";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 import { eventCells } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";

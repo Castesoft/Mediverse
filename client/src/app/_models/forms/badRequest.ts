@@ -1,5 +1,5 @@
-import { HttpErrorResponse } from "@angular/common/http";
-import { Errors } from "src/app/_models/forms/formTypes";
+import { HttpErrorResponse } from '@angular/common/http';
+import { Errors } from 'src/app/_models/forms/formTypes';
 
 
 /**
@@ -7,6 +7,8 @@ import { Errors } from "src/app/_models/forms/formTypes";
  * This class is used to handle and parse the error response,
  * categorizing it into either a validation error or a general bad request.
  */
+
+
 export class BadRequest {
   type: Errors;
   message?: string;

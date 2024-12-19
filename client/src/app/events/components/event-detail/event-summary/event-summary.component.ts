@@ -1,7 +1,7 @@
 import { Component, inject, input, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 

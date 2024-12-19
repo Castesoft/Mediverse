@@ -9,6 +9,7 @@ using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Infrastructure.Data;
 public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRepository
@@ -108,4 +109,21 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
     }
 
     public async Task<bool> ExistsByIdAsync(int id) => await context.Services.AnyAsync(x => x.Id == id);
+
+    public async Task<List<OptionDto>> GetOptionsAsync(ServiceParams param)
+    {
+        IQueryable<Service> query = context.Services
+            .Include(x => x.DoctorService)
+            .AsQueryable()
+        ;
+
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.DoctorService.DoctorId == param.DoctorId.Value);
+        }
+
+        return await query
+            .AsNoTracking()
+            .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 }

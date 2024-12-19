@@ -1,12 +1,12 @@
-import {Component, effect, inject, input, model, OnInit, signal} from "@angular/core";
-import {BootstrapModule} from "../_shared/bootstrap.module";
-import {DatePipe} from "@angular/common";
-import { User } from "../_models/users/user";
-import { UsersService } from "../users/users.config";
-import {Subject, takeUntil} from "rxjs";
-import { ProfilePictureComponent } from "../users/components/profile-picture/profile-picture.component";
+import { Component, effect, inject, input, model, OnInit, signal } from "@angular/core";
+import { DatePipe } from "@angular/common";
+import { Subject } from "rxjs";
 import { Router } from '@angular/router';
-import { Account } from "../_models/account/account";
+import { Account } from 'src/app/_models/account/account';
+import { User } from 'src/app/_models/users/user';
+import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
+import { UsersService } from 'src/app/users/users.config';
 
 @Component({
   selector: 'div[patientSummaryCard]',
@@ -69,6 +69,6 @@ export class PatientSummaryCardComponent implements OnInit {
   }
 
   goToPatient() {
-    this.router.navigate(['/home/patients', this.item().id]);
+    this.router.navigate(['/inicio/pacientes', this.item().id]);
   }
 }

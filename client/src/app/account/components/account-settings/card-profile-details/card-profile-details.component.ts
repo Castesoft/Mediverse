@@ -4,7 +4,7 @@ import { Validators } from "@angular/forms";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Account } from "src/app/_models/account/account";
 import { AccountForm } from "src/app/_models/account/accountForm";
-import { BadRequest } from "src/app/_models/forms/error";
+import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 import { Specialty } from "src/app/_models/specialties/specialty";

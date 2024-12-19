@@ -1,50 +1,52 @@
-@if ((use() === "create" && form) || (use() === "edit" && item && form) ||
-(use() === "detail" && item)) {
+
   @if (form.error) {
     <div errorsAlert [error]="form.error"></div>
   }
 
-  <form [formGroup]="form.group" [id]="form.id" (ngSubmit)="onSubmit()">
+  <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
     <mat-stepper
       orientation="vertical"
       [linear]="true"
       #stepper
+      [(selectedIndex)]="selectedIndex"
       style="background: transparent!important;"
     >
-      <mat-step [stepControl]="form.group.get('patient')!">
+      <mat-step [stepControl]="form.controls.patient.controls.select">
         <ng-template matStepLabel
-        >Paciente @if (patient) {
+        >{{ patients.dictionary.singularTitlecase }} @if (form.hasPatient !== false) {
           <span class="fw-semibold text-gray-500"
-          >({{ patient.fullName }})</span
+          >({{ form.controls.patient.controls.select.value?.name }})</span
           >
         }
         </ng-template>
-        @if (patient) {
-          <div
+        @if (form.hasPatient !== false) {
+          <!-- <div
             userCardCompact
             [role]="'Patient'"
             [key]="selectPatientKey"
             [view]="view()"
-          ></div>
+          ></div> -->
         }
 
         <div class="my-4">
-          <div patientSelectTypeahead [user]="patient ?? null" [isDisabled]="false" [key]="selectPatientKey"
-               [label]="'Paciente'"></div>
+
+          <div controlTypeahead3 [(control)]="form.controls.patient.controls.select" [(fromWrapper)]="fromWrapper"></div>
+
           <button
             class="btn btn-light-primary me-2"
             type="button"
+            (click)="patients.showCatalogModal($event, patientKey(), 'select', 'modal');"
           >
-            @if (!patient) {
-              Seleccionar paciente
+            @if (form.hasPatient === false) {
+              Seleccionar {{ patients.dictionary.singular }}
             } @else {
-              Cambiar paciente
+              Cambiar {{ patients.dictionary.singular }}
             }
           </button>
           @if (!patientPanelOpen()) {
             <button
-              matTooltip="Quite al paciente actual para poder agregar uno nuevo."
-              [matTooltipDisabled]="!patient"
+              [matTooltip]="'Quite ' + patients.dictionary.articles.definedSingular + ' ' + patients.dictionary.singular + ' actual para poder agregar ' + patients.dictionary.articles.undefinedSingular + ' nuevo.'"
+              [matTooltipDisabled]="form.hasPatient === false"
               type="button"
               class="btn btn-light-success me-2"
               (click)="handlePatientPanelClick($event)"
@@ -52,10 +54,11 @@
               Agregar
             </button>
           }
-          @if (patient) {
+          @if (form.hasPatient) {
             <button
               class="btn btn-light-danger me-2"
               type="button"
+              (click)="form.removePatient()"
             >
               Quitar
             </button>
@@ -63,8 +66,8 @@
         </div>
 
         <mat-accordion
-          matTooltip="Quite al paciente actual para poder agregar uno nuevo."
-          [matTooltipDisabled]="!patient"
+          [matTooltip]="'Quite ' + patients.dictionary.articles.definedSingular + ' ' + patients.dictionary.singular + ' actual para poder agregar ' + patients.dictionary.articles.undefinedSingular + ' nuevo.'"
+          [matTooltipDisabled]="form.hasPatient === false"
         >
           <mat-expansion-panel
             (opened)="patientPanelOpen.set(true)"
@@ -72,139 +75,133 @@
             [expanded]="patientPanelOpen()"
             cdkAccordionItem
             #patientAccordion
-            [disabled]="patient"
+            [disabled]="form.hasPatient"
             style="background: transparent!important; box-shadow: none!important;"
           >
             <mat-expansion-panel-header>
-              <mat-panel-title> Crear nuevo paciente</mat-panel-title>
+              <mat-panel-title> Crear nuev{{patients.dictionary.articleSex === 'masculine' ? 'o' : 'a' }} {{ patients.dictionary.singular }}</mat-panel-title>
             </mat-expansion-panel-header>
-            <div userForm ></div>
+            <div
+              patientForm
+              [(item)]="patientItem"
+              [(view)]="patientView"
+              [(use)]="patientUse"
+              [(key)]="patientKey"
+            ></div>
           </mat-expansion-panel>
         </mat-accordion>
       </mat-step>
-      <mat-step [stepControl]="form.group.get('dateTime')!">
+      <mat-step [stepControl]="form.controls.dateFrom">
         <ng-template matStepLabel
         >Fecha y hora
           <span class="fw-semibold text-gray-500">
-          @if (form.group.get('dateTime')!.get('dateFrom')?.value && form.group.get('dateTime')!.get('dateTo')?.value) {
-            @if (form.group.get('dateTime')!.get('allDay')!.value) {
-              @if (form.group.get('dateTime')!.get('dateFrom')!.value === form.group.get('dateTime')!.get('dateTo')!.value) {
-                El {{form.group.get('dateTime')!.get('dateFrom')!.value | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'}}
+          @if (form.controls.dateFrom.value && form.controls.dateTo.value) {
+            @if (form.controls.allDay.value) {
+              @if (form.controls.dateFrom.value === form.controls.dateTo.value) {
+                El {{form.controls.dateFrom.value | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'}}
               } @else {
                 Del
-                @if (form.group.get('dateTime')!.get('dateFrom')!.value) {
-                  {{form.group.get('dateTime')!.get('dateFrom')!.value | date : "EEEE d 'de' MMMM" : '' : 'es-MX'}}
+                @if (form.controls.dateFrom.value) {
+                  {{form.controls.dateFrom.value | date : "EEEE d 'de' MMMM" : '' : 'es-MX'}}
                 }
-                @if (form.group.get('dateTime')!.get('dateTo')!.value) {
-                  al {{form.group.get('dateTime')!.get('dateTo')!.value | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'}}
+                @if (form.controls.dateTo.value) {
+                  al {{form.controls.dateTo.value | date : "EEEE d 'de' MMMM, YYYY" : '' : 'es-MX'}}
                 }
               }
             } @else {
-              @if (form.group.get('dateTime')!.get('dateFrom')!.value === form.group.get('dateTime')!.get('dateTo')!.value) {
-                El {{form.group.get('dateTime')!.get('dateFrom')!.value | date : "EEEE d 'de' MMMM" : '' : 'es-MX'}}
-                {{form.group.get('dateTime')!.get('timeFrom')!.value | date : 'h:mm' : '' : 'es-MX'}}
+              @if (form.controls.dateFrom.value === form.controls.dateTo.value) {
+                El {{form.controls.dateFrom.value | date : "EEEE d 'de' MMMM" : '' : 'es-MX'}}
+                {{form.controls.dateFrom.value | date : 'h:mm' : '' : 'es-MX'}}
                 -
-                {{form.group.get('dateTime')!.get('timeTo')!.value | date : 'h:mm a' : '' : 'es-MX'}}
-                {{form.group.get('dateTime')!.get('dateTo')!.value | date : 'YYYY' : '' : 'es-MX'}}
+                {{form.controls.dateTo.value | date : 'h:mm a' : '' : 'es-MX'}}
+                {{form.controls.dateTo.value | date : 'YYYY' : '' : 'es-MX'}}
               } @else {
-                Del @if (form.group.get('dateTime')!.get('dateFrom')!.value) {
-                  {{form.group.get('dateTime')!.get('dateFrom')!.value | date : "EEEE d 'de' MMMM 'a las' h:mm a" : '' : 'es-MX'}}
+                Del @if (form.controls.dateFrom.value) {
+                  {{form.controls.dateFrom.value | date : "EEEE d 'de' MMMM 'a las' h:mm a" : '' : 'es-MX'}}
                 }
-                @if (form.group.get('dateTime')!.get('dateTo')!.value) {
+                @if (form.controls.dateTo.value) {
                   al
-                  {{form.group.get('dateTime')!.get('dateTo')!.value | date : "EEEE d 'de' MMMM 'a las' h:mm a, YYYY" : '' : 'es-MX'}}
+                  {{form.controls.dateTo.value | date : "EEEE d 'de' MMMM 'a las' h:mm a, YYYY" : '' : 'es-MX'}}
                 }
               }
             }
           }
         </span>
         </ng-template>
-        <div formGroupName="dateTime">
+        <div class="d-flex gap-3 align-items-center">
           <div
-            formControlName="allDay"
-            controlCheck
-            [label]="'Dia completo'"
+            controlDate3
+            [(control)]="form.controls.dateFrom"
+            [(fromWrapper)]="fromWrapper"
           ></div>
-          <div class="row row-cols-lg-2 g-10">
-            <div class="col">
-              <div
-                controlDate
-                formControlName="dateFrom"
-                [label]="'Fecha de inicio'"
-              ></div>
-            </div>
-            @if (!form.group.get('dateTime')!.get('allDay')!.value) {
-              <div class="col">
-                <div
-                  controlDate
-                  formControlName="timeFrom"
-                  [label]="'Hora de inicio'"
-                  [timepicker]="true"
-                ></div>
-              </div>
-            }
-          </div>
-          <div class="row row-cols-lg-2 g-10">
-            <div class="col">
-              <div
-                controlDate
-                formControlName="dateTo"
-                [label]="'Fecha fin'"
-              ></div>
-            </div>
-            @if (!form.group.get('dateTime')!.get('allDay')!.value) {
-              <div class="col">
-                <div
-                  controlDate
-                  formControlName="timeTo"
-                  [label]="'Hora fin'"
-                  [timepicker]="true"
-                ></div>
-              </div>
-            }
-          </div>
+          @if (!form.controls.allDay.value) {
+            <div
+              controlTime3
+              [(control)]="form.controls.dateFrom"
+              [(fromWrapper)]="fromWrapper"
+            ></div>
+          }
+
+          a
+
+          <div
+            controlDate3
+            [(control)]="form.controls.dateTo"
+            [(fromWrapper)]="fromWrapper"
+          ></div>
+          @if (!form.controls.allDay.value) {
+            <div
+              controlTime3
+              [(control)]="form.controls.dateTo"
+              [(fromWrapper)]="fromWrapper"
+            ></div>
+          }
+        </div>
+        <div class="d-flex">
+          <div
+            controlCheckbox3
+            [(control)]="form.controls.allDay"
+            [(fromWrapper)]="fromWrapper"
+          ></div>
         </div>
       </mat-step>
-      <mat-step>
+      <mat-step [stepControl]="form.controls.service.controls.select">
         <ng-template matStepLabel>
-          Servicio/Tratamiento
-          @if (service) {
+          {{ services.dictionary.singularTitlecase }}
+          @if (form.hasService) {
             <div class="fw-semibold text-gray-500">
-              ({{ service.name }}) {{ service.price | currency }}
+              ({{ form.controls.service.controls.select.value?.name }}) {{ form.controls.service.controls.select.value?.options?.price | currency }}
             </div>
           }
         </ng-template>
-        @if (service) {
+        <!-- @if (service) {
           <div
             serviceCardCompact
             [key]="selectServiceKey"
             [view]="view()"
           ></div>
-        }
+        } -->
 
         <div class="my-4">
+
+          <div controlTypeahead3 [(control)]="form.controls.service.controls.select" [(fromWrapper)]="fromWrapper"></div>
+
           <button
             class="btn btn-light-primary me-2"
             type="button"
-            (click)="
-            servicesService.showCatalogModal(
-              $event,
-              selectServiceKey,
-              'select',
-              view()
-            )
-          "
+            (click)="services.showCatalogModal($event, serviceKey(), 'select', 'modal');"
           >
-            @if (!service) {
-              Seleccionar servicio
+            @if (form.hasService === false) {
+              Seleccionar {{ services.dictionary.singular }}
             } @else {
-              Cambiar servicio
+              Cambiar {{ services.dictionary.singular }}
             }
           </button>
+
           @if (!servicePanelOpen()) {
             <button
-              matTooltip="Quite al servicio actual para poder agregar uno nuevo."
-              [matTooltipDisabled]="!service"
+              [matTooltip]="'Quite ' + services.dictionary.articles.definedSingular + ' ' + services.dictionary.singular + ' actual para poder agregar ' + services.dictionary.articles.undefinedSingular + ' nuevo.'"
+              [matTooltipDisabled]="form.hasService === false"
               type="button"
               class="btn btn-light-success me-2"
               (click)="handleServicePanelClick($event)"
@@ -212,17 +209,11 @@
               Agregar
             </button>
           }
-          @if (service) {
-            <!-- <button
-              class="btn btn-light-danger me-2"
-              type="button"
-              (click)="servicesService.setSelected$(selectServiceKey)"
-            >
-              Quitar
-            </button> -->
+          @if (form.hasService) {
             <button
               class="btn btn-light-danger me-2"
               type="button"
+              (click)="form.removeService()"
             >
               Quitar
             </button>
@@ -230,8 +221,8 @@
         </div>
 
         <mat-accordion
-          matTooltip="Quite el servicio actual para poder agregar uno nuevo."
-          [matTooltipDisabled]="!service"
+          [matTooltip]="'Quite ' + services.dictionary.articles.definedSingular + ' ' + services.dictionary.singular + ' actual para poder agregar ' + services.dictionary.articles.undefinedSingular + ' nuevo.'"
+          [matTooltipDisabled]="form.hasService === false"
         >
           <mat-expansion-panel
             (opened)="servicePanelOpen.set(true)"
@@ -239,35 +230,24 @@
             [expanded]="servicePanelOpen()"
             cdkAccordionItem
             #serviceAccordion
-            [disabled]="service"
+            [disabled]="form.hasService"
             style="background: transparent!important; box-shadow: none!important;"
           >
             <mat-expansion-panel-header>
-              <mat-panel-title> Crear nuevo servicio</mat-panel-title>
+              <mat-panel-title> Crear nuev{{services.dictionary.articleSex === 'masculine' ? 'o' : 'a' }} {{ services.dictionary.singular }}</mat-panel-title>
             </mat-expansion-panel-header>
 
             <div
               serviceForm
-              [view]="'inline'"
-              [id]="null"
-              [use]="'create'"
-              [key]="selectServiceKey"
-              [item]="null"
+              [(item)]="serviceItem"
+              [(view)]="serviceView"
+              [(use)]="serviceUse"
+              [(key)]="serviceKey"
             ></div>
-            <!-- <div
-              serviceForm
-              [view]="'inline'"
-              [id]="null"
-              [use]="'create'"
-              [key]="selectServiceKey"
-              (itemToReturn)="
-              servicesService.setSelected$(selectServiceKey, $event)
-            "
-            ></div> -->
           </mat-expansion-panel>
         </mat-accordion>
       </mat-step>
-      <mat-step>
+      <!-- <mat-step>
         <ng-template matStepLabel>
         <span class="fw-semibold text-gray-500">
           @if (!nurses || nurses.length === 0) {
@@ -299,8 +279,8 @@
           [view]="'page'"
           [role]="'Nurse'"
         ></div>
-      </mat-step>
-      <mat-step>
+      </mat-step> -->
+      <!-- <mat-step>
         <ng-template matStepLabel>
         <span class="fw-semibold text-gray-500">
           Seleccione la localización
@@ -318,16 +298,105 @@
                 required: 'La dirección es requerida.'
             }"
         ></div>
+      </mat-step> -->
+      <mat-step [stepControl]="form.controls.nurseOptions">
+        <ng-template matStepLabel>
+          {{ nurses.dictionary.pluralTitlecase }}
+          @if (form.hasNurses) {
+            <div class="fw-semibold text-gray-500">
+              <!-- ({{ form.controls.clinic.controls.select.value?.name }}) -->
+            </div>
+          }
+        </ng-template>
+      </mat-step>
+      <mat-step [stepControl]="form.controls.clinic.controls.select">
+        <ng-template matStepLabel>
+          {{ clinics.dictionary.singularTitlecase }}
+          @if (form.hasClinic) {
+            <div class="fw-semibold text-gray-500">
+              ({{ form.controls.clinic.controls.select.value?.name }})
+            </div>
+          }
+        </ng-template>
+        <div class="my-4">
+          <div controlTypeahead3 [(control)]="form.controls.clinic.controls.select" [(fromWrapper)]="fromWrapper"></div>
+
+          <button
+            class="btn btn-light-primary me-2"
+            type="button"
+            (click)="clinics.showCatalogModal($event, clinicKey(), 'select', 'modal');"
+          >
+            @if (form.hasClinic === false) {
+              Seleccionar {{ clinics.dictionary.singular }}
+            } @else {
+              Cambiar {{ clinics.dictionary.singular }}
+            }
+          </button>
+
+          @if (!clinicPanelOpen()) {
+            <button
+              [matTooltip]="'Quite ' + clinics.dictionary.articles.definedSingular + ' ' + clinics.dictionary.singular + ' actual para poder agregar ' + clinics.dictionary.articles.undefinedSingular + ' nuevo.'"
+              [matTooltipDisabled]="form.hasClinic === false"
+              type="button"
+              class="btn btn-light-success me-2"
+              (click)="handleClinicPanelClick($event)"
+            >
+              Agregar
+            </button>
+          }
+          @if (form.hasClinic) {
+            <button
+              class="btn btn-light-danger me-2"
+              type="button"
+              (click)="form.removeClinic()"
+            >
+              Quitar
+            </button>
+          }
+        </div>
+
+        <mat-accordion
+          [matTooltip]="'Quite ' + clinics.dictionary.articles.definedSingular + ' ' + clinics.dictionary.singular + ' actual para poder agregar ' + clinics.dictionary.articles.undefinedSingular + ' nuevo.'"
+          [matTooltipDisabled]="form.hasClinic === false"
+        >
+          <mat-expansion-panel
+            (opened)="clinicPanelOpen.set(true)"
+            (closed)="clinicPanelOpen.set(false)"
+            [expanded]="clinicPanelOpen()"
+            cdkAccordionItem
+            #clinicAccordion
+            [disabled]="form.hasClinic"
+            style="background: transparent!important; box-shadow: none!important;"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title> Crear nuev{{clinics.dictionary.articleSex === 'masculine' ? 'o' : 'a' }} {{ clinics.dictionary.singular }}</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div
+              clinicForm
+              [(item)]="clinicItem"
+              [(view)]="clinicView"
+              [(use)]="clinicUse"
+              [(key)]="clinicKey"
+            ></div>
+          </mat-expansion-panel>
+        </mat-accordion>
       </mat-step>
     </mat-stepper>
   </form>
-  @if (view() === 'page') {
     <button class="btn btn-primary" [attr.form]="form.id" type="submit">
       @if (use() === "create") {
-        Crear {{ eventsService.dictionary.singular }}
+        Crear {{ service.dictionary.singular }}
       } @else if (use() === "edit") {
         Guardar cambios
       }
     </button>
-  }
-}
+  <!-- @if (view() === 'page') {
+    <button class="btn btn-primary" [attr.form]="form.id" type="submit">
+      @if (use() === "create") {
+        Crear {{ service.dictionary.singular }}
+      } @else if (use() === "edit") {
+        Guardar cambios
+      }
+    </button>
+  } -->

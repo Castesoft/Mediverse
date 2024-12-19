@@ -26,16 +26,12 @@ import { PrescriptionFiltersForm } from 'src/app/_models/prescriptions/prescript
 import { PrescriptionForm } from 'src/app/_models/prescriptions/prescriptionForm';
 import { PrescriptionParams } from 'src/app/_models/prescriptions/prescriptionParams';
 import { AccountService } from 'src/app/_services/account.service';
-import { IconsService } from 'src/app/_services/icons.service';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { TableHeaderComponent } from 'src/app/_shared/template/components/tables/table-header.component';
 import { ClinicsService } from 'src/app/clinics/clinics.config';
-import { EventSelectDisplayCardComponent } from 'src/app/events/event-select-display-card.component';
-import { EventSelectTypeaheadComponent } from 'src/app/events/event-select-typeahead.component';
 import { PatientsService } from 'src/app/patients/patients.config';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProductsService } from 'src/app/products/products.config';
-import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
 @Component({
   selector: '[prescriptionForm]',

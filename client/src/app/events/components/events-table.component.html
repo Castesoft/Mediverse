@@ -37,10 +37,10 @@
         </div>
       </td>
 
-      <td>{{ item.patient.fullName }}</td>
-      <td>{{ item.doctor.fullName }}</td>
-      <td>{{ item.service.name }}</td>
-      <td>{{ item.clinic.name }}</td>
+      <td>{{ item.patient?.fullName }}</td>
+      <td>{{ item.doctor?.fullName }}</td>
+      <td>{{ item.service?.name }}</td>
+      <td>{{ item.clinic?.name }}</td>
       <td>{{ item.dateFrom | date : "dd/MM/yyyy" : "" : "es-MX" }}</td>
       <td>{{ item.dateFrom | date : "h:mm a" : "" : "es-MX" }}</td>
       <td>{{ item.dateTo | date : "h:mm a" : "" : "es-MX" }}</td>

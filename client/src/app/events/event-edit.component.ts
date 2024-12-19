@@ -15,7 +15,7 @@ import { IconsService } from "src/app/_services/icons.service";
 import { FormUse, Role, View } from "src/app/_models/types";
 import { User } from "../_models/users/user";
 import { Product } from "../_models/products/product";
-import { Event } from "../_models/events/event";
+import Event from "../_models/events/event";
 import { ServiceCardCompactComponent } from "src/app/services/components/service-card-compact.component";
 import { Service } from "../_models/services/service";
 import { Address } from "../_models/addresses/address";

@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { AlertModule } from 'ngx-bootstrap/alert';
-import { BadRequest } from 'src/app/_models/forms/error';
+import { BadRequest } from 'src/app/_models/forms/badRequest';
 
 @Component({
   host: { class: 'col' },

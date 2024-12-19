@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, model } from '@angular/core';
-import { BadRequest } from "src/app/_models/forms/error";
+import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 

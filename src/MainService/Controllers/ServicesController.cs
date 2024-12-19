@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Controllers;
 [Authorize]
@@ -20,6 +21,7 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
     private static readonly string subjectArticle = "El";
 
         
+    [HttpGet]
     public async Task<ActionResult<PagedList<ServiceDto>>> GetPagedListAsync([FromQuery] ServiceParams param)
     {
         var pagedList = await uow.ServiceRepository.GetPagedListAsync(param, User);
@@ -28,6 +30,13 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
             pagedList.TotalCount, pagedList.TotalPages));
 
         return pagedList;
+    }
+
+    [HttpGet("options")]
+    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] ServiceParams param) {
+        param.DoctorId = User.GetUserId();
+        
+        return await uow.ServiceRepository.GetOptionsAsync(param);
     }
 
     [AllowAnonymous]

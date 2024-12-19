@@ -5,7 +5,7 @@ import { ToastrService } from "ngx-toastr";
 import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
 import { View } from "src/app/_models/base/types";
-import { BadRequest } from "src/app/_models/forms/error";
+import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { DevService } from "src/app/_services/dev.service";

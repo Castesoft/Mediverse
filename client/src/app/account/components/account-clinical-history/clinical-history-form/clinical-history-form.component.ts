@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, model, effect } from "@angular/core";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
-import { BadRequest } from "src/app/_models/forms/error";
+import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { MedicalRecord } from "src/app/_models/medicalRecords/medicalRecord";
 import { MedicalRecordForm } from "src/app/_models/medicalRecords/medicalRecordForm";

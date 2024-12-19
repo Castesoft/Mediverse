@@ -8,6 +8,7 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
+using MainService.Models.Entities.Aggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Infrastructure.Data;
@@ -144,5 +145,28 @@ public class PatientRepository(DataContext context, IMapper mapper) : IPatientRe
         return await PagedList<PatientDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<PatientDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
+    }
+
+    public async Task<List<OptionDto>> GetOptionsAsync(PatientParams param)
+    {
+        IQueryable<AppUser> query = context.Users
+            .Include(x => x.Patients)
+            .Include(x => x.Doctors)
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Include(x => x.DoctorNurses)
+            .Include(x => x.UserAddresses)
+            .ThenInclude(x => x.Address)
+            .AsQueryable()
+        ;
+
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.Doctors.Any(x => x.DoctorId == param.DoctorId.Value));
+        }
+
+        return await query
+            .AsNoTracking()
+            .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
+            .ToListAsync()
+        ;
     }
 }

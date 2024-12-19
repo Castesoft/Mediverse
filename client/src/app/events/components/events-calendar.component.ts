@@ -4,7 +4,7 @@ import timeGridDayPlugin from '@fullcalendar/timegrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import interactionPlugin, { DateClickArg, EventDragStopArg, } from '@fullcalendar/interaction';
 import { CommonModule } from '@angular/common';
-import { Component, forwardRef, inject, model, ModelSignal, OnDestroy, OnInit, viewChild } from '@angular/core';
+import { Component, effect, forwardRef, inject, model, ModelSignal, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -17,7 +17,7 @@ import { ControlsModule } from 'src/app/_forms/controls.module';
 import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
 import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
 import { CatalogMode, View } from 'src/app/_models/base/types';
-import { Event } from 'src/app/_models/events/event';
+import Event from 'src/app/_models/events/event';
 import { EventFiltersForm } from 'src/app/_models/events/eventFiltersForm';
 import { EventParams } from 'src/app/_models/events/eventParams';
 import { AccountService } from 'src/app/_services/account.service';
@@ -68,10 +68,6 @@ export class EventsCalendarComponent
 
   accountService = inject(AccountService);
 
-  constructor() {
-    super(EventsService, Event);
-  }
-
   calendarOptions: CalendarOptions = {
     plugins: [
       dayGridPlugin,
@@ -97,8 +93,28 @@ export class EventsCalendarComponent
   eventsModel: any;
   fullcalendar = viewChild.required<FullCalendarComponent>('fullcalendar');
 
+  constructor() {
+    super(EventsService, Event);
+
+    effect(() => {
+
+    });
+  }
+
   ngOnInit(): void {
     forwardRef(() => Calendar);
+
+    this.calendarOptions.events = this.data().map((event: Event) => {
+      return {
+        patient: `${event.patient?.firstName} ${event.patient?.lastName || ''}`,
+        doctor: `${event.doctor?.firstName} ${event.doctor?.lastName || ''}`,
+        description: `${event.service?.name}`,
+        start: event.dateFrom,
+        end: event.dateTo,
+        id: event.id,
+        className: this.getBgColorClass(event.patient?.firstName || '', event.dateFrom, event.dateTo),
+      } as any;
+    })
   }
 
   ngOnDestroy() {
@@ -106,7 +122,10 @@ export class EventsCalendarComponent
     this.ngUnsubscribe.complete();
   }
 
-  private getBgColorClass = (name: string, dateFrom: Date, dateTo: Date): string => {
+  private getBgColorClass = (name: string, dateFrom: Date | null, dateTo: Date | null): string => {
+    if (dateFrom === null) throw new Error('dateFrom is required');
+    if (dateTo === null) throw new Error('dateTo is required');
+
     const colors = ['bg-primary', 'bg-info', 'bg-success', 'bg-warning'];
     const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const classIndex = asciiSum % colors.length;
@@ -156,7 +175,13 @@ export class EventsCalendarComponent
   }
 
   handleEventClick(arg: EventClickArg) {
-    // this.service.clickLink(+arg.event.id, this.service.getById$(+arg.event.id, this.key(), this.role()), this.key(), 'detail', 'modal');
+    console.log(arg);
+
+    const eventToSend: Event | null = this.service.getByIdFromData(+arg.event.id);
+
+    if (eventToSend === null) throw new Error('Event not found');
+
+    this.service.clickLink(eventToSend, this.key(), 'detail', 'modal');
   }
 
   handleEventDragStop(arg: EventDragStopArg) {

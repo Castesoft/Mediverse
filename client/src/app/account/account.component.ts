@@ -38,7 +38,7 @@ import { SatisfactionSurveyModalComponent } from 'src/app/account/components/sat
                 <h1 toolbarTitle [title]="'Mi Cuenta'"></h1>
                 <ul breadcrumb>
                   <li breadcrumbLink [label]="'Inicio'" [url]="'/'"></li>
-                  <li breadcrumbLink [label]="'Cuenta'" [url]="'/account'"></li>
+                  <li breadcrumbLink [label]="'Cuenta'" [url]="'/cuenta'"></li>
                   @if(label){<li breadcrumbLink [label]="label" [active]="true">{{label}}</li>}
                 </ul>
               </div>

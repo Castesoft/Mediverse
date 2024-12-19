@@ -1,0 +1,14 @@
+
+<form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+
+  <div formBuilder3 [controls]="[
+    form.controls.firstName,
+    form.controls.lastName,
+    form.controls.email,
+    form.controls.dateOfBirth,
+    form.controls.sex,
+  ]" [cols]="2"></div>
+
+  <button type="submit" [attr.form]="form.id" class="btn btn-primary">Enviar</button>
+
+</form>

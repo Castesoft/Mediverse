@@ -5,17 +5,17 @@ import {
   FormArray,
   FormGroup,
 } from '@angular/forms';
-import { TypeaheadOptions } from './controlOptions';
-import { SelectOptionOptions } from './controlOptions';
-import { TextareaOptions } from './controlOptions';
-import { FormControl2 } from './formControl2';
-import { FormGroup2 } from './formGroup2';
 import { Ranges } from 'src/app/_models/base/ranges';
 import { SelectOption } from 'src/app/_models/base/selectOption';
-import { Units } from "../base/types";
-import { ColumnOptions } from "./options/columnOptions";
-import { DateRange } from '../base/dateRange';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
+import MaterialOptions from 'src/app/_models/forms/materialOptions';
+import DateOptions from 'src/app/_models/forms/dateOptions';
+import { DateRange } from 'src/app/_models/base/dateRange';
+import { ColumnOptions } from 'src/app/_models/forms/options/columnOptions';
+import { Units } from 'src/app/_models/base/types';
+import { SelectOptionOptions, TextareaOptions, TypeaheadOptions } from 'src/app/_models/forms/controlOptions';
+import { FormControl2 } from 'src/app/_models/forms/formControl2';
+import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 
 /**
  * Represents the information for a control in a form.
@@ -113,6 +113,8 @@ export type ControlInfo<
   selectOptionOptions: SelectOptionOptions;
   style: Style;
   ranges: Ranges;
+  materialOptions: MaterialOptions;
+  dateOptions: DateOptions;
 }>;
 
 

@@ -9,6 +9,11 @@ import { HomeComponent } from './home.component';
 import { HomePatientDetailRouteComponent } from 'src/app/home/components/home-patient-detail-route.component';
 import createItemResolver from 'src/app/_utils/serviceHelper/functions/createItemResolver';
 import { PatientsService } from 'src/app/patients/patients.config';
+import { EventsService } from 'src/app/events/events.config';
+import { HomeEventDetailRouteComponent } from 'src/app/home/components/home-event-detail-route.component';
+import titleDetailResolver from 'src/app/_utils/serviceHelper/functions/titleDetailResolver';
+import titleCatalogResolver from 'src/app/_utils/serviceHelper/functions/titleCatalogResolver';
+import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-event-create-route.component';
 
 
 @NgModule({
@@ -33,7 +38,23 @@ import { PatientsService } from 'src/app/patients/patients.config';
         {
           path: 'citas',
           component: HomeEventsCatalogRouteComponent,
+          title: titleCatalogResolver(EventsService),
         },
+        {
+          path: 'citas/nuevo',
+          component: HomeEventCreateRouteComponent,
+          title: titleDetailResolver(EventsService, 'create'),
+        },
+        {
+          path: 'citas/:id',
+          component: HomeEventDetailRouteComponent,
+          resolve: { item: createItemResolver(EventsService), },
+          title: titleDetailResolver(EventsService, 'detail'),
+        },
+        // {
+        //   path: 'citas/:id/edit',
+
+        // },
         {
           path: 'servicios',
           component: HomeServicesCatalogRouteComponent,

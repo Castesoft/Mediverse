@@ -1,22 +1,22 @@
 import { Observable, catchError, map, of, tap } from "rxjs";
-import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { Account } from "../_models/account/account";
 import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
-import { SnackbarService } from './snackbar.service';
-import { BillingDetails, UserAddress, UserPaymentMethod } from '../_models/billingDetails';
-import { Payment } from "../_models/payments/payment";
-import { SatisfactionSurvey } from '../_models/satisfactionSurvey';
-import { MedicalRecord } from "../_models/medicalRecords/medicalRecord";
-import { UserMedicalInsuranceCompany } from "../_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
 import { UserInsuranceModalComponent } from "src/app/account/modals/user-insurance-modal.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { View } from "src/app/_models/base/types";
+import { Account } from 'src/app/_models/account/account';
+import { MedicalRecord } from 'src/app/_models/medicalRecords/medicalRecord';
+import { Payment } from 'src/app/_models/payments/payment';
+import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
+import { UserMedicalInsuranceCompany } from 'src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany';
+import { SnackbarService } from 'src/app/_services/snackbar.service';
+import { BillingDetails, UserAddress, UserPaymentMethod } from 'src/app/_models/billingDetails';
 
 
 @Injectable({

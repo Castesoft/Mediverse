@@ -1,7 +1,7 @@
 ﻿import {Component, inject, input, model, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import {TabDirective, TabsetComponent} from 'ngx-bootstrap/tabs';
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 import {CurrencyPipe, DatePipe, NgSwitch, NgSwitchCase} from "@angular/common";
 import {BootstrapModule} from "src/app/_shared/bootstrap.module";
 import {DashboardModule} from "src/app/home/dashboard/dashboard.module";

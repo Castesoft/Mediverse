@@ -2,7 +2,6 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, Injectable, ModelSignal, model, effect } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
-import { Observable, tap } from 'rxjs';
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
@@ -10,7 +9,7 @@ import BaseForm from "src/app/_models/base/components/extensions/baseForm";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { Event } from "src/app/_models/events/event";
+import Event from "src/app/_models/events/event";
 import { eventDictionary, eventColumns } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventForm } from "src/app/_models/events/eventForm";
@@ -23,6 +22,7 @@ import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
+import { EventFormComponent } from 'src/app/events/components/event-form.component';
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 
 @Component({
@@ -120,40 +120,6 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
         break;
       }
     }
-  }
-}
-
-@Component({
-  selector: "[eventForm]",
-  // template: ``,
-  templateUrl: './event-form.component.html',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]
-})
-export class EventFormComponent
-  extends BaseForm<
-    Event, EventParams, EventFiltersForm, EventForm, EventsService
-  >
-  implements FormInputSignals<Event> {
-  item: ModelSignal<Event | null> = model.required();
-  use: ModelSignal<FormUse> = model.required();
-  view: ModelSignal<View> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(EventsService, EventForm);
-
-    effect(() => {
-      this.form
-        .setUse(this.use())
-        .setValidation(this.validation.active());
-
-      const value = this.item();
-
-      if (value !== null) {
-        this.form.patchValue(value);
-      }
-    });
   }
 }
 

@@ -7,7 +7,7 @@ import { AlertModule } from 'ngx-bootstrap/alert';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { Subject, Observable, takeUntil } from 'rxjs';
-import { Event } from 'src/app/_models/events/event';
+import Event from 'src/app/_models/events/event';
 import { EventParams } from 'src/app/_models/events/eventParams';
 import { EventSummary } from 'src/app/_models/events/eventSummary/eventSummary';
 import { TypeaheadComplexOption } from 'src/app/_models/types';

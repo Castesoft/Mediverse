@@ -9,6 +9,27 @@ import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module";
 import { DateRange } from "src/app/_models/base/dateRange";
+import {provideMomentDateAdapter} from '@angular/material-moment-adapter';
+
+import * as _moment from 'moment';
+// tslint:disable-next-line:no-duplicate-imports
+import {default as _rollupMoment} from 'moment';
+
+const moment = _rollupMoment || _moment;
+
+// See the Moment.js docs for the meaning of these formats:
+// https://momentjs.com/docs/#/displaying/format/
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'LL',
+  },
+  display: {
+    dateInput: 'LL',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @Component({
   selector: '[controlDate3]',
@@ -18,7 +39,9 @@ import { DateRange } from "src/app/_models/base/dateRange";
     CommonModule, CdkModule, MaterialModule,
     Forms2HelperModule,
    ],
-  providers: [ DatePipe,],
+  providers: [ DatePipe,
+    provideMomentDateAdapter(MY_FORMATS),
+  ],
   standalone: true,
 })
 export class ControlDate3Component {

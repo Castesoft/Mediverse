@@ -12,6 +12,7 @@ namespace MainService.Controllers;
 [Authorize]
 public class PatientsController(IUnitOfWork uow) : BaseApiController
 {
+    [HttpGet]
     public async Task<ActionResult<PagedList<PatientDto>>> GetPagedListAsync([FromQuery] PatientParams param)
     {
         PagedList<PatientDto> pagedList = await uow.PatientRepository.GetPagedListAsync(param, User);
@@ -29,12 +30,9 @@ public class PatientsController(IUnitOfWork uow) : BaseApiController
     }
 
     [HttpGet("options")]
-    public async Task<ActionResult<List<OptionDto>>> GetOptionsAsync([FromQuery] UserParams param)
-    {
-        int userId = User.GetUserId();
-
-        param.DoctorId = userId;
-
-        return await uow.UserRepository.GetPatientOptionsForDoctorAsync(param);
+    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] PatientParams param) {
+        param.DoctorId = User.GetUserId();
+        
+        return await uow.PatientRepository.GetOptionsAsync(param);
     }
 }

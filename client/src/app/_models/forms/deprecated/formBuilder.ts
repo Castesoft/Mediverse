@@ -10,7 +10,7 @@ import { TypedForm } from "./controlTypes";
 import { TypedFormBuilder } from "./controlTypes";
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { ControlOrientation } from 'src/app/_models/forms/formTypes';
-import { BadRequest } from "../error";
+import { BadRequest } from '../badRequest';
 import { Column } from "../../base/column";
 import { FormUse } from "../formTypes";
 
