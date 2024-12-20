@@ -238,9 +238,12 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   create(form: FormGroup2<T>, view: View, model?: any): Observable<T> {
     return this.http.post<T>(this.baseUrl, model ?? form.value).pipe(
       tap(response => {
-        // this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} creado correctamente`, 'Cerrar', { duration: 3000 });
-        // this.router.navigate([this.dictionary.catalogRoute, response.id]);
-        // this.data.next([...this.data.value, response]);
+        console.log('response', response);
+        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} ${this.dictionary.articleSex === 'feminine' ? 'creada' : 'creado'} correctamente`, 'Cerrar', { duration: 3000 });
+        if (view === 'page') {
+          this.router.navigate([this.dictionary.catalogRoute, response.id]);
+        }
+        this.data.next([...this.data.value, response]);
       })
     );
   }

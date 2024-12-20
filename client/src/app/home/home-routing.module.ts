@@ -17,6 +17,7 @@ import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-even
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { HomeNursesCatalogRouteComponent } from 'src/app/home/components/home-nurses-catalog-route.component';
 import { HomeNurseDetailRouteComponent } from 'src/app/home/components/home-nurse-detail-route.component';
+import { HomePatientCreateRouteComponent } from 'src/app/home/components/home-patient-create-route.component';
 
 
 @NgModule({
@@ -32,6 +33,11 @@ import { HomeNurseDetailRouteComponent } from 'src/app/home/components/home-nurs
         {
           path: 'pacientes',
           component: HomePatientsCatalogRouteComponent,
+        },
+        {
+          path: 'pacientes/nuevo',
+          component: HomePatientCreateRouteComponent,
+          title: titleDetailResolver(PatientsService, 'create'),
         },
         {
           path: 'pacientes/:id',
@@ -73,9 +79,6 @@ import { HomeNurseDetailRouteComponent } from 'src/app/home/components/home-nurs
           path: 'prescriptions',
           loadChildren: () => import('../prescriptions/prescriptions.config').then(x => x.PrescriptionsModule)
         },
-        // {
-        //   path: 'nurses',
-        // },
         {
           path: 'clinicas',
           component: HomeClinicsCatalogRouteComponent,

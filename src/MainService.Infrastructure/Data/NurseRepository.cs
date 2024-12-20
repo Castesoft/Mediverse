@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Nurses;
-using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
@@ -121,12 +119,6 @@ public class NurseRepository(DataContext context, IMapper mapper) : INurseReposi
             .Where(x => x.UserRoles.Any(x => x.Role.Name == "Nurse"))
             .AsQueryable()
         ;
-
-        List<AppUser> appusers = await query.ToListAsync();
-
-        // if (param.DoctorId.HasValue) {
-        //     query = query.Where(x => x.DoctorNurses.Any(y => y.DoctorId == param.DoctorId.Value));
-        // }
 
         if (param.DoctorId.HasValue) {
             query = query.Where(x => x.NursesDoctor.Any(x => x.DoctorId == param.DoctorId.Value));

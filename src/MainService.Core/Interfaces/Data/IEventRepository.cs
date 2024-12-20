@@ -13,11 +13,10 @@ public interface IEventRepository
     Task<Event?> GetByIdAsync(int id);
     Task<EventDto?> GetDtoByIdAsync(int id);
     Task<Event?> GetByIdAsNoTrackingAsync(int id);
-    Task<List<EventSummaryDto>> GetSummaryDtosAsync(EventParams param, ClaimsPrincipal user);
+    Task<List<EventSummaryDto>> GetSummaryDtosAsync(EventParams param);
     Task<List<Event>> GetAllAsync();
     Task<List<EventDto>> GetAllDtoAsync(EventParams param);
-    Task<PagedList<EventDto>> GetPagedListAsync(EventParams param, ClaimsPrincipal user);
-    Task<List<EventDto>> GetAllDtoAsync(EventParams param, ClaimsPrincipal user);
+    Task<PagedList<EventDto>> GetPagedListAsync(EventParams param);
     Task<EventDoctorFieldsDto> GetDoctorFieldsDtoAsync(ClaimsPrincipal user);
     Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId);
     Task<bool> ExistsByIdAsync(int id);

@@ -1,26 +1,28 @@
-import { Component, inject, input, model } from '@angular/core';
+import { Component, inject, model, ModelSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import Event from "src/app/_models/events/event";
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { EventsService } from 'src/app/events/events.config';
+import { View } from 'src/app/_models/base/types';
+import { FormUse } from 'src/app/_models/forms/formTypes';
 
 @Component({
-  selector: 'app-event-summary',
+  selector: 'div[eventSummary]',
   standalone: true,
   imports: [CommonModule, ProfilePictureComponent],
   templateUrl: './event-summary.component.html',
 })
 export class EventSummaryComponent {
-  orientation = input<'vertical' | 'horizontal'>('horizontal');
   router = inject(Router);
-  private modalService = inject(BsModalService);
+  service = inject(EventsService);
 
-  item = model.required<Event>();
-  summaryMode = input.required<boolean>();
+  orientation = model.required<'vertical' | 'horizontal'>();
+  summaryMode = model.required<boolean>();
 
-  goToEvent() {
-    this.router.navigate(['/home/events', this.item().id]);
-    this.modalService.hide();
-  }
+  use: ModelSignal<FormUse> = model.required();
+  view: ModelSignal<View> = model.required();
+  item: ModelSignal<Event | null> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  title: ModelSignal<string | null> = model.required();
 }

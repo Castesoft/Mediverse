@@ -38,7 +38,7 @@ public class PatientRepository(DataContext context, IMapper mapper) : IPatientRe
             .SingleOrDefaultAsync(x => x.Id == id)
         ;
 
-    public async Task<PagedList<PatientDto>> GetPagedListAsync(PatientParams param, ClaimsPrincipal user)
+    public async Task<PagedList<PatientDto>> GetPagedListAsync(PatientParams param)
     {
         IQueryable<AppUser> query = context.Users
             .Include(x => x.Patients)
@@ -47,47 +47,16 @@ public class PatientRepository(DataContext context, IMapper mapper) : IPatientRe
             .Include(x => x.DoctorNurses)
             .Include(x => x.UserAddresses)
             .ThenInclude(x => x.Address)
+            .Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"))
             .AsQueryable()
         ;
 
-        IEnumerable<string> roles = user.GetRoles();
-        int userId = user.GetUserId();
+        if (param.UserId.HasValue) {
+            query = query.Where(x => x.Id != param.UserId.Value);
+        }
 
-        query = query.Where(x => x.Id != userId);
-
-        switch (param.Role)
-        {
-            case Roles.Admin:
-                // if (!roles.Contains("Admin")) return null;
-                break;
-            case Roles.Doctor:
-                // if (!roles.Contains("Admin") || !roles.Contains("Patient")) return null;
-                break;
-            case Roles.Patient:
-                // if (!roles.Contains("Doctor") && !roles.Contains("Nurse")) return null;
-                if (roles.Contains("Doctor"))
-                {
-                    query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Patient"));
-                    query = query.Where(x => x.Doctors.Any(x => x.DoctorId == userId));
-                }
-
-                break;
-            case Roles.Nurse:
-                // if (!roles.Contains("Doctor")) return null;
-                if (roles.Contains("Doctor"))
-                {
-                    int doctorId = userId;
-
-                    query = query.Where(x => x.UserRoles.Any(x => x.Role.Name == "Nurse"));
-                    query = query.Where(x => x.NursesDoctor.Any(x => x.DoctorId == doctorId));
-                }
-
-                break;
-            case Roles.Staff:
-                // if (!roles.Contains("Admin")) return null;
-                break;
-            default:
-                break;
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.Doctors.Any(x => x.DoctorId == param.DoctorId.Value));
         }
 
         if (!string.IsNullOrEmpty(param.Sort))
@@ -158,6 +127,10 @@ public class PatientRepository(DataContext context, IMapper mapper) : IPatientRe
             .ThenInclude(x => x.Address)
             .AsQueryable()
         ;
+
+        if (param.UserId.HasValue) {
+            query = query.Where(x => x.Id != param.UserId.Value);
+        }
 
         if (param.DoctorId.HasValue) {
             query = query.Where(x => x.Doctors.Any(x => x.DoctorId == param.DoctorId.Value));

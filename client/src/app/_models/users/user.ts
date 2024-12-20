@@ -21,6 +21,7 @@ export class User extends Entity {
   sex: SelectOption | null = null;
   photoUrl: string | null = null;
   dateOfBirth: Date | null = null;
+  recommendedBy: string | null = null;
 
   taxId: string | null = null;
 

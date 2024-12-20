@@ -51,7 +51,6 @@ export class CacheEntry<T extends Entity, U extends EntityParams<U>> {
   getParam(): U {
     const cacheItem: CacheItem<T, U>[] = Object.values(this.entries);
     const current: CacheItem<T, U> | undefined = cacheItem.find(a => a.current);
-    console.log(this);
     if (!current) throw new Error('No current item found');
     return current.params;
   }

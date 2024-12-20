@@ -29,6 +29,7 @@ import { HomeNursesCatalogRouteComponent } from 'src/app/home/components/home-nu
 import { HomeNurseDetailRouteComponent } from 'src/app/home/components/home-nurse-detail-route.component';
 import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog.component';
 import { NurseDetailComponent } from 'src/app/nurses/nurses.config';
+import { HomePatientCreateRouteComponent } from 'src/app/home/components/home-patient-create-route.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { NurseDetailComponent } from 'src/app/nurses/nurses.config';
     HomeEventCreateRouteComponent,
     HomeNursesCatalogRouteComponent,
     HomeNurseDetailRouteComponent,
+    HomePatientCreateRouteComponent,
   ],
   imports: [
     HomeRoutingModule,

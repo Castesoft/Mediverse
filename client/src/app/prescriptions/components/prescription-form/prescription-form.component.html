@@ -190,7 +190,7 @@
 </form>
 @if (use() === 'create' || use() === 'edit') {
   <div class="form-actions">
-    <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light" type="button">
+    <button (click)="router.navigate(['/inicio/recetas'])" class="btn btn-light" type="button">
       Cancelar
     </button>
     <button class="btn btn-primary" type="submit" [attr.form]="form.id">
@@ -200,7 +200,7 @@
 } @else {
   @if (view() === 'page') {
     <div class="form-actions">
-      <button (click)="router.navigate(['/home/prescriptions'])" class="btn btn-light" type="button">
+      <button (click)="router.navigate(['/inicio/recetas'])" class="btn btn-light" type="button">
         Volver
       </button>
     </div>

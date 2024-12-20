@@ -9,3 +9,16 @@ export type EventFormSteps =
 'especialistas' |
 'clinica';
 ;
+
+export type EventUpperTabs =
+'evolucion' |
+'recetas' |
+'proximosPasos'
+;
+
+export type EventLowerTabs =
+'general' |
+'pagos' |
+'especialistas'
+;
+

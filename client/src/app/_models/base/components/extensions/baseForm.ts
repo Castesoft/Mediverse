@@ -94,6 +94,8 @@ export default class BaseForm<
    * @param use - A signal representing the form use case.
    */
   onSubmit(view: ModelSignal<View>, use: ModelSignal<FormUse>) {
+    console.log('SUBMIT', this.form);
+
     this.form.submitted = true;
     switch (this.form.use) {
       case 'create':
@@ -112,6 +114,8 @@ export default class BaseForm<
    * @param use - A signal representing the form use case.
    */
   create(view: ModelSignal<View>, use: ModelSignal<FormUse>) {
+    console.log('CREATE', this.form);
+
     if (this.form.submittable) {
       this.service.create(this.form, view()).subscribe({
         next: response => {

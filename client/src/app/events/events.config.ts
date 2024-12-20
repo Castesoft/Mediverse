@@ -1,27 +1,25 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, Injectable, ModelSignal, model, effect } from "@angular/core";
+import { Component, inject, Injectable, ModelSignal, model } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { RouterModule } from "@angular/router";
+import { Observable, tap } from 'rxjs';
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
-import BaseForm from "src/app/_models/base/components/extensions/baseForm";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
 import Event from "src/app/_models/events/event";
 import { eventDictionary, eventColumns } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
-import { EventForm } from "src/app/_models/events/eventForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { CalendarView } from "src/app/_models/events/eventTypes";
-import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
+import { EventWindowComponent } from 'src/app/events/components/event-detail/event-window.component';
 import { EventFormComponent } from 'src/app/events/components/event-form.component';
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 
@@ -121,6 +119,23 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
       }
     }
   }
+
+  updateEvolution(id: number, evolution: string): Observable<Event> {
+    return this.http.put<Event>(`${this.baseUrl}${id}/evolution`, { content: evolution }).pipe(
+      tap(() => {
+        this.matSnackBar.open('Evolución actualizada', 'Cerrar', { duration: 5000 });
+      })
+    )
+  }
+
+  updateNextSteps(id: number, nextSteps: string): Observable<Event> {
+    return this.http.put<Event>(`${this.baseUrl}${id}/next-steps`, { content: nextSteps }).pipe(
+      tap(() => {
+        this.matSnackBar.open('Próximos pasos actualizados', 'Cerrar', { duration: 5000 });
+      })
+    )
+  }
+
 }
 
 @Component({
@@ -129,10 +144,11 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
   <div container3 [type]="'inline'">
     <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
   </div>
-  <div eventForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+  @if(use() === 'create' || use() === 'edit'){<div eventForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>}
+  @if(use() === 'detail') {<div eventWindow [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view" [(title)]="title"></div>}
   `,
   standalone: true,
-  imports: [EventFormComponent, ControlsModule, Forms2Module,],
+  imports: [EventFormComponent, ControlsModule, Forms2Module, EventWindowComponent,],
 })
 export class EventDetailComponent
   extends BaseDetail<Event, EventParams, EventFiltersForm, EventsService>

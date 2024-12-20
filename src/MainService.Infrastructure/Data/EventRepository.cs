@@ -24,14 +24,17 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         context.Events.Remove(item);
     }
 
-    public async Task<List<EventSummaryDto>> GetSummaryDtosAsync(EventParams param, ClaimsPrincipal user)
+    public async Task<List<EventSummaryDto>> GetSummaryDtosAsync(EventParams param)
     {
         IQueryable<Event> query = context.Events
             .AsNoTracking()
             .Include(x => x.DoctorEvent)
-            .Where(x => x.DoctorEvent.DoctorId == user.GetUserId())
             .AsQueryable()
         ;
+
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);
+        }
 
         query = query.OrderBy(x => x.DateFrom).ThenBy(x => x.DateTo);
 
@@ -92,17 +95,6 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         return await context.Events.ToListAsync();
     }
 
-    public async Task<List<EventDto>> GetAllDtoAsync(EventParams param)
-    {
-        // TODO: filtering after
-
-        var query = context.Events
-            .AsNoTracking()
-            .ProjectTo<EventDto>(mapper.ConfigurationProvider);
-
-        return await query.ToListAsync();
-    }
-
     public async Task<Event?> GetByIdAsNoTrackingAsync(int id) =>
         await context.Events
             .AsNoTracking()
@@ -124,10 +116,8 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .SingleOrDefaultAsync(x => x.Id == id)
         ;
 
-    public async Task<PagedList<EventDto>> GetPagedListAsync(EventParams param, ClaimsPrincipal user)
+    public async Task<PagedList<EventDto>> GetPagedListAsync(EventParams param)
     {
-        if (!param.Role.HasValue) throw new ArgumentNullException();
-        
         IQueryable<Event> query = context.Events
             .Include(x => x.EventService)
             .Include(x => x.EventClinic)
@@ -143,20 +133,8 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .AsQueryable()
         ;
 
-        IEnumerable<string> roles = user.GetRoles();
-
-        // if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
-        // else if (roles.Contains("Nurse")) query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == user.GetUserId()));
-        // else if (roles.Contains("Patient")) query = query.Where(x => x.PatientEvent.PatientId == user.GetUserId());
-        // else return null;
-
-        switch (param.Role)
-        {
-            case Roles.Doctor:
-                query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);
         }
 
         if (param.PatientId.HasValue) {
@@ -168,9 +146,9 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             param.PageNumber, param.PageSize);
     }
 
-    public async Task<List<EventDto>> GetAllDtoAsync(EventParams param, ClaimsPrincipal user)
+    public async Task<List<EventDto>> GetAllDtoAsync(EventParams param)
     {
-        var query = context.Events
+        IQueryable<Models.Entities.Event> query = context.Events
             .Include(x => x.EventService)
             .Include(x => x.EventClinic)
             .Include(x => x.DoctorEvent)
@@ -188,20 +166,12 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
                 .ThenInclude(x => x.Payment)
                 .ThenInclude(x => x.PaymentPaymentMethodType)
                 .ThenInclude(x => x.PaymentMethodType)
-            .AsQueryable();
+            .AsQueryable()
+        ;
 
-        if (param.DateFrom != DateTime.MinValue)
-            query = query.Where(x => x.DateFrom >= param.DateFrom);
-
-        if (param.DateTo != DateTime.MaxValue)
-            query = query.Where(x => x.DateTo <= param.DateTo);
-
-        IEnumerable<string> roles = user.GetRoles();
-
-        if (roles.Contains("Doctor")) query = query.Where(x => x.DoctorEvent.DoctorId == user.GetUserId());
-        else if (roles.Contains("Nurse")) query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == user.GetUserId()));
-        else if (roles.Contains("Patient")) query = query.Where(x => x.PatientEvent.PatientId == user.GetUserId());
-        else return null!;
+        if (param.DoctorId.HasValue) {
+            query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);
+        }
 
         return await query.AsNoTracking().ProjectTo<EventDto>(mapper.ConfigurationProvider).ToListAsync();
     }

@@ -35,13 +35,15 @@ public class EventsController(
     [HttpGet]
     public async Task<ActionResult<PagedList<EventDto>>> GetPagedListAsync([FromQuery] EventParams param)
     {
+        param.DoctorId = User.GetUserId();
+
         if (param.IsCalendarView.HasValue && param.IsCalendarView.Value == true)
         {
-            var list = await uow.EventRepository.GetAllDtoAsync(param, User);
+            var list = await uow.EventRepository.GetAllDtoAsync(param);
             return Ok(list);
         }
 
-        var pagedList = await uow.EventRepository.GetPagedListAsync(param, User);
+        var pagedList = await uow.EventRepository.GetPagedListAsync(param);
         
         if (pagedList == null) return NotFound($"{subjectArticle} {subject} no fue encontrada.");
     
@@ -83,7 +85,9 @@ public class EventsController(
     [HttpGet("summary")]
     public async Task<ActionResult<List<EventSummaryDto>>> GetSummaryAsync([FromQuery] EventParams param)
     {
-        var item = await uow.EventRepository.GetSummaryDtosAsync(param, User);
+        param.DoctorId = User.GetUserId();
+        
+        var item = await uow.EventRepository.GetSummaryDtosAsync(param);
 
         if (item == null) return NotFound($"{subjectArticle} {subject} no fue encontrado.");
 
@@ -276,7 +280,6 @@ public class EventsController(
         if (!request.AllDay.HasValue) return BadRequest("La duración es requerida.");
         if (request.Patient == null) return BadRequest("El paciente es requerido.");
         if (!request.Patient.Id.HasValue) return BadRequest("El paciente es requerido.");
-        if (!request.PaymentMethodTypeId.HasValue) return BadRequest("El método de pago es requerido.");
         if (!request.DateFrom.HasValue) return BadRequest("La fecha de inicio es requerida.");
         if (!request.DateTo.HasValue) return BadRequest("La fecha de fin es requerida.");
         if (request.Service == null) return BadRequest("El servicio es requerido.");
@@ -380,8 +383,11 @@ public class EventsController(
             PatientEvent = new(request.Patient.Id.Value),
             EventClinic = new(request.Clinic.Id.Value),
             DoctorEvent = new(doctorId),
-            EventPaymentMethodType = new(request.PaymentMethodTypeId.Value),
         };
+
+        if (request.PaymentMethodTypeId.HasValue) {
+            item.EventPaymentMethodType = new(request.PaymentMethodTypeId.Value);
+        }
 
         if (request.MedicalInsuranceCompanyId.HasValue) {
             item.EventMedicalInsuranceCompany = new(request.MedicalInsuranceCompanyId.Value);
@@ -430,6 +436,48 @@ public class EventsController(
         }
 
         var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
+
+        return itemDto;
+    }
+
+    [HttpPut("{id}/evolution")]
+    public async Task<ActionResult<EventDto?>> UpdateEvolutionAsync([FromRoute] int id, [FromBody] EventUpdateEvolutionDto request)
+    {
+        if (string.IsNullOrEmpty(request.Content)) return BadRequest("La evolución es requerida.");
+        if (!await uow.EventRepository.ExistsByIdAsync(id)) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+        
+        Models.Entities.Event? item = await uow.EventRepository.GetByIdAsync(id);
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        item.Evolution = request.Content;
+
+        if (uow.HasChanges())
+        {
+            if (!await uow.Complete()) return BadRequest($"Error al actualizar {subject}.");
+        }
+
+        EventDto? itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
+
+        return itemDto;
+    }
+
+    [HttpPut("{id}/next-steps")]
+    public async Task<ActionResult<EventDto?>> UpdateNextStepAsync([FromRoute] int id, [FromBody] EventUpdateNextStepDto request)
+    {
+        if (string.IsNullOrEmpty(request.Content)) return BadRequest("El siguiente paso es requerido.");
+        if (!await uow.EventRepository.ExistsByIdAsync(id)) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+        
+        Models.Entities.Event? item = await uow.EventRepository.GetByIdAsync(id);
+        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        item.NextSteps = request.Content;
+
+        if (uow.HasChanges())
+        {
+            if (!await uow.Complete()) return BadRequest($"Error al actualizar {subject}.");
+        }
+
+        EventDto? itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
 
         return itemDto;
     }

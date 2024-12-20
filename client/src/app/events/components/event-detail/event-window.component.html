@@ -1,22 +1,24 @@
 ﻿@if (item()) {
 <div class="fs-6 d-flex flex-column">
-  @if (summaryMode) {
-    <app-event-summary [item]="item()!" [summaryMode]="summaryMode"></app-event-summary>
+  @if (summaryMode() === true) {
+    <div eventSummary [(item)]="item" [(summaryMode)]="summaryMode" [(orientation)]="summaryOrientation"
+      [(key)]="key" [(title)]="title" [(use)]="use" [(view)]="view"></div>
   } @else {
     <div class="row">
       <div class="col-3">
-        <app-event-summary [item]="item()!" [summaryMode]="summaryMode" orientation="vertical"></app-event-summary>
+        <div eventSummary [(item)]="item" [(summaryMode)]="summaryMode" [(orientation)]="summaryOrientation"
+          [(key)]="key" [(title)]="title" [(use)]="use" [(view)]="view"></div>
       </div>
       <div class="col-9">
         <div class="card mb-xl-8">
           <div class="card-header card-header-stretch border-bottom border-gray-200">
             <h3 class="card-title">
               <span class="card-label fw-bolder text-gray-900 fs-2">
-                @if (activeTab === 'evolution') {
+                @if (upperTab() === 'evolucion') {
                   Evolucion del paciente
-                } @else if (activeTab === 'recipes') {
+                } @else if (upperTab() === 'recetas') {
                   Recetas
-                } @else if (activeTab === 'nextSteps') {
+                } @else if (upperTab() === 'proximosPasos') {
                   Próximos pasos
                 }
               </span>
@@ -27,31 +29,61 @@
               role="tablist"
               >
               <li class="nav-item" role="presentation">
-                  <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeTab === 'evolution'" (click)="onSelectTab('evolution')">Evolución</a>
+                <a
+                  class="nav-link fs-5 fw-semibold me-3"
+                  [routerLink]="[]"
+                  [routerLinkActive]="'active'"
+                  [queryParams]="{ superiorTab: 'evolucion' }"
+                  [queryParamsHandling]="'merge'"
+                  (click)="upperTab.set('evolucion')"
+                >Evolución</a>
               </li>
               <li class="nav-item" role="presentation">
-                  <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeTab === 'recipes'" (click)="onSelectTab('recipes')">Recetas</a>
+                <a
+                  class="nav-link fs-5 fw-semibold me-3"
+                  [routerLink]="[]"
+                  [routerLinkActive]="'active'"
+                  [queryParams]="{ superiorTab: 'recetas' }"
+                  [queryParamsHandling]="'merge'"
+                  (click)="upperTab.set('recetas')"
+                  >Recetas</a>
               </li>
               <li class="nav-item" role="presentation">
-                  <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;" [class.active]="activeTab === 'nextSteps'" (click)="onSelectTab('nextSteps')">Próximos pasos</a>
+                <a
+                  class="nav-link fs-5 fw-semibold"
+                  [routerLink]="[]"
+                  [routerLinkActive]="'active'"
+                  [queryParams]="{ superiorTab: 'proximosPasos' }"
+                  [queryParamsHandling]="'merge'"
+                  (click)="upperTab.set('proximosPasos')"
+                  >Próximos pasos</a>
               </li>
               </ul>
             </div>
           </div>
           <div class="separator mb-3 opacity-75"></div>
           <div class="card-body">
-            <form [formGroup]="form" (ngSubmit)="onSave(activeTab)">
-              @if (activeTab === 'evolution') {
-                @if (isEvolutionEditing) {
-                  <quill-editor placeholder="Escribe aquí la evolución del paciente..." [trimOnValidation]="true" formControlName="evolution"></quill-editor>
-                  <button type="submit" class="btn btn-primary mt-3 float-end">Guardar</button>
-                } @else {
-                  <quill-editor placeholder="Haz click en editar para agregar la evolución del paciente." [trimOnValidation]="true" formControlName="evolution"
-                    [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
-                  ></quill-editor>
-                  <button type="button" class="btn btn-primary mt-3 float-end" (click)="isEvolutionEditing = true">Editar</button>
+
+            @switch(upperTab()) {
+              @case('evolucion') {
+
+                @if(evolutionForm.error !== null) {
+                  <div errorsAlert3 [(error)]="evolutionForm.error"></div>
                 }
-              } @else if (activeTab === 'recipes') {
+
+                <form [id]="evolutionForm.id" (ngSubmit)="onSubmitEvolution()">
+                  @if (isEvolutionEditing() === true) {
+                    <quill-editor placeholder="Escribe aquí la evolución del paciente..." [trimOnValidation]="true" [formControl]="evolutionForm.controls.content"></quill-editor>
+                    <button type="submit" class="btn btn-primary mt-3 float-end" [attr.form]="evolutionForm.id">Guardar</button>
+                  } @else {
+                    <quill-editor placeholder="Haz click en editar para agregar la evolución del paciente." [trimOnValidation]="true" [formControl]="evolutionForm.controls.content"
+                      [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
+                    ></quill-editor>
+                    <button type="button" class="btn btn-primary mt-3 float-end" (click)="isEvolutionEditing.set(true)">Editar</button>
+                  }
+                </form>
+              }
+              @case('recetas') {
                 @if (item()!!.prescriptions && item()!!.prescriptions!.length > 0) {
                   <div tableWrapper>
                     <table
@@ -70,32 +102,33 @@
 
                 <h2 class="mt-5 mb-3 text-gray-800">Nueva receta</h2>
 
-                <div prescriptionForm
-                  [use]="'create'"
-                  [view]="'inline'"
-                  [item]="$any(null)"
-                ></div>
-                <!-- <div prescriptionForm
-                  [use]="'create'"
-                  [view]="'inline'"
-                  [item]="{
-                    clinicId: item()!!.clinic,
-                    patient: item()!!.patient,
-                    event: item()!!.event,
-                  }"
-                ></div> -->
-              } @else if (activeTab === 'nextSteps') {
-                @if (isNextStepsEditing) {
-                  <quill-editor placeholder="Escribe aquí los próximos pasos del paciente..." [trimOnValidation]="true" formControlName="nextSteps"></quill-editor>
-                  <button type="submit" class="btn btn-primary mt-3 float-end">Guardar</button>
-                } @else {
-                  <quill-editor placeholder="Haz click en editar para agregar los próximos pasos del paciente." [trimOnValidation]="true" formControlName="nextSteps"
-                    [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
-                  ></quill-editor>
-                  <button type="button" class="btn btn-primary mt-3 float-end" (click)="isNextStepsEditing = true">Editar</button>
-                }
+                @defer(){<div
+                  prescriptionForm
+                  [(item)]="prescriptionItem"
+                  [(key)]="prescriptionKey"
+                  [(use)]="prescriptionUse"
+                  [(view)]="prescriptionView"
+                  ></div>}
               }
-            </form>
+              @case('proximosPasos') {
+
+                @if(nextStepForm.error !== null) {
+                  <div errorsAlert3 [(error)]="nextStepForm.error"></div>
+                }
+
+                <form [id]="nextStepForm.id" (ngSubmit)="onSubmitNextSteps()">
+                  @if (isNextStepsEditing() === true) {
+                    <quill-editor placeholder="Escribe aquí los próximos pasos del paciente..." [trimOnValidation]="true" [formControl]="nextStepForm.controls.content"></quill-editor>
+                    <button type="submit" class="btn btn-primary mt-3 float-end" [attr.form]="nextStepForm.id">Guardar</button>
+                  } @else {
+                    <quill-editor placeholder="Haz click en editar para agregar los próximos pasos del paciente." [trimOnValidation]="true" [formControl]="nextStepForm.controls.content"
+                      [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
+                    ></quill-editor>
+                    <button type="button" class="btn btn-primary mt-3 float-end" (click)="isNextStepsEditing.set(true)">Editar</button>
+                  }
+                </form>
+              }
+            }
           </div>
         </div>
       </div>
@@ -113,20 +146,41 @@
         role="tablist"
         >
         <li class="nav-item" role="presentation">
-            <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeDetails === 'general'" (click)="onSelectDetails('general')">General</a>
+          <a
+            class="nav-link fs-5 fw-semibold me-3"
+            [routerLink]="[]"
+            [routerLinkActive]="'active'"
+            [queryParams]="{ inferiorTab: 'general' }"
+            [queryParamsHandling]="'merge'"
+            (click)="lowerTab.set('general')"
+            >General</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeDetails === 'payments'" (click)="onSelectDetails('payments')">Pagos</a>
+          <a
+            class="nav-link fs-5 fw-semibold me-3"
+            [routerLink]="[]"
+            [routerLinkActive]="'active'"
+            [queryParams]="{ inferiorTab: 'pagos' }"
+            [queryParamsHandling]="'merge'"
+            (click)="lowerTab.set('pagos')"
+            >Pagos</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;" [class.active]="activeDetails === 'experts'" (click)="onSelectDetails('experts')">Especialistas</a>
+          <a
+            class="nav-link fs-5 fw-semibold"
+            [routerLink]="[]"
+            [routerLinkActive]="'active'"
+            [queryParams]="{ inferiorTab: 'especialistas' }"
+            [queryParamsHandling]="'merge'"
+            (click)="lowerTab.set('especialistas')"
+            >Especialistas</a>
         </li>
         </ul>
       </div>
     </div>
     <div class="separator mb-3 opacity-75"></div>
     <div class="card-body">
-      @if (activeDetails === 'general') {
+      @if (lowerTab() === 'general') {
         <div class="row mb-6">
           <div class="col-6">
             <h5 class="text-gray-500 mb-3">Clínica</h5>
@@ -173,9 +227,9 @@
             {{ total | currency : "MXN" }}
           </div>
         </div>
-      } @else if (activeDetails === 'payments') {
+      } @else if (lowerTab() === 'pagos') {
         <app-payments-table [title]="'Pagos'" [payments]="item()!!.payments" [showTabs]="false" [view]="'inline'"></app-payments-table>
-      } @else if (activeDetails === 'experts') {
+      } @else if (lowerTab() === 'especialistas') {
         @if (item()!!.nurses && item()!!.nurses!.length > 0) {
           <div class="row row-cols-1 row-cols-md-2 g-4">
             @for (nurse of item()!!.nurses; track nurse.id) {
@@ -184,7 +238,7 @@
                   <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
                       <div class="me-3">
-                        <div userProfilePicture userProfilePicture [account]="$any(nurse)">
+                        <div userProfilePicture [fullName]="nurse.fullName" [photoUrl]="nurse.photoUrl">
                         </div>
                       </div>
                       <div>

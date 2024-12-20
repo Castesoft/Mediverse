@@ -6,4 +6,5 @@ public class EventParams : BaseParams
     public int? PatientId { get; set; }
     public bool? IsCalendarView { get; set; }
     public Roles? Role { get; set; }
+    public int? DoctorId { get; set; }
 }

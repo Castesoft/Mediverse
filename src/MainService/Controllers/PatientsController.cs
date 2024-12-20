@@ -25,7 +25,10 @@ public class PatientsController(
     [HttpGet]
     public async Task<ActionResult<PagedList<PatientDto>>> GetPagedListAsync([FromQuery] PatientParams param)
     {
-        PagedList<PatientDto> pagedList = await uow.PatientRepository.GetPagedListAsync(param, User);
+        param.DoctorId = User.GetUserId();
+        param.UserId = User.GetUserId();
+        
+        PagedList<PatientDto> pagedList = await uow.PatientRepository.GetPagedListAsync(param);
 
         foreach (var item in pagedList)
         {
@@ -42,6 +45,7 @@ public class PatientsController(
     [HttpGet("options")]
     public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] PatientParams param) {
         param.DoctorId = User.GetUserId();
+        param.UserId = User.GetUserId();
         
         return await uow.PatientRepository.GetOptionsAsync(param);
     }
@@ -79,7 +83,7 @@ public class PatientsController(
         }
         else
         {
-            var patient = mapper.Map<AppUser>(request);
+            AppUser patient = mapper.Map<PatientCreateDto, AppUser>(request);
 
             var createResult = await userManager.CreateAsync(patient, "Pa$$w0rd");
 
