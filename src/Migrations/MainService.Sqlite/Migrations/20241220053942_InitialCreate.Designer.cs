@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainService.Sqlite.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241209221704_InitialCreate")]
+    [Migration("20241220053942_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -1016,6 +1016,9 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AllDay")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")

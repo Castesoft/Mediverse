@@ -257,7 +257,7 @@ export type FormInfo<T extends object> = {
  *
  * @property {'material'} material - Material design style.
  * @property {'bootstrap'} bootstrap - Bootstrap design style.
- */
+*/
 export type Style = 'material' | 'bootstrap';
 
 

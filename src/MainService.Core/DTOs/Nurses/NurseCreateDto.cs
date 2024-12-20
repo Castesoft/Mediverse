@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using MainService.Models.Entities.Aggregate;
 
-namespace MainService.Core.DTOs.Patients;
-public class PatientCreateDto
+namespace MainService.Core.DTOs.Nurses;
+public class NurseCreateDto
 {
     // required and min length 3 and max length 50
     [Required(ErrorMessage = "El nombre es requerido.")]

@@ -14,6 +14,9 @@ import { HomeEventDetailRouteComponent } from 'src/app/home/components/home-even
 import titleDetailResolver from 'src/app/_utils/serviceHelper/functions/titleDetailResolver';
 import titleCatalogResolver from 'src/app/_utils/serviceHelper/functions/titleCatalogResolver';
 import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-event-create-route.component';
+import { NursesService } from 'src/app/nurses/nurses.config';
+import { HomeNursesCatalogRouteComponent } from 'src/app/home/components/home-nurses-catalog-route.component';
+import { HomeNurseDetailRouteComponent } from 'src/app/home/components/home-nurse-detail-route.component';
 
 
 @NgModule({
@@ -76,6 +79,17 @@ import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-even
         {
           path: 'clinicas',
           component: HomeClinicsCatalogRouteComponent,
+        },
+        {
+          path: 'especialistas',
+          component: HomeNursesCatalogRouteComponent,
+          title: titleCatalogResolver(NursesService),
+        },
+        {
+          path: 'espacialistas/:id',
+          component: HomeNurseDetailRouteComponent,
+          resolve: { item: createItemResolver(NursesService), },
+          title: titleDetailResolver(NursesService, 'detail'),
         },
       ],
     },

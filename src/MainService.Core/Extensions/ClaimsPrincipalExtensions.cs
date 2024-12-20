@@ -5,7 +5,7 @@ namespace MainService.Core.Extensions;
 public static class ClaimsPrincipalExtensions
 {
     public static string? GetEmail(this ClaimsPrincipal user) =>
-        user.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+        user.FindFirst(ClaimTypes.Email)?.Value;
 
     public static IEnumerable<string> GetRoles(this ClaimsPrincipal user) =>
         user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();

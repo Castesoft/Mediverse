@@ -2,7 +2,6 @@ import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
 import { Component, ModelSignal, model, effect, inject, signal, viewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { createId } from '@paralleldrive/cuid2';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
@@ -104,7 +103,7 @@ export class EventFormComponent
     this.patients.getOptions().subscribe();
     this.clinics.getOptions().subscribe();
     this.services.getOptions().subscribe();
-    // this.nurses.getOptions().subscribe();
+    this.nurses.getOptions().subscribe();
 
     effect(() => {
       this.router.navigate([], { queryParams: { paso: eventFormSteps[this.selectedIndex()] } });
@@ -115,8 +114,11 @@ export class EventFormComponent
         .setClinicOptions(this.clinics.options())
         .setPatientOptions(this.patients.options())
         .setServiceOptions(this.services.options())
-        // .setNurseOptions(this.nurses.options())
+        .setNurseOptions(this.nurses.options())
       ;
+
+      console.log('FORM', this.form);
+
 
       const value = this.item();
 

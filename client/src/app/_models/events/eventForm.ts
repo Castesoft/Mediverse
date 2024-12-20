@@ -53,6 +53,54 @@ export class EventForm extends FormGroup2<Event> {
 
   constructor() {
     super(Event, new Event(), eventFormInfo);
+
+    this.controls.dateFrom.valueChanges.subscribe({
+      next: (value: Date | null) => {
+        this.controls.dateTo.dateOptions.matTimepickerMin = value;
+
+        this.controls.dateTo.dateOptions.dateFilter = (date: Date | null) => {
+          if (!date || !value) return false;
+
+          const selectedMin = new Date(value);
+          const currentDate = new Date(date);
+
+          // Compare only the date portion (ignoring time)
+          const minDate = new Date(selectedMin.getFullYear(), selectedMin.getMonth(), selectedMin.getDate());
+          const checkDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+
+          return checkDate.getTime() >= minDate.getTime();
+        };
+
+        if (this.controls.dateTo.value === null) {
+          this.controls.dateTo.patchValue(value);
+        }
+
+      }
+    });
+
+    this.controls.service.controls.select.valueChanges.subscribe({
+      next: (value: SelectOption | null) => {
+        if (value !== null) {
+          this.controls.service.controls.id.patchValue(value.id);
+        }
+      }
+    });
+
+    this.controls.patient.controls.select.valueChanges.subscribe({
+      next: (value: SelectOption | null) => {
+        if (value !== null) {
+          this.controls.patient.controls.id.patchValue(value.id);
+        }
+      }
+    });
+
+    this.controls.clinic.controls.select.valueChanges.subscribe({
+      next: (value: SelectOption | null) => {
+        if (value !== null) {
+          this.controls.clinic.controls.id.patchValue(value.id);
+        }
+      }
+    });
   }
 
   get hasPatient(): boolean {

@@ -4,6 +4,7 @@ import { SelectOption } from "src/app/_models/base/selectOption";
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { SelectOptionPair } from "src/app/_models/base/selectOptionPair";
+import { TemplateFormsModule } from 'src/app/_forms2/controls/template/template-forms.module';
 
 @Component({
   selector: 'div[controlsWrapper3]',
@@ -12,7 +13,7 @@ import { SelectOptionPair } from "src/app/_models/base/selectOptionPair";
   //   <ng-content></ng-content>
   // `,
   standalone: true,
-  imports: [ Forms2ControlsModule, ],
+  imports: [ Forms2ControlsModule, TemplateFormsModule, ],
 })
 export class ControlsWrapper3Component {
   control = model.required<FormControl2<any>>();

@@ -274,8 +274,15 @@ public class EventsController(
         // la propiedad de Event de DoctorEvent
 
         if (!request.AllDay.HasValue) return BadRequest("La duración es requerida.");
-        if (!request.PatientId.HasValue) return BadRequest("El paciente es requerido.");
+        if (request.Patient == null) return BadRequest("El paciente es requerido.");
+        if (!request.Patient.Id.HasValue) return BadRequest("El paciente es requerido.");
         if (!request.PaymentMethodTypeId.HasValue) return BadRequest("El método de pago es requerido.");
+        if (!request.DateFrom.HasValue) return BadRequest("La fecha de inicio es requerida.");
+        if (!request.DateTo.HasValue) return BadRequest("La fecha de fin es requerida.");
+        if (request.Service == null) return BadRequest("El servicio es requerido.");
+        if (!request.Service.Id.HasValue) return BadRequest("El servicio es requerido.");
+        if (request.Clinic == null) return BadRequest("La clínica es requerida.");
+        if (!request.Clinic.Id.HasValue) return BadRequest("La clínica es requerida.");
 
         AppUser? user = await uow.UserRepository.GetByIdAsync(User.GetUserId());
 
@@ -283,46 +290,31 @@ public class EventsController(
 
         IList<string> userRoles = await userManager.GetRolesAsync(user);
 
-        IEnumerable<int> nurseIds = [];
-        int doctorId = 0;
+        int doctorId = User.GetUserId();
         AppUser? doctor = null;
 
-        AppUser? patient = await uow.UserRepository.GetByIdAsync(request.PatientId.Value);
+        AppUser? patient = await uow.UserRepository.GetByIdAsync(request.Patient.Id.Value);
 
-        if (patient == null) return BadRequest($"Paciente de ID {request.PatientId.Value} no fue encontrado.");
+        if (patient == null) return BadRequest($"Paciente de ID {request.Patient.Id.Value} no fue encontrado.");
 
-        if (!request.ServiceId.HasValue) return BadRequest("El servicio es requerido.");
-        
-        Models.Entities.Service? doctorService = await uow.ServiceRepository.GetByIdAsync(request.ServiceId.Value);
+        Models.Entities.Service? doctorService = await uow.ServiceRepository.GetByIdAsync(request.Service.Id.Value);
 
-        if (doctorService == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
+        if (doctorService == null) return BadRequest($"Tratamiento de ID {request.Service.Id.Value} no fue encontrado.");
 
-        if (userRoles.Contains("Doctor") && request.Role == "Doctor")
+        if (userRoles.Contains("Doctor"))
         {
             doctorId = user.Id;
             doctor = user;
 
-            if (!await uow.PatientRepository.ExistsAsync(request.PatientId.Value, doctorId))
-                return BadRequest($"Paciente de ID {request.PatientId.Value} no fue encontrado o no existe para el doctor actual.");
-
-            if (!string.IsNullOrEmpty(request.NursesIds)) {
-                nurseIds = request.NursesIds.Split(',')
-                    .Select(s => int.TryParse(s, out var n) ? n : (int?)null)
-                    .Where(n => n.HasValue)
-                    .Select(n => n!.Value)
-                ;
-            }
-
+            if (!await uow.PatientRepository.ExistsAsync(request.Patient.Id.Value, doctorId))
+                return BadRequest($"Paciente de ID {request.Patient.Id.Value} no fue encontrado o no existe para el doctor actual.");
         }
         else
         {
-            if (!request.DoctorId.HasValue) return BadRequest("El doctor es requerido.");
-            
-            doctorId = request.DoctorId.Value;
-            doctor = await uow.UserRepository.GetByIdAsync(request.DoctorId.Value);
-            if (doctor == null) return BadRequest($"Doctor de ID {request.DoctorId.Value} no fue encontrado.");
+            doctor = await uow.UserRepository.GetByIdAsync(doctorId);
+            if (doctor == null) return BadRequest($"Doctor de ID {doctorId} no fue encontrado.");
 
-            var isAvailable = await service.IsDoctorAvailableAsync(request.DoctorId.Value, request.DateFrom, request.DateTo);
+            var isAvailable = await service.IsDoctorAvailableAsync(doctorId, request.DateFrom.Value, request.DateTo.Value);
             if (!isAvailable) return BadRequest("El doctor no está disponible en el horario seleccionado.");
 
             if (!request.PaymentMethodTypeId.HasValue) return BadRequest("El método de pago es requerido.");
@@ -352,7 +344,7 @@ public class EventsController(
             if (!patientExists)
             {
                 
-                doctor.Patients.Add(new DoctorPatient(request.DoctorId.Value, user.Id) { HasPatientInformationAccess = request.HasPatientInformationAccess.Value });
+                doctor.Patients.Add(new DoctorPatient(doctorId, user.Id) { HasPatientInformationAccess = request.HasPatientInformationAccess.Value });
             }
             else
             {
@@ -367,26 +359,26 @@ public class EventsController(
         if (!await uow.UserRepository.DoctorExistsAsync(doctorId, doctorId))
             return BadRequest($"Doctor de ID {doctorId} no fue encontrado o no existe para el doctor actual.");
 
-        if (!request.ClinicId.HasValue) return BadRequest("La clínica es requerida.");
+        if (!await uow.AddressRepository.ExistsByIdAndDoctorIdAsync(request.Clinic.Id.Value, doctorId))
+            return BadRequest($"Clinica de ID {request.Patient.Id.Value} no fue encontrado o no existe para el doctor actual.");
 
-        if (!await uow.AddressRepository.ExistsByIdAndDoctorIdAsync(request.ClinicId.Value, doctorId))
-            return BadRequest($"Clinica de ID {request.PatientId.Value} no fue encontrado o no existe para el doctor actual.");
+        if (!await uow.ServiceRepository.ExistsByIdAndDoctorIdAsync(request.Service.Id.Value, doctorId))
+            return BadRequest($"Tratamiento de ID {request.Service} no fue encontrado o no existe para el doctor actual.");
 
-        if (!await uow.ServiceRepository.ExistsByIdAndDoctorIdAsync(request.ServiceId.Value, doctorId))
-            return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado o no existe para el doctor actual.");
-
-        foreach (var nurseId in nurseIds)
+        foreach (var nurseId in request.Nurses)
         {
-            if (!await uow.UserRepository.NurseExistsAsync(nurseId, doctorId))
+            if (!nurseId.Id.HasValue) return BadRequest("Enfermera es requerida.");
+            
+            if (!await uow.UserRepository.NurseExistsAsync(nurseId.Id.Value, doctorId))
                 return BadRequest($"Especialista de ID {nurseId} no fue encontrado o no existe para el doctor actual.");
         }
 
-        Models.Entities.Event item = new(request.AllDay.Value, request.DateFrom, request.DateTo, request.TimeFrom, request.TimeTo)
+        Models.Entities.Event item = new(request.AllDay.Value, request.DateFrom.Value, request.DateTo.Value)
         {
-            NurseEvents = nurseIds.Select(x => new NurseEvent(x)).ToList(),
-            EventService = new(request.ServiceId.Value),
-            PatientEvent = new(request.PatientId.Value),
-            EventClinic = new(request.ClinicId.Value),
+            NurseEvents = request.Nurses.Select(x => new NurseEvent(x.Id!.Value)).ToList(),
+            EventService = new(request.Service.Id.Value),
+            PatientEvent = new(request.Patient.Id.Value),
+            EventClinic = new(request.Clinic.Id.Value),
             DoctorEvent = new(doctorId),
             EventPaymentMethodType = new(request.PaymentMethodTypeId.Value),
         };
@@ -399,12 +391,12 @@ public class EventsController(
 
         if (!await uow.Complete()) return BadRequest($"Error al crear {subject}.");
 
-        string formattedDate = request.DateFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+        string formattedDate = request.DateFrom.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
         string emailSubject = $"Mediverse: Confirmación de tu cita!";
 
         if (string.IsNullOrEmpty(doctorService.Name)) return BadRequest("El nombre del servicio es requerido.");
         
-        string htmlMessage =  emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName, formattedDate, request.TimeFrom + " - " + request.TimeTo, doctorService.Name);
+        string htmlMessage =  emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName, formattedDate, request.DateFrom.Value.TimeOfDay + " - " + request.DateTo.Value.TimeOfDay, doctorService.Name);
 
         string? patientEmail = patient.Email;
 

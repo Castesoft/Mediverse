@@ -3,19 +3,27 @@ import { Column, columnCreatedAt, columnId } from "src/app/_models/base/column"
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
+import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormInfo } from "src/app/_models/forms/formTypes";
 import { ColumnOptions } from "src/app/_models/forms/options/columnOptions";
 import Patient from "src/app/_models/patients/patient";
 import { PatientParams } from "src/app/_models/patients/patientParams";
 import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/tables/tableCellItem";
 
+export const sexOptions: SelectOption[] = [
+  new SelectOption({ id: 1, code: 'Masculino', name: 'Masculino' }),
+  new SelectOption({ id: 2, code: 'Femenino', name: 'Femenino' }),
+];
+
 export const patientFormInfo: FormInfo<Patient> = {
   ...baseInfo,
 
-  firstName: { label: 'Nombre(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ] },
-  lastName: { label: 'Apellido(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ] },
+  firstName: { label: 'Nombre(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ], orientation: 'inline', },
+  lastName: { label: 'Apellido(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ], orientation: 'inline', },
   dateOfBirth: { label: 'Fecha de nacimiento', type: 'date', validators: [ Validators.required, Validators.maxLength(100), ], },
-  sex: { label: 'Sexo', type: 'radioChips', validators: [ Validators.required, ], },
+  sex: { label: 'Sexo', type: 'radio', validators: [ Validators.required, ], selectOptions: sexOptions, orientation: 'inline', showCodeSpan: false, },
+  email: { label: 'Correo electrónico', type: 'email', validators: [ Validators.required, Validators.email, Validators.maxLength(500), ] },
+  phoneNumber: { label: 'Teléfono', type: 'tel', validators: [ Validators.required, Validators.maxLength(100), ] },
 } as FormInfo<Patient>;
 
 export const patientFiltersFormInfo: FormInfo<PatientParams> = {

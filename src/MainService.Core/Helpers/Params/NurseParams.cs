@@ -1,0 +1,10 @@
+using MainService.Models.Entities;
+
+namespace MainService.Core.Helpers.Params;
+public class NurseParams : BaseParams
+{
+    public string? Roles { get; set; }
+    public Roles Role { get; set; }
+    public int? DoctorId { get; set; }
+    public int? UserId { get; set; }
+}

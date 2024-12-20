@@ -18,6 +18,7 @@ public interface IUnitOfWork
     IPhotoRepository PhotoRepository { get; }
     IUserRepository UserRepository { get; }
     IPatientRepository PatientRepository { get; }
+    INurseRepository NurseRepository { get; }
     IAddressRepository AddressRepository { get; }
     IClinicRepository ClinicRepository { get; }
     IEventRepository EventRepository { get; }

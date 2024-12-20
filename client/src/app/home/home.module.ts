@@ -25,6 +25,10 @@ import { PatientDetailComponent } from "../patients/components/patient-detail.co
 import { EventDetailComponent } from 'src/app/events/events.config';
 import { HomeEventDetailRouteComponent } from 'src/app/home/components/home-event-detail-route.component';
 import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-event-create-route.component';
+import { HomeNursesCatalogRouteComponent } from 'src/app/home/components/home-nurses-catalog-route.component';
+import { HomeNurseDetailRouteComponent } from 'src/app/home/components/home-nurse-detail-route.component';
+import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog.component';
+import { NurseDetailComponent } from 'src/app/nurses/nurses.config';
 
 @NgModule({
   declarations: [
@@ -37,6 +41,8 @@ import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-even
     HomePatientDetailRouteComponent,
     HomeEventDetailRouteComponent,
     HomeEventCreateRouteComponent,
+    HomeNursesCatalogRouteComponent,
+    HomeNurseDetailRouteComponent,
   ],
   imports: [
     HomeRoutingModule,
@@ -56,6 +62,8 @@ import { HomeEventCreateRouteComponent } from 'src/app/home/components/home-even
     PatientsCatalogComponent,
     PatientDetailComponent,
     EventDetailComponent,
+    NursesCatalogComponent,
+    NurseDetailComponent,
   ],
   exports: [HomeComponent],
 })

@@ -4,23 +4,14 @@
     {
         public Event() {}
 
-        public Event(bool allDay, DateTime dateFrom, DateTime dateTo, string? timeFrom, string? timeTo)
+        public Event(bool allDay, DateTime dateFrom, DateTime dateTo)
         {
-            if (!allDay && !string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
-            {
-                TimeSpan fromTimeSpan = TimeSpan.Parse(timeFrom);
-                TimeSpan toTimeSpan = TimeSpan.Parse(timeTo);
-
-                DateFrom = dateFrom.Add(fromTimeSpan);
-                DateTo = dateTo.Add(toTimeSpan);
-            }
-            else
-            {
-                DateFrom = dateFrom;
-                DateTo = dateTo;
-            }
+            DateFrom = dateFrom;
+            DateTo = dateTo;
+            AllDay = allDay;
         }
 
+        public bool AllDay { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public bool IsServiceRecommended { get; set; } = false;

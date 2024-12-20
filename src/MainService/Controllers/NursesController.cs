@@ -1,5 +1,5 @@
 using AutoMapper;
-using MainService.Core.DTOs.Patients;
+using MainService.Core.DTOs.Nurses;
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
 [Authorize]
-public class PatientsController(
+public class NursesController(
     IUnitOfWork uow, 
     UserManager<AppUser> userManager,
     IMapper mapper,
@@ -23,15 +23,12 @@ public class PatientsController(
 ) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<PagedList<PatientDto>>> GetPagedListAsync([FromQuery] PatientParams param)
+    public async Task<ActionResult<PagedList<NurseDto>>> GetPagedListAsync([FromQuery] NurseParams param)
     {
-        PagedList<PatientDto> pagedList = await uow.PatientRepository.GetPagedListAsync(param, User);
-
-        foreach (var item in pagedList)
-        {
-            item.DoctorEvents = item.DoctorEvents.Where(e => e.Doctor != null && e.Doctor.Id == User.GetUserId()).ToList();
-            item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();
-        }
+        param.DoctorId = User.GetUserId();
+        param.UserId = User.GetUserId();
+        
+        PagedList<NurseDto> pagedList = await uow.NurseRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));
@@ -40,14 +37,15 @@ public class PatientsController(
     }
 
     [HttpGet("options")]
-    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] PatientParams param) {
+    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] NurseParams param) {
         param.DoctorId = User.GetUserId();
+        param.UserId = User.GetUserId();
         
-        return await uow.PatientRepository.GetOptionsAsync(param);
+        return await uow.NurseRepository.GetOptionsAsync(param);
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserDto>> CreateAsync([FromBody] PatientCreateDto request)
+    public async Task<ActionResult<UserDto>> CreateAsync([FromBody] NurseCreateDto request)
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("Email es requerido.");
         
@@ -57,47 +55,47 @@ public class PatientsController(
         
         if (await service.EmailExistsAsync(request.Email))
         {
-            AppUser? patient = await userManager.Users
+            AppUser? nurse = await userManager.Users
                 .Include(x => x.Doctors)
                 .SingleOrDefaultAsync(x => x.Email == request.Email)
             ;
 
-            if (patient == null) return NotFound($"Paciente con email {request.Email} no fue encontrado.");
+            if (nurse == null) return NotFound($"Paciente con email {request.Email} no fue encontrado.");
 
-            if (string.IsNullOrEmpty(patient.Email)) return BadRequest($"Email del paciente con ID {patient.Id} es requerido.");
+            if (string.IsNullOrEmpty(nurse.Email)) return BadRequest($"Email del paciente con ID {nurse.Id} es requerido.");
 
-            if (patient.Email == email) return BadRequest($"No puedes agregar tu propio email como paciente.");
+            if (nurse.Email == email) return BadRequest($"No puedes agregar tu propio email como paciente.");
 
-            if (patient.Doctors.Any(x => x.DoctorId == User.GetUserId()))
+            if (nurse.Doctors.Any(x => x.DoctorId == User.GetUserId()))
                 return BadRequest($"El paciente con email {request.Email} ya está registrado.");
 
-            patient.Doctors.Add(new(User.GetUserId()));
+            nurse.Doctors.Add(new(User.GetUserId()));
 
-            var updateResult = await userManager.UpdateAsync(patient);
+            var updateResult = await userManager.UpdateAsync(nurse);
 
             if (!updateResult.Succeeded) return BadRequest($"Error al agregar paciente con email {request.Email}.");
         }
         else
         {
-            var patient = mapper.Map<AppUser>(request);
+            var nurse = mapper.Map<AppUser>(request);
 
-            var createResult = await userManager.CreateAsync(patient, "Pa$$w0rd");
+            var createResult = await userManager.CreateAsync(nurse, "Pa$$w0rd");
 
             if (!createResult.Succeeded) return BadRequest($"Error al crear paciente con email {request.Email}.");
 
-            var roleResult = await userManager.AddToRoleAsync(patient, "Patient");
+            var roleResult = await userManager.AddToRoleAsync(nurse, "Nurse");
 
             if (!roleResult.Succeeded) return BadRequest($"Error al agregar paciente con email {request.Email}.");
 
-            patient.Doctors.Add(new(User.GetUserId()));
+            nurse.Doctors.Add(new(User.GetUserId()));
 
-            var updateResult = await userManager.UpdateAsync(patient);
+            var updateResult = await userManager.UpdateAsync(nurse);
 
             if (!updateResult.Succeeded) return BadRequest($"Error al agregar paciente a la lista de pacientes del doctor.");
 
         }
-        var patientToReturn = await uow.UserRepository.GetDtoByEmailAsync(request.Email);
+        var nurseToReturn = await uow.UserRepository.GetDtoByEmailAsync(request.Email);
 
-        return Ok(patientToReturn);
+        return Ok(nurseToReturn);
     }
 }

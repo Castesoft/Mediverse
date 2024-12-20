@@ -26,8 +26,6 @@ public class TokenService : ITokenService
     {
         List<Claim> claims = [
             new (ClaimTypes.NameIdentifier, user.Id.ToString()),
-            // new (ClaimTypes.Name, user.UserName),
-            // new (ClaimTypes.Email, user.Email),
         ];
 
         if (!string.IsNullOrEmpty(user.Email)) {

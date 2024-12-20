@@ -1,6 +1,6 @@
 <mat-form-field [subscriptSizing]="'fixed'" [appearance]="control().materialOptions.appearance" class="hide-bottom" style="display: flex;">
   @if(control().showLabel === true){<mat-label>{{control().label}}</mat-label>}
-  <input [formControl]="$any(control())" matInput [matTimepicker]="picker" (click)="picker.open()">
+  <input [formControl]="$any(control())" matInput [matTimepicker]="picker" [matTimepickerMin]="control().dateOptions.matTimepickerMin" (click)="picker.open()">
   @if(!control().disabled || (control().dateOptions.hideToggleButton !== null || control().dateOptions.hideToggleButton === false)) {
   } @else {
     <mat-timepicker-toggle matIconSuffix [for]="picker"></mat-timepicker-toggle>

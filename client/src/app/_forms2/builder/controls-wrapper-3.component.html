@@ -1,74 +1,109 @@
 @if(!hasPair()) {
   @if (!control().hidden) {
-    @switch (control().type) {
-      @case ('file') {
-        <div controlFile3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+    @switch(control().style) {
+      @case('bootstrap') {
+        @switch(control().type) {
+          @case('text') {
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('search') {
+            <h1 class="text-danger">PENDIENTE</h1>
+          }
+          @case('checkbox') {
+            <div templateControlCheckbox [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('radio') {
+            <div templateControlCheckRadio [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('select') {
+            <h1 class="text-danger">PENDIENTE</h1>
+          }
+          @case('textarea') {
+            <h1 class="text-danger">PENDIENTE</h1>
+          }
+          @case('date') {
+            <div templateControlDate [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('email') {
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('tel') {
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+        }
       }
-      @case ('files') {
-        <div controlFiles3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('file-image') {
-        <div controlFileImage3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('select') {
-        <div controlSelect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('checkbox') {
-        <div controlCheckbox3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('slideToggle') {
-        <div controlSlide3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('textarea') {
-        <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('text') {
-        <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('tel') {
-        <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('number') {
-        <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('email') {
-        <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('password') {
-        <div controlPassword3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('date') {
-        <div controlDate3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('time') {
-        <div controlTime3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('dateRange') {
-        <div controlDateRange3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('radio') {
-        <div controlRadio3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('radioChips') {
-        <div controlChipsRadio3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case ('search') {
-        <div controlSearchText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case('typeahead') {
-        <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case('multiselect') {
-        <div controlMultiselect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case('buttonToggleMultiple') {
-        <div controlButtonToggleMultiple3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case('sliderRange') {
-        <div controlSliderRange3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
-      }
-      @case('chips') {
-        <p>pendiente</p>
+      @case('material') {
+        @switch (control().type) {
+          @case ('file') {
+            <div controlFile3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('files') {
+            <div controlFiles3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('file-image') {
+            <div controlFileImage3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('select') {
+            <div controlSelect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('checkbox') {
+            <div controlCheckbox3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('slideToggle') {
+            <div controlSlide3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('textarea') {
+            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('text') {
+            <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('tel') {
+            <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('number') {
+            <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('email') {
+            <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('password') {
+            <div controlPassword3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('date') {
+            <div controlDate3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('time') {
+            <div controlTime3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('dateRange') {
+            <div controlDateRange3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('radio') {
+            <div controlRadio3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('radioChips') {
+            <div controlChipsRadio3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('search') {
+            <div controlSearchText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('typeahead') {
+            <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('multiselect') {
+            <div controlMultiselect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('buttonToggleMultiple') {
+            <div controlButtonToggleMultiple3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('sliderRange') {
+            <div controlSliderRange3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('chips') {
+            <p>pendiente</p>
+          }
+        }
       }
     }
   }

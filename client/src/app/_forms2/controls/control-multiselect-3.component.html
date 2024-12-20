@@ -1,5 +1,5 @@
-<mat-form-field [appearance]="'outline'" style="width: 100%;" class="hide-bottom">
-  <mat-label>{{control().label}}</mat-label>
+<mat-form-field [subscriptSizing]="'fixed'" [appearance]="control().appearance" class="hide-bottom" style="display: flex;">
+  @if(control().showLabel === true){<mat-label>{{control().label}}</mat-label>}
   <mat-select [formControl]="control()" multiple>
     @for (option of control().selectOptions; track option) {
       <mat-option [value]="option">
