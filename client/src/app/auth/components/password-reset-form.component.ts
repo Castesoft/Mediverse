@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { PasswordResetForm } from 'src/app/_models/account';
 import { FormErrorModalService } from 'src/app/_services/form-error-modal.service';
-import { UtilsService } from 'src/app/_services/utils.service';
 import { AccountService } from 'src/app/_services/account.service';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { ValidationService } from 'src/app/_services/validation.service';
@@ -16,7 +15,6 @@ import { ValidationService } from 'src/app/_services/validation.service';
   imports: [ RouterModule, ReactiveFormsModule, FormsModule, InputControlComponent,  ],
 })
 export class PasswordResetFormComponent {
-  utils = inject(UtilsService);
   private validation = inject(ValidationService);
   private errorModal = inject(FormErrorModalService);
   private accountService = inject(AccountService);

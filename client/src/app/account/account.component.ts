@@ -6,7 +6,7 @@ import { Account } from 'src/app/_models/account/account';
 import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
 import { AccountService } from 'src/app/_services/account.service';
 import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
-import { UtilsService } from 'src/app/_services/utils.service';
+import { SidebarService } from 'src/app/_services/sidebar.service';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MainAsideComponent } from 'src/app/_shared/template/components/main-aside.component';
@@ -26,7 +26,7 @@ import { SatisfactionSurveyModalComponent } from 'src/app/account/components/sat
   template: `
   <div root>
     <div page>
-      @if (!utilsService.sidebarCollapsed()){
+      @if (!sidebar.opened()) {
         <div mainAside></div>
       }
       <div wrapper>
@@ -58,9 +58,9 @@ import { SatisfactionSurveyModalComponent } from 'src/app/account/components/sat
 })
 export class AccountComponent implements OnInit {
   private bsModalService = inject(BsModalService);
-  utilsService = inject(UtilsService);
   accountService = inject(AccountService);
   breadcrumbService = inject(BreadcrumbService);
+  sidebar = inject(SidebarService);
 
   account: Account | null = null;
   label?: string;

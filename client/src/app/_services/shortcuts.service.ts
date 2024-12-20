@@ -28,6 +28,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { DevService } from 'src/app/_services/dev.service';
+import { SidebarService } from 'src/app/_services/sidebar.service';
 import { ThemeService } from 'src/app/_services/theme.service';
 import { ValidationService } from 'src/app/_services/validation.service';
 
@@ -39,7 +40,7 @@ export class ShortcutsService {
   private theme = inject(ThemeService);
   private validation = inject(ValidationService);
   private dev = inject(DevService);
-  // private sidebar = inject(SidebarService);
+  private sidebar = inject(SidebarService);
 
   private shortcuts: { [key: string]: () => void } = {};
 
@@ -50,7 +51,7 @@ export class ShortcutsService {
   };
 
   constructor() {
-    // console.log('ShortcutsService initialized');
+    console.log('ShortcutsService initialized');
 
 
     this.listenToKeyboardEvents();
@@ -100,7 +101,7 @@ export class ShortcutsService {
   focusOnSearchBar = () => undefined;
   toggleTheme = () => this.theme.cycle();
   toggleSidebar() {
-    // this.sidebar.toggle();
+    this.sidebar.toggle();
   }
   navigateToHome = () => undefined;
   navigateToAdmin = () => this.router.navigate(['/admin'])

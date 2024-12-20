@@ -1,5 +1,5 @@
 import { Component, inject, HostBinding } from "@angular/core";
-import { UtilsService } from "src/app/_services/utils.service";
+import { SidebarService } from 'src/app/_services/sidebar.service';
 
 
 // wrapper
@@ -11,9 +11,9 @@ import { UtilsService } from "src/app/_services/utils.service";
   standalone: true,
 })
 export class WrapperComponent {
-  utilsService = inject(UtilsService);
+  sidebar = inject(SidebarService);
 
   @HostBinding('style') get paddingStyle() {
-    return this.utilsService.sidebarCollapsed() ? 'padding-left: 40px;' : '';
+    return this.sidebar.opened() ? 'padding-left: 40px;' : '';
   }
 }

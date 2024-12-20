@@ -1,6 +1,6 @@
 <div root>
   <div page>
-    @if (!utilsService.sidebarCollapsed()){
+    @if (!sidebar.opened()) {
       <div mainAside></div>
     }
     <div wrapper>

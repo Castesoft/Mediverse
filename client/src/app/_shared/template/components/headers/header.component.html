@@ -12,8 +12,8 @@
     <a routerLink="/" class="d-lg-none">
       <img alt="Logo" src="media/logos/logo-compact.svg" class="mh-40px">
     </a>
-    <div class="btn btn-icon w-auto ps-0 btn-active-color-primary d-none d-lg-inline-flex me-2 me-lg-5" (click)="utilsService.toggleSidebar()">
-      <i class="ki-duotone ki-black-left-line fs-1" style="transition: transform 0.3s;" [ngStyle]="{'transform': utilsService.sidebarCollapsed() ? 'rotate(180deg)' : 'rotate(0deg)'}">
+    <div class="btn btn-icon w-auto ps-0 btn-active-color-primary d-none d-lg-inline-flex me-2 me-lg-5" (click)="sidebar.toggle()">
+      <i class="ki-duotone ki-black-left-line fs-1" style="transition: transform 0.3s;" [ngStyle]="{'transform': sidebar.opened() ? 'rotate(180deg)' : 'rotate(0deg)'}">
         <span class="path1"></span>
         <span class="path2"></span>
       </i>

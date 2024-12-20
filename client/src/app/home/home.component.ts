@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Account } from 'src/app/_models/account/account';
 import { AccountService } from 'src/app/_services/account.service';
 import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
-import { UtilsService } from 'src/app/_services/utils.service';
+import { SidebarService } from 'src/app/_services/sidebar.service';
 
 
 @Component({
@@ -14,7 +14,7 @@ import { UtilsService } from 'src/app/_services/utils.service';
 export class HomeComponent implements OnInit {
   accountService = inject(AccountService);
   breadcrumbService = inject(BreadcrumbService);
-  utilsService = inject(UtilsService);
+  sidebar = inject(SidebarService);
 
   account: Account | null = null;
   label?: string;
