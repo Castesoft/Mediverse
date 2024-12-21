@@ -1,0 +1,22 @@
+
+<form (ngSubmit)="onSubmit(view, use)" [id]="form.id">
+
+  @if (form.error !== null) {
+    <div errorsAlert3 [(error)]="form.error"></div>
+  }
+
+  <div formBuilder3 [cols]="2" [controls]="[
+    form.controls.name,
+    form.controls.description,
+    form.controls.manufacturer,
+    form.controls.dosage,
+    form.controls.unit,
+    form.controls.price,
+    form.controls.discount,
+    form.controls.quantity,
+    form.controls.lotNumber,
+  ]"></div>
+
+  <button type="submit" class="btn btn-primary" [attr.form]="form.id">Enviar</button>
+
+</form>

@@ -9,7 +9,7 @@
 tableHeader
 ></thead>
 <tbody class="text-gray-600 fw-semibold">
-    @for (item of data; track item.id; let idx = $index) {
+    @for (item of data(); track item.id; let idx = $index) {
     <tr class="hover-actions-trigger btn-reveal-trigger position-static cursor-pointer" style="border-bottom: none;" (click)="toggleCollapsed(item)" [attr.aria-expanded]="!item.isCollapsed" [attr.aria-controls]="'collapseBasic' + item.id" [attr.data-target]="'collapseBasic' + item.id"
         [cdkContextMenuTriggerFor]="context_menu">
       @switch (mode()) {

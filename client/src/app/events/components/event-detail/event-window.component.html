@@ -86,12 +86,16 @@
               @case('recetas') {
                 @if (item()!!.prescriptions && item()!!.prescriptions!.length > 0) {
                   <div tableWrapper>
-                    <table
+                    @defer(){<table
                       prescriptionsTable
-                      [data]="item()!.prescriptions"
-                      [mode]="'view'"
-                      [key]="'event-recipe'"
-                    ></table>
+                      [(data)]="prescriptions"
+                      [(item)]="prescriptionItem"
+                      [(key)]="prescriptionKey"
+                      [(view)]="prescriptionView"
+                      [(params)]="prescriptionParams"
+                      [(isCompact)]="compact.isCompact"
+                      [(mode)]="prescriptionsCatalogMode"
+                    ></table>}
                   </div>
                 } @else {
                   <div class="text-center py-5">

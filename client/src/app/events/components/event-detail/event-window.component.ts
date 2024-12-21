@@ -13,7 +13,7 @@ import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { PrescriptionFormComponent } from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { PrescriptionsTableComponent } from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component';
-import { View } from 'src/app/_models/base/types';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { IconsService } from 'src/app/_services/icons.service';
 import { PaymentsTableComponent } from 'src/app/_shared/components/payments-table/payments-table.component';
@@ -29,6 +29,9 @@ import EvolutionForm from 'src/app/_models/events/detail/evolutionForm';
 import NextStepForm from 'src/app/_models/events/detail/nextStepForm';
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
+import { Prescription } from 'src/app/_models/prescriptions/prescription';
+import { CompactTableService } from 'src/app/_services/compact-table.service';
+import { PrescriptionParams } from 'src/app/_models/prescriptions/prescriptionParams';
 
 @Component({
   selector: 'div[eventWindow]',
@@ -43,7 +46,7 @@ import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 })
 export class EventWindowComponent
   extends BaseDetail<Event, EventParams, EventFiltersForm, EventsService>
-  implements DetailInputSignals<Event>
+  implements DetailInputSignals<Event>, OnInit
 {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
@@ -57,6 +60,7 @@ export class EventWindowComponent
   private eventService = inject(EventsService);
   private snackbarService = inject(SnackbarService);
   icons = inject(IconsService);
+  compact = inject(CompactTableService);
 
   tax?: number;
   total?: number;
@@ -72,6 +76,9 @@ export class EventWindowComponent
   prescriptionKey = signal<string>(`${this.router.url}#event-detail`);
   prescriptionView = signal<View>('inline');
   prescriptionUse = signal<FormUse>('create');
+  prescriptions = signal<Prescription[]>([]);
+  prescriptionsCatalogMode = signal<CatalogMode>('readonly');
+  prescriptionParams = signal<PrescriptionParams>(new PrescriptionParams(`${this.router.url}#event-detail`));
 
   @ViewChild('staticTabs', {static: false}) staticTabs!: TabsetComponent;
 
@@ -118,6 +125,8 @@ export class EventWindowComponent
     if (this.item() && this.item()!.service) {
       this.tax = this.item()!.service!.price! * 0.16;
       this.total = this.item()!.service!.price! + this.tax;
+
+      this.prescriptions.set(this.item()!.prescriptions);
     }
   }
 

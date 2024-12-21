@@ -84,6 +84,7 @@ public class MappingProfiles : Profile
         CreateMap<ClinicCreateDto, Address>();
 
         CreateMap<PatientCreateDto, AppUser>()
+            .ForMember(dest => dest.DateOfBirth, opt => opt.Ignore())
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex != null ? null : src.Sex!.Name))
         ;

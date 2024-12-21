@@ -60,6 +60,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
         {
           path: 'pacientes',
           component: HomePatientsCatalogRouteComponent,
+          title: titleCatalogResolver(PatientsService),
         },
         {
           path: 'pacientes/nuevo',
@@ -70,13 +71,13 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           path: 'pacientes/:id',
           component: HomePatientDetailRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
-          title: titleDetailResolver(PatientsService, 'detail'),
+          title: titleDetailResolver(PatientsService, 'detail', 'fullName'),
         },
         {
           path: 'pacientes/:id/editar',
           component: HomePatientEditRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
-          title: titleDetailResolver(PatientsService, 'edit'),
+          title: titleDetailResolver(PatientsService, 'edit', 'fullName'),
         },
         // citas
         {

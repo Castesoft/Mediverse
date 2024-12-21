@@ -3,7 +3,7 @@ import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/b
 import Patient from 'src/app/_models/patients/patient';
 
 @Component({
-  // host: { class: 'card card-flush' },
+  host: { class: 'card card-flush' },
   selector: 'div[homePatientEditRoute]',
   template: `
     <div patientDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect } from "@angular/core";
+import { Component, OnDestroy, ModelSignal, model, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -29,7 +29,7 @@ import { ServicesService } from "src/app/services/services.config";
 })
 export class ServicesCatalogComponent
   extends BaseCatalog<Service, ServiceParams, ServiceFiltersForm, ServicesService>
-  implements OnInit, OnDestroy, CatalogInputSignals<Service, ServiceParams>
+  implements OnDestroy, CatalogInputSignals<Service, ServiceParams>
 {
   item: ModelSignal<Service | null> = model.required();
   view: ModelSignal<View> = model.required();
@@ -56,12 +56,6 @@ export class ServicesCatalogComponent
         }
       });
     });
-  }
-
-  ngOnInit(): void {
-    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
-    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
-    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
   }
 
   ngOnDestroy() {

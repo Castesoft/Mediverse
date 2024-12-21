@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect, signal } from "@angular/core";
+import { Component, OnDestroy, ModelSignal, model, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -31,7 +31,7 @@ import { EventsService } from "src/app/events/events.config";
 })
 export class EventsCatalogComponent
   extends BaseCatalog<Event, EventParams, EventFiltersForm, EventsService>
-  implements OnInit, OnDestroy, CatalogInputSignals<Event, EventParams>
+  implements OnDestroy, CatalogInputSignals<Event, EventParams>
 {
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
@@ -59,12 +59,6 @@ export class EventsCatalogComponent
         }
       });
     });
-  }
-
-  ngOnInit(): void {
-    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
-    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
-    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
   }
 
   ngOnDestroy() {

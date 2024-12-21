@@ -42,6 +42,15 @@ public class PatientsController(
         return pagedList;
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PatientDto>> GetDtoByIdAsync([FromRoute] int id) {
+        PatientDto? patient = await uow.PatientRepository.GetDtoByIdAsync(id);
+
+        if (patient == null) return NotFound($"Paciente con ID {id} no fue encontrado.");
+
+        return patient;
+    }
+
     [HttpGet("options")]
     public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] PatientParams param) {
         param.DoctorId = User.GetUserId();
@@ -54,6 +63,8 @@ public class PatientsController(
     public async Task<ActionResult<UserDto>> CreateAsync([FromBody] PatientCreateDto request)
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("Email es requerido.");
+        if (!DateTime.TryParse(request.DateOfBirth, out DateTime dob))
+        return BadRequest("Formato de fecha de nacimiento inválido");
         
         string? email = User.GetEmail();
 
@@ -84,6 +95,8 @@ public class PatientsController(
         else
         {
             AppUser patient = mapper.Map<PatientCreateDto, AppUser>(request);
+
+            patient.DateOfBirth = new DateOnly(dob.Year, dob.Month, dob.Day);
 
             var createResult = await userManager.CreateAsync(patient, "Pa$$w0rd");
 

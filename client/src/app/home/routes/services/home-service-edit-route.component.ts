@@ -3,7 +3,7 @@ import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/b
 import { Service } from 'src/app/_models/services/service';
 
 @Component({
-  // host: { class: 'card card-flush' },
+  host: { class: 'card card-flush' },
   selector: 'div[homeServiceEditRoute]',
   template: `
     <div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>

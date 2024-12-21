@@ -6,8 +6,9 @@ import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { FormInfo } from "src/app/_models/forms/formTypes";
 import { prescriptionItemInfo } from "src/app/_models/prescriptionItem";
-import { Prescription } from "src/app/_models/prescriptions/prescription";
+import { Prescription } from 'src/app/_models/prescriptions/prescription';
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
+import { baseTableCells, PartialCellsOf } from 'src/app/_models/tables/tableCellItem';
 import { userInfo } from "src/app/_models/users/userConstants";
 
 
@@ -35,9 +36,13 @@ export const prescriptionDictionary: NamingSubject = new NamingSubject(
   'recetas',
   'Recetas',
   'prescriptions',
-  ['home', 'prescriptions'],
+  ['inicio'],
 );
 
 export const prescriptionColumns: Column[] = [
   ...baseColumns,
 ];
+
+export const prescriptionCells: PartialCellsOf<Prescription> = {
+  ...baseTableCells,
+} as PartialCellsOf<Prescription>;

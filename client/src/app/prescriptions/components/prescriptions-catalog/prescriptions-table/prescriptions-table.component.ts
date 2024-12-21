@@ -11,6 +11,7 @@ import {
   input,
   output,
   signal,
+  ModelSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -19,7 +20,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Subscription } from 'rxjs';
 import { Account } from 'src/app/_models/account/account';
-import { CatalogMode } from 'src/app/_models/base/types';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
 import { PrescriptionParams } from 'src/app/_models/prescriptions/prescriptionParams';
 import { IconsService } from 'src/app/_services/icons.service';
@@ -36,6 +37,10 @@ import {
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
+import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
+import { PrescriptionFiltersForm } from 'src/app/_models/prescriptions/prescriptionFiltersForm';
+import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
+import { prescriptionCells } from 'src/app/_models/prescriptions/prescriptionConstants';
 
 @Component({
   host: {
@@ -56,27 +61,35 @@ import { UserTableCellComponent } from 'src/app/users/components/user-table-cell
     CdkModule,
     BootstrapModule,
     ProfilePictureComponent,
-    // PrescriptionTableCellComponent,
-    // PrescriptionTableSexCellComponent,
-    // PrescriptionTableHasAccountCellComponent,
-    // UserTableCellComponent,
-    // PrescriptionFormComponent,
+    PrescriptionTableCellComponent,
+    PrescriptionTableSexCellComponent,
+    PrescriptionTableHasAccountCellComponent,
+    UserTableCellComponent,
+    PrescriptionFormComponent,
   ],
 })
-export class PrescriptionsTableComponent implements OnInit, OnDestroy {
-  service = inject(PrescriptionsService);
-  icons = inject(IconsService);
+export class PrescriptionsTableComponent
+  extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
+  implements OnInit, OnDestroy, TableInputSignals<Prescription, PrescriptionParams>
+{
+  item: ModelSignal<Prescription | null> = model.required();
+  view: ModelSignal<View> = model.required();
+  key: ModelSignal<string | null> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model.required();
+  params: ModelSignal<PrescriptionParams> = model.required();
+  data: ModelSignal<Prescription[]> = model.required();
 
-  @Input() data: Prescription[] = [];
-  key = model.required<string>();
-  mode = model.required<CatalogMode>();
+  constructor() {
+    super(PrescriptionsService, Prescription, { tableCells: prescriptionCells, });
+  }
+
   showHeaders = input<boolean>(true);
   onReloadData = output();
 
   sortAscending = false;
   columns = this.service.columns;
   devMode = false;
-  params!: PrescriptionParams;
 
   account = signal<Account | null>(null);
 
@@ -99,7 +112,7 @@ export class PrescriptionsTableComponent implements OnInit, OnDestroy {
 
   toggleCollapsed(item: Prescription) {
     const initalItemState = item.isCollapsed;
-    this.data.map((item) => (item.isCollapsed = false));
+    // this.data.map((item) => (item.isCollapsed = false));
     item.isCollapsed = !initalItemState;
   }
 

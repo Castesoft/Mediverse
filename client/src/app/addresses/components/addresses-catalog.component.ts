@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, OnDestroy, ModelSignal, model, input, effect } from "@angular/core";
+import { Component, OnDestroy, ModelSignal, model, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -29,7 +29,7 @@ import { AddressesTableComponent } from "src/app/addresses/components/addresses-
 })
 export class AddressesCatalogComponent
   extends BaseCatalog<Address, AddressParams, AddressFiltersForm, AddressesService>
-  implements OnInit, OnDestroy, CatalogInputSignals<Address, AddressParams>
+  implements OnDestroy, CatalogInputSignals<Address, AddressParams>
 {
   item: ModelSignal<Address | null> = model.required();
   view: ModelSignal<View> = model.required();
@@ -56,12 +56,6 @@ export class AddressesCatalogComponent
         }
       });
     });
-  }
-
-  ngOnInit(): void {
-    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
-    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
-    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
   }
 
   ngOnDestroy() {

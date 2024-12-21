@@ -29,7 +29,7 @@ import { ProductsService } from "src/app/products/products.config";
 })
 export class ProductsCatalogComponent
   extends BaseCatalog<Product, ProductParams, ProductFiltersForm, ProductsService>
-  implements OnInit, OnDestroy, CatalogInputSignals<Product, ProductParams>
+  implements OnDestroy, CatalogInputSignals<Product, ProductParams>
 {
   item: ModelSignal<Product | null> = model.required();
   view: ModelSignal<View> = model.required();
@@ -56,12 +56,6 @@ export class ProductsCatalogComponent
         }
       });
     });
-  }
-
-  ngOnInit(): void {
-    // this.service.param$(this.key(), this.mode()).subscribe({ next: params => this.params = params });
-    this.service.list$(this.key(), this.mode()).subscribe({ next: list => this.list.set(list) });
-    this.service.pagination$(this.key()).subscribe({ next: pagination => this.pagination.set(pagination) });
   }
 
   ngOnDestroy() {

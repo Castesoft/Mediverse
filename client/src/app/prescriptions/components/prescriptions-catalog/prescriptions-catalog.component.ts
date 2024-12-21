@@ -26,12 +26,12 @@ import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config
 
 @Component({
   selector: '[prescriptionsCatalog]',
-  template: ``,
-  // templateUrl: './prescriptions-catalog.component.html',
+  // template: ``,
+  templateUrl: './prescriptions-catalog.component.html',
   standalone: true,
   imports: [
     FontAwesomeModule,
-    // PrescriptionsTableComponent,
+    PrescriptionsTableComponent,
     CommonModule,
     RouterModule,
     ControlsModule,

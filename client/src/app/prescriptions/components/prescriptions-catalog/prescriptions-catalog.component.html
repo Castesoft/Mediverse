@@ -1,128 +1,29 @@
-<!-- <div class="card-header">
-  <div class="d-flex flex-grow-1 align-items-center justify-content-between">
-    <div class="card-title">
-      Recetas
-    </div>
-    <a class="btn btn-primary" [routerLink]="['create']">
-      <fa-icon [icon]="icons.faPlus"></fa-icon>
-      Agregar receta
-    </a>
-  </div>
-</div> -->
+@let pagination = service.pagination$(key()) | async;
+@let list = service.list$(key(), mode()) | async;
+<!-- @let hasSelected = service.hasSelected(key(), mode()) | async;
+@let selectedCount = service.selectedCount(key(), mode()) | async; -->
 
-<!-- <div catalogCardHeader>
-  <div class="card-title">
-    <form [formGroup]="form.group" (ngSubmit)="onSubmit()" [id]="form.id">
-      <div searchText formControlName="search" [naming]="service.dictionary"></div>
-    </form>
+<div class="card-header align-items-center py-5 gap-2 gap-md-5">
+  <form [id]="form.id" (ngSubmit)="onSubmit(key())">
+    <div class="card-title">
+      <div templateControlSearch [(control)]="form.controls.search" [(fromWrapper)]="fromWrapper" [(dictionary)]="service.dictionary"></div>
+    </div>
+  </form>
+
+    <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+      <a (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute" class="btn btn-primary">
+        Agregar {{ service.dictionary.singular }}
+      </a>
+    </div>
   </div>
-  <div class="card-toolbar">
-    @if (service.hasSelected(key()) && mode() === 'view') {
-      <div deleteSelectedBtn [count]="service.selectedCount(key())" (click)="deleteRange()"></div>
+
+<div class="card-body pt-0">
+  <div tableWrapper>
+    @if(list !== null){
+      <table prescriptionsTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params"></table>
     }
-    @if(!service.hasSelected(key())) {
-      <div class="d-flex justify-content-end">
-        <button filterMenuBtn ></button>
-        <products-filter-menu></products-filter-menu>
-        <button exportBtn (click)="service.downloadXLSX$(key())"></button>
-        <button createBtn [naming]="service.dictionary" (click)="router.navigate(['create'], {relativeTo: route})"></button>
-      </div>
+    @if(pagination !== null){
+      <div tablePager pager [(isCompact)]="isCompact" [pagination]="pagination" [(params)]="params"></div>
     }
   </div>
 </div>
-
-<div cardBody>
-  @if (mode() === "select" || mode() === "multiselect") {
-    <h4>
-      @switch (mode()) {
-        @case ("select") {
-          {{ service.dictionary.singularTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionado
-          } @else {
-            seleccionada
-          }
-        }
-        @case ("multiselect") {
-          {{ service.dictionary.pluralTitlecase }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionados
-          } @else {
-            seleccionadas
-          }
-        }
-      }
-    </h4>
-    @if (service.hasSelected$(key())) {
-      <div tableWrapper class="mb-4">
-        <table
-          productsTable
-          [data]="mode() === 'select' ? service.getSelected$(key()) : []"
-          [key]="key()"
-          [mode]="'readonly'"
-          [showHeaders]="false"
-        ></table>
-      </div>
-    } @else {
-      @switch (mode()) {
-        @case ("select") {
-          No tienes {{ service.dictionary.articles.undefinedSingular }} {{ service.dictionary.singular }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionado
-          } @else {
-            seleccionada
-          }.
-        }
-        @case ("multiselect") {
-          No tienes {{ service.dictionary.plural }} @if (service.dictionary.articleSex === 'masculine') {
-            seleccionados
-          } @else {
-            seleccionadas
-          }.
-        }
-      }
-    }
-  }
-
-  @if (data && pagination) {
-    @if (data.length > 0) {
-      <div tableWrapper>
-        <table
-          prescriptionsTable
-          [data]="data"
-          [mode]="mode()"
-          [key]="key()"
-          (onReloadData)="reloadData()"
-        ></table>
-      </div>
-      <div
-        tablePager
-        [currentPage]="pagination.currentPage"
-        (pageChanged)="service.onPageChanged(key(), $event)"
-        [itemsPerPage]="pagination.itemsPerPage"
-        [totalItems]="pagination.totalItems"
-        (loadMore)="service.loadMore(key())"
-        (loadLess)="service.loadLess(key())"
-      ></div>
-    } @else {
-      <div style="border-radius: 0.7em" class="bg-white border">
-        <alert type="unknown" class="mb-0 text-center">
-          <h4 class="alert-heading mt-4 pt-4 mb-4 fw-bold">
-            {{ service.dictionary.pluralTitlecase }} no encontrados
-          </h4>
-          <p class="mb-4">
-            No se encontraron {{ service.dictionary.plural }} que coincidan con los
-            criterios de búsqueda.
-          </p>
-          <p class="mb-4">
-            <button
-              class="btn btn-phoenix-secondary me-2"
-              (click)="service.resetForm(key(), form)"
-            >
-              Restablecer los filtros
-            </button>
-          </p>
-        </alert>
-      </div>
-    }
-  } @else {
-    <div tableLoadingPlaceholder></div>
-  }
-</div> -->

@@ -3,7 +3,7 @@ import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/b
 import { Product } from 'src/app/_models/products/product';
 
 @Component({
-  // host: { class: 'card card-flush' },
+  host: { class: 'card card-flush' },
   selector: 'div[homeProductEditRoute]',
   template: `
     <div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
