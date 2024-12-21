@@ -11,7 +11,7 @@ namespace MainService.Core.Interfaces.Data
         Task<List<ClinicDto>> GetAllDtoAsync(ClinicParams param);
         Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId);
         Task<ClinicDto?> GetDtoByIdAsync(int id);
-        Task<PagedList<ClinicDto>> GetPagedListAsync(ClinicParams param, ClaimsPrincipal user);
+        Task<PagedList<ClinicDto>> GetPagedListAsync(ClinicParams param);
         Task<bool> DoctorHasAddressAsync(int doctorId, int addressId);
         Task<List<OptionDto>> GetClinicOptionsForDoctorAsync(AddressParams param);
         Task<List<OptionDto>> GetOptionsAsync(ClinicParams param);

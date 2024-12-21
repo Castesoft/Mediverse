@@ -24,7 +24,9 @@ public class ClinicsController(IUnitOfWork uow, IAddressesService service, UserM
     [HttpGet]
     public async Task<ActionResult<PagedList<ClinicDto>>> GetPagedListAsync([FromQuery] ClinicParams param)
     {
-        var pagedList = await uow.ClinicRepository.GetPagedListAsync(param, User);
+        param.DoctorId = User.GetUserId();
+        
+        var pagedList = await uow.ClinicRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));

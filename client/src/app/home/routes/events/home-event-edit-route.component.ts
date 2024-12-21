@@ -1,24 +1,21 @@
-import { Component, effect } from "@angular/core";
-import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
-import Patient from "src/app/_models/patients/patient";
+import { Component, effect } from '@angular/core';
+import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
+import Event from 'src/app/_models/events/event';
 
 @Component({
   // host: { class: 'card card-flush' },
-  selector: 'div[homePatientDetailRoute]',
+  selector: 'div[homeEventEditRoute]',
   template: `
-    <div patientDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
   `,
-  // templateUrl: './home-patient-detail-route.component.html',
+  // templateUrl: './home-event-edit-route.component.html',
   standalone: false,
 })
-export class HomePatientDetailRouteComponent
-  extends BaseRouteDetail<Patient>
-
-{
+export class HomeEventEditRouteComponent extends BaseRouteDetail<Event> {
   constructor() {
-    super('patients', 'detail');
+    super('events', 'edit');
 
-    this.key.set(`${this.router.url}#patient-detail`);
+    this.key.set(`${this.router.url}#event-edit`);
 
     effect(() => {
       this.route.paramMap.subscribe({
@@ -31,8 +28,6 @@ export class HomePatientDetailRouteComponent
       this.route.data.subscribe({
         next: (data) => {
           this.item.set(data['item']);
-          console.log('HomePatientDetailRouteComponent', this.item());
-
         },
       });
       const navigation = this.router.getCurrentNavigation();
