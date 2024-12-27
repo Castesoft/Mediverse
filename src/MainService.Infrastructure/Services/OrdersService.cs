@@ -11,6 +11,14 @@ namespace MainService.Infrastructure.Services
     {
         public async Task<Order> CreateAsync(List<OrderItem> items, int customerId, int doctorId)
         {
+            OrderStatus? orderStatus = await context.OrderStatuses.SingleOrDefaultAsync(x => x.Name == "Pendiente");
+            DeliveryStatus? deliveryStatus = await context.DeliveryStatuses.SingleOrDefaultAsync(x => x.Name == "Pendiente");
+
+            if (orderStatus == null || deliveryStatus == null)
+            {
+                throw new Exception("OrderStatus or DeliveryStatus not found");
+            }
+            
             Order order = new()
             {
                 PatientOrder = new(customerId),
@@ -23,10 +31,9 @@ namespace MainService.Infrastructure.Services
                 AmountPaid = 0,
                 AmountDue = 0,
                 PrescriptionOrder = null!,
-                OrderAddress = null!,
                 OrderItems = [],
-                Status = OrderStatus.Pending,
-                DeliveryStatus = OrderDeliveryStatus.Pending
+                OrderOrderStatus = new(orderStatus.Id),
+                OrderDeliveryStatus = new(deliveryStatus.Id),
             };
 
             int? addressId = await context.UserAddresses
@@ -35,7 +42,8 @@ namespace MainService.Infrastructure.Services
                 .SingleOrDefaultAsync()
             ;
 
-            if (addressId.HasValue) order.OrderAddress = new (addressId.Value);
+            if (addressId.HasValue) order.OrderDeliveryAddress = new (addressId.Value);
+            else order.OrderDeliveryAddress = null!;
 
             foreach (OrderItem orderItem in items)
             {

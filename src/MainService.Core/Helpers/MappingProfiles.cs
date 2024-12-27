@@ -2,9 +2,11 @@ using AutoMapper;
 using MainService.Core.DTOs;
 using MainService.Core.DTOs.Addresses;
 using MainService.Core.DTOs.Clinics;
+using MainService.Core.DTOs.DeliveryStatuses;
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Nurses;
 using MainService.Core.DTOs.Orders;
+using MainService.Core.DTOs.OrderStatuses;
 using MainService.Core.DTOs.Patients;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.DTOs.Products;
@@ -264,15 +266,18 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
             .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
             .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber))
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Item.CreatedAt));
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Item.CreatedAt))
+        ;
 
         CreateMap<Order, OrderDto>()
-            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.OrderAddress.Address))
+            .ForMember(dest => dest.DeliveryAddress, opt => opt.MapFrom(src => src.OrderDeliveryAddress.DeliveryAddress))
+            .ForMember(dest => dest.PickupAddress, opt => opt.MapFrom(src => src.OrderPickupAddress.PickupAddress))
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientOrder.Patient))
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorOrder.Doctor))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems))
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString().ToLower()))
-            .ForMember(dest => dest.DeliveryStatus, opt => opt.MapFrom(src => src.DeliveryStatus.ToString().ToLower()));
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.OrderOrderStatus.OrderStatus))
+            .ForMember(dest => dest.DeliveryStatus, opt => opt.MapFrom(src => src.OrderDeliveryStatus.DeliveryStatus))
+        ;
 
         CreateMap<OrderItem, OrderItemDto>()
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
@@ -430,6 +435,30 @@ public class MappingProfiles : Profile
 
         CreateMap<Specialty, OptionDto>()
         
+        ;
+
+        CreateMap<DeliveryStatus, OptionDto>()
+
+        ;
+
+        CreateMap<OrderStatus, OptionDto>()
+
+        ;
+
+        CreateMap<DeliveryStatusCreateDto, DeliveryStatus>()
+
+        ;
+
+        CreateMap<DeliveryStatusUpdateDto, DeliveryStatus>()
+
+        ;
+
+        CreateMap<OrderStatusCreateDto, OrderStatus>()
+        
+        ;
+
+        CreateMap<OrderStatusUpdateDto, OrderStatus>()
+
         ;
 
         CreateMap<MedicalInsuranceCompany, MedicalInsuranceCompanyDto>()

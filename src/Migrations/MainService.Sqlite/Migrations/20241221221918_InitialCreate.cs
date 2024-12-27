@@ -1,10 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MainService.Postgres.Migrations
+namespace MainService.Sqlite.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -16,24 +15,24 @@ namespace MainService.Postgres.Migrations
                 name: "Addresses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Street = table.Column<string>(type: "text", nullable: true),
-                    InteriorNumber = table.Column<string>(type: "text", nullable: true),
-                    ExteriorNumber = table.Column<string>(type: "text", nullable: true),
-                    Neighborhood = table.Column<string>(type: "text", nullable: true),
-                    City = table.Column<string>(type: "text", nullable: true),
-                    State = table.Column<string>(type: "text", nullable: true),
-                    Country = table.Column<string>(type: "text", nullable: true),
-                    Zipcode = table.Column<string>(type: "text", nullable: true),
-                    Notes = table.Column<string>(type: "text", nullable: true),
-                    CrossStreet1 = table.Column<string>(type: "text", nullable: true),
-                    CrossStreet2 = table.Column<string>(type: "text", nullable: true),
-                    Latitude = table.Column<double>(type: "double precision", nullable: true),
-                    Longitude = table.Column<double>(type: "double precision", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Street = table.Column<string>(type: "TEXT", nullable: true),
+                    InteriorNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    ExteriorNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    Neighborhood = table.Column<string>(type: "TEXT", nullable: true),
+                    City = table.Column<string>(type: "TEXT", nullable: true),
+                    State = table.Column<string>(type: "TEXT", nullable: true),
+                    Country = table.Column<string>(type: "TEXT", nullable: true),
+                    Zipcode = table.Column<string>(type: "TEXT", nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    CrossStreet1 = table.Column<string>(type: "TEXT", nullable: true),
+                    CrossStreet2 = table.Column<string>(type: "TEXT", nullable: true),
+                    Latitude = table.Column<double>(type: "REAL", nullable: true),
+                    Longitude = table.Column<double>(type: "REAL", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,11 +43,11 @@ namespace MainService.Postgres.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -59,45 +58,45 @@ namespace MainService.Postgres.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EmailVerificationCodeHash = table.Column<byte[]>(type: "bytea", nullable: true),
-                    EmailVerificationCodeSalt = table.Column<byte[]>(type: "bytea", nullable: true),
-                    PhoneNumberVerificationCodeHash = table.Column<byte[]>(type: "bytea", nullable: true),
-                    PhoneNumberVerificationCodeSalt = table.Column<byte[]>(type: "bytea", nullable: true),
-                    FirstName = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    LastName = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    Sex = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", maxLength: 100, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastActive = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: false),
-                    PhoneNumberCountryCode = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: true),
-                    EmailVerificationExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: true),
-                    PhoneNumberVerificationExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: true),
-                    StripeCustomerId = table.Column<string>(type: "text", nullable: true),
-                    RecommendedBy = table.Column<string>(type: "text", nullable: true),
-                    RFC = table.Column<string>(type: "text", nullable: true),
-                    CURP = table.Column<string>(type: "text", nullable: true),
-                    CommercialName = table.Column<string>(type: "text", nullable: true),
-                    LegalName = table.Column<string>(type: "text", nullable: true),
-                    Education = table.Column<string>(type: "text", nullable: true),
-                    Post = table.Column<string>(type: "text", nullable: true),
-                    StripeConnectAccountId = table.Column<string>(type: "text", nullable: true),
-                    RequireAnticipatedCardPayments = table.Column<bool>(type: "boolean", nullable: true),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    EmailVerificationCodeHash = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    EmailVerificationCodeSalt = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    PhoneNumberVerificationCodeHash = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    PhoneNumberVerificationCodeSalt = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    Sex = table.Column<string>(type: "TEXT", maxLength: 10, nullable: true),
+                    DateOfBirth = table.Column<DateOnly>(type: "TEXT", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LastActive = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: false),
+                    PhoneNumberCountryCode = table.Column<string>(type: "TEXT", maxLength: 5, nullable: true),
+                    EmailVerificationExpiryTime = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: true),
+                    PhoneNumberVerificationExpiryTime = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: true),
+                    StripeCustomerId = table.Column<string>(type: "TEXT", nullable: true),
+                    RecommendedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    RFC = table.Column<string>(type: "TEXT", nullable: true),
+                    CURP = table.Column<string>(type: "TEXT", nullable: true),
+                    CommercialName = table.Column<string>(type: "TEXT", nullable: true),
+                    LegalName = table.Column<string>(type: "TEXT", nullable: true),
+                    Education = table.Column<string>(type: "TEXT", nullable: true),
+                    Post = table.Column<string>(type: "TEXT", nullable: true),
+                    StripeConnectAccountId = table.Column<string>(type: "TEXT", nullable: true),
+                    RequireAnticipatedCardPayments = table.Column<bool>(type: "INTEGER", nullable: true),
+                    UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "TEXT", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,11 +107,11 @@ namespace MainService.Postgres.Migrations
                 name: "Cities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,17 +122,17 @@ namespace MainService.Postgres.Migrations
                 name: "ColorBlindnesses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -144,23 +143,23 @@ namespace MainService.Postgres.Migrations
                 name: "Companions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Age = table.Column<int>(type: "integer", nullable: true),
-                    Sex = table.Column<string>(type: "text", nullable: true),
-                    Address = table.Column<string>(type: "text", nullable: true),
-                    HomePhone = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Age = table.Column<int>(type: "INTEGER", nullable: true),
+                    Sex = table.Column<string>(type: "TEXT", nullable: true),
+                    Address = table.Column<string>(type: "TEXT", nullable: true),
+                    HomePhone = table.Column<string>(type: "TEXT", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    Email = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,17 +170,17 @@ namespace MainService.Postgres.Migrations
                 name: "ConsumptionLevels",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,20 +188,41 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeliveryStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeliveryStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Diseases",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -213,17 +233,17 @@ namespace MainService.Postgres.Migrations
                 name: "Documents",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Url = table.Column<string>(type: "text", nullable: true),
-                    PublicId = table.Column<string>(type: "text", nullable: true),
-                    Size = table.Column<int>(type: "integer", nullable: true),
-                    ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
-                    ThumbnailPublicId = table.Column<string>(type: "text", nullable: true),
-                    ThumbnailSize = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Url = table.Column<string>(type: "TEXT", nullable: true),
+                    PublicId = table.Column<string>(type: "TEXT", nullable: true),
+                    Size = table.Column<int>(type: "INTEGER", nullable: true),
+                    ThumbnailUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    ThumbnailPublicId = table.Column<string>(type: "TEXT", nullable: true),
+                    ThumbnailSize = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -234,17 +254,17 @@ namespace MainService.Postgres.Migrations
                 name: "EducationLevels",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -255,19 +275,19 @@ namespace MainService.Postgres.Migrations
                 name: "Events",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AllDay = table.Column<bool>(type: "boolean", nullable: false),
-                    DateFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DateTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsServiceRecommended = table.Column<bool>(type: "boolean", nullable: false),
-                    IsSatisfactionSurveyEmailSent = table.Column<bool>(type: "boolean", nullable: false),
-                    IsSatisfactionSurveyCompleted = table.Column<bool>(type: "boolean", nullable: false),
-                    Evolution = table.Column<string>(type: "text", nullable: true),
-                    NextSteps = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AllDay = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DateFrom = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DateTo = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    IsServiceRecommended = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsSatisfactionSurveyEmailSent = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsSatisfactionSurveyCompleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Evolution = table.Column<string>(type: "TEXT", nullable: true),
+                    NextSteps = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -278,11 +298,11 @@ namespace MainService.Postgres.Migrations
                 name: "FamilyMembers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Age = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Age = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -293,13 +313,13 @@ namespace MainService.Postgres.Migrations
                 name: "Link",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Url = table.Column<string>(type: "text", nullable: true),
-                    SiteName = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Url = table.Column<string>(type: "TEXT", nullable: true),
+                    SiteName = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -310,17 +330,17 @@ namespace MainService.Postgres.Migrations
                 name: "MaritalStatuses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -331,17 +351,17 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalInsuranceCompanies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -352,13 +372,13 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalLicenses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LicenseNumber = table.Column<string>(type: "text", nullable: true),
-                    SpecialtyLicense = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    LicenseNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    SpecialtyLicense = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -369,27 +389,27 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecords",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PatientName = table.Column<string>(type: "text", nullable: true),
-                    Age = table.Column<int>(type: "integer", nullable: true),
-                    Sex = table.Column<string>(type: "text", nullable: true),
-                    BirthPlace = table.Column<string>(type: "text", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    YearsOfSchooling = table.Column<int>(type: "integer", nullable: true),
-                    HandDominance = table.Column<string>(type: "text", nullable: true),
-                    CurrentLivingSituation = table.Column<string>(type: "text", nullable: true),
-                    CurrentAddress = table.Column<string>(type: "text", nullable: true),
-                    HomePhone = table.Column<string>(type: "text", nullable: true),
-                    MobilePhone = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
-                    HasCompanion = table.Column<bool>(type: "boolean", nullable: false),
-                    EconomicDependence = table.Column<string>(type: "text", nullable: true),
-                    UsesGlassesOrHearingAid = table.Column<bool>(type: "boolean", nullable: true),
-                    Comments = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PatientName = table.Column<string>(type: "TEXT", nullable: true),
+                    Age = table.Column<int>(type: "INTEGER", nullable: true),
+                    Sex = table.Column<string>(type: "TEXT", nullable: true),
+                    BirthPlace = table.Column<string>(type: "TEXT", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    YearsOfSchooling = table.Column<int>(type: "INTEGER", nullable: true),
+                    HandDominance = table.Column<string>(type: "TEXT", nullable: true),
+                    CurrentLivingSituation = table.Column<string>(type: "TEXT", nullable: true),
+                    CurrentAddress = table.Column<string>(type: "TEXT", nullable: true),
+                    HomePhone = table.Column<string>(type: "TEXT", nullable: true),
+                    MobilePhone = table.Column<string>(type: "TEXT", nullable: true),
+                    Email = table.Column<string>(type: "TEXT", nullable: true),
+                    HasCompanion = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EconomicDependence = table.Column<string>(type: "TEXT", nullable: true),
+                    UsesGlassesOrHearingAid = table.Column<bool>(type: "INTEGER", nullable: true),
+                    Comments = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -400,13 +420,13 @@ namespace MainService.Postgres.Migrations
                 name: "Neighborhoods",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Settlement = table.Column<string>(type: "text", nullable: true),
-                    Zipcode = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Settlement = table.Column<string>(type: "TEXT", nullable: true),
+                    Zipcode = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -417,17 +437,17 @@ namespace MainService.Postgres.Migrations
                 name: "Occupations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -438,19 +458,17 @@ namespace MainService.Postgres.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Total = table.Column<decimal>(type: "numeric", nullable: true),
-                    Subtotal = table.Column<decimal>(type: "numeric", nullable: true),
-                    Discount = table.Column<double>(type: "double precision", nullable: true),
-                    Tax = table.Column<decimal>(type: "numeric", nullable: true),
-                    AmountPaid = table.Column<decimal>(type: "numeric", nullable: true),
-                    AmountDue = table.Column<decimal>(type: "numeric", nullable: true),
-                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    DeliveryStatus = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Total = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Subtotal = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Discount = table.Column<double>(type: "REAL", nullable: true),
+                    Tax = table.Column<decimal>(type: "TEXT", nullable: true),
+                    AmountPaid = table.Column<decimal>(type: "TEXT", nullable: true),
+                    AmountDue = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -458,21 +476,42 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PaymentMethods",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DisplayName = table.Column<string>(type: "text", nullable: true),
-                    Last4 = table.Column<string>(type: "text", nullable: true),
-                    Brand = table.Column<string>(type: "text", nullable: true),
-                    Country = table.Column<string>(type: "text", nullable: true),
-                    ExpirationMonth = table.Column<int>(type: "integer", nullable: true),
-                    ExpirationYear = table.Column<int>(type: "integer", nullable: true),
-                    StripePaymentMethodId = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DisplayName = table.Column<string>(type: "TEXT", nullable: true),
+                    Last4 = table.Column<string>(type: "TEXT", nullable: true),
+                    Brand = table.Column<string>(type: "TEXT", nullable: true),
+                    Country = table.Column<string>(type: "TEXT", nullable: true),
+                    ExpirationMonth = table.Column<int>(type: "INTEGER", nullable: true),
+                    ExpirationYear = table.Column<int>(type: "INTEGER", nullable: true),
+                    StripePaymentMethodId = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -483,17 +522,17 @@ namespace MainService.Postgres.Migrations
                 name: "PaymentMethodTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -504,13 +543,13 @@ namespace MainService.Postgres.Migrations
                 name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: true),
-                    StripePaymentIntent = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: true),
+                    StripePaymentIntent = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -521,12 +560,12 @@ namespace MainService.Postgres.Migrations
                 name: "PaymentStatuses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -537,10 +576,10 @@ namespace MainService.Postgres.Migrations
                 name: "Permissions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -551,14 +590,14 @@ namespace MainService.Postgres.Migrations
                 name: "Phone",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    CountryCode = table.Column<string>(type: "text", nullable: true),
-                    Extension = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    CountryCode = table.Column<string>(type: "TEXT", nullable: true),
+                    Extension = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -569,14 +608,14 @@ namespace MainService.Postgres.Migrations
                 name: "Photos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Url = table.Column<string>(type: "text", nullable: true),
-                    PublicId = table.Column<string>(type: "text", nullable: true),
-                    Size = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Url = table.Column<string>(type: "TEXT", nullable: true),
+                    PublicId = table.Column<string>(type: "TEXT", nullable: true),
+                    Size = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -587,13 +626,13 @@ namespace MainService.Postgres.Migrations
                 name: "Prescriptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ExchangeAmount = table.Column<int>(type: "integer", nullable: true),
-                    Notes = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ExchangeAmount = table.Column<int>(type: "INTEGER", nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -604,17 +643,17 @@ namespace MainService.Postgres.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Dosage = table.Column<double>(type: "double precision", nullable: true),
-                    Unit = table.Column<string>(type: "text", nullable: true),
-                    Manufacturer = table.Column<string>(type: "text", nullable: true),
-                    LotNumber = table.Column<string>(type: "text", nullable: true),
-                    Price = table.Column<decimal>(type: "numeric", nullable: true),
-                    Discount = table.Column<double>(type: "double precision", nullable: true),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Dosage = table.Column<double>(type: "REAL", nullable: true),
+                    Unit = table.Column<string>(type: "TEXT", nullable: true),
+                    Manufacturer = table.Column<string>(type: "TEXT", nullable: true),
+                    LotNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    Price = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Discount = table.Column<double>(type: "REAL", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -625,17 +664,17 @@ namespace MainService.Postgres.Migrations
                 name: "RelativeTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -646,13 +685,13 @@ namespace MainService.Postgres.Migrations
                 name: "Reviews",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Content = table.Column<string>(type: "text", nullable: true),
-                    Rating = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Content = table.Column<string>(type: "TEXT", nullable: true),
+                    Rating = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -663,13 +702,13 @@ namespace MainService.Postgres.Migrations
                 name: "Services",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Price = table.Column<decimal>(type: "numeric", nullable: true),
-                    Discount = table.Column<double>(type: "double precision", nullable: true),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Price = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Discount = table.Column<double>(type: "REAL", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -680,17 +719,17 @@ namespace MainService.Postgres.Migrations
                 name: "Specialties",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -701,11 +740,11 @@ namespace MainService.Postgres.Migrations
                 name: "States",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -716,11 +755,11 @@ namespace MainService.Postgres.Migrations
                 name: "SubSpecialties",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -731,17 +770,17 @@ namespace MainService.Postgres.Migrations
                 name: "Substances",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: true),
-                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
+                    CodeNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Color = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Visible = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -752,12 +791,12 @@ namespace MainService.Postgres.Migrations
                 name: "TaxRegime",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Code = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Code = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -768,14 +807,14 @@ namespace MainService.Postgres.Migrations
                 name: "WorkSchedules",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DayOfWeek = table.Column<int>(type: "integer", nullable: true),
-                    StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DayOfWeek = table.Column<int>(type: "INTEGER", nullable: true),
+                    StartTime = table.Column<TimeOnly>(type: "TEXT", nullable: true),
+                    EndTime = table.Column<TimeOnly>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -786,14 +825,14 @@ namespace MainService.Postgres.Migrations
                 name: "WorkScheduleSettings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StartTime = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    EndTime = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    MinutesPerBlock = table.Column<int>(type: "integer", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    StartTime = table.Column<TimeSpan>(type: "TEXT", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "TEXT", nullable: true),
+                    MinutesPerBlock = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -804,11 +843,11 @@ namespace MainService.Postgres.Migrations
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<int>(type: "integer", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
+                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -825,11 +864,11 @@ namespace MainService.Postgres.Migrations
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
+                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -846,10 +885,10 @@ namespace MainService.Postgres.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    ProviderKey = table.Column<string>(type: "text", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
+                    ProviderKey = table.Column<string>(type: "TEXT", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "TEXT", nullable: true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -866,8 +905,8 @@ namespace MainService.Postgres.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    RoleId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RoleId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -890,10 +929,10 @@ namespace MainService.Postgres.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -910,8 +949,8 @@ namespace MainService.Postgres.Migrations
                 name: "ClinicNurses",
                 columns: table => new
                 {
-                    ClinicId = table.Column<int>(type: "integer", nullable: false),
-                    NurseId = table.Column<int>(type: "integer", nullable: false)
+                    ClinicId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NurseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -934,9 +973,9 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorClinics",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    ClinicId = table.Column<int>(type: "integer", nullable: false),
-                    IsMain = table.Column<bool>(type: "boolean", nullable: true)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ClinicId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsMain = table.Column<bool>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -959,8 +998,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorNurses",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    NurseId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NurseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -983,10 +1022,10 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorPatients",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    PatientId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    HasPatientInformationAccess = table.Column<bool>(type: "boolean", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    HasPatientInformationAccess = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1008,10 +1047,10 @@ namespace MainService.Postgres.Migrations
                 name: "UserAddresses",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    AddressId = table.Column<int>(type: "integer", nullable: false),
-                    IsMain = table.Column<bool>(type: "boolean", nullable: false),
-                    IsBilling = table.Column<bool>(type: "boolean", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsMain = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsBilling = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1034,8 +1073,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorEvent",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1058,8 +1097,8 @@ namespace MainService.Postgres.Migrations
                 name: "EventClinic",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    ClinicId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ClinicId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1082,8 +1121,8 @@ namespace MainService.Postgres.Migrations
                 name: "NurseEvent",
                 columns: table => new
                 {
-                    NurseId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false)
+                    NurseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1106,8 +1145,8 @@ namespace MainService.Postgres.Migrations
                 name: "PatientEvent",
                 columns: table => new
                 {
-                    PatientId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false)
+                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1130,8 +1169,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorLinks",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    LinkId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LinkId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1154,8 +1193,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorMedicalInsuranceCompany",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1167,7 +1206,7 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DoctorMedicalInsuranceCompany_MedicalInsuranceCompanies_Med~",
+                        name: "FK_DoctorMedicalInsuranceCompany_MedicalInsuranceCompanies_MedicalInsuranceCompanyId",
                         column: x => x.MedicalInsuranceCompanyId,
                         principalTable: "MedicalInsuranceCompanies",
                         principalColumn: "Id",
@@ -1178,8 +1217,8 @@ namespace MainService.Postgres.Migrations
                 name: "EventMedicalInsuranceCompany",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1191,7 +1230,7 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EventMedicalInsuranceCompany_MedicalInsuranceCompanies_Medi~",
+                        name: "FK_EventMedicalInsuranceCompany_MedicalInsuranceCompanies_MedicalInsuranceCompanyId",
                         column: x => x.MedicalInsuranceCompanyId,
                         principalTable: "MedicalInsuranceCompanies",
                         principalColumn: "Id",
@@ -1202,11 +1241,11 @@ namespace MainService.Postgres.Migrations
                 name: "UserMedicalInsuranceCompanies",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false),
-                    DocumentId = table.Column<int>(type: "integer", nullable: true),
-                    IsMain = table.Column<bool>(type: "boolean", nullable: false),
-                    PolicyNumber = table.Column<string>(type: "text", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DocumentId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsMain = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PolicyNumber = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1224,7 +1263,7 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserMedicalInsuranceCompanies_MedicalInsuranceCompanies_Med~",
+                        name: "FK_UserMedicalInsuranceCompanies_MedicalInsuranceCompanies_MedicalInsuranceCompanyId",
                         column: x => x.MedicalInsuranceCompanyId,
                         principalTable: "MedicalInsuranceCompanies",
                         principalColumn: "Id",
@@ -1235,8 +1274,8 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalLicenseDocuments",
                 columns: table => new
                 {
-                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
-                    DocumentId = table.Column<int>(type: "integer", nullable: false)
+                    MedicalLicenseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DocumentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1259,9 +1298,9 @@ namespace MainService.Postgres.Migrations
                 name: "UserMedicalLicenses",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
-                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MedicalLicenseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsMain = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1284,16 +1323,16 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordColorBlindnesses",
                 columns: table => new
                 {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    ColorBlindnessId = table.Column<int>(type: "integer", nullable: false),
-                    Other = table.Column<string>(type: "text", nullable: true),
-                    IsPresent = table.Column<bool>(type: "boolean", nullable: false)
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ColorBlindnessId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Other = table.Column<string>(type: "TEXT", nullable: true),
+                    IsPresent = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicalRecordColorBlindnesses", x => new { x.MedicalRecordId, x.ColorBlindnessId });
                     table.ForeignKey(
-                        name: "FK_MedicalRecordColorBlindnesses_ColorBlindnesses_ColorBlindne~",
+                        name: "FK_MedicalRecordColorBlindnesses_ColorBlindnesses_ColorBlindnessId",
                         column: x => x.ColorBlindnessId,
                         principalTable: "ColorBlindnesses",
                         principalColumn: "Id");
@@ -1308,8 +1347,8 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordCompanions",
                 columns: table => new
                 {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    CompanionId = table.Column<int>(type: "integer", nullable: false)
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CompanionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1331,14 +1370,14 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordEducationLevels",
                 columns: table => new
                 {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    EducationLevelId = table.Column<int>(type: "integer", nullable: false)
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EducationLevelId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicalRecordEducationLevels", x => new { x.MedicalRecordId, x.EducationLevelId });
                     table.ForeignKey(
-                        name: "FK_MedicalRecordEducationLevels_EducationLevels_EducationLevel~",
+                        name: "FK_MedicalRecordEducationLevels_EducationLevels_EducationLevelId",
                         column: x => x.EducationLevelId,
                         principalTable: "EducationLevels",
                         principalColumn: "Id");
@@ -1353,8 +1392,8 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordFamilyMembers",
                 columns: table => new
                 {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    FamilyMemberId = table.Column<int>(type: "integer", nullable: false)
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FamilyMemberId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1376,9 +1415,9 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordMaritalStatuses",
                 columns: table => new
                 {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    MaritalStatusId = table.Column<int>(type: "integer", nullable: false),
-                    Other = table.Column<string>(type: "text", nullable: true)
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MaritalStatusId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Other = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1399,10 +1438,10 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordPersonalDiseases",
                 columns: table => new
                 {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    DiseaseId = table.Column<int>(type: "integer", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Other = table.Column<string>(type: "text", nullable: true)
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DiseaseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Other = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1423,8 +1462,8 @@ namespace MainService.Postgres.Migrations
                 name: "UserMedicalRecords",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1445,8 +1484,8 @@ namespace MainService.Postgres.Migrations
                 name: "CityNeighborhood",
                 columns: table => new
                 {
-                    CityId = table.Column<int>(type: "integer", nullable: false),
-                    NeighborhoodId = table.Column<int>(type: "integer", nullable: false)
+                    CityId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NeighborhoodId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1469,8 +1508,8 @@ namespace MainService.Postgres.Migrations
                 name: "CompanionOccupations",
                 columns: table => new
                 {
-                    CompanionId = table.Column<int>(type: "integer", nullable: false),
-                    OccupationId = table.Column<int>(type: "integer", nullable: false)
+                    CompanionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OccupationId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1492,9 +1531,9 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordOccupations",
                 columns: table => new
                 {
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    OccupationId = table.Column<int>(type: "integer", nullable: false),
-                    Other = table.Column<string>(type: "text", nullable: true)
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OccupationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Other = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1515,8 +1554,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorOrder",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1536,23 +1575,71 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderAddress",
+                name: "OrderDeliveryAddress",
                 columns: table => new
                 {
-                    OrderId = table.Column<int>(type: "integer", nullable: false),
-                    AddressId = table.Column<int>(type: "integer", nullable: false)
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderAddress", x => new { x.OrderId, x.AddressId });
+                    table.PrimaryKey("PK_OrderDeliveryAddress", x => new { x.OrderId, x.AddressId });
                     table.ForeignKey(
-                        name: "FK_OrderAddress_Addresses_AddressId",
+                        name: "FK_OrderDeliveryAddress_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrderAddress_Orders_OrderId",
+                        name: "FK_OrderDeliveryAddress_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDeliveryStatus",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeliveryStatusId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDeliveryStatus", x => new { x.OrderId, x.DeliveryStatusId });
+                    table.ForeignKey(
+                        name: "FK_OrderDeliveryStatus_DeliveryStatuses_DeliveryStatusId",
+                        column: x => x.DeliveryStatusId,
+                        principalTable: "DeliveryStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDeliveryStatus_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderPickupAddress",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderPickupAddress", x => new { x.OrderId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_OrderPickupAddress_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderPickupAddress_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -1563,8 +1650,8 @@ namespace MainService.Postgres.Migrations
                 name: "PatientOrder",
                 columns: table => new
                 {
-                    PatientId = table.Column<int>(type: "integer", nullable: false),
-                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1584,12 +1671,36 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderOrderStatus",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderStatusId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderOrderStatus", x => new { x.OrderId, x.OrderStatusId });
+                    table.ForeignKey(
+                        name: "FK_OrderOrderStatus_OrderStatuses_OrderStatusId",
+                        column: x => x.OrderStatusId,
+                        principalTable: "OrderStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderOrderStatus_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserPaymentMethods",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "integer", nullable: false),
-                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsMain = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1612,8 +1723,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorPaymentMethodTypes",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1625,7 +1736,7 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DoctorPaymentMethodTypes_PaymentMethodTypes_PaymentMethodTy~",
+                        name: "FK_DoctorPaymentMethodTypes_PaymentMethodTypes_PaymentMethodTypeId",
                         column: x => x.PaymentMethodTypeId,
                         principalTable: "PaymentMethodTypes",
                         principalColumn: "Id",
@@ -1636,8 +1747,8 @@ namespace MainService.Postgres.Migrations
                 name: "EventPaymentMethodType",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1649,7 +1760,7 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EventPaymentMethodType_PaymentMethodTypes_PaymentMethodType~",
+                        name: "FK_EventPaymentMethodType_PaymentMethodTypes_PaymentMethodTypeId",
                         column: x => x.PaymentMethodTypeId,
                         principalTable: "PaymentMethodTypes",
                         principalColumn: "Id",
@@ -1660,8 +1771,8 @@ namespace MainService.Postgres.Migrations
                 name: "EventPayments",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1684,8 +1795,8 @@ namespace MainService.Postgres.Migrations
                 name: "PaymentPaymentMethod",
                 columns: table => new
                 {
-                    PaymentId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "integer", nullable: false)
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1708,14 +1819,14 @@ namespace MainService.Postgres.Migrations
                 name: "PaymentPaymentMethodTypes",
                 columns: table => new
                 {
-                    PaymentId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false)
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PaymentPaymentMethodTypes", x => new { x.PaymentId, x.PaymentMethodTypeId });
                     table.ForeignKey(
-                        name: "FK_PaymentPaymentMethodTypes_PaymentMethodTypes_PaymentMethodT~",
+                        name: "FK_PaymentPaymentMethodTypes_PaymentMethodTypes_PaymentMethodTypeId",
                         column: x => x.PaymentMethodTypeId,
                         principalTable: "PaymentMethodTypes",
                         principalColumn: "Id",
@@ -1732,8 +1843,8 @@ namespace MainService.Postgres.Migrations
                 name: "EventPaymentStatuses",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentStatusId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentStatusId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1756,8 +1867,8 @@ namespace MainService.Postgres.Migrations
                 name: "AppRolePermission",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "integer", nullable: false),
-                    PermissionId = table.Column<int>(type: "integer", nullable: false)
+                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PermissionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1780,8 +1891,8 @@ namespace MainService.Postgres.Migrations
                 name: "UserPermissions",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    PermissionId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PermissionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1804,8 +1915,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorPhones",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    PhoneId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhoneId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1828,8 +1939,8 @@ namespace MainService.Postgres.Migrations
                 name: "ClinicLogo",
                 columns: table => new
                 {
-                    AddressId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1852,8 +1963,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorBannerPhoto",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1876,8 +1987,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorSignature",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    SignatureId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SignatureId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1900,14 +2011,14 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalInsuranceCompanyPhoto",
                 columns: table => new
                 {
-                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicalInsuranceCompanyPhoto", x => new { x.MedicalInsuranceCompanyId, x.PhotoId });
                     table.ForeignKey(
-                        name: "FK_MedicalInsuranceCompanyPhoto_MedicalInsuranceCompanies_Medi~",
+                        name: "FK_MedicalInsuranceCompanyPhoto_MedicalInsuranceCompanies_MedicalInsuranceCompanyId",
                         column: x => x.MedicalInsuranceCompanyId,
                         principalTable: "MedicalInsuranceCompanies",
                         principalColumn: "Id",
@@ -1924,8 +2035,8 @@ namespace MainService.Postgres.Migrations
                 name: "UserPhotos",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1948,8 +2059,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorPrescription",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1972,8 +2083,8 @@ namespace MainService.Postgres.Migrations
                 name: "EventPrescription",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1996,8 +2107,8 @@ namespace MainService.Postgres.Migrations
                 name: "PatientPrescription",
                 columns: table => new
                 {
-                    PatientId = table.Column<int>(type: "integer", nullable: false),
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2020,8 +2131,8 @@ namespace MainService.Postgres.Migrations
                 name: "PrescriptionClinic",
                 columns: table => new
                 {
-                    ClinicId = table.Column<int>(type: "integer", nullable: false),
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                    ClinicId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2042,8 +2153,8 @@ namespace MainService.Postgres.Migrations
                 name: "PrescriptionOrder",
                 columns: table => new
                 {
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
-                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2066,8 +2177,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorProducts",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2090,15 +2201,15 @@ namespace MainService.Postgres.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    OrderId = table.Column<int>(type: "integer", nullable: false),
-                    ItemId = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: true),
-                    Dosage = table.Column<double>(type: "double precision", nullable: true),
-                    Instructions = table.Column<string>(type: "text", nullable: true),
-                    Notes = table.Column<string>(type: "text", nullable: true),
-                    Unit = table.Column<string>(type: "text", nullable: true),
-                    Price = table.Column<decimal>(type: "numeric", nullable: true),
-                    Discount = table.Column<double>(type: "double precision", nullable: true)
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: true),
+                    Dosage = table.Column<double>(type: "REAL", nullable: true),
+                    Instructions = table.Column<string>(type: "TEXT", nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    Unit = table.Column<string>(type: "TEXT", nullable: true),
+                    Price = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Discount = table.Column<double>(type: "REAL", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2121,16 +2232,16 @@ namespace MainService.Postgres.Migrations
                 name: "PrescriptionItems",
                 columns: table => new
                 {
-                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
-                    ItemId = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: true),
-                    Dosage = table.Column<double>(type: "double precision", nullable: true),
-                    Instructions = table.Column<string>(type: "text", nullable: true),
-                    Unit = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Id = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: true),
+                    Dosage = table.Column<double>(type: "REAL", nullable: true),
+                    Instructions = table.Column<string>(type: "TEXT", nullable: true),
+                    Unit = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2153,8 +2264,8 @@ namespace MainService.Postgres.Migrations
                 name: "ProductPhoto",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2177,8 +2288,8 @@ namespace MainService.Postgres.Migrations
                 name: "CompanionRelativeTypes",
                 columns: table => new
                 {
-                    CompanionId = table.Column<int>(type: "integer", nullable: false),
-                    RelativeTypeId = table.Column<int>(type: "integer", nullable: false)
+                    CompanionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2200,13 +2311,13 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordFamilyDiseases",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    DiseaseId = table.Column<int>(type: "integer", nullable: false),
-                    RelativeTypeId = table.Column<int>(type: "integer", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Other = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DiseaseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Other = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2232,20 +2343,20 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordFamilyMemberRelativeTypes",
                 columns: table => new
                 {
-                    FamilyMemberId = table.Column<int>(type: "integer", nullable: false),
-                    RelativeTypeId = table.Column<int>(type: "integer", nullable: false)
+                    FamilyMemberId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicalRecordFamilyMemberRelativeTypes", x => new { x.FamilyMemberId, x.RelativeTypeId });
                     table.ForeignKey(
-                        name: "FK_MedicalRecordFamilyMemberRelativeTypes_FamilyMembers_Family~",
+                        name: "FK_MedicalRecordFamilyMemberRelativeTypes_FamilyMembers_FamilyMemberId",
                         column: x => x.FamilyMemberId,
                         principalTable: "FamilyMembers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MedicalRecordFamilyMemberRelativeTypes_RelativeTypes_Relati~",
+                        name: "FK_MedicalRecordFamilyMemberRelativeTypes_RelativeTypes_RelativeTypeId",
                         column: x => x.RelativeTypeId,
                         principalTable: "RelativeTypes",
                         principalColumn: "Id");
@@ -2255,8 +2366,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorReviews",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    ReviewId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ReviewId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2279,8 +2390,8 @@ namespace MainService.Postgres.Migrations
                 name: "UserReviews",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    ReviewId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ReviewId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2303,8 +2414,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorServices",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    ServiceId = table.Column<int>(type: "integer", nullable: false)
+                    DoctorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ServiceId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2327,8 +2438,8 @@ namespace MainService.Postgres.Migrations
                 name: "EventService",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    ServiceId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ServiceId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2351,8 +2462,8 @@ namespace MainService.Postgres.Migrations
                 name: "ServicePhoto",
                 columns: table => new
                 {
-                    ServiceId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                    ServiceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2375,8 +2486,8 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalLicenseSpecialty",
                 columns: table => new
                 {
-                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
-                    SpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                    MedicalLicenseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SpecialtyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2399,8 +2510,8 @@ namespace MainService.Postgres.Migrations
                 name: "SpecialtyService",
                 columns: table => new
                 {
-                    SpecialtyId = table.Column<int>(type: "integer", nullable: false),
-                    ServiceId = table.Column<int>(type: "integer", nullable: false)
+                    SpecialtyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ServiceId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2423,8 +2534,8 @@ namespace MainService.Postgres.Migrations
                 name: "StateCity",
                 columns: table => new
                 {
-                    StateId = table.Column<int>(type: "integer", nullable: false),
-                    CityId = table.Column<int>(type: "integer", nullable: false)
+                    StateId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CityId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2447,14 +2558,14 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalLicenseSubSpecialties",
                 columns: table => new
                 {
-                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
-                    SubSpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                    MedicalLicenseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubSpecialtyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicalLicenseSubSpecialties", x => new { x.MedicalLicenseId, x.SubSpecialtyId });
                     table.ForeignKey(
-                        name: "FK_MedicalLicenseSubSpecialties_MedicalLicenses_MedicalLicense~",
+                        name: "FK_MedicalLicenseSubSpecialties_MedicalLicenses_MedicalLicenseId",
                         column: x => x.MedicalLicenseId,
                         principalTable: "MedicalLicenses",
                         principalColumn: "Id",
@@ -2471,8 +2582,8 @@ namespace MainService.Postgres.Migrations
                 name: "SpecialitySubSpecialties",
                 columns: table => new
                 {
-                    SpecialtyId = table.Column<int>(type: "integer", nullable: false),
-                    SubSpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                    SpecialtyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubSpecialtyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2495,15 +2606,15 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordSubstances",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
-                    SubstanceId = table.Column<int>(type: "integer", nullable: false),
-                    ConsumptionLevelId = table.Column<int>(type: "integer", nullable: false),
-                    StartAge = table.Column<int>(type: "integer", nullable: true),
-                    EndAge = table.Column<int>(type: "integer", nullable: true),
-                    IsCurrent = table.Column<bool>(type: "boolean", nullable: false),
-                    Other = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MedicalRecordId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubstanceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ConsumptionLevelId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartAge = table.Column<int>(type: "INTEGER", nullable: true),
+                    EndAge = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsCurrent = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Other = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2529,9 +2640,9 @@ namespace MainService.Postgres.Migrations
                 name: "UserTaxRegimes",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    TaxRegimeId = table.Column<int>(type: "integer", nullable: false),
-                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaxRegimeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsMain = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2554,8 +2665,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorWorkSchedules",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    WorkScheduleId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    WorkScheduleId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2578,8 +2689,8 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorWorkScheduleSettings",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    WorkScheduleSettingsId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    WorkScheduleSettingsId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2591,7 +2702,7 @@ namespace MainService.Postgres.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DoctorWorkScheduleSettings_WorkScheduleSettings_WorkSchedul~",
+                        name: "FK_DoctorWorkScheduleSettings_WorkScheduleSettings_WorkScheduleSettingsId",
                         column: x => x.WorkScheduleSettingsId,
                         principalTable: "WorkScheduleSettings",
                         principalColumn: "Id",
@@ -3021,13 +3132,24 @@ namespace MainService.Postgres.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderAddress_AddressId",
-                table: "OrderAddress",
+                name: "IX_OrderDeliveryAddress_AddressId",
+                table: "OrderDeliveryAddress",
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderAddress_OrderId",
-                table: "OrderAddress",
+                name: "IX_OrderDeliveryAddress_OrderId",
+                table: "OrderDeliveryAddress",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDeliveryStatus_DeliveryStatusId",
+                table: "OrderDeliveryStatus",
+                column: "DeliveryStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDeliveryStatus_OrderId",
+                table: "OrderDeliveryStatus",
                 column: "OrderId",
                 unique: true);
 
@@ -3035,6 +3157,28 @@ namespace MainService.Postgres.Migrations
                 name: "IX_OrderItems_ItemId",
                 table: "OrderItems",
                 column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderOrderStatus_OrderId",
+                table: "OrderOrderStatus",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderOrderStatus_OrderStatusId",
+                table: "OrderOrderStatus",
+                column: "OrderStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderPickupAddress_AddressId",
+                table: "OrderPickupAddress",
+                column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderPickupAddress_OrderId",
+                table: "OrderPickupAddress",
+                column: "OrderId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PatientEvent_EventId",
@@ -3357,10 +3501,19 @@ namespace MainService.Postgres.Migrations
                 name: "NurseEvent");
 
             migrationBuilder.DropTable(
-                name: "OrderAddress");
+                name: "OrderDeliveryAddress");
+
+            migrationBuilder.DropTable(
+                name: "OrderDeliveryStatus");
 
             migrationBuilder.DropTable(
                 name: "OrderItems");
+
+            migrationBuilder.DropTable(
+                name: "OrderOrderStatus");
+
+            migrationBuilder.DropTable(
+                name: "OrderPickupAddress");
 
             migrationBuilder.DropTable(
                 name: "PatientEvent");
@@ -3478,6 +3631,12 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "Substances");
+
+            migrationBuilder.DropTable(
+                name: "DeliveryStatuses");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatuses");
 
             migrationBuilder.DropTable(
                 name: "Events");

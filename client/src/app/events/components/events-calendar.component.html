@@ -1,6 +1,6 @@
 @if (calendarOptions) {
   <div class="card-body">
-    <full-calendar #fullcalendar [options]="calendarOptions">
+    <full-calendar #fullcalendar [options]="calendarOptions" [deepChangeDetection]="true">
       <ng-template #eventContent let-arg>
         <div class="d-flex flex-grow-1 flex-column px-1 {{ arg.event.extendedProps.bgColor }}">
           <div class="fw-bold text-white">

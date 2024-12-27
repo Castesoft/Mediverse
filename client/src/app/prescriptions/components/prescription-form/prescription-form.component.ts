@@ -32,6 +32,7 @@ import { ClinicsService } from 'src/app/clinics/clinics.config';
 import { PatientsService } from 'src/app/patients/patients.config';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProductsService } from 'src/app/products/products.config';
+import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
 @Component({
   selector: '[prescriptionForm]',
@@ -47,7 +48,7 @@ import { ProductsService } from 'src/app/products/products.config';
     ReactiveFormsModule,
     // EventSelectDisplayCardComponent,
     // EventSelectTypeaheadComponent,
-    // ProfilePictureComponent,
+    ProfilePictureComponent,
   ],
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss',
@@ -88,6 +89,8 @@ export class PrescriptionFormComponent
   patientOptions = signal<SelectOption[]>([]);
   clinicOptions = signal<SelectOption[]>([]);
 
+  fromWrapper = signal<boolean>(false);
+
   constructor() {
     super(PrescriptionsService, PrescriptionForm);
 
@@ -99,7 +102,11 @@ export class PrescriptionFormComponent
       this.account.set(this.accountService.current());
       const value = this.item();
 
-      this.form.use = this.use();
+      this.form
+        .setUse(this.use())
+        .setValidation(this.validation.active())
+      ;
+
       this.form.productOptions = this.productsService.options();
       this.form.patientOptions = this.patientsService.options();
       this.form.clinicOptions = this.clinicsService.options();

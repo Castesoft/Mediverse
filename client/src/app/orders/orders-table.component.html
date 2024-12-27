@@ -23,7 +23,7 @@
             (click)="service.onSelect(key(), mode(), item)"
           ></td>
 
-          <td
+          <!-- <td
             class="name align-middle white-space-nowrap px-0 py-0"
             [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
           >
@@ -35,15 +35,18 @@
                 >#{{ item.id | number }}</a
               >
             </div>
-          </td>
+          </td> -->
 
           @for (
             cell of row().getItems([
-              'name',
-              'description',
+              'patient',
+              'status',
+              'deliveryStatus',
+              'address',
+              'subtotal',
               'discount',
-              'enabled',
-              'visible',
+              'tax',
+              'total',
               'createdAt',
             ]);
             let idx = $index;

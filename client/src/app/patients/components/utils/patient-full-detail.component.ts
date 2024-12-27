@@ -47,6 +47,7 @@ export class PatientFullDetailComponent
   eventIsCompact = signal(true);
   eventMode = signal<CatalogMode>('view');
   eventCalendarView = signal<CalendarView>('table');
+  eventFiltersCollapsed = signal(true);
 
   constructor() {
     super(PatientsService);

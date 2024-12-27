@@ -37,6 +37,9 @@ export class ControlMultiselect3Component {
 
   constructor() {
     effect(() => {
+      console.log('controlMultiselect3', this.control());
+
+
       if (this.fromWrapper() === true) {
         this.class += ' w-100';
       } else {

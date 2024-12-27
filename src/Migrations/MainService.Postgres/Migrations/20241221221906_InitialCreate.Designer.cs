@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241220053930_InitialCreate")]
+    [Migration("20241221221906_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -636,6 +636,46 @@ namespace MainService.Postgres.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ConsumptionLevels");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.DeliveryStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CodeNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeliveryStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
@@ -1814,11 +1854,6 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DeliveryStatus")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -1827,11 +1862,6 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal?>("Subtotal")
                         .HasColumnType("numeric");
@@ -1847,7 +1877,7 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryAddress", b =>
                 {
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
@@ -1862,7 +1892,25 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("OrderAddress");
+                    b.ToTable("OrderDeliveryAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryStatus", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DeliveryStatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrderId", "DeliveryStatusId");
+
+                    b.HasIndex("DeliveryStatusId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("OrderDeliveryStatus");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
@@ -1899,6 +1947,82 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("ItemId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrderStatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrderId", "OrderStatusId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderStatusId");
+
+                    b.ToTable("OrderOrderStatus");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderPickupAddress", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrderId", "AddressId");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("OrderPickupAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CodeNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -3854,21 +3978,40 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Nurse");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryAddress", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Address", "Address")
-                        .WithMany("OrderAddresses")
+                    b.HasOne("MainService.Models.Entities.Address", "DeliveryAddress")
+                        .WithMany("OrderDeliveryAddresses")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Order", "Order")
-                        .WithOne("OrderAddress")
-                        .HasForeignKey("MainService.Models.Entities.OrderAddress", "OrderId")
+                        .WithOne("OrderDeliveryAddress")
+                        .HasForeignKey("MainService.Models.Entities.OrderDeliveryAddress", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Address");
+                    b.Navigation("DeliveryAddress");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryStatus", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.DeliveryStatus", "DeliveryStatus")
+                        .WithMany("OrderDeliveryStatuses")
+                        .HasForeignKey("DeliveryStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderDeliveryStatus")
+                        .HasForeignKey("MainService.Models.Entities.OrderDeliveryStatus", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeliveryStatus");
 
                     b.Navigation("Order");
                 });
@@ -3890,6 +4033,44 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderOrderStatus")
+                        .HasForeignKey("MainService.Models.Entities.OrderOrderStatus", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.OrderStatus", "OrderStatus")
+                        .WithMany("OrderOrderStatuses")
+                        .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("OrderStatus");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderPickupAddress", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "PickupAddress")
+                        .WithMany("OrderPickupAddresses")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderPickupAddress")
+                        .HasForeignKey("MainService.Models.Entities.OrderPickupAddress", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("PickupAddress");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -4326,7 +4507,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("EventClinics");
 
-                    b.Navigation("OrderAddresses");
+                    b.Navigation("OrderDeliveryAddresses");
+
+                    b.Navigation("OrderPickupAddresses");
 
                     b.Navigation("PrescriptionClinics");
 
@@ -4465,6 +4648,11 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("MedicalRecordSubstances");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DeliveryStatus", b =>
+                {
+                    b.Navigation("OrderDeliveryStatuses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
                 {
                     b.Navigation("MedicalRecordFamilyDiseases");
@@ -4599,16 +4787,28 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("DoctorOrder")
                         .IsRequired();
 
-                    b.Navigation("OrderAddress")
+                    b.Navigation("OrderDeliveryAddress");
+
+                    b.Navigation("OrderDeliveryStatus")
                         .IsRequired();
 
                     b.Navigation("OrderItems");
+
+                    b.Navigation("OrderOrderStatus")
+                        .IsRequired();
+
+                    b.Navigation("OrderPickupAddress");
 
                     b.Navigation("PatientOrder")
                         .IsRequired();
 
                     b.Navigation("PrescriptionOrder")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderStatus", b =>
+                {
+                    b.Navigation("OrderOrderStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Payment", b =>

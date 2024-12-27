@@ -87,9 +87,7 @@ public class PrescriptionsController(
         if (!await uow.PatientRepository.ExistsAsync(request.Patient.Id.Value, doctorId))
         return BadRequest($"El paciente {request.Patient.Id.Value} no corresponde al doctor {doctorId}.");
         
-        if (request.Event != null) {
-            if (!request.Event.Id.HasValue) return BadRequest("La cita es requerida");
-            
+        if (request.Event != null && request.Event.Id.HasValue) {
             if (!await uow.EventRepository.ExistsByIdAsync(request.Event.Id.Value))
             return NotFound($"La cita con Id {request.Event.Id} no existe");
 
@@ -173,22 +171,26 @@ public class PrescriptionsController(
             }
         }
 
+        uow.PrescriptionRepository.Add(prescriptionToCreate);
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest("Error al crear la receta.");
+        }
+        
         Order? order = null;
 
         if (globalProducts.Count() > 0) {
             order = await ordersService.CreateAsync(globalProducts, patientId, doctorId);
         }
 
-        uow.PrescriptionRepository.Add(prescriptionToCreate);
-
-        if (!await uow.Complete()) return BadRequest("Error al crear la receta.");
-
         if (order != null) {
             order.PrescriptionOrder = new(prescriptionToCreate.Id);
 
             uow.OrderRepository.Add(order);
 
-            if (!await uow.Complete()) return BadRequest("Error al crear la orden.");
+            if (uow.HasChanges()) {
+                if (!await uow.Complete()) return BadRequest("Error al crear la orden.");
+            }
         }
 
         return await uow.PrescriptionRepository.GetDtoByIdAsync(prescriptionToCreate.Id);

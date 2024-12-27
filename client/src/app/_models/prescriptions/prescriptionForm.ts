@@ -10,6 +10,9 @@ import { PrescriptionItem, prescriptionItemInfo } from "src/app/_models/prescrip
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { prescriptionFormInfo } from "src/app/_models/prescriptions/prescriptionConstants";
 import { User } from "src/app/_models/users/user";
+import Patient from 'src/app/_models/patients/patient';
+import Clinic from 'src/app/_models/clinics/clinic';
+import { isNullOrWhiteSpace } from 'src/app/_utils/util';
 
 
 export class PrescriptionForm extends FormGroup2<Prescription> {
@@ -53,6 +56,36 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     super(Prescription, new Prescription(), prescriptionFormInfo);
 
     this.addEmptyProductItem();
+
+    this.controls.patient.controls.select.valueChanges.subscribe({
+      next: (value: SelectOption | null) => {
+        if (value !== null && value !== undefined && !isNullOrWhiteSpace(value)) {
+          this.controls.patient.controls.id.patchValue(value.id);
+          this.controls.patient.controls.fullName.patchValue(value.name);
+          this.controls.patient.controls.email.patchValue(value.code);
+
+          if (value.options !== null) {
+            this.controls.patient.controls.photoUrl.patchValue(value.options.photoUrl);
+            if (value.options.sex !== null) {
+              this.controls.patient.controls.sex.patchValue(new SelectOption({ name: value.options.sex, code: value.options.sex, }));
+            }
+          }
+        }
+      }
+    });
+
+    this.controls.clinic.controls.select.valueChanges.subscribe({
+      next: (value: SelectOption | null) => {
+        if (value !== null && value !== undefined && !isNullOrWhiteSpace(value)) {
+          this.controls.clinic.controls.id.patchValue(value.id);
+          if (value.options !== null) {
+            this.controls.clinic.controls.photoUrl.patchValue(value.options.photoUrl);
+          }
+        }
+      }
+    });
+
+
   }
 
   patch(doctor: Account, prescription: Prescription | null) {
@@ -128,52 +161,39 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     this.updateValueAndValidity();
   }
 
-  patchPatient(value: SelectOption | null) {
-    if (value !== null) {
-      this.controls.patient.patchValue(new User({
-        id: value.id,
-        fullName: value.name,
-      }));
-      this.controls.patient.controls.select.patchValue(new SelectOption({
-        ...value,
-      }));
-    }
-  }
-
-  patchClinic(value: SelectOption | null) {
-    if (value !== null) {
-      this.controls.clinic.patchValue(new Address({
-        id: value.id,
-      }));
-      this.controls.clinic.controls.select.patchValue(new SelectOption({
-        ...value,
-      }));
-    }
-  }
-
   patchProductItem(value: SelectOption | null, index: number) {
+    console.log('patchProductItem', value, index);
+
     if (this.controls.items.length && this.controls.items.length > 0) {
       if (value !== null) {
-        const prescriptionItem = this.controls.items.controls[index];
-        prescriptionItem.controls.selectProduct.patchValue(new SelectOption({ ...value }));
-        prescriptionItem.controls.quantity.patchValue(1);
+        this.controls.items.controls[index].controls.quantity.patchValue(1);
+        this.controls.items.controls[index].controls.id.patchValue(value.id);
+        this.controls.items.controls[index].controls.name.patchValue(value.name);
+        this.controls.items.controls[index].controls.product.controls.id.patchValue(value.id);
+        this.controls.items.controls[index].controls.product.controls.name.patchValue(value.name);
+        if (value.options?.price) {
+        this.controls.items.controls[index].controls.product.controls.description.patchValue(value.options?.description);
+        }
+        if (value.options?.dosage) {
+          this.controls.items.controls[index].controls.product.controls.dosage.patchValue(value.options?.dosage.toString());
+        }
 
         if (value?.options?.dosage) {
-          prescriptionItem.controls.dosage.patchValue(value?.options?.dosage);
+          this.controls.items.controls[index].controls.dosage.patchValue(value?.options?.dosage);
           if (value?.options?.unit) {
-            prescriptionItem.controls.dosage.inputGroupAppend = value?.options?.unit;
-            prescriptionItem.controls.unit.patchValue(value?.options?.unit);
+            this.controls.items.controls[index].controls.dosage.inputGroupAppend = value?.options?.unit;
+            this.controls.items.controls[index].controls.unit.patchValue(value?.options?.unit);
           }
         }
 
         if (value?.options?.description) {
-          prescriptionItem.controls.description.patchValue(value?.options?.description);
+          this.controls.items.controls[index].controls.description.patchValue(value?.options?.description);
         }
 
-        prescriptionItem.disable();
-        prescriptionItem.controls.selectProduct.enable();
-        prescriptionItem.controls.instructions.enable();
-        prescriptionItem.controls.quantity.enable();
+        this.controls.items.controls[index].disable();
+        this.controls.items.controls[index].controls.selectProduct.enable();
+        this.controls.items.controls[index].controls.instructions.enable();
+        this.controls.items.controls[index].controls.quantity.enable();
       }
     }
   }

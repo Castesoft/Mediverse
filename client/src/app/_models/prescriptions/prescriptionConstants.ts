@@ -5,11 +5,11 @@ import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { FormInfo } from "src/app/_models/forms/formTypes";
+import { patientFormInfo } from 'src/app/_models/patients/patientConstants';
 import { prescriptionItemInfo } from "src/app/_models/prescriptionItem";
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
 import { baseTableCells, PartialCellsOf } from 'src/app/_models/tables/tableCellItem';
-import { userInfo } from "src/app/_models/users/userConstants";
 
 
 export const prescriptionFormInfo: FormInfo<Prescription> = {
@@ -22,7 +22,10 @@ export const prescriptionFormInfo: FormInfo<Prescription> = {
   logoUrl: { label: 'URL del logo', type: 'text', },
   notes: { label: 'Notas', type: 'textarea', },
   orderId: { label: 'ID de pedido', type: 'number', },
-  patient: userInfo,
+  patient: {
+    ...patientFormInfo,
+
+  },
   clinic: addressFormInfo,
 } as FormInfo<Prescription>;
 

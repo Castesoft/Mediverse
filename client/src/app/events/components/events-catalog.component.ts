@@ -41,6 +41,7 @@ export class EventsCatalogComponent
   params: ModelSignal<EventParams> = model.required();
 
   calendarView = model.required<CalendarView>();
+  filtersCollapsed = model.required<boolean>();
 
   constructor() {
     super(EventsService, EventFiltersForm);

@@ -1,4 +1,8 @@
+@if(form.error) {
+  <div errorsAlert3 [(error)]="form.error"></div>
+}
 <form class="prescription-pad bg-body" [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+
   <div class="prescription-header">
     <div class="logo">
       @if (use() === 'create') {
@@ -22,17 +26,24 @@
 
   <div class="prescription-body">
     <div class="patient-info-container">
-      <div controlsWrapper3 [(control)]="form.controls.patient.controls.select" (onSelectionChange)="form.patchPatient($event)"></div>
+      <!-- <div
+        controlTypeahead3
+        [(control)]="form.controls.patient.controls.select"
+        [(fromWrapper)]="fromWrapper"
+        (onSelectionChange)="form.patchPatient($event)"
+        ></div> -->
 
-      <!-- <div class="patient-info">
+      <div class="patient-info">
         <p class="text-gray-900 fw-bold mb-0 fs-6">Paciente:</p>
         @if (form.controls.patient.controls.id.value !== null) {
           <div class="d-flex align-items-center">
             <div class="d-flex flex-grow-1 justify-content-start align-items-center">
               <a class="symbol symbol-50px symbol-circle">
-                <div userProfilePicture
-                  [account]="$any(form.controls.patient.value)"
-                ></div>
+                <div
+                  userProfilePicture
+                  [fullName]="form.controls.patient.controls.fullName.value"
+                  [photoUrl]="form.controls.patient.controls.photoUrl.value"
+                  ></div>
               </a>
               <div class="ms-4 w-100">
                 <p class="text-gray-900 mb-0 fs-6">
@@ -42,7 +53,7 @@
                 </p>
               </div>
             </div>
-              @if (use() === 'create' && form.controls.patient.controls.id.value === null) {
+              @if (use() === 'create' && form.controls.patient.controls.id.value !== null) {
                 <i class="ki-duotone ki-pencil me-6 fs-4 cursor-pointer" (click)="form.resetPatient()">
                   <span class="path1"></span>
                   <span class="path2"></span>
@@ -50,9 +61,12 @@
               }
             </div>
         } @else {
-          <div controlsWrapper3 [(control)]="form.controls.patient.controls.id"></div>
+          <div
+            controlTypeahead3
+            [(fromWrapper)]="fromWrapper"
+            [(control)]="form.controls.patient.controls.select"></div>
         }
-      </div> -->
+      </div>
 
       <div class="prescription-date">
         <p class="text-gray-900 mb-0">
@@ -84,7 +98,11 @@
               <tr>
                 <td class="fw-bold">{{(idx + 1) | number}}</td>
                 <td>
-                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.selectProduct" (onSelectionChange)="form.patchProductItem($event, idx)"></div>
+                  <div
+                    controlTypeahead3
+                    [(control)]="form.controls.items.controls[idx].controls.selectProduct"
+                    [(fromWrapper)]="fromWrapper"
+                    (onSelectionChange)="form.patchProductItem($event, idx)"></div>
                 </td>
                 <td>
                   <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.description"></div>
@@ -133,14 +151,17 @@
     }
 
     <div class="prescription-notes">
-      <div controlsWrapper3 [(control)]="form.controls.notes"></div>
+      <div templateControlTextarea [(fromWrapper)]="fromWrapper" [(control)]="form.controls.notes"></div>
     </div>
   </div>
 
   <div class="prescription-footer">
     <div class="doctor-info">
       @if(form.clinicSelectMode === true) {
-        <div controlsWrapper3 [(control)]="form.controls.clinic.controls.select" (onSelectionChange)="form.patchClinic($event)"></div>
+        <div
+          controlTypeahead3
+          [(control)]="form.controls.clinic.controls.select"
+          [(fromWrapper)]="fromWrapper"></div>
       }
       @if (use() === 'create') {
         <div class="d-flex align-items-center">
@@ -205,8 +226,4 @@
       </button>
     </div>
   }
-}
-
-@if(form.error) {
-  <div errorsAlert3 [(error)]="form.error"></div>
 }

@@ -1,0 +1,33 @@
+<mat-nav-list [disableRipple]="false">
+  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <!-- This is the tree node template for leaf nodes -->
+
+
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding [isExpanded]="rla.isActive">
+      <!-- use a disabled button to provide padding for tree leaf -->
+      <mat-list-item routerLinkActive #rla="routerLinkActive" [activated]="rla.isActive"
+        [routerLink]="node.route === null ? null : node.route" (keydown.enter)="router.navigate([node.route])">
+        {{node.name}}
+      </mat-list-item>
+    </mat-tree-node>
+
+
+    <!-- This is the tree node template for expandable nodes -->
+    <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding matTreeNodeToggle
+      [cdkTreeNodeTypeaheadLabel]="node.name" [isExpanded]="rla.isActive">
+      <mat-list-item [routerLink]="node.route" routerLinkActive #rla="routerLinkActive" (click)="router.navigate([router.url])"
+        style="display:flex; align-items:center;">
+        <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+          <mat-icon class="mat-icon-rtl-mirror">
+            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+          </mat-icon>
+        </button>
+        <span>
+          {{node.name}}
+        </span>
+      </mat-list-item>
+    </mat-tree-node>
+
+  </mat-tree>
+
+</mat-nav-list>

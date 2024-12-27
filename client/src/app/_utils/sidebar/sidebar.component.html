@@ -1,0 +1,10 @@
+<mat-sidenav-container autosize style="width: 100%; background-color: transparent; height: 100vh;">
+  <mat-sidenav #snav [(opened)]="service.opened" [mode]="mode()" [fixedInViewport]="true" [fixedTopGap]="64" style="padding: 10px;">
+    <div mainTree></div>
+  </mat-sidenav>
+  <mat-sidenav-content style="overflow: hidden;">
+    <div style="padding: 10px; padding-top: 74px;">
+      <ng-content></ng-content>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

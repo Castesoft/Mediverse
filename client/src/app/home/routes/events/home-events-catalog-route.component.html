@@ -1,1 +1,35 @@
-<div eventsCatalog [(item)]="item" [(isCompact)]="compact.isCompact" [(key)]="key" [(mode)]="mode" [(params)]="params" [(view)]="view" [(calendarView)]="calendarView"></div>
+<mat-drawer-container class="example-container" autosize style="background-color: transparent;">
+  <mat-drawer #drawer class="example-sidenav" mode="side" [(opened)]="filtersCollapsed" style="background-color: transparent;">
+    <form action="#">
+      <div class="card">
+        <div class="card-body">
+          <div class="position-relative">
+            <i class="ki-duotone ki-magnifier fs-3 text-gray-500 position-absolute top-50 translate-middle ms-6"><span
+                class="path1"></span><span class="path2"></span></i> <input type="text"
+              class="form-control form-control-solid ps-10" name="search" value="" placeholder="Search">
+          </div>
+
+          <div class="separator separator-dashed my-8"></div>
+
+          <div class="d-flex flex-column gap-4">
+            <div controlMultiselect3 [(control)]="form.controls.clinics" [(fromWrapper)]="fromWrapper"></div>
+            <div controlMultiselect3 [(control)]="form.controls.patients" [(fromWrapper)]="fromWrapper"></div>
+            <div controlMultiselect3 [(control)]="form.controls.services" [(fromWrapper)]="fromWrapper"></div>
+            <div controlMultiselect3 [(control)]="form.controls.nurses" [(fromWrapper)]="fromWrapper"></div>
+          </div>
+
+
+
+          <div class="d-flex align-items-center justify-content-end">
+            <a href="#" class="btn btn-active-light-primary btn-color-gray-400 me-3">Discard</a>
+            <a href="#" class="btn btn-primary">Search</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-drawer>
+
+  <div eventsCatalog [(item)]="item" [(isCompact)]="compact.isCompact" [(key)]="key" [(mode)]="mode" [(params)]="params"
+    [(view)]="view" [(calendarView)]="calendarView" [(filtersCollapsed)]="filtersCollapsed"></div>
+
+</mat-drawer-container>

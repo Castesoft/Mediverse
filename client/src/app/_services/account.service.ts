@@ -34,14 +34,11 @@ export class AccountService {
   current = signal<Account | null>(null);
   billingDetails = signal<BillingDetails | null>(null);
   userPaymentHistory = signal<Payment[]>([]);
-  roles = computed<Role[]>(() => {
-
+  roles = computed(() => {
     const user = this.current();
     if (user && user.token) {
       const role = JSON.parse(atob(user.token.split('.')[1])).role;
-      const roles = Array.isArray(role) ? role : [role];
-      user.roles = roles;
-      return roles;
+      return Array.isArray(role) ? role : [role];
     }
     return [];
   });

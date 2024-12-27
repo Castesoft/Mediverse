@@ -610,6 +610,44 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("ConsumptionLevels");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DeliveryStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CodeNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeliveryStatuses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
                 {
                     b.Property<int>("Id")
@@ -1758,11 +1796,6 @@ namespace MainService.Sqlite.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DeliveryStatus")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -1770,11 +1803,6 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("Subtotal")
@@ -1791,7 +1819,7 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryAddress", b =>
                 {
                     b.Property<int>("OrderId")
                         .HasColumnType("INTEGER");
@@ -1806,7 +1834,25 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("OrderAddress");
+                    b.ToTable("OrderDeliveryAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryStatus", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DeliveryStatusId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("OrderId", "DeliveryStatusId");
+
+                    b.HasIndex("DeliveryStatusId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("OrderDeliveryStatus");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
@@ -1843,6 +1889,80 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("ItemId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderStatusId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("OrderId", "OrderStatusId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderStatusId");
+
+                    b.ToTable("OrderOrderStatus");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderPickupAddress", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("OrderId", "AddressId");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("OrderPickupAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CodeNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -3760,21 +3880,40 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Nurse");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderAddress", b =>
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryAddress", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Address", "Address")
-                        .WithMany("OrderAddresses")
+                    b.HasOne("MainService.Models.Entities.Address", "DeliveryAddress")
+                        .WithMany("OrderDeliveryAddresses")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Order", "Order")
-                        .WithOne("OrderAddress")
-                        .HasForeignKey("MainService.Models.Entities.OrderAddress", "OrderId")
+                        .WithOne("OrderDeliveryAddress")
+                        .HasForeignKey("MainService.Models.Entities.OrderDeliveryAddress", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Address");
+                    b.Navigation("DeliveryAddress");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderDeliveryStatus", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.DeliveryStatus", "DeliveryStatus")
+                        .WithMany("OrderDeliveryStatuses")
+                        .HasForeignKey("DeliveryStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderDeliveryStatus")
+                        .HasForeignKey("MainService.Models.Entities.OrderDeliveryStatus", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeliveryStatus");
 
                     b.Navigation("Order");
                 });
@@ -3796,6 +3935,44 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderOrderStatus")
+                        .HasForeignKey("MainService.Models.Entities.OrderOrderStatus", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.OrderStatus", "OrderStatus")
+                        .WithMany("OrderOrderStatuses")
+                        .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("OrderStatus");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderPickupAddress", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "PickupAddress")
+                        .WithMany("OrderPickupAddresses")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithOne("OrderPickupAddress")
+                        .HasForeignKey("MainService.Models.Entities.OrderPickupAddress", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("PickupAddress");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -4232,7 +4409,9 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("EventClinics");
 
-                    b.Navigation("OrderAddresses");
+                    b.Navigation("OrderDeliveryAddresses");
+
+                    b.Navigation("OrderPickupAddresses");
 
                     b.Navigation("PrescriptionClinics");
 
@@ -4371,6 +4550,11 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("MedicalRecordSubstances");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DeliveryStatus", b =>
+                {
+                    b.Navigation("OrderDeliveryStatuses");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Disease", b =>
                 {
                     b.Navigation("MedicalRecordFamilyDiseases");
@@ -4505,16 +4689,28 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("DoctorOrder")
                         .IsRequired();
 
-                    b.Navigation("OrderAddress")
+                    b.Navigation("OrderDeliveryAddress");
+
+                    b.Navigation("OrderDeliveryStatus")
                         .IsRequired();
 
                     b.Navigation("OrderItems");
+
+                    b.Navigation("OrderOrderStatus")
+                        .IsRequired();
+
+                    b.Navigation("OrderPickupAddress");
 
                     b.Navigation("PatientOrder")
                         .IsRequired();
 
                     b.Navigation("PrescriptionOrder")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderStatus", b =>
+                {
+                    b.Navigation("OrderOrderStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Payment", b =>

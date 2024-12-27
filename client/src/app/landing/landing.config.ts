@@ -7,50 +7,73 @@ import { LandingNavbarComponent } from 'src/app/landing/components/landing-navba
 import { LandingComponent } from 'src/app/landing/components/landing.component';
 import { PricingComponent } from 'src/app/landing/components/pricing/pricing.component';
 import { SearchResultsComponent } from 'src/app/landing/components/search-results/search-results.component';
-import { ServicesComponent } from 'src/app/services/services.config';
+import { LandingServicesRouteComponent } from 'src/app/landing/routes/services/landing-services-route.component';
 
 @Component({
-    selector: 'landing-route',
-    template: `
-        <app-landing-navbar *ngIf="showNavbar" [isLightBackground]="isLightBackground"></app-landing-navbar>
-        <router-outlet></router-outlet>
-    `,
-    standalone: true,
-    imports: [CommonModule, RouterModule, LandingNavbarComponent]
+  selector: 'landing-route',
+  template: `
+    <app-landing-navbar
+      *ngIf="showNavbar"
+      [isLightBackground]="isLightBackground"
+    ></app-landing-navbar>
+    <router-outlet></router-outlet>
+  `,
+  standalone: true,
+  imports: [CommonModule, RouterModule, LandingNavbarComponent],
 })
 export class LandingRouterComponent {
-    showNavbar = true;
-    isLightBackground = false;
+  showNavbar = true;
+  isLightBackground = false;
 
-    constructor(private router: Router) {
-        this.router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-                this.showNavbar = !event.url.includes('/search');
-                this.isLightBackground = event.url.includes('/services') || event.url.includes('/pricing') || event.url.includes('/doctor');
-            }
-        });
-    }
+  constructor(private router: Router) {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.showNavbar = !event.url.includes('/search');
+        this.isLightBackground =
+          event.url.includes('/services') ||
+          event.url.includes('/pricing') ||
+          event.url.includes('/doctor');
+      }
+    });
+  }
 }
 
 @NgModule({
-    imports: [RouterModule.forChild([
-        {
-            path: '',
-            component: LandingRouterComponent,
-            children: [
-                { path: '', component: LandingComponent, title: 'Mediverse', data: { breadcrumb: 'Landing' } },
-                { path: 'search', component: SearchResultsComponent, title: 'Especialistas', data: { breadcrumb: 'Landing' } },
-                { path: 'services', component: ServicesComponent, title: 'Servicios', data: { breadcrumb: 'Servicios' } },
-                { path: 'pricing', component: PricingComponent, title: 'Precios', data: { breadcrumb: 'Precios' } },
-                { path: 'doctor/:id', component: DoctorProfileComponent, title: 'Perfil del Doctor', data: { breadcrumb: 'Perfil del Doctor' } },
-            ],
-        },
-    ])],
-    exports: [RouterModule]
+  imports: [
+    RouterModule.forChild([
+      {
+        path: '',
+        component: LandingRouterComponent,
+        children: [
+          { path: '', component: LandingComponent, title: 'Mediverse' },
+          {
+            path: 'search',
+            component: SearchResultsComponent,
+            title: 'Especialistas',
+          },
+          {
+            path: 'services',
+            component: LandingServicesRouteComponent,
+            title: 'Servicios',
+          },
+          { path: 'pricing', component: PricingComponent, title: 'Precios' },
+          {
+            path: 'doctor/:id',
+            component: DoctorProfileComponent,
+            title: 'Perfil del Doctor',
+          },
+        ],
+      },
+    ]),
+  ],
+  exports: [RouterModule],
 })
 export class LandingRoutingModule {}
 
 @NgModule({
-    imports: [CommonModule, LandingRoutingModule, LayoutModule]
+  declarations: [
+    LandingServicesRouteComponent,
+  ],
+  imports: [CommonModule, LandingRoutingModule, LayoutModule],
 })
 export class LandingModule {}

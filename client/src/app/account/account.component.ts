@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, NgModule } from '@angular/core';
+import { Component, OnInit, inject, NgModule, signal } from '@angular/core';
 import { ResolveFn, RouterModule } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { Account } from 'src/app/_models/account/account';
@@ -65,6 +65,8 @@ export class AccountComponent implements OnInit {
   account: Account | null = null;
   label?: string;
   satisfactionSurveys: SatisfactionSurvey[] = [];
+
+  withPadding = signal(true);
 
   ngOnInit(): void {
     this.accountService.getSatisfactionSurveys().subscribe({

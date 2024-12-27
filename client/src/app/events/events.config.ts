@@ -38,6 +38,7 @@ import { EventsCatalogComponent } from "src/app/events/components/events-catalog
       [(item)]="data.item"
       [(params)]="data.params"
       [(calendarView)]="data.calendarView"
+      [(filtersCollapsed)]="data.filtersCollapsed"
     ></div>
   </mat-dialog-content>
   <mat-dialog-actions>
@@ -49,7 +50,7 @@ import { EventsCatalogComponent } from "src/app/events/components/events-catalog
   imports: [EventsCatalogComponent, MaterialModule, CdkModule,],
 })
 export class EventsCatalogModalComponent {
-  data = inject<CatalogDialog<Event, EventParams> & { calendarView: CalendarView; }>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Event, EventParams> & { calendarView: CalendarView; filtersCollapsed: boolean; }>(MAT_DIALOG_DATA);
 }
 
 @Injectable({

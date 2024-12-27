@@ -39,6 +39,10 @@ export const eventFormInfo: FormInfo<Event> = {
 
 export const eventFiltersFormInfo: FormInfo<EventParams> = {
   ...baseFilterFormInfo,
+  clinics: { label: 'Clínicas', type: 'multiselect', materialOptions: new MaterialOptions({ appearance: 'fill', }), showCodeSpan: false,  },
+  nurses: { label: 'Especialistas', type: 'multiselect', materialOptions: new MaterialOptions({ appearance: 'fill', }), showCodeSpan: false,  },
+  patients: { label: 'Pacientes', type: 'multiselect', materialOptions: new MaterialOptions({ appearance: 'fill', }), showCodeSpan: false,  },
+  services: { label: 'Servicios', type: 'multiselect', materialOptions: new MaterialOptions({ appearance: 'fill', }), showCodeSpan: false,  },
 } as FormInfo<EventParams>;
 
 export const eventDictionary: NamingSubject = new NamingSubject(

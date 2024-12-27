@@ -1,13 +1,10 @@
-using System.Reflection;
-using System.Runtime.Serialization;
-using AutoMapper;
 using MainService.Core.DTOs.Orders;
+using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Models.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MainService.Controllers;
@@ -23,7 +20,9 @@ public class OrdersController(IUnitOfWork uow
     [HttpGet]
     public async Task<ActionResult<PagedList<OrderDto>>> GetPagedListAsync([FromQuery] OrderParams param)
     {
-        var pagedList = await uow.OrderRepository.GetPagedListAsync(param, User);
+        param.DoctorId = User.GetUserId();
+        
+        var pagedList = await uow.OrderRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));
@@ -45,18 +44,26 @@ public class OrdersController(IUnitOfWork uow
     [HttpPut("{id}")]
     public async Task<ActionResult<OrderDto?>> UpdateAsync([FromRoute] int id, [FromBody] OrderUpdateDto request)
     {
-        var order = await uow.OrderRepository.GetByIdAsync(id);
+        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{subjectArticle} {subject} no existe");
+        
+        if (request.DeliveryStatus == null) return BadRequest("El estado de entrega es requerido");
+        if (!request.DeliveryStatus.Id.HasValue) return BadRequest("El estado de entrega es requerido");
+        if (request.Status == null) return BadRequest("El estado es requerido");
+        if (!request.Status.Id.HasValue) return BadRequest("El estado es requerido");
+
+        Order? order = await uow.OrderRepository.GetByIdAsync(id);
 
         if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
 
-        if (!string.IsNullOrEmpty(request.Status)) {
-            order.Status = GetEnumFromMemberValue<OrderStatus>(request.Status);
-        }
-        if (!string.IsNullOrEmpty(request.DeliveryStatus)) {
-            order.DeliveryStatus = GetEnumFromMemberValue<OrderDeliveryStatus>(request.DeliveryStatus);
-        }
+        if (!await uow.DeliveryStatusRepository.ExistsByIdAsync(request.DeliveryStatus.Id.Value)) return NotFound("Estado de entrega no existe");
+        if (!await uow.OrderStatusRepository.ExistsByIdAsync(request.Status.Id.Value)) return NotFound("Estado de orden no existe");
 
-        await uow.Complete();
+        order.OrderDeliveryStatus = new(request.DeliveryStatus.Id.Value);
+        order.OrderOrderStatus = new(request.Status.Id.Value);
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest($"Error al actualizar {subjectArticle} {subject} con ID {id}.");
+        }
 
         return await uow.OrderRepository.GetDtoByIdAsync(id);
     }
@@ -64,30 +71,28 @@ public class OrdersController(IUnitOfWork uow
     [HttpPut("{id}/approve")]
     public async Task<ActionResult<OrderDto?>> ApproveAsync([FromRoute] int id)
     {
-        var order = await uow.OrderRepository.GetByIdAsync(id);
+        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{subjectArticle} {subject} no existe");
+        
+        OrderStatus? orderStatus = await uow.OrderStatusRepository.GetByNameAsync("Completado");
+        DeliveryStatus? deliveryStatus = await uow.DeliveryStatusRepository.GetByNameAsync("Procesando");
+
+        if (orderStatus == null) return NotFound("Estado de orden no existe");
+        if (deliveryStatus == null) return NotFound("Estado de entrega no existe");
+
+        Order? order = await uow.OrderRepository.GetByIdAsync(id);
 
         if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
         
-        order.Status = OrderStatus.Completed;
-        order.DeliveryStatus = OrderDeliveryStatus.Processing;
+        // order.Status = OrderStatus.Completed;
+        // order.DeliveryStatus = OrderDeliveryStatus.Processing;
 
-        if (!await uow.Complete()) return BadRequest($"Error al aprobar {subjectArticle} {subject} con ID {id}.");
+        order.OrderOrderStatus = new(orderStatus.Id);
+        order.OrderDeliveryStatus = new(deliveryStatus.Id);
 
-        return await uow.OrderRepository.GetDtoByIdAsync(id);
-    }
-
-    private T GetEnumFromMemberValue<T>(string value) where T : Enum
-    {
-        var type = typeof(T);
-        foreach (var field in type.GetFields())
-        {
-            var attribute = field.GetCustomAttribute<EnumMemberAttribute>();
-            if (attribute != null && attribute.Value == value)
-            {
-                return (T)field.GetValue(null)!;
-            }
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest($"Error al aprobar {subjectArticle} {subject} con ID {id}.");
         }
-
-        return (T)Enum.Parse(type, value, true);
+        
+        return await uow.OrderRepository.GetDtoByIdAsync(id);
     }
 }

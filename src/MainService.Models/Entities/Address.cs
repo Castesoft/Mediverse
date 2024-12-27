@@ -24,7 +24,8 @@ namespace MainService.Models.Entities
         public DoctorClinic DoctorClinic { get; set; } = null!;
         public List<EventClinic> EventClinics { get; set; } = [];
         public List<ClinicNurse> ClinicNurses { get; set; } = [];
-        public List<OrderAddress> OrderAddresses { get; set; } = [];
+        public List<OrderDeliveryAddress> OrderDeliveryAddresses { get; set; } = [];
+        public List<OrderPickupAddress> OrderPickupAddresses { get; set; } = [];
         public UserAddress UserAddress { get; set; } = null!;
         public List<PrescriptionClinic> PrescriptionClinics { get; set; } = [];
 

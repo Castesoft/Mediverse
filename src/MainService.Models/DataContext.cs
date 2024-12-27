@@ -85,6 +85,8 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<RelativeType> RelativeTypes { get; set; }
     public DbSet<MedicalRecordFamilyMember> MedicalRecordFamilyMembers { get; set; }
     public DbSet<MedicalRecordFamilyMemberRelativeType> MedicalRecordFamilyMemberRelativeTypes { get; set; }
+    public DbSet<DeliveryStatus> DeliveryStatuses { get; set; }
+    public DbSet<OrderStatus> OrderStatuses { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

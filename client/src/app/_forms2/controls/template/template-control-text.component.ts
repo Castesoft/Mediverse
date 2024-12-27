@@ -3,7 +3,6 @@ import { Component, computed, effect, HostBinding, inject, model } from '@angula
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TemplateInvalidFeedbackComponent } from 'src/app/_forms2/controls/template/template-invalid-feedback.component';
 import { DateRange } from 'src/app/_models/base/dateRange';
-import { NamingSubject } from 'src/app/_models/base/namingSubject';
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormControl2 } from 'src/app/_models/forms/formControl2';
 import { FormGroup2 } from 'src/app/_models/forms/formGroup2';

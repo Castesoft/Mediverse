@@ -58,6 +58,8 @@ import { ProductDetailComponent } from 'src/app/products/products.config';
 import { PrescriptionDetailComponent } from 'src/app/prescriptions/prescriptions.config';
 import { PrescriptionsCatalogComponent } from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component';
 import { ClinicDetailComponent } from 'src/app/clinics/clinics.config';
+import { MaterialModule } from 'src/app/_shared/material.module';
+import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 
 @NgModule({
   declarations: [
@@ -99,6 +101,8 @@ import { ClinicDetailComponent } from 'src/app/clinics/clinics.config';
     HomeRoutingModule,
     BootstrapModule,
     CdkModule,
+    Forms2Module,
+    MaterialModule,
     RouterModule,
     CommonModule,
     TemplateModule,

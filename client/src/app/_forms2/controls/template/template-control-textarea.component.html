@@ -1,0 +1,14 @@
+@if(control().showLabel === true){<label class="form-label" [ngClass]="{'required': control().required && validation.active()}">{{control().label}}</label>}
+<textarea
+  class="form-control form-control-lg form-control-solid"
+  [ngClass]="{
+    'is-invalid': (root().submitted) && control().invalid,
+    'is-valid': (root().submitted) && control().valid
+  }"
+  [placeholder]="control().placeholder ?? ''"
+  [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
+  [attr.aria-label]="control().label + ' input'"
+  [id]="control().id"
+  [formControl]="$any(control())"
+></textarea>
+<div templateInvalidFeedback [(control)]="control"></div>

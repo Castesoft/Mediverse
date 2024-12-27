@@ -38,6 +38,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMaritalStatusesService, MaritalStatusesService>();
         services.AddScoped<IEducationLevelsService, EducationLevelsService>();
         services.AddScoped<IColorBlindnessesService, ColorBlindnessesService>();
+        services.AddScoped<IDeliveryStatusesService, DeliveryStatusesService>();
+        services.AddScoped<IOrderStatusesService, OrderStatusesService>();
         services.AddScoped<IRelativeTypesService, RelativeTypesService>();
         services.AddScoped<IConsumptionLevelsService, ConsumptionLevelsService>();
         

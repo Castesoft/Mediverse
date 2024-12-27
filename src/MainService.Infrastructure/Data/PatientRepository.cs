@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Patients;
-using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;

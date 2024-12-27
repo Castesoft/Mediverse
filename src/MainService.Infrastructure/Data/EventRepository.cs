@@ -29,11 +29,16 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         IQueryable<Event> query = context.Events
             .AsNoTracking()
             .Include(x => x.DoctorEvent)
+            .Include(x => x.EventService.Service)
             .AsQueryable()
         ;
 
+        if (param.ServiceId.HasValue) {
+            query = query.Where(x => x.EventService.ServiceId == param.ServiceId.Value);
+        }
+
         if (param.DoctorId.HasValue) {
-            query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);
+            query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId.Value);
         }
 
         query = query.OrderBy(x => x.DateFrom).ThenBy(x => x.DateTo);
@@ -137,8 +142,47 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);
         }
 
+        if (param.ServiceId.HasValue) {
+            query = query.Where(x => x.EventService.ServiceId == param.ServiceId.Value);
+        }
+
+        if (param.NurseId.HasValue) {
+            query = query.Where(x => x.NurseEvents.Any(y => y.NurseId == param.NurseId));
+        }
+
         if (param.PatientId.HasValue) {
             query = query.Where(x => x.PatientEvent.PatientId == param.PatientId);
+        }
+
+        if (!string.IsNullOrEmpty(param.Patients)) {
+            List<int> patients = param.GetPatients();
+
+            if (patients.Count() > 0) {
+                query = query.Where(x =>
+                    x.PatientEvent != null &&
+                    patients.Contains(x.PatientEvent.PatientId)
+                );
+            }
+        }
+
+        if (!string.IsNullOrEmpty(param.Services)) {
+            List<int> services = param.GetServices();
+
+            if (services.Count() > 0) {
+                query = query.Where(x =>
+                    services.Contains(x.EventService.ServiceId)
+                );
+            }
+        }
+
+        if (!string.IsNullOrEmpty(param.Nurses)) {
+            List<int> nurses = param.GetNurses();
+
+            if (nurses.Count() > 0) {
+                query = query.Where(x =>
+                    x.NurseEvents.Any(y => nurses.Contains(y.NurseId))
+                );
+            }
         }
 
         return await PagedList<EventDto>.CreateAsync(
@@ -171,6 +215,10 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
         if (param.DoctorId.HasValue) {
             query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);
+        }
+
+        if (param.ServiceId.HasValue) {
+            query = query.Where(x => x.EventService.ServiceId == param.ServiceId.Value);
         }
 
         return await query.AsNoTracking().ProjectTo<EventDto>(mapper.ConfigurationProvider).ToListAsync();

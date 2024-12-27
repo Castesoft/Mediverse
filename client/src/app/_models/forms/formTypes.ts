@@ -184,6 +184,7 @@ export type TypedControl<T> = T extends
   | boolean
   | Date
   | SelectOption
+  | SelectOption[]
   | DateRange
   | Ranges
   ? AbstractControl<T | null, T | null>

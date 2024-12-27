@@ -66,6 +66,8 @@ export class EventsCalendarComponent
   params: ModelSignal<EventParams> = model.required();
   data: ModelSignal<Event[]> = model.required();
 
+  filtersCollapsed = model.required<boolean>();
+
   accountService = inject(AccountService);
 
   calendarOptions: CalendarOptions = {
@@ -97,7 +99,13 @@ export class EventsCalendarComponent
     super(EventsService, Event);
 
     effect(() => {
+      console.log('eventsCalendar', this.filtersCollapsed());
+      console.log('eventsCalendar', this.fullcalendar());
 
+
+
+      this.fullcalendar().getApi().destroy();
+      this.fullcalendar().getApi().render();
     });
   }
 

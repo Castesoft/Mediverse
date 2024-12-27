@@ -228,13 +228,13 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           title: titleDetailResolver(NursesService, 'create'),
         },
         {
-          path: 'espacialistas/:id',
+          path: 'especialistas/:id',
           component: HomeNurseDetailRouteComponent,
           resolve: { item: createItemResolver(NursesService), },
           title: titleDetailResolver(NursesService, 'detail'),
         },
         {
-          path: 'espacialistas/:id/editar',
+          path: 'especialistas/:id/editar',
           component: HomeNurseEditRouteComponent,
           resolve: { item: createItemResolver(NursesService), },
           title: titleDetailResolver(NursesService, 'edit'),

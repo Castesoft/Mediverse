@@ -4,6 +4,7 @@ import { FormInfo } from "src/app/_models/forms/formTypes";
 import { Product } from "src/app/_models/products/product";
 
 export class PrescriptionItem {
+  id: number | null = null;
   quantity: number | null = null;
   instructions: string | null = null;
   notes: string | null = null;

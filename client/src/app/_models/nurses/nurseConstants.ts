@@ -10,6 +10,8 @@ import { PartialCellsOf, baseTableCells, TableCellItem } from 'src/app/_models/t
 
 export const nurseFormInfo: FormInfo<Nurse> = {
   ...baseInfo,
+
+  select: { label: 'Especialista', type: 'multiselect', },
 } as FormInfo<Nurse>;
 
 export const nurseFiltersFormInfo: FormInfo<NurseParams> = {

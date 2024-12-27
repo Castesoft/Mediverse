@@ -1,18 +1,7 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  inject,
-  Input,
-  model,
-  input,
-  output,
-  signal,
-  ModelSignal,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, ModelSignal, model, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -20,27 +9,22 @@ import { createId } from '@paralleldrive/cuid2';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Subscription } from 'rxjs';
 import { Account } from 'src/app/_models/account/account';
-import { CatalogMode, View } from 'src/app/_models/base/types';
+import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
+import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
+import { View, CatalogMode } from 'src/app/_models/base/types';
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
+import { prescriptionCells } from 'src/app/_models/prescriptions/prescriptionConstants';
+import { PrescriptionFiltersForm } from 'src/app/_models/prescriptions/prescriptionFiltersForm';
 import { PrescriptionParams } from 'src/app/_models/prescriptions/prescriptionParams';
-import { IconsService } from 'src/app/_services/icons.service';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { TableHeaderComponent } from 'src/app/_shared/template/components/tables/table-header.component';
 import { PrescriptionFormComponent } from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
-import {
-  PrescriptionTableCellComponent,
-  PrescriptionTableSexCellComponent,
-  PrescriptionTableHasAccountCellComponent,
-} from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component';
+import { PrescriptionTableCellComponent, PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent } from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
-import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
-import { PrescriptionFiltersForm } from 'src/app/_models/prescriptions/prescriptionFiltersForm';
-import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
-import { prescriptionCells } from 'src/app/_models/prescriptions/prescriptionConstants';
 
 @Component({
   host: {
@@ -112,7 +96,13 @@ export class PrescriptionsTableComponent
 
   toggleCollapsed(item: Prescription) {
     const initalItemState = item.isCollapsed;
-    // this.data.map((item) => (item.isCollapsed = false));
+    this.data().map((item) => (item.isCollapsed = false));
+    this.data.update(oldValues => {
+      return oldValues.map((item) => {
+        item.isCollapsed = false;
+        return item;
+      });
+    });
     item.isCollapsed = !initalItemState;
   }
 

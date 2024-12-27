@@ -25,6 +25,7 @@ export const patientFormInfo: FormInfo<Patient> = {
   email: { label: 'Correo electrónico', type: 'email', validators: [ Validators.required, Validators.email, Validators.maxLength(500), ] },
   phoneNumber: { label: 'Teléfono', type: 'tel', validators: [ Validators.required, Validators.maxLength(100), ] },
   recommendedBy: { label: 'Recomendado por', type: 'text', validators: [ Validators.maxLength(500), ] },
+  select: { label: 'Paciente', type: 'select', },
 } as FormInfo<Patient>;
 
 export const patientFiltersFormInfo: FormInfo<PatientParams> = {

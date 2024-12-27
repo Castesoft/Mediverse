@@ -50,7 +50,13 @@ public class NurseRepository(DataContext context, IMapper mapper) : INurseReposi
         ;
 
         if (param.DoctorId.HasValue) {
-            query = query.Where(x => x.DoctorNurses.Any(x => x.DoctorId == param.DoctorId.Value));
+            // query = query.Where(x => x.DoctorNurses.Any(x => x.DoctorId == param.DoctorId.Value));
+
+            query = query.Where(x => x.NursesDoctor.Any(x => x.DoctorId == param.DoctorId.Value));
+        }
+
+        if (param.UserId.HasValue) {
+            query = query.Where(x => x.Id != param.UserId.Value);
         }
 
         if (!string.IsNullOrEmpty(param.Sort))

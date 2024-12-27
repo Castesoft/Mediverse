@@ -152,6 +152,20 @@ namespace MainService.Models.Helpers
             "Nurse",
         ];
 
+        public static readonly List<OrderStatus> orderStatuses = [
+            new("Pending", "Pendiente", "El pedido está pendiente de confirmación."),
+            new("Completed", "Completado", "El pedido ha sido completado con éxito."),
+            new("Cancelled", "Cancelado", "El pedido ha sido cancelado.")
+        ];
+
+        public static readonly List<DeliveryStatus> deliveryStatuses = [
+            new("Pending", "Pendiente", "El pedido está pendiente de confirmación."),
+            new("Processing", "Procesando", "El pedido está siendo procesado."),
+            new("InProgress", "En Progreso", "El pedido está en progreso."),
+            new("Delivered", "Entregado", "El pedido ha sido entregado."),
+            new("Cancelled", "Cancelado", "El pedido ha sido cancelado.")
+        ];
+
         public static readonly List<Substance> Substances = [
             new("tobacco", "Tabaco", "Sustancia comúnmente usada que puede causar adicción y afecta los pulmones y el sistema respiratorio."),
             new("alcohol", "Alcohol", "Sustancia legal en muchos países que puede causar dependencia y afecta el hígado y el sistema nervioso."),

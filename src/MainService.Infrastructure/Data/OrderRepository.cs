@@ -17,70 +17,66 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
 {
     public void Add(Order item) => context.Orders.Add(item);
 
-    public void Delete(Order item)
-    {
-        throw new NotImplementedException();
-    }
+    public void Delete(Order item) => context.Orders.Remove(item);
 
     public async Task<Order?> GetByIdAsync(int id) =>
         await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync()
     ;
 
-    public Task<Order> GetByNameAsync(string name, ClaimsPrincipal user)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> ExistsAsync(int id, ClaimsPrincipal user)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<bool> ExistsByIdAsync(int id) => await context.Orders.AnyAsync(x => x.Id == id);
 
     public async Task<OrderDto?> GetDtoByIdAsync(int id) =>
         await context.Orders
+            .Include(x => x.OrderOrderStatus.OrderStatus)
+            .Include(x => x.OrderDeliveryStatus.DeliveryStatus)
             .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
             .Include(x => x.OrderItems).ThenInclude(x => x.Item)
-            .Include(x => x.OrderAddress).ThenInclude(x => x.Address)
+            .Include(x => x.OrderDeliveryAddress.DeliveryAddress)
+            .Include(x => x.OrderPickupAddress.PickupAddress)
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsNoTracking()
             .ProjectTo<OrderDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id)
         ;
 
-    public Task<Order> GetByIdAsNoTrackingAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<Order>> GetAllAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<OrderDto>> GetAllDtoAsync(OrderParams param, ClaimsPrincipal user)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<PagedList<OrderDto>> GetPagedListAsync(OrderParams param, ClaimsPrincipal user)
-    {
-        IQueryable<Order> query = context.Orders
+    public async Task<Order?> GetByIdAsNoTrackingAsync(int id) =>
+        await context.Orders
+            .Include(x => x.OrderOrderStatus.OrderStatus)
+            .Include(x => x.OrderDeliveryStatus.DeliveryStatus)
             .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
             .Include(x => x.OrderItems).ThenInclude(x => x.Item)
-            .Include(x => x.OrderAddress).ThenInclude(x => x.Address)
+            .Include(x => x.OrderDeliveryAddress.DeliveryAddress)
+            .Include(x => x.OrderPickupAddress.PickupAddress)
+            .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
+
+    public async Task<List<Order>> GetAllAsync() =>
+        await context.Orders.ToListAsync()
+    ;
+
+    public Task<List<OrderDto>> GetAllDtoAsync(OrderParams param)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<PagedList<OrderDto>> GetPagedListAsync(OrderParams param)
+    {
+        IQueryable<Order> query = context.Orders
+            .Include(x => x.OrderOrderStatus.OrderStatus)
+            .Include(x => x.OrderDeliveryStatus.DeliveryStatus)
+            .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
+            .Include(x => x.OrderItems).ThenInclude(x => x.Item)
+            .Include(x => x.OrderDeliveryAddress.DeliveryAddress)
+            .Include(x => x.OrderPickupAddress.PickupAddress)
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsQueryable()
         ;
 
-        var userId = user.GetUserId();
-        var userRoles = user.GetRoles();
-
-        foreach (var role in userRoles)
+        if (param.DoctorId.HasValue)
         {
-            if (role == "Doctor")
-            {
-                query = query.Where(x => x.DoctorOrder.DoctorId == userId);
-            }
+            query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
         }
 
         if (!string.IsNullOrEmpty(param.Sort))

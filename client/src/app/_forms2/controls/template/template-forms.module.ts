@@ -4,6 +4,7 @@ import { TemplateControlCheckboxComponent } from 'src/app/_forms2/controls/templ
 import { TemplateControlDateComponent } from 'src/app/_forms2/controls/template/template-control-date.component';
 import { TemplateControlSearchComponent } from "src/app/_forms2/controls/template/template-control-search.component";
 import { TemplateControlTextComponent } from 'src/app/_forms2/controls/template/template-control-text.component';
+import { TemplateControlTextareaComponent } from 'src/app/_forms2/controls/template/template-control-textarea.component';
 
 @NgModule({
   imports: [
@@ -12,6 +13,7 @@ import { TemplateControlTextComponent } from 'src/app/_forms2/controls/template/
     TemplateControlCheckboxComponent,
     TemplateControlCheckRadioComponent,
     TemplateControlDateComponent,
+    TemplateControlTextareaComponent,
   ],
   exports: [
     TemplateControlSearchComponent,
@@ -19,6 +21,7 @@ import { TemplateControlTextComponent } from 'src/app/_forms2/controls/template/
     TemplateControlCheckboxComponent,
     TemplateControlCheckRadioComponent,
     TemplateControlDateComponent,
+    TemplateControlTextareaComponent,
   ]
 })
 export class TemplateFormsModule {}

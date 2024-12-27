@@ -1,3 +1,4 @@
+import { SelectOption } from 'src/app/_models/base/selectOption';
 import { Range } from "src/app/_models/date-range";
 
 export const mexicoCities: any = {
@@ -104,4 +105,20 @@ export const dateRanges: Range[] = [
 
 export const calcDateDiff = (dateFrom: Date, dateTo: Date) => {
   return Math.floor((Date.UTC(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()) - Date.UTC(dateTo.getFullYear(), dateTo.getMonth(), dateTo.getDate()) ) /(1000 * 60 * 60 * 24));
+}
+
+export function isNullOrWhiteSpace(
+  value: string | SelectOption | null | undefined
+): boolean {
+  if (!value) return true;
+
+  if (typeof value === 'string') {
+    return value.trim().length === 0;
+  }
+
+  if ('code' in value && typeof value.code === 'string') {
+    return value.code.trim().length === 0;
+  }
+
+  return false;
 }

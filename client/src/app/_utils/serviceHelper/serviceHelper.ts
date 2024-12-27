@@ -236,7 +236,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   }
 
   create(form: FormGroup2<T>, view: View, model?: any): Observable<T> {
-    return this.http.post<T>(this.baseUrl, model ?? form.value).pipe(
+    return this.http.post<T>(this.baseUrl, model ?? form.getRawValue()).pipe(
       tap(response => {
         console.log('response', response);
         this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} ${this.dictionary.articleSex === 'feminine' ? 'creada' : 'creado'} correctamente`, 'Cerrar', { duration: 3000 });

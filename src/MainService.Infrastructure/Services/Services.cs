@@ -87,6 +87,34 @@ namespace MainService.Infrastructure.Services
             return true;
         }
     }
+    public class DeliveryStatusesService(IUnitOfWork uow) : IDeliveryStatusesService {
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            DeliveryStatus? itemToDelete = await uow.DeliveryStatusRepository.GetByIdAsync(id);
+
+            if (itemToDelete == null) return false;
+
+            uow.DeliveryStatusRepository.Delete(itemToDelete);
+
+            if (!await uow.Complete()) return false;
+
+            return true;
+        }
+    }
+    public class OrderStatusesService(IUnitOfWork uow) : IOrderStatusesService {
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            OrderStatus? itemToDelete = await uow.OrderStatusRepository.GetByIdAsync(id);
+
+            if (itemToDelete == null) return false;
+
+            uow.OrderStatusRepository.Delete(itemToDelete);
+
+            if (!await uow.Complete()) return false;
+
+            return true;
+        }
+    }
 
     public class SubstancesService(IUnitOfWork uow) : ISubstancesService {
         public async Task<bool> DeleteByIdAsync(int id)

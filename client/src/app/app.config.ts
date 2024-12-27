@@ -144,7 +144,12 @@ export const appConfig: ApplicationConfig = {
         runGuardsAndResolvers: 'always',
         canActivate: [authGuard],
         children: [
-          { path: 'cuenta',
+          {
+            path: 'admin',
+            loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+          },
+          {
+            path: 'cuenta',
             loadChildren: () => import('./account/account.component').then(m => m.AccountModule)
            },
           {

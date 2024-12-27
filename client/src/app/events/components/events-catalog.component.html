@@ -47,7 +47,7 @@
     </form>
 
       <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-
+        <button class="btn btn-light-primary" type="button" (click)="filtersCollapsed.set(!filtersCollapsed())">Filtros</button>
       </div>
     </div>
 
@@ -61,7 +61,7 @@
         </div>
       }
       @case('calendar') {
-        <div eventsCalendar [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params">
+        <div eventsCalendar [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params" [(filtersCollapsed)]="filtersCollapsed">
         </div>
       }
       @default() {

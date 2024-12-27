@@ -31,6 +31,8 @@ export const clinicColumns: Column[] = [
 
 export const clinicFormInfo: FormInfo<Clinic> = {
   ...baseInfo,
+
+  select: { label: 'Clínica', type: 'select' },
 } as FormInfo<Clinic>;
 
 export const clinicFiltersFormInfo: FormInfo<ClinicParams> = {

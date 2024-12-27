@@ -10,7 +10,7 @@ tableHeader
 ></thead>
 <tbody class="text-gray-600 fw-semibold">
     @for (item of data(); track item.id; let idx = $index) {
-    <tr class="hover-actions-trigger btn-reveal-trigger position-static cursor-pointer" style="border-bottom: none;" (click)="toggleCollapsed(item)" [attr.aria-expanded]="!item.isCollapsed" [attr.aria-controls]="'collapseBasic' + item.id" [attr.data-target]="'collapseBasic' + item.id"
+    <tr class="hover-actions-trigger btn-reveal-trigger position-static cursor-pointer" style="border-bottom: none;" (click)="toggleCollapsed(item)" [attr.aria-expanded]="!item.isCollapsed" [attr.aria-controls]="'collapseBasic' + item.id"
         [cdkContextMenuTriggerFor]="context_menu">
       @switch (mode()) {
         @case ("view") {
@@ -86,7 +86,7 @@ tableHeader
             <i class="ki-duotone ki-eye fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
           </a>
           <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-             [routerLink]="[service.dictionary.catalogRoute, item.id, 'edit']"
+             [routerLink]="[service.dictionary.catalogRoute, item.id, 'editar']"
              tooltip="Editar"
              (click)="$event.stopPropagation()">
             <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i>
@@ -119,7 +119,7 @@ tableHeader
           </div>
           <div cdkMenuItem
                class="menu-item px-3">
-            <a [routerLink]="[service.dictionary.catalogRoute, item.id, 'edit']"
+            <a [routerLink]="[service.dictionary.catalogRoute, item.id, 'editar']"
                class="menu-link">Editar</a>
           </div>
           <div cdkMenuItem
@@ -142,12 +142,12 @@ tableHeader
         <td colspan="100" style="padding: 0;">
             <div [collapse]="!item.isCollapsed" [id]="'collapseBasic' + item.id" [isAnimated]="true">
               <div class="p-4">
-                <!-- <div prescriptionForm
-                  [id]="null"
+                <div prescriptionForm
                   [use]="'detail'"
+                  [(key)]="key"
                   [view]="'inline'"
-                  [(item)]="data[idx]"
-                ></div> -->
+                  [(item)]="data()[idx]"
+                ></div>
               </div>
             </div>
         </td>

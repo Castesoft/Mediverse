@@ -14,6 +14,8 @@ export const serviceFormInfo: FormInfo<Service> = {
   discount: { label: 'Descuento', type: 'number' },
   photoUrl: { label: 'URL de foto', type: 'text' },
   price: { label: 'Precio', type: 'number' },
+
+  select: { label: 'Servicio', type: 'select' },
 } as FormInfo<Service>;
 
 export const serviceFiltersFormInfo: FormInfo<ServiceParams> = {

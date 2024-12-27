@@ -105,6 +105,42 @@ public static class Seed
         return [];
     }
 
+    private static async Task<List<DeliveryStatus>> SeedDeliveryStatusesAsync(DataContext context)
+    {
+        if (!await context.DeliveryStatuses.AnyAsync()) {
+
+            List<DeliveryStatus> deliveryStatuses = SeedData.deliveryStatuses;
+
+            await context.DeliveryStatuses.AddRangeAsync(deliveryStatuses);
+            await context.SaveChangesAsync();
+
+            return await context.DeliveryStatuses
+                .AsNoTracking()
+                .ToListAsync()
+            ;
+        }
+
+        return [];
+    }
+
+    private static async Task<List<OrderStatus>> SeedOrderStatusesAsync(DataContext context)
+    {
+        if (!await context.OrderStatuses.AnyAsync()) {
+
+            List<OrderStatus> orderStatuses = SeedData.orderStatuses;
+
+            await context.OrderStatuses.AddRangeAsync(orderStatuses);
+            await context.SaveChangesAsync();
+
+            return await context.OrderStatuses
+                .AsNoTracking()
+                .ToListAsync()
+            ;
+        }
+
+        return [];
+    }
+
     private static async Task<List<PaymentMethodType>> SeedPaymentMethodTypesAsync(DataContext context)
     {
         if (!await context.PaymentMethodTypes.AnyAsync())
@@ -291,6 +327,8 @@ public static class Seed
         await SeedProductsAsync(context);
         await SeedServicesAsync(context);
         List<Specialty> specialties = await SeedSpecialtiesAsync(context);
+        List<DeliveryStatus> deliveryStatuses = await SeedDeliveryStatusesAsync(context);
+        List<OrderStatus> orderStatuses = await SeedOrderStatusesAsync(context);
         List<PaymentMethodType> paymentMethodTypes = await SeedPaymentMethodTypesAsync(context);
         List<EducationLevel> educationLevels = await SeedEducationLevelsAsync(context);
         List<Occupation> occupations = await SeedOccupationsAsync(context);
