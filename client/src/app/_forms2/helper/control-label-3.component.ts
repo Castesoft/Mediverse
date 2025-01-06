@@ -9,7 +9,6 @@ import { ValidationService } from "src/app/_services/validation.service";
   selector: "label[controlLabel3]",
   host: { class: "" },
   templateUrl: './control-label-3.component.html',
-  // template: ``,
   standalone: true,
   imports: [OptionalSpan3Component, ]
 })

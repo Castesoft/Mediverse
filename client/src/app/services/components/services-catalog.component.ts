@@ -18,7 +18,6 @@ import { ServicesService } from "src/app/services/services.config";
 
 @Component({
   selector: '[servicesCatalog]',
-  // template: ``,
   templateUrl: './services-catalog.component.html',
   standalone: true,
   imports: [ FontAwesomeModule,

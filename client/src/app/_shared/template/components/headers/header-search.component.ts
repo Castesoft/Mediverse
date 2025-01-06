@@ -10,7 +10,6 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 @Component({
   host: { 'class': 'd-flex align-items-stretch me-1' },
   selector: '[headerSearch]',
-  // template: ``,
   templateUrl: './header-search.component.html',
   standalone: true,
   imports: [BootstrapModule, RouterModule, ReactiveFormsModule,],

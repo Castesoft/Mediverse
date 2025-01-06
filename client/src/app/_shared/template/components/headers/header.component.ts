@@ -11,7 +11,6 @@ import { UserDropdownComponent } from 'src/app/_shared/template/components/user-
 @Component({
   host: { class: 'header' },
   selector: '[header]',
-  // template: ``,
   templateUrl: './header.component.html',
   standalone: true,
   imports: [RouterModule, ThemeDropdownComponent, UserDropdownComponent, BsDropdownModule, HeaderSearchComponent, CommonModule],

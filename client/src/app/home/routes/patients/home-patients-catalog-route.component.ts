@@ -8,17 +8,11 @@ import { PatientsService } from "src/app/patients/patients.config";
 @Component({
   host: { class: 'card card-flush' },
   selector: 'div[homePatientsCatalogRoute]',
-  // selector: 'home-patients-catalog-route',
-  // template: ``,
   templateUrl: './home-patients-catalog-route.component.html',
   standalone: false,
 })
-export class HomePatientsCatalogRouteComponent
-  extends BaseRouteCatalog<Patient, PatientParams, PatientFiltersForm, PatientsService>
-{
-
+export class HomePatientsCatalogRouteComponent extends BaseRouteCatalog<Patient, PatientParams, PatientFiltersForm, PatientsService> {
   constructor() {
     super(PatientsService, 'patients');
   }
-
 }

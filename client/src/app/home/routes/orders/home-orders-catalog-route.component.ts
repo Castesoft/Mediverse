@@ -8,8 +8,6 @@ import { OrdersService } from "src/app/orders/orders.config";
 @Component({
   host: { class: 'card card-flush' },
   selector: 'div[homeOrdersCatalogRoute]',
-  // selector: 'home-orders-catalog-route',
-  // template: ``,
   templateUrl: './home-orders-catalog-route.component.html',
   standalone: false,
 })

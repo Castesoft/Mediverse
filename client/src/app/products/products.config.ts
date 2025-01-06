@@ -126,7 +126,6 @@ export class ProductsService extends ServiceHelper<Product, ProductParams, FormG
 
 @Component({
   selector: "[productForm]",
-  // template: ``,
   templateUrl: './product-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

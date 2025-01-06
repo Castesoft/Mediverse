@@ -18,7 +18,6 @@ import { ClinicsTableComponent } from "src/app/clinics/components/clinics-table.
 
 @Component({
   selector: '[clinicsCatalog]',
-  // template: ``,
   templateUrl: './clinics-catalog.component.html',
   standalone: true,
   imports: [ FontAwesomeModule,

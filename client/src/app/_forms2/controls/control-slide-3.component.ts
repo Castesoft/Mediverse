@@ -14,7 +14,6 @@ import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 @Component({
   selector: 'div[controlSlide3]',
   templateUrl: './control-slide-3.component.html',
-  // template: ``,
   standalone: true,
   imports: [
     ReactiveFormsModule,

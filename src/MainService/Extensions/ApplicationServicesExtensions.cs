@@ -3,13 +3,12 @@ using Serilog;
 using MainService.Infrastructure.Data;
 using MainService.Core.Settings;
 using MainService.Infrastructure.Services;
-using MainService.Core.Interfaces.Data;
 
 namespace MainService.Extensions;
+
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration config)
+    public static void AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddHttpClient();
 
@@ -20,10 +19,9 @@ public static class ApplicationServicesExtensions
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.Configure<GoogleSettings>(config.GetSection("GoogleSettings"));
         services.Configure<ClientSettings>(config.GetSection("ClientSettings"));
-
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddHostedService<CronJobsService>();
+        // services.AddHostedService<CronJobsService>();
 
         // Services
         services.AddScoped<ITokenService, TokenService>();
@@ -42,7 +40,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IOrderStatusesService, OrderStatusesService>();
         services.AddScoped<IRelativeTypesService, RelativeTypesService>();
         services.AddScoped<IConsumptionLevelsService, ConsumptionLevelsService>();
-        
+
         services.AddScoped<IUsersService, UsersService>();
         services.AddScoped<IAddressesService, AddressesService>();
         services.AddScoped<IServicesService, ServicesService>();
@@ -71,10 +69,8 @@ public static class ApplicationServicesExtensions
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials()
-                    .WithOrigins(["https://localhost:4400", "https://beta.mediverse.castesoft.com"]);
+                    .WithOrigins("https://localhost:4400", "https://beta.mediverse.castesoft.com");
             });
         });
-
-        return services;
     }
 }

@@ -13,7 +13,6 @@ import { MaterialModule } from "src/app/_shared/material.module";
 @Component({
   host: { class: 'd-flex align-items-center mt-2', },
   selector: 'div[detailFooter2]',
-  // template: ``,
   templateUrl: './detail-footer-2.component.html',
   standalone: true,
   imports: [CommonModule, CdkModule, MaterialModule, FormsModule, ReactiveFormsModule,],

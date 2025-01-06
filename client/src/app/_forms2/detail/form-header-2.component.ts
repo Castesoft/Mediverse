@@ -6,7 +6,6 @@ import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: 'h4[formHeader2]',
-  // template: ``,
   templateUrl: './form-header-2.component.html',
   standalone: true,
   imports: [DecimalPipe],

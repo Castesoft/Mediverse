@@ -9,7 +9,6 @@ import { NursesService } from "src/app/nurses/nurses.config";
   host: { class: 'card card-flush' },
   selector: 'div[homeNursesCatalogRoute]',
   // selector: 'home-nurses-catalog-route',
-  // template: ``,
   templateUrl: './home-nurses-catalog-route.component.html',
   standalone: false,
 })

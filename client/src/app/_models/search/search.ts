@@ -23,36 +23,31 @@ export class Search extends EntityParams<Entity> {
 
   setFromQueryParamMap(params: ParamMap): this {
     if (params.has('specialty') && params.has('specialtyId')) {
-      this.specialty = new SelectOption({ id: +params.get('specialtyId')!, name: params.get('specialty')!, code: params.get('specialty')! });
+      this.specialty = new SelectOption({
+        id: +params.get('specialtyId')!,
+        name: params.get('specialty')!,
+        code: params.get('specialty')!
+      });
     }
-    if (params.has('location') && params.has('locationName')) {
-      this.location = new SelectOption({ code: params.get('location')!, name: params.get('locationName')! });
-    }
-    if (params.has('pageNumber')) {
-      this.pageNumber = +params.get('pageNumber')!;
-    }
-    if (params.has('pageSize')) {
-      this.pageSize = +params.get('pageSize')!;
-    }
+
+    if (params.has('location') && params.has('locationName')) this.location = new SelectOption({
+      code: params.get('location')!,
+      name: params.get('locationName')!
+    });
+
     if (params.has('doctorId')) {
       this.result = new DoctorResult({ id: +params.get('doctorId')! });
       if (params.has('doctorName')) {
         this.result.fullName = params.get('doctorName')!;
       }
     }
-    if (params.has('tab')) {
-      this.tab = params.get('tab')! as SearchTabs;
-    }
-    if (params.has('dayNumber')) {
-      this.dayNumber = +params.get('dayNumber')!;
-    }
-    if (params.has('scheduleOption')) {
-      this.scheduleOption = +params.get('scheduleOption')!;
-    }
 
-    if (params.has('eventId')) {
-      this.eventId = +params.get('eventId')!;
-    }
+    if (params.has('eventId')) this.eventId = +params.get('eventId')!;
+    if (params.has('tab')) this.tab = params.get('tab')! as SearchTabs;
+    if (params.has('pageSize')) this.pageSize = +params.get('pageSize')!;
+    if (params.has('dayNumber')) this.dayNumber = +params.get('dayNumber')!;
+    if (params.has('pageNumber')) this.pageNumber = +params.get('pageNumber')!;
+    if (params.has('scheduleOption')) this.scheduleOption = +params.get('scheduleOption')!;
 
     return this;
   }

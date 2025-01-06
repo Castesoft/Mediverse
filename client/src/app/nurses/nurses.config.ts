@@ -52,7 +52,6 @@ export class NursesCatalogModalComponent {
 
 @Component({
   selector: "[nurseForm]",
-  // template: ``,
   templateUrl: './nurse-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

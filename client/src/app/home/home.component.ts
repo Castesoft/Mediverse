@@ -8,7 +8,6 @@ import { SidebarService } from 'src/app/_services/sidebar.service';
 
 @Component({
   selector: 'home-route',
-  // template: ``,
   templateUrl: './home.component.html',
   standalone: false,
 })

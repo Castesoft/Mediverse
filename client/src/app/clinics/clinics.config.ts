@@ -126,7 +126,6 @@ export class ClinicsService extends ServiceHelper<Clinic, ClinicParams, ClinicFi
 
 @Component({
   selector: "[clinicForm]",
-  // template: ``,
   templateUrl: './clinic-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

@@ -6,43 +6,35 @@ using Microsoft.Extensions.Hosting;
 
 namespace MainService.Infrastructure.Services
 {
-    public class CronJobsService : BackgroundService
+    public class CronJobsService(IServiceProvider serviceProvider) : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
-
-        public CronJobsService(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
-        public async Task SendSatisfactionSurveysEmailAsync(DataContext dbContext, IEmailService emailService)
+        private static async Task SendSatisfactionSurveysEmailAsync(DataContext dbContext, IEmailService emailService)
         {
             Console.WriteLine("Entering SendSatisfactionSurveysEmailAsync");
             var thirtyMinutesAgo = DateTime.UtcNow.AddMinutes(-30);
             var events = await dbContext.Events
                 .Where(e => e.DateTo <= thirtyMinutesAgo && !e.IsSatisfactionSurveyEmailSent)
-                .Include(e => e.PatientEvent)
-                    .ThenInclude(pe => pe.Patient)
-                .Include(e => e.DoctorEvent)
-                    .ThenInclude(de => de.Doctor)
-                .Include(e => e.EventService)
-                    .ThenInclude(es => es.Service)
-                .ToListAsync();
+                    .Include(e => e.PatientEvent)
+                        .ThenInclude(pe => pe.Patient)
+                    .Include(e => e.DoctorEvent)
+                        .ThenInclude(de => de.Doctor)
+                    .Include(e => e.EventService)
+                        .ThenInclude(es => es.Service)
+                    .ToListAsync();
 
-            if (events.Count == 0)
+            switch (events.Count)
             {
-                Console.WriteLine("No events found to send satisfaction survey email");
-                return;
-            }
-
-            // TODO: Remove this after testing
-            if (events.Count > 2)
-            {
-                foreach (var @event in events)
-                    @event.IsSatisfactionSurveyEmailSent = true;
-                Console.WriteLine($"More than 5 events found to send satisfaction survey email: {events.Count}");
-                await dbContext.SaveChangesAsync();
-                return;
+                case 0:
+                    Console.WriteLine("No events found to send satisfaction survey email");
+                    return;
+                case > 2: // TODO: Remove this after testing
+                {
+                    foreach (var @event in events)
+                        @event.IsSatisfactionSurveyEmailSent = true;
+                    Console.WriteLine($"More than 5 events found to send satisfaction survey email: {events.Count}");
+                    await dbContext.SaveChangesAsync();
+                    return;
+                }
             }
 
             foreach (var @event in events)
@@ -59,9 +51,10 @@ namespace MainService.Infrastructure.Services
                     Console.WriteLine($"Skipping event {@event.Id} due to missing patient email");
                     continue;
                 }
-                
-                string subject = "🔒 Mediverse: cuentanos tu experiencia!";
-                string htmlMessage = emailService.CreateSatisfactionSurveyEmail(@event.DoctorEvent.Doctor, @event.PatientEvent.Patient, @event);
+
+                const string subject = "🔒 Mediverse: cuentanos tu experiencia!";
+                var htmlMessage = emailService.CreateSatisfactionSurveyEmail(@event.DoctorEvent.Doctor,
+                    @event.PatientEvent.Patient, @event);
 
                 try
                 {
@@ -81,7 +74,7 @@ namespace MainService.Infrastructure.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                using var scope = _serviceProvider.CreateScope();
+                using var scope = serviceProvider.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
                 var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 

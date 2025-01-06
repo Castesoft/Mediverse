@@ -128,7 +128,6 @@ export class AddressesService extends ServiceHelper<Address, AddressParams, Form
 
 @Component({
   selector: "[addressForm]",
-  // template: ``,
   templateUrl: './address-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

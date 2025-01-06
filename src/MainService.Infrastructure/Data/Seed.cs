@@ -85,15 +85,15 @@ public static class Seed
 
     private static async Task<List<Specialty>> SeedSpecialtiesAsync(DataContext context)
     {
-        if (!await context.Specialties.AnyAsync()) {
-
-            List<Specialty> specialties = SeedDataSpecialties.specialties.ToList();
+        if (!await context.Specialties.AnyAsync())
+        {
+            var specialties = SeedDataSpecialties.specialties.ToList();
 
             foreach (var specialty in specialties)
             {
                 specialty.Code = specialty.Name;
             }
-            
+
             await context.Specialties.AddRangeAsync(specialties);
             await context.SaveChangesAsync();
 
@@ -107,165 +107,133 @@ public static class Seed
 
     private static async Task<List<DeliveryStatus>> SeedDeliveryStatusesAsync(DataContext context)
     {
-        if (!await context.DeliveryStatuses.AnyAsync()) {
+        if (await context.DeliveryStatuses.AnyAsync()) return [];
+        var deliveryStatuses = SeedData.deliveryStatuses;
 
-            List<DeliveryStatus> deliveryStatuses = SeedData.deliveryStatuses;
+        await context.DeliveryStatuses.AddRangeAsync(deliveryStatuses);
+        await context.SaveChangesAsync();
 
-            await context.DeliveryStatuses.AddRangeAsync(deliveryStatuses);
-            await context.SaveChangesAsync();
-
-            return await context.DeliveryStatuses
-                .AsNoTracking()
-                .ToListAsync()
-            ;
-        }
-
-        return [];
+        return await context.DeliveryStatuses
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<OrderStatus>> SeedOrderStatusesAsync(DataContext context)
     {
-        if (!await context.OrderStatuses.AnyAsync()) {
+        if (await context.OrderStatuses.AnyAsync()) return [];
+        var orderStatuses = SeedData.orderStatuses;
 
-            List<OrderStatus> orderStatuses = SeedData.orderStatuses;
+        await context.OrderStatuses.AddRangeAsync(orderStatuses);
+        await context.SaveChangesAsync();
 
-            await context.OrderStatuses.AddRangeAsync(orderStatuses);
-            await context.SaveChangesAsync();
-
-            return await context.OrderStatuses
-                .AsNoTracking()
-                .ToListAsync()
-            ;
-        }
-
-        return [];
+        return await context.OrderStatuses
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<PaymentMethodType>> SeedPaymentMethodTypesAsync(DataContext context)
     {
-        if (!await context.PaymentMethodTypes.AnyAsync())
-        {
-            await context.PaymentMethodTypes.AddRangeAsync(SeedData.paymentMethodTypes.ToArray());
-            await context.SaveChangesAsync();
+        if (await context.PaymentMethodTypes.AnyAsync()) return [];
+        await context.PaymentMethodTypes.AddRangeAsync(SeedData.paymentMethodTypes.ToArray());
+        await context.SaveChangesAsync();
 
-            return await context.PaymentMethodTypes
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        return await context.PaymentMethodTypes
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<Occupation>> SeedOccupationsAsync(DataContext context)
     {
-        if (!await context.Occupations.AnyAsync())
-        {
-            await context.Occupations.AddRangeAsync(SeedData.Occupations);
-            await context.SaveChangesAsync();
+        if (await context.Occupations.AnyAsync()) return [];
 
-            return await context.Occupations
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        await context.Occupations.AddRangeAsync(SeedData.Occupations);
+        await context.SaveChangesAsync();
+
+        return await context.Occupations
+            .AsNoTracking()
+            .ToListAsync();
     }
-    
+
     private static async Task<List<MaritalStatus>> SeedMaritalStatusesAsync(DataContext context)
     {
-        if (!await context.MaritalStatuses.AnyAsync())
-        {
-            await context.MaritalStatuses.AddRangeAsync(SeedData.MaritalStatuses);
-            await context.SaveChangesAsync();
+        if (await context.MaritalStatuses.AnyAsync()) return [];
 
-            return await context.MaritalStatuses
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        await context.MaritalStatuses.AddRangeAsync(SeedData.MaritalStatuses);
+        await context.SaveChangesAsync();
+
+        return await context.MaritalStatuses
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<ColorBlindness>> SeedColorBlindnessesAsync(DataContext context)
     {
-        if (!await context.ColorBlindnesses.AnyAsync())
-        {
-            await context.ColorBlindnesses.AddRangeAsync(SeedData.ColorBlindnesses);
-            await context.SaveChangesAsync();
+        if (await context.ColorBlindnesses.AnyAsync()) return [];
 
-            return await context.ColorBlindnesses
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        await context.ColorBlindnesses.AddRangeAsync(SeedData.ColorBlindnesses);
+        await context.SaveChangesAsync();
+
+        return await context.ColorBlindnesses
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<EducationLevel>> SeedEducationLevelsAsync(DataContext context)
     {
-        if (!await context.EducationLevels.AnyAsync())
-        {
-            await context.EducationLevels.AddRangeAsync(SeedData.EducationLevels);
-            await context.SaveChangesAsync();
+        if (await context.EducationLevels.AnyAsync()) return [];
+        await context.EducationLevels.AddRangeAsync(SeedData.EducationLevels);
+        await context.SaveChangesAsync();
 
-            return await context.EducationLevels
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        return await context.EducationLevels
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<RelativeType>> SeedRelativeTypesAsync(DataContext context)
     {
-        if (!await context.RelativeTypes.AnyAsync())
-        {
-            await context.RelativeTypes.AddRangeAsync(SeedData.RelativeTypes);
-            await context.SaveChangesAsync();
+        if (await context.RelativeTypes.AnyAsync()) return [];
 
-            return await context.RelativeTypes
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        await context.RelativeTypes.AddRangeAsync(SeedData.RelativeTypes);
+        await context.SaveChangesAsync();
+
+        return await context.RelativeTypes
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<Disease>> SeedDiseasesAsync(DataContext context)
     {
-        if (!await context.Diseases.AnyAsync())
-        {
-            await context.Diseases.AddRangeAsync(SeedData.Diseases);
-            await context.SaveChangesAsync();
+        if (await context.Diseases.AnyAsync()) return [];
+        await context.Diseases.AddRangeAsync(SeedData.Diseases);
+        await context.SaveChangesAsync();
 
-            return await context.Diseases
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        return await context.Diseases
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<Substance>> SeedSubstancesAsync(DataContext context)
     {
-        if (!await context.Substances.AnyAsync())
-        {
-            await context.Substances.AddRangeAsync(SeedData.Substances);
-            await context.SaveChangesAsync();
+        if (await context.Substances.AnyAsync()) return [];
+        await context.Substances.AddRangeAsync(SeedData.Substances);
+        await context.SaveChangesAsync();
 
-            return await context.Substances
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        return await context.Substances
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<ConsumptionLevel>> SeedConsumptionLevelsAsync(DataContext context)
     {
-        if (!await context.ConsumptionLevels.AnyAsync())
-        {
-            await context.ConsumptionLevels.AddRangeAsync(SeedData.ConsumptionLevels);
-            await context.SaveChangesAsync();
+        if (await context.ConsumptionLevels.AnyAsync()) return [];
+        await context.ConsumptionLevels.AddRangeAsync(SeedData.ConsumptionLevels);
+        await context.SaveChangesAsync();
 
-            return await context.ConsumptionLevels
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        return await context.ConsumptionLevels
+            .AsNoTracking()
+            .ToListAsync();
     }
+
     private static async Task SeedMedicalInsuranceCompaniesAsync(DataContext context)
     {
         if (await context.MedicalInsuranceCompanies.AnyAsync()) return;
@@ -275,16 +243,13 @@ public static class Seed
 
     private static async Task<List<PaymentStatus>> SeedPaymentStatusesAsync(DataContext context)
     {
-        if (!await context.PaymentStatuses.AnyAsync())
-        {
-            await context.PaymentStatuses.AddRangeAsync(SeedData.paymentStatuses);
-            await context.SaveChangesAsync();
+        if (await context.PaymentStatuses.AnyAsync()) return [];
+        await context.PaymentStatuses.AddRangeAsync(SeedData.paymentStatuses);
+        await context.SaveChangesAsync();
 
-            return await context.PaymentStatuses
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        return [];
+        return await context.PaymentStatuses
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
@@ -292,16 +257,14 @@ public static class Seed
     {
         if (await roleManager.Roles.AnyAsync()) return;
 
-        List<AppRole> seedingRoles = SeedData.getRolesWithPermissions().ToList();
+        var seedingRoles = SeedData.getRolesWithPermissions().ToList();
 
-        int idx = 1;
+        var idx = 1;
 
-        foreach (AppRole role in seedingRoles)
+        foreach (var role in seedingRoles.Where(role => !string.IsNullOrEmpty(role.Name)))
         {
-            if (!string.IsNullOrEmpty(role.Name)) {
-                Log.Information($"({idx++}/{seedingRoles.Count()}) creating role: {role.Name}.");
-                await roleManager.CreateAsync(new(role.Name));
-            }
+            Log.Information($"({idx++}/{seedingRoles.Count}) creating role: {role.Name}.");
+            if (role.Name != null) await roleManager.CreateAsync(new AppRole(role.Name));
         }
 
         Log.Information($"{seedingRoles.Count()} roles created.");
@@ -322,26 +285,27 @@ public static class Seed
         // TODO
     }
 
-    public static async Task SeedAsync(UserManager<AppUser> userManager, DataContext context, int doctorCount = 300, int patientCount = 100)
+    public static async Task SeedAsync(UserManager<AppUser> userManager, DataContext context, int doctorCount = 300,
+        int patientCount = 100)
     {
         await SeedProductsAsync(context);
         await SeedServicesAsync(context);
-        List<Specialty> specialties = await SeedSpecialtiesAsync(context);
-        List<DeliveryStatus> deliveryStatuses = await SeedDeliveryStatusesAsync(context);
-        List<OrderStatus> orderStatuses = await SeedOrderStatusesAsync(context);
-        List<PaymentMethodType> paymentMethodTypes = await SeedPaymentMethodTypesAsync(context);
-        List<EducationLevel> educationLevels = await SeedEducationLevelsAsync(context);
-        List<Occupation> occupations = await SeedOccupationsAsync(context);
-        List<MaritalStatus> maritalStatuses = await SeedMaritalStatusesAsync(context);
-        List<ColorBlindness> colorBlindnesses = await SeedColorBlindnessesAsync(context);
-        List<RelativeType> relativeTypes = await SeedRelativeTypesAsync(context);
-        List<Disease> diseases = await SeedDiseasesAsync(context);
-        List<Substance> substances = await SeedSubstancesAsync(context);
-        List<ConsumptionLevel> consumptionLevels = await SeedConsumptionLevelsAsync(context);
+        var specialties = await SeedSpecialtiesAsync(context);
+        var deliveryStatuses = await SeedDeliveryStatusesAsync(context);
+        var orderStatuses = await SeedOrderStatusesAsync(context);
+        var paymentMethodTypes = await SeedPaymentMethodTypesAsync(context);
+        var educationLevels = await SeedEducationLevelsAsync(context);
+        var occupations = await SeedOccupationsAsync(context);
+        var maritalStatuses = await SeedMaritalStatusesAsync(context);
+        var colorBlindnesses = await SeedColorBlindnessesAsync(context);
+        var relativeTypes = await SeedRelativeTypesAsync(context);
+        var diseases = await SeedDiseasesAsync(context);
+        var substances = await SeedSubstancesAsync(context);
+        var consumptionLevels = await SeedConsumptionLevelsAsync(context);
         await SeedMedicalInsuranceCompaniesAsync(context);
-        List<PaymentStatus> paymentStatuses = await SeedPaymentStatusesAsync(context);
+        var paymentStatuses = await SeedPaymentStatusesAsync(context);
         await SeedMexicoStates(context);
-        
+
         if (await userManager.Users.AnyAsync()) return;
 
         var admin = new AppUser
@@ -374,10 +338,10 @@ public static class Seed
             FirstName = "Ramiro",
             LastName = "Castellanos",
             Sex = "Masculino",
-            DateOfBirth = new(1995, 10, 10),
+            DateOfBirth = new DateOnly(1995, 10, 10),
             UserPhoto = new UserPhoto
             {
-                Photo = new()
+                Photo = new Photo
                 {
                     Url =
                         "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*",
@@ -387,7 +351,7 @@ public static class Seed
             },
             DoctorSignature = new DoctorSignature
             {
-                Signature = new()
+                Signature = new Photo
                 {
                     Url = "https://cdn.shopify.com/s/files/1/0594/4639/5086/files/Slanted_Signature.jpg",
                     Name = "Firma chida",
@@ -396,9 +360,9 @@ public static class Seed
             },
             DoctorPhones =
             [
-                new()
+                new DoctorPhone
                 {
-                    Phone = new()
+                    Phone = new Phone
                     {
                         PhoneNumber = "8112089292",
                         Extension = "5454",
@@ -407,25 +371,25 @@ public static class Seed
             ],
             DoctorLinks =
             [
-                new()
+                new DoctorLink
                 {
-                    Link = new()
+                    Link = new Link
                     {
                         Url = "https://www.facebook.com/raul.m.benavides.3/?locale=es_LA",
                         SiteName = "Facebook",
                     }
                 },
-                new()
+                new DoctorLink
                 {
-                    Link = new()
+                    Link = new Link
                     {
                         Url = "https://www.instagram.com/drbenavidesg/?hl=en",
                         SiteName = "Instagram",
                     }
                 },
-                new()
+                new DoctorLink
                 {
-                    Link = new()
+                    Link = new Link
                     {
                         Url = "https://mx.linkedin.com/in/dr-raul-mario-benavides-garza-31014139",
                         SiteName = "LinkedIn",
@@ -441,12 +405,12 @@ public static class Seed
         await userManager.AddToRolesAsync(admin, ["Admin"]);
         await userManager.AddToRolesAsync(doctor, ["Doctor", "Patient"]);
 
-        List<AppUser> patientsForSeeding = SeedData.GenerateUsersForSeeding(patientCount, Roles.Patient);
-        int userIndex = 1;
+        var patientsForSeeding = SeedData.GenerateUsersForSeeding(patientCount, Roles.Patient);
+        var userIndex = 1;
 
-        List<AppRole> roles = await context.Roles.ToListAsync();
+        var roles = await context.Roles.ToListAsync();
 
-        foreach (AppUser user in patientsForSeeding)
+        foreach (var user in patientsForSeeding)
         {
             List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Patient").ToList()!;
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
@@ -465,7 +429,7 @@ public static class Seed
             .Where(x => x.UserRoles.Any(y => y.Role.Name == "Patient"))
             .ToListAsync();
 
-        List<AppUser> doctorsForSeeding = SeedData.GenerateUsersForSeeding(doctorCount, Roles.Doctor);
+        var doctorsForSeeding = SeedData.GenerateUsersForSeeding(doctorCount, Roles.Doctor);
         userIndex = 1;
 
         foreach (var user in doctorsForSeeding)
@@ -473,7 +437,7 @@ public static class Seed
             user.UserMedicalLicenses.Add(Utils.CreateUserMedicalLicense(specialties));
             user.DoctorPaymentMethodTypes.AddRange(Utils.CreateDoctorPaymentMethodTypes(paymentMethodTypes));
             user.DoctorWorkSchedules.AddRange(Utils.CreateDoctorWorkSchedules());
-            
+
             List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Doctor").ToList()!;
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
             if (!createUserResult.Succeeded) return;
@@ -495,19 +459,17 @@ public static class Seed
 
         foreach (var item in doctors)
         {
-            int numberOfPatients = Random.Next(1, 20);
+            var numberOfPatients = Random.Next(1, 20);
             var assignedPatients = patients.OrderBy(_ => Random.Next()).Take(numberOfPatients).ToList();
 
-            foreach (var patient in assignedPatients)
+            foreach (var patient in assignedPatients.Where(patient =>
+                         !doctorPatientRelationships.Any(dp => dp.DoctorId == item.Id && dp.PatientId == patient.Id)))
             {
-                if (!doctorPatientRelationships.Any(dp => dp.DoctorId == item.Id && dp.PatientId == patient.Id))
+                doctorPatientRelationships.Add(new DoctorPatient
                 {
-                    doctorPatientRelationships.Add(new DoctorPatient
-                    {
-                        DoctorId = item.Id,
-                        PatientId = patient.Id
-                    });
-                }
+                    DoctorId = item.Id,
+                    PatientId = patient.Id
+                });
             }
         }
 
@@ -515,7 +477,8 @@ public static class Seed
         await context.SaveChangesAsync();
 
         await SeedRandomDoctorData(context, userManager);
-        await SeedMedicalRecordsAsync(context, userManager, educationLevels, occupations, maritalStatuses, colorBlindnesses,
+        await SeedMedicalRecordsAsync(context, userManager, educationLevels, occupations, maritalStatuses,
+            colorBlindnesses,
             relativeTypes, diseases, substances, consumptionLevels);
     }
 
@@ -538,8 +501,8 @@ public static class Seed
         UserManager<AppUser> userManager, int doctorId)
     {
         var random = new Random();
-        int numberOfNurses = random.Next(1, 16);
-        List<AppUser> nurses = SeedData.GenerateUsersForSeeding(numberOfNurses, Roles.Nurse);
+        var numberOfNurses = random.Next(1, 16);
+        var nurses = SeedData.GenerateUsersForSeeding(numberOfNurses, Roles.Nurse);
 
         foreach (var nurse in nurses)
         {
@@ -550,7 +513,7 @@ public static class Seed
                 continue;
             }
 
-            var addToRolesResult = await userManager.AddToRolesAsync(nurse, new[] { "Nurse", "Patient" });
+            var addToRolesResult = await userManager.AddToRolesAsync(nurse, ["Nurse", "Patient"]);
             if (!addToRolesResult.Succeeded)
             {
                 Log.Error("Failed to add roles to nurse user {NurseId} for doctor {DoctorId}", nurse.Id, doctorId);
@@ -569,14 +532,9 @@ public static class Seed
     {
         var random = new Random();
         var numberOfProductsToAdd = random.Next(5, 16);
-        var products =
-            SeedData.products.OrderBy(_ => Guid.NewGuid()).Take(numberOfProductsToAdd)
-                .ToList();
-        var doctorProducts = new List<DoctorProduct>();
+        var products = SeedData.products.OrderBy(_ => Guid.NewGuid()).Take(numberOfProductsToAdd).ToList();
 
-        foreach (var product in products)
-        {
-            doctorProducts.Add(new DoctorProduct
+        var doctorProducts = products.Select(product => new DoctorProduct
             {
                 DoctorId = doctor.Id,
                 Product = new Product
@@ -590,8 +548,8 @@ public static class Seed
                     Price = product.Price,
                     Discount = product.Discount,
                 }
-            });
-        }
+            })
+            .ToList();
 
         context.DoctorProducts.AddRange(doctorProducts);
         await context.SaveChangesAsync();
@@ -609,7 +567,7 @@ public static class Seed
         {
             doctor.DoctorServices.Add(new DoctorService()
             {
-                Service = new()
+                Service = new Service
                 {
                     Name = service.Name,
                     Description = service.Description,
@@ -628,7 +586,7 @@ public static class Seed
     private static async Task SeedRandomDoctorData(DataContext context, UserManager<AppUser> userManager)
     {
         var doctors = await GetDoctorsAsync(userManager);
-        int userIndex = 0;
+        var userIndex = 0;
 
         foreach (var doctor in doctors)
         {
@@ -653,25 +611,19 @@ public static class Seed
     private static async Task SeedDoctorDataAsync(DataContext context, UserManager<AppUser> userManager, AppUser doctor)
     {
         var doctorNurses = await SeedDoctorNursesAsync(context, userManager, doctor.Id);
-        // Log.Debug($"Seeded {doctorNurses.Count} nurses for doctor {doctor.Email}");
-
         var doctorProducts = await SeedDoctorProductsAsync(context, doctor);
-        // Log.Debug($"Seeded {doctorProducts.Count} products for doctor {doctor.Email}");
-
         var doctorServices = await SeedDoctorServicesAsync(context, doctor);
-        // Log.Debug($"Seeded {doctorServices.Count} services for doctor {doctor.Email}");
 
-        if (doctor.Patients != null)
+        foreach (var patient in doctor.Patients.Select(x => x.Patient))
         {
-            foreach (var patient in doctor.Patients.Select(x => x.Patient))
-            {
-                SeedPatientEventsAsync(doctor, patient, doctorNurses, doctorProducts, doctorServices);
-            }
+            SeedPatientEventsAsync(doctor, patient, doctorNurses, doctorProducts, doctorServices);
         }
     }
 
-    private static async Task SeedMedicalRecordsAsync(DataContext context, UserManager<AppUser> userManager, List<EducationLevel> educationLevels, 
-        List<Occupation> occupations, List<MaritalStatus> maritalStatuses, List<ColorBlindness> colorBlindnesses, List<RelativeType> relativeTypes,
+    private static async Task SeedMedicalRecordsAsync(DataContext context, UserManager<AppUser> userManager,
+        List<EducationLevel> educationLevels,
+        List<Occupation> occupations, List<MaritalStatus> maritalStatuses, List<ColorBlindness> colorBlindnesses,
+        List<RelativeType> relativeTypes,
         List<Disease> diseases, List<Substance> substances, List<ConsumptionLevel> consumptionLevels)
     {
         var users = await userManager.Users.ToListAsync();
@@ -694,7 +646,8 @@ public static class Seed
                 YearsOfSchooling = Random.Shared.Next(6, 22),
                 HandDominance = Random.Shared.Next(2) == 0 ? "Diestro" : "Zurdo",
                 CurrentLivingSituation = GetRandomLivingSituation(),
-                CurrentAddress = user.UserAddresses.FirstOrDefault(ua => ua.IsMain)?.Address?.Street ?? "No especificado",
+                CurrentAddress = user.UserAddresses.FirstOrDefault(ua => ua.IsMain)?.Address?.Street ??
+                                 "No especificado",
                 HomePhone = SeedData.GenerateMexicanPhoneNumber(),
                 MobilePhone = user.PhoneNumber,
                 Email = user.Email,
@@ -702,36 +655,36 @@ public static class Seed
                 EconomicDependence = GetRandomEconomicDependence(),
                 UsesGlassesOrHearingAid = Random.Shared.Next(2) == 0,
                 Comments = "Comentarios iniciales del paciente.",
-                MedicalRecordEducationLevel = new()
+                MedicalRecordEducationLevel = new MedicalRecordEducationLevel
                 {
                     EducationLevelId = educationLevels[Random.Shared.Next(educationLevels.Count)].Id,
                 },
-                MedicalRecordOccupation = new()
+                MedicalRecordOccupation = new MedicalRecordOccupation
                 {
                     OccupationId = occupations[Random.Shared.Next(occupations.Count)].Id,
                 },
-                MedicalRecordMaritalStatus = new()
+                MedicalRecordMaritalStatus = new MedicalRecordMaritalStatus
                 {
                     MaritalStatusId = maritalStatuses[Random.Shared.Next(maritalStatuses.Count)].Id,
                 },
-                MedicalRecordColorBlindness = new()
+                MedicalRecordColorBlindness = new MedicalRecordColorBlindness
                 {
                     ColorBlindnessId = colorBlindnesses[Random.Shared.Next(colorBlindnesses.Count)].Id,
                     IsPresent = Random.Shared.Next(2) == 0,
                 }
             };
 
-            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
+            for (var i = 0; i < Random.Shared.Next(3, 7); i++)
             {
-                int id = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id;
-                
-                medicalRecord.MedicalRecordFamilyMembers.Add(new()
+                var id = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id;
+
+                medicalRecord.MedicalRecordFamilyMembers.Add(new MedicalRecordFamilyMember
                 {
-                    FamilyMember = new()
+                    FamilyMember = new FamilyMember
                     {
                         Name = GetRandomName(),
                         Age = Random.Shared.Next(1, 90),
-                        MedicalRecordFamilyMemberRelativeType = new(id)
+                        MedicalRecordFamilyMemberRelativeType = new MedicalRecordFamilyMemberRelativeType(id)
                     }
                 });
             }
@@ -740,9 +693,9 @@ public static class Seed
             {
                 var randomOccupation = occupations[Random.Shared.Next(occupations.Count)];
 
-                medicalRecord.MedicalRecordCompanion = new()
+                medicalRecord.MedicalRecordCompanion = new MedicalRecordCompanion
                 {
-                    Companion = new()
+                    Companion = new Companion
                     {
                         Name = GetRandomName(),
                         Age = Random.Shared.Next(18, 80),
@@ -750,12 +703,13 @@ public static class Seed
                         Address = GetRandomAddress(),
                         HomePhone = SeedData.GenerateMexicanPhoneNumber(),
                         PhoneNumber = SeedData.GenerateMexicanPhoneNumber(),
-                        Email = $"{SeedData.GetRandomFirstName("").ToLower()}.{SeedData.GetRandomLastName().ToLower()}@{SeedData.GetRandomEmailDomain()}.com",
-                        CompanionRelativeType = new()
+                        Email =
+                            $"{SeedData.GetRandomFirstName("").ToLower()}.{SeedData.GetRandomLastName().ToLower()}@{SeedData.GetRandomEmailDomain()}.com",
+                        CompanionRelativeType = new CompanionRelativeType
                         {
                             RelativeTypeId = relativeTypes[Random.Shared.Next(relativeTypes.Count)].Id
                         },
-                        CompanionOccupation = new()
+                        CompanionOccupation = new CompanionOccupation
                         {
                             OccupationId = randomOccupation.Id
                         }
@@ -767,7 +721,7 @@ public static class Seed
             var usedFamilyDiseaseIds = new HashSet<int>();
             var usedRelativeTypeIds = new HashSet<int>();
 
-            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
+            for (var i = 0; i < Random.Shared.Next(3, 7); i++)
             {
                 if (usedPersonalDiseaseIds.Count >= diseases.Count) break;
 
@@ -778,15 +732,14 @@ public static class Seed
                 } while (usedPersonalDiseaseIds.Contains(diseaseId));
 
                 usedPersonalDiseaseIds.Add(diseaseId);
-                medicalRecord.MedicalRecordPersonalDiseases.Add(new()
+                medicalRecord.MedicalRecordPersonalDiseases.Add(new MedicalRecordPersonalDisease
                 {
                     DiseaseId = diseaseId,
                     Description = "Descripción de la enfermedad personal."
-                    
                 });
             }
 
-            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
+            for (var i = 0; i < Random.Shared.Next(3, 7); i++)
             {
                 if (usedFamilyDiseaseIds.Count >= diseases.Count) break;
                 if (usedRelativeTypeIds.Count >= relativeTypes.Count) break;
@@ -805,7 +758,7 @@ public static class Seed
 
                 usedFamilyDiseaseIds.Add(diseaseId);
                 usedRelativeTypeIds.Add(relativeTypeId);
-                medicalRecord.MedicalRecordFamilyDiseases.Add(new()
+                medicalRecord.MedicalRecordFamilyDiseases.Add(new MedicalRecordFamilyDisease
                 {
                     DiseaseId = diseaseId,
                     RelativeTypeId = relativeTypeId,
@@ -815,7 +768,7 @@ public static class Seed
 
             var usedSubstances = new HashSet<(int SubstanceId, int ConsumptionLevelId)>();
 
-            for (int i = 0; i < Random.Shared.Next(3, 7); i++)
+            for (var i = 0; i < Random.Shared.Next(3, 7); i++)
             {
                 if (usedSubstances.Count >= substances.Count * consumptionLevels.Count) break;
 
@@ -828,7 +781,7 @@ public static class Seed
 
                 usedSubstances.Add((substanceId, consumptionLevelId));
 
-                medicalRecord.MedicalRecordSubstances.Add(new()
+                medicalRecord.MedicalRecordSubstances.Add(new MedicalRecordSubstance
                 {
                     SubstanceId = substanceId,
                     ConsumptionLevelId = consumptionLevelId,
@@ -840,7 +793,7 @@ public static class Seed
 
             context.MedicalRecords.Add(medicalRecord);
 
-            context.UserMedicalRecords.Add(new()
+            context.UserMedicalRecords.Add(new UserMedicalRecord
             {
                 UserId = user.Id,
                 MedicalRecord = medicalRecord
@@ -852,7 +805,8 @@ public static class Seed
 
     private static string GetRandomLivingSituation()
     {
-        string[] livingSituations = ["Solo", "Con familia", "Con compañeros de piso", "En un hogar de ancianos", "Otro"];
+        string[] livingSituations =
+            ["Solo", "Con familia", "Con compañeros de piso", "En un hogar de ancianos", "Otro"];
         return livingSituations[Random.Shared.Next(livingSituations.Length)];
     }
 
@@ -874,14 +828,15 @@ public static class Seed
 
     private static string GetRandomFamilyMember()
     {
-        string[] familyMembers = ["Madre", "Padre", "Hermano", "Hermana", "Abuelo", "Abuela", "Tío", "Tía", "Primo", "Prima"];
+        string[] familyMembers =
+            ["Madre", "Padre", "Hermano", "Hermana", "Abuelo", "Abuela", "Tío", "Tía", "Primo", "Prima"];
         return familyMembers[Random.Shared.Next(familyMembers.Length)];
     }
 
     private static void SeedPatientEventsAsync(AppUser doctor, AppUser patient,
         List<DoctorNurse> doctorNurses, List<DoctorProduct> doctorProducts, List<DoctorService> doctorServices)
     {
-        for (int i = 2; i < Random.Next(2, 11); i++)
+        for (var i = 2; i < Random.Next(2, 11); i++)
         {
             var newPatientEvent = CreatePatientEvent(doctor, doctorServices, patient);
             AddNursesToEvent(newPatientEvent, doctorNurses);
@@ -899,27 +854,29 @@ public static class Seed
 
         var eventDate = DateGenerator.GenerateRandomDate(DateTime.UtcNow.Year, DateTime.UtcNow.Month);
 
-        Service selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
+        var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
 
         var isMainClinic = Random.Next(0, 2) > 0;
         var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
 
-        PatientEvent newPatientEvent = new() {
-            Event = new() {
-                DoctorEvent = new(doctor),
+        PatientEvent newPatientEvent = new()
+        {
+            Event = new Event
+            {
+                DoctorEvent = new DoctorEvent(doctor),
                 DateFrom = eventDate.ToUniversalTime(),
                 DateTo = eventDate.AddHours(1).ToUniversalTime(),
-                EventService = new(selectedService),
+                EventService = new EventService(selectedService),
             }
         };
 
         newPatientEvent.Event.EventPayments = SeedEventPayments.GetEventPayments(newPatientEvent.Event, patient);
-        newPatientEvent.Event.EventPaymentStatus = new()
+        newPatientEvent.Event.EventPaymentStatus = new EventPaymentStatus
         {
             PaymentStatus = SeedEventPayments.GetPaymentStatus(newPatientEvent.Event)
         };
 
-        if (randomClinic != null) newPatientEvent.Event.EventClinic = new (randomClinic);
+        if (randomClinic != null) newPatientEvent.Event.EventClinic = new EventClinic(randomClinic);
 
         return newPatientEvent;
     }
@@ -927,77 +884,75 @@ public static class Seed
 
     private static void AddNursesToEvent(PatientEvent patientEvent, List<DoctorNurse> doctorNurses)
     {
-        if (Random.Next(0, 2) > 0)
-        {
-            var randomNurses = doctorNurses.Select(x => x.Nurse).Take(Random.Next(1, 4)).ToList();
+        if (Random.Next(0, 2) <= 0) return;
+        
+        var randomNurses = doctorNurses.Select(x => x.Nurse).Take(Random.Next(1, 4)).ToList();
 
-            foreach (var nurse in randomNurses)
-            {
-                patientEvent.Event.NurseEvents.Add(new NurseEvent { Nurse = nurse });
-            }
+        foreach (var nurse in randomNurses)
+        {
+            patientEvent.Event.NurseEvents.Add(new NurseEvent { Nurse = nurse });
         }
     }
 
     private static void AddPrescriptionsToEvent(PatientEvent patientEvent, List<DoctorProduct> doctorProducts,
         AppUser patient, AppUser doctor)
     {
-        if (Random.Next(0, 2) > 0)
+        if (Random.Next(0, 2) <= 0) return;
+        
+        for (var j = 1; j < Random.Next(1, 4); j++)
         {
-            for (int j = 1; j < Random.Next(1, 4); j++)
+            var newPrescriptionItems = new List<PrescriptionItem>();
+            var existingMedicineIds = new HashSet<int>();
+            var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
+
+            for (var k = 1; k < Random.Next(1, 4); k++)
             {
-                var newPrescriptionItems = new List<PrescriptionItem>();
-                var existingMedicineIds = new HashSet<int>();
-                var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
-
-                for (int k = 1; k < Random.Next(1, 4); k++)
+                if (existingMedicineIds.Count >= productIds.Count)
                 {
-                    if (existingMedicineIds.Count >= productIds.Count)
-                    {
-                        Log.Warning($"All products have been used for patient {patient.Id}");
-                        break;
-                    }
-
-                    int randomMedicineId;
-                    do
-                    {
-                        randomMedicineId = productIds[Random.Next(productIds.Count)];
-                    } while (existingMedicineIds.Contains(randomMedicineId));
-
-                    existingMedicineIds.Add(randomMedicineId);
-
-                    var randomMedicine = doctorProducts.Select(x => x.Product)
-                        .FirstOrDefault(p => p.Id == randomMedicineId);
-                    if (randomMedicine == null)
-                    {
-                        Log.Error($"Failed to find medicine with ID {randomMedicineId}");
-                        continue;
-                    }
-
-                    var newPrescriptionItem = new PrescriptionItem
-                    {
-                        ItemId = randomMedicineId,
-                        Item = randomMedicine,
-                        Quantity = Random.Next(1, 10),
-                        Dosage = 500,
-                        Instructions = "Tomar 1 tableta cada 6 horas",
-                        Unit = "mg"
-                    };
-
-                    newPrescriptionItems.Add(newPrescriptionItem);
+                    Log.Warning($"All products have been used for patient {patient.Id}");
+                    break;
                 }
 
-                patientEvent.Event.EventPrescriptions.Add(new EventPrescription
+                int randomMedicineId;
+                do
                 {
-                    Prescription = new Prescription
-                    {
-                        ExchangeAmount = Random.Next(1, 6),
-                        Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
-                        PatientPrescription = new PatientPrescription { Patient = patient },
-                        DoctorPrescription = new DoctorPrescription { Doctor = doctor },
-                        PrescriptionItems = newPrescriptionItems,
-                    }
-                });
+                    randomMedicineId = productIds[Random.Next(productIds.Count)];
+                } while (existingMedicineIds.Contains(randomMedicineId));
+
+                existingMedicineIds.Add(randomMedicineId);
+
+                var randomMedicine = doctorProducts.Select(x => x.Product)
+                    .FirstOrDefault(p => p.Id == randomMedicineId);
+                if (randomMedicine == null)
+                {
+                    Log.Error($"Failed to find medicine with ID {randomMedicineId}");
+                    continue;
+                }
+
+                var newPrescriptionItem = new PrescriptionItem
+                {
+                    ItemId = randomMedicineId,
+                    Item = randomMedicine,
+                    Quantity = Random.Next(1, 10),
+                    Dosage = 500,
+                    Instructions = "Tomar 1 tableta cada 6 horas",
+                    Unit = "mg"
+                };
+
+                newPrescriptionItems.Add(newPrescriptionItem);
             }
+
+            patientEvent.Event.EventPrescriptions.Add(new EventPrescription
+            {
+                Prescription = new Prescription
+                {
+                    ExchangeAmount = Random.Next(1, 6),
+                    Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
+                    PatientPrescription = new PatientPrescription { Patient = patient },
+                    DoctorPrescription = new DoctorPrescription { Doctor = doctor },
+                    PrescriptionItems = newPrescriptionItems,
+                }
+            });
         }
     }
 }

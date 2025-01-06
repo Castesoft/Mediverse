@@ -1,5 +1,3 @@
-/// <reference types="@types/google.maps" />
-
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject, input, effect, signal } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -13,13 +11,12 @@ import { SearchService } from "src/app/_services/search.service";
 import { SpecialtiesService } from "src/app/specialties/specialties.config";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 
-// declare var google: any;
-
 @Component({
   selector: 'div[searchForm]',
   standalone: true,
-  imports: [ReactiveFormsModule, Forms2Module, CommonModule,],
+  imports: [ ReactiveFormsModule, Forms2Module, CommonModule, ],
   templateUrl: './search-form.component.html',
+  styleUrls: [ './search-form.component.scss' ]
 })
 export class SearchFormComponent implements OnInit {
   private router = inject(Router);
@@ -38,7 +35,7 @@ export class SearchFormComponent implements OnInit {
   constructor() {
     effect(() => {
       this.specialtiesService.getOptions().subscribe({
-        next: response => {
+        next: _ => {
           this.form.controls.specialty.selectOptions = this.specialtiesService.options();
         }
       })
@@ -50,8 +47,7 @@ export class SearchFormComponent implements OnInit {
   async ngOnInit() {
     await google.maps.importLibrary("places");
 
-  // Now you can safely access AutocompleteService
-  this.autocompleteService = new google.maps.places.AutocompleteService();
+    this.autocompleteService = new google.maps.places.AutocompleteService();
 
     this.form.controls.location.valueChanges.pipe(
       debounceTime(300),
@@ -73,28 +69,28 @@ export class SearchFormComponent implements OnInit {
     if (this.haveSelected) return;
 
     this.autocompleteService.getPlacePredictions(
-      { input, componentRestrictions: {country: ['mx']} },
+      { input, componentRestrictions: { country: [ 'mx' ] } },
       (
         predictions: google.maps.places.AutocompletePrediction[] | null,
         status: google.maps.places.PlacesServiceStatus
       ) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-        this.form.controls.location.selectOptions = predictions.map((prediction: google.maps.places.AutocompletePrediction) => {
-          return new SelectOption({
-            name: prediction.description,
-            code: prediction.place_id,
+        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+          this.form.controls.location.selectOptions = predictions.map((prediction: google.maps.places.AutocompletePrediction): SelectOption => {
+            return new SelectOption({ name: prediction.description, code: prediction.place_id });
           });
-        });
-      } else {
-        this.form.controls.location.selectOptions = [];
-      }
-    });
+        } else {
+          this.form.controls.location.selectOptions = [];
+        }
+      });
   }
 
-  onSubmit() {
-    this.router.navigate(['/search'], { queryParams: this.form.getParams() });
+  onSubmit(): void {
+    this.router.navigate([ '/search' ], { queryParams: this.form.getParams() }).then((): void => { });
 
-    this.service.search.set(new Search(this.service.search().key, { ...this.form.value, result: new DoctorResult({ ...this.form.controls.result.value, } as any) }));
+    this.service.search.set(new Search(this.service.search().key, {
+      ...this.form.value,
+      result: new DoctorResult({ ...this.form.controls.result.value, } as any)
+    }));
     this.service.getSearchResults({ ignoreCache: true }).subscribe();
   }
 }

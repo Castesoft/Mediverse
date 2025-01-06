@@ -9,7 +9,6 @@ import { ProductsService } from "src/app/products/products.config";
   host: { class: 'card card-flush' },
   selector: 'div[homeProductsCatalogRoute]',
   // selector: 'home-products-catalog-route',
-  // template: ``,
   templateUrl: './home-products-catalog-route.component.html',
   standalone: false,
 })

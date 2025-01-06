@@ -13,7 +13,6 @@ import { Ranges } from "src/app/_models/base/ranges";
 @Component({
   selector: 'div[controlSliderRange3]',
   host: { },
-  // template: ``,
   templateUrl: './control-slider-range-3.component.html',
   standalone: true,
   imports: [

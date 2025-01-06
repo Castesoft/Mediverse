@@ -52,7 +52,6 @@ export class PatientsCatalogModalComponent {
 
 @Component({
   selector: "[patientForm]",
-  // template: ``,
   templateUrl: './patient-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

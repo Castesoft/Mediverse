@@ -18,7 +18,6 @@ import { AddressesTableComponent } from "src/app/addresses/components/addresses-
 
 @Component({
   selector: '[addressesCatalog]',
-  // template: ``,
   templateUrl: './addresses-catalog.component.html',
   standalone: true,
   imports: [ FontAwesomeModule,

@@ -126,7 +126,6 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, FormG
 
 @Component({
   selector: "[serviceForm]",
-  // template: ``,
   templateUrl: './service-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

@@ -8,7 +8,6 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
 @Component({
   host: { class: '', },
   selector: 'div[accountCard]',
-  // template: ``,
   templateUrl: './account-card.component.html',
   standalone: true,
   imports: [RouterModule, LayoutModule, ProfilePictureComponent],

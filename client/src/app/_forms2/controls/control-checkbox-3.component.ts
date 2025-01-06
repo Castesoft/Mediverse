@@ -13,7 +13,6 @@ import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 @Component({
   selector: 'div[controlCheckbox3]',
   templateUrl: './control-checkbox-3.component.html',
-  // template: ``,
   standalone: true,
   imports: [
     ReactiveFormsModule,

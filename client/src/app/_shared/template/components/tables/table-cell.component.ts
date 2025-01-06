@@ -6,7 +6,6 @@ import { TableCellItem } from "src/app/_models/tables/tableCellItem";
 
 @Component({
   selector: 'td[tableCell]',
-  // template: ``,
   templateUrl: './table-cell.component.html',
   standalone: true,
   imports: [RouterModule, CommonModule,],

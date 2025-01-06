@@ -24,11 +24,10 @@ import { ServiceFormComponent, ServicesService } from 'src/app/services/services
 
 @Component({
   selector: "[eventForm]",
-  // template: ``,
   templateUrl: './event-form.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, ControlsModule, Forms2Module, MaterialModule, CdkModule,
-    PatientFormComponent, NurseFormComponent, ServiceFormComponent, ClinicFormComponent,
+  imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, MaterialModule, CdkModule,
+    PatientFormComponent, ServiceFormComponent, ClinicFormComponent,
   ]
 })
 export class EventFormComponent

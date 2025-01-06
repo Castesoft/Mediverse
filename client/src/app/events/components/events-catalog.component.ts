@@ -20,7 +20,6 @@ import { EventsService } from "src/app/events/events.config";
 
 @Component({
   selector: '[eventsCatalog]',
-  // template: ``,
   templateUrl: './events-catalog.component.html',
   standalone: true,
   imports: [ FontAwesomeModule,

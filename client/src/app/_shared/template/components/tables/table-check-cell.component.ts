@@ -7,7 +7,6 @@ import { TABLE_CHECK_CELL_ITEM_DIV_CLASS } from "src/app/_shared/template/compon
 
 @Component({
   selector: 'td[tableCheckCell]',
-  // template: ``,
   templateUrl: './table-check-cell.component.html',
   standalone: true,
   imports: [FormsModule],

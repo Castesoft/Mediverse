@@ -9,7 +9,6 @@ import { ServicesService } from "src/app/services/services.config";
   host: { class: 'card card-flush' },
   selector: 'div[homeServicesCatalogRoute]',
   // selector: 'home-services-catalog-route',
-  // template: ``,
   templateUrl: './home-services-catalog-route.component.html',
   standalone: false,
 })

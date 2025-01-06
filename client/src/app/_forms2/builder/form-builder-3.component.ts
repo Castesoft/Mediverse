@@ -9,11 +9,9 @@ import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 @Component({
   selector: "div[formBuilder3]",
   templateUrl: "./form-builder-3.component.html",
-  // template: ``,
   standalone: true,
   host: { class: 'mb-1', },
-  imports: [CommonModule, ControlsRow3Component, ControlsWrapper3Component,
-  ]
+  imports: [ CommonModule, ControlsRow3Component, ControlsWrapper3Component, ]
 })
 export class FormBuilder3Component {
   controls = model.required<FormControl2<any>[]>();

@@ -9,7 +9,6 @@ import { MaterialModule } from "src/app/_shared/material.module";
 @Component({
   host: { class: 'text-end pe-0', },
   selector: 'td[tableMenuCell]',
-  // template: ``,
   templateUrl: './table-menu-cell.component.html',
   standalone: true,
   imports: [MaterialModule, CdkModule, FontAwesomeModule],
@@ -23,7 +22,7 @@ export class TableMenuCellComponent {
 
   constructor() {
     effect(() => {
-      
+
     });
   }
 }

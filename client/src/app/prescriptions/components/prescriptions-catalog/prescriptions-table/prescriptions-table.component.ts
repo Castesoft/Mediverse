@@ -45,10 +45,6 @@ import { UserTableCellComponent } from 'src/app/users/components/user-table-cell
     CdkModule,
     BootstrapModule,
     ProfilePictureComponent,
-    PrescriptionTableCellComponent,
-    PrescriptionTableSexCellComponent,
-    PrescriptionTableHasAccountCellComponent,
-    UserTableCellComponent,
     PrescriptionFormComponent,
   ],
 })

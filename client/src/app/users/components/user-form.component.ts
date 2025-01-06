@@ -15,7 +15,6 @@ import { UsersService } from "src/app/users/users.config";
 
 @Component({
   selector: "[userForm]",
-  // template: ``,
   templateUrl: './user-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

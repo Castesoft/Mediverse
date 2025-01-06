@@ -126,7 +126,6 @@ export class OrdersService extends ServiceHelper<Order, OrderParams, FormGroup2<
 
 @Component({
   selector: "[orderForm]",
-  // template: ``,
   templateUrl: './order-form.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]

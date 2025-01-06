@@ -80,7 +80,6 @@ export class PatientsTableMenuComponent
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[patientsTable]',
-  // template: ``,
   templateUrl: './patients-table.component.html',
   standalone: true,
   imports: [

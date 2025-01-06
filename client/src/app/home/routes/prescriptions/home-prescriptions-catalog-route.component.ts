@@ -8,8 +8,6 @@ import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config
 @Component({
   host: { class: 'card card-flush' },
   selector: 'div[homePrescriptionsCatalogRoute]',
-  // selector: 'home-prescriptions-catalog-route',
-  // template: ``,
   templateUrl: './home-prescriptions-catalog-route.component.html',
   standalone: false,
 })

@@ -7,7 +7,6 @@ import { AccountService } from "src/app/_services/account.service";
 @Component({
   host: { class: 'aside aside-default aside-hoverable', },
   selector: 'div[mainAside]',
-  // template: ``,
   templateUrl: './main-aside.component.html',
   standalone: true,
   imports: [RouterModule,],

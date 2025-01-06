@@ -1,61 +1,14 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, AfterViewInit, inject, input, effect } from "@angular/core";
-import { Validators } from "@angular/forms";
 import { RouterModule, Router, ActivatedRoute } from "@angular/router";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
-import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { FormInfo } from "src/app/_models/forms/formTypes";
 import { AccountService } from "src/app/_services/account.service";
-import { SnackbarService } from "src/app/_services/snackbar.service";
 import { UtilsService } from "src/app/_services/utils.service";
 import { ValidationService } from "src/app/_services/validation.service";
 import { MaterialModule } from "src/app/_shared/material.module";
+import { LoginForm } from "../models/login";
 
 declare var google: any;
-export class Login {
-  email: string | null = null;
-  password: string | null = null;
-  twoFactorCode: string | null = null;
-
-  constructor(init?: Partial<Login>) {
-    Object.assign(this, init);
-  }
-}
-
-export const loginInfo: FormInfo<Login> = {
-  email: { type: 'text', label: 'Email', validators: [Validators.required, Validators.email, Validators.maxLength(255)],
-    validationErrors: {
-      required: 'El nombre de usuario o el correo es requerido.',
-      minlength:
-        'El nombre de usuario o el correo debe tener al menos 6 caracteres.',
-      maxlength:
-        'El nombre de usuario o el correo no debe tener más de 255 caracteres.'
-    },
-   },
-  password: { type: 'text', label: 'Password', validators: [Validators.required, Validators.minLength(8), Validators.maxLength(30)],
-    validationErrors: {
-      'required': 'La contraseña es requerida',
-      'minlength': 'La contraseña debe tener al menos 6 caracteres.',
-      'maxlength': 'La contraseña no debe tener más de 100 caracteres.'
-    },
-   },
-  twoFactorCode: { type: 'text', label: 'Código',
-    validationErrors: {
-      required: 'El código de autenticación es requerido.',
-      minlength:
-        'El código de autenticación debe tener al menos 6 caracteres.',
-      maxlength:
-        'El código de autenticación no debe tener más de 6 caracteres.'
-    },
-   },
-} as FormInfo<Login>;
-
-export class LoginForm extends FormGroup2<Login> {
-  constructor() {
-    super(Login, new Login(), loginInfo);
-  }
-
-}
 
 @Component({
   selector: '[signInBasicForm]',
@@ -69,7 +22,6 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   route = inject(ActivatedRoute);
   utils = inject(UtilsService);
   validation = inject(ValidationService);
-  snackbarService = inject(SnackbarService)
 
   form = new LoginForm();
 
@@ -83,15 +35,11 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   noRedirect = input<boolean>(false);
 
   constructor() {
-    effect(() => {
-      this.form.setValidation(this.validation.active());
-    });
+    effect((): LoginForm => this.form.setValidation(this.validation.active()));
 
     this.route.queryParams.subscribe({
       next: params => {
-        if (params['redirectUrl']) {
-          this.redirectUrl = params['redirectUrl'];
-        }
+        if (params['redirectUrl']) this.redirectUrl = params['redirectUrl'];
       }
     });
   }
@@ -114,7 +62,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
       size: 'large',
       text: 'continue_with',
       locale: 'es',
-      width: document.getElementById('google-btn')!.offsetWidth.toFixed(0).toString(),
+      width: document.getElementById('google-btn')?.offsetWidth.toFixed(0).toString(),
       height: '80'
     });
   }
@@ -131,21 +79,21 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
             } else {
               if (this.noRedirect()) return;
               if (this.redirectUrl) {
-                this.router.navigate([this.redirectUrl]);
+                this.router.navigate([ this.redirectUrl ]);
               } else {
-                this.router.navigate([this.returnUrl]);
+                this.router.navigate([ this.returnUrl ]);
               }
             }
           }
         })
       } else {
         this.accountService.twoFactorLogin(this.form.controls.email.value!, this.form.controls.twoFactorCode.value!).subscribe({
-          next: response => {
+          next: _ => {
             if (this.noRedirect()) return;
             if (this.redirectUrl) {
-              this.router.navigate([this.redirectUrl]);
+              this.router.navigate([ this.redirectUrl ]);
             } else {
-              this.router.navigate([this.returnUrl]);
+              this.router.navigate([ this.returnUrl ]);
             }
           }
         });

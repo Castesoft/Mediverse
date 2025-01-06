@@ -8,8 +8,6 @@ import { ClinicsService } from "src/app/clinics/clinics.config";
 @Component({
   host: { class: 'card card-flush' },
   selector: 'div[homeClinicsCatalogRoute]',
-  // selector: 'home-clinics-catalog-route',
-  // template: ``,
   templateUrl: './home-clinics-catalog-route.component.html',
   standalone: false,
 })

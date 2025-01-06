@@ -10,7 +10,6 @@ import { MaterialModule } from "src/app/_shared/material.module";
 
 @Component({
   selector: 'a[detailLink2]',
-  // template: ``,
   templateUrl: './detail-link-2.component.html',
   standalone: true,
   imports: [ RouterModule, MaterialModule, CdkModule,],

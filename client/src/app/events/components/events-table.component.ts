@@ -80,7 +80,6 @@ export class EventsTableMenuComponent
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[eventsTable]',
-  // template: ``,
   templateUrl: './events-table.component.html',
   standalone: true,
   imports: [

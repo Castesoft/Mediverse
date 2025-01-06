@@ -10,7 +10,6 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
   host: { class: 'd-flex align-items-center ms-2 ms-lg-3', id: 'userDropdown' },
   selector: '[userDropdown]',
   templateUrl: './user-dropdown.component.html',
-  // template: ``,
   standalone: true,
   imports: [BootstrapModule, RouterModule, ProfilePictureComponent],
 })

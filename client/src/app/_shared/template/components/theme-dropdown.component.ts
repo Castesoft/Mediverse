@@ -8,7 +8,6 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 @Component({
   host: { class: 'd-flex align-items-center ms-1 ms-lg-2 dropdown', id: 'themeDropdown' },
   selector: '[themeDropdown]',
-  // template: ``,
   templateUrl: './theme-dropdown.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, BootstrapModule,],

@@ -80,7 +80,6 @@ export class ServicesTableMenuComponent
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[servicesTable]',
-  // template: ``,
   templateUrl: './services-table.component.html',
   standalone: true,
   imports: [

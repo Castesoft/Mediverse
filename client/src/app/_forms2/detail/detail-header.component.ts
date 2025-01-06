@@ -11,7 +11,6 @@ import { FormUse } from "src/app/_models/forms/formTypes";
 @Component({
   host: { class: 'row align-items-center justify-content-between g-3 mb-2 pt-2', },
   selector: 'div[detailHeader]',
-  // template: ``,
   templateUrl: './detail-header.component.html',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, RouterModule, FormHeaderComponent,],

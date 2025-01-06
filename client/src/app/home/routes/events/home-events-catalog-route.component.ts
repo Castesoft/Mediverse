@@ -15,7 +15,6 @@ import { ServicesService } from 'src/app/services/services.config';
 @Component({
   host: { class: 'card card-flush' },
   selector: 'div[homeEventsCatalogRoute]',
-  // template: ``,
   templateUrl: './home-events-catalog-route.component.html',
   standalone: false,
 })
@@ -86,7 +85,7 @@ export class HomeEventsCatalogRouteComponent
       }
 
       if (this.filtersCollapsed()) {
-        
+
       }
 
     });

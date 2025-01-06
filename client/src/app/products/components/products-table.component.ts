@@ -80,7 +80,6 @@ export class ProductsTableMenuComponent
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
   selector: 'table[productsTable]',
-  // template: ``,
   templateUrl: './products-table.component.html',
   standalone: true,
   imports: [

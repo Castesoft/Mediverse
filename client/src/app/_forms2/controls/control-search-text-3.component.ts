@@ -15,7 +15,6 @@ import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 @Component({
   selector: '[controlSearchText3]',
   templateUrl: './control-search-text-3.component.html',
-  // template: ``,
   standalone: true,
   imports: [
     ReactiveFormsModule,
