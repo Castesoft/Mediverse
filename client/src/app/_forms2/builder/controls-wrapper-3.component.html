@@ -19,7 +19,7 @@
             <div templateControlCheckRadio [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
           @case('select') {
-            <h1 class="text-danger">PENDIENTE</h1>
+            <div controlSelect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
           @case('textarea') {
             <h1 class="text-danger">PENDIENTE</h1>
@@ -32,6 +32,9 @@
           }
           @case('tel') {
             <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case('typeahead') {
+            <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
         }
       }

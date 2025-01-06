@@ -57,14 +57,8 @@
                 <div stepperIcon [index]="3"></div>
                 <div class="stepper-label flex-grow-1">
                   <h3 class="stepper-title">Dirección</h3>
-                  @if (service.selected()?.addresses!.length > 1) {
                   <div class="stepper-desc fw-semibold">Selecciona una dirección</div>
                   <div controlsWrapper3 [(control)]="form.controls.clinic"></div>
-                  } @else {
-                  <div class="stepper-desc fw-semibold">
-                    {{service.selected()?.addresses![0].name}}
-                  </div>
-                  }
                 </div>
               </div>
               <div class="stepper-line h-40px"></div>
