@@ -34,6 +34,7 @@ export class EventForm extends FormGroup2<Event> {
   }
 
   setClinicOptions(options: SelectOption[]): this {
+    if (!this.controls.clinic) return this;
     this._clinicOptions = options;
     this.controls.clinic.controls.select.selectOptions = options;
     return this;
@@ -94,10 +95,10 @@ export class EventForm extends FormGroup2<Event> {
       }
     });
 
-    this.controls.clinic.controls.select.valueChanges.subscribe({
+    this.controls.clinic?.controls.select.valueChanges.subscribe({
       next: (value: SelectOption | null) => {
         if (value !== null) {
-          this.controls.clinic.controls.id.patchValue(value.id);
+          this.controls.clinic?.controls.id.patchValue(value.id);
         }
       }
     });
@@ -108,7 +109,7 @@ export class EventForm extends FormGroup2<Event> {
   }
 
   get hasClinic(): boolean {
-    return this.controls.clinic.controls.select.value !== null;
+    return this.controls.clinic?.controls.select.value !== null;
   }
 
   get hasService(): boolean {
@@ -124,7 +125,7 @@ export class EventForm extends FormGroup2<Event> {
   }
 
   removeClinic(): void {
-    this.controls.clinic.controls.select.patchValue(null);
+    this.controls.clinic?.controls.select.patchValue(null);
   }
 
   removeService(): void {

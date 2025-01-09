@@ -1,17 +1,21 @@
 import { CommonModule } from "@angular/common";
-import { Component, model, input, HostBinding, effect } from "@angular/core";
+import { Component, model, input, HostBinding, effect, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { createId } from "@paralleldrive/cuid2";
 import { TableCellItem } from "src/app/_models/tables/tableCellItem";
+import { IconsService } from "../../../../_services/icons.service";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { PhoneNumberPipe } from "../../../../_pipes/phone-number.pipe";
 
 
 @Component({
   selector: 'td[tableCell2]',
   templateUrl: './table-cell-2.component.html',
   standalone: true,
-  imports: [RouterModule, CommonModule,],
+  imports: [ RouterModule, CommonModule, FaIconComponent, PhoneNumberPipe, ],
 })
 export class TableCell2Component {
+  icons = inject(IconsService);
   item = model.required<TableCellItem<any, any>>();
   isCompact = model.required<boolean>();
   value = input.required<any>();
@@ -52,11 +56,6 @@ export class TableCell2Component {
           this.class = `${this.class} text-start ps-0`;
           break;
       }
-
-      // if (this.item().isLink) {
-      //   this.class = `name align-middle white-space-nowrap px-0 py-0`;
-      // }
-
     });
   }
 }

@@ -13,8 +13,14 @@ import { CatalogMode } from "src/app/_models/base/types";
 import { SortOptions } from "src/app/_models/types";
 import { DevService } from "src/app/_services/dev.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { TableHeaderCheckCellComponent } from "src/app/_shared/template/components/tables/table-header-check-cell.component";
-import { TABLE_HEADER_CHECK_CELL_TH_CLASS, TABLE_HEADER_CHECK_CELL_TH_STYLE, TABLE_HEADER_TR_CLASS } from "src/app/_shared/template/components/tables/tableConstants";
+import {
+  TableHeaderCheckCellComponent
+} from "src/app/_shared/template/components/tables/table-header-check-cell.component";
+import {
+  TABLE_HEADER_CHECK_CELL_TH_CLASS,
+  TABLE_HEADER_CHECK_CELL_TH_STYLE,
+  TABLE_HEADER_TR_CLASS
+} from "src/app/_shared/template/components/tables/tableConstants";
 
 
 @Component({
@@ -22,7 +28,7 @@ import { TABLE_HEADER_CHECK_CELL_TH_CLASS, TABLE_HEADER_CHECK_CELL_TH_STYLE, TAB
   templateUrl: "./table-header.component.html",
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, FormsModule, TableHeaderCheckCellComponent,],
+  imports: [ CommonModule, FontAwesomeModule, FormsModule, TableHeaderCheckCellComponent, ],
 })
 export class TableHeaderComponent implements OnInit {
   private dev = inject(DevService);

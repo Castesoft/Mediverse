@@ -16,66 +16,7 @@ import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { ProductsService } from "src/app/products/products.config";
-
-@Component({
-  selector: 'div[productsTableMenu]',
-  host: { class: '' },
-  template: `
-    <div class="dropdown-menu d-block" cdkMenu>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          service.clickLink(item(), key(), 'detail', 'page');
-          $event.preventDefault()
-        "
-      >
-        Ver {{ service.dictionary.singular }}
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          $event.preventDefault();
-          service.clickLink(item(), key(), 'detail', 'modal')
-        "
-      >
-        Abrir {{ service.dictionary.singular }} en pantalla modal
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
-      >
-        Editar
-      </a>
-      <button
-        cdkMenuItem
-        class="dropdown-item px-3 text-danger"
-        (click)="service.delete$(item())"
-      >
-        Eliminar
-      </button>
-    </div>
-  `,
-  standalone: true,
-  imports: [RouterModule, CdkModule, MaterialModule],
-})
-export class ProductsTableMenuComponent
-  extends TableMenu<ProductsService>
-  implements OnInit, ITableMenu<Product>
-{
-  item: ModelSignal<Product> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(ProductsService);
-  }
-
-  ngOnInit(): void {}
-}
+import { ProductsTableMenuComponent } from "./products-table-menu.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -93,10 +34,7 @@ export class ProductsTableMenuComponent
     ProductsTableMenuComponent,
   ],
 })
-export class ProductsTableComponent
-  extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService>
-  implements OnInit, OnDestroy, TableInputSignals<Product, ProductParams>
-{
+export class ProductsTableComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements OnDestroy, TableInputSignals<Product, ProductParams> {
   item: ModelSignal<Product | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -107,11 +45,7 @@ export class ProductsTableComponent
 
   constructor() {
     super(ProductsService, Product, { tableCells: productCells, });
-
-    effect(() => {});
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

@@ -1,6 +1,6 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
-import { Component, ModelSignal, model, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, ModelSignal, model, effect, inject, signal, viewChild, Signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
@@ -45,28 +45,31 @@ export class EventFormComponent
 
   readonly fromWrapper = signal<boolean>(false);
 
-  readonly patientPanelOpen = signal(false);
-  readonly patientItem = signal(null);
-  readonly patientView = signal<View>('inline');
-  readonly patientUse = signal<FormUse>('create');
-  readonly patientKey = signal<string>(this.router.url);
-  patientAccordion = viewChild.required<CdkAccordionItem>('patientAccordion');
-  readonly servicePanelOpen = signal(false);
-  readonly serviceItem = signal(null);
-  readonly serviceView = signal<View>('inline');
-  readonly serviceUse = signal<FormUse>('create');
-  readonly serviceKey = signal<string>(this.router.url);
-  serviceAccordion = viewChild.required<CdkAccordionItem>('serviceAccordion');
-  readonly nursesPanelOpen = signal(false);
-  nursesAccordion = viewChild.required<CdkAccordionItem>('nursesAccordion');
-  readonly clinicPanelOpen = signal(false);
-  readonly clinicItem = signal(null);
-  readonly clinicView = signal<View>('inline');
-  readonly clinicUse = signal<FormUse>('create');
-  readonly clinicKey = signal<string>(this.router.url);
-  clinicAccordion = viewChild.required<CdkAccordionItem>('clinicAccordion');
+  patientUse: FormUse = 'create';
+  serviceUse: FormUse = 'create';
+  clinicUse: FormUse = 'create';
 
-  selectedIndex = signal(0);
+  patientKey: string = this.router.url;
+  serviceKey: string = this.router.url;
+  clinicKey: string = this.router.url;
+
+  patientView: View = 'inline';
+  serviceView: View = 'inline';
+  clinicView: View = 'inline';
+
+  patientAccordion: Signal<CdkAccordionItem> = viewChild.required<CdkAccordionItem>('patientAccordion');
+  serviceAccordion: Signal<CdkAccordionItem> = viewChild.required<CdkAccordionItem>('serviceAccordion');
+  clinicAccordion: Signal<CdkAccordionItem> = viewChild.required<CdkAccordionItem>('clinicAccordion');
+
+  patientItem = null;
+  serviceItem = null;
+  clinicItem = null;
+
+  patientPanelOpen = false;
+  servicePanelOpen = false;
+  clinicPanelOpen = false;
+
+  selectedIndex = 0;
 
   constructor() {
     super(EventsService, EventForm);
@@ -74,27 +77,27 @@ export class EventFormComponent
     const step: EventFormSteps | undefined = this.route.snapshot.queryParams['paso'];
 
     if (step === undefined) {
-      this.selectedIndex.set(0);
+      this.selectedIndex = 0;
     } else {
 
       switch (step) {
         case 'paciente':
-          this.selectedIndex.set(0);
+          this.selectedIndex = 0;
           break;
         case 'horario':
-          this.selectedIndex.set(1);
+          this.selectedIndex = 1;
           break;
         case 'servicio':
-          this.selectedIndex.set(2);
+          this.selectedIndex = 2;
           break;
         case 'especialistas':
-          this.selectedIndex.set(3);
+          this.selectedIndex = 3;
           break;
         case 'clinica':
-          this.selectedIndex.set(4);
+          this.selectedIndex = 4;
           break;
         default:
-          this.selectedIndex.set(0);
+          this.selectedIndex = 0;
           break;
       }
     }
@@ -105,7 +108,7 @@ export class EventFormComponent
     this.nurses.getOptions().subscribe();
 
     effect(() => {
-      this.router.navigate([], { queryParams: { paso: eventFormSteps[this.selectedIndex()] } });
+      this.router.navigate([], { queryParams: { paso: eventFormSteps[this.selectedIndex] } }).then((): void => {});
 
       this.form
         .setUse(this.use())
@@ -113,17 +116,11 @@ export class EventFormComponent
         .setClinicOptions(this.clinics.options())
         .setPatientOptions(this.patients.options())
         .setServiceOptions(this.services.options())
-        .setNurseOptions(this.nurses.options())
-      ;
-
-      console.log('FORM', this.form);
-
+        .setNurseOptions(this.nurses.options());
 
       const value = this.item();
 
-      if (value !== null) {
-        this.form.patchValue(value);
-      }
+      if (value !== null) this.form.patchValue(value);
     });
   }
 
@@ -143,14 +140,6 @@ export class EventFormComponent
     }
   }
 
-  handleNursesPanelClick(event: any) {
-    if (this.form.hasNurses) {
-      event.stopPropagation();
-    } else {
-      this.nursesAccordion()?.open();
-    }
-  }
-
   handleClinicPanelClick(event: any) {
     if (this.form.hasClinic) {
       event.stopPropagation();
@@ -158,5 +147,4 @@ export class EventFormComponent
       this.clinicAccordion()?.open();
     }
   }
-
 }

@@ -1,4 +1,3 @@
-
 export type Role = 'Admin' | 'User';
 
 export class BaseNode {

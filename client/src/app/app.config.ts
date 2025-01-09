@@ -1,3 +1,5 @@
+import { ScrolltopComponent } from "./_shared/template/components/scrolltop.component";
+
 declare var google: any;
 import localeEsMX from '@angular/common/locales/es-MX';
 import { registerLocaleData } from '@angular/common';
@@ -23,8 +25,11 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { QuillModule } from 'ngx-quill';
 import { anonymousGuard } from 'src/app/_guards/anonymous.guard';
 import { authGuard } from 'src/app/_guards/auth.guard';
-import { UseOfCookiesModalComponent } from 'src/app/auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
+import {
+  UseOfCookiesModalComponent
+} from 'src/app/auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
 import { ShortcutsService } from 'src/app/_services/shortcuts.service';
+
 @Component({
   selector: 'app-root',
   host: { class: 'h-100' },
@@ -33,20 +38,25 @@ import { ShortcutsService } from 'src/app/_services/shortcuts.service';
     <div scrolltop></div>
 
     @if (cookiesAccepted === 'false') {
-      <div class="fixed-bottom bg-dark text-white text-center p-8 shadow-lg" style="z-index: 100; width: 30%; bottom: 30px; left: 30px; border-radius: 10px;">
+      <div class="fixed-bottom bg-dark text-white text-center p-8 shadow-lg"
+           style="z-index: 100; width: 30%; bottom: 30px; left: 30px; border-radius: 10px;">
         <p class="fs-6 m-0">
-          Este sitio web utiliza cookies para mejorar la experiencia de usuario. Al continuar utilizando esta página estás aceptando nuestras políticas de <a
+          Este sitio web utiliza cookies para mejorar la experiencia de usuario. Al continuar utilizando esta página
+          estás aceptando nuestras políticas de
+          <a
             (click)="openUseOfCookiesModal()"
             class="text-muted text-hover-primary"
             style="cursor: pointer"
-            >Uso de cookies</a>
+          >
+            Uso de cookies
+          </a>
         </p>
         <button class="btn btn-small btn-primary mt-2" (click)="accept()">Aceptar</button>
       </div>
     }
   `,
   standalone: true,
-  imports: [RouterOutlet, MaterialModule],
+  imports: [ RouterOutlet, MaterialModule, ScrolltopComponent ],
 })
 export class AppComponent implements OnInit {
   private bsModalService = inject(BsModalService);
@@ -54,13 +64,8 @@ export class AppComponent implements OnInit {
   private breadcrumb = inject(BreadcrumbService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private shortcuts = inject(ShortcutsService);
 
   cookiesAccepted = 'true';
-
-  constructor() {
-
-  }
 
   ngOnInit(): void {
     this.cookiesAccepted = localStorage.getItem('cookiesAccepted') || '';
@@ -68,7 +73,6 @@ export class AppComponent implements OnInit {
       localStorage.setItem('cookiesAccepted', 'false');
       this.cookiesAccepted = 'false';
     }
-
 
     this.setCurrentUser();
     this.breadcrumb.init();
@@ -81,7 +85,7 @@ export class AppComponent implements OnInit {
           this.accountService.loginWithSocialAuth('GOOGLE', resp.credential).subscribe({
             next: () => {
               if (this.route.snapshot.queryParams['noredirect']) return;
-              this.router.navigate(['/cuenta']);
+              this.router.navigate([ '/cuenta' ]);
             }
           });
         } else {
@@ -106,8 +110,6 @@ export class AppComponent implements OnInit {
     if (!userString) return;
     const user = JSON.parse(userString);
     this.accountService.setCurrentUser(user);
-    // console.log('user', user);
-
   }
 }
 
@@ -136,13 +138,13 @@ export const appConfig: ApplicationConfig = {
       },
       {
         path: 'auth',
-        canActivate: [anonymousGuard],
+        canActivate: [ anonymousGuard ],
         loadChildren: () => import('./auth/auth.config').then(m => m.AuthModule)
       },
       {
         path: '',
         runGuardsAndResolvers: 'always',
-        canActivate: [authGuard],
+        canActivate: [ authGuard ],
         children: [
           {
             path: 'admin',
@@ -151,7 +153,7 @@ export const appConfig: ApplicationConfig = {
           {
             path: 'cuenta',
             loadChildren: () => import('./account/account.component').then(m => m.AccountModule)
-           },
+          },
           {
             path: 'inicio',
             loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
@@ -159,7 +161,7 @@ export const appConfig: ApplicationConfig = {
         ]
       },
     ]),
-    provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor, loadingInterceptor])),
+    provideHttpClient(withInterceptors([ errorInterceptor, jwtInterceptor, loadingInterceptor ])),
     provideAnimations(),
     provideAnimationsAsync(),
     // localeEsMX,

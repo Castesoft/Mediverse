@@ -60,6 +60,7 @@ import { PrescriptionsCatalogComponent } from 'src/app/prescriptions/components/
 import { ClinicDetailComponent } from 'src/app/clinics/clinics.config';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
+import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharmacy-catalog-route.component";
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { Forms2Module } from 'src/app/_forms2/forms-2.module';
     HomeProductsCatalogRouteComponent,
     HomeClinicsCatalogRouteComponent,
     HomePatientDetailRouteComponent,
+    HomePharmacyCatalogRouteComponent,
     HomeEventDetailRouteComponent,
     HomeEventCreateRouteComponent,
     HomeNursesCatalogRouteComponent,

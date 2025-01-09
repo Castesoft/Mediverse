@@ -4,7 +4,7 @@
       <ng-template #eventContent let-arg>
         <div class="d-flex flex-grow-1 flex-column px-1 {{ arg.event.extendedProps.bgColor }}">
           <div class="fw-bold text-white">
-            @if (accountService.hasRole(['Doctor'])) {
+            @if (accountService.hasRole([ 'Doctor' ])) {
               {{ arg.event.extendedProps.patient }}
             } @else {
               {{ arg.event.extendedProps.doctor }}

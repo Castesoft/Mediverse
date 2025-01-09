@@ -13,47 +13,57 @@ import { MainAsideComponent } from 'src/app/_shared/template/components/main-asi
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { AccountBillingComponent } from 'src/app/account/components/account-billing/account-billing.component';
 import { AccountCardComponent } from 'src/app/account/components/account-card.component';
-import { AccountClinicalHistoryComponent } from 'src/app/account/components/account-clinical-history/account-clinical-history.component';
+import {
+  AccountClinicalHistoryComponent
+} from 'src/app/account/components/account-clinical-history/account-clinical-history.component';
 import { AccountInsurancesComponent } from 'src/app/account/components/account-insurances/account-insurances.component';
 import { AccountOverviewComponent } from 'src/app/account/components/account-overview/account-overview.component';
 import { AccountPaymentsComponent } from 'src/app/account/components/account-payments/account-payments.component';
 import { AccountSchedulesComponent } from 'src/app/account/components/account-schedules/account-schedules.component';
 import { AccountSettingsComponent } from 'src/app/account/components/account-settings/account-settings.component';
-import { SatisfactionSurveyModalComponent } from 'src/app/account/components/satisfaction-survey-modal/satisfaction-survey-modal.component';
+import {
+  SatisfactionSurveyModalComponent
+} from 'src/app/account/components/satisfaction-survey-modal/satisfaction-survey-modal.component';
 
 @Component({
   selector: 'account-main-route',
   template: `
-  <div root>
-    <div page>
-      @if (!sidebar.opened()) {
-        <div mainAside></div>
-      }
-      <div wrapper>
-        <div header></div>
-        <div content>
-          <div toolbar>
-            <div toolbarContainer>
-              <div toolbarInfo>
-                <h1 toolbarTitle [title]="'Mi Cuenta'"></h1>
-                <ul breadcrumb>
-                  <li breadcrumbLink [label]="'Inicio'" [url]="'/'"></li>
-                  <li breadcrumbLink [label]="'Cuenta'" [url]="'/cuenta'"></li>
-                  @if(label){<li breadcrumbLink [label]="label" [active]="true">{{label}}</li>}
-                </ul>
+    <div root>
+      <div page>
+        @if (!sidebar.opened()) {
+          <div mainAside></div>
+        }
+        <div wrapper>
+          <div header></div>
+          <div content>
+            <div toolbar>
+              <div toolbarContainer>
+                <div toolbarInfo>
+                  <h1 toolbarTitle [title]="'Mi Cuenta'"></h1>
+                  <ul breadcrumb>
+                    <li breadcrumbLink [label]="'Inicio'" [url]="'/'"></li>
+                    <li breadcrumbLink [label]="'Cuenta'" [url]="'/cuenta'"></li>
+                    @if (label) {
+                      <li breadcrumbLink [label]="label" [active]="true">{{ label }}</li>
+                    }
+                  </ul>
+                </div>
+                <div toolbarActions></div>
               </div>
-              <div toolbarActions></div>
+            </div>
+            <div post>
+              @if (account && label !== 'Configuración') {
+                <div card>
+                  <div accountCard [account]="account"></div>
+                </div>
+              }
+              <router-outlet></router-outlet>
             </div>
           </div>
-          <div post>
-            @if(account && label !== 'Configuración'){<div card><div accountCard [account]="account"></div></div>}
-            <router-outlet></router-outlet>
-          </div>
+          <div footer></div>
         </div>
-        <div footer></div>
       </div>
-    </div>
-  </div>`,
+    </div>`,
   standalone: false,
 })
 export class AccountComponent implements OnInit {
@@ -74,20 +84,20 @@ export class AccountComponent implements OnInit {
         this.satisfactionSurveys = surveys;
 
         if (this.satisfactionSurveys.length > 0 && false) {
-        this.bsModalService.show(SatisfactionSurveyModalComponent, {
-          initialState: {
-            satisfactionSurvey: this.satisfactionSurveys[0],
-          },
-        });
+          this.bsModalService.show(SatisfactionSurveyModalComponent, {
+            initialState: {
+              satisfactionSurvey: this.satisfactionSurveys[0],
+            },
+          });
 
-        this.bsModalService.onHide.subscribe(() => {
-          this.satisfactionSurveys.shift();
-          if (this.satisfactionSurveys.length > 0) {
-            this.bsModalService.show(SatisfactionSurveyModalComponent, {
-              initialState: {
-                satisfactionSurvey: this.satisfactionSurveys[0],
-              },
-            });
+          this.bsModalService.onHide.subscribe(() => {
+            this.satisfactionSurveys.shift();
+            if (this.satisfactionSurveys.length > 0) {
+              this.bsModalService.show(SatisfactionSurveyModalComponent, {
+                initialState: {
+                  satisfactionSurvey: this.satisfactionSurveys[0],
+                },
+              });
             }
           });
         }
@@ -109,30 +119,44 @@ export const itemResolver: ResolveFn<Account | null> = (route, state) => {
 };
 
 @NgModule({
-  imports: [RouterModule.forChild([
-    { path: '', component: AccountComponent, resolve: { item: itemResolver },
+  imports: [ RouterModule.forChild([
+    {
+      path: '', component: AccountComponent, resolve: { item: itemResolver },
       children: [
-        { path: '', component: AccountOverviewComponent, data: { breadcrumb: 'Mi Cuenta', }, title: 'Mi Cuenta',  },
-        { path: 'expediente', component: AccountClinicalHistoryComponent, data: { breadcrumb: 'Historial Clínico', }, title: 'Historial Clínico',  },
-        { path: 'configuracion', component: AccountSettingsComponent, data: { breadcrumb: 'Configuración', }, title: 'Configuración', },
-        { path: 'facturacion', component: AccountBillingComponent, data: { breadcrumb: 'Facturación', }, title: 'Facturación', },
+        { path: '', component: AccountOverviewComponent, data: { breadcrumb: 'Mi Cuenta', }, title: 'Mi Cuenta', },
+        {
+          path: 'expediente',
+          component: AccountClinicalHistoryComponent,
+          data: { breadcrumb: 'Historial Clínico', },
+          title: 'Historial Clínico',
+        },
+        {
+          path: 'configuracion',
+          component: AccountSettingsComponent,
+          data: { breadcrumb: 'Configuración', },
+          title: 'Configuración',
+        },
+        {
+          path: 'facturacion',
+          component: AccountBillingComponent,
+          data: { breadcrumb: 'Facturación', },
+          title: 'Facturación',
+        },
         { path: 'pagos', component: AccountPaymentsComponent, data: { breadcrumb: 'Pagos', }, title: 'Pagos', },
         { path: 'seguros', component: AccountInsurancesComponent, data: { breadcrumb: 'Seguros', }, title: 'Seguros', },
         { path: 'agenda', component: AccountSchedulesComponent, data: { breadcrumb: 'Horarios', }, title: 'Horarios', },
       ],
     },
-  ])],
-  exports: [RouterModule]
+  ]) ],
+  exports: [ RouterModule ]
 })
 export class AccountRoutingModule {}
 
 @NgModule({
-  declarations: [
-    AccountComponent
-  ],
+  declarations: [ AccountComponent ],
   imports: [
     AccountRoutingModule, BootstrapModule, CdkModule, RouterModule, CommonModule,
     TemplateModule, AccountCardComponent, MainAsideComponent,
   ]
 })
-export class AccountModule { }
+export class AccountModule {}

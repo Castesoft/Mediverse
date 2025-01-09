@@ -35,19 +35,29 @@ import { HomeOrdersCatalogRouteComponent } from 'src/app/home/routes/orders/home
 import { HomeOrderCreateRouteComponent } from 'src/app/home/routes/orders/home-order-create-route.component';
 import { HomeOrderDetailRouteComponent } from 'src/app/home/routes/orders/home-order-detail-route.component';
 import { HomeOrderEditRouteComponent } from 'src/app/home/routes/orders/home-order-edit-route.component';
-import { HomePrescriptionsCatalogRouteComponent } from 'src/app/home/routes/prescriptions/home-prescriptions-catalog-route.component';
-import { HomePrescriptionCreateRouteComponent } from 'src/app/home/routes/prescriptions/home-prescription-create-route.component';
-import { HomePrescriptionDetailRouteComponent } from 'src/app/home/routes/prescriptions/home-prescription-detail-route.component';
-import { HomePrescriptionEditRouteComponent } from 'src/app/home/routes/prescriptions/home-prescription-edit-route.component';
+import {
+  HomePrescriptionsCatalogRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescriptions-catalog-route.component';
+import {
+  HomePrescriptionCreateRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescription-create-route.component';
+import {
+  HomePrescriptionDetailRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescription-detail-route.component';
+import {
+  HomePrescriptionEditRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescription-edit-route.component';
 import { HomeClinicCreateRouteComponent } from 'src/app/home/routes/clinics/home-clinic-create-route.component';
 import { HomeClinicDetailRouteComponent } from 'src/app/home/routes/clinics/home-clinic-detail-route.component';
 import { HomeClinicEditRouteComponent } from 'src/app/home/routes/clinics/home-clinic-edit-route.component';
 import { HomeNurseCreateRouteComponent } from 'src/app/home/routes/nurses/home-nurse-create-route.component';
 import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nurse-edit-route.component';
+import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharmacy-catalog-route.component";
+import { PharmaciesService } from "../pharmacies/pharmacies.config";
 
 
 @NgModule({
-  imports: [RouterModule.forChild([
+  imports: [ RouterModule.forChild([
     {
       path: '',
       component: HomeComponent,
@@ -56,7 +66,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           path: 'search',
           loadChildren: () => import('../search/search.config').then(x => x.SearchModule)
         },
-        // pacientes
+        // Pacientes
         {
           path: 'pacientes',
           component: HomePatientsCatalogRouteComponent,
@@ -79,7 +89,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(PatientsService), },
           title: titleDetailResolver(PatientsService, 'edit', 'fullName'),
         },
-        // citas
+        // Citas
         {
           path: 'citas',
           component: HomeEventsCatalogRouteComponent,
@@ -102,7 +112,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(EventsService), },
           title: titleDetailResolver(EventsService, 'edit'),
         },
-        // servicios
+        // Servicios
         {
           path: 'servicios',
           component: HomeServicesCatalogRouteComponent,
@@ -125,7 +135,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(ServicesService), },
           title: titleDetailResolver(ServicesService, 'edit'),
         },
-        // productos
+        // Productos
         {
           path: 'productos',
           component: HomeProductsCatalogRouteComponent,
@@ -148,7 +158,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(ProductsService), },
           title: titleDetailResolver(ProductsService, 'edit'),
         },
-        // pedidos
+        // Pedidos
         {
           path: 'pedidos',
           component: HomeOrdersCatalogRouteComponent,
@@ -171,7 +181,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(OrdersService), },
           title: titleDetailResolver(OrdersService, 'edit'),
         },
-        // recetas
+        // Recetas
         {
           path: 'recetas',
           component: HomePrescriptionsCatalogRouteComponent,
@@ -193,7 +203,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(PrescriptionsService), },
           title: titleDetailResolver(PrescriptionsService, 'edit'),
         },
-        // clinicas
+        // Clinicas
         {
           path: 'clinicas',
           component: HomeClinicsCatalogRouteComponent,
@@ -216,7 +226,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(ClinicsService), },
           title: titleDetailResolver(ClinicsService, 'edit'),
         },
-        // especialistas
+        // Especialistas
         {
           path: 'especialistas',
           component: HomeNursesCatalogRouteComponent,
@@ -239,10 +249,16 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
           resolve: { item: createItemResolver(NursesService), },
           title: titleDetailResolver(NursesService, 'edit'),
         },
+        // Farmacia
+        {
+          path: "farmacia",
+          component: HomePharmacyCatalogRouteComponent,
+          title: titleCatalogResolver(PharmaciesService)
+        },
       ],
     },
-  ])],
-  exports: [RouterModule]
+  ]) ],
+  exports: [ RouterModule ]
 })
 export class HomeRoutingModule {
 }

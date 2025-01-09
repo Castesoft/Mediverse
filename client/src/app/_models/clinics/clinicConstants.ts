@@ -5,7 +5,17 @@ import { NamingSubject } from "src/app/_models/base/namingSubject";
 import Clinic from "src/app/_models/clinics/clinic";
 import ClinicParams from "src/app/_models/clinics/clinicParams";
 import { FormInfo } from "src/app/_models/forms/formTypes";
-import { PartialCellsOf, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellName, tableCellCode, tableCellVisible, tableCellId, TableCellItem } from "src/app/_models/tables/tableCellItem";
+import {
+  PartialCellsOf,
+  tableCellCreatedAt,
+  tableCellDescription,
+  tableCellEnabled,
+  tableCellName,
+  tableCellCode,
+  tableCellVisible,
+  tableCellId,
+  TableCellItem
+} from "src/app/_models/tables/tableCellItem";
 
 export const clinicDictionary: NamingSubject = new NamingSubject(
   'feminine',
@@ -13,11 +23,10 @@ export const clinicDictionary: NamingSubject = new NamingSubject(
   'clínicas',
   'Clínicas',
   'clinics',
-  ['inicio']
+  [ 'inicio' ]
 );
 
 export const clinicColumns: Column[] = [
-  columnId,
   columnName,
   new Column('street', 'Calle'),
   new Column('exteriorNumber', 'Número exterior'),

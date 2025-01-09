@@ -16,6 +16,7 @@ import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { PatientsService } from "src/app/patients/patients.config";
+import { UserTableCellComponent } from "../../users/components/user-table-cell.component";
 
 @Component({
   selector: 'div[patientsTableMenu]',
@@ -91,6 +92,7 @@ export class PatientsTableMenuComponent
     MaterialModule,
     CommonModule,
     PatientsTableMenuComponent,
+    UserTableCellComponent,
   ],
 })
 export class PatientsTableComponent

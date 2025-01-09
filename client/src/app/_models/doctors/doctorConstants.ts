@@ -18,4 +18,4 @@ export const doctorFormInfo: FormInfo<Doctor> = {
   sex: { label: 'Sexo', type: 'select' },
   specialty: { label: 'Especialidad', type: 'text' },
   username: { label: 'Nombre de usuario', type: 'text' },
-} as FormInfo<Doctor>;
+} as unknown as FormInfo<Doctor>;

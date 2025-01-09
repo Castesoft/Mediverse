@@ -11,12 +11,9 @@ import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config
   templateUrl: './home-prescriptions-catalog-route.component.html',
   standalone: false,
 })
-export class HomePrescriptionsCatalogRouteComponent
-  extends BaseRouteCatalog<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
-{
+export class HomePrescriptionsCatalogRouteComponent extends BaseRouteCatalog<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> {
 
   constructor() {
     super(PrescriptionsService, 'prescriptions');
   }
-
 }

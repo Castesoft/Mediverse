@@ -8,16 +8,11 @@ import { NursesService } from "src/app/nurses/nurses.config";
 @Component({
   host: { class: 'card card-flush' },
   selector: 'div[homeNursesCatalogRoute]',
-  // selector: 'home-nurses-catalog-route',
   templateUrl: './home-nurses-catalog-route.component.html',
   standalone: false,
 })
-export class HomeNursesCatalogRouteComponent
-  extends BaseRouteCatalog<Nurse, NurseParams, NurseFiltersForm, NursesService>
-{
-
+export class HomeNursesCatalogRouteComponent extends BaseRouteCatalog<Nurse, NurseParams, NurseFiltersForm, NursesService> {
   constructor() {
     super(NursesService, 'nurses');
   }
-
 }

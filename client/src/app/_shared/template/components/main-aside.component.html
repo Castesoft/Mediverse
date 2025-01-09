@@ -1,9 +1,9 @@
 <div style="position: fixed">
   <div class="aside-logo flex-column-auto px-10 pt-9 pb-5">
     <a [routerLink]="['/']">
-      <img alt="Logo" class="max-h-50px logo-default theme-light-show" src="media/logos/logo-default.svg" />
-      <img alt="Logo" class="max-h-50px logo-default theme-dark-show" src="media/logos/logo-default-dark.svg" />
-      <img alt="Logo" class="max-h-50px logo-minimize" src="media/logos/logo-minimize.svg" />
+      <img alt="Logo" class="max-h-50px logo-default theme-light-show" src="media/logos/logo-default.svg"/>
+      <img alt="Logo" class="max-h-50px logo-default theme-dark-show" src="media/logos/logo-default-dark.svg"/>
+      <img alt="Logo" class="max-h-50px logo-minimize" src="media/logos/logo-minimize.svg"/>
     </a>
   </div>
   <div class="aside-menu flex-column-fluid ps-3 pe-1">
@@ -31,7 +31,7 @@
         </div>
         <div class="menu-item">
           <a class="menu-link" [routerLink]="['/inicio/citas']" [routerLinkActive]="'active'"
-            [ariaCurrentWhenActive]="'page'">
+             [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-calendar-8 fs-2">
                 <span class="path1"></span>
@@ -60,7 +60,7 @@
         </div>
         <div class="menu-item">
           <a class="menu-link" [routerLink]="['/inicio/pacientes']" [routerLinkActive]="'active'"
-            [ariaCurrentWhenActive]="'page'">
+             [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-profile-user">
                 <span class="path1"></span>
@@ -74,7 +74,7 @@
         </div>
         <div class="menu-item">
           <a class="menu-link" [routerLink]="['/inicio/productos']" [routerLinkActive]="'active'"
-            [ariaCurrentWhenActive]="'page'">
+             [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-brifecase-tick fs-2">
                 <span class="path1"></span>
@@ -87,7 +87,7 @@
         </div>
         <div class="menu-item">
           <a class="menu-link" [routerLink]="['/inicio/servicios']" [routerLinkActive]="'active'"
-            [ariaCurrentWhenActive]="'page'">
+             [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-brifecase-tick fs-2">
                 <span class="path1"></span>
@@ -100,7 +100,7 @@
         </div>
         <div class="menu-item">
           <a class="menu-link" [routerLink]="['/inicio/especialistas']" [routerLinkActive]="'active'"
-            [ariaCurrentWhenActive]="'page'">
+             [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-people fs-2">
                 <span class="path1"></span>
@@ -115,7 +115,7 @@
         </div>
         <div class="menu-item">
           <a class="menu-link" [routerLink]="['/inicio/clinicas']" [routerLinkActive]="'active'"
-            [ariaCurrentWhenActive]="'page'">
+             [ariaCurrentWhenActive]="'page'">
             <span class="menu-icon">
               <i class="ki-duotone ki-map fs-2">
                 <span class="path1"></span>
@@ -171,6 +171,26 @@
             </i>
           </span>
           <span class="menu-title">Facturación</span>
+        </a>
+      </div>
+      <div class="menu-item pt-5">
+        <div class="menu-content">
+          <span class="fw-bold text-muted text-uppercase fs-7">Farmacia</span>
+        </div>
+      </div>
+      <div class="menu-item">
+        <a [routerLink]="['/inicio/farmacia']" class="menu-link">
+          <span class="menu-icon">
+            <i class="ki-duotone ki-bill">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span class="path3"></span>
+              <span class="path4"></span>
+              <span class="path5"></span>
+              <span class="path6"></span>
+            </i>
+          </span>
+          <span class="menu-title">Medicamentos</span>
         </a>
       </div>
       <div class="menu-item">

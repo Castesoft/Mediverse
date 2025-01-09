@@ -15,7 +15,7 @@ import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { EventsCalendarComponent } from "src/app/events/components/events-calendar.component";
-import { EventsTableComponent } from "src/app/events/components/events-table.component";
+import { EventsTableComponent } from "src/app/events/components/events-table/events-table.component";
 import { EventsService } from "src/app/events/events.config";
 
 @Component({

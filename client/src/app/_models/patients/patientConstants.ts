@@ -18,11 +18,36 @@ export const sexOptions: SelectOption[] = [
 export const patientFormInfo: FormInfo<Patient> = {
   ...baseInfo,
 
-  firstName: { label: 'Nombre(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ], orientation: 'inline', },
-  lastName: { label: 'Apellido(s)', type: 'text', validators: [ Validators.required, Validators.maxLength(500), ], orientation: 'inline', },
-  dateOfBirth: { label: 'Fecha de nacimiento', type: 'date', validators: [ Validators.required, Validators.maxLength(100), ], },
-  sex: { label: 'Sexo', type: 'radio', validators: [ Validators.required, ], selectOptions: sexOptions, orientation: 'inline', showCodeSpan: false, },
-  email: { label: 'Correo electrónico', type: 'email', validators: [ Validators.required, Validators.email, Validators.maxLength(500), ] },
+  firstName: {
+    label: 'Nombre(s)',
+    type: 'text',
+    validators: [ Validators.required, Validators.maxLength(500), ],
+    orientation: 'inline',
+  },
+  lastName: {
+    label: 'Apellido(s)',
+    type: 'text',
+    validators: [ Validators.required, Validators.maxLength(500), ],
+    orientation: 'inline',
+  },
+  dateOfBirth: {
+    label: 'Fecha de nacimiento',
+    type: 'date',
+    validators: [ Validators.required, Validators.maxLength(100), ],
+  },
+  sex: {
+    label: 'Sexo',
+    type: 'radio',
+    validators: [ Validators.required, ],
+    selectOptions: sexOptions,
+    orientation: 'inline',
+    showCodeSpan: false,
+  },
+  email: {
+    label: 'Correo electrónico',
+    type: 'email',
+    validators: [ Validators.required, Validators.email, Validators.maxLength(500), ]
+  },
   phoneNumber: { label: 'Teléfono', type: 'tel', validators: [ Validators.required, Validators.maxLength(100), ] },
   recommendedBy: { label: 'Recomendado por', type: 'text', validators: [ Validators.maxLength(500), ] },
   select: { label: 'Paciente', type: 'select', },
@@ -33,13 +58,11 @@ export const patientFiltersFormInfo: FormInfo<PatientParams> = {
 } as FormInfo<PatientParams>;
 
 export const patientColumns: Column[] = [
-  columnId,
   new Column('fullName', 'Nombre'),
-  new Column('email', 'Correo electrónico'),
-  new Column('phoneNumber', 'Teléfono'),
   new Column('age', 'Edad'),
   new Column('sex', 'Sexo'),
-  new Column('dateOfBirth', 'Fecha de nacimiento', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('phoneNumber', 'Teléfono'),
+  new Column('dateOfBirth', 'Fecha de nacimiento', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('taxId', 'RFC'),
   new Column('eventsCount', 'Citas'),
   new Column('prescriptionsCount', 'Recetas'),
@@ -53,12 +76,12 @@ export const patientDictionary: NamingSubject = new NamingSubject(
   'pacientes',
   'Pacientes',
   'patients',
-  ['inicio']
+  [ 'inicio' ]
 );
 
 export const patientCells: PartialCellsOf<Patient> = {
   ...baseTableCells,
-  age: new TableCellItem<number, 'age'>('age', 'number', { unit: 'años', }),
+  age: new TableCellItem<number, 'age'>('age', 'badge', { unit: 'años', color: 'secondary' }),
   city: new TableCellItem<string, 'city'>('city', 'string'),
   country: new TableCellItem<string, 'country'>('country', 'string'),
   dateOfBirth: new TableCellItem<Date, 'dateOfBirth'>('dateOfBirth', 'date'),
@@ -69,8 +92,8 @@ export const patientCells: PartialCellsOf<Patient> = {
   eventsCount: new TableCellItem<number, 'eventsCount'>('eventsCount', 'number'),
   prescriptionsCount: new TableCellItem<number, 'prescriptionsCount'>('prescriptionsCount', 'number'),
   ordersCount: new TableCellItem<number, 'ordersCount'>('ordersCount', 'number'),
-  sex: new TableCellItem<string, 'sex'>('sex', 'string'),
-  phoneNumber: new TableCellItem<string, 'phoneNumber'>('phoneNumber', 'string'),
+  sex: new TableCellItem<string, 'sex'>('sex', 'sex'),
+  phoneNumber: new TableCellItem<string, 'phoneNumber'>('phoneNumber', 'phoneNumber'),
   taxId: new TableCellItem<string, 'taxId'>('taxId', 'string'),
 } as PartialCellsOf<Patient>;
 

@@ -22,7 +22,7 @@ export default class Event extends Entity {
   patient: Patient = new Patient();
   doctor: Doctor = new Doctor();
   service: Service = new Service();
-  clinic: Address = new Address();
+  clinic?: Address | undefined = new Address();
   nurses: Nurse[] = [];
   nurseOptions: SelectOption[] = [];
   payments: Payment[] = [];

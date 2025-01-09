@@ -56,8 +56,7 @@ import { calcDateDiff } from 'src/app/_utils/util';
 })
 export class EventsCalendarComponent
   extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
-  implements OnInit, OnDestroy, TableInputSignals<Event, EventParams>
-{
+  implements OnInit, OnDestroy, TableInputSignals<Event, EventParams> {
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -103,7 +102,6 @@ export class EventsCalendarComponent
       console.log('eventsCalendar', this.fullcalendar());
 
 
-
       this.fullcalendar().getApi().destroy();
       this.fullcalendar().getApi().render();
     });
@@ -134,8 +132,8 @@ export class EventsCalendarComponent
     if (dateFrom === null) throw new Error('dateFrom is required');
     if (dateTo === null) throw new Error('dateTo is required');
 
-    const colors = ['bg-primary', 'bg-info', 'bg-success', 'bg-warning'];
-    const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const colors = [ 'bg-primary', 'bg-info', 'bg-success', 'bg-warning' ];
+    const asciiSum = [ ...name ].reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const classIndex = asciiSum % colors.length;
     const baseColor = colors[classIndex];
 

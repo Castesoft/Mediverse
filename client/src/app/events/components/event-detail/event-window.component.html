@@ -1,311 +1,343 @@
 ﻿@if (item()) {
-<div class="fs-6 d-flex flex-column">
-  @if (summaryMode() === true) {
-    <div eventSummary [(item)]="item" [(summaryMode)]="summaryMode" [(orientation)]="summaryOrientation"
-      [(key)]="key" [(title)]="title" [(use)]="use" [(view)]="view"></div>
-  } @else {
-    <div class="row">
-      <div class="col-3">
-        <div eventSummary [(item)]="item" [(summaryMode)]="summaryMode" [(orientation)]="summaryOrientation"
-          [(key)]="key" [(title)]="title" [(use)]="use" [(view)]="view"></div>
-      </div>
-      <div class="col-9">
-        <div class="card mb-xl-8">
-          <div class="card-header card-header-stretch border-bottom border-gray-200">
-            <h3 class="card-title">
-              <span class="card-label fw-bolder text-gray-900 fs-2">
-                @if (upperTab() === 'evolucion') {
-                  Evolucion del paciente
-                } @else if (upperTab() === 'recetas') {
-                  Recetas
-                } @else if (upperTab() === 'proximosPasos') {
-                  Próximos pasos
-                }
-              </span>
-            </h3>
-            <div class="card-toolbar m-0">
-              <ul
-              class="nav nav-stretch nav-line-tabs border-transparent"
-              role="tablist"
-              >
-              <li class="nav-item" role="presentation">
-                <a
-                  class="nav-link fs-5 fw-semibold me-3"
-                  [routerLink]="[]"
-                  [routerLinkActive]="'active'"
-                  [queryParams]="{ superiorTab: 'evolucion' }"
-                  [queryParamsHandling]="'merge'"
-                  (click)="upperTab.set('evolucion')"
-                >Evolución</a>
-              </li>
-              <li class="nav-item" role="presentation">
-                <a
-                  class="nav-link fs-5 fw-semibold me-3"
-                  [routerLink]="[]"
-                  [routerLinkActive]="'active'"
-                  [queryParams]="{ superiorTab: 'recetas' }"
-                  [queryParamsHandling]="'merge'"
-                  (click)="upperTab.set('recetas')"
-                  >Recetas</a>
-              </li>
-              <li class="nav-item" role="presentation">
-                <a
-                  class="nav-link fs-5 fw-semibold"
-                  [routerLink]="[]"
-                  [routerLinkActive]="'active'"
-                  [queryParams]="{ superiorTab: 'proximosPasos' }"
-                  [queryParamsHandling]="'merge'"
-                  (click)="upperTab.set('proximosPasos')"
-                  >Próximos pasos</a>
-              </li>
-              </ul>
-            </div>
-          </div>
-          <div class="separator mb-3 opacity-75"></div>
-          <div class="card-body">
-
-            @switch(upperTab()) {
-              @case('evolucion') {
-
-                @if(evolutionForm.error !== null) {
-                  <div errorsAlert3 [(error)]="evolutionForm.error"></div>
-                }
-
-                <form [id]="evolutionForm.id" (ngSubmit)="onSubmitEvolution()">
-                  @if (isEvolutionEditing() === true) {
-                    <quill-editor placeholder="Escribe aquí la evolución del paciente..." [trimOnValidation]="true" [formControl]="evolutionForm.controls.content"></quill-editor>
-                    <button type="submit" class="btn btn-primary mt-3 float-end" [attr.form]="evolutionForm.id">Guardar</button>
-                  } @else {
-                    <quill-editor placeholder="Haz click en editar para agregar la evolución del paciente." [trimOnValidation]="true" [formControl]="evolutionForm.controls.content"
-                      [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
-                    ></quill-editor>
-                    <button type="button" class="btn btn-primary mt-3 float-end" (click)="isEvolutionEditing.set(true)">Editar</button>
+  <div class="fs-6 d-flex flex-column">
+    @if (summaryMode) {
+      <div eventSummary [(item)]="item" [(summaryMode)]="summaryMode" [(orientation)]="summaryOrientation"
+           [(key)]="key" [(title)]="title" [(use)]="use" [(view)]="view"></div>
+    } @else {
+      <div class="row">
+        <div class="col-3">
+          <div eventSummary [(item)]="item" [(summaryMode)]="summaryMode" [(orientation)]="summaryOrientation"
+               [(key)]="key" [(title)]="title" [(use)]="use" [(view)]="view"></div>
+        </div>
+        <div class="col-9">
+          <div class="card mb-xl-8">
+            <div class="card-header card-header-stretch border-bottom border-gray-200">
+              <h3 class="card-title">
+                <span class="card-label fw-bolder text-gray-900 fs-2">
+                  @if (upperTab === 'evolucion') {
+                    Evolucion del paciente
+                  } @else if (upperTab === 'recetas') {
+                    Recetas
+                  } @else if (upperTab === 'proximosPasos') {
+                    Próximos pasos
                   }
-                </form>
-              }
-              @case('recetas') {
-                @if (item()!!.prescriptions && item()!!.prescriptions!.length > 0) {
-                  <div tableWrapper>
-                    @defer(){<table
-                      prescriptionsTable
-                      [(data)]="prescriptions"
+                </span>
+              </h3>
+              <div class="card-toolbar m-0">
+                <ul
+                  class="nav nav-stretch nav-line-tabs border-transparent"
+                  role="tablist"
+                >
+                  <li class="nav-item" role="presentation">
+                    <a
+                      class="nav-link fs-5 fw-semibold me-3"
+                      [routerLink]="[]"
+                      [routerLinkActive]="'active'"
+                      [queryParams]="{ superiorTab: 'evolucion' }"
+                      [queryParamsHandling]="'merge'"
+                      (click)="upperTab = 'evolucion'"
+                    >
+                      Evolución
+                    </a>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <a
+                      class="nav-link fs-5 fw-semibold me-3"
+                      [routerLink]="[]"
+                      [routerLinkActive]="'active'"
+                      [queryParams]="{ superiorTab: 'recetas' }"
+                      [queryParamsHandling]="'merge'"
+                      (click)="upperTab = 'recetas'"
+                    >
+                      Recetas
+                    </a>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <a
+                      class="nav-link fs-5 fw-semibold"
+                      [routerLink]="[]"
+                      [routerLinkActive]="'active'"
+                      [queryParams]="{ superiorTab: 'proximosPasos' }"
+                      [queryParamsHandling]="'merge'"
+                      (click)="upperTab = 'proximosPasos'"
+                    >
+                      Próximos pasos
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="separator mb-3 opacity-75"></div>
+            <div class="card-body">
+
+              @switch (upperTab) {
+                @case ('evolucion') {
+
+                  @if (evolutionForm.error !== null) {
+                    <div errorsAlert3 [(error)]="evolutionForm.error"></div>
+                  }
+
+                  <form [id]="evolutionForm.id" (ngSubmit)="onSubmitEvolution()">
+                    @if (isEvolutionEditing) {
+                      <quill-editor placeholder="Escribe aquí la evolución del paciente..." [trimOnValidation]="true"
+                                    [formControl]="evolutionForm.controls.content"></quill-editor>
+                      <button type="submit" class="btn btn-primary mt-3 float-end" [attr.form]="evolutionForm.id">
+                        Guardar
+                      </button>
+                    } @else {
+                      <quill-editor placeholder="Haz click en editar para agregar la evolución del paciente."
+                                    [trimOnValidation]="true" [formControl]="evolutionForm.controls.content"
+                                    [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;"
+                                    [readOnly]="true"
+                      ></quill-editor>
+                      <button type="button" class="btn btn-primary mt-3 float-end"
+                              (click)="isEvolutionEditing = true">Editar
+                      </button>
+                    }
+                  </form>
+                }
+                @case ('recetas') {
+                  @if (item()!!.prescriptions && item()!!.prescriptions!.length > 0) {
+                    <div tableWrapper>
+                      @defer () {
+                        <table
+                          prescriptionsTable
+                          [(data)]="prescriptions"
+                          [(item)]="prescriptionItem"
+                          [(key)]="prescriptionKey"
+                          [(view)]="prescriptionView"
+                          [(params)]="prescriptionParams"
+                          [(isCompact)]="compact.isCompact"
+                          [(mode)]="prescriptionsCatalogMode"
+                        ></table>
+                      }
+                    </div>
+                  } @else {
+                    <div class="text-center py-5">
+                      <i class="fas fa-prescription fa-3x text-muted mb-3"></i>
+                      <p class="fs-5 text-muted">Aún no existen recetas para esta cita.</p>
+                    </div>
+                  }
+
+                  <h2 class="mt-5 mb-3 text-gray-800">Nueva receta</h2>
+
+                  @defer () {
+                    <div
+                      prescriptionForm
                       [(item)]="prescriptionItem"
                       [(key)]="prescriptionKey"
+                      [(use)]="prescriptionUse"
                       [(view)]="prescriptionView"
-                      [(params)]="prescriptionParams"
-                      [(isCompact)]="compact.isCompact"
-                      [(mode)]="prescriptionsCatalogMode"
-                    ></table>}
-                  </div>
-                } @else {
-                  <div class="text-center py-5">
-                    <i class="fas fa-prescription fa-3x text-muted mb-3"></i>
-                    <p class="fs-5 text-muted">Aún no existen recetas para esta cita.</p>
-                  </div>
-                }
-
-                <h2 class="mt-5 mb-3 text-gray-800">Nueva receta</h2>
-
-                @defer(){<div
-                  prescriptionForm
-                  [(item)]="prescriptionItem"
-                  [(key)]="prescriptionKey"
-                  [(use)]="prescriptionUse"
-                  [(view)]="prescriptionView"
-                  ></div>}
-              }
-              @case('proximosPasos') {
-
-                @if(nextStepForm.error !== null) {
-                  <div errorsAlert3 [(error)]="nextStepForm.error"></div>
-                }
-
-                <form [id]="nextStepForm.id" (ngSubmit)="onSubmitNextSteps()">
-                  @if (isNextStepsEditing() === true) {
-                    <quill-editor placeholder="Escribe aquí los próximos pasos del paciente..." [trimOnValidation]="true" [formControl]="nextStepForm.controls.content"></quill-editor>
-                    <button type="submit" class="btn btn-primary mt-3 float-end" [attr.form]="nextStepForm.id">Guardar</button>
-                  } @else {
-                    <quill-editor placeholder="Haz click en editar para agregar los próximos pasos del paciente." [trimOnValidation]="true" [formControl]="nextStepForm.controls.content"
-                      [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;" [readOnly]="true"
-                    ></quill-editor>
-                    <button type="button" class="btn btn-primary mt-3 float-end" (click)="isNextStepsEditing.set(true)">Editar</button>
+                    ></div>
                   }
-                </form>
-              }
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  }
+                }
+                @case ('proximosPasos') {
+                  @if (nextStepForm.error !== null) {
+                    <div errorsAlert3 [(error)]="nextStepForm.error"></div>
+                  }
 
-  <div class="card mb-xl-8">
-    <div class="card-header card-header-stretch border-bottom border-gray-200">
-      <h3 class="card-title">
-        <span class="card-label fw-bolder text-gray-900 fs-2">Detalles</span>
-      </h3>
-      <div class="card-toolbar m-0">
-        <ul
-        class="nav nav-stretch nav-line-tabs border-transparent"
-        role="tablist"
-        >
-        <li class="nav-item" role="presentation">
-          <a
-            class="nav-link fs-5 fw-semibold me-3"
-            [routerLink]="[]"
-            [routerLinkActive]="'active'"
-            [queryParams]="{ inferiorTab: 'general' }"
-            [queryParamsHandling]="'merge'"
-            (click)="lowerTab.set('general')"
-            >General</a>
-        </li>
-        <li class="nav-item" role="presentation">
-          <a
-            class="nav-link fs-5 fw-semibold me-3"
-            [routerLink]="[]"
-            [routerLinkActive]="'active'"
-            [queryParams]="{ inferiorTab: 'pagos' }"
-            [queryParamsHandling]="'merge'"
-            (click)="lowerTab.set('pagos')"
-            >Pagos</a>
-        </li>
-        <li class="nav-item" role="presentation">
-          <a
-            class="nav-link fs-5 fw-semibold"
-            [routerLink]="[]"
-            [routerLinkActive]="'active'"
-            [queryParams]="{ inferiorTab: 'especialistas' }"
-            [queryParamsHandling]="'merge'"
-            (click)="lowerTab.set('especialistas')"
-            >Especialistas</a>
-        </li>
-        </ul>
-      </div>
-    </div>
-    <div class="separator mb-3 opacity-75"></div>
-    <div class="card-body">
-      @if (lowerTab() === 'general') {
-        <div class="row mb-6">
-          <div class="col-6">
-            <h5 class="text-gray-500 mb-3">Clínica</h5>
-            <div>
-              @if (item()!.clinic) {
-                {{ item()!.clinic.name }}
-                <br>
-                {{ item()!.clinic.street }} {{ item()!.clinic.exteriorNumber }}, {{ item()!.clinic.neighborhood }}
-              } @else {
-                Sin clínica asignada
-              }
-            </div>
-          </div>
-          <div class="col-6">
-            <h5 class="text-gray-500 mb-3">Aseguradora</h5>
-            <div>
-              @if (item()!.medicalInsuranceCompany) {
-                {{ item()!.medicalInsuranceCompany?.name }}
-              } @else {
-                Sin aseguradora
+                  <form [id]="nextStepForm.id" (ngSubmit)="onSubmitNextSteps()">
+                    @if (isNextStepsEditing) {
+                      <quill-editor placeholder="Escribe aquí los próximos pasos del paciente..."
+                                    [trimOnValidation]="true"
+                                    [formControl]="nextStepForm.controls.content"></quill-editor>
+                      <button type="submit" class="btn btn-primary mt-3 float-end" [attr.form]="nextStepForm.id">
+                        Guardar
+                      </button>
+                    } @else {
+                      <quill-editor placeholder="Haz click en editar para agregar los próximos pasos del paciente."
+                                    [trimOnValidation]="true" [formControl]="nextStepForm.controls.content"
+                                    [modules]="{toolbar: false}" theme="bubble" style="width: 100%; border: none;"
+                                    [readOnly]="true"
+                      ></quill-editor>
+                      <button type="button" class="btn btn-primary mt-3 float-end"
+                              (click)="isNextStepsEditing = true">Editar
+                      </button>
+                    }
+                  </form>
+                }
               }
             </div>
           </div>
         </div>
+      </div>
+    }
 
-        <h5 class="text-gray-500 mb-3">Servicios solicitados</h5>
-        @if (item()!!.service) {
-          <div eventServicesSummary [item]="item()!!.service!"></div>
-        }
-        <div class="row mt-2">
-          <div class="col">
-            <p class="fs-5 fw-bold mb-0">IVA (16%)</p>
-          </div>
-          <div class="col text-end fw-bolder">
-            {{ tax | currency : "MXN" }}
-          </div>
+    <div class="card mb-xl-8">
+      <div class="card-header card-header-stretch border-bottom border-gray-200">
+        <h3 class="card-title">
+          <span class="card-label fw-bolder text-gray-900 fs-2">Detalles</span>
+        </h3>
+        <div class="card-toolbar m-0">
+          <ul
+            class="nav nav-stretch nav-line-tabs border-transparent"
+            role="tablist"
+          >
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link fs-5 fw-semibold me-3"
+                [routerLink]="[]"
+                [routerLinkActive]="'active'"
+                [queryParams]="{ inferiorTab: 'general' }"
+                [queryParamsHandling]="'merge'"
+                (click)="lowerTab = 'general'"
+              >
+                General
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link fs-5 fw-semibold me-3"
+                [routerLink]="[]"
+                [routerLinkActive]="'active'"
+                [queryParams]="{ inferiorTab: 'pagos' }"
+                [queryParamsHandling]="'merge'"
+                (click)="lowerTab = 'pagos'"
+              >
+                Pagos
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link fs-5 fw-semibold"
+                [routerLink]="[]"
+                [routerLinkActive]="'active'"
+                [queryParams]="{ inferiorTab: 'especialistas' }"
+                [queryParamsHandling]="'merge'"
+                (click)="lowerTab = 'especialistas'"
+              >
+                Especialistas
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="separator m-3 opacity-75"></div>
-        <div class="row mt-4">
-          <div class="col">
-            <p class="fs-5 fw-bold mb-3">Total</p>
+      </div>
+      <div class="separator mb-3 opacity-75"></div>
+      <div class="card-body">
+        @if (lowerTab === 'general') {
+          <div class="row mb-6">
+            <div class="col-6">
+              <h5 class="text-gray-500 mb-3">Clínica</h5>
+              <div>
+                @if (item()!.clinic) {
+                  {{ item()!.clinic?.name }}
+                  <br>
+                  {{ item()!.clinic?.street }} {{ item()!.clinic?.exteriorNumber }}, {{ item()!.clinic?.neighborhood }}
+                } @else {
+                  Sin clínica asignada
+                }
+              </div>
+            </div>
+            <div class="col-6">
+              <h5 class="text-gray-500 mb-3">Aseguradora</h5>
+              <div>
+                @if (item()!.medicalInsuranceCompany) {
+                  {{ item()!.medicalInsuranceCompany?.name }}
+                } @else {
+                  Sin aseguradora
+                }
+              </div>
+            </div>
           </div>
-          <div class="col text-end fw-bolder">
-            {{ total | currency : "MXN" }}
+
+          <h5 class="text-gray-500 mb-3">Servicios solicitados</h5>
+          @if (item()!!.service) {
+            <div eventServicesSummary [item]="item()!!.service!"></div>
+          }
+          <div class="row mt-2">
+            <div class="col">
+              <p class="fs-5 fw-bold mb-0">IVA (16%)</p>
+            </div>
+            <div class="col text-end fw-bolder">
+              {{ tax | currency : "MXN" }}
+            </div>
           </div>
-        </div>
-      } @else if (lowerTab() === 'pagos') {
-        <app-payments-table [title]="'Pagos'" [payments]="item()!!.payments" [showTabs]="false" [view]="'inline'"></app-payments-table>
-      } @else if (lowerTab() === 'especialistas') {
-        @if (item()!!.nurses && item()!!.nurses!.length > 0) {
-          <div class="row row-cols-1 row-cols-md-2 g-4">
-            @for (nurse of item()!!.nurses; track nurse.id) {
-              <div class="col">
-                <div class="card h-100 nurse-card">
-                  <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                      <div class="me-3">
-                        <div userProfilePicture [fullName]="nurse.fullName" [photoUrl]="nurse.photoUrl">
+          <div class="separator m-3 opacity-75"></div>
+          <div class="row mt-4">
+            <div class="col">
+              <p class="fs-5 fw-bold mb-3">Total</p>
+            </div>
+            <div class="col text-end fw-bolder">
+              {{ total | currency : "MXN" }}
+            </div>
+          </div>
+        } @else if (lowerTab === 'pagos') {
+          <app-payments-table [title]="'Pagos'" [payments]="item()!!.payments" [showTabs]="false"
+                              [view]="'inline'"></app-payments-table>
+        } @else if (lowerTab === 'especialistas') {
+          @if (item()!!.nurses && item()!!.nurses!.length > 0) {
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+              @for (nurse of item()!!.nurses; track nurse.id) {
+                <div class="col">
+                  <div class="card h-100 nurse-card">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                          <div userProfilePicture [fullName]="nurse.fullName" [photoUrl]="nurse.photoUrl">
+                          </div>
+                        </div>
+                        <div>
+                          <h5 class="card-title mb-1">{{ nurse.fullName }}</h5>
+                          <p class="card-text text-muted mb-0">
+                            <i class="ki-duotone ki-user-tick fs-6 me-1"><span class="path1"></span><span
+                              class="path2"></span></i>
+                            {{ nurse.post || 'Nurse' }}
+                          </p>
                         </div>
                       </div>
-                      <div>
-                        <h5 class="card-title mb-1">{{ nurse.fullName }}</h5>
-                        <p class="card-text text-muted mb-0">
-                          <i class="ki-duotone ki-user-tick fs-6 me-1"><span class="path1"></span><span class="path2"></span></i>
-                          {{ nurse.post || 'Nurse' }}
-                        </p>
-                      </div>
+                      <ul class="list-unstyled">
+                        <li class="mb-2">
+                          <i class="ki-duotone ki-sms fs-6 me-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                          </i>
+                          {{ nurse.email }}
+                        </li>
+                        <li class="mb-2">
+                          <i class="ki-duotone ki-phone fs-6 me-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                            <span class="path4"></span>
+                            <span class="path5"></span>
+                          </i>
+                          {{ nurse.phoneNumber || 'N/A' }}
+                        </li>
+                        <li>
+                          <i class="ki-duotone ki-award fs-6 me-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                          </i>
+                          {{ nurse.education || 'N/A' }}
+                        </li>
+                      </ul>
                     </div>
-                    <ul class="list-unstyled">
-                      <li class="mb-2">
-                        <i class="ki-duotone ki-sms fs-6 me-2">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                        </i>
-                        {{ nurse.email }}
-                      </li>
-                      <li class="mb-2">
-                        <i class="ki-duotone ki-phone fs-6 me-2">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                          <span class="path3"></span>
-                          <span class="path4"></span>
-                          <span class="path5"></span>
-                        </i>
-                        {{ nurse.phoneNumber || 'N/A' }}
-                      </li>
-                      <li>
-                        <i class="ki-duotone ki-award fs-6 me-2">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                          <span class="path3"></span>
-                        </i>
-                        {{ nurse.education || 'N/A' }}
-                      </li>
-                    </ul>
                   </div>
                 </div>
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="text-center py-5">
-            <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
-              <span class="path1"></span>
-              <span class="path2"></span>
-            </i>
-            <p class="fs-5 text-muted">No hay especialistas asignados a esta cita.</p>
-            @if (!summaryMode) {
-              <!-- <button class="btn btn-primary mt-3" (click)="onAddNurse()">
-                <i class="ki-duotone ki-plus-square fs-2 me-2">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                  <span class="path3"></span>
-                </i>
-                Agregar especialista
-              </button> -->
-            }
-          </div>
+              }
+            </div>
+          } @else {
+            <div class="text-center py-5">
+              <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+              <p class="fs-5 text-muted">No hay especialistas asignados a esta cita.</p>
+              @if (!summaryMode) {
+                <!-- <button class="btn btn-primary mt-3" (click)="onAddNurse()">
+                  <i class="ki-duotone ki-plus-square fs-2 me-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                  </i>
+                  Agregar especialista
+                </button> -->
+              }
+            </div>
+          }
         }
-      }
+      </div>
     </div>
   </div>
-</div>
 }

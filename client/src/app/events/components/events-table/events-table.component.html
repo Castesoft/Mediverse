@@ -1,96 +1,59 @@
-<!-- <thead
+<thead
   tableHeader
-  [show]="showHeaders()"
-  [columns]="location() === 'user-detail' ? service.columnsPatientDetails : columns"
-  [params]="params"
-  (onSelectAll)="service.selectAll(key(), $event)"
-  [mode]="mode()"
-  (onParamsChange)="service.onSortOptionsChange(key(), $event)"
+  [columns]="service.columns"
+  [(dictionary)]="service.dictionary"
+  [(params)]="params"
+  [(mode)]="mode"
+  [(isCompact)]="isCompact"
+  (selectedChange)="service.onSelectAll(key(), mode(), $event)"
+  [selected]="(service.areAllSelected(key()) | async)!"
 ></thead>
-<tbody class="text-gray-600 fw-semibold">
-  @for (item of data; track item.id; let idx = $index) {
-    <tr class="hover-actions-trigger btn-reveal-trigger position-static" [cdkContextMenuTriggerFor]="context_menu">
-      @switch (mode()) {
-        @case ("view") {
-          <td
-            class="py-1 fs--1 pe-3 ps-1 border-none"
-          >
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                [name]="service.dictionary.singular"
-                [(ngModel)]="item.isSelected"
-                [id]="cuid + 'tableCheck' + idx"
-              />
-            </div>
-          </td>
-        }
-        @case ("select") {
-          <td class="fs--1 align-middle">
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="radio"
-                [name]="service.dictionary.singular"
-                [checked]="item.isSelected"
-                (change)="service.setSelected$(key(), item)"
-              />
-            </div>
-          </td>
-        }
-        @case ("multiselect") {
-          <td class="py-1 fs--1 pe-3 ps-1 border-none" >
-            <div class="form-check form-check-sm form-check-custom form-check-solid">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                [name]="service.dictionary.singular"
-                [checked]="item.isSelected"
-                [id]="cuid + 'tableCheck' + idx"
-                (change)="service.addSelected$(key(), item)"
-              />
-            </div>
-          </td>
-        }
-      }
 
-      @if (location() === 'events-catalog') {
-        <td patientCell [patient]="item.patient"></td>
-        <td>{{ item.patient.age }} años</td>
-        <td patientSex [patient]="item.patient"></td>
-        <td>{{ item.createdAt | date }}</td>
-      } @else {
-        <td>{{ item.service.name }}</td>
-        <td>{{ item.dateFrom | date:'dd/MM/yyyy' }} <br/> {{ item.dateFrom | date:'hh:mm a' }}</td>
-        <td>
-          @if (item.paymentStatus) {
-            <span class="badge" [style.background-color]="item.paymentStatus.options?.color" [style.color]="getContrastColor(item.paymentStatus.options!.color!)">{{ item.paymentStatus.name }}</span>
-          } @else {
-            <span class="badge" style="background-color: gray; color: #FFFFFF;">Sin estatus</span>
-          }
-        </td>
-        <td>
-          <div class="symbol-group symbol-hover flex-nowrap flex-grow-1 min-w-100px pe-2">
-            @for (nurse of item.nurses; track nurse.id) {
-              @if (nurse.photoUrl) {
-                <div class="symbol symbol-circle symbol-25px" [tooltip]="nurse.firstName + ' ' + nurse.lastName">
-                  <img [src]="nurse.photoUrl" alt="img" />
-                </div>
-              } @else {
-                <div class="symbol symbol-circle symbol-25px" [tooltip]="nurse.firstName + ' ' + nurse.lastName">
-                  <div [class]="'symbol-label fs-8 fw-semibold bg-' + utils.getBootstrapClass(nurse.firstName!) + ' text-inverse-primary'">{{ nurse.firstName!.charAt(0) }}</div>
-                </div>
-              }
-            }
-            @if (!item.nurses || item.nurses.length === 0) {
-              <div class="symbol symbol-circle symbol-25px" [tooltip]="'Sin especialistas asignados'">
-                <div class="symbol-label fs-8 fw-semibold bg-gray-200 text-gray-600" >N/A</div>
-              </div>
-            }
+<tbody templateTableBody>
+  @for (item of data(); track item.id; let idx = $index) {
+    <tr
+      class="hover-actions-trigger btn-reveal-trigger position-static"
+      [cdkContextMenuTriggerFor]="context_menu"
+    >
+      <td
+        tableCheckCell
+        [(isCompact)]="isCompact"
+        [idx]="idx"
+        [(dictionary)]="service.dictionary"
+        [(selected)]="item.isSelected"
+        (click)="service.onSelect(key(), mode(), item)"
+      ></td>
+
+      @if (dev.isDev()) {
+        <td
+          class="name align-middle white-space-nowrap px-0 py-0"
+          [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+        >
+          <div class="d-flex align-items-center justify-content-start px-0">
+            <a
+              [routerLink]="[service.dictionary.catalogRoute, item.id]"
+              [href]="[service.dictionary.catalogRoute, item.id]"
+              class="fw-semibold text-primary"
+            >
+              #{{ item.id | number }}
+            </a>
           </div>
         </td>
       }
+
+      <td timePeriodCell [from]="item.dateFrom" [to]="item.dateTo" [showDate]="true" [allDay]="item.allDay"></td>
+      <td userCell [user]="item.patient" [role]="'Patient'"></td>
+      @if (showDoctorColumn()) {
+        <td userCell [user]="item.doctor" [role]="'Doctor'"></td>
+      }
+      <td>{{ item.service.name }}</td>
+      <td>{{ item.clinic?.name }}</td>
+
+      @for (cell of row().getItems([ 'evolution', 'nextSteps', 'nursesCount', 'createdAt', ]); let idx = $index; track idx) {
+        <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact"
+            [value]="item[cell.item.key]"></td>
+      }
+
       <td class="text-end">
         <a class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm"
            [cdkContextMenuTriggerFor]="context_menu" [cdkMenuTriggerFor]="context_menu"
@@ -108,7 +71,8 @@
             <a [routerLink]="[service.dictionary.catalogRoute,item.id]" class="menu-link">Ver</a>
           </div>
           <div cdkMenuItem class="menu-item px-3">
-            <a [routerLink]="[service.dictionary.catalogRoute, item.id, 'edit']" class="menu-link">Editar</a>
+            <a [routerLink]="[service.dictionary.catalogRoute, item.id, 'edit']"
+               class="menu-link">Editar</a>
           </div>
           <button cdkMenuItem class="menu-item px-3 text-danger" (click)="service.delete$(item)">
             <a class="menu-link">Eliminar</a>
@@ -117,4 +81,4 @@
       </ng-template>
     </tr>
   }
-</tbody> -->
+</tbody>

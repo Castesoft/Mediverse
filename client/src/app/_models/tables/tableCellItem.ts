@@ -16,6 +16,7 @@ export class TableCellItem<T, TKey extends keyof any> {
   showCodeSpan = true;
   fullDate = false;
   baseUrl?: string;
+  color?: TableCellColor;
   unit?: Units;
   label?: string;
   pair?: { first: TableCellItem<T, any>; second: TableCellItem<T, any>; };
@@ -65,8 +66,13 @@ export type TableCells = "string" |
   "date" |
   "code" |
   "currency" |
-  "codePair"
-;
+  "codePair" |
+  "sex" |
+  "phoneNumber" |
+  "badge";
+
+export type TableCellColor = "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "light" | "dark";
+
 
 export const tableCellCreatedAt: TableCellItem<Date, 'createdAt'> = new TableCellItem<Date, "createdAt">("createdAt", "date", { fullDate: true });
 export const tableCellDescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");

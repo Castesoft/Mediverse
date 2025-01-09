@@ -23,19 +23,21 @@
         (click)="service.onSelect(key(), mode(), item)"
       ></td>
 
-      <td
-        class="name align-middle white-space-nowrap px-0 py-0"
-        [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
-      >
-        <div class="d-flex align-items-center justify-content-start px-0">
-          <a
-            [routerLink]="[service.dictionary.catalogRoute, item.id]"
-            [href]="[service.dictionary.catalogRoute, item.id]"
-            class="fw-semibold text-primary"
-          >#{{ item.id | number }}</a
-          >
-        </div>
-      </td>
+      @if (dev.isDev()) {
+        <td
+          class="name align-middle white-space-nowrap px-0 py-0"
+          [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+        >
+          <div class="d-flex align-items-center justify-content-start px-0">
+            <a
+              [routerLink]="[service.dictionary.catalogRoute, item.id]"
+              [href]="[service.dictionary.catalogRoute, item.id]"
+              class="fw-semibold text-primary"
+            >#{{ item.id | number }}</a
+            >
+          </div>
+        </td>
+      }
 
       @for (cell of row().getItems([
         'fullName',
@@ -48,8 +50,7 @@
         'eventsCount',
         'createdAt',
       ]);
-        let idx = $index;
-        track idx) {
+        let idx = $index; track idx) {
         <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
       }
 
@@ -61,8 +62,8 @@
       ></td>
       <ng-template #context_menu>
         <div nursesTableMenu
-              [item]="item"
-              [key]="key()"></div>
+             [item]="item"
+             [key]="key()"></div>
       </ng-template>
     </tr>
   }

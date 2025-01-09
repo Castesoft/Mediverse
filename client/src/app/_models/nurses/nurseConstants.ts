@@ -19,13 +19,12 @@ export const nurseFiltersFormInfo: FormInfo<NurseParams> = {
 } as FormInfo<NurseParams>;
 
 export const nurseColumns: Column[] = [
-  columnId,
   new Column('fullName', 'Nombre'),
   new Column('email', 'Correo electrónico'),
   new Column('phoneNumber', 'Teléfono'),
   new Column('age', 'Edad'),
   new Column('sex', 'Sexo'),
-  new Column('dateOfBirth', 'Fecha de nacimiento', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('dateOfBirth', 'Fecha de nacimiento', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('taxId', 'RFC'),
   new Column('eventsCount', 'Citas'),
   new Column('prescriptionsCount', 'Recetas'),
@@ -39,7 +38,7 @@ export const nurseDictionary: NamingSubject = new NamingSubject(
   'especialistas',
   'Especialistas',
   'nurses',
-  ['inicio']
+  [ 'inicio' ]
 );
 
 export const nurseCells: PartialCellsOf<Nurse> = {

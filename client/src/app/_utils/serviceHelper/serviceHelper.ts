@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { inject, signal } from "@angular/core";
+import { effect, inject, signal } from "@angular/core";
 import { AbstractControl, AsyncValidatorFn } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -9,7 +9,7 @@ import { Modal } from "src/app/_models/modal";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
 import { View } from "src/app/_models/base/types";
 import { SortOptions } from "src/app/_models/base/sortOptions";
-import { Column } from "src/app/_models/base/column";
+import { Column, columnId } from "src/app/_models/base/column";
 import { CatalogMode } from "src/app/_models/base/types";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { EntityParams } from "src/app/_models/base/entityParams";
@@ -27,6 +27,7 @@ import { getFormHeaderText } from "src/app/_models/forms/formUtils";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { ConfirmService } from "src/app/_services/confirm/confirm.service";
 import downloadExcelFile from "src/app/_utils/serviceHelper/functions/downloadExcelFile";
+import { DevService } from "../../_services/dev.service";
 
 /**
  * A helper class that provides common service functionalities for handling entities, parameters, forms, and caching.
@@ -61,10 +62,11 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   protected router = inject(Router);
   protected confirm = inject(ConfirmService);
   protected matSnackBar = inject(MatSnackBar);
+  readonly dev = inject(DevService)
 
   baseUrl: string;
   dictionary: NamingSubject;
-  columns: Column[];
+  columns: Column[] = [];
 
   data = new BehaviorSubject<T[]>([]);
   data$ = this.data.asObservable();
@@ -85,13 +87,22 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   ) {
     this.baseUrl = `${environment.apiUrl}${controller.toLowerCase()}/`;
     this.dictionary = dictionary;
-    this.columns = columns;
+    effect(() => this.updateColumns(columns));
   }
 
   setKey(key: string): void {
     if (!this.cache.value.hasEntry(key)) {
       this.cache.next(this.cache.value.add(key, this.cache.value.entries[key].type));
     }
+  }
+
+  /**
+   * Add ID column if development mode is enabled.
+   * @param columns
+   * @private
+   */
+  private updateColumns(columns: Column[]): void {
+    this.columns = this.dev.isDev() ? [columnId, ...columns] : columns;
   }
 
   next(): void {

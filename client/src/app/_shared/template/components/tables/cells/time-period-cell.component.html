@@ -1,0 +1,84 @@
+@if (allDay()) {
+  <div class="d-flex flex-column justify-content-center">
+    @if (showDate()) {
+      <div class="d-flex flex-row gap-2">
+        <div>
+          <i class="ki-duotone ki-calendar">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+        </div>
+        <div class="text-gray-800 mb-2 fs-6">{{ from() | date : "dd/MM/yyyy" : "" : "es-MX" }}</div>
+      </div>
+    }
+    <div class="d-flex flex-row gap-2">
+      <div>
+        <i class="ki-duotone ki-time">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </div>
+      <span class="badge badge-light-primary">
+        Todo el Día
+      </span>
+    </div>
+  </div>
+} @else {
+  <div class="d-flex flex-column justify-content-center">
+    @if (showDate()) {
+      <div class="d-flex flex-row gap-2">
+        <div>
+          <i class="ki-duotone ki-calendar">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+        </div>
+        <div class="text-gray-800 mb-2 fs-6">{{ from() | date : "dd/MM/yyyy" : "" : "es-MX" }}</div>
+      </div>
+    }
+    <div class="d-inline-flex align-items-center gap-2">
+      <i class="ki-duotone ki-time">
+        <span class="path1"></span>
+        <span class="path2"></span>
+      </i>
+      @if (from() && to()) {
+        <span class="badge badge-light-primary">
+          {{ from() | date:'h:mm a':'' : 'es-MX' }}
+        </span>
+        <span class="text-muted">&mdash;</span>
+        <span class="badge badge-light-primary">
+          {{ to() | date:'h:mm a':'' : 'es-MX' }}
+        </span>
+        @if (from()! > to()!) {
+          <small class="text-danger ms-2">
+            (Rango Inválido)
+          </small>
+        }
+      } @else {
+        @if (from() && !to()) {
+          <span class="badge bg-info">
+            Start: {{ from() | date:'h:mm a':'' : 'es-MX' }}
+          </span>
+          <span class="text-muted">
+            (No End Time)
+          </span>
+        }
+
+        @if (!from() && to()) {
+          <span class="text-muted">
+            (No Start Time)
+          </span>
+          <span class="badge bg-info">
+            End: {{ to() | date:'h:mm a':'' : 'es-MX' }}
+          </span>
+        }
+
+        @if (!from() && !to()) {
+          <span class="badge bg-secondary">
+            No Time Data
+          </span>
+        })
+      }
+    </div>
+  </div>
+}

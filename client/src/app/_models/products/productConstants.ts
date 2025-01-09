@@ -1,4 +1,12 @@
-import { Column, columnCreatedAt, columnDescription, columnEnabled, columnId, columnName, columnVisible } from "src/app/_models/base/column";
+import {
+  Column,
+  columnCreatedAt,
+  columnDescription,
+  columnEnabled,
+  columnId,
+  columnName,
+  columnVisible
+} from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -6,7 +14,17 @@ import { FormInfo } from "src/app/_models/forms/formTypes";
 import { ColumnOptions } from "src/app/_models/forms/options/columnOptions";
 import { Product } from "src/app/_models/products/product";
 import { ProductParams } from "src/app/_models/products/productParams";
-import { PartialCellsOf, tableCellCode, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellId, TableCellItem, tableCellName, tableCellVisible } from "src/app/_models/tables/tableCellItem";
+import {
+  PartialCellsOf,
+  tableCellCode,
+  tableCellCreatedAt,
+  tableCellDescription,
+  tableCellEnabled,
+  tableCellId,
+  TableCellItem,
+  tableCellName,
+  tableCellVisible
+} from "src/app/_models/tables/tableCellItem";
 
 
 export const productFormInfo: FormInfo<Product> = {
@@ -32,20 +50,19 @@ export const productDictionary: NamingSubject = new NamingSubject(
   'productos',
   'Productos',
   'products',
-  ['inicio']
+  [ 'inicio' ]
 );
 
 export const productColumns: Column[] = [
-  columnId,
   columnName,
   columnDescription,
-  new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('quantity', 'Cantidad', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('dosage', 'Dosis', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('unit', 'Unidad', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('lotNumber', 'Número de lote', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('manufacturer', 'Fabricante', { options: new ColumnOptions({ justify: 'start', })}),
+  new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('quantity', 'Cantidad', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('dosage', 'Dosis', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('unit', 'Unidad', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('lotNumber', 'Número de lote', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('manufacturer', 'Fabricante', { options: new ColumnOptions({ justify: 'start', }) }),
   columnEnabled,
   columnVisible,
   columnCreatedAt,

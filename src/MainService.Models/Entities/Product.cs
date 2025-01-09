@@ -2,7 +2,9 @@ namespace MainService.Models.Entities;
 
 public class Product : BaseEntity
 {
-    public Product() {}
+    public Product()
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
@@ -28,7 +30,7 @@ public class Product : BaseEntity
         Price = price;
         Discount = discount;
     }
-    
+
     public double? Dosage { get; set; }
     public string? Unit { get; set; }
     public string? Manufacturer { get; set; }
@@ -41,16 +43,10 @@ public class Product : BaseEntity
     public List<PrescriptionItem> PrescriptionItems { get; set; } = [];
     public List<OrderItem> OrderItems { get; set; } = [];
 
-    public string GetPhotoUrl() {
-        if (ProductPhotos.Count() > 0) {
-            Photo photo = ProductPhotos.First().Photo;
-
-            string? url = photo.Url;
-
-            if (string.IsNullOrEmpty(url)) return "img/placeholder.png";
-            else return url;
-        }
-
-        return "img/placeholder.png";
+    public string GetPhotoUrl()
+    {
+        if (ProductPhotos.Count == 0) return "img/placeholder.png";
+        var photo = ProductPhotos.First().Photo;
+        return string.IsNullOrEmpty(photo.Url) ? "img/placeholder.png" : photo.Url;
     }
 }

@@ -1,5 +1,4 @@
-import { CommonModule, NgClass } from '@angular/common';
-import { Component, effect, inject, input, model, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, model, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
 import { User } from "src/app/_models/users/user";
@@ -8,65 +7,34 @@ import { ProfilePictureComponent } from './profile-picture/profile-picture.compo
 import { Account } from "src/app/_models/account/account";
 
 @Component({
-  selector: 'td[userHasAccount]',
-  template: `
-  @if(user().hasAccount) {
-    <div class="badge badge-light-success fw-bold">
-      Registrado
-    </div>
-  }
-  `,
-  standalone: true,
-  imports: [ CommonModule, ],
-})
-export class UserTableHasAccountCellComponent {
-  user = input.required<User>();
-}
-
-@Component({
-  selector: 'td[userSex]',
-  template: `
-    <div class="badge fw-bold"
-      [ngClass]="{ 'badge-light-primary': user().sex?.name === 'Masculino', 'badge-light-warning': user().sex?.name === 'Femenino'}">
-      {{user().sex}}
-    </div>
-  `,
-  standalone: true,
-  imports: [ NgClass ],
-})
-export class UserTableSexCellComponent {
-  user = input.required<User>();
-}
-
-@Component({
-  host: { class: 'd-flex align-items-center' },
+  host: { class: 'align-middle flex-column-fluid border-none' },
   selector: 'td[userCell]',
   template: `
-    @if (routerLink) {
-    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-      <a [routerLink]="[routerLink]">
-        <div class="symbol-label">
-          <div userProfilePicture [fullName]="user().fullName" [photoUrl]="user().photoUrl"></div>
-        </div>
-      </a>
-    </div>
-    <div class="d-flex flex-column">
-      <a
-        [routerLink]="[routerLink]"
-        class="text-gray-800 text-hover-primary mb-1"
+    <div class="d-flex align-middle">
+      <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+        <a [routerLink]="[routerLink]">
+          <div class="symbol-label">
+            <div userProfilePicture [fullName]="user().fullName" [photoUrl]="user().photoUrl"></div>
+          </div>
+        </a>
+      </div>
+      <div class="d-flex flex-column align-middle justify-content-center">
+        <a
+          [routerLink]="[routerLink]"
+          class="text-gray-800 text-hover-primary mb-1"
         >{{ user().fullName }}</a
-      >
-      <span>{{ user().email }}</span>
+        >
+        <span>{{ user().email }}</span>
+      </div>
     </div>
-    }
   `,
   standalone: true,
-  imports: [RouterModule, ProfilePictureComponent],
+  imports: [ RouterModule, ProfilePictureComponent ],
 })
-export class UserTableCellComponent implements OnInit {
+export class UserTableCellComponent<T extends User> implements OnInit {
   service = inject(UsersService);
 
-  user = model.required<User>();
+  user = model.required<T>();
   role = model.required<Role>();
 
   routerLink?: string;
@@ -75,18 +43,13 @@ export class UserTableCellComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      this.account.set(new Account({
-        id: this.user().id,
-        firstName: this.user().firstName,
-        photoUrl: this.user().photoUrl,
-      }));
+      const { id, firstName, photoUrl } = this.user();
+      this.account.set(new Account({ id, firstName, photoUrl }));
     })
   }
 
   ngOnInit(): void {
-    // this.routerLink = `${
-    //   this.service.dictionary.get(this.role())!.catalogRoute
-    // }/${this.user().id}`;
+    // TODO - Implement role-based routing
+    this.routerLink = `${this.service.dictionary.catalogRoute}/${this.user().id}`;
   }
-
 }

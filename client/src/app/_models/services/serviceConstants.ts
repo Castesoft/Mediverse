@@ -1,4 +1,11 @@
-import { baseColumns, Column, columnCreatedAt, columnDescription, columnId, columnName } from "src/app/_models/base/column";
+import {
+  baseColumns,
+  Column,
+  columnCreatedAt,
+  columnDescription,
+  columnId,
+  columnName
+} from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -6,7 +13,17 @@ import { FormInfo } from "src/app/_models/forms/formTypes";
 import { ColumnOptions } from "src/app/_models/forms/options/columnOptions";
 import { Service } from "src/app/_models/services/service";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
-import { PartialCellsOf, tableCellCode, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellId, TableCellItem, tableCellName, tableCellVisible } from "src/app/_models/tables/tableCellItem";
+import {
+  PartialCellsOf,
+  tableCellCode,
+  tableCellCreatedAt,
+  tableCellDescription,
+  tableCellEnabled,
+  tableCellId,
+  TableCellItem,
+  tableCellName,
+  tableCellVisible
+} from "src/app/_models/tables/tableCellItem";
 
 
 export const serviceFormInfo: FormInfo<Service> = {
@@ -40,14 +57,13 @@ export const serviceDictionary: NamingSubject = new NamingSubject(
   'servicios',
   'Servicios',
   'services',
-  ['inicio'],
+  [ 'inicio' ],
 );
 
 export const serviceColumns: Column[] = [
-  columnId,
   columnName,
   columnDescription,
-  new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', }) }),
   columnCreatedAt,
 ];

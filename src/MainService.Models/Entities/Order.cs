@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace MainService.Models.Entities;
 
 public class Order : BaseEntity
