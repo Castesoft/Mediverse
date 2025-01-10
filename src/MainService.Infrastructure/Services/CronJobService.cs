@@ -52,7 +52,7 @@ namespace MainService.Infrastructure.Services
                     continue;
                 }
 
-                const string subject = "🔒 Mediverse: cuentanos tu experiencia!";
+                const string subject = "🔒 DocHub: cuentanos tu experiencia!";
                 var htmlMessage = emailService.CreateSatisfactionSurveyEmail(@event.DoctorEvent.Doctor,
                     @event.PatientEvent.Patient, @event);
 

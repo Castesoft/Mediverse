@@ -13,7 +13,7 @@ import { RouterModule } from "@angular/router";
           [routerLink]="[]"
           target="_blank"
           class="text-gray-800 text-hover-primary"
-          >Mediverse</a
+          >DocHub</a
         >
       </div>
       <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">

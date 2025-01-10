@@ -32,7 +32,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
             height="30"
             class="d-inline-block align-text-top"
           />
-          <span class="ms-2">Mediverse</span>
+          <span class="ms-2">DocHub</span>
         </a>
         <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
           <span class="navbar-toggler-icon"></span>

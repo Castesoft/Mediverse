@@ -177,8 +177,8 @@ export class AuthComponent { }
       redirectTo: 'sign-in',
       pathMatch: 'full'
     },
-    { path: 'sign-in', loadChildren: () => SignInModule, title: 'Iniciar sesión en Mediverse', },
-    { path: 'sign-up', loadChildren: () => SignUpModule, title: 'Registrarse en Mediverse', },
+    { path: 'sign-in', loadChildren: () => SignInModule, title: 'Iniciar sesión en DocHub', },
+    { path: 'sign-up', loadChildren: () => SignUpModule, title: 'Registrarse en DocHub', },
   ])],
   exports: [RouterModule]
 })

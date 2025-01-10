@@ -212,7 +212,7 @@ public class AccountController(
 
         string clientUrl = clientSettings.Value.Url;
         string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
+        string subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
         string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
 
         string? email = user.Email;
@@ -394,7 +394,7 @@ public class AccountController(
 
         string clientUrl = clientSettings.Value.Url;
         string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
+        string subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
         string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
 
         await emailService.SendMail(email, subject, htmlMessage);
@@ -765,7 +765,7 @@ public class AccountController(
 
         {{phoneNumberVerificationCode}}
 
-        Gracias por usar Mediverse.
+        Gracias por usar DocHub.
         """;
 
         var messageResponse = await  phoneService.SendMessage(user.PhoneNumberCountryCode + user.PhoneNumber, message);
@@ -907,7 +907,7 @@ public class AccountController(
 
         {{phoneNumberVerificationCode}}
 
-        Gracias por usar Mediverse.
+        Gracias por usar DocHub.
         """;
         
         string fullPhoneNumber = user.PhoneNumberCountryCode + user.PhoneNumber;
@@ -992,7 +992,7 @@ public class AccountController(
         
         {{phoneNumberVerificationCode}}
 
-        Gracias por usar Mediverse.
+        Gracias por usar DocHub.
         """;
 
         var messageResponse = await  phoneService.SendMessage(user.PhoneNumberCountryCode + user.PhoneNumber, message);
@@ -1594,7 +1594,7 @@ public class AccountController(
 
         string clientUrl = clientSettings.Value.Url;
         string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        string subject = $"🔒 Mediverse: Verifica tu correo {user.FirstName}!";
+        string subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
         string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
         string? email = user.Email;

@@ -69,7 +69,7 @@ public static class ApplicationServicesExtensions
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials()
-                    .WithOrigins("https://localhost:4400", "https://beta.mediverse.castesoft.com");
+                    .WithOrigins("https://localhost:4400", "https://dochub.mx");
             });
         });
     }

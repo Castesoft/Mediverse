@@ -398,7 +398,7 @@ public class EventsController(
         if (!await uow.Complete()) return BadRequest($"Error al crear {subject}.");
 
         string formattedDate = request.DateFrom.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-        string emailSubject = $"Mediverse: Confirmación de tu cita!";
+        string emailSubject = $"DocHub: Confirmación de tu cita!";
 
         if (string.IsNullOrEmpty(doctorService.Name)) return BadRequest("El nombre del servicio es requerido.");
         

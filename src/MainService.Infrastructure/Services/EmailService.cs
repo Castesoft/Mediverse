@@ -46,9 +46,9 @@ public class EmailService : IEmailService
                         <div style="padding-bottom: 10px">Si alguna de esta información es incorrecta, por favor contacta a tu especialista.
                         <tr>
                           <td align="center" valign="center" style="font-size: 13px; text-align:center;padding: 20px; color: #6d6e7c;">
-                            <p>Dirección de mediverse, MX.</p>
+                            <p>Dirección de DocHub, MX.</p>
                             <p>Copyright &copy; 
-                            <a href="https://mediverse.com" rel="noopener" target="_blank">Mediverse</a>.</p>
+                            <a href="https://dochub.mx" rel="noopener" target="_blank">DocHub</a>.</p>
                           </td>
                         </tr></br></div>
                       </div>
@@ -132,9 +132,9 @@ public class EmailService : IEmailService
                         <div style="padding-bottom: 10px">Si alguna de esta información es incorrecta, por favor contacta a tu especialista.
                         <tr>
                           <td align="center" valign="center" style="font-size: 13px; text-align:center;padding: 20px; color: #6d6e7c;">
-                            <p>Dirección de mediverse, MX.</p>
+                            <p>Dirección de DocHub, MX.</p>
                             <p>Copyright &copy; 
-                            <a href="https://mediverse.com" rel="noopener" target="_blank">Mediverse</a>.</p>
+                            <a href="https://dochub.mx" rel="noopener" target="_blank">DocHub</a>.</p>
                           </td>
                         </tr></br></div>
                       </div>

@@ -106,7 +106,7 @@ export class DoctorProfileComponent implements OnInit {
   shareProfile(platform: string) {
     const doctorName = `Dr. ${this.doctor!.firstName} ${this.doctor!.lastName}`;
     const specialty = this.doctor!.specialties[0].name;
-    const text = `¡Descubre a un excelente especialista en ${specialty}! Te recomiendo al ${doctorName}. Su experiencia y atención son excepcionales. Agenda tu cita fácilmente a través de Mediverse y cuida tu salud con lo mejor.`;
+    const text = `¡Descubre a un excelente especialista en ${specialty}! Te recomiendo al ${doctorName}. Su experiencia y atención son excepcionales. Agenda tu cita fácilmente a través de DocHub y cuida tu salud con lo mejor.`;
     let url = '';
 
     switch (platform) {

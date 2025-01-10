@@ -6,7 +6,7 @@ import { mexicoCities } from 'src/app/_utils/util';
 })
 export class UtilsService {
 
-  title = 'Mediverse';
+  title = 'DocHub';
   mexicoCities = mexicoCities;
 
   sidebarCollapsed = signal(false);

@@ -45,7 +45,7 @@ export class LandingRouterComponent {
         path: '',
         component: LandingRouterComponent,
         children: [
-          { path: '', component: LandingComponent, title: 'Mediverse' },
+          { path: '', component: LandingComponent, title: 'DocHub' },
           {
             path: 'search',
             component: SearchResultsComponent,
