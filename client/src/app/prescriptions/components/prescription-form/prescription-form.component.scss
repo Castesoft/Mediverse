@@ -8,7 +8,7 @@ border-width-1px {
 
 .prescription-pad {
   background-color: #ffffff;
-  background-image: 
+  background-image:
     linear-gradient(90deg, rgba(200,200,200,.07) 1px, transparent 1px),
     linear-gradient(rgba(200,200,200,.07) 1px, transparent 1px);
   background-size: 25px 25px;
@@ -93,7 +93,9 @@ border-width-1px {
   }
 
   .prescription-date {
-    align-self: center;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    align-items: center;
   }
 
   label {
@@ -128,7 +130,7 @@ border-width-1px {
 
   .doctor-signature {
     text-align: center;
-    
+
     .doctor-signature-line {
       width: 300px;
       margin: 0 0 0 auto;

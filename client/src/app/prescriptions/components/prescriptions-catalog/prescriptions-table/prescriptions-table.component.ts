@@ -20,15 +20,19 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { TableHeaderComponent } from 'src/app/_shared/template/components/tables/table-header.component';
-import { PrescriptionFormComponent } from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
-import { PrescriptionTableCellComponent, PrescriptionTableSexCellComponent, PrescriptionTableHasAccountCellComponent } from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescription-table-cell.component';
+import {
+  PrescriptionFormComponent
+} from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
-import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
+import { Column } from "src/app/_models/base/column";
+import {
+  PrescriptionsTableMenuComponent
+} from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table-menu.component";
 
 @Component({
   host: {
-    class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable',
+      class: 'table table-hover align-middle table-row-dashed fs-6 gy-5 dataTable',
     id: 'kt_table_prescriptions',
   },
   selector: 'table[prescriptionsTable]',
@@ -44,14 +48,14 @@ import { UserTableCellComponent } from 'src/app/users/components/user-table-cell
     MaterialModule,
     CdkModule,
     BootstrapModule,
-    ProfilePictureComponent,
     PrescriptionFormComponent,
+    UserTableCellComponent,
+    PrescriptionsTableMenuComponent,
   ],
 })
 export class PrescriptionsTableComponent
   extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
-  implements OnInit, OnDestroy, TableInputSignals<Prescription, PrescriptionParams>
-{
+  implements OnInit, OnDestroy, TableInputSignals<Prescription, PrescriptionParams> {
   item: ModelSignal<Prescription | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -67,9 +71,7 @@ export class PrescriptionsTableComponent
   showHeaders = input<boolean>(true);
   onReloadData = output();
 
-  sortAscending = false;
-  columns = this.service.columns;
-  devMode = false;
+  columns: Column[] = this.service.columns;
 
   account = signal<Account | null>(null);
 
@@ -83,23 +85,13 @@ export class PrescriptionsTableComponent
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
-  deleteItem(item: Prescription) {
-    // const deleteSubscription = this.service.delete$(item).subscribe(() => {
-    //   this.onReloadData.emit();
-    // });
-    // this.subscriptions.push(deleteSubscription);
-  }
-
   toggleCollapsed(item: Prescription) {
-    const initalItemState = item.isCollapsed;
-    this.data().map((item) => (item.isCollapsed = false));
-    this.data.update(oldValues => {
-      return oldValues.map((item) => {
-        item.isCollapsed = false;
-        return item;
-      });
-    });
-    item.isCollapsed = !initalItemState;
+    if (!item.id) {
+      console.error('Cannot collapse prescription without ID');
+      return;
+    }
+
+    this.service.toggleCollapsedInService(item.id);
   }
 
   stopPropagation(event: Event) {
@@ -111,9 +103,7 @@ export class PrescriptionsTableComponent
 
     await new Promise((resolve) => setTimeout(resolve, 400));
 
-    const prescriptionElement = document.getElementById(
-      `prescription-form-${item.id}`
-    );
+    const prescriptionElement = document.getElementById(`prescription-form-${item.id}`);
 
     if (prescriptionElement) {
       const options = {
@@ -129,7 +119,7 @@ export class PrescriptionsTableComponent
 
       const pdfWidth = 297;
       const pdfHeight = 210;
-      const pdf = new jsPDF('l', 'mm', [pdfWidth, pdfHeight]);
+      const pdf = new jsPDF('l', 'mm', [ pdfWidth, pdfHeight ]);
 
       const imgData = canvas.toDataURL('image/png');
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');

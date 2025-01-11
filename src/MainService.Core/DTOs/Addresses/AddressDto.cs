@@ -6,6 +6,7 @@ namespace MainService.Core.DTOs.Addresses
         public string? Description { get; set; }
 
         public int? NursesCount { get; set; }
+        public string? PhotoUrl { get; set; }
         public bool IsMain { get; set; }
     }
 

@@ -73,7 +73,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   options = signal<SelectOption[]>([]);
 
-  params = new BehaviorSubject<ParamRecord<T, U>>(new ParamRecord<T,U>(this.paramsConstructor));
+  params = new BehaviorSubject<ParamRecord<T, U>>(new ParamRecord<T, U>(this.paramsConstructor));
   params$ = this.params.asObservable();
 
   cache = new BehaviorSubject<Cache<T, U>>(new Cache<T, U>(this.paramsConstructor));
@@ -102,7 +102,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
    * @private
    */
   private updateColumns(columns: Column[]): void {
-    this.columns = this.dev.isDev() ? [columnId, ...columns] : columns;
+    this.columns = this.dev.isDev() ? [ columnId, ...columns ] : columns;
   }
 
   next(): void {
@@ -114,7 +114,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     if (this.cache.value.hasEntry(key)) {
       if (this.cache.value.entries[key].count > 0) {
         this.cache.value.getParamValues(key).forEach(x => {
-          if(x !== param.paramsValue) {
+          if (x !== param.paramsValue) {
             this.cache.value.entries[key].entries[x].setCurrent(false);
           }
         });
@@ -138,7 +138,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
         }
         for (const item of response.result) {
           if (!this.data.value.find(a => a.id === item.id)) {
-            this.data.next([...this.data.value, item]);
+            this.data.next([ ...this.data.value, item ]);
           }
         }
       })
@@ -159,7 +159,6 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     console.log('this.cache.value', this.cache.value);
 
     console.log('this.cache.value.entries[key]', this.cache.value.entries[key]);
-
 
 
     return this.cache$.pipe(
@@ -189,6 +188,20 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
         return [];
       })
     );
+  }
+
+  toggleCollapsedInService(id: number) {
+    const updated = this.data.value.map(p => {
+      const collapsed = false;
+
+      if (p.id === id) {
+        return { ...p, isCollapsed: !p.isCollapsed, };
+      }
+
+      return { ...p, isCollapsed: collapsed };
+    });
+
+    this.data.next(updated);
   }
 
 
@@ -237,7 +250,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
     return this.http.get<T>(`${this.baseUrl}${id}`).pipe(
       tap(response => {
-        this.data.next([...this.data.value, response]);
+        this.data.next([ ...this.data.value, response ]);
       })
     );
   }
@@ -252,9 +265,9 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
         console.log('response', response);
         this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} ${this.dictionary.articleSex === 'feminine' ? 'creada' : 'creado'} correctamente`, 'Cerrar', { duration: 3000 });
         if (view === 'page') {
-          this.router.navigate([this.dictionary.catalogRoute, response.id]);
+          this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
         }
-        this.data.next([...this.data.value, response]);
+        this.data.next([ ...this.data.value, response ]);
       })
     );
   }
@@ -263,7 +276,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     return this.http.put<T>(`${this.baseUrl}${id ?? form.controls.id.value}`, model ?? form.value).pipe(
       tap(response => {
         if (view === 'page') {
-          this.router.navigate([this.dictionary.catalogRoute, response.id]);
+          this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
         }
         this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`, 'Cerrar', { duration: 3000 });
         this.data.next(this.data.value.map(a => a.id === (id ?? form.controls.id.value) ? response : a));
@@ -354,7 +367,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   validateNameUnique(current?: string): AsyncValidatorFn {
     return (control: AbstractControl) => {
-      if(current && control.value === current) {
+      if (current && control.value === current) {
         return of(null);
       }
       return control.valueChanges.pipe(
@@ -453,7 +466,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   submitForm(key: string | null, params: U) {
     if (key === null) throw new Error('Key cannot be null');
-    let inputParams = new EntityParams<U>(key, {...params});
+    let inputParams = new EntityParams<U>(key, { ...params });
     let current = this.cache.value.getParam(key);
     if (current.paramsValue !== inputParams.paramsValue) {
       let target = current;

@@ -88,6 +88,16 @@ html {
   scroll-padding-top: 130px;
 }
 
+.menu-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.menu-item:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .menu-item{
   border: 0!important;
 }

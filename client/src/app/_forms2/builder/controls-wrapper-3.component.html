@@ -4,10 +4,10 @@
       @case('bootstrap') {
         @switch(control().type) {
           @case('text') {
-            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
           }
           @case('number') {
-            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
           }
           @case('search') {
             <h1 class="text-danger">PENDIENTE</h1>

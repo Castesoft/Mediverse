@@ -1,4 +1,7 @@
-@if(control().showLabel === true){<label class="form-label" [ngClass]="{'required': control().required && validation.active()}">{{control().label}}</label>}
+@if (control().showLabel) {
+  <label class="form-label"
+         [ngClass]="{'required': control().required && validation.active()}">{{ control().label }}</label>
+}
 <input
   class="form-control form-control-lg form-control-solid"
   [ngClass]="{

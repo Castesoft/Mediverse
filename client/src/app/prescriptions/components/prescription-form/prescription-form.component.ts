@@ -7,13 +7,13 @@ import {
   model,
   ModelSignal,
   signal,
-  effect,
+  effect, OnDestroy, OnInit,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TabsetComponent, TabDirective } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { Account } from 'src/app/_models/account/account';
 import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
@@ -33,6 +33,7 @@ import { PatientsService } from 'src/app/patients/patients.config';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProductsService } from 'src/app/products/products.config';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
+import Patient from "src/app/_models/patients/patient";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -46,23 +47,12 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
     TooltipModule,
     FormsModule,
     ReactiveFormsModule,
-    // EventSelectDisplayCardComponent,
-    // EventSelectTypeaheadComponent,
     ProfilePictureComponent,
   ],
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss',
 })
-export class PrescriptionFormComponent
-  extends BaseForm<
-    Prescription,
-    PrescriptionParams,
-    PrescriptionFiltersForm,
-    PrescriptionForm,
-    PrescriptionsService
-  >
-  implements FormInputSignals<Prescription>
-{
+export class PrescriptionFormComponent extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService> implements OnInit, OnDestroy, FormInputSignals<Prescription> {
   accountService = inject(AccountService);
 
   private productsService = inject(ProductsService);
@@ -72,6 +62,7 @@ export class PrescriptionFormComponent
   private ngUnsubscribe = new Subject<void>();
 
   @ViewChild('memberTabs', { static: false }) memberTabs?: TabsetComponent;
+
   @HostBinding('class') get hostClass() {
     if (this.view() === 'page') return 'pt-9 pb-9';
     else return '';
@@ -83,7 +74,6 @@ export class PrescriptionFormComponent
   key: ModelSignal<string | null> = model.required();
 
   activeTab?: TabDirective;
-  account = signal<Account | null>(null);
 
   productOptions = signal<SelectOption[]>([]);
   patientOptions = signal<SelectOption[]>([]);
@@ -99,27 +89,35 @@ export class PrescriptionFormComponent
     this.clinicsService.getOptions().subscribe();
 
     effect(() => {
-      this.account.set(this.accountService.current());
-      const value = this.item();
-
-      this.form
-        .setUse(this.use())
-        .setValidation(this.validation.active())
-      ;
-
+      this.form.setUse(this.use());
+      this.form.setValidation(this.validation.active());
       this.form.productOptions = this.productsService.options();
       this.form.patientOptions = this.patientsService.options();
       this.form.clinicOptions = this.clinicsService.options();
+    });
 
-      const account = this.accountService.current();
-      if (account !== null) {
-        this.form.patch(account, this.item()!);
+    this.subscribeToFormValueChanges();
+  }
+
+  private subscribeToFormValueChanges = () => {
+    this.form.controls.patient.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async (patient): Promise<void> => {
+      if (patient && patient.id) {
+        const patientFull = await firstValueFrom(this.patientsService.getById(patient.id));
+        this.form.controls.patient.patchValue(patientFull as any, { emitEvent: false });
       }
-      this.form.setUse(this.use());
     });
   }
 
-  ngOnDestroy() {
+  ngOnInit(): void {
+    if (this.item()) this.form.patch(this.item()!);
+
+    const account: Account | null = this.accountService.current();
+    if (account) {
+      this.form.controls.doctor.patchValue(account as Account);
+    }
+  }
+
+  ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
@@ -148,7 +146,6 @@ export class PrescriptionFormComponent
 
   onTabActivated = (data: TabDirective) => {
     this.activeTab = data;
-    console.log(this.activeTab.id);
 
     this.router.navigate([], {
       relativeTo: this.route,

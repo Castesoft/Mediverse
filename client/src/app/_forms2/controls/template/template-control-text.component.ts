@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, HostBinding, inject, model } from '@angular/core';
+import { Component, computed, effect, HostBinding, inject, input, model } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TemplateInvalidFeedbackComponent } from 'src/app/_forms2/controls/template/template-invalid-feedback.component';
+import {
+  TemplateInvalidFeedbackComponent
+} from 'src/app/_forms2/controls/template/template-invalid-feedback.component';
 import { DateRange } from 'src/app/_models/base/dateRange';
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormControl2 } from 'src/app/_models/forms/formControl2';
@@ -23,14 +25,21 @@ export class TemplateControlTextComponent {
     return this.control().root as FormGroup2<any>;
   });
 
-  class = 'fv-row mb-10 fv-plugins-icon-container';
+  // Show bottom margins (mb-10)
+  showBottomMargin = input<boolean>(true);
+
+  class = 'fv-row fv-plugins-icon-container';
 
   constructor() {
     effect(() => {
       this.control.set(this.control().setValidation(this.validation.active()));
 
-      if (this.fromWrapper() === true) {
+      if (this.fromWrapper()) {
         this.class = `${this.class} w-100`;
+      }
+
+      if (this.showBottomMargin()) {
+        this.class += ` mb-10`;
       }
     });
   }

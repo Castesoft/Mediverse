@@ -78,7 +78,7 @@ public class MappingProfiles : Profile
         CreateMap<Address, AddressDto>()
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
             .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
-        ;
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ClinicLogo.Photo.Url));
 
         CreateMap<UserAddressCreateDto, Address>();
         CreateMap<UserAddressUpdateDto, Address>();
@@ -88,8 +88,7 @@ public class MappingProfiles : Profile
         CreateMap<PatientCreateDto, AppUser>()
             .ForMember(dest => dest.DateOfBirth, opt => opt.Ignore())
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex != null ? null : src.Sex!.Name))
-        ;
+            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex != null ? null : src.Sex!.Name));
 
         CreateMap<Payment, PaymentDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -111,7 +110,7 @@ public class MappingProfiles : Profile
         CreateMap<Address, ClinicDto>()
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
             .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
-        ;
+            .ForMember(dest=>dest.PhotoUrl, opt=>opt.MapFrom(src=>src.ClinicLogo.Photo.Url));
 
         CreateMap<AppUser, AccountDto>()
             .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.GetSex()))
@@ -132,8 +131,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DoctorClinics, opt => opt.MapFrom(src => src.DoctorClinics.Select(x => x.Clinic)))
             .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors.Select(x => x.Doctor)))
             .ForMember(dest => dest.MedicalInsuranceCompanies, opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies))
-            .ForMember(dest => dest.DoctorInsuranceCompanies, opt => opt.MapFrom(src => src.DoctorMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)))
-        ;
+            .ForMember(dest => dest.DoctorInsuranceCompanies, opt => opt.MapFrom(src => src.DoctorMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)));
 
         CreateMap<WorkSchedule, WorkScheduleDto>();
         CreateMap<WorkScheduleSettings, WorkScheduleSettingsDto>();
@@ -266,8 +264,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
             .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
             .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber))
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Item.CreatedAt))
-        ;
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Item.CreatedAt));
 
         CreateMap<Order, OrderDto>()
             .ForMember(dest => dest.DeliveryAddress, opt => opt.MapFrom(src => src.OrderDeliveryAddress.DeliveryAddress))
@@ -276,8 +273,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorOrder.Doctor))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.OrderOrderStatus.OrderStatus))
-            .ForMember(dest => dest.DeliveryStatus, opt => opt.MapFrom(src => src.OrderDeliveryStatus.DeliveryStatus))
-        ;
+            .ForMember(dest => dest.DeliveryStatus, opt => opt.MapFrom(src => src.OrderDeliveryStatus.DeliveryStatus));
 
         CreateMap<OrderItem, OrderItemDto>()
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
@@ -308,8 +304,7 @@ public class MappingProfiles : Profile
         CreateMap<AppRole, RoleDto>();
         CreateMap<AppUser, DoctorDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
-            .ForMember(dest => dest.Specialty, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault().MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
-        ;
+            .ForMember(dest => dest.Specialty, opt => opt.MapFrom(src => src.UserMedicalLicenses.FirstOrDefault().MedicalLicense.MedicalLicenseSpecialty.Specialty.Name));
 
         CreateMap<AppPermission, PermissionDto>();
 
@@ -336,8 +331,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
             .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count()))
             .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count()))
-            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()))
-        ;
+            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()));
 
         CreateMap<AppUser, NurseDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
@@ -347,8 +341,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
             .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count()))
             .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count()))
-            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()))
-        ;
+            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()));
 
         CreateMap<AppUser, UserDto>()
             .ForMember(dest => dest.Street,
@@ -369,7 +362,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count() > 0))
+            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Any()))
             .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
             .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role)))
             .ForMember(dest => dest.Permissions,
@@ -401,8 +394,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.IsInternal, opt => opt.MapFrom(src => src.DoctorProduct == null))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url))
-        ;
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ProductPhotos.FirstOrDefault().Photo.Url));
 
         CreateMap<Product, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -415,8 +407,7 @@ public class MappingProfiles : Profile
                 Price = src.Price,
                 Dosage = src.Dosage,
                 Unit = src.Unit,
-            }))
-        ;
+            }));
 
         CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
@@ -461,14 +452,12 @@ public class MappingProfiles : Profile
 
         ;
 
-        CreateMap<MedicalInsuranceCompany, MedicalInsuranceCompanyDto>()
-            // .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyPhoto.Photo.Url))
-        ;
+        CreateMap<MedicalInsuranceCompany, MedicalInsuranceCompanyDto>();
+        
         CreateMap<UserMedicalInsuranceCompany, UserMedicalInsuranceCompanyDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MedicalInsuranceCompanyId))
             .ForMember(dest => dest.Document, opt => opt.MapFrom(src => src.Document))
-            .ForMember(dest => dest.MedicalInsuranceCompany, opt => opt.MapFrom(src => src.MedicalInsuranceCompany))
-        ;
+            .ForMember(dest => dest.MedicalInsuranceCompany, opt => opt.MapFrom(src => src.MedicalInsuranceCompany));
 
         CreateMap<Disease, DiseaseDto>();
         CreateMap<Substance, SubstanceDto>();
@@ -501,8 +490,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.FamilyMembers, opt => opt.MapFrom(src => src.MedicalRecordFamilyMembers.Select(x => x.FamilyMember)))
             .ForMember(dest => dest.PersonalMedicalHistory, opt => opt.MapFrom(src => src.MedicalRecordPersonalDiseases.Select(x => x.Disease)))
             .ForMember(dest => dest.FamilyMedicalHistory, opt => opt.MapFrom(src => src.MedicalRecordFamilyDiseases))
-            .ForMember(dest => dest.PersonalDrugHistory, opt => opt.MapFrom(src => src.MedicalRecordSubstances))
-        ;
+            .ForMember(dest => dest.PersonalDrugHistory, opt => opt.MapFrom(src => src.MedicalRecordSubstances));
 
         CreateMap<EducationLevel, MedicalRecordEducationLevelDto>();
         CreateMap<Occupation, MedicalRecordOccupationDto>();
@@ -512,52 +500,44 @@ public class MappingProfiles : Profile
         CreateMap<MedicalRecordEducationLevel, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.EducationLevel.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.EducationLevel.Name))
-            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.EducationLevel.Code))
-        ;
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.EducationLevel.Code));
 
         CreateMap<MedicalRecordOccupation, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Occupation.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Occupation.Name))
-            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Occupation.Code))
-        ;
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Occupation.Code));
 
         CreateMap<MedicalRecordMaritalStatus, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MaritalStatus.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MaritalStatus.Name))
-            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.MaritalStatus.Code))
-        ;
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.MaritalStatus.Code));
 
         CreateMap<MedicalRecordColorBlindness, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ColorBlindness.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.ColorBlindness.Name))
-            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.ColorBlindness.Code))
-        ;
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.ColorBlindness.Code));
 
         CreateMap<FamilyMember, MedicalRecordFamilyMemberDto>()
             .ForMember(dest => dest.RelativeType, opt => opt.MapFrom(src => src.MedicalRecordFamilyMemberRelativeType))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.Age))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-        ;
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
         CreateMap<MedicalRecordFamilyMemberRelativeType, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RelativeType.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.RelativeType.Name))
-            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.RelativeType.Code))
-        ;
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.RelativeType.Code));
 
         CreateMap<Disease, MedicalRecordPersonalDiseaseDto>()
             .ForMember(dest => dest.Disease, opt => opt.MapFrom(src => src))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-        ;
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
         CreateMap<MedicalRecordFamilyMember, MedicalRecordFamilyMemberDto>()
             .ForMember(dest => dest.RelativeType, opt => opt.MapFrom(src => src.FamilyMember.MedicalRecordFamilyMemberRelativeType.RelativeType))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FamilyMember.Name))
             .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.FamilyMember.Age))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FamilyMember.Id))
-        ;
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FamilyMember.Id));
 
         CreateMap<MedicalRecordCompanion, MedicalRecordCompanionDto>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Companion.Name))
@@ -570,40 +550,32 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Companion.Id))
 
             .ForMember(dest => dest.RelativeType, opt => opt.MapFrom(src => src.Companion.CompanionRelativeType))
-            .ForMember(dest => dest.Occupation, opt => opt.MapFrom(src => src.Companion.CompanionOccupation))
-        ;
+            .ForMember(dest => dest.Occupation, opt => opt.MapFrom(src => src.Companion.CompanionOccupation));
 
         CreateMap<CompanionRelativeType, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RelativeType.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.RelativeType.Name))
-            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.RelativeType.Code))
-        ;
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.RelativeType.Code));
 
         CreateMap<CompanionOccupation, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Occupation.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Occupation.Name))
-            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Occupation.Code))
-        ;
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Occupation.Code));
         
         CreateMap<MedicalRecordPersonalDisease, MedicalRecordPersonalDiseaseDto>()
             .ForMember(dest => dest.Disease, opt => opt.MapFrom(src => src.Disease))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DiseaseId))
-        ;
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DiseaseId));
 
         CreateMap<MedicalRecordFamilyDisease, MedicalRecordFamilyDiseaseDto>()
             .ForMember(dest => dest.RelativeType, opt => opt.MapFrom(src => src.RelativeType))
-            .ForMember(dest => dest.Disease, opt => opt.MapFrom(src => src.Disease))
-            // .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            
-        ;
+            .ForMember(dest => dest.Disease, opt => opt.MapFrom(src => src.Disease));
         CreateMap<MedicalRecordSubstance, MedicalRecordSubstanceDto>();
 
         CreateMap<Service, OptionDto>()
             .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options { Price = src.Price }))
-        ;
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options { Price = src.Price }));
 
         CreateMap<Address, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -611,14 +583,12 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Id.ToString()))
             .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options { 
                 PhotoUrl = src.ClinicLogo.Photo.Url
-            }))
-        ;
+            }));
 
         CreateMap<MedicalInsuranceCompany, OptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Id.ToString()))
-            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options() { PhotoUrl = src.GetPhotoUrl(), }))
-        ;
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => new Options() { PhotoUrl = src.GetPhotoUrl(), }));
     }
 }

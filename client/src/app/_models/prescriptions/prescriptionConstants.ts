@@ -22,9 +22,9 @@ export const prescriptionFormInfo: FormInfo<Prescription> = {
   logoUrl: { label: 'URL del logo', type: 'text', },
   notes: { label: 'Notas', type: 'textarea', },
   orderId: { label: 'ID de pedido', type: 'number', },
+  date: { label: 'Fecha', type: 'date', },
   patient: {
     ...patientFormInfo,
-
   },
   clinic: addressFormInfo,
 } as FormInfo<Prescription>;
@@ -39,11 +39,12 @@ export const prescriptionDictionary: NamingSubject = new NamingSubject(
   'recetas',
   'Recetas',
   'prescriptions',
-  ['inicio'],
+  [ 'inicio' ],
 );
 
 export const prescriptionColumns: Column[] = [
-  ...baseColumns,
+  new Column('patient', 'Paciente'),
+  new Column('date', 'Fecha'),
 ];
 
 export const prescriptionCells: PartialCellsOf<Prescription> = {

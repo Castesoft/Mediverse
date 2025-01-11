@@ -1,6 +1,7 @@
 using CloudinaryDotNet.Actions;
 
 namespace MainService.Models.Entities;
+
 public class Photo : BaseEntity
 {
     public string? Url { get; set; }
@@ -15,12 +16,14 @@ public class Photo : BaseEntity
     public DoctorSignature DoctorSignature { get; set; } = null!;
     public MedicalInsuranceCompanyPhoto MedicalInsuranceCompanyPhoto { get; set; } = null!;
 
-    public Photo() {}
+    public Photo()
+    {
+    }
 
     public Photo(ImageUploadResult result, int userId)
     {
         Url = result.SecureUrl.AbsoluteUri;
         PublicId = result.PublicId;
-        UserPhoto = new(userId);
+        UserPhoto = new UserPhoto(userId);
     }
 }

@@ -23,11 +23,8 @@ export class Prescription extends Entity {
   items: PrescriptionItem[] = [];
   product: SelectOption | null = null;
 
-  isCollapsed = true;
-
   constructor(init?: Partial<Prescription>) {
     super();
-
     Object.assign(this, init);
   }
 }

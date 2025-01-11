@@ -14,6 +14,7 @@ export class Entity {
   isSelected: boolean = false;
   visible: boolean = true;
   enabled: boolean = true;
+  isCollapsed: boolean = false;
 }
 
 export const baseInfo: FormInfo<Entity> = {

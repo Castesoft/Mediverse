@@ -1,4 +1,4 @@
-@if(form.error) {
+@if (form.error) {
   <div errorsAlert3 [(error)]="form.error"></div>
 }
 <form class="prescription-pad bg-body" [id]="form.id" (ngSubmit)="onSubmit(view, use)">
@@ -6,33 +6,26 @@
   <div class="prescription-header">
     <div class="logo">
       @if (use() === 'create') {
-        <img [src]="form.controls.clinic.controls.photoUrl.value ?? 'media/logos/logo-compact.svg'" alt="Logo" />
+        <img [src]="form.controls.clinic.controls.photoUrl.value ?? 'media/logos/logo-compact.svg'" alt="Logo"/>
       } @else {
-        <img [src]="form.controls.clinic.controls.photoUrl.value ?? 'media/logos/logo-compact.svg'" alt="Logo" />
+        <img [src]="form.controls.clinic.controls.photoUrl.value ?? 'media/logos/logo-compact.svg'" alt="Logo"/>
       }
     </div>
     <div class="doctor-info">
       <p class="text-gray-900 fw-bold">
-        @if (form.controls.doctor.controls.sex.value?.name === 'Masculino') {Dr.} @else {Dra.}
+        @if (form.controls.doctor.controls.sex.value?.name === 'Masculino') {
+          Dr.
+        } @else {
+          Dra.
+        }
         {{ form.controls.doctor.controls.firstName.value }} {{ form.controls.doctor.controls.lastName.value }}
       </p>
       <p>{{ form.controls.doctor.controls.mainSpecialty.value }}</p>
     </div>
   </div>
 
-  <!-- <div class="prescription-content">
-    <div class="rx-symbol">℞</div>
-  </div> -->
-
   <div class="prescription-body">
     <div class="patient-info-container">
-      <!-- <div
-        controlTypeahead3
-        [(control)]="form.controls.patient.controls.select"
-        [(fromWrapper)]="fromWrapper"
-        (onSelectionChange)="form.patchPatient($event)"
-        ></div> -->
-
       <div class="patient-info">
         <p class="text-gray-900 fw-bold mb-0 fs-6">Paciente:</p>
         @if (form.controls.patient.controls.id.value !== null) {
@@ -43,23 +36,24 @@
                   userProfilePicture
                   [fullName]="form.controls.patient.controls.fullName.value"
                   [photoUrl]="form.controls.patient.controls.photoUrl.value"
-                  ></div>
+                ></div>
               </a>
               <div class="ms-4 w-100">
                 <p class="text-gray-900 mb-0 fs-6">
 
                   <b class="mb-0 me-4">{{ form.controls.patient.controls.fullName.value }}</b>
-                  {{ form.controls.patient.controls.sex.value?.name }} <span class="text-gray-300">|</span> {{ form.controls.patient.controls.age.value | number }} años
+                  {{ form.controls.patient.controls.sex.value?.name }} <span
+                  class="text-gray-300">|</span> {{ form.controls.patient.controls.age.value }} años
                 </p>
               </div>
             </div>
-              @if (use() === 'create' && form.controls.patient.controls.id.value !== null) {
-                <i class="ki-duotone ki-pencil me-6 fs-4 cursor-pointer" (click)="form.resetPatient()">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                </i>
-              }
-            </div>
+            @if (use() === 'create' && form.controls.patient.controls.id.value !== null) {
+              <i class="ki-duotone ki-pencil me-6 fs-4 cursor-pointer" (click)="form.resetPatient()">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+            }
+          </div>
         } @else {
           <div
             controlTypeahead3
@@ -69,86 +63,91 @@
       </div>
 
       <div class="prescription-date">
-        <p class="text-gray-900 mb-0">
-          @if (use() === 'create') {
-            {{ form.controls.clinic.controls.city.value }}, {{ form.controls.date.value | date:'dd/MM/yyyy' }}
-          } @else if (form.controls.clinic.controls.id.value !== null) {
-            {{ form.controls.clinic.controls.city.value }}, {{ form.controls.date.value | date:'dd/MM/yyyy' }}
-          } @else {
-            {{ form.controls.date.value | date:'dd/MM/yyyy' }}
-          }
-        </p>
+        <p class="text-gray-900 fw-bold mb-0 fs-6 ms-5 me-8">Fecha:</p>
+        <div controlsWrapper3
+             [showBottomMargin]="false"
+             [(control)]="form.controls.date"></div>
       </div>
     </div>
 
-    <div class="table-responsive mt-10">
-        <table class="table table-row-dashed table-row-gray-300 gx-1 gy-3">
-          <thead
-            [columns]="form.prescriptionItemColumns"
-            [isCompact]="true"
-            [(dictionary)]="service.dictionary"
-            [mode]="'readonly'"
-            [params]="null"
-            [showActions]="false"
-            [show]="true"
-            tableHeader
-          ></thead>
-          <tbody>
-            @for (productItem of form.controls.items.controls; let idx = $index; track idx) {
-              <tr>
-                <td class="fw-bold">{{(idx + 1) | number}}</td>
-                <td>
-                  <div
-                    controlTypeahead3
-                    [(control)]="form.controls.items.controls[idx].controls.selectProduct"
-                    [(fromWrapper)]="fromWrapper"
-                    (onSelectionChange)="form.patchProductItem($event, idx)"></div>
+    <div class="table-responsive mt-4">
+      <table class="table table-row-dashed table-row-gray-300 gx-1 gy-3 mb-0">
+        <thead
+          [columns]="form.prescriptionItemColumns"
+          [isCompact]="true"
+          [(dictionary)]="service.dictionary"
+          [mode]="'readonly'"
+          [params]="null"
+          [showActions]="false"
+          [show]="true"
+          tableHeader
+        ></thead>
+        <tbody>
+          @for (productItem of form.controls.items.controls; let idx = $index; track idx) {
+            <tr class="align-middle" [style.border-bottom]="'none'">
+              <td class="fw-bold">
+                {{ (idx + 1) | number }}
+              </td>
+              <td>
+                <div
+                  controlTypeahead3
+                  [(control)]="form.controls.items.controls[idx].controls.selectProduct"
+                  [(fromWrapper)]="fromWrapper"
+                  (onSelectionChange)="form.patchProductItem($event, idx)"></div>
+              </td>
+              <td>
+                <div controlsWrapper3
+                     [showBottomMargin]="false"
+                     [(control)]="form.controls.items.controls[idx].controls.description"></div>
+              </td>
+              <td style="max-width: 80px;">
+                <div controlsWrapper3
+                     [showBottomMargin]="false"
+                     [(control)]="form.controls.items.controls[idx].controls.dosage"></div>
+              </td>
+              <td style="max-width: 80px;">
+                <div controlsWrapper3
+                     [showBottomMargin]="false"
+                     [(control)]="form.controls.items.controls[idx].controls.quantity"></div>
+              </td>
+              @if (form.use !== 'detail') {
+                <td class="border-none align-start">
+                  <button class="btn btn-light-danger h-100 w-100" type="button" (click)="form.removeProductItem(idx)">
+                    <fa-icon [icon]="icons.faRegTrashCan"></fa-icon>
+                  </button>
                 </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.description"></div>
-                </td>
-                <td style="max-width: 80px;">
-                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.dosage"></div>
-                </td>
-                <td style="max-width: 80px;">
-                  <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.quantity"></div>
-                </td>
-                @if (form.use !== 'detail') {
-                  <td class="d-flex justify-content-start align-items-end">
-                    <button class="btn btn-sm btn-light-danger" type="button" (click)="form.removeProductItem(idx)">
-                      <fa-icon [icon]="icons.faClipboard"></fa-icon>
-                    </button>
-                  </td>
-                }
-              </tr>
-              @if(form.controls.items.controls[idx].controls.selectProduct.value?.id !== null) {
-                <tr>
-                  <td></td>
-                  <td colspan="5">
-                    <div controlsWrapper3 [(control)]="form.controls.items.controls[idx].controls.instructions"></div>
-                  </td>
-                </tr>
               }
+            </tr>
+            @if (form.controls.items.controls[idx].controls.selectProduct.value?.id !== null) {
+              <tr>
+                <td class="pt-0"></td>
+                <td class="pt-0" colspan="5">
+                  <div controlsWrapper3
+                       [showBottomMargin]="false"
+                       [(control)]="form.controls.items.controls[idx].controls.instructions"></div>
+                </td>
+              </tr>
             }
-          </tbody>
-        </table>
-      </div>
-
-    @if (form.use !== 'detail') {
-      <tr>
-        <td>
-          <button
-            (click)="form.addEmptyProductItem()"
-            class="btn btn-primary"
-            type="button"
-            [disabled]="!form.addButtonEnabled"
-            >
-            <fa-icon [icon]="icons.faPlus"></fa-icon>
-            Agregar
-          </button>
-        </td>
-      </tr>
-    }
+          }
+          @if (form.use !== 'detail') {
+            <tr>
+              <td></td>
+              <td>
+                <button
+                  (click)="form.addEmptyProductItem()"
+                  class="btn btn-primary"
+                  type="button"
+                  [disabled]="!form.addButtonEnabled"
+                >
+                  <fa-icon [icon]="icons.faPlus"></fa-icon>
+                  Agregar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     <div class="prescription-notes">
       <div templateControlTextarea [(fromWrapper)]="fromWrapper" [(control)]="form.controls.notes"></div>
@@ -157,43 +156,38 @@
 
   <div class="prescription-footer">
     <div class="doctor-info">
-      @if(form.clinicSelectMode === true) {
+      @if (form.clinicSelectMode && use() !== 'detail') {
         <div
           controlTypeahead3
           [(control)]="form.controls.clinic.controls.select"
           [(fromWrapper)]="fromWrapper"></div>
       }
+
       @if (use() === 'create') {
-        <div class="d-flex align-items-center">
-          <p class="text-gray-900 mb-0 me-2">{{ form.addressString1 }}</p>
-          @if (this.item() === null || this.item()!.clinic.id === null) {
-            <i class="ki-duotone ki-pencil fs-6 cursor-pointer"
-               (click)="form.clinicSelectMode = !form.clinicSelectMode"
-               [tooltip]="'Cambiar clinica'">
-              <span class="path1"></span>
-              <span class="path2"></span>
-            </i>
-          }
-        </div>
-      } @else {
-        @if (form.hasAddress) {
-          <p class="text-gray-900 mb-0 me-2">{{ form.addressString1 }}</p>
-        } @else {
-          <p class="text-gray-900 mb-0 me-2">Clinica no especificada</p>
+        @if (form.addressString1) {
+          <div class="d-flex align-items-center">
+            <p class="text-gray-900 mb-0 me-2">{{ form.addressString1 }}</p>
+            @if (this.item() === null || this.item()!.clinic.id === null) {
+              <i class="ki-duotone ki-pencil fs-6 cursor-pointer"
+                 (click)="form.clinicSelectMode = !form.clinicSelectMode"
+                 [tooltip]="'Cambiar clinica'">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+            }
+          </div>
         }
+      } @else {
+        <p class="text-gray-900 mb-0 me-2">{{ form.addressString1 || 'Dirección no especificada' }}</p>
       }
       <p class="text-gray-900 mb-0">
         @if (use() === 'create') {
-          {{ form.addressString2}}
+          {{ form.addressString2 || '' }}
         } @else {
-          @if (form.hasAddress) {
-            {{form.addressString2}}
-          } @else {
-            Clínica no especificada
-          }
+          {{ form.addressString2 || 'Clínica no especificada' }}
         }
       </p>
-      <p class="text-gray-900 mb-0">Tel: {{ form.doctorPhoneNumber}}</p>
+      <p class="text-gray-900 mb-0">Tel: {{ form.doctorPhoneNumber || 'No especificado' }}</p>
       <p class="text-gray-900 mb-0">{{ form.controls.doctor.controls.email.value }}</p>
     </div>
     <div class="doctor-signature pt-5">
@@ -202,8 +196,8 @@
         <p>Firma del médico</p>
       </div>
       <div class="doctor-signature-info">
-        <p class="text-gray-900 mb-0">Cédula Profesional: {{ form.doctorLicenseNumber }}</p>
-        <p class="text-gray-900 mb-0">Cédula de Especialidad: {{ form.doctorSpecialtyLicense }}</p>
+        <p class="text-gray-900 mb-0">Cédula Profesional: {{ form.doctorLicenseNumber || 'No disponible' }}</p>
+        <p class="text-gray-900 mb-0">Cédula de Especialidad: {{ form.doctorSpecialtyLicense || 'No disponible' }}</p>
       </div>
     </div>
   </div>

@@ -16,15 +16,13 @@ import { isNullOrWhiteSpace } from 'src/app/_utils/util';
 
 
 export class PrescriptionForm extends FormGroup2<Prescription> {
-
-  clinicSelectMode = false;
+  clinicSelectMode = true;
 
   readonly prescriptionItemColumns: Column[] = [
     new Column('number', '#'),
     new Column('name', 'Nombre'),
     new Column('description', 'Descripción'),
     new Column('dose', 'Dosis'),
-    // new Column('instructions', 'Instrucciones'),
     new Column('quantity', 'Cantidad'),
     new Column('', ''),
   ];
@@ -56,9 +54,11 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     super(Prescription, new Prescription(), prescriptionFormInfo);
 
     this.addEmptyProductItem();
+    this.controls.patient.controls.select.showLabel = false;
+    this.controls.date.showLabel = false;
 
     this.controls.patient.controls.select.valueChanges.subscribe({
-      next: (value: SelectOption | null) => {
+      next: (value: SelectOption | null): void => {
         if (value !== null && value !== undefined && !isNullOrWhiteSpace(value)) {
           this.controls.patient.controls.id.patchValue(value.id);
           this.controls.patient.controls.fullName.patchValue(value.name);
@@ -67,7 +67,10 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
           if (value.options !== null) {
             this.controls.patient.controls.photoUrl.patchValue(value.options.photoUrl);
             if (value.options.sex !== null) {
-              this.controls.patient.controls.sex.patchValue(new SelectOption({ name: value.options.sex, code: value.options.sex, }));
+              this.controls.patient.controls.sex.patchValue(new SelectOption({
+                name: value.options.sex,
+                code: value.options.sex,
+              }));
             }
           }
         }
@@ -75,7 +78,7 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     });
 
     this.controls.clinic.controls.select.valueChanges.subscribe({
-      next: (value: SelectOption | null) => {
+      next: (value: SelectOption | null): void => {
         if (value !== null && value !== undefined && !isNullOrWhiteSpace(value)) {
           this.controls.clinic.controls.id.patchValue(value.id);
           if (value.options !== null) {
@@ -84,23 +87,15 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         }
       }
     });
-
-
   }
 
-  patch(doctor: Account, prescription: Prescription | null) {
-    console.log('doctor', doctor, 'prescription', prescription);
-
-
+  patch(prescription: Prescription | null) {
     if (this.use === 'create') {
-      this.controls.doctor.patchValue(
-        new Account({
-          ...doctor,
-        }));
-
+      const doctor = prescription?.doctor;
+      this.controls.doctor.patchValue(doctor as Account);
       this.controls.date.patchValue(new Date());
 
-      if (doctor.doctorClinics.length && doctor.doctorClinics.length > 0) {
+      if (doctor && doctor.doctorClinics.length && doctor.doctorClinics.length > 0) {
         const clinic = doctor.doctorClinics[0];
         this.controls.clinic.patchValue(new Address({
           city: clinic.city,
@@ -118,7 +113,7 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         }));
       }
 
-      if (doctor.medicalLicenses.length && doctor.medicalLicenses.length > 0) {
+      if (doctor && doctor.medicalLicenses.length && doctor.medicalLicenses.length > 0) {
         doctor.medicalLicenses.forEach(license => {
           this.controls.doctor.controls.medicalLicenses.push(new FormGroup2<MedicalLicense>(MedicalLicense, new MedicalLicense({
             ...license,
@@ -131,34 +126,35 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
       }
     }
 
-
     if (this.use === 'detail' || this.use === 'edit') {
       if (prescription !== null) {
+        const { doctor, clinic, patient } = prescription;
+
         this.controls.items.clear();
-        prescription.items.forEach(x => {
-          const prescriptionItem = new PrescriptionItem({
-            ...x,
-          });
+
+        prescription.items.forEach(pi => {
+          const prescriptionItem = new PrescriptionItem({ ...pi, });
+          console.log('prescriptionItem: ' + prescriptionItem.name, prescriptionItem);
           const prescriptionItemGroup = new FormGroup2<PrescriptionItem>(PrescriptionItem, prescriptionItem, prescriptionItemInfo);
-          if (x.unit) {
-            prescriptionItemGroup.controls.dosage.inputGroupAppend = x.unit;
-          }
+
+          prescriptionItemGroup.controls.selectProduct.setValue(new SelectOption({
+            name: prescriptionItem.name ?? undefined,
+            code: prescriptionItem.name ?? undefined,
+          }));
+
+          if (pi.unit) prescriptionItemGroup.controls.dosage.inputGroupAppend = pi.unit;
+
           this.controls.items.push(prescriptionItemGroup);
         });
 
-        this.controls.date.patchValue(prescription.date);
-
-        this.controls.clinic.patchValue(new Address({
-          ...prescription.clinic,
-        }));
-
-        this.controls.doctor.patchValue(new Account({
-          ...prescription.doctor,
-        }));
+        this.controls.notes.patchValue(prescription.notes);
+        this.controls.date.patchValue(prescription.createdAt, { emitEvent: false });
+        this.controls.clinic.patchValue(clinic as Address, { emitEvent: false });
+        this.controls.clinic.controls.photoUrl.patchValue(clinic.photoUrl);
+        this.controls.doctor.patchValue(doctor as Account, { emitEvent: false });
+        this.controls.patient.patchValue(patient as Patient, { emitEvent: false });
       }
     }
-
-    this.updateValueAndValidity();
   }
 
   patchProductItem(value: SelectOption | null, index: number) {
@@ -172,7 +168,7 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         this.controls.items.controls[index].controls.product.controls.id.patchValue(value.id);
         this.controls.items.controls[index].controls.product.controls.name.patchValue(value.name);
         if (value.options?.price) {
-        this.controls.items.controls[index].controls.product.controls.description.patchValue(value.options?.description);
+          this.controls.items.controls[index].controls.product.controls.description.patchValue(value.options?.description);
         }
         if (value.options?.dosage) {
           this.controls.items.controls[index].controls.product.controls.dosage.patchValue(value.options?.dosage.toString());
@@ -216,28 +212,51 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     prescriptionItemGroup.disable();
     prescriptionItemGroup.controls.selectProduct.enable();
 
-    prescriptionItemGroup.controls.selectProduct.setValidators([Validators.required, Validators.maxLength(500)]);
-    prescriptionItemGroup.controls.quantity.setValidators([Validators.required, Validators.min(1), Validators.max(1000)]);
-    prescriptionItemGroup.controls.instructions.setValidators([Validators.required, Validators.maxLength(1000)]);
+    prescriptionItemGroup.controls.selectProduct.setValidators([ Validators.required, Validators.maxLength(500) ]);
+    prescriptionItemGroup.controls.quantity.setValidators([ Validators.required, Validators.min(1), Validators.max(1000) ]);
+    prescriptionItemGroup.controls.instructions.setValidators([ Validators.required, Validators.maxLength(1000) ]);
 
     this.controls.items.push(prescriptionItemGroup);
     this.updateValueAndValidity();
   }
 
-  get addressString1(): string {
-    return `${this.controls.clinic.controls.street.value!} ${this.controls.clinic.controls.exteriorNumber.value!} ${this.controls.clinic.controls.neighborhood.value!}`;
+  get addressString1(): string | null {
+    const street = this.controls.clinic.controls.street.value;
+    const exteriorNumber = this.controls.clinic.controls.exteriorNumber.value || 'Sin Número';
+
+    if (street && exteriorNumber) {
+      return `${street}, ${exteriorNumber}`;
+    }
+
+    return null;
   }
 
-  get addressString2(): string {
-    return `${this.controls.clinic.controls.city.value!}, ${this.controls.clinic.controls.state.value!}, ${this.controls.clinic.controls.country.value!}`;
+  get addressString2(): string | null {
+    const city = this.controls.clinic.controls.city.value;
+    const state = this.controls.clinic.controls.state.value;
+    const country = this.controls.clinic.controls.country.value;
+
+    if (!city && !state && !country) return null;
+
+    let address = '';
+
+    if (city) address += `${city}, `;
+    if (state) address += `${state}, `;
+    if (country) address += `${country}`;
+
+    return address.trim();
   }
 
   get hasAddress(): boolean {
     return this.controls.clinic.controls.id.value !== null;
   }
 
-  get doctorPhoneNumber(): string {
-    return `${this.controls.doctor.controls.phoneNumberCountryCode.value!} ${this.controls.doctor.controls.phoneNumber.value!}`;
+  get doctorPhoneNumber(): string | null {
+    const { phoneNumberCountryCode, phoneNumber } = this.controls.doctor.controls;
+
+    if (!phoneNumberCountryCode.value || !phoneNumber.value) return null;
+
+    return `${phoneNumberCountryCode.value} ${phoneNumber.value}`;
   }
 
   get doctorLicenseNumber(): string | null {

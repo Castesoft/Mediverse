@@ -16,5 +16,6 @@ namespace MainService.Core.DTOs.Clinics
         public string? State { get; set; }
         public string? Country { get; set; }
         public string? Zipcode { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 }
