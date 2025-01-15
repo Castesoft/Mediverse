@@ -26,13 +26,19 @@ import { ServiceFormComponent, ServicesService } from 'src/app/services/services
   selector: "[eventForm]",
   templateUrl: './event-form.component.html',
   standalone: true,
-  imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, MaterialModule, CdkModule,
-    PatientFormComponent, ServiceFormComponent, ClinicFormComponent,
+  imports: [
+    CommonModule,
+    RouterModule,
+    ControlsModule,
+    Forms2Module,
+    MaterialModule,
+    CdkModule,
+    PatientFormComponent,
+    ServiceFormComponent,
+    ClinicFormComponent,
   ]
 })
-export class EventFormComponent
-  extends BaseForm<Event, EventParams, EventFiltersForm, EventForm, EventsService>
-  implements FormInputSignals<Event> {
+export class EventFormComponent extends BaseForm<Event, EventParams, EventFiltersForm, EventForm, EventsService> implements FormInputSignals<Event> {
   item: ModelSignal<Event | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
@@ -79,7 +85,6 @@ export class EventFormComponent
     if (step === undefined) {
       this.selectedIndex = 0;
     } else {
-
       switch (step) {
         case 'paciente':
           this.selectedIndex = 0;

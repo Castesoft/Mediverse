@@ -11,7 +11,6 @@ import { ControlRows } from "src/app/_models/forms/formTypes";
 })
 export class ControlsRow3Component {
   grid = input<ControlRows>('responsive');
-
   orientation = input<ControlOrientation>('inline');
 
   class = 'row d-flex';
@@ -43,7 +42,7 @@ export class ControlsRow3Component {
           break;
       }
 
-      switch(this.orientation()) {
+      switch (this.orientation()) {
         case 'inline':
           this.class = `${this.class} align-items-start gx-3 gy-3`;
           break;

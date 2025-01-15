@@ -5,8 +5,7 @@
   [(params)]="params"
   [(mode)]="mode"
   [(isCompact)]="isCompact"
-  (selectedChange)="service.onSelectAll(key(), mode(), $event)"
-  [selected]="(service.areAllSelected(key()) | async)!"
+  (selectedChange)="service.toggleMultipleSelectedArray$(key() || '', data())"
 ></thead>
 <tbody templateTableBody>
   @for (item of data(); track item.id; let idx = $index) {
@@ -20,7 +19,7 @@
         [(isCompact)]="isCompact"
         [(dictionary)]="service.dictionary"
         [(selected)]="item.isSelected"
-        (click)="service.onSelect(key(), mode(), item)"
+        (click)="service.setSelected$(key() || '', item)"
       ></td>
 
       @if (dev.isDev()) {
@@ -67,7 +66,14 @@
         [(isCompact)]="isCompact"
       ></td>
       <ng-template #context_menu>
-        <div ordersTableMenu [item]="item" [key]="key()"></div>
+        @defer {
+          @if (key()) {
+            <div tableMenu
+                 [item]="item"
+                 [key]="key()!"
+                 [service]="service"></div>
+          }
+        }
       </ng-template>
     </tr>
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, ModelSignal, model, effect } from "@angular/core";
+import { Component, OnDestroy, ModelSignal, model, effect, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -18,19 +18,21 @@ import { UsersService } from "src/app/users/users.config";
 
 @Component({
   selector: '[usersCatalog]',
-  template: ``,
   templateUrl: './users-catalog.component.html',
   standalone: true,
-  imports: [ FontAwesomeModule,
-    UsersTableComponent, CommonModule,
-    RouterModule, ControlsModule, TablesModule,
-    CdkModule, MaterialModule, Forms2Module,
-   ],
+  imports: [
+    FontAwesomeModule,
+    UsersTableComponent,
+    CommonModule,
+    RouterModule,
+    ControlsModule,
+    TablesModule,
+    CdkModule,
+    MaterialModule,
+    Forms2Module,
+  ],
 })
-export class UsersCatalogComponent
-  extends BaseCatalog<User, UserParams, UserFiltersForm, UsersService>
-  implements OnDestroy, CatalogInputSignals<User, UserParams>
-{
+export class UsersCatalogComponent extends BaseCatalog<User, UserParams, UserFiltersForm, UsersService> implements OnInit, OnDestroy, CatalogInputSignals<User, UserParams> {
   item: ModelSignal<User | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -38,29 +40,22 @@ export class UsersCatalogComponent
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<UserParams> = model.required();
 
-
   constructor() {
     super(UsersService, UserFiltersForm);
 
-    effect(() => {
+    effect((): void => {
       this.form
         .setForm(this.params())
-        .setValidation(this.validation.active())
-      ;
-
-      this.service.createEntry(this.key(), this.params(), this.mode());
-
-      this.service.cache$.subscribe({
-        next: cache => {
-          this.service.loadPagedList(this.key(), this.params()).subscribe();
-        }
-      });
+        .setValidation(this.validation.active());
     });
   }
 
-  ngOnDestroy() {
+  ngOnInit(): void {
+    this.service.loadPagedList(this.key(), this.params()).subscribe();
+  }
+
+  ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
 }

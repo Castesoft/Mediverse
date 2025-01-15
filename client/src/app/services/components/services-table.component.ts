@@ -10,72 +10,11 @@ import { Service } from "src/app/_models/services/service";
 import { serviceCells } from "src/app/_models/services/serviceConstants";
 import { ServiceFiltersForm } from "src/app/_models/services/serviceFiltersForm";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
-import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
-import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { ServicesService } from "src/app/services/services.config";
-
-@Component({
-  selector: 'div[servicesTableMenu]',
-  host: { class: '' },
-  template: `
-    <div class="dropdown-menu d-block" cdkMenu>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          service.clickLink(item(), key(), 'detail', 'page');
-          $event.preventDefault()
-        "
-      >
-        Ver {{ service.dictionary.singular }}
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          $event.preventDefault();
-          service.clickLink(item(), key(), 'detail', 'modal')
-        "
-      >
-        Abrir {{ service.dictionary.singular }} en pantalla modal
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
-      >
-        Editar
-      </a>
-      <button
-        cdkMenuItem
-        class="dropdown-item px-3 text-danger"
-        (click)="service.delete$(item())"
-      >
-        Eliminar
-      </button>
-    </div>
-  `,
-  standalone: true,
-  imports: [RouterModule, CdkModule, MaterialModule],
-})
-export class ServicesTableMenuComponent
-  extends TableMenu<ServicesService>
-  implements OnInit, ITableMenu<Service>
-{
-  item: ModelSignal<Service> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(ServicesService);
-  }
-
-  ngOnInit(): void {}
-}
+import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -90,7 +29,7 @@ export class ServicesTableMenuComponent
     CdkModule,
     MaterialModule,
     CommonModule,
-    ServicesTableMenuComponent,
+    TableMenuComponent,
   ],
 })
 export class ServicesTableComponent

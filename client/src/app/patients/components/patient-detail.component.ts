@@ -7,7 +7,7 @@ import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
 import { View } from "src/app/_models/base/types";
 import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormUse } from "src/app/_models/forms/formTypes";
-import Patient from "src/app/_models/patients/patient";
+import { Patient } from "src/app/_models/patients/patient";
 import { PatientFiltersForm } from "src/app/_models/patients/patientFiltersForm";
 import { PatientParams } from "src/app/_models/patients/patientParams";
 import { PatientFullDetailComponent } from "src/app/patients/components/utils/patient-full-detail.component";
@@ -24,14 +24,13 @@ import { PatientFormComponent, PatientsService } from "src/app/patients/patients
   // `,
   templateUrl: './patient-detail.component.html',
   standalone: true,
-  imports: [PatientFormComponent, ControlsModule, Forms2Module, RouterModule, CommonModule,
+  imports: [ PatientFormComponent, ControlsModule, Forms2Module, RouterModule, CommonModule,
     PatientFullDetailComponent,
-   ],
+  ],
 })
 export class PatientDetailComponent
   extends BaseDetail<Patient, PatientParams, PatientFiltersForm, PatientsService>
-  implements DetailInputSignals<Patient>
-{
+  implements DetailInputSignals<Patient> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Patient | null> = model.required();

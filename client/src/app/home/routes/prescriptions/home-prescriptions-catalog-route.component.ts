@@ -6,13 +6,11 @@ import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionPa
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homePrescriptionsCatalogRoute]',
   templateUrl: './home-prescriptions-catalog-route.component.html',
   standalone: false,
 })
 export class HomePrescriptionsCatalogRouteComponent extends BaseRouteCatalog<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> {
-
   constructor() {
     super(PrescriptionsService, 'prescriptions');
   }

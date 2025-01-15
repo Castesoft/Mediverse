@@ -1,12 +1,11 @@
 import { Component } from "@angular/core";
 import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
-import { ProductsService } from "../../../products/products.config";
-import { Product } from "../../../_models/products/product";
-import { ProductParams } from "../../../_models/products/productParams";
-import { ProductFiltersForm } from "../../../_models/products/productFiltersForm";
+import { Product } from "src/app/_models/products/product";
+import { ProductParams } from "src/app/_models/products/productParams";
+import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm";
+import { ProductsService } from "src/app/products/products.config";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homePatientsCatalogRoute]',
   templateUrl: './home-pharmacy-catalog-route.component.html',
   standalone: false,

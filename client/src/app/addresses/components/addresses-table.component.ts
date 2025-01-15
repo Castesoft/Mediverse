@@ -10,72 +10,12 @@ import { AddressParams } from "src/app/_models/addresses/addressParams";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { View, CatalogMode } from "src/app/_models/base/types";
-import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
-import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { AddressesService } from "src/app/addresses/addresses.config";
+import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 
-@Component({
-  selector: 'div[addressesTableMenu]',
-  host: { class: '' },
-  template: `
-    <div class="dropdown-menu d-block" cdkMenu>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          service.clickLink(item(), key(), 'detail', 'page');
-          $event.preventDefault()
-        "
-      >
-        Ver {{ service.dictionary.singular }}
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          $event.preventDefault();
-          service.clickLink(item(), key(), 'detail', 'modal')
-        "
-      >
-        Abrir {{ service.dictionary.singular }} en pantalla modal
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
-      >
-        Editar
-      </a>
-      <button
-        cdkMenuItem
-        class="dropdown-item px-3 text-danger"
-        (click)="service.delete$(item())"
-      >
-        Eliminar
-      </button>
-    </div>
-  `,
-  standalone: true,
-  imports: [RouterModule, CdkModule, MaterialModule],
-})
-export class AddressesTableMenuComponent
-  extends TableMenu<AddressesService>
-  implements OnInit, ITableMenu<Address>
-{
-  item: ModelSignal<Address> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(AddressesService);
-  }
-
-  ngOnInit(): void {}
-}
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -90,7 +30,7 @@ export class AddressesTableMenuComponent
     CdkModule,
     MaterialModule,
     CommonModule,
-    AddressesTableMenuComponent,
+    TableMenuComponent,
   ],
 })
 export class AddressesTableComponent

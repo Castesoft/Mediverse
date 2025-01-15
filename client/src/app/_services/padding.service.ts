@@ -1,22 +1,18 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaddingService {
-  withPadding = signal<boolean>(true);
+  withPadding: WritableSignal<boolean> = signal<boolean>(true);
 
-  constructor() {
-    
-  }
+  get: () => boolean = (): boolean => this.withPadding();
 
-  get = (): boolean => this.withPadding();
-  set(value: boolean) {
+  set(value: boolean): void {
     this.withPadding.set(value);
   }
 
-  toggle() {
+  toggle(): void {
     this.withPadding.set(!this.withPadding());
   }
-
 }

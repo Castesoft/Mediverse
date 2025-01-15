@@ -1,6 +1,6 @@
 import { Component, effect } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
-import Patient from 'src/app/_models/patients/patient';
+import { Patient } from 'src/app/_models/patients/patient';
 
 @Component({
   host: { class: 'card card-flush' },

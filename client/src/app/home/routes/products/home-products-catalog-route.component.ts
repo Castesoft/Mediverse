@@ -6,18 +6,12 @@ import { ProductParams } from "src/app/_models/products/productParams";
 import { ProductsService } from "src/app/products/products.config";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homeProductsCatalogRoute]',
-  // selector: 'home-products-catalog-route',
   templateUrl: './home-products-catalog-route.component.html',
   standalone: false,
 })
-export class HomeProductsCatalogRouteComponent
-  extends BaseRouteCatalog<Product, ProductParams, ProductFiltersForm, ProductsService>
-{
-
+export class HomeProductsCatalogRouteComponent extends BaseRouteCatalog<Product, ProductParams, ProductFiltersForm, ProductsService> {
   constructor() {
     super(ProductsService, 'products');
   }
-
 }

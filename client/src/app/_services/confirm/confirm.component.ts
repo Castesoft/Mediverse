@@ -9,31 +9,24 @@ import { MaterialModule } from "src/app/_shared/material.module";
 @Component({
   selector: "confirm-modal",
   template: `
-  <h2 mat-dialog-title>{{data.title}}
-    <!-- <code>{{result() | json}}</code> -->
-  </h2>
-  <mat-dialog-content>
-    <p>{{data.message}}</p>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button (click)="onCancel()">{{data.btnCancelText}}</button>
-    <button mat-button (click)="onConfirm()" cdkFocusInitial>{{data.btnOkText}}</button>
-  </mat-dialog-actions>
+      <h2 mat-dialog-title>{{ data.title }}
+          <!-- <code>{{result() | json}}</code> -->
+      </h2>
+      <mat-dialog-content>
+          <p>{{ data.message }}</p>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+          <button mat-button (click)="onCancel()">{{ data.btnCancelText }}</button>
+          <button mat-button (click)="onConfirm()" cdkFocusInitial>{{ data.btnOkText }}</button>
+      </mat-dialog-actions>
   `,
   standalone: true,
-  imports: [ CommonModule, MaterialModule, CdkModule, FormsModule, ReactiveFormsModule,],
+  imports: [ CommonModule, MaterialModule, CdkModule, FormsModule, ReactiveFormsModule, ],
 })
 export class ConfirmComponent {
   readonly dialogRef = inject(MatDialogRef<ConfirmComponent>);
   readonly data = inject<IModal>(MAT_DIALOG_DATA);
   readonly result = model(this.data.result);
-
-  constructor() {
-    effect(() => {
-      // console.log(this.data);
-
-    })
-  }
 
   onCancel(): void {
     this.result.set(false);

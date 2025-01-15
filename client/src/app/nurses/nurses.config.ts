@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ModelSignal, model, effect, Injectable } from '@angular/core';
+import {
+  Component,
+  inject,
+  ModelSignal,
+  model,
+  effect,
+  Injectable,
+  OnInit,
+  OnDestroy,
+  output,
+  OutputEmitterRef
+} from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { ControlsModule } from 'src/app/_forms/controls.module';
@@ -21,12 +32,16 @@ import { MaterialModule } from 'src/app/_shared/material.module';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 import { ServiceHelper } from 'src/app/_utils/serviceHelper/serviceHelper';
 import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog.component';
+import { Subject } from "rxjs";
 
 @Component({
   selector: 'nurses-catalog-modal',
   template: `
     @defer {
-      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      @if (data.title) {
+        <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle
+            class="fw-semibold">{{ data.title }}</h2>
+      }
       <mat-dialog-content>
         <div
           nursesCatalog
@@ -39,15 +54,49 @@ import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog
         ></div>
       </mat-dialog-content>
       <mat-dialog-actions>
-        <button mat-button mat-dialog-close>Cerrar</button>
+        <div class="d-flex justify-content-end">
+          @if (selectedNurseCount > 0) {
+            <button class="btn btn-secondary btn-sm me-2" mat-dialog-close>Cancelar</button>
+            <button class="btn btn-primary btn-sm" mat-dialog-close>Seleccionar {{ selectedNurseCount }}
+              @if (selectedNurseCount > 1) {
+                especialistas
+              } @else {
+                especialista
+              }
+            </button>
+          } @else {
+            <button class="btn btn-secondary btn-sm" mat-dialog-close>Cerrar</button>
+          }
+        </div>
       </mat-dialog-actions>
     }
   `,
   standalone: true,
-  imports: [ NursesCatalogComponent, MaterialModule, CdkModule, ],
+  imports: [ MaterialModule, CdkModule, NursesCatalogComponent, ],
 })
-export class NursesCatalogModalComponent {
-  data = inject<CatalogDialog<Nurse, NurseParams>>(MAT_DIALOG_DATA);
+export class NursesCatalogModalComponent implements OnInit, OnDestroy {
+  private readonly nurses: NursesService = inject(NursesService);
+  private destroy$: Subject<void> = new Subject<void>();
+
+  data: CatalogDialog<Nurse, NurseParams> = inject<CatalogDialog<Nurse, NurseParams>>(MAT_DIALOG_DATA);
+  onConfirm: OutputEmitterRef<void> = output<void>();
+
+  selectedNurseCount: number = 0;
+
+  ngOnInit(): void {
+    this.subscribeToSelectedNurses();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private subscribeToSelectedNurses(): void {
+    this.nurses.multipleSelected$(this.data.key).subscribe({
+      next: (selectedNurses: Nurse[]): number => this.selectedNurseCount = selectedNurses.length
+    })
+  }
 }
 
 @Component({
@@ -161,40 +210,4 @@ export class NursesService extends ServiceHelper<Nurse, NurseParams, NurseFilter
       panelClass: [ "window" ]
     });
   };
-
-  clickLink(
-    item: Nurse | null = null,
-    key: string | null = null,
-    use: FormUse = 'detail',
-    view: View,
-    title: string | null = null
-  ) {
-    if (view === 'modal') {
-      this.matDialog.open<NurseDetailModalComponent, DetailDialog<Nurse>>(NurseDetailModalComponent, {
-        data: {
-          item: item,
-          key: key,
-          use: use,
-          view: 'modal',
-          title: this.getFormHeaderText(use, item),
-        },
-        disableClose: true,
-        hasBackdrop: false,
-        panelClass: [ 'window' ]
-      });
-
-    } else {
-      switch (use) {
-        case 'create':
-          this.router.navigate([ this.dictionary.createRoute ]);
-          break;
-        case 'edit':
-          this.router.navigate([ `${this.dictionary.catalogRoute}/${item?.id}/editar` ]);
-          break;
-        case 'detail':
-          this.router.navigate([ `${this.dictionary.catalogRoute}/${item?.id}` ]);
-          break;
-      }
-    }
-  }
 }

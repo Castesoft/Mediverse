@@ -28,9 +28,8 @@ export class TemplateControlSearchComponent {
   dictionary = model.required<NamingSubject>();
 
   constructor() {
-    effect(() => {
+    effect((): void => {
       this.control.set(this.control().setValidation(this.validation.active()));
     });
   }
-
 }

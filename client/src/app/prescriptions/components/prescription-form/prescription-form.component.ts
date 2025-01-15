@@ -7,7 +7,7 @@ import {
   model,
   ModelSignal,
   signal,
-  effect, OnDestroy, OnInit,
+  effect, OnDestroy, OnInit, input, InputSignal, WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -17,7 +17,6 @@ import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { Account } from 'src/app/_models/account/account';
 import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
-import { SelectOption } from 'src/app/_models/base/selectOption';
 import { View } from 'src/app/_models/base/types';
 import { FormInputSignals } from 'src/app/_models/forms/formComponentInterfaces';
 import { FormUse } from 'src/app/_models/forms/formTypes';
@@ -33,7 +32,7 @@ import { PatientsService } from 'src/app/patients/patients.config';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProductsService } from 'src/app/products/products.config';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
-import Patient from "src/app/_models/patients/patient";
+import { Patient } from "src/app/_models/patients/patient";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -63,23 +62,20 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
 
   @ViewChild('memberTabs', { static: false }) memberTabs?: TabsetComponent;
 
-  @HostBinding('class') get hostClass() {
+  @HostBinding('class') get hostClass(): '' | 'pt-9 pb-9' {
     if (this.view() === 'page') return 'pt-9 pb-9';
     else return '';
   }
 
-  use = model.required<FormUse>();
-  view = model.required<View>();
-  item = model.required<Prescription | null>();
+  use: ModelSignal<FormUse> = model.required<FormUse>();
+  view: ModelSignal<View> = model.required<View>();
+  item: ModelSignal<Prescription | null> = model.required<Prescription | null>();
   key: ModelSignal<string | null> = model.required();
 
   activeTab?: TabDirective;
 
-  productOptions = signal<SelectOption[]>([]);
-  patientOptions = signal<SelectOption[]>([]);
-  clinicOptions = signal<SelectOption[]>([]);
-
-  fromWrapper = signal<boolean>(false);
+  fromWrapper: WritableSignal<boolean> = signal<boolean>(false);
+  fromEventWindow: InputSignal<boolean> = input<boolean>(false);
 
   constructor() {
     super(PrescriptionsService, PrescriptionForm);
@@ -88,7 +84,7 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     this.patientsService.getOptions().subscribe();
     this.clinicsService.getOptions().subscribe();
 
-    effect(() => {
+    effect((): void => {
       this.form.setUse(this.use());
       this.form.setValidation(this.validation.active());
       this.form.productOptions = this.productsService.options();
@@ -99,7 +95,7 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     this.subscribeToFormValueChanges();
   }
 
-  private subscribeToFormValueChanges = () => {
+  private subscribeToFormValueChanges(): void {
     this.form.controls.patient.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async (patient): Promise<void> => {
       if (patient && patient.id) {
         const patientFull = await firstValueFrom(this.patientsService.getById(patient.id));
@@ -109,7 +105,9 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
   }
 
   ngOnInit(): void {
-    if (this.item()) this.form.patch(this.item()!);
+    if (this.item()) {
+      this.form.patch(this.item()!, this.fromEventWindow());
+    }
 
     const account: Account | null = this.accountService.current();
     if (account) {
@@ -122,9 +120,9 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     this.ngUnsubscribe.complete();
   }
 
-  private subscribeToRouteQueryParams = () => {
+  private subscribeToRouteQueryParams(): void {
     this.route.queryParams.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (params) => {
+      next: (params): void => {
         if (params['tab']) {
           this.selectTab(params['tab']);
         } else {
@@ -134,23 +132,22 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     });
   };
 
-  private selectTab = (id: string) => {
+  private selectTab(id: string): void {
     if (this.memberTabs) {
-      console.log(id);
-      const tab = this.memberTabs.tabs.find((x) => x.id === id);
+      const tab: TabDirective | undefined = this.memberTabs.tabs.find((x) => x.id === id);
       if (tab) {
         tab.active = true;
       }
     }
   };
 
-  onTabActivated = (data: TabDirective) => {
+  onTabActivated(data: TabDirective): void {
     this.activeTab = data;
 
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: data.id },
       queryParamsHandling: 'merge',
-    });
+    }).then(() => {});
   };
 }

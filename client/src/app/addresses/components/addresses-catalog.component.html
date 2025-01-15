@@ -1,25 +1,28 @@
 <div class="card-header align-items-center py-5 gap-2 gap-md-5">
-  <form [id]="form.id" (ngSubmit)="onSubmit(key())">
+  <form [id]="form.id">
     <div class="card-title">
-      <div templateControlSearch [(control)]="form.controls.search" [(fromWrapper)]="fromWrapper" [(dictionary)]="service.dictionary"></div>
+      <div templateControlSearch [(control)]="form.controls.search" [(fromWrapper)]="fromWrapper"
+           [(dictionary)]="service.dictionary"></div>
     </div>
   </form>
 
-    <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-      <a (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute" class="btn btn-primary">
-        Agregar {{ service.dictionary.singular }}
-      </a>
-    </div>
+  <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+    <a (click)="service.clickLink(null, key(), 'create', view()); $event.preventDefault()"
+       [href]="service.dictionary.createRoute" class="btn btn-primary">
+      Agregar {{ service.dictionary.singular }}
+    </a>
   </div>
+</div>
 
 <div class="card-body pt-0">
   <div tableWrapper>
-    @if(service.list$(key(), mode()) | async; as _list) {
-    <table addressesTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params">
-    </table>
-    }
-    @if(service.pagination$(key()) | async; as _pagination) {
-    <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
+    @if (service.list$(key()) | async; as _list) {
+      <table addressesTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view"
+             [(item)]="item" [(params)]="params">
+      </table>
+  }
+    @if (service.pagination$(key()) | async; as _pagination) {
+      <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
     }
   </div>
 </div>

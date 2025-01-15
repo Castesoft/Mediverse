@@ -1,0 +1,15 @@
+.transparent-container {
+  background: none !important;
+}
+
+.no-background {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.no-background > div {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}

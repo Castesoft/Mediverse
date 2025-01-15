@@ -1,4 +1,4 @@
-import { inject, signal } from "@angular/core";
+import { Directive, inject, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
@@ -44,6 +44,7 @@ import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
  * @method onSubmit - Submits the form with the given key.
  * @param {string | null} key - The key for form submission.
  */
+@Directive()
 export default class BaseCatalog<
   T extends Entity, U extends EntityParams<U>, V extends FormGroup2<U>,
   Z extends ServiceHelper<T, U, V>
@@ -74,17 +75,8 @@ export default class BaseCatalog<
     this.form = new formInstance();
   }
 
-  onSubmit(key: string | null) {
-    this.service.submitForm(key, this.form.params as any);
-  }
-
   onParamsChange(params: U) {
-    console.log(params);
-
-
     this.form.controls.isSortAscending.patchValue(params.isSortAscending);
     this.form.controls.sort.patchValue(params.sort);
-
-    this.onSubmit(params.key);
   }
 }

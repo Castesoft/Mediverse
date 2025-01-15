@@ -1,29 +1,28 @@
-@let pagination = service.pagination$(key()) | async;
-@let list = service.list$(key(), mode()) | async;
-<!-- @let hasSelected = service.hasSelected(key(), mode()) | async;
-@let selectedCount = service.selectedCount(key(), mode()) | async; -->
-
-<div class="card-header align-items-center py-5 gap-2 gap-md-5">
-  <form [id]="form.id" (ngSubmit)="onSubmit(key())">
-    <div class="card-title">
-      <div templateControlSearch [(control)]="form.controls.search" [(fromWrapper)]="fromWrapper" [(dictionary)]="service.dictionary"></div>
+<div catalogLayout
+     [service]="service"
+     [(form)]="form"
+     [(mode)]="mode"
+     [(key)]="key"
+     [(view)]="view"
+     [(isCompact)]="isCompact"
+     [(filterConfig)]="filterConfig"
+     [(item)]="item"
+     [(params)]="params"
+>
+  <ng-template #entityFilterForm>
+    <div controlsRow3 [grid]="filterConfig().orientation == 'horizontal' ? 5 : 1">
+      <div controlsWrapper3 [(control)]="form().controls.search" [showBottomMargin]="false"></div>
     </div>
-  </form>
-
-    <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-      <a (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute" class="btn btn-primary">
-        Agregar {{ service.dictionary.singular }}
-      </a>
-    </div>
-  </div>
-
-<div class="card-body pt-0">
-  <div tableWrapper>
-    @if(list !== null){
-      <table ordersTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params"></table>
-    }
-    @if(pagination !== null){
-      <div tablePager pager [(isCompact)]="isCompact" [pagination]="pagination" [(params)]="params"></div>
-    }
-  </div>
+  </ng-template>
+  <ng-template #entityTable let-list="list">
+    <table ordersTable
+           [(mode)]="mode"
+           [(isCompact)]="isCompact"
+           [data]="list"
+           [(key)]="key"
+           [(view)]="view"
+           [(item)]="item"
+           [(params)]="params">
+    </table>
+  </ng-template>
 </div>

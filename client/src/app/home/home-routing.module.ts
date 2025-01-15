@@ -68,6 +68,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Pacientes
         {
+          data: { breadcrumb: 'Pacientes', title: 'Pacientes' },
           path: 'pacientes',
           component: HomePatientsCatalogRouteComponent,
           title: titleCatalogResolver(PatientsService),
@@ -91,6 +92,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Citas
         {
+          data: { breadcrumb: 'Citas', title: 'Citas' },
           path: 'citas',
           component: HomeEventsCatalogRouteComponent,
           title: titleCatalogResolver(EventsService),
@@ -114,6 +116,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Servicios
         {
+          data: { breadcrumb: 'Servicios', title: 'Servicios' },
           path: 'servicios',
           component: HomeServicesCatalogRouteComponent,
           title: titleCatalogResolver(ServicesService),
@@ -137,6 +140,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Productos
         {
+          data: { breadcrumb: 'Productos', title: 'Productos' },
           path: 'productos',
           component: HomeProductsCatalogRouteComponent,
           title: titleCatalogResolver(ProductsService),
@@ -160,6 +164,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Pedidos
         {
+          data: { breadcrumb: 'Pedidos', title: 'Pedidos' },
           path: 'pedidos',
           component: HomeOrdersCatalogRouteComponent,
           title: titleCatalogResolver(OrdersService),
@@ -183,6 +188,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Recetas
         {
+          data: { breadcrumb: 'Recetas', title: 'Recetas' },
           path: 'recetas',
           component: HomePrescriptionsCatalogRouteComponent,
           title: titleCatalogResolver(PrescriptionsService),
@@ -205,6 +211,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Clinicas
         {
+          data: { breadcrumb: 'Clinicas', title: 'Clinicas' },
           path: 'clinicas',
           component: HomeClinicsCatalogRouteComponent,
           title: titleCatalogResolver(ClinicsService),
@@ -228,6 +235,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Especialistas
         {
+          data: { breadcrumb: 'Especialistas', title: 'Especialistas' },
           path: 'especialistas',
           component: HomeNursesCatalogRouteComponent,
           title: titleCatalogResolver(NursesService),
@@ -251,6 +259,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         },
         // Farmacia
         {
+          data: { breadcrumb: 'Farmacia', title: 'Farmacia' },
           path: "farmacia",
           component: HomePharmacyCatalogRouteComponent,
           title: titleCatalogResolver(PharmaciesService)

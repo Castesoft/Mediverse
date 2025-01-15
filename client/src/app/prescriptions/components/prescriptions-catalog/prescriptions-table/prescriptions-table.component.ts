@@ -1,7 +1,18 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ModelSignal, model, input, output, signal } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  ModelSignal,
+  model,
+  input,
+  output,
+  signal,
+  InputSignal,
+  OutputEmitterRef,
+  WritableSignal
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -26,13 +37,11 @@ import {
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
 import { Column } from "src/app/_models/base/column";
-import {
-  PrescriptionsTableMenuComponent
-} from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table-menu.component";
+import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 
 @Component({
   host: {
-      class: 'table table-hover align-middle table-row-dashed fs-6 gy-5 dataTable',
+    class: 'table table-hover align-middle table-row-dashed fs-6 gy-5 dataTable',
     id: 'kt_table_prescriptions',
   },
   selector: 'table[prescriptionsTable]',
@@ -50,12 +59,10 @@ import {
     BootstrapModule,
     PrescriptionFormComponent,
     UserTableCellComponent,
-    PrescriptionsTableMenuComponent,
+    TableMenuComponent,
   ],
 })
-export class PrescriptionsTableComponent
-  extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
-  implements OnInit, OnDestroy, TableInputSignals<Prescription, PrescriptionParams> {
+export class PrescriptionsTableComponent extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> implements OnDestroy, TableInputSignals<Prescription, PrescriptionParams> {
   item: ModelSignal<Prescription | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -65,21 +72,18 @@ export class PrescriptionsTableComponent
   data: ModelSignal<Prescription[]> = model.required();
 
   constructor() {
-    super(PrescriptionsService, Prescription, { tableCells: prescriptionCells, });
+    super(PrescriptionsService, Prescription, { tableCells: prescriptionCells });
   }
 
-  showHeaders = input<boolean>(true);
-  onReloadData = output();
+  showHeaders: InputSignal<boolean> = input<boolean>(true);
+  onReloadData: OutputEmitterRef<void> = output();
 
-  columns: Column[] = this.service.columns;
-
-  account = signal<Account | null>(null);
+  columns: WritableSignal<Column[]> = signal<Column[]>(this.service.columns);
+  account: WritableSignal<Account | null> = signal<Account | null>(null);
 
   subscriptions: Subscription[] = [];
 
   cuid: string = createId();
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((s) => s.unsubscribe());

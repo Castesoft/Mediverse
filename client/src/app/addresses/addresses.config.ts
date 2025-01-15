@@ -80,45 +80,6 @@ export class AddressesService extends ServiceHelper<Address, AddressParams, Form
     });
   };
 
-  clickLink(
-    item: Address | null = null,
-    key: string | null = null,
-    use: FormUse = 'detail',
-    view: View,
-    title: string | null = null
-  )
-  {
-  if (view === 'modal') {
-    this.matDialog.open<
-      AddressDetailModalComponent,
-      DetailDialog<Address>
-    >(AddressDetailModalComponent, {
-      data: {
-        item: item,
-        key: key,
-        use: use,
-        view: 'modal',
-        title: this.getFormHeaderText(use, item),
-      },
-      disableClose: true,
-      hasBackdrop: false,
-      panelClass: [ 'window' ]
-    });
-
-  } else {
-    switch (use) {
-      case 'create':
-        this.router.navigate([this.dictionary.createRoute]);
-        break;
-      case 'edit':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
-        break;
-      case 'detail':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
-        break;
-      }
-    }
-  }
 
   getAddressesByZipcode(zipcode: string) {
     return this.http.get<ZipcodeAddressOption[]>(`${this.baseUrl}zipcodes/${zipcode}`);

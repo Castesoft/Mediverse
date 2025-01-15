@@ -61,6 +61,7 @@ import { ClinicDetailComponent } from 'src/app/clinics/clinics.config';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharmacy-catalog-route.component";
+import { BreadcrumbsComponent } from "src/app/_shared/components/breadcrumbs.component";
 
 @NgModule({
   declarations: [
@@ -128,6 +129,7 @@ import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharma
     PrescriptionDetailComponent,
     PrescriptionsCatalogComponent,
     ClinicDetailComponent,
+    BreadcrumbsComponent,
   ],
   exports: [HomeComponent],
 })

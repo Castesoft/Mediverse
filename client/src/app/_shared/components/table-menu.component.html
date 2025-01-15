@@ -5,33 +5,33 @@
   <div cdkMenuItem class="menu-item px-3">
     <a
       class="menu-link"
-      [href]="service.dictionary.catalogRoute + '/' + item().id"
+      [href]="service().dictionary.catalogRoute + '/' + item().id"
       (click)="
-          service.clickLink(item(), key(), 'detail', 'page');
+          service().clickLink(item(), key(), 'detail', 'page');
           $event.stopPropagation();
           $event.preventDefault()
         "
     >
-      Ver {{ service.dictionary.singular }}
+      Ver {{ service().dictionary.singular }}
     </a>
   </div>
 
   <div cdkMenuItem class="menu-item px-3">
     <a
       class="menu-link"
-      [href]="service.dictionary.catalogRoute + '/' + item().id"
+      [href]="service().dictionary.catalogRoute + '/' + item().id"
       (click)="
-          service.clickLink(item(), key(), 'detail', 'modal');
+          service().clickLink(item(), key(), 'detail', 'modal');
           $event.stopPropagation();
           $event.preventDefault();
         "
     >
-      Abrir {{ service.dictionary.singular }} en pantalla modal
+      Abrir {{ service().dictionary.singular }} en pantalla modal
     </a>
   </div>
 
   <div cdkMenuItem class="menu-item px-3">
-    <a class="menu-link" [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']">
+    <a class="menu-link" [routerLink]="[service().dictionary.catalogRoute, item().id, 'editar']">
       Editar
     </a>
   </div>
@@ -44,7 +44,7 @@
     <a class="menu-link">Imprimir</a>
   </button>
 
-  <button cdkMenuItem class="menu-item px-3 text-danger" (click)="service.delete$(item())">
+  <button cdkMenuItem class="menu-item px-3 text-danger" (click)="service().delete$(item())">
     <a class="menu-link text-danger">Eliminar</a>
   </button>
 </div>

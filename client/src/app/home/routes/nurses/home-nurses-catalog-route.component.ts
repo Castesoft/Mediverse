@@ -6,7 +6,6 @@ import { NurseParams } from "src/app/_models/nurses/nurseParams";
 import { NursesService } from "src/app/nurses/nurses.config";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homeNursesCatalogRoute]',
   templateUrl: './home-nurses-catalog-route.component.html',
   standalone: false,

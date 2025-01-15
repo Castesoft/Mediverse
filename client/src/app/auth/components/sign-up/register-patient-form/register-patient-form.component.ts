@@ -3,14 +3,16 @@ import { Component, inject, model, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { TermsAndConditionsModalComponent } from '../../terms-and-conditions-modal/terms-and-conditions-modal.component';
+import {
+  TermsAndConditionsModalComponent
+} from '../../terms-and-conditions-modal/terms-and-conditions-modal.component';
 import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 
 @Component({
   selector: 'app-register-patient-form',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, Forms2Module, ],
+  imports: [ RouterLink, ReactiveFormsModule, Forms2Module, ],
   templateUrl: './register-patient-form.component.html',
 })
 export class RegisterPatientFormComponent {

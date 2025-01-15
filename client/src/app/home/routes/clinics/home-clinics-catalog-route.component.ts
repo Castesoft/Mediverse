@@ -6,17 +6,12 @@ import ClinicParams from "src/app/_models/clinics/clinicParams";
 import { ClinicsService } from "src/app/clinics/clinics.config";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homeClinicsCatalogRoute]',
   templateUrl: './home-clinics-catalog-route.component.html',
   standalone: false,
 })
-export class HomeClinicsCatalogRouteComponent
-  extends BaseRouteCatalog<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService>
-{
-
+export class HomeClinicsCatalogRouteComponent extends BaseRouteCatalog<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService> {
   constructor() {
     super(ClinicsService, 'clinics');
   }
-
 }

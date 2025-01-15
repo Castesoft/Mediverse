@@ -9,7 +9,7 @@ import { TABLE_CHECK_CELL_ITEM_DIV_CLASS } from "src/app/_shared/template/compon
   selector: 'td[tableCheckCell]',
   templateUrl: './table-check-cell.component.html',
   standalone: true,
-  imports: [FormsModule],
+  imports: [ FormsModule ],
 })
 export class TableCheckCellComponent {
   isCompact = model.required<boolean>();
@@ -28,7 +28,7 @@ export class TableCheckCellComponent {
   }
 
   constructor() {
-    effect(() => {
+    effect((): void => {
       this.class = `${this.class} py-1 pe-3 ps-1 border-none`;
     });
   }

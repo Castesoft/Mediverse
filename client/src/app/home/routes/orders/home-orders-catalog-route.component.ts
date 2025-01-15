@@ -6,17 +6,12 @@ import { OrderParams } from "src/app/_models/orders/orderParams";
 import { OrdersService } from "src/app/orders/orders.config";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homeOrdersCatalogRoute]',
   templateUrl: './home-orders-catalog-route.component.html',
   standalone: false,
 })
-export class HomeOrdersCatalogRouteComponent
-  extends BaseRouteCatalog<Order, OrderParams, OrderFiltersForm, OrdersService>
-{
-
+export class HomeOrdersCatalogRouteComponent extends BaseRouteCatalog<Order, OrderParams, OrderFiltersForm, OrdersService> {
   constructor() {
     super(OrdersService, 'orders');
   }
-
 }

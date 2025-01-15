@@ -10,72 +10,11 @@ import { Order } from 'src/app/_models/orders/order';
 import { orderCells } from 'src/app/_models/orders/orderConstants';
 import { OrderFiltersForm } from 'src/app/_models/orders/orderFiltersForm';
 import { OrderParams } from 'src/app/_models/orders/orderParams';
-import { TableMenu } from 'src/app/_models/tables/extensions/tableComponentExtensions';
-import { ITableMenu } from 'src/app/_models/tables/interfaces/tableComponentInterfaces';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { TablesModule } from 'src/app/_shared/template/components/tables/tables.module';
 import { OrdersService } from 'src/app/orders/orders.config';
-
-@Component({
-  selector: 'div[ordersTableMenu]',
-  host: { class: '' },
-  template: `
-    <div class="dropdown-menu d-block" cdkMenu>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          service.clickLink(item(), key(), 'detail', 'page');
-          $event.preventDefault()
-        "
-      >
-        Ver {{ service.dictionary.singular }}
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          $event.preventDefault();
-          service.clickLink(item(), key(), 'detail', 'modal')
-        "
-      >
-        Abrir {{ service.dictionary.singular }} en pantalla modal
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
-      >
-        Editar
-      </a>
-      <button
-        cdkMenuItem
-        class="dropdown-item px-3 text-danger"
-        (click)="service.delete$(item())"
-      >
-        Eliminar
-      </button>
-    </div>
-  `,
-  standalone: true,
-  imports: [RouterModule, CdkModule, MaterialModule],
-})
-export class OrdersTableMenuComponent
-  extends TableMenu<OrdersService>
-  implements OnInit, ITableMenu<Order>
-{
-  item: ModelSignal<Order> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(OrdersService);
-  }
-
-  ngOnInit(): void {}
-}
+import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -90,13 +29,12 @@ export class OrdersTableMenuComponent
     CdkModule,
     MaterialModule,
     CommonModule,
-    OrdersTableMenuComponent,
+    TableMenuComponent,
   ],
 })
 export class OrdersTableComponent
   extends BaseTable<Order, OrderParams, OrderFiltersForm, OrdersService>
-  implements OnInit, OnDestroy, TableInputSignals<Order, OrderParams>
-{
+  implements OnInit, OnDestroy, TableInputSignals<Order, OrderParams> {
   item: ModelSignal<Order | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();

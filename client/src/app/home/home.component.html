@@ -1,3 +1,4 @@
+<!-- home.component.html -->
 <div root>
   <div page>
     @if (!sidebar.opened()) {
@@ -6,32 +7,7 @@
     <div wrapper>
       <div header></div>
       <div content>
-        <div toolbar>
-          <div toolbarContainer>
-            <div toolbarInfo>
-              <h1 toolbarTitle
-                  [title]="'Mi Cuenta'"></h1>
-              <ul breadcrumb>
-                <li breadcrumbLink
-                    [label]="'Inicio'"
-                    [url]="'/'"></li>
-                <li breadcrumbLink
-                    [label]="'Cuenta'"
-                    [url]="'/cuenta'"></li>
-                @if (label) {
-                  <li breadcrumbLink
-                      [label]="label"
-                      [active]="true">{{ label }}
-                  </li>
-                }
-              </ul>
-            </div>
-            <div toolbarActions></div>
-          </div>
-        </div>
-        <div post>
-          <router-outlet></router-outlet>
-        </div>
+        <router-outlet></router-outlet>
       </div>
       <div footer></div>
     </div>

@@ -1,19 +1,22 @@
-@let _list = service.list$(key(), mode()) | async;
-@let _pagination = service.pagination$(key()) | async;
-
-@if(_list !== null && _pagination !== null) {
-  <div class="card-header">
-    <h2 class="card-title fw-bold">
-      {{ service.dictionary.title }}
-    </h2>
-
+<div catalogLayout
+     [service]="service"
+     [(form)]="form"
+     [(mode)]="mode"
+     [(key)]="key"
+     [(view)]="view"
+     [(isCompact)]="isCompact"
+     [(filterConfig)]="filterConfig"
+     [(item)]="item"
+     [(params)]="params"
+>
+  <ng-template #entityCustomActions>
     <div class="card-toolbar">
       <ul class="nav nav-pills me-3 mb-2 mb-sm-0">
         <li class="nav-item m-0">
           <a (click)="calendarView.set('table')"
              [class.active]="calendarView() === 'table'"
              class="btn btn-icon btn-light btn-color-muted btn-active-primary me-3"
-             >
+          >
             <i class="ki-duotone ki-row-horizontal fs-1">
               <span class="path1"></span>
               <span class="path2"></span>
@@ -24,7 +27,7 @@
           <a (click)="calendarView.set('calendar')"
              [class.active]="calendarView() === 'calendar'"
              class="btn btn-icon btn-light btn-color-muted btn-active-primary"
-             >
+          >
             <i class="ki-duotone ki-calendar fs-1">
               <span class="path1"></span>
               <span class="path2"></span>
@@ -32,42 +35,45 @@
           </a>
         </li>
       </ul>
-        <a (click)="service.clickLink(undefined, key(), 'create', view()); $event.preventDefault()" [href]="service.dictionary.createRoute" class="btn btn-flex btn-primary">
-          <i class="ki-duotone ki-plus fs-2"></i>
-          Agregar {{ service.dictionary.singular }}
-        </a>
     </div>
-  </div>
-
-  <div class="card-header align-items-center py-5 gap-2 gap-md-5">
-    <form [id]="form.id" (ngSubmit)="onSubmit(key())">
-      <div class="card-title">
-        <div templateControlSearch [(control)]="form.controls.search" [(fromWrapper)]="fromWrapper" [(dictionary)]="service.dictionary"></div>
-      </div>
-    </form>
-
-      <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-        <button class="btn btn-light-primary" type="button" (click)="filtersCollapsed.set(!filtersCollapsed())">Filtros</button>
-      </div>
+  </ng-template>
+  <ng-template #entityFilterForm>
+    <div controlsRow3 [grid]="filterConfig().orientation == 'horizontal' ? 5 : 1">
+      <div controlsWrapper3 [(control)]="form().controls.search" [showBottomMargin]="false"></div>
+      <div controlMultiselect3 [(control)]="form().controls.clinics" [fromWrapper]="true"></div>
+      <div controlMultiselect3 [(control)]="form().controls.patients" [fromWrapper]="true"></div>
+      <div controlMultiselect3 [(control)]="form().controls.services" [fromWrapper]="true"></div>
+      <div controlMultiselect3 [(control)]="form().controls.nurses" [fromWrapper]="true"></div>
     </div>
-
-  <div class="card-body pt-0">
-    @switch(calendarView()) {
-      @case('table') {
-        <div tableWrapper>
-          <table eventsTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params">
-          </table>
-          <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
+  </ng-template>
+  <ng-template #entityTable let-list="list">
+    @switch (calendarView()) {
+      @case ('table') {
+        <table eventsTable
+               [(mode)]="mode"
+               [(isCompact)]="isCompact"
+               [data]="list"
+               [(key)]="key"
+               [(view)]="view"
+               [(item)]="item"
+               [(params)]="params">
+        </table>
+      }
+      @case ('calendar') {
+        <div eventsCalendar
+             [(mode)]="mode"
+             [(isCompact)]="isCompact"
+             [data]="list"
+             [(key)]="key"
+             [(view)]="view"
+             [(item)]="item"
+             [(params)]="params"
+             [(filtersCollapsed)]="filtersCollapsed">
         </div>
       }
-      @case('calendar') {
-        <div eventsCalendar [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view" [(item)]="item" [(params)]="params" [(filtersCollapsed)]="filtersCollapsed">
-        </div>
-      }
-      @default() {
+      @default () {
         <p>Invalid view</p>
       }
     }
-  </div>
-}
-
+  </ng-template>
+</div>

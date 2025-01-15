@@ -1,0 +1,137 @@
+<div class="card card-flush">
+  <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+    <form [id]="form().id" (ngSubmit)="onSubmit()">
+      <div class="card-title">
+        <div
+          templateControlSearch
+          [(control)]="form().controls.search"
+          [(fromWrapper)]="fromWrapper"
+          [(dictionary)]="service().dictionary"
+        ></div>
+      </div>
+    </form>
+
+    <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+      <div class="d-flex justify-content-end align-items-center">
+        @if (dev.isDev()) {
+          <button class="btn btn-light-info me-2" (click)="toggleFilterOrientation()">
+            Toggle filter orientation
+          </button>
+        }
+        @if (entityCustomActions) {
+          <ng-container *ngTemplateOutlet="entityCustomActions"></ng-container>
+        }
+        <a
+          (click)="service().clickLink(null, key(), 'create', view()); $event.preventDefault()"
+          [href]="service().dictionary.createRoute"
+          class="btn btn-primary"
+        >
+          <i class="ki-duotone ki-plus fs-2 pe-0"></i> Agregar {{ service().dictionary.singular }}
+        </a>
+        <button class="btn btn-light-primary btn-icon ms-3" (click)="toggleFilterCollapsed()">
+          <i class="ki-duotone ki-filter fs-2">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  @if (filterConfig().orientation == "vertical") {
+    <mat-drawer-container class="transparent-container">
+      <mat-drawer
+        [mode]="filterConfig().mode"
+        [opened]="isDrawerOpen"
+        [position]="filterConfig().position"
+        class="bg-body rounded-top-0 rounded-bottom-0 d-flex flex-column border-gray-200"
+      >
+        <div class="d-flex flex-column h-100">
+          <div class="flex-grow-1 overflow-auto">
+            <div class="px-7 py-5">
+              <div class="d-flex flex-row flex-grow-1 justify-content-between align-items-center">
+                <div class="fs-4 text-body fw-bold">Filtros</div>
+                <button class="btn btn-sm explore-btn-secondary" (click)="resetParams()">
+                  <i class="ki-duotone ki-arrows-loop fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i>
+                  Limpiar
+                </button>
+              </div>
+            </div>
+            <div class="separator border-gray-200"></div>
+            <div class="px-7 py-5">
+              <ng-container *ngTemplateOutlet="entityFilterForm"></ng-container>
+            </div>
+          </div>
+          <div class="px-7 py-5 border-top mt-auto">
+            <button class="btn btn-light-primary w-100" (click)="onSubmit()">
+              Aplicar Filtros
+            </button>
+          </div>
+        </div>
+      </mat-drawer>
+      <mat-drawer-content>
+        <div class="card-body pt-0">
+          <div tableWrapper>
+            @if (service().list$(key()) | async; as _list) {
+              <ng-container *ngTemplateOutlet="entityTable; context: { list: _list }"></ng-container>
+            }
+
+            @if (service().pagination$(key()) | async; as _pagination) {
+              <div
+                tablePager
+                pager
+                [(isCompact)]="isCompact"
+                [pagination]="_pagination"
+                [(params)]="params"
+              >
+              </div>
+            }
+          </div>
+        </div>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  } @else {
+    <div id="collapseBasic" [collapse]="isCollapsed" [isAnimated]="true" class="no-background">
+      <div class="px-7 py-5">
+        <div class="d-flex flex-row flex-grow-1 justify-content-between align-items-center">
+          <div class="fs-4 text-body fw-bold">Filtros</div>
+          <button class="btn btn-sm explore-btn-secondary" (click)="resetParams()">
+            <i class="ki-duotone ki-arrows-loop fs-2">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+            Limpiar
+          </button>
+        </div>
+      </div>
+      <div>
+        <div class="separator border-gray-200"></div>
+      </div>
+      <div class="px-7 py-5">
+        <ng-container *ngTemplateOutlet="entityFilterForm"></ng-container>
+      </div>
+    </div>
+    <div class="card-body pt-0">
+      <div tableWrapper>
+        @if (service().list$(key()) | async; as _list) {
+          <ng-container *ngTemplateOutlet="entityTable; context: { list: _list }"></ng-container>
+        }
+
+        @if (service().pagination$(key()) | async; as _pagination) {
+          <div
+            tablePager
+            pager
+            [(isCompact)]="isCompact"
+            [pagination]="_pagination"
+            [(params)]="params"
+          >
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

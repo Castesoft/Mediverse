@@ -10,15 +10,13 @@ import Event from "src/app/_models/events/event";
 import { eventCells } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
-import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
-import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { EventsService } from "src/app/events/events.config";
-import { UserTableCellComponent } from "../../../users/components/user-table-cell.component";
-import { TimePeriodCellComponent } from "../../../_shared/template/components/tables/cells/time-period-cell.component";
-import { Column } from "../../../_models/base/column";
+import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
+import { TimePeriodCellComponent } from "src/app/_shared/template/components/tables/cells/time-period-cell.component";
+import { Column } from "src/app/_models/base/column";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },

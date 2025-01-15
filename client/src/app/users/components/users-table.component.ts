@@ -6,8 +6,6 @@ import { ControlsModule } from "src/app/_forms/controls.module";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
 import { View, CatalogMode } from "src/app/_models/base/types";
-import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
-import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { User } from "src/app/_models/users/user";
 import { userCells } from "src/app/_models/users/userConstants";
 import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
@@ -16,66 +14,7 @@ import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { UsersService } from "src/app/users/users.config";
-
-@Component({
-  selector: 'div[usersTableMenu]',
-  host: { class: '' },
-  template: `
-    <div class="dropdown-menu d-block" cdkMenu>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          service.clickLink(item(), key(), 'detail', 'page');
-          $event.preventDefault()
-        "
-      >
-        Ver {{ service.dictionary.singular }}
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [href]="service.dictionary.catalogRoute + '/' + item().id"
-        (click)="
-          $event.preventDefault();
-          service.clickLink(item(), key(), 'detail', 'modal')
-        "
-      >
-        Abrir {{ service.dictionary.singular }} en pantalla modal
-      </a>
-      <a
-        cdkMenuItem
-        class="dropdown-item px-3"
-        [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
-      >
-        Editar
-      </a>
-      <button
-        cdkMenuItem
-        class="dropdown-item px-3 text-danger"
-        (click)="service.delete$(item())"
-      >
-        Eliminar
-      </button>
-    </div>
-  `,
-  standalone: true,
-  imports: [RouterModule, CdkModule, MaterialModule],
-})
-export class UsersTableMenuComponent
-  extends TableMenu<UsersService>
-  implements OnInit, ITableMenu<User>
-{
-  item: ModelSignal<User> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(UsersService);
-  }
-
-  ngOnInit(): void {}
-}
+import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -90,7 +29,7 @@ export class UsersTableMenuComponent
     CdkModule,
     MaterialModule,
     CommonModule,
-    UsersTableMenuComponent,
+    TableMenuComponent,
   ],
 })
 export class UsersTableComponent

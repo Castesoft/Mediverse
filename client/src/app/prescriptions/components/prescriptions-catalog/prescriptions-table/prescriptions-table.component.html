@@ -1,8 +1,8 @@
 <thead
-  (onSelectAll)="service.onSelectAll(key(), mode(), $event)"
+  (onSelectAll)="service.toggleMultipleSelectedArray$(key() || '', data())"
   [isCompact]="false"
   [(dictionary)]="service.dictionary"
-  [columns]="columns"
+  [columns]="columns()"
   [(mode)]="mode"
   [params]="params"
   [show]="showHeaders()"
@@ -63,7 +63,7 @@
 
       <td class="align-middle">{{ item.notes }}</td>
 
-      <td class="align-middle">
+      <td class="align-middle" style="white-space: nowrap;">
         {{ item.createdAt | date }}
         @if (item.isCollapsed) {
           <i class="ki-duotone ki-down ms-2 fs-4"><span class="path1"></span><span class="path2"></span></i>
@@ -86,12 +86,17 @@
       </td>
 
       <ng-template #context_menu>
-        <div prescriptionsTableMenu
-             [item]="item"
-             [key]="key()"
-             (printClicked)="printPrescription(item)"
-             (downloadClicked)="downloadPrescription(item)"
-        ></div>
+        @defer {
+          @if (key()) {
+            <div tableMenu
+                 [item]="item"
+                 [key]="key()!"
+                 [service]="service"
+                 (printClicked)="printPrescription(item)"
+                 (downloadClicked)="downloadPrescription(item)"
+            ></div>
+          }
+        }
       </ng-template>
     </tr>
 

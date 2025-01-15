@@ -13,7 +13,6 @@ export class Modal {
     if (this.btnOkText === null) this.btnOkText = 'Ok';
     if (this.btnCancelText === null) this.btnCancelText = 'Cancelar';
   }
-
 }
 
 export interface IModal {

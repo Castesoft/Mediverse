@@ -10,13 +10,11 @@ import { Product } from "src/app/_models/products/product";
 import { productCells } from "src/app/_models/products/productConstants";
 import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm";
 import { ProductParams } from "src/app/_models/products/productParams";
-import { TableMenu } from "src/app/_models/tables/extensions/tableComponentExtensions";
-import { ITableMenu } from "src/app/_models/tables/interfaces/tableComponentInterfaces";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { ProductsService } from "src/app/products/products.config";
-import { ProductsTableMenuComponent } from "./products-table-menu.component";
+import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -31,7 +29,7 @@ import { ProductsTableMenuComponent } from "./products-table-menu.component";
     CdkModule,
     MaterialModule,
     CommonModule,
-    ProductsTableMenuComponent,
+    TableMenuComponent,
   ],
 })
 export class ProductsTableComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements OnDestroy, TableInputSignals<Product, ProductParams> {

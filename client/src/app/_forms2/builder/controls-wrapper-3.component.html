@@ -31,7 +31,7 @@
             <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
           @case('tel') {
-            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
           }
           @case('typeahead') {
             <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control" [(fromWrapper)]="fromWrapper"></div>

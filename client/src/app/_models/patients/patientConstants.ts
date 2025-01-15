@@ -6,7 +6,7 @@ import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormInfo } from "src/app/_models/forms/formTypes";
 import { ColumnOptions } from "src/app/_models/forms/options/columnOptions";
-import Patient from "src/app/_models/patients/patient";
+import { Patient } from 'src/app/_models/patients/patient';
 import { PatientParams } from "src/app/_models/patients/patientParams";
 import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/tables/tableCellItem";
 
@@ -55,6 +55,21 @@ export const patientFormInfo: FormInfo<Patient> = {
 
 export const patientFiltersFormInfo: FormInfo<PatientParams> = {
   ...baseFilterFormInfo,
+  firstName: { label: 'Nombre(s)', type: 'text' },
+  lastName: { label: 'Apellido(s)', type: 'text' },
+  // sex: { label: 'Sexo', type: 'select', selectOptions: sexOptions },
+  sex: { label: 'Sexo', type: 'text' },
+  phoneNumber: { label: 'Teléfono', type: 'tel' },
+  rfc: { label: 'RFC', type: 'text' },
+  prescriptions: { label: 'Recetas', type: 'number' },
+  ageFrom: { label: 'Edad desde', type: 'number' },
+  events: { label: 'Citas', type: 'number' },
+  orders: { label: 'Pedidos', type: 'number' },
+  ageTo: { label: 'Edad hasta', type: 'number' },
+  birthDateFrom: { label: 'Fecha de nacimiento desde', type: 'date' },
+  birthDateTo: { label: 'Fecha de nacimiento hasta', type: 'date' },
+  createdAtFrom: { label: 'Creado desde', type: 'date' },
+  createdAtTo: { label: 'Creado hasta', type: 'date' },
 } as FormInfo<PatientParams>;
 
 export const patientColumns: Column[] = [

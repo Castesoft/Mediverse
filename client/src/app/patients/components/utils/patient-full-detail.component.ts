@@ -6,7 +6,7 @@ import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
 import { CatalogMode, View } from "src/app/_models/base/types";
 import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormUse } from "src/app/_models/forms/formTypes";
-import Patient from "src/app/_models/patients/patient";
+import { Patient } from "src/app/_models/patients/patient";
 import { PatientFiltersForm } from "src/app/_models/patients/patientFiltersForm";
 import { PatientParams } from "src/app/_models/patients/patientParams";
 import { PatientsService } from "src/app/patients/patients.config";

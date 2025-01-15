@@ -26,31 +26,34 @@ import { EventsCatalogComponent } from "src/app/events/components/events-catalog
 @Component({
   selector: 'events-catalog-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      eventsCatalog
-      [(mode)]="data.mode"
-      [(key)]="data.key"
-      [(view)]="data.view"
-      [(isCompact)]="data.isCompact"
-      [(item)]="data.item"
-      [(params)]="data.params"
-      [(calendarView)]="data.calendarView"
-      [(filtersCollapsed)]="data.filtersCollapsed"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          eventsCatalog
+          [(mode)]="data.mode"
+          [(key)]="data.key"
+          [(view)]="data.view"
+          [(isCompact)]="data.isCompact"
+          [(item)]="data.item"
+          [(params)]="data.params"
+          [(calendarView)]="data.calendarView"
+          [(filtersCollapsed)]="data.filtersCollapsed"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [EventsCatalogComponent, MaterialModule, CdkModule,],
+  imports: [ EventsCatalogComponent, MaterialModule, CdkModule, ],
 })
 export class EventsCatalogModalComponent {
-  data = inject<CatalogDialog<Event, EventParams> & { calendarView: CalendarView; filtersCollapsed: boolean; }>(MAT_DIALOG_DATA);
+  data = inject<CatalogDialog<Event, EventParams> & {
+    calendarView: CalendarView;
+    filtersCollapsed: boolean;
+  }>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
@@ -81,46 +84,6 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
     });
   };
 
-  clickLink(
-    item: Event | null = null,
-    key: string | null = null,
-    use: FormUse = 'detail',
-    view: View,
-    title: string | null = null
-  )
-  {
-  if (view === 'modal') {
-    this.matDialog.open<
-      EventDetailModalComponent,
-      DetailDialog<Event>
-    >(EventDetailModalComponent, {
-      data: {
-        item: item,
-        key: key,
-        use: use,
-        view: 'modal',
-        title: this.getFormHeaderText(use, item),
-      },
-      disableClose: true,
-      hasBackdrop: false,
-      panelClass: [ 'window' ]
-    });
-
-  } else {
-    switch (use) {
-      case 'create':
-        this.router.navigate([this.dictionary.createRoute]);
-        break;
-      case 'edit':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
-        break;
-      case 'detail':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
-        break;
-      }
-    }
-  }
-
   updateEvolution(id: number, evolution: string): Observable<Event> {
     return this.http.put<Event>(`${this.baseUrl}${id}/evolution`, { content: evolution }).pipe(
       tap(() => {
@@ -142,19 +105,22 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
 @Component({
   selector: 'div[eventDetail]',
   template: `
-  <div container3 [type]="'inline'">
-    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
-  </div>
-  @if(use() === 'create' || use() === 'edit'){<div eventForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>}
-  @if(use() === 'detail') {<div eventWindow [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view" [(title)]="title"></div>}
+    <div container3 [type]="'inline'">
+      <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
+    </div>
+    @if (use() === 'create' || use() === 'edit') {
+      <div eventForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    }
+    @if (use() === 'detail') {
+      <div eventWindow [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view" [(title)]="title"></div>
+    }
   `,
   standalone: true,
-  imports: [EventFormComponent, ControlsModule, Forms2Module, EventWindowComponent,],
+  imports: [ EventFormComponent, ControlsModule, Forms2Module, EventWindowComponent, ],
 })
 export class EventDetailComponent
   extends BaseDetail<Event, EventParams, EventFiltersForm, EventsService>
-  implements DetailInputSignals<Event>
-{
+  implements DetailInputSignals<Event> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Event | null> = model.required();
@@ -170,25 +136,25 @@ export class EventDetailComponent
 @Component({
   selector: 'event-detail-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      eventDetail
-      [(use)]="data.use"
-      [(view)]="data.view"
-      [(key)]="data.key"
-      [(item)]="data.item"
-      [(title)]="data.title"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          eventDetail
+          [(use)]="data.use"
+          [(view)]="data.view"
+          [(key)]="data.key"
+          [(item)]="data.item"
+          [(title)]="data.title"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [EventDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+  imports: [ EventDetailComponent, ModalWrapperModule, MaterialModule, CdkModule, ],
 })
 export class EventDetailModalComponent {
   data = inject<DetailDialog<Event>>(MAT_DIALOG_DATA);

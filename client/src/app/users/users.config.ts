@@ -98,45 +98,4 @@ export class UsersService extends ServiceHelper<User, UserParams, UserFiltersFor
       panelClass: [ "window" ]
     });
   };
-
-  clickLink(
-    item: User | null = null,
-    key: string | null = null,
-    use: FormUse = 'detail',
-    view: View,
-    title: string | null = null
-  )
-  {
-  if (view === 'modal') {
-    this.matDialog.open<
-      UserDetailModalComponent,
-      DetailDialog<User>
-    >(UserDetailModalComponent, {
-      data: {
-        item: item,
-        key: key,
-        use: use,
-        view: 'modal',
-        title: this.getFormHeaderText(use, item),
-      },
-      disableClose: true,
-      hasBackdrop: false,
-      panelClass: [ 'window' ]
-    });
-
-  } else {
-    switch (use) {
-      case 'create':
-        this.router.navigate([this.dictionary.createRoute]);
-        break;
-      case 'edit':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
-        break;
-      case 'detail':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
-        break;
-      }
-    }
-  }
-
 }

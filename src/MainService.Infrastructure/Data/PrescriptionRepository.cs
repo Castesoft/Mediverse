@@ -21,58 +21,59 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
     public async Task<PrescriptionDto?> GetDtoByIdAsync(int id) =>
         await context.Prescriptions
             .Include(x => x.DoctorPrescription)
-                .ThenInclude(x => x.Doctor)
+            .ThenInclude(x => x.Doctor)
             .Include(x => x.PrescriptionItems)
-                .ThenInclude(x => x.Item)
+            .ThenInclude(x => x.Item)
             .Include(x => x.EventPrescription)
-                .ThenInclude(x => x.Event)
-                .ThenInclude(x => x.EventClinic)
-                .ThenInclude(x => x.Clinic)
-                .ThenInclude(x => x.ClinicLogo)
-                .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.Event)
+            .ThenInclude(x => x.EventClinic)
+            .ThenInclude(x => x.Clinic)
+            .ThenInclude(x => x.ClinicLogo)
+            .ThenInclude(x => x.Photo)
             .Include(x => x.PatientPrescription)
-                .ThenInclude(x => x.Patient)
+            .ThenInclude(x => x.Patient)
             .Include(x => x.PrescriptionOrder)
-                .ThenInclude(x => x.Order)
+            .ThenInclude(x => x.Order)
             .ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Prescription?> GetByIdAsync(int id) =>
         await context.Prescriptions
             .Include(x => x.DoctorPrescription)
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<PagedList<PrescriptionDto>> GetPagedListAsync(PrescriptionParams param, ClaimsPrincipal user)
     {
-        IQueryable<Prescription> query = context.Prescriptions
+        var query = context.Prescriptions
             .Include(x => x.PatientPrescription)
-                .ThenInclude(x => x.Patient)
+            .ThenInclude(x => x.Patient)
             .Include(x => x.DoctorPrescription)
-                .ThenInclude(x => x.Doctor)
+            .ThenInclude(x => x.Doctor)
             .Include(x => x.EventPrescription)
-                .ThenInclude(x => x.Event)
+            .ThenInclude(x => x.Event)
             .Include(x => x.PrescriptionItems)
             .Include(x => x.PrescriptionOrder)
-                .ThenInclude(x => x.Order)
+            .ThenInclude(x => x.Order)
             .Include(x => x.EventPrescription)
-                .ThenInclude(x => x.Event)
-                .ThenInclude(x => x.EventClinic)
-                .ThenInclude(x => x.Clinic)
-                .ThenInclude(x => x.ClinicLogo)
-                .ThenInclude(x => x.Photo)
-            .AsQueryable()
-        ;
+            .ThenInclude(x => x.Event)
+            .ThenInclude(x => x.EventClinic)
+            .ThenInclude(x => x.Clinic)
+            .ThenInclude(x => x.ClinicLogo)
+            .ThenInclude(x => x.Photo)
+            .AsQueryable();
 
-        IEnumerable<string> roles = user.GetRoles();
-        int userId = user.GetUserId();
+        var roles = user.GetRoles();
+        var userId = user.GetUserId();
 
         query = query.Where(x => x.DoctorPrescription.Doctor.Id == userId);
 
         if (!string.IsNullOrEmpty(param.Search))
         {
+        }
 
+        if (param.EventId.HasValue)
+        {
+            query = query.Where(x => x.EventPrescription.EventId == param.EventId);
         }
 
         return await PagedList<PrescriptionDto>.CreateAsync(
@@ -83,6 +84,5 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
     public async Task<Prescription?> GetByIdAsNoTrackingAsync(int id) =>
         await context.Prescriptions
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 }

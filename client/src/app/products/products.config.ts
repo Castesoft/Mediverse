@@ -83,45 +83,6 @@ export class ProductsService extends ServiceHelper<Product, ProductParams, FormG
     });
   };
 
-  clickLink(
-    item: Product | null = null,
-    key: string | null = null,
-    use: FormUse = 'detail',
-    view: View,
-    title: string | null = null
-  )
-  {
-  if (view === 'modal') {
-    this.matDialog.open<
-      ProductDetailModalComponent,
-      DetailDialog<Product>
-    >(ProductDetailModalComponent, {
-      data: {
-        item: item,
-        key: key,
-        use: use,
-        view: 'modal',
-        title: this.getFormHeaderText(use, item),
-      },
-      disableClose: true,
-      hasBackdrop: false,
-      panelClass: [ 'window' ]
-    });
-
-  } else {
-    switch (use) {
-      case 'create':
-        this.router.navigate([this.dictionary.createRoute]);
-        break;
-      case 'edit':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}/editar`]);
-        break;
-      case 'detail':
-        this.router.navigate([`${this.dictionary.catalogRoute}/${item?.id}`]);
-        break;
-      }
-    }
-  }
 }
 
 @Component({

@@ -7,7 +7,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, Component, importProvidersFrom, inject, isDevMode, OnInit } from '@angular/core';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from "@angular/material/core";
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, provideRouter, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router, RouterOutlet, ROUTES } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { FlatpickrModule } from "angularx-flatpickr";
 import { provideToastr } from 'ngx-toastr';
@@ -18,7 +18,6 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AccountService } from 'src/app/_services/account.service';
-import { BreadcrumbService } from 'src/app/_services/breadcrumb.service';
 import { SocialLoginModule, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import { environment } from 'src/environments/environment';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -28,7 +27,6 @@ import { authGuard } from 'src/app/_guards/auth.guard';
 import {
   UseOfCookiesModalComponent
 } from 'src/app/auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
-import { ShortcutsService } from 'src/app/_services/shortcuts.service';
 
 @Component({
   selector: 'app-root',
@@ -61,7 +59,6 @@ import { ShortcutsService } from 'src/app/_services/shortcuts.service';
 export class AppComponent implements OnInit {
   private bsModalService = inject(BsModalService);
   private accountService = inject(AccountService);
-  private breadcrumb = inject(BreadcrumbService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -75,7 +72,6 @@ export class AppComponent implements OnInit {
     }
 
     this.setCurrentUser();
-    this.breadcrumb.init();
 
     google.accounts.id.initialize({
       client_id: environment.google_client_id,

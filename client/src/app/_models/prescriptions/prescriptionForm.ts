@@ -10,7 +10,7 @@ import { PrescriptionItem, prescriptionItemInfo } from "src/app/_models/prescrip
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { prescriptionFormInfo } from "src/app/_models/prescriptions/prescriptionConstants";
 import { User } from "src/app/_models/users/user";
-import Patient from 'src/app/_models/patients/patient';
+import { Patient } from 'src/app/_models/patients/patient';
 import Clinic from 'src/app/_models/clinics/clinic';
 import { isNullOrWhiteSpace } from 'src/app/_utils/util';
 
@@ -89,7 +89,17 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     });
   }
 
-  patch(prescription: Prescription | null) {
+  /**
+   * Patches the form with prescription data based on the current use case ('create', 'detail', or 'edit').
+   * This method populates form controls with data from the provided prescription object.
+   *
+   * @param prescription - The prescription object containing data to patch the form with. Can be null.
+   * @param fromEventWindow - A boolean flag indicating if the patch is triggered from an event window.
+   *                          Default is false. When true, it disables certain form controls.
+   *
+   * @returns void This method doesn't return a value, it updates the form state internally.
+   */
+  patch(prescription: Prescription | null, fromEventWindow: boolean = false): void {
     if (this.use === 'create') {
       const doctor = prescription?.doctor;
       this.controls.doctor.patchValue(doctor as Account);
@@ -134,7 +144,6 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
 
         prescription.items.forEach(pi => {
           const prescriptionItem = new PrescriptionItem({ ...pi, });
-          console.log('prescriptionItem: ' + prescriptionItem.name, prescriptionItem);
           const prescriptionItemGroup = new FormGroup2<PrescriptionItem>(PrescriptionItem, prescriptionItem, prescriptionItemInfo);
 
           prescriptionItemGroup.controls.selectProduct.setValue(new SelectOption({
@@ -148,18 +157,21 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         });
 
         this.controls.notes.patchValue(prescription.notes);
-        this.controls.date.patchValue(prescription.createdAt, { emitEvent: false });
+        this.controls.date.patchValue(prescription.date, { emitEvent: false });
         this.controls.clinic.patchValue(clinic as Address, { emitEvent: false });
         this.controls.clinic.controls.photoUrl.patchValue(clinic.photoUrl);
         this.controls.doctor.patchValue(doctor as Account, { emitEvent: false });
         this.controls.patient.patchValue(patient as Patient, { emitEvent: false });
       }
     }
+
+    if (fromEventWindow) {
+      this.controls.date.disable({ emitEvent: false });
+      this.controls.patient.controls.select.disable({ emitEvent: false });
+    }
   }
 
   patchProductItem(value: SelectOption | null, index: number) {
-    console.log('patchProductItem', value, index);
-
     if (this.controls.items.length && this.controls.items.length > 0) {
       if (value !== null) {
         this.controls.items.controls[index].controls.quantity.patchValue(1);
@@ -167,9 +179,11 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         this.controls.items.controls[index].controls.name.patchValue(value.name);
         this.controls.items.controls[index].controls.product.controls.id.patchValue(value.id);
         this.controls.items.controls[index].controls.product.controls.name.patchValue(value.name);
+
         if (value.options?.price) {
           this.controls.items.controls[index].controls.product.controls.description.patchValue(value.options?.description);
         }
+
         if (value.options?.dosage) {
           this.controls.items.controls[index].controls.product.controls.dosage.patchValue(value.options?.dosage.toString());
         }

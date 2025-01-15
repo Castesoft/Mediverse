@@ -13,10 +13,9 @@ import { Pagination } from 'src/app/_utils/serviceHelper/pagination/pagination';
   selector: 'div[tablePager]',
   templateUrl: './table-pager.component.html',
   standalone: true,
-  imports: [CommonModule, MaterialModule, FontAwesomeModule,]
+  imports: [ CommonModule, MaterialModule, FontAwesomeModule, ]
 })
 export class TablePagerComponent implements OnInit, OnChanges {
-  // injections
   icons = inject(IconsService);
 
   @HostBinding('class') get hostClasses() {
@@ -37,7 +36,6 @@ export class TablePagerComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log('changes', changes);
     if (changes['totalItems'] || changes['itemsPerPage'] || changes['currentPage']) {
       this.setIsLastPage();
     }

@@ -5,8 +5,7 @@
   [(params)]="params"
   [(mode)]="mode"
   [(isCompact)]="isCompact"
-  (selectedChange)="service.onSelectAll(key(), mode(), $event)"
-  [selected]="(service.areAllSelected(key()) | async)!"
+  (selectedChange)="service.toggleMultipleSelectedArray$(key() || '', data())"
 ></thead>
 
 <tbody templateTableBody>
@@ -21,7 +20,7 @@
         [idx]="idx"
         [(dictionary)]="service.dictionary"
         [(selected)]="item.isSelected"
-        (click)="service.onSelect(key(), mode(), item)"
+        (click)="service.setSelected$(key() || '', item)"
       ></td>
 
       @if (dev.isDev()) {

@@ -47,7 +47,7 @@
                 </p>
               </div>
             </div>
-            @if (use() === 'create' && form.controls.patient.controls.id.value !== null) {
+            @if (use() === 'create' && form.controls.patient.controls.id.value !== null && !fromEventWindow()) {
               <i class="ki-duotone ki-pencil me-6 fs-4 cursor-pointer" (click)="form.resetPatient()">
                 <span class="path1"></span>
                 <span class="path2"></span>
