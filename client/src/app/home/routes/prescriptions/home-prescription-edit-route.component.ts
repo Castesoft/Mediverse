@@ -1,6 +1,7 @@
 import { Component, effect } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   // host: { class: 'card card-flush' },
@@ -16,7 +17,7 @@ export class HomePrescriptionEditRouteComponent
 
 {
   constructor() {
-    super('prescriptions', 'edit');
+    super('prescriptions', FormUse.EDIT);
 
     this.key.set(`${this.router.url}#prescription-edit`);
 

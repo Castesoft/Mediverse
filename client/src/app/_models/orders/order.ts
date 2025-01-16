@@ -2,6 +2,8 @@ import { Entity } from "src/app/_models/base/entity";
 import { User } from "src/app/_models/users/user";
 import { Product } from "src/app/_models/products/product";
 import { SelectOption } from 'src/app/_models/base/selectOption';
+import { Doctor } from "src/app/_models/doctors/doctor";
+import { Patient } from "src/app/_models/patients/patient";
 
 
 export class Order extends Entity {
@@ -11,8 +13,8 @@ export class Order extends Entity {
   tax: number | null = null;
   amountPaid: number | null = null;
   amountDue: number | null = null;
-  patient: User = new User();
-  doctor: User = new User();
+  patient: Patient = new Patient();
+  doctor: Doctor = new Doctor();
   address: SelectOption | null = null;
   items: Product[] = [];
   status: SelectOption | null = null;
@@ -20,7 +22,6 @@ export class Order extends Entity {
 
   constructor(init?: Partial<Order>) {
     super();
-
     Object.assign(this, init);
   }
 }

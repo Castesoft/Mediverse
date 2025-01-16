@@ -1,4 +1,4 @@
-import { Observable, catchError, map, of, tap } from "rxjs";
+import { catchError, map, Observable, of, tap } from "rxjs";
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
@@ -14,7 +14,9 @@ import { Account } from 'src/app/_models/account/account';
 import { MedicalRecord } from 'src/app/_models/medicalRecords/medicalRecord';
 import { Payment } from 'src/app/_models/payments/payment';
 import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
-import { UserMedicalInsuranceCompany } from 'src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany';
+import {
+  UserMedicalInsuranceCompany
+} from 'src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BillingDetails, UserAddress, UserPaymentMethod } from 'src/app/_models/billingDetails';
 
@@ -38,12 +40,12 @@ export class AccountService {
     const user = this.current();
     if (user && user.token) {
       const role = JSON.parse(atob(user.token.split('.')[1])).role;
-      return Array.isArray(role) ? role : [role];
+      return Array.isArray(role) ? role : [ role ];
     }
     return [];
   });
   passwordPattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[*@$¡!%*¿?&.,_-]).{8,}$/;
-  emailPattern:string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
+  emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   phonePattern: string = '^[0-9]+$';
 
   login(value: any) {
@@ -88,7 +90,10 @@ export class AccountService {
   }
 
   twoFactorLogin(email: string, verificationCode: string) {
-    return this.http.post<Account>(`${this.baseUrl}login-two-factor`, { email, verificationCode }, {withCredentials: true}).pipe(
+    return this.http.post<Account>(`${this.baseUrl}login-two-factor`, {
+      email,
+      verificationCode
+    }, { withCredentials: true }).pipe(
       map(response => {
         if (response) {
           this.setCurrentUser(response);
@@ -196,7 +201,7 @@ export class AccountService {
         } else {
           this.billingDetails.set({
             userAddresses: this.billingDetails()?.userAddresses || [],
-            userPaymentMethods: [...this.billingDetails()?.userPaymentMethods || [], newPaymentMehod as UserPaymentMethod]
+            userPaymentMethods: [ ...this.billingDetails()?.userPaymentMethods || [], newPaymentMehod as UserPaymentMethod ]
           });
         }
       }),
@@ -247,7 +252,7 @@ export class AccountService {
           });
         } else {
           this.billingDetails.set({
-            userAddresses: [...this.billingDetails()?.userAddresses || [], newAddress as UserAddress],
+            userAddresses: [ ...this.billingDetails()?.userAddresses || [], newAddress as UserAddress ],
             userPaymentMethods: this.billingDetails()?.userPaymentMethods || []
           });
         }
@@ -267,7 +272,7 @@ export class AccountService {
     );
   }
 
-  updateAddress(id:number, value: any) {
+  updateAddress(id: number, value: any) {
     return this.http.put<UserAddress>(`${this.baseUrl}address/${id}`, value).pipe(
       tap(_ => {
         this.snackbarService.success('Dirección actualizada correctamente');
@@ -414,7 +419,12 @@ export class AccountService {
   }
 
   updateWorkSchedule(workScheduleBlocks: any, startTime: string, endTime: string, minutesPerBlock: number) {
-    return this.http.post<Account>(`${this.baseUrl}work-schedule`, { workScheduleBlocks, startTime, endTime, minutesPerBlock }).pipe(
+    return this.http.post<Account>(`${this.baseUrl}work-schedule`, {
+      workScheduleBlocks,
+      startTime,
+      endTime,
+      minutesPerBlock
+    }).pipe(
       map(response => {
         this.snackbarService.success('Horario de trabajo actualizado correctamente');
         this.setCurrentUser(response);
@@ -457,7 +467,7 @@ export class AccountService {
     localStorage.removeItem('user');
     this.current.set(null);
     this.billingDetails.set(null);
-    this.router.navigate(['/']);
+    this.router.navigate([ '/' ]);
   }
 
   update(value: any) {
@@ -597,32 +607,32 @@ export class AccountService {
   resendPhoneNumberVerificationCode = () =>
     this.http.get(`${this.baseUrl}resend-phone-verification`);
 
-  equalFields(field1:string, field2:string): ValidationErrors | null {
-    return ( formGroup:FormGroup ): ValidationErrors | null => {
-        const fieldValue1 = formGroup.get(field1)?.value;
-        const fieldValue2 = formGroup.get(field2)?.value;
-        if( fieldValue1 !== fieldValue2 ) {
-            formGroup.get(field2)?.setErrors({ notEqual:true });
-            return { notEqual: true }
-        }
+  equalFields(field1: string, field2: string): ValidationErrors | null {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+      const fieldValue1 = formGroup.get(field1)?.value;
+      const fieldValue2 = formGroup.get(field2)?.value;
+      if (fieldValue1 !== fieldValue2) {
+        formGroup.get(field2)?.setErrors({ notEqual: true });
+        return { notEqual: true }
+      }
 
-        return null;
+      return null;
     }
   }
 
   termsAndConditionsValidator(control: AbstractControl): ValidationErrors | null {
-    return control.value === true ? null : {termsAndConditions: true};
+    return control.value === true ? null : { termsAndConditions: true };
   }
 
-  clickInsuranceCompany(item: UserMedicalInsuranceCompany | null = null, use: FormUse = "detail", view: View) {
+  clickInsuranceCompany(item: UserMedicalInsuranceCompany | null = null, use: FormUse = FormUse.DETAIL, view: View) {
 
-  if (view === "modal") {
-    this.matDialog.open(UserInsuranceModalComponent, {
-      data: { item: item, use: use, view: 'modal', },
-      maxWidth: '500px',
-      panelClass: 'bg-body'
-    });
-  }
+    if (view === "modal") {
+      this.matDialog.open(UserInsuranceModalComponent, {
+        data: { item: item, use: use, view: 'modal', },
+        maxWidth: '500px',
+        panelClass: 'bg-body'
+      });
+    }
   };
 
 }

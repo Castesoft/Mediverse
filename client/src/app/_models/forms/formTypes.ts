@@ -377,8 +377,12 @@ export type ControlOrientation = 'inline' | 'block';
  * - `detail`: Used when viewing the details of a form.
  * - `filter`: Used when filtering forms.
  */
-export type FormUse = "create" | "edit" | "detail" | "filter";
-
+export enum FormUse {
+  CREATE = "create",
+  EDIT = "edit",
+  DETAIL = "detail",
+  FILTER = "filter"
+}
 
 /**
  * Represents the possible error types that can occur in the application.

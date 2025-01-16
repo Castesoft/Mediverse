@@ -6,6 +6,7 @@ import { AccountService } from "src/app/_services/account.service";
 import { InsuranceCompanyItemComponent } from "src/app/account/utils/insurance-company-item.component";
 import { InsuranceCompanySwitchComponent } from "src/app/account/utils/insurance-company-switch.component";
 import { MedicalInsuranceCompaniesService } from "src/app/medicalInsuranceCompanies/medicalInsuranceCompanies.config";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: 'app-account-insurances',
@@ -57,4 +58,6 @@ export class AccountInsurancesComponent implements OnInit {
 
     // return this.service.doctorMedicalInsuranceCompanies()!.some((company: any) => company.id === insuranceCompany.id);
   }
+
+  protected readonly FormUse = FormUse;
 }

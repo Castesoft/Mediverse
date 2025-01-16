@@ -1,5 +1,5 @@
 import { Component, ModelSignal, model, inject } from "@angular/core";
-import { View, CatalogMode, FilterOrientation, FilterConfiguration } from "src/app/_models/base/types";
+import { View, CatalogMode, } from "src/app/_models/base/types";
 import { Product } from "src/app/_models/products/product";
 import { ProductParams } from "src/app/_models/products/productParams";
 import { ProductsTableComponent } from "src/app/products/components/products-table.component";
@@ -9,6 +9,7 @@ import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm"
 import { ControlsRow3Component } from "src/app/_forms2/builder/controls-row-3.component";
 import { ControlsWrapper3Component } from "src/app/_forms2/builder/controls-wrapper-3.component";
 import { FormsModule } from "@angular/forms";
+import { FilterConfiguration } from "../../_models/base/filter-types";
 
 @Component({
   selector: '[productsCatalog]',

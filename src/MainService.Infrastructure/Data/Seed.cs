@@ -885,7 +885,7 @@ public static class Seed
     private static void AddNursesToEvent(PatientEvent patientEvent, List<DoctorNurse> doctorNurses)
     {
         if (Random.Next(0, 2) <= 0) return;
-        
+
         var randomNurses = doctorNurses.Select(x => x.Nurse).Take(Random.Next(1, 4)).ToList();
 
         foreach (var nurse in randomNurses)
@@ -898,7 +898,7 @@ public static class Seed
         AppUser patient, AppUser doctor)
     {
         if (Random.Next(0, 2) <= 0) return;
-        
+
         for (var j = 1; j < Random.Next(1, 4); j++)
         {
             var newPrescriptionItems = new List<PrescriptionItem>();

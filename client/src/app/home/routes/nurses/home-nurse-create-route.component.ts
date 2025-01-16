@@ -1,6 +1,7 @@
 import { Component, effect } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import Nurse from 'src/app/_models/nurses/nurse';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   host: { class: 'card card-flush' },
@@ -16,7 +17,7 @@ export class HomeNurseCreateRouteComponent
 
 {
   constructor() {
-    super('nurses', 'create');
+    super('nurses', FormUse.CREATE);
 
     this.key.set(`${this.router.url}#nurse-create`);
 

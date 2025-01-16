@@ -184,7 +184,7 @@ export class CatalogComponent extends BaseRouteCatalog<Prescription, Prescriptio
 })
 export class DetailComponent extends BaseRouteDetail<Prescription> {
   constructor() {
-    super('prescriptions', 'detail');
+    super('prescriptions', FormUse.DETAIL);
 
     effect(() => {
       this.route.paramMap.subscribe({
@@ -220,7 +220,7 @@ export class DetailComponent extends BaseRouteDetail<Prescription> {
 })
 export class EditComponent extends BaseRouteDetail<Prescription> {
   constructor() {
-    super('prescriptions', 'edit');
+    super('prescriptions', FormUse.EDIT);
 
     effect(() => {
       this.route.paramMap.subscribe({
@@ -256,7 +256,7 @@ export class EditComponent extends BaseRouteDetail<Prescription> {
 })
 export class NewComponent extends BaseRouteDetail<Prescription> {
   constructor() {
-    super('prescriptions', 'create');
+    super('prescriptions', FormUse.CREATE);
 
     effect(() => {
       const navigation = this.router.getCurrentNavigation();

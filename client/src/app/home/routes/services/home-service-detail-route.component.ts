@@ -7,6 +7,7 @@ import { CalendarView } from 'src/app/_models/events/eventTypes';
 import { Service } from 'src/app/_models/services/service';
 import { ServiceTabs } from 'src/app/_models/services/serviceTypes';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: 'div[homeServiceDetailRoute]',
@@ -34,7 +35,7 @@ export class HomeServiceDetailRouteComponent
   hostClass = '';
 
   constructor() {
-    super('services', 'detail');
+    super('services', FormUse.DETAIL);
 
     const tab: ServiceTabs | undefined = this.route.snapshot.queryParams['tab'];
 

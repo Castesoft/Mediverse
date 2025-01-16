@@ -105,7 +105,7 @@
         <div [collapse]="!item.isCollapsed" [id]="'collapseBasic' + item.id" [isAnimated]="true">
           <div class="p-4 border bg-light">
             <div prescriptionForm
-                 [use]="'detail'"
+                 [use]="FormUse.DETAIL"
                  [(key)]="key"
                  [view]="'inline'"
                  [(item)]="data()[idx]"

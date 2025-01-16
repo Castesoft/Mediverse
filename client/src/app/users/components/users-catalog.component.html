@@ -7,7 +7,7 @@
   </form>
 
   <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-    <a (click)="service.clickLink(null, key(), 'create', view()); $event.preventDefault()"
+    <a (click)="service.clickLink(null, key(), FormUse.CREATE, view()); $event.preventDefault()"
        [href]="service.dictionary.createRoute" class="btn btn-primary">
       Agregar {{ service.dictionary.singular }}
     </a>

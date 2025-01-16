@@ -19,4 +19,6 @@ export class InsuranceCompanyItemComponent {
   use = model.required<FormUse>();
 
   constructor() {}
+
+  protected readonly FormUse = FormUse;
 }

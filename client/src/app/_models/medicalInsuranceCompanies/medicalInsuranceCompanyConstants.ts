@@ -12,7 +12,6 @@ export const medicalInsuranceCompanyDictionary: NamingSubject = new NamingSubjec
   'especialidades',
   'Especialidades',
   'medicalInsuranceCompanies',
-  ['admin', 'utilerias', 'codigos'],
 );
 
 export const medicalInsuranceCompanyColumns: Column[] = [

@@ -1,10 +1,53 @@
-<mat-sidenav-container autosize style="width: 100%; background-color: transparent; height: 100vh;">
-  <mat-sidenav #snav [(opened)]="service.opened" [mode]="mode()" [fixedInViewport]="true" [fixedTopGap]="64" style="padding: 10px;">
-    <div mainTree></div>
-  </mat-sidenav>
-  <mat-sidenav-content style="overflow: hidden;">
-    <div style="padding: 10px; padding-top: 74px;">
-      <ng-content></ng-content>
+<mat-toolbar class="bg-body w-100" style="width: 100vw">
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon"
+          (click)="service.opened = !service.opened">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div>
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <img
+        [src]="'media/logos/logo-compact.svg'"
+        alt="Logo"
+        height="30"
+        class="d-inline-block align-text-top"
+      />
+      <span class="ms-2">DocHub</span>
+    </a>
+  </div>
+</mat-toolbar>
+
+<mat-sidenav-container
+  autosize
+  style="width: 100%; background-color: transparent; height: calc(100vh - 64px);"
+>
+  <mat-sidenav
+    class="bg-body"
+    [opened]="!service.opened"
+    [mode]="mode"
+    [fixedInViewport]="true"
+    style="width: 240px"
+    [fixedTopGap]="64"
+  >
+    <div class="container px-2 py-1">
+      <div class="d-flex flex-column">
+        <mat-nav-list>
+          @for (item of sidebarItems; track item) {
+            <a
+              mat-list-item
+              routerLinkActive="active"
+              [routerLink]="item.link"
+            >
+              @if (item.icon) {
+                <mat-icon class="me-2">{{ item.icon }}</mat-icon>
+              }
+              {{ item.label }}
+            </a>
+          }
+        </mat-nav-list>
+      </div>
     </div>
+  </mat-sidenav>
+  <mat-sidenav-content style="overflow: hidden;" class="content">
+    <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

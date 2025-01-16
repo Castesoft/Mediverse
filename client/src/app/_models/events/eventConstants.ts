@@ -82,8 +82,7 @@ export const eventDictionary: NamingSubject = new NamingSubject(
   'cita',
   'citas',
   'Citas',
-  'events',
-  [ 'inicio' ],
+  'events'
 );
 
 export const eventColumns: Column[] = [

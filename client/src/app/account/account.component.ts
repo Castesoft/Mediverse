@@ -29,7 +29,7 @@ import {
   template: `
     <div root>
       <div page>
-        @if (!sidebar.opened()) {
+        @if (!sidebar.opened) {
           <div mainAside></div>
         }
         <div wrapper>

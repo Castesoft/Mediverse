@@ -12,7 +12,6 @@ export const maritalStatusDictionary: NamingSubject = new NamingSubject(
   'especialidades',
   'Especialidades',
   'maritalStatuses',
-  ['admin', 'utilerias', 'codigos'],
 );
 
 export const maritalStatusColumns: Column[] = [

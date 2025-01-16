@@ -8,7 +8,9 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
+using MainService.Models.Helpers.Enums;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 
 namespace MainService.Infrastructure.Data;
@@ -20,8 +22,7 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
     public void Delete(Order item) => context.Orders.Remove(item);
 
     public async Task<Order?> GetByIdAsync(int id) =>
-        await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync()
-    ;
+        await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
 
     public async Task<bool> ExistsByIdAsync(int id) => await context.Orders.AnyAsync(x => x.Id == id);
 
@@ -36,8 +37,7 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsNoTracking()
             .ProjectTo<OrderDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Order?> GetByIdAsNoTrackingAsync(int id) =>
         await context.Orders
@@ -49,12 +49,10 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.OrderPickupAddress.PickupAddress)
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<List<Order>> GetAllAsync() =>
-        await context.Orders.ToListAsync()
-    ;
+        await context.Orders.ToListAsync();
 
     public Task<List<OrderDto>> GetAllDtoAsync(OrderParams param)
     {
@@ -63,7 +61,7 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
 
     public async Task<PagedList<OrderDto>> GetPagedListAsync(OrderParams param)
     {
-        IQueryable<Order> query = context.Orders
+        var query = context.Orders
             .Include(x => x.OrderOrderStatus.OrderStatus)
             .Include(x => x.OrderDeliveryStatus.DeliveryStatus)
             .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
@@ -71,45 +69,80 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.OrderDeliveryAddress.DeliveryAddress)
             .Include(x => x.OrderPickupAddress.PickupAddress)
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
-            .AsQueryable()
-        ;
+            .AsQueryable();
 
-        if (param.DoctorId.HasValue)
+        if (!string.IsNullOrEmpty(param.FromSection))
         {
-            query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
+            if (param.FromSection == SiteSection.Admin)
+            {
+                Log.Information(Roles.Admin.ToString());
+                if (!param.DoctorRole.Contains(Roles.Admin.ToString()))
+                    throw new UnauthorizedAccessException("Access denied. Admin role required.");
+            }
+            else
+            {
+                if (param.DoctorId.HasValue)
+                    query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
+            }
         }
+        else
+        {
+            if (param.DoctorId.HasValue)
+                query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
+        }
+
 
         if (!string.IsNullOrEmpty(param.Sort))
         {
             query = param.Sort.ToLower() switch
             {
-                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
-                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
-                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
-                "total" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Total) : query.OrderByDescending(x => x.Total),
-                "subtotal" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Subtotal) : query.OrderByDescending(x => x.Subtotal),
-                "discount" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Discount) : query.OrderByDescending(x => x.Discount),
-                "tax" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Tax) : query.OrderByDescending(x => x.Tax),
-                "amountpaid" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.AmountPaid) : query.OrderByDescending(x => x.AmountPaid),
-                "amountdue" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.AmountDue) : query.OrderByDescending(x => x.AmountDue),
-                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Id)
+                    : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Name)
+                    : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Description)
+                    : query.OrderByDescending(x => x.Description),
+                "total" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Total)
+                    : query.OrderByDescending(x => x.Total),
+                "subtotal" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Subtotal)
+                    : query.OrderByDescending(x => x.Subtotal),
+                "discount" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Discount)
+                    : query.OrderByDescending(x => x.Discount),
+                "tax" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Tax)
+                    : query.OrderByDescending(x => x.Tax),
+                "amountpaid" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.AmountPaid)
+                    : query.OrderByDescending(x => x.AmountPaid),
+                "amountdue" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.AmountDue)
+                    : query.OrderByDescending(x => x.AmountDue),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.CreatedAt)
+                    : query.OrderByDescending(x => x.CreatedAt),
                 _ => query.OrderByDescending(x => x.CreatedAt),
             };
-        } else {
+        }
+        else
+        {
             query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            string term = param.Search.ToLower();
-            
+            var term = param.Search.ToLower();
+
             query = query.Where(
-                x =>
-                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
-                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)
+                x => !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term)
+                     || !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)
             );
         }
-        
 
         return await PagedList<OrderDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<OrderDto>(mapper.ConfigurationProvider), param.PageNumber, param.PageSize);

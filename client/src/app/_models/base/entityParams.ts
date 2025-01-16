@@ -3,6 +3,7 @@ import { transform } from "src/app/_models/base/paramUtils";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { DateRange } from "src/app/_models/base/dateRange";
 import { sortOptions } from "src/app/_models/forms/formConstants";
+import { SiteSection } from "../sections/sectionTypes";
 
 
 /**
@@ -23,6 +24,7 @@ export class EntityParams<T> {
   description: string | null = null;
   key: string | null = null;
   id: number | null = 0;
+  fromSection: SiteSection | null = null;
 
   constructor(key: string | null, init?: Partial<EntityParams<T>>) {
     if (key === null) throw new Error('Key cannot be null');

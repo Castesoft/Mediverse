@@ -14,6 +14,6 @@ export class WrapperComponent {
   sidebar = inject(SidebarService);
 
   @HostBinding('style') get paddingStyle() {
-    return this.sidebar.opened() ? 'padding-left: 40px;' : '';
+    return this.sidebar.opened ? 'padding-left: 40px;' : '';
   }
 }

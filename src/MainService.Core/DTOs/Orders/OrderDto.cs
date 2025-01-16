@@ -1,4 +1,5 @@
 using MainService.Core.DTOs.Addresses;
+using MainService.Core.DTOs.User;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
 
@@ -14,8 +15,8 @@ public class OrderDto : BaseEntity
     public decimal? AmountPaid { get; set; }
     public decimal? AmountDue { get; set; }
 
-    public OptionDto? Patient { get; set; }
-    public OptionDto? Doctor { get; set; }
+    public UserDto? Patient { get; set; }
+    public UserDto? Doctor { get; set; }
     public OptionDto? PickupAddress { get; set; }
     public OptionDto? DeliveryAddress { get; set; }
     public List<OrderItemDto> Items { get; set; } = [];

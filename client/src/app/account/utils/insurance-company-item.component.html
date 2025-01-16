@@ -7,7 +7,7 @@
           Puede agregar pólizas de seguros adicionales
         </div>
       </div>
-      <a (click)="service.clickInsuranceCompany(null, 'create', 'modal')"
+      <a (click)="service.clickInsuranceCompany(null, FormUse.CREATE, 'modal')"
         class="btn btn-primary px-6 align-self-center text-nowrap">Nueva Póliza</a>
     </div>
   </div>
@@ -28,7 +28,7 @@
             <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
         </button>
         <button class="btn btn-sm btn-light btn-active-light-primary"
-          (click)="service.clickInsuranceCompany(item(), 'edit', 'modal')">
+          (click)="service.clickInsuranceCompany(item(), FormUse.EDIT, 'modal')">
           Editar
         </button>
       </div>

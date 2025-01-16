@@ -1,5 +1,5 @@
 import { Component, ModelSignal, model, inject } from "@angular/core";
-import { View, CatalogMode, FilterOrientation, FilterConfiguration } from "src/app/_models/base/types";
+import { View, CatalogMode, } from "src/app/_models/base/types";
 import { Service } from "src/app/_models/services/service";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
 import { ServicesTableComponent } from "src/app/services/components/services-table.component";
@@ -9,11 +9,12 @@ import { ServiceFiltersForm } from "src/app/_models/services/serviceFiltersForm"
 import { ControlsRow3Component } from "src/app/_forms2/builder/controls-row-3.component";
 import { ControlsWrapper3Component } from "src/app/_forms2/builder/controls-wrapper-3.component";
 import { FormsModule } from "@angular/forms";
+import { FilterConfiguration } from "../../_models/base/filter-types";
 
 @Component({
   selector: '[servicesCatalog]',
   templateUrl: './services-catalog.component.html',
-  imports: [ ServicesTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule],
+  imports: [ ServicesTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule ],
   standalone: true,
 })
 export class ServicesCatalogComponent {

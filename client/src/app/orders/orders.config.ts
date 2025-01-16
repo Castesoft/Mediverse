@@ -26,30 +26,31 @@ import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
 import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { OrdersCatalogComponent } from "src/app/orders/orders-catalog.component";
+import { Column } from "../_models/base/column";
 
 @Component({
   selector: 'orders-catalog-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      ordersCatalog
-      [(mode)]="data.mode"
-      [(key)]="data.key"
-      [(view)]="data.view"
-      [(isCompact)]="data.isCompact"
-      [(item)]="data.item"
-      [(params)]="data.params"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          ordersCatalog
+          [(mode)]="data.mode"
+          [(key)]="data.key"
+          [(view)]="data.view"
+          [(isCompact)]="data.isCompact"
+          [(item)]="data.item"
+          [(params)]="data.params"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [OrdersCatalogComponent, MaterialModule, CdkModule,],
+  imports: [ OrdersCatalogComponent, MaterialModule, CdkModule, ],
 })
 export class OrdersCatalogModalComponent {
   data = inject<CatalogDialog<Order, OrderParams>>(MAT_DIALOG_DATA);
@@ -89,7 +90,7 @@ export class OrdersService extends ServiceHelper<Order, OrderParams, FormGroup2<
   selector: "[orderForm]",
   templateUrl: './order-form.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]
+  imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, ]
 })
 export class OrderFormComponent
   extends BaseForm<
@@ -121,18 +122,17 @@ export class OrderFormComponent
 @Component({
   selector: 'div[orderDetail]',
   template: `
-  <div container3 [type]="'inline'">
-    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
-  </div>
-  <div orderForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    <div container3 [type]="'inline'">
+      <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
+    </div>
+    <div orderForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
   standalone: true,
-  imports: [OrderFormComponent, ControlsModule, Forms2Module,],
+  imports: [ OrderFormComponent, ControlsModule, Forms2Module, ],
 })
 export class OrderDetailComponent
   extends BaseDetail<Order, OrderParams, OrderFiltersForm, OrdersService>
-  implements DetailInputSignals<Order>
-{
+  implements DetailInputSignals<Order> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Order | null> = model.required();
@@ -148,25 +148,25 @@ export class OrderDetailComponent
 @Component({
   selector: 'order-detail-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      orderDetail
-      [(use)]="data.use"
-      [(view)]="data.view"
-      [(key)]="data.key"
-      [(item)]="data.item"
-      [(title)]="data.title"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          orderDetail
+          [(use)]="data.use"
+          [(view)]="data.view"
+          [(key)]="data.key"
+          [(item)]="data.item"
+          [(title)]="data.title"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [OrderDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+  imports: [ OrderDetailComponent, ModalWrapperModule, MaterialModule, CdkModule, ],
 })
 export class OrderDetailModalComponent {
   data = inject<DetailDialog<Order>>(MAT_DIALOG_DATA);
@@ -177,7 +177,7 @@ export class OrderDetailModalComponent {
   selector: 'orders-route',
   standalone: false,
   template: `
-  <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
   `,
 })
 export class OrdersComponent {}
@@ -185,18 +185,18 @@ export class OrdersComponent {}
 @Component({
   selector: 'orders-catalog-route',
   template: `
-  <div
-    ordersCatalog
-    [(mode)]="mode"
-    [(key)]="key"
-    [(view)]="view"
-    [(isCompact)]="compact.isCompact"
-    [(item)]="item"
-    [(params)]="params"
-  ></div>
+    <div
+      ordersCatalog
+      [(mode)]="mode"
+      [(key)]="key"
+      [(view)]="view"
+      [(isCompact)]="compact.isCompact"
+      [(item)]="item"
+      [(params)]="params"
+    ></div>
   `,
   standalone: true,
-  imports: [RouterModule, OrdersCatalogComponent, BreadcrumbsModule, ],
+  imports: [ RouterModule, OrdersCatalogComponent, BreadcrumbsModule, ],
 })
 export class CatalogComponent extends BaseRouteCatalog<Order, OrderParams, OrderFiltersForm, OrdersService> {
   constructor() {
@@ -214,11 +214,11 @@ export class CatalogComponent extends BaseRouteCatalog<Order, OrderParams, Order
     <div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
   `,
   standalone: true,
-  imports: [RouterModule, OrderDetailComponent, BreadcrumbsModule,],
+  imports: [ RouterModule, OrderDetailComponent, BreadcrumbsModule, ],
 })
 export class DetailComponent extends BaseRouteDetail<Order> {
   constructor() {
-    super('orders', 'detail');
+    super('orders', FormUse.DETAIL);
 
     effect(() => {
       this.route.paramMap.subscribe({
@@ -250,11 +250,11 @@ export class DetailComponent extends BaseRouteDetail<Order> {
     <div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
   `,
   standalone: true,
-  imports: [OrderDetailComponent, RouterModule, BreadcrumbsModule,],
+  imports: [ OrderDetailComponent, RouterModule, BreadcrumbsModule, ],
 })
 export class EditComponent extends BaseRouteDetail<Order> {
   constructor() {
-    super('orders', 'edit');
+    super('orders', FormUse.EDIT);
 
     effect(() => {
       this.route.paramMap.subscribe({
@@ -284,13 +284,13 @@ export class EditComponent extends BaseRouteDetail<Order> {
   selector: 'order-new-route',
   template: `
     <div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-`,
+  `,
   standalone: true,
-  imports: [OrderDetailComponent, RouterModule, BreadcrumbsModule,],
+  imports: [ OrderDetailComponent, RouterModule, BreadcrumbsModule, ],
 })
 export class NewComponent extends BaseRouteDetail<Order> {
   constructor() {
-    super('orders', 'create');
+    super('orders', FormUse.CREATE);
 
     effect(() => {
       const navigation = this.router.getCurrentNavigation();
@@ -305,7 +305,7 @@ export class NewComponent extends BaseRouteDetail<Order> {
 }
 
 @NgModule({
-  imports: [RouterModule.forChild([
+  imports: [ RouterModule.forChild([
     {
       path: '', title: 'Ganaderías', data: { breadcrumb: 'Ganaderías', },
       component: OrdersComponent, runGuardsAndResolvers: 'always',
@@ -324,10 +324,10 @@ export class NewComponent extends BaseRouteDetail<Order> {
         },
       ],
     },
-  ])],
-  exports: [RouterModule]
+  ]) ],
+  exports: [ RouterModule ]
 })
-export class OrdersRoutingModule { }
+export class OrdersRoutingModule {}
 
 @NgModule({
   declarations: [
@@ -335,5 +335,5 @@ export class OrdersRoutingModule { }
   ],
   imports: [ CommonModule, OrdersRoutingModule, ]
 })
-export class OrdersModule { }
+export class OrdersModule {}
 

@@ -41,8 +41,8 @@ export class SidebarTreeComponent {
 
   treeFlattener: MatTreeFlattener<BaseNode, FlatNode, FlatNode> = new MatTreeFlattener<BaseNode, FlatNode, FlatNode>(
     this._transformer,
-    node => node.level,
-    node => node.expandable,
+    (node: FlatNode) => node.level,
+    (node: FlatNode) => node.expandable,
     node => node.children,
   );
 
@@ -50,8 +50,8 @@ export class SidebarTreeComponent {
 
   constructor() {
     effect(() => {
-      const roles = this.account.roles();
-      const filteredData = this.filterTree(TREE_DATA, roles, this.dev.isDev());
+      const roles: any[] = this.account.roles();
+      const filteredData: BaseNode[] = this.filterTree(TREE_DATA, roles, this.dev.isDev());
       this.dataSource.data = filteredData;
     });
   }
@@ -81,8 +81,8 @@ export class SidebarTreeComponent {
           return null;
         }
       })
-      .filter(node => node !== null) as BaseNode[];
+      .filter((node: BaseNode | null): node is BaseNode => node !== null) as BaseNode[];
   }
 
-  hasChild = (_: number, node: FlatNode) => node.expandable;
+  hasChild = (_: number, node: FlatNode): boolean => node.expandable;
 }

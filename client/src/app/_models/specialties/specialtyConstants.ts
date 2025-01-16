@@ -21,7 +21,6 @@ export const specialtyDictionary: NamingSubject = new NamingSubject(
   'especialidades',
   'Especialidades',
   'specialties',
-  [ 'admin', 'utilerias', 'codigos' ],
 );
 
 export const specialtyColumns: Column[] = [

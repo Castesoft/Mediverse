@@ -22,7 +22,7 @@
           <ng-container *ngTemplateOutlet="entityCustomActions"></ng-container>
         }
         <a
-          (click)="service().clickLink(null, key(), 'create', view()); $event.preventDefault()"
+          (click)="service().clickLink(null, key(), FormUse.CREATE, view()); $event.preventDefault()"
           [href]="service().dictionary.createRoute"
           class="btn btn-primary"
         >

@@ -26,6 +26,7 @@ import { TablesModule } from 'src/app/_shared/template/components/tables/tables.
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { EventsService } from 'src/app/events/events.config';
 import { calcDateDiff } from 'src/app/_utils/util';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   host: { class: 'pb-6' },
@@ -155,7 +156,7 @@ export class EventsCalendarComponent
       allDay: arg.allDay,
       dateFrom: arg.date,
       dateTo: arg.date,
-    }), this.key(), 'create', 'modal');
+    }), this.key(), FormUse.DETAIL, 'modal');
   }
 
   formatTimeRange = (start: Date, end: Date): string => {
@@ -187,7 +188,7 @@ export class EventsCalendarComponent
 
     if (eventToSend === null) throw new Error('Event not found');
 
-    this.service.clickLink(eventToSend, this.key(), 'detail', 'modal');
+    this.service.clickLink(eventToSend, this.key(), FormUse.DETAIL, 'modal');
   }
 
   handleEventDragStop(arg: EventDragStopArg) {

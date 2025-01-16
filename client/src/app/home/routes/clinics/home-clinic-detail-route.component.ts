@@ -7,6 +7,7 @@ import { ClinicTabs } from 'src/app/_models/clinics/clinicTypes';
 import { EventParams } from 'src/app/_models/events/eventParams';
 import { CalendarView } from 'src/app/_models/events/eventTypes';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   // host: { class: 'card card-flush' },
@@ -35,7 +36,7 @@ export class HomeClinicDetailRouteComponent
   hostClass = '';
 
   constructor() {
-    super('clinics', 'detail');
+    super('clinics', FormUse.DETAIL);
 
     const tab: ClinicTabs | undefined = this.route.snapshot.queryParams['tab'];
 

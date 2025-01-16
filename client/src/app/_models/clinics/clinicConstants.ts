@@ -23,7 +23,7 @@ export const clinicDictionary: NamingSubject = new NamingSubject(
   'clínicas',
   'Clínicas',
   'clinics',
-  [ 'inicio' ]
+
 );
 
 export const clinicColumns: Column[] = [

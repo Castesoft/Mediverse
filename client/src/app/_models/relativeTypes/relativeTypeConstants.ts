@@ -12,7 +12,6 @@ export const relativeTypeDictionary: NamingSubject = new NamingSubject(
   'sustancias',
   'Sustancias',
   'relativeTypes',
-  ['admin', 'utilerias', 'codigos'],
 );
 
 export const relativeTypeColumns: Column[] = [

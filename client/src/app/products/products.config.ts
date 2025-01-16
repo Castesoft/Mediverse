@@ -218,7 +218,7 @@ export class CatalogComponent extends BaseRouteCatalog<Product, ProductParams, P
 })
 export class DetailComponent extends BaseRouteDetail<Product> {
   constructor() {
-    super('products', 'detail');
+    super('products', FormUse.DETAIL);
 
     effect(() => {
       this.route.paramMap.subscribe({
@@ -254,7 +254,7 @@ export class DetailComponent extends BaseRouteDetail<Product> {
 })
 export class EditComponent extends BaseRouteDetail<Product> {
   constructor() {
-    super('products', 'edit');
+    super('products', FormUse.EDIT);
 
     effect(() => {
       this.route.paramMap.subscribe({
@@ -290,7 +290,7 @@ export class EditComponent extends BaseRouteDetail<Product> {
 })
 export class NewComponent extends BaseRouteDetail<Product> {
   constructor() {
-    super('products', 'create');
+    super('products', FormUse.CREATE);
 
     effect(() => {
       const navigation = this.router.getCurrentNavigation();

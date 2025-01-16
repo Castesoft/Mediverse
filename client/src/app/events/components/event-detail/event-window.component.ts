@@ -120,7 +120,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   prescriptionItem: WritableSignal<Prescription | null> = signal<Prescription | null>(null);
   prescriptionKey: WritableSignal<string> = signal<string>(this.prescriptionCuid);
   prescriptionView: WritableSignal<View> = signal<View>('inline');
-  prescriptionUse: WritableSignal<FormUse> = signal<FormUse>('create');
+  prescriptionUse: WritableSignal<FormUse> = signal<FormUse>(FormUse.CREATE);
   prescriptions: WritableSignal<Prescription[]> = signal<Prescription[]>([]);
   prescriptionsCatalogMode: WritableSignal<CatalogMode> = signal<CatalogMode>('readonly');
   prescriptionParams: WritableSignal<PrescriptionParams> = signal<PrescriptionParams>(new PrescriptionParams(this.prescriptionCuid));
@@ -128,7 +128,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   // Nurse signals
   nurseCuid: string = createId();
   nurseView: WritableSignal<View> = signal<View>('inline');
-  nurseUse: WritableSignal<FormUse> = signal<FormUse>('create');
+  nurseUse: WritableSignal<FormUse> = signal<FormUse>(FormUse.CREATE);
   nurseCatalogMode: WritableSignal<CatalogMode> = signal<CatalogMode>('select');
   nurseParams: WritableSignal<NurseParams> = signal<NurseParams>(new NurseParams(createId()));
 

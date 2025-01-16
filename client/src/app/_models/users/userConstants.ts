@@ -28,7 +28,6 @@ export const userDictionary: NamingSubject = new NamingSubject(
   'usuarios',
   'Usuarios',
   'users',
-  ['inicio'],
 );
 
 export const userColumns: Column[] = [

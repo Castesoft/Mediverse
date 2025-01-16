@@ -1,6 +1,7 @@
 import { Component, effect } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import { Order } from 'src/app/_models/orders/order';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   // host: { class: 'card card-flush' },
@@ -16,7 +17,7 @@ export class HomeOrderDetailRouteComponent
 
 {
   constructor() {
-    super('orders', 'detail');
+    super('orders', FormUse.DETAIL);
 
     this.key.set(`${this.router.url}#order-detail`);
 

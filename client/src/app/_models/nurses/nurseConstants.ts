@@ -38,7 +38,7 @@ export const nurseDictionary: NamingSubject = new NamingSubject(
   'especialistas',
   'Especialistas',
   'nurses',
-  [ 'inicio' ]
+
 );
 
 export const nurseCells: PartialCellsOf<Nurse> = {

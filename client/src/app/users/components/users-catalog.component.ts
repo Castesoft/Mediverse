@@ -15,6 +15,7 @@ import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { UsersTableComponent } from "src/app/users/components/users-table.component";
 import { UsersService } from "src/app/users/users.config";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: '[usersCatalog]',
@@ -58,4 +59,6 @@ export class UsersCatalogComponent extends BaseCatalog<User, UserParams, UserFil
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
+
+  protected readonly FormUse = FormUse;
 }

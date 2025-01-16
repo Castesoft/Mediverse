@@ -1,13 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ShortcutsService } from "src/app/_services/shortcuts.service";
 
 @Component({
-  host: { class: '', },
   selector: 'div[adminRoute]',
   template: `
-  <nav mainSidebar>
-    <router-outlet></router-outlet>
-  </nav>
+    <nav mainSidebar>
+      <router-outlet></router-outlet>
+    </nav>
   `,
   standalone: false,
 })
-export class AdminComponent {}
+export class AdminComponent implements OnDestroy {
+  private shortcuts = inject(ShortcutsService);
+
+  ngOnDestroy(): void {
+    this.shortcuts.unregisterShortcut('Ctrl+p');
+    this.shortcuts.unregisterShortcut('Ctrl+P');
+  }
+}

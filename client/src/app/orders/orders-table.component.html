@@ -1,6 +1,6 @@
 <thead
   tableHeader
-  [columns]="service.columns"
+  [(columns)]="service.columns"
   [(dictionary)]="service.dictionary"
   [(params)]="params"
   [(mode)]="mode"
@@ -38,10 +38,21 @@
         </td>
       }
 
+      @if (showDoctorColumn() || params().fromSection == SiteSection.ADMIN) {
+        <td userCell [user]="item.doctor" [role]="'Doctor'"></td>
+      }
+
+      <td userCell [user]="item.patient" [role]="'Patient'"></td>
+
+      <td>
+        <div ordersStatusBadge [statusOption]="item.status"></div>
+      </td>
+
+      <td>
+        <div ordersDeliveryStatusBadge [statusOption]="item.deliveryStatus"></div>
+      </td>
+
       @for (cell of row().getItems([
-        'patient',
-        'status',
-        'deliveryStatus',
         'address',
         'subtotal',
         'discount',
@@ -69,6 +80,7 @@
         @defer {
           @if (key()) {
             <div tableMenu
+                 [siteSection]="params().fromSection || undefined"
                  [item]="item"
                  [key]="key()!"
                  [service]="service"></div>

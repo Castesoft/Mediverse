@@ -1,13 +1,21 @@
-import { FormArray, FormGroup, ValidatorFn, AbstractControlOptions, AsyncValidatorFn } from "@angular/forms";
+import { AbstractControlOptions, AsyncValidatorFn, FormArray, FormGroup, ValidatorFn } from "@angular/forms";
 import { DateRange } from "@angular/material/datepicker";
 import { createId } from "@paralleldrive/cuid2";
 import { EntityParams } from "src/app/_models/base/entityParams";
 import { isRanges, Ranges } from "src/app/_models/base/ranges";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { isSelectOptionArray, isSelectOption } from "src/app/_models/base/selectOptionUtils";
+import { isSelectOption, isSelectOptionArray } from "src/app/_models/base/selectOptionUtils";
 import { BadRequest } from './badRequest';
 import { FormControl2 } from "src/app/_models/forms/formControl2";
-import { FormInfo, ControlInfo, TypedFormGroup, ControlOrientation, FormUse, InputTypes, Style } from "src/app/_models/forms/formTypes";
+import {
+  ControlInfo,
+  ControlOrientation,
+  FormInfo,
+  FormUse,
+  InputTypes,
+  Style,
+  TypedFormGroup
+} from "src/app/_models/forms/formTypes";
 import { isFile } from "src/app/_models/forms/formUtils";
 
 export function createTypedFormGroup2<T extends object>(
@@ -54,7 +62,7 @@ export function createTypedFormGroup2<T extends object>(
           }
 
           if (init?.use === 'detail') {
-            control.use = 'detail';
+            control.use = FormUse.DETAIL;
             control.disable();
           }
           if (controlInfo.isDisabled === true) {
@@ -106,7 +114,7 @@ export function createTypedFormGroup2<T extends object>(
         }
 
         if (init?.use === 'detail') {
-          control.use = 'detail';
+          control.use = FormUse.DETAIL;
           control.disable();
         }
         if (controlInfo.isDisabled === true) {
@@ -134,7 +142,7 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   submitted: boolean = false;
   validation: boolean = true;
   orientation?: ControlOrientation = "inline";
-  use: FormUse = "detail";
+  use: FormUse = FormUse.DETAIL;
   show = false;
   label: string | null = null;
   showLabel = true;
@@ -214,7 +222,7 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
       this.validation === true &&
       this.valid
     )
-    return true;
+      return true;
 
     return false;
   }
@@ -267,7 +275,7 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   }
 
   get params(): EntityParams<T> {
-    return new EntityParams<T>(createId(), {...this.value});
+    return new EntityParams<T>(createId(), { ...this.value });
   }
 
 }

@@ -7,6 +7,7 @@ import { CalendarView } from 'src/app/_models/events/eventTypes';
 import Nurse from "src/app/_models/nurses/nurse";
 import { NurseTabs } from 'src/app/_models/nurses/nurseTypes';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   // host: { class: 'card card-flush' },
@@ -35,7 +36,7 @@ export class HomeNurseDetailRouteComponent
   hostClass = '';
 
   constructor() {
-    super('nurses', 'detail');
+    super('nurses', FormUse.DETAIL);
 
     const tab: NurseTabs | undefined = this.route.snapshot.queryParams['tab'];
 

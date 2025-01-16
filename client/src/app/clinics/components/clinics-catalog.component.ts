@@ -1,5 +1,5 @@
 import { Component, ModelSignal, model, inject } from "@angular/core";
-import { View, CatalogMode, FilterOrientation, FilterConfiguration } from "src/app/_models/base/types";
+import { View, CatalogMode, } from "src/app/_models/base/types";
 import { ClinicsTableComponent } from "src/app/clinics/components/clinics-table.component";
 import { GenericCatalogComponent } from "src/app/_shared/components/catalog-layout.component";
 import { ClinicsService } from "src/app/clinics/clinics.config";
@@ -9,6 +9,7 @@ import { FormsModule } from "@angular/forms";
 import Clinic from "src/app/_models/clinics/clinic";
 import ClinicParams from "src/app/_models/clinics/clinicParams";
 import ClinicFiltersForm from "src/app/_models/clinics/clinicFiltersForm";
+import { FilterConfiguration } from "../../_models/base/filter-types";
 
 @Component({
   selector: '[clinicsCatalog]',

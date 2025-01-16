@@ -1,6 +1,6 @@
-import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
+import { Breakpoints, BreakpointObserver, BreakpointState } from "@angular/cdk/layout";
 import { CommonModule } from "@angular/common";
-import { Component, inject, model, signal } from "@angular/core";
+import { Component, inject, model, OnDestroy, signal, WritableSignal } from "@angular/core";
 import { MatDrawerMode } from "@angular/material/sidenav";
 import { RouterModule } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
@@ -8,36 +8,40 @@ import { SidebarService } from "src/app/_services/sidebar.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { SidebarTreeComponent } from "src/app/_utils/sidebar/sidebar-tree.component";
+import { DrawerMode } from "../../_models/base/filter-types";
+
+interface SidebarItem {
+  link: string;
+  label: string;
+  icon?: string;
+}
 
 @Component({
-  host: { class: '', },
   selector: 'nav[mainSidebar]',
-  styles: `
-  // :host {
-  //   display: flex;
-  //   flex-grow: 1;
-  // }
-  `,
   templateUrl: './sidebar.component.html',
   standalone: true,
-  imports: [ CommonModule, CdkModule, MaterialModule, RouterModule, SidebarTreeComponent, ],
+  imports: [ CommonModule, CdkModule, MaterialModule, RouterModule ],
 })
-export class SidebarComponent {
-  service = inject(SidebarService);
+export class SidebarComponent implements OnDestroy {
+  service: SidebarService = inject(SidebarService);
 
-  destroyed = new Subject<void>();
+  ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  currentScreenSize = signal<string>('');
-  mode = signal<MatDrawerMode>('side');
-  isMobile = signal(false);
+  currentScreenSize: string = '';
+  mode: MatDrawerMode = DrawerMode.SIDE;
+  isMobile: boolean = false;
 
-  // Create a map to display breakpoint names for demonstration purposes.
-  displayNameMap = new Map([
-    [Breakpoints.XSmall, 'XSmall'],
-    [Breakpoints.Small, 'Small'],
-    [Breakpoints.Medium, 'Medium'],
-    [Breakpoints.Large, 'Large'],
-    [Breakpoints.XLarge, 'XLarge'],
+  sidebarItems: SidebarItem[] = [
+    { link: '/admin', label: 'Inicio' },
+    { link: '/admin/pedidos', label: 'Pedidos' },
+  ]
+
+  displayNameMap: Map<string, string> = new Map([
+    [ Breakpoints.XSmall, 'XSmall' ],
+    [ Breakpoints.Small, 'Small' ],
+    [ Breakpoints.Medium, 'Medium' ],
+    [ Breakpoints.Large, 'Large' ],
+    [ Breakpoints.XLarge, 'XLarge' ],
   ]);
 
   constructor() {
@@ -49,29 +53,26 @@ export class SidebarComponent {
         Breakpoints.Large,
         Breakpoints.XLarge,
       ])
-      .pipe(takeUntil(this.destroyed))
-      .subscribe(result => {
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((result: BreakpointState): void => {
         for (const query of Object.keys(result.breakpoints)) {
           if (result.breakpoints[query]) {
-            this.currentScreenSize.set(this.displayNameMap.get(query) ?? 'Unknown');
-            if (
-              this.currentScreenSize() === 'XSmall' ||
-              this.currentScreenSize() === 'Small'
-            ) {
-              this.mode.set('over');
-              this.isMobile.set(true);
+            this.currentScreenSize = this.displayNameMap.get(query) ?? 'Unknown';
+            if (this.currentScreenSize === 'XSmall' || this.currentScreenSize === 'Small') {
+              this.mode = DrawerMode.OVER;
+              this.isMobile = true;
             } else {
-              this.mode.set('side');
-              this.isMobile.set(false);
+              this.mode = DrawerMode.SIDE;
+              this.isMobile = false;
             }
           }
         }
       });
   }
 
-  ngOnDestroy() {
-    this.destroyed.next();
-    this.destroyed.complete();
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }
 

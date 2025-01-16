@@ -5,9 +5,8 @@
   <div cdkMenuItem class="menu-item px-3">
     <a
       class="menu-link"
-      [href]="service().dictionary.catalogRoute + '/' + item().id"
       (click)="
-          service().clickLink(item(), key(), 'detail', 'page');
+          service().clickLink(item(), key(), FormUse.DETAIL, 'page', siteSection());
           $event.stopPropagation();
           $event.preventDefault()
         "
@@ -19,9 +18,8 @@
   <div cdkMenuItem class="menu-item px-3">
     <a
       class="menu-link"
-      [href]="service().dictionary.catalogRoute + '/' + item().id"
       (click)="
-          service().clickLink(item(), key(), 'detail', 'modal');
+          service().clickLink(item(), key(), FormUse.DETAIL, 'modal', siteSection());
           $event.stopPropagation();
           $event.preventDefault();
         "
@@ -31,7 +29,12 @@
   </div>
 
   <div cdkMenuItem class="menu-item px-3">
-    <a class="menu-link" [routerLink]="[service().dictionary.catalogRoute, item().id, 'editar']">
+    <a class="menu-link"
+       (click)="
+          service().clickLink(item(), key(), FormUse.EDIT, 'page', siteSection());
+          $event.stopPropagation();
+          $event.preventDefault();
+        ">
       Editar
     </a>
   </div>

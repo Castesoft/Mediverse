@@ -1,59 +1,98 @@
-import { OrderDeliveryStatus } from "../_models/orders/orderTypes";
-import { OrderStatus } from "../_models/orders/orderTypes";
+import { OrderDeliveryStatus, OrderStatus } from "src/app/_models/orders/orderTypes";
+import { SelectOption } from "src/app/_models/base/selectOption";
 
-const orderStatusMap: { [key in OrderStatus]: string } = {
-  pending: 'Pendiente',
-  completed: 'Completado',
-  cancelled: 'Cancelado'
-};
+// Order Status
+export function getOrderStatus(status: OrderStatus): string {
+  switch (status) {
+    case OrderStatus.Pending:
+      return 'Pendiente';
+    case OrderStatus.Completed:
+      return 'Procesando';
+    case OrderStatus.Cancelled:
+      return 'Cancelado';
+    default:
+      return '';
+  }
+}
 
-const orderStatusBadgeColorMap: { [key in OrderStatus]: string } = {
-  pending: 'warning',
-  completed: 'success',
-  cancelled: 'danger'
-};
+export function getOrderStatusBadgeColor(status: OrderStatus): string {
+  switch (status) {
+    case OrderStatus.Pending:
+      return 'warning';
+    case OrderStatus.Completed:
+      return 'success';
+    case OrderStatus.Cancelled:
+      return 'danger';
+    default:
+      return 'primary';
+  }
+}
 
-const orderDeliveryStatusMap: { [key in OrderDeliveryStatus]: string } = {
-  pending: 'Pendiente de aprobación',
-  processing: 'Procesando',
-  inprogress: 'En progreso',
-  delivered: 'Entregado',
-  cancelled: 'Cancelado'
-};
+export function parseOrderStatusFromSelectOption(statusOption: SelectOption | null): OrderStatus | null {
+  const code: string | undefined = statusOption?.code;
 
-const orderDeliveryStatusIndexMap: { [key in OrderDeliveryStatus]: number } = {
-  pending: 0,
-  processing: 1,
-  inprogress: 2,
-  delivered: 3,
-  cancelled: 4
-};
+  switch (code?.toLowerCase()) {
+    case 'pending':
+      return OrderStatus.Pending;
+    case 'completed':
+      return OrderStatus.Completed;
+    case 'cancelled':
+      return OrderStatus.Cancelled;
+    default:
+      return null;
+  }
+}
 
-const orderDeliveryStatusBadgeColorMap: { [key in OrderDeliveryStatus]: string } = {
-  pending: 'warning',
-  processing: 'info',
-  inprogress: 'primary',
-  delivered: 'success',
-  cancelled: 'danger'
-};
+// Order Delivery Status
+export function getOrderDeliveryStatus(status: OrderDeliveryStatus): string {
+  switch (status) {
+    case OrderDeliveryStatus.Pending:
+      return 'Pendiente';
+    case OrderDeliveryStatus.Processing:
+      return 'Procesando';
+    case OrderDeliveryStatus.InProgress:
+      return 'En Proceso';
+    case OrderDeliveryStatus.Delivered:
+      return 'Entregado';
+    case OrderDeliveryStatus.Cancelled:
+      return 'Cancelado';
+    default:
+      return '';
+  }
+}
 
-const reverseOrderStatusMap: { [key: string]: OrderStatus } = {
-  'Pendiente': 'pending',
-  'Completado': 'completed',
-  'Cancelado': 'cancelled'
-};
+export function getOrderDeliveryStatusBadgeColor(status: OrderDeliveryStatus): string {
+  switch (status) {
+    case OrderDeliveryStatus.Pending:
+      return 'warning';
+    case OrderDeliveryStatus.Processing:
+      return 'info';
+    case OrderDeliveryStatus.InProgress:
+      return 'primary';
+    case OrderDeliveryStatus.Delivered:
+      return 'success';
+    case OrderDeliveryStatus.Cancelled:
+      return 'danger';
+    default:
+      return 'primary';
+  }
+}
 
-const reverseOrderDeliveryStatusMap: { [key: string]: OrderDeliveryStatus } = {
-  'Procesando': 'processing',
-  'En progreso': 'inprogress',
-  'Entregado': 'delivered',
-  'Cancelado': 'cancelled'
-};
+export function parseOrderDeliveryStatusFromSelectOption(statusOption: SelectOption | null): OrderDeliveryStatus | null {
+  const code: string | undefined = statusOption?.code;
 
-export const reverseParseOrderDeliveryStatus = (str: string): OrderDeliveryStatus => reverseOrderDeliveryStatusMap[str] || str as OrderDeliveryStatus;
-export const parseOrderDeliveryStatusBadgeColor = (str: OrderDeliveryStatus) => orderDeliveryStatusBadgeColorMap[str] || 'primary';
-export const reverseParseOrderStatus = (str: string): OrderStatus => reverseOrderStatusMap[str] || str as OrderStatus;
-export const parseOrderStatusBadgeColor = (str: OrderStatus) => orderStatusBadgeColorMap[str] || 'primary';
-export const parseOrderDeliveryStatus = (str: OrderDeliveryStatus) => orderDeliveryStatusMap[str] || str;
-export const parseOrderDeliveryStatusIndex = (str: OrderDeliveryStatus) => orderDeliveryStatusIndexMap[str] || 0;
-export const parseOrderStatus = (str: OrderStatus) => orderStatusMap[str] || str;
+  switch (code?.toLowerCase()) {
+    case 'pending':
+      return OrderDeliveryStatus.Pending;
+    case 'processing':
+      return OrderDeliveryStatus.Processing;
+    case 'inprogress':
+      return OrderDeliveryStatus.InProgress;
+    case 'delivered':
+      return OrderDeliveryStatus.Delivered;
+    case 'cancelled':
+      return OrderDeliveryStatus.Cancelled;
+    default:
+      return null;
+  }
+}

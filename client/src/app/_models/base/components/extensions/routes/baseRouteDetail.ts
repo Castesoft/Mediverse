@@ -32,7 +32,7 @@ export default class BaseRouteDetail<T extends Entity> {
 
   item = signal<T | null>(null);
   id = signal<number | null>(null);
-  use = signal<FormUse>('detail');
+  use = signal<FormUse>(FormUse.DETAIL);
   view = signal<View>('page');
   key = signal<string | null>(null);
   label = signal<string | null>(null);

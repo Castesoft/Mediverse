@@ -12,7 +12,7 @@ export const educationLevelDictionary: NamingSubject = new NamingSubject(
   'especialidades',
   'Especialidades',
   'educationLevels',
-  ['admin', 'utilerias', 'codigos'],
+
 );
 
 export const educationLevelColumns: Column[] = [

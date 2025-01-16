@@ -1,5 +1,14 @@
+export enum OrderStatus {
+  Pending = 'pending',
+  Completed = 'completed',
+  Cancelled = 'cancelled'
+}
 
-export type OrderStatus = 'pending' | 'completed' | 'cancelled';
-
-export type OrderDeliveryStatus = 'pending' | 'processing' | 'inprogress' | 'delivered' | 'cancelled';
+export enum OrderDeliveryStatus {
+  Pending = 'pending',
+  Processing = 'processing',
+  InProgress = 'inprogress',
+  Delivered = 'delivered',
+  Cancelled = 'cancelled'
+}
 

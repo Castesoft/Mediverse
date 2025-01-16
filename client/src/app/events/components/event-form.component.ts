@@ -1,6 +1,6 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
-import { Component, ModelSignal, model, effect, inject, signal, viewChild, Signal } from '@angular/core';
+import { Component, effect, inject, model, ModelSignal, signal, Signal, viewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
@@ -18,7 +18,7 @@ import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { ClinicFormComponent, ClinicsService } from 'src/app/clinics/clinics.config';
 import { EventsService } from 'src/app/events/events.config';
-import { NurseFormComponent, NursesService } from 'src/app/nurses/nurses.config';
+import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientFormComponent, PatientsService } from 'src/app/patients/patients.config';
 import { ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
 
@@ -51,9 +51,9 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
 
   readonly fromWrapper = signal<boolean>(false);
 
-  patientUse: FormUse = 'create';
-  serviceUse: FormUse = 'create';
-  clinicUse: FormUse = 'create';
+  patientUse: FormUse = FormUse.CREATE;
+  serviceUse: FormUse = FormUse.CREATE;
+  clinicUse: FormUse = FormUse.CREATE;
 
   patientKey: string = this.router.url;
   serviceKey: string = this.router.url;

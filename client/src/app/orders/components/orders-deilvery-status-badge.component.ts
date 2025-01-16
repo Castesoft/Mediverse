@@ -1,6 +1,11 @@
-import { Component, input, effect } from "@angular/core";
+import { Component, input, effect, InputSignal } from "@angular/core";
 import { OrderDeliveryStatus } from "src/app/_models/orders/orderTypes";
-import { parseOrderDeliveryStatus, parseOrderDeliveryStatusBadgeColor } from "src/app/orders/orders-util";
+import {
+  getOrderDeliveryStatus,
+  getOrderDeliveryStatusBadgeColor,
+  parseOrderDeliveryStatusFromSelectOption
+} from "src/app/orders/orders-util";
+import { SelectOption } from "src/app/_models/base/selectOption";
 
 @Component({
   selector: '[ordersDeliveryStatusBadge]',
@@ -10,21 +15,27 @@ import { parseOrderDeliveryStatus, parseOrderDeliveryStatusBadgeColor } from "sr
       [class.badge-sm]="size() === 'sm'"
       class="badge badge-{{ statusClass }}"
     >
-    {{ parsedStatus }}
-  </span>`,
+      {{ parsedStatus }}
+    </span>`,
   standalone: true,
 })
 export class OrdersDeliveryStatusBadgeComponent {
-  status = input<OrderDeliveryStatus>();
-  size = input<'sm' | 'lg'>();
+  statusOption: InputSignal<SelectOption | null> = input.required<SelectOption | null>();
+  size: InputSignal<"sm" | "lg" | undefined> = input<'sm' | 'lg'>();
 
   parsedStatus: string = '';
   statusClass: string = '';
 
   constructor() {
-    effect(() => {
-      this.parsedStatus = parseOrderDeliveryStatus(this.status()!);
-      this.statusClass = parseOrderDeliveryStatusBadgeColor(this.status()!);
+    effect((): void => {
+      const status: OrderDeliveryStatus | null = parseOrderDeliveryStatusFromSelectOption(this.statusOption());
+      if (!status) {
+        console.error('Invalid OrderDeliveryStatus');
+        return;
+      }
+
+      this.parsedStatus = getOrderDeliveryStatus(status);
+      this.statusClass = getOrderDeliveryStatusBadgeColor(status);
     });
   }
 }

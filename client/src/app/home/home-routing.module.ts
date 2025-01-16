@@ -54,6 +54,7 @@ import { HomeNurseCreateRouteComponent } from 'src/app/home/routes/nurses/home-n
 import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nurse-edit-route.component';
 import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharmacy-catalog-route.component";
 import { PharmaciesService } from "../pharmacies/pharmacies.config";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 
 @NgModule({
@@ -76,19 +77,19 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'pacientes/nuevo',
           component: HomePatientCreateRouteComponent,
-          title: titleDetailResolver(PatientsService, 'create'),
+          title: titleDetailResolver(PatientsService, FormUse.CREATE),
         },
         {
           path: 'pacientes/:id',
           component: HomePatientDetailRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
-          title: titleDetailResolver(PatientsService, 'detail', 'fullName'),
+          title: titleDetailResolver(PatientsService, FormUse.DETAIL, 'fullName'),
         },
         {
           path: 'pacientes/:id/editar',
           component: HomePatientEditRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
-          title: titleDetailResolver(PatientsService, 'edit', 'fullName'),
+          title: titleDetailResolver(PatientsService, FormUse.EDIT, 'fullName'),
         },
         // Citas
         {
@@ -100,19 +101,19 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'citas/nuevo',
           component: HomeEventCreateRouteComponent,
-          title: titleDetailResolver(EventsService, 'create'),
+          title: titleDetailResolver(EventsService, FormUse.CREATE),
         },
         {
           path: 'citas/:id',
           component: HomeEventDetailRouteComponent,
           resolve: { item: createItemResolver(EventsService), },
-          title: titleDetailResolver(EventsService, 'detail'),
+          title: titleDetailResolver(EventsService, FormUse.DETAIL),
         },
         {
           path: 'citas/:id/editar',
           component: HomeEventEditRouteComponent,
           resolve: { item: createItemResolver(EventsService), },
-          title: titleDetailResolver(EventsService, 'edit'),
+          title: titleDetailResolver(EventsService, FormUse.EDIT),
         },
         // Servicios
         {
@@ -124,19 +125,19 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'servicios/nuevo',
           component: HomeServiceCreateRouteComponent,
-          title: titleDetailResolver(ServicesService, 'create'),
+          title: titleDetailResolver(ServicesService, FormUse.CREATE),
         },
         {
           path: 'servicios/:id',
           component: HomeServiceDetailRouteComponent,
           resolve: { item: createItemResolver(ServicesService), },
-          title: titleDetailResolver(ServicesService, 'detail'),
+          title: titleDetailResolver(ServicesService, FormUse.DETAIL),
         },
         {
           path: 'servicios/:id/editar',
           component: HomeServiceEditRouteComponent,
           resolve: { item: createItemResolver(ServicesService), },
-          title: titleDetailResolver(ServicesService, 'edit'),
+          title: titleDetailResolver(ServicesService, FormUse.EDIT),
         },
         // Productos
         {
@@ -148,19 +149,19 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'productos/nuevo',
           component: HomeProductCreateRouteComponent,
-          title: titleDetailResolver(ProductsService, 'create'),
+          title: titleDetailResolver(ProductsService, FormUse.CREATE),
         },
         {
           path: 'productos/:id',
           component: HomeProductDetailRouteComponent,
           resolve: { item: createItemResolver(ProductsService), },
-          title: titleDetailResolver(ProductsService, 'detail'),
+          title: titleDetailResolver(ProductsService, FormUse.DETAIL),
         },
         {
           path: 'productos/:id/editar',
           component: HomeProductEditRouteComponent,
           resolve: { item: createItemResolver(ProductsService), },
-          title: titleDetailResolver(ProductsService, 'edit'),
+          title: titleDetailResolver(ProductsService, FormUse.EDIT),
         },
         // Pedidos
         {
@@ -172,19 +173,19 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'pedidos/nuevo',
           component: HomeOrderCreateRouteComponent,
-          title: titleDetailResolver(OrdersService, 'create'),
+          title: titleDetailResolver(OrdersService, FormUse.CREATE),
         },
         {
           path: 'pedidos/:id',
           component: HomeOrderDetailRouteComponent,
           resolve: { item: createItemResolver(OrdersService), },
-          title: titleDetailResolver(OrdersService, 'detail'),
+          title: titleDetailResolver(OrdersService, FormUse.DETAIL),
         },
         {
           path: 'pedidos/:id/editar',
           component: HomeOrderEditRouteComponent,
           resolve: { item: createItemResolver(OrdersService), },
-          title: titleDetailResolver(OrdersService, 'edit'),
+          title: titleDetailResolver(OrdersService, FormUse.EDIT),
         },
         // Recetas
         {
@@ -196,18 +197,18 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'recetas/nuevo',
           component: HomePrescriptionCreateRouteComponent,
-          title: titleDetailResolver(PrescriptionsService, 'create'),
+          title: titleDetailResolver(PrescriptionsService, FormUse.CREATE),
         },
         {
           path: 'recetas/:id',
           component: HomePrescriptionDetailRouteComponent,
-          title: titleDetailResolver(PrescriptionsService, 'detail'),
+          title: titleDetailResolver(PrescriptionsService, FormUse.DETAIL),
         },
         {
           path: 'recetas/:id/editar',
           component: HomePrescriptionEditRouteComponent,
           resolve: { item: createItemResolver(PrescriptionsService), },
-          title: titleDetailResolver(PrescriptionsService, 'edit'),
+          title: titleDetailResolver(PrescriptionsService, FormUse.EDIT),
         },
         // Clinicas
         {
@@ -219,19 +220,19 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'clinicas/nuevo',
           component: HomeClinicCreateRouteComponent,
-          title: titleDetailResolver(ClinicsService, 'create'),
+          title: titleDetailResolver(ClinicsService, FormUse.CREATE),
         },
         {
           path: 'clinicas/:id',
           component: HomeClinicDetailRouteComponent,
           resolve: { item: createItemResolver(ClinicsService), },
-          title: titleDetailResolver(ClinicsService, 'detail'),
+          title: titleDetailResolver(ClinicsService, FormUse.DETAIL),
         },
         {
           path: 'clinicas/:id/editar',
           component: HomeClinicEditRouteComponent,
           resolve: { item: createItemResolver(ClinicsService), },
-          title: titleDetailResolver(ClinicsService, 'edit'),
+          title: titleDetailResolver(ClinicsService, FormUse.EDIT),
         },
         // Especialistas
         {
@@ -243,19 +244,19 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
         {
           path: 'especialistas/nuevo',
           component: HomeNurseCreateRouteComponent,
-          title: titleDetailResolver(NursesService, 'create'),
+          title: titleDetailResolver(NursesService, FormUse.CREATE),
         },
         {
           path: 'especialistas/:id',
           component: HomeNurseDetailRouteComponent,
           resolve: { item: createItemResolver(NursesService), },
-          title: titleDetailResolver(NursesService, 'detail'),
+          title: titleDetailResolver(NursesService, FormUse.DETAIL),
         },
         {
           path: 'especialistas/:id/editar',
           component: HomeNurseEditRouteComponent,
           resolve: { item: createItemResolver(NursesService), },
-          title: titleDetailResolver(NursesService, 'edit'),
+          title: titleDetailResolver(NursesService, FormUse.EDIT),
         },
         // Farmacia
         {

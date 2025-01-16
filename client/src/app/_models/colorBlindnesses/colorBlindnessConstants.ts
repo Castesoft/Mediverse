@@ -12,7 +12,7 @@ export const colorBlindnessDictionary: NamingSubject = new NamingSubject(
   'especialidades',
   'Especialidades',
   'colorBlindnesses',
-  ['admin', 'utilerias', 'codigos'],
+
 );
 
 export const colorBlindnessColumns: Column[] = [

@@ -10,7 +10,7 @@ import { IconsService } from "src/app/_services/icons.service";
 import { InputControlComponent } from "src/app/_forms/input-control.component";
 import { ControlSelectComponent } from "src/app/_forms/control-select.component";
 import { OrdersService } from "src/app/_services/orders.service";
-import { parseOrderDeliveryStatus, parseOrderStatus, reverseParseOrderDeliveryStatus, reverseParseOrderStatus } from "src/app/orders/orders-util";
+import { getOrderDeliveryStatus, parseOrderStatus, reverseParseOrderDeliveryStatus, reverseParseOrderStatus } from "src/app/orders/orders-util";
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 
 @Component({
@@ -74,7 +74,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
   private patchForm = () => {
     this.formGroup.patchValue({
       status: parseOrderStatus(this.item().status!),
-      deliveryStatus: parseOrderDeliveryStatus(this.item().deliveryStatus!),
+      deliveryStatus: getOrderDeliveryStatus(this.item().deliveryStatus!),
     });
   }
 

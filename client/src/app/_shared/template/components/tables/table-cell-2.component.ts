@@ -11,8 +11,9 @@ import { PhoneNumberPipe } from "../../../../_pipes/phone-number.pipe";
 @Component({
   selector: 'td[tableCell2]',
   templateUrl: './table-cell-2.component.html',
+  styleUrls: [ './table-cell-2.component.scss' ],
   standalone: true,
-  imports: [ RouterModule, CommonModule, FaIconComponent, PhoneNumberPipe, ],
+  imports: [ RouterModule, CommonModule ],
 })
 export class TableCell2Component {
   icons = inject(IconsService);

@@ -12,7 +12,6 @@ export const occupationDictionary: NamingSubject = new NamingSubject(
   'especialidades',
   'Especialidades',
   'occupations',
-  ['admin', 'utilerias', 'codigos'],
 );
 
 export const occupationColumns: Column[] = [

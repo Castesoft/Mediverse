@@ -1,35 +1,37 @@
 <div class="col-12 col-md-auto">
-  @if(view()==='page'){<h4 formHeader [title]="title()" [dictionary]="dictionary()" [id]="id()" [use]="use()"></h4>}
+  @if (view() === 'page') {
+    <h4 formHeader [title]="title()" [dictionary]="dictionary()" [id]="id()" [use]="use()"></h4>
+  }
 </div>
 <div class="col-12 col-md-auto d-flex gap-3 align-items-center">
-  @if(use() === 'create') {
-  <a [href]="this.dictionary().catalogRoute" (click)="onClick('cancel'); $event.preventDefault();" mat-button>
-    Cancelar
-  </a>
+  @if (use() === 'create') {
+    <a [href]="this.dictionary().catalogRoute" (click)="onClick('cancel'); $event.preventDefault();" mat-button>
+      Cancelar
+    </a>
   }
   @if (use() === "detail") {
-  <a [color]="'secondary'" [href]="this.dictionary().catalogRoute + '/' + this.id() + '/editar'"
-    (click)="onClick('edit'); $event.preventDefault();" mat-button>
-    <mat-icon>edit</mat-icon>
-    Editar
-  </a>
+    <a [color]="'secondary'" [href]="this.dictionary().catalogRoute + '/' + this.id() + '/editar'"
+       (click)="onClick(FormUse.EDIT); $event.preventDefault();" mat-button>
+      <mat-icon>edit</mat-icon>
+      Editar
+    </a>
   }
   @if (use() === "edit") {
-  <a [href]="this.dictionary().catalogRoute" (click)="onClick('cancel'); $event.preventDefault();" mat-button>
-    Cancelar
-  </a>
+    <a [href]="this.dictionary().catalogRoute" (click)="onClick('cancel'); $event.preventDefault();" mat-button>
+      Cancelar
+    </a>
   }
   @if (use() !== 'create') {
-  <button [color]="'error'" (click)="onClick('delete'); $event.preventDefault();" mat-button>
-    <mat-icon>delete</mat-icon>
-    Eliminar
-  </button>
+    <button [color]="'error'" (click)="onClick('delete'); $event.preventDefault();" mat-button>
+      <mat-icon>delete</mat-icon>
+      Eliminar
+    </button>
   }
   @if (use() !== 'create') {
-  <a [color]="'primary'" [href]="this.dictionary().createRoute" (click)="onClick('create'); $event.preventDefault();"
-    mat-flat-button>
-    <mat-icon>add</mat-icon>
-    Nuevo
-  </a>
+    <a [color]="'primary'" [href]="this.dictionary().createRoute" (click)="onClick('create'); $event.preventDefault();"
+       mat-flat-button>
+      <mat-icon>add</mat-icon>
+      Nuevo
+    </a>
   }
 </div>

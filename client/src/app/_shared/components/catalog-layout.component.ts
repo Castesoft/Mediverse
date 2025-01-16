@@ -1,11 +1,16 @@
 import {
   Component,
   ContentChild,
-  OnDestroy,
-  TemplateRef,
-  signal,
   effect,
-  inject, InputSignal, input, WritableSignal
+  inject,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  OnDestroy,
+  signal,
+  TemplateRef,
+  WritableSignal
 } from '@angular/core';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,14 +26,15 @@ import { IconsService } from 'src/app/_services/icons.service';
 import { ServiceHelper } from 'src/app/_utils/serviceHelper/serviceHelper';
 import { Pagination } from 'src/app/_utils/serviceHelper/pagination/pagination';
 
-import { View, CatalogMode, FilterConfiguration } from 'src/app/_models/base/types';
-import { ModelSignal, model } from '@angular/core';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import { TableWrapperComponent } from "src/app/_shared/template/components/tables/table-wrapper.component";
 import { TablePagerComponent } from "src/app/_shared/template/components/tables/table-pager.component";
 import { TemplateControlSearchComponent } from "src/app/_forms2/controls/template/template-control-search.component";
 import { FormsModule } from "@angular/forms";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { CollapseDirective } from "ngx-bootstrap/collapse";
+import { FilterConfiguration, FilterOrientation } from "../../_models/base/filter-types";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: 'div[catalogLayout]',
@@ -100,7 +106,10 @@ export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>
 
   toggleFilterOrientation(): void {
     this.filterConfig.update((pastValue): FilterConfiguration => {
-      pastValue.orientation = pastValue.orientation === "vertical" ? "horizontal" : "vertical";
+      pastValue.orientation =
+        pastValue.orientation === FilterOrientation.VERTICAL
+          ? FilterOrientation.HORIZONTAL
+          : FilterOrientation.VERTICAL;
       return pastValue;
     });
   }
@@ -114,4 +123,6 @@ export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
+
+  protected readonly FormUse = FormUse;
 }

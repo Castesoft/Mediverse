@@ -23,10 +23,7 @@ export class ShortcutsService {
   private shortcuts: Record<string, () => void> = {};
 
   constructor() {
-    console.log('ShortcutsService initialized');
     this.listenToKeyboardEvents();
-
-    // Register all your default shortcuts in one place:
     this.initializeDefaultShortcuts();
   }
 

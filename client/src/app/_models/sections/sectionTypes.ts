@@ -1,3 +1,6 @@
+import { MatDrawerMode } from "@angular/material/sidenav";
+import { FilterOrientation, FilterPosition } from "../base/filter-types";
+
 export type Section = {
   label: string;
   route: string;
@@ -29,3 +32,9 @@ export type Sections =
 export type SectionDictionary = {
   [key in Sections]: Section;
 };
+
+export enum SiteSection {
+  LANDING = "landing",
+  ADMIN = "admin",
+  HOME = "home",
+}

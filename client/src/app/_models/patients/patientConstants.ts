@@ -91,7 +91,7 @@ export const patientDictionary: NamingSubject = new NamingSubject(
   'pacientes',
   'Pacientes',
   'patients',
-  [ 'inicio' ]
+
 );
 
 export const patientCells: PartialCellsOf<Patient> = {

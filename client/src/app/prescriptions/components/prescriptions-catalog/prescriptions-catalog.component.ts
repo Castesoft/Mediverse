@@ -1,5 +1,5 @@
 import { Component, ModelSignal, model, inject } from "@angular/core";
-import { View, CatalogMode, FilterOrientation, FilterConfiguration } from "src/app/_models/base/types";
+import { View, CatalogMode, } from "src/app/_models/base/types";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
 import { GenericCatalogComponent } from "src/app/_shared/components/catalog-layout.component";
@@ -11,6 +11,7 @@ import { FormsModule } from "@angular/forms";
 import {
   PrescriptionsTableComponent
 } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component";
+import { FilterConfiguration } from "../../../_models/base/filter-types";
 
 @Component({
   selector: '[prescriptionsCatalog]',

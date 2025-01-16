@@ -1,36 +1,39 @@
-@if(service.current() !== null) {
-<div class="card mb-5 mb-xl-10">
-  <div class="card-header">
-    <div class="card-title">
-      <h3>Mis Seguros</h3>
+@if (service.current() !== null) {
+  <div class="card mb-5 mb-xl-10">
+    <div class="card-header">
+      <div class="card-title">
+        <h3>Mis Seguros</h3>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row gx-9 gy-6">
+        @for (insurance of service.current()?.medicalInsuranceCompanies; let idx = $index; track idx) {
+          <div insuranceCompanyItem [(item)]="service.current()!.medicalInsuranceCompanies[idx]"
+               [use]="FormUse.EDIT"></div>
+        }
+        <div insuranceCompanyItem [item]="null" [use]="FormUse.CREATE"></div>
+      </div>
     </div>
   </div>
-  <div class="card-body">
-    <div class="row gx-9 gy-6">
-      @for (insurance of service.current()?.medicalInsuranceCompanies; let idx = $index; track idx) {
-        <div insuranceCompanyItem [(item)]="service.current()!.medicalInsuranceCompanies[idx]" [use]="'edit'"></div>
-      }
-      <div insuranceCompanyItem [item]="null" [use]="'create'"></div>
-    </div>
-  </div>
-</div>
 
-@if (service.hasRole(['Doctor'])) {
-<div class="card mb-5 mb-xl-10">
-  <div class="card-header">
-    <div class="card-title">
-      <h3>Seguros afiliados</h3>
+  @if (service.hasRole([ 'Doctor' ])) {
+    <div class="card mb-5 mb-xl-10">
+      <div class="card-header">
+        <div class="card-title">
+          <h3>Seguros afiliados</h3>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="fs-6 fw-semibold text-muted">Los seguros seleccionados aparecerán a los pacientes al momento de
+          agendar
+          una cita.
+        </div>
+        <div class="row gx-9 gy-6">
+          @for (item of medicalInsuranceCompanyOptions(); let idx = $index; track idx) {
+            <div insuranceCompanySwitch [(item)]="medicalInsuranceCompanyOptions()[idx]"></div>
+          }
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="card-body">
-    <div class="fs-6 fw-semibold text-muted">Los seguros seleccionados aparecerán a los pacientes al momento de agendar
-      una cita.</div>
-    <div class="row gx-9 gy-6">
-      @for (item of medicalInsuranceCompanyOptions(); let idx = $index; track idx) {
-        <div insuranceCompanySwitch [(item)]="medicalInsuranceCompanyOptions()[idx]"></div>
-      }
-    </div>
-  </div>
-</div>
-}
+  }
 }

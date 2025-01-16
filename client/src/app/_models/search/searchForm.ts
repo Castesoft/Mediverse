@@ -14,7 +14,7 @@ export class SearchForm extends FormGroup2<Search> {
 
   getParams(): Params {
     return getSearchRouteQueryParams(new Search(this.controls.key.value, {
-      ...this.value,
+      ...this.value as any,
       result: new DoctorResult({ ...this.controls.result.value, } as any)
     }));
   }

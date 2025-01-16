@@ -6,9 +6,6 @@ import { SectionDictionary, Sections } from "src/app/_models/sections/sectionTyp
   providedIn: 'root'
 })
 export class SectionsService {
-
   sections: SectionDictionary = sectionDictionary;
-
   get = (key: Sections) => this.sections[key];
-
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, model, output, HostBinding, HostListener, effect, signal } from "@angular/core";
-import { RouterModule, Router } from "@angular/router";
+import { Component, effect, HostBinding, HostListener, inject, input, model, output, signal } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -76,7 +76,7 @@ export class DetailLinkComponent {
   @HostListener('click', ['$event']) onClick(event: MouseEvent) {
     switch (this.type()) {
       case 'edit':
-        this.view() === 'modal' ? this.use.set('edit') : this.router.navigate([this.dictionary().catalogRoute, this.id()!, 'editar']);
+        this.view() === 'modal' ? this.use.set(FormUse.EDIT) : this.router.navigate([this.dictionary().catalogRoute, this.id()!, 'editar']);
         break;
       case 'cancel':
         if (this.use() === 'create') {
@@ -88,7 +88,7 @@ export class DetailLinkComponent {
         }
         if (this.use() === 'edit') {
           if (this.view() === 'modal') {
-            this.use.set('detail');
+            this.use.set(FormUse.DETAIL);
           }
           else {
             this.router.navigate([this.dictionary().catalogRoute, this.id()!]);
@@ -99,7 +99,7 @@ export class DetailLinkComponent {
         this.onDelete.emit();
         break;
       case 'create':
-        this.view() === 'modal' ? this.use.set('create') : this.router.navigate([this.dictionary().createRoute]);
+        this.view() === 'modal' ? this.use.set(FormUse.CREATE) : this.router.navigate([this.dictionary().createRoute]);
         break;
     }
     event.preventDefault();

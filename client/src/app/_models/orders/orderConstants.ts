@@ -14,19 +14,19 @@ export const orderDictionary: NamingSubject = new NamingSubject(
   'pedido',
   'pedidos',
   'Pedidos',
-  'orders',
-  ['inicio'],
+  'orders'
 );
 
 export const orderColumns: Column[] = [
+  new Column('doctor', 'Doctor'),
   new Column('patient', 'Paciente'),
   new Column('status', 'Estado'),
   new Column('deliveryStatus', 'Entrega'),
   new Column('address', 'Dirección'),
-  new Column('subtotal', 'Subtotal', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('tax', 'Impuesto', { options: new ColumnOptions({ justify: 'end', })}),
-  new Column('total', 'Total', { options: new ColumnOptions({ justify: 'end', })}),
+  new Column('subtotal', 'Subtotal', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('tax', 'Impuesto', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('total', 'Total', { options: new ColumnOptions({ justify: 'end', }) }),
   columnCreatedAt,
 ];
 
@@ -47,7 +47,10 @@ export const orderCells: PartialCellsOf<Order> = {
   amountPaid: new TableCellItem<number, 'amountPaid'>('amountPaid', 'currency', { justification: 'end' }),
   tax: new TableCellItem<number, 'tax'>('tax', 'currency', { justification: 'end' }),
   patient: new TableCellItem<SelectOption, 'patient'>('patient', 'code', { isLink: false, showCodeSpan: false, }),
-  deliveryStatus: new TableCellItem<SelectOption, 'deliveryStatus'>('deliveryStatus', 'code', { isLink: false, showCodeSpan: false, }),
+  deliveryStatus: new TableCellItem<SelectOption, 'deliveryStatus'>('deliveryStatus', 'code', {
+    isLink: false,
+    showCodeSpan: false,
+  }),
   status: new TableCellItem<SelectOption, 'status'>('status', 'code', { isLink: false, showCodeSpan: false, }),
   address: new TableCellItem<SelectOption, 'address'>('address', 'code', { isLink: false, showCodeSpan: false, }),
 } as PartialCellsOf<Order>;

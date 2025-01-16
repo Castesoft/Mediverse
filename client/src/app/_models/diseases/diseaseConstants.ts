@@ -12,7 +12,7 @@ export const diseaseDictionary: NamingSubject = new NamingSubject(
   'especialidades',
   'Especialidades',
   'diseases',
-  ['admin', 'utilerias', 'codigos'],
+
 );
 
 export const diseaseColumns: Column[] = [

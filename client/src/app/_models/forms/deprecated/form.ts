@@ -1,12 +1,11 @@
-import { FormGroup, AbstractControl, FormControl } from "@angular/forms";
+import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
 import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
 import { Control } from "src/app/_models/forms/deprecated/control";
-import { ControlOrientation } from "src/app/_models/forms/formTypes";
+import { ControlOrientation, FormUse } from "src/app/_models/forms/formTypes";
 import { BadRequest } from '../badRequest';
 import { Column } from "../../base/column";
-import { FormUse } from "../formTypes";
 
 
 export interface IForm<T extends Record<keyof T, any>> {
@@ -62,7 +61,7 @@ export interface IForm<T extends Record<keyof T, any>> {
   error?: BadRequest;
   submitted = false;
   validation = true;
-  use: FormUse = "detail";
+  use: FormUse = FormUse.DETAIL;
   isReadonly = false;
   controls: {
     [K in keyof T]: Control<T[K]>;
@@ -237,9 +236,9 @@ export interface IForm<T extends Record<keyof T, any>> {
   }
 
   onSuccess(item: T) {
-    this.setUse('detail');
+    this.setUse(FormUse.DETAIL);
     this.group.patchValue(item as any);
-    this.patch('detail', item);
+    this.patch(FormUse.DETAIL, item);
     this.group.markAsPristine();
   }
 

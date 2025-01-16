@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { Component, ModelSignal, model, inject, effect } from "@angular/core";
+import { Component, effect, inject, model, ModelSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
-import { View, CatalogMode, FilterConfiguration } from "src/app/_models/base/types";
+import { CatalogMode, View } from "src/app/_models/base/types";
 import Event from "src/app/_models/events/event";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
@@ -20,6 +20,12 @@ import { NursesService } from "src/app/nurses/nurses.config";
 import { PatientsService } from "src/app/patients/patients.config";
 import { ServicesService } from "src/app/services/services.config";
 import { ClinicsService } from "src/app/clinics/clinics.config";
+import {
+  FilterConfiguration,
+  FilterOrientation,
+  FilterPosition,
+  DrawerMode
+} from "../../_models/base/filter-types";
 
 @Component({
   selector: '[eventsCatalog]',
@@ -51,7 +57,11 @@ export class EventsCatalogComponent {
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<EventParams> = model.required();
-  filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration("vertical", "side", "start"));
+  filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration(
+    FilterOrientation.VERTICAL,
+    DrawerMode.SIDE,
+    FilterPosition.START
+  ));
 
   calendarView: ModelSignal<CalendarView> = model.required<CalendarView>();
   filtersCollapsed: ModelSignal<boolean> = model.required<boolean>();

@@ -116,8 +116,8 @@ export default class BaseForm<
       this.service.create(this.form, view()).subscribe({
         next: response => {
           this.form.onSuccess(response);
-          this.form.use = 'detail';
-          use.set('detail');
+          this.form.use = FormUse.DETAIL;
+          use.set(FormUse.DETAIL);
         },
         error: (error: BadRequest) => this.form.error = error
       });
@@ -135,8 +135,8 @@ export default class BaseForm<
       this.service.update(this.form, view()).subscribe({
         next: response => {
           this.form.onSuccess(response);
-          this.form.use = 'detail';
-          use.set('detail');
+          this.form.use = FormUse.DETAIL;
+          use.set(FormUse.DETAIL);
         },
         error: (error: BadRequest) => this.form.error = error
       });

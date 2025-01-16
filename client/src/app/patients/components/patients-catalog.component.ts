@@ -1,5 +1,5 @@
 import { Component, ModelSignal, model, inject, signal } from "@angular/core";
-import { View, CatalogMode, FilterOrientation, FilterConfiguration } from "src/app/_models/base/types";
+import { View, CatalogMode,  } from "src/app/_models/base/types";
 import { Patient } from "src/app/_models/patients/patient";
 import { PatientParams } from "src/app/_models/patients/patientParams";
 import { PatientsTableComponent } from "src/app/patients/components/patients-table.component";
@@ -8,6 +8,7 @@ import { PatientsService } from "src/app/patients/patients.config";
 import { PatientFiltersForm } from "src/app/_models/patients/patientFiltersForm";
 import { ControlsRow3Component } from "src/app/_forms2/builder/controls-row-3.component";
 import { ControlsWrapper3Component } from "src/app/_forms2/builder/controls-wrapper-3.component";
+import { FilterConfiguration } from "../../_models/base/filter-types";
 
 @Component({
   selector: '[patientsCatalog]',

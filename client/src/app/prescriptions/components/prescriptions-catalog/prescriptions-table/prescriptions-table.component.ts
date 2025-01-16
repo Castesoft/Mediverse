@@ -38,6 +38,7 @@ import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
 import { Column } from "src/app/_models/base/column";
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   host: {
@@ -188,4 +189,6 @@ export class PrescriptionsTableComponent extends BaseTable<Prescription, Prescri
       console.error('Prescription form element not found');
     }
   }
+
+  protected readonly FormUse = FormUse;
 }

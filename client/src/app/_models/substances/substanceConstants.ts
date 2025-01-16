@@ -12,7 +12,6 @@ export const substanceDictionary: NamingSubject = new NamingSubject(
   'sustancias',
   'Sustancias',
   'substances',
-  ['admin', 'utilerias', 'codigos'],
 );
 
 export const substanceColumns: Column[] = [

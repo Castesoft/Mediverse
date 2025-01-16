@@ -2,10 +2,10 @@ import { Component, inject, model, output } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { RouterModule, Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { FormHeaderComponent } from "src/app/_forms2/detail/form-header.component";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
-import { View, DetailActions } from "src/app/_models/base/types";
+import { DetailActions, View } from "src/app/_models/base/types";
 import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
@@ -13,7 +13,7 @@ import { FormUse } from "src/app/_models/forms/formTypes";
   selector: 'div[detailHeader]',
   templateUrl: './detail-header.component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, RouterModule, FormHeaderComponent,],
+  imports: [ MatButtonModule, MatIconModule, RouterModule, FormHeaderComponent, ],
 })
 export class DetailHeaderComponent {
   router = inject(Router);
@@ -31,15 +31,15 @@ export class DetailHeaderComponent {
     switch (type) {
       case 'edit':
         if (this.view() === 'modal') {
-          this.use.set('edit');
+          this.use.set(FormUse.EDIT);
         } else {
-          this.router.navigate([this.dictionary().catalogRoute, this.id()!, 'editar'], { queryParamsHandling: 'merge', })
+          this.router.navigate([ this.dictionary().catalogRoute, this.id()!, 'editar' ], { queryParamsHandling: 'merge', })
         }
         break;
       case 'cancel':
         if (this.use() === 'create') {
           if (this.view() === 'page') {
-            this.router.navigate([this.dictionary().catalogRoute], { queryParamsHandling: 'merge', });
+            this.router.navigate([ this.dictionary().catalogRoute ], { queryParamsHandling: 'merge', });
           } else if (this.view() === 'modal') {
             // this.bsModalService.hide();
             this.matSnackbar.open('Debe cerrar el modal', 'Cerrar', { duration: 5000, });
@@ -47,10 +47,9 @@ export class DetailHeaderComponent {
         }
         if (this.use() === 'edit') {
           if (this.view() === 'modal') {
-            this.use.set('detail');
-          }
-          else {
-            this.router.navigate([this.dictionary().catalogRoute, this.id()!], { queryParamsHandling: 'merge', });
+            this.use.set(FormUse.DETAIL);
+          } else {
+            this.router.navigate([ this.dictionary().catalogRoute, this.id()! ], { queryParamsHandling: 'merge', });
           }
         }
         break;
@@ -59,12 +58,13 @@ export class DetailHeaderComponent {
         break;
       case 'create':
         if (this.view() === 'modal') {
-          this.use.set('create');
+          this.use.set(FormUse.CREATE);
         } else {
-          this.router.navigate([this.dictionary().createRoute], { queryParamsHandling: 'merge', });
+          this.router.navigate([ this.dictionary().createRoute ], { queryParamsHandling: 'merge', });
         }
         break;
     }
   }
 
+  protected readonly FormUse = FormUse;
 }

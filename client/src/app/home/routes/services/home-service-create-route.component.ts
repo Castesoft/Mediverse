@@ -1,6 +1,7 @@
 import { Component, effect } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import { Service } from 'src/app/_models/services/service';
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   host: { class: 'card card-flush' },
@@ -16,7 +17,7 @@ export class HomeServiceCreateRouteComponent
 
 {
   constructor() {
-    super('services', 'create');
+    super('services', FormUse.CREATE);
 
     this.key.set(`${this.router.url}#service-create`);
 

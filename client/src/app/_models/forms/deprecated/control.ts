@@ -1,11 +1,9 @@
-import { ValidatorFn, AsyncValidatorFn, AbstractControl, FormControl, Validators } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormControl, ValidatorFn, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
-import { TypeaheadOptions } from "./deprecatedControlOptions";
-import { ITypeaheadOptions } from "./deprecatedControlOptions";
+import { ITypeaheadOptions, TypeaheadOptions } from "./deprecatedControlOptions";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { InputTypes, ControlErrors, ControlOrientation } from "src/app/_models/forms/formTypes";
+import { ControlErrors, ControlOrientation, FormUse, InputTypes } from "src/app/_models/forms/formTypes";
 import { Column } from "../../base/column";
-import { FormUse } from "../formTypes";
 
 export interface IControl<TValue> {
   type: InputTypes;
@@ -64,7 +62,7 @@ export class Control<TValue> implements IControl<TValue | null> {
   helperText: string | null = null;
   isReadonly = false;
   id: string;
-  use: FormUse = "detail";
+  use: FormUse = FormUse.DETAIL;
   submitted = false;
   touched = false;
   formControl: AbstractControl<TValue | null, TValue | null>;

@@ -52,7 +52,7 @@ export class EventsTableComponent extends BaseTable<Event, EventParams, EventFil
   constructor() {
     super(EventsService, Event, { tableCells: eventCells, });
 
-    effect(() => {
+    effect((): void => {
       if (this.columns.length === 0) {
         this.columns = this.service.columns;
       }

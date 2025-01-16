@@ -38,8 +38,7 @@ export const prescriptionDictionary: NamingSubject = new NamingSubject(
   'receta',
   'recetas',
   'Recetas',
-  'prescriptions',
-  [ 'inicio' ],
+  'prescriptions'
 );
 
 export const prescriptionColumns: Column[] = [

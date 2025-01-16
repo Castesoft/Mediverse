@@ -1,35 +1,29 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Component, effect, inject, signal, Type } from "@angular/core";
-import { AbstractControl, AsyncValidatorFn } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { BehaviorSubject, Observable, of, tap, map, switchMap, catchError, debounceTime, take, finalize } from "rxjs";
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { Modal } from "src/app/_models/modal";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
 import { View } from "src/app/_models/base/types";
-import { SortOptions } from "src/app/_models/base/sortOptions";
 import { Column, columnId } from "src/app/_models/base/column";
-import { CatalogMode } from "src/app/_models/base/types";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { EntityParams } from "src/app/_models/base/entityParams";
 import { Entity } from "src/app/_models/base/entity";
 import { environment } from "src/environments/environment";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { MatDialog } from "@angular/material/dialog";
-import { transformToHttpParams } from "src/app/_models/base/paramUtils";
-import { transform } from "src/app/_models/base/paramUtils";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { transform, transformToHttpParams } from "src/app/_models/base/paramUtils";
 import { ParamRecord } from "src/app/_utils/serviceHelper/paramRecord";
 import { getPaginatedResponse, PaginatedResponse } from "src/app/_utils/serviceHelper/pagination/paginatedResponse";
 import { getFormHeaderText } from "src/app/_models/forms/formUtils";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { ConfirmService } from "src/app/_services/confirm/confirm.service";
-import downloadExcelFile from "src/app/_utils/serviceHelper/functions/downloadExcelFile";
 import { DevService } from "../../_services/dev.service";
 import { SelectionService } from "src/app/_models/services/selection.service";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
-import Event from "src/app/_models/events/event";
-import { EventDetailModalComponent } from "src/app/events/events.config";
+import { SiteSection } from "src/app/_models/sections/sectionTypes";
 
 /**
  * A helper class that provides common service functionalities for handling entities, parameters, forms, etc.
@@ -138,33 +132,30 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     this.data.next(updated);
   }
 
-  clickLink(item: T | null, key: string | null, use: FormUse = 'detail', view: View): void {
+  clickLink(item: T | null, key: string | null, use: FormUse = FormUse.DETAIL, view: View, siteSection?: SiteSection): void {
     if (view === 'modal' && this.modalComponent) {
-      this.matDialog.open<W, DetailDialog<T>>(this.modalComponent, {
-        data: {
-          item: item,
-          key: key,
-          use: use,
-          view: 'modal',
-          title: this.getFormHeaderText(use, item),
-        },
-        disableClose: true,
-        hasBackdrop: false,
-        panelClass: [ 'window' ]
-      });
+      this.matDialog.open<W, DetailDialog<T>>(this.modalComponent, this.buildModalConfig(item, key, use, view));
+    } else if (view === 'modal' && this.modalComponent === undefined) {
+      console.error("Modal component not defined during constructor initialization");
     } else {
-      switch (use) {
-        case 'create':
-          this.router.navigate([ this.dictionary.createRoute ]).then((): void => {});
-          break;
-        case 'edit':
-          this.router.navigate([ `${this.dictionary.catalogRoute}/${item?.id}/editar` ]).then((): void => {});
-          break;
-        case 'detail':
-          this.router.navigate([ `${this.dictionary.catalogRoute}/${item?.id}` ]).then((): void => {});
-          break;
-      }
+      this.router.navigate([ this.dictionary.buildFromSiteSection(use, item?.id, siteSection) ]).then((): void => {});
     }
+  }
+
+  private buildModalConfig(item: T | null, key: string | null, use: FormUse = FormUse.DETAIL, view: View): MatDialogConfig<DetailDialog<T>> {
+    const title: string = this.getFormHeaderText(use, item);
+    return {
+      data: {
+        item: item,
+        key: key,
+        use: use,
+        view: view,
+        title: title,
+      },
+      disableClose: true,
+      hasBackdrop: false,
+      panelClass: [ 'window' ]
+    };
   }
 
   /**

@@ -15,6 +15,7 @@ import { AddressesService } from "src/app/addresses/addresses.config";
 import { Address } from "src/app/_models/addresses/address";
 import { AddressParams } from "src/app/_models/addresses/addressParams";
 import { AddressFiltersForm } from "src/app/_models/addresses/addressFiltersForm";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: '[addressesCatalog]',
@@ -58,4 +59,6 @@ export class AddressesCatalogComponent extends BaseCatalog<Address, AddressParam
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
+
+  protected readonly FormUse = FormUse;
 }

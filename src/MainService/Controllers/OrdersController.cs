@@ -9,19 +9,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MainService.Controllers;
 
-public class OrdersController(IUnitOfWork uow
+public class OrdersController(
+    IUnitOfWork uow
 // ,IMapper mapper, 
 // UserManager<AppUser> userManager
 ) : BaseApiController
 {
-    private static readonly string subject = "orden";
-    private static readonly string subjectArticle = "La";
+    private const string Subject = "orden";
+    private const string SubjectArticle = "La";
 
     [HttpGet]
     public async Task<ActionResult<PagedList<OrderDto>>> GetPagedListAsync([FromQuery] OrderParams param)
     {
         param.DoctorId = User.GetUserId();
-        
+        param.DoctorRole = User.GetRoles();
+
         var pagedList = await uow.OrderRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
@@ -35,7 +37,7 @@ public class OrdersController(IUnitOfWork uow
     {
         var order = await uow.OrderRepository.GetDtoByIdAsync(id);
 
-        if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
+        if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
 
         return order;
     }
@@ -44,8 +46,8 @@ public class OrdersController(IUnitOfWork uow
     [HttpPut("{id}")]
     public async Task<ActionResult<OrderDto?>> UpdateAsync([FromRoute] int id, [FromBody] OrderUpdateDto request)
     {
-        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{subjectArticle} {subject} no existe");
-        
+        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{SubjectArticle} {Subject} no existe");
+
         if (request.DeliveryStatus == null) return BadRequest("El estado de entrega es requerido");
         if (!request.DeliveryStatus.Id.HasValue) return BadRequest("El estado de entrega es requerido");
         if (request.Status == null) return BadRequest("El estado es requerido");
@@ -53,16 +55,20 @@ public class OrdersController(IUnitOfWork uow
 
         Order? order = await uow.OrderRepository.GetByIdAsync(id);
 
-        if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
+        if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
 
-        if (!await uow.DeliveryStatusRepository.ExistsByIdAsync(request.DeliveryStatus.Id.Value)) return NotFound("Estado de entrega no existe");
-        if (!await uow.OrderStatusRepository.ExistsByIdAsync(request.Status.Id.Value)) return NotFound("Estado de orden no existe");
+        if (!await uow.DeliveryStatusRepository.ExistsByIdAsync(request.DeliveryStatus.Id.Value))
+            return NotFound("Estado de entrega no existe");
+        if (!await uow.OrderStatusRepository.ExistsByIdAsync(request.Status.Id.Value))
+            return NotFound("Estado de orden no existe");
 
         order.OrderDeliveryStatus = new(request.DeliveryStatus.Id.Value);
         order.OrderOrderStatus = new(request.Status.Id.Value);
 
-        if (uow.HasChanges()) {
-            if (!await uow.Complete()) return BadRequest($"Error al actualizar {subjectArticle} {subject} con ID {id}.");
+        if (uow.HasChanges())
+        {
+            if (!await uow.Complete())
+                return BadRequest($"Error al actualizar {SubjectArticle} {Subject} con ID {id}.");
         }
 
         return await uow.OrderRepository.GetDtoByIdAsync(id);
@@ -71,8 +77,8 @@ public class OrdersController(IUnitOfWork uow
     [HttpPut("{id}/approve")]
     public async Task<ActionResult<OrderDto?>> ApproveAsync([FromRoute] int id)
     {
-        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{subjectArticle} {subject} no existe");
-        
+        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{SubjectArticle} {Subject} no existe");
+
         OrderStatus? orderStatus = await uow.OrderStatusRepository.GetByNameAsync("Completado");
         DeliveryStatus? deliveryStatus = await uow.DeliveryStatusRepository.GetByNameAsync("Procesando");
 
@@ -81,18 +87,19 @@ public class OrdersController(IUnitOfWork uow
 
         Order? order = await uow.OrderRepository.GetByIdAsync(id);
 
-        if (order == null) return NotFound($"{subjectArticle} {subject} no existe");
-        
+        if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
+
         // order.Status = OrderStatus.Completed;
         // order.DeliveryStatus = OrderDeliveryStatus.Processing;
 
         order.OrderOrderStatus = new(orderStatus.Id);
         order.OrderDeliveryStatus = new(deliveryStatus.Id);
 
-        if (uow.HasChanges()) {
-            if (!await uow.Complete()) return BadRequest($"Error al aprobar {subjectArticle} {subject} con ID {id}.");
+        if (uow.HasChanges())
+        {
+            if (!await uow.Complete()) return BadRequest($"Error al aprobar {SubjectArticle} {Subject} con ID {id}.");
         }
-        
+
         return await uow.OrderRepository.GetDtoByIdAsync(id);
     }
 }

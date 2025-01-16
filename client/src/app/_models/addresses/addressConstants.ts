@@ -6,7 +6,17 @@ import { SelectOption } from "src/app/_models/base/selectOption";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { Column, columnCreatedAt, columnId } from "src/app/_models/base/column";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
-import { PartialCellsOf, tableCellCode, tableCellCreatedAt, tableCellDescription, tableCellEnabled, tableCellId, TableCellItem, tableCellName, tableCellVisible } from "src/app/_models/tables/tableCellItem";
+import {
+  PartialCellsOf,
+  tableCellCode,
+  tableCellCreatedAt,
+  tableCellDescription,
+  tableCellEnabled,
+  tableCellId,
+  TableCellItem,
+  tableCellName,
+  tableCellVisible
+} from "src/app/_models/tables/tableCellItem";
 
 
 export const addressFormInfo: FormInfo<Address> = {
@@ -62,7 +72,6 @@ export const addressDictionary: NamingSubject = new NamingSubject(
   'direcciones',
   'Dirección',
   'addresses',
-  ['inicio']
 );
 
 export const addressColumns: Column[] = [

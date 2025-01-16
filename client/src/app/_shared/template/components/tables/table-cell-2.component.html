@@ -1,29 +1,23 @@
-<!-- {{ item() | json }} -->
-<!-- {{value() | json}} -->
-
 @if (item().isLink && item().key === 'id') {
-  <div class="d-flex align-items-center">
+  <div class="d-flex align-items-center" [ngClass]="{'no-wrap': item().noWrap}">
     <a [routerLink]="[item().baseUrl, value()]" [href]="[item().baseUrl, value()]"
        class="text-gray-800 text-hover-primary fs-5 fw-bold">
       @if (item().key === 'id') {
         #
       }
-
       {{ value() | number }}
     </a>
   </div>
 } @else if (item().isLink && item().type === 'code' && value()) {
-  <div class="d-flex align-items-center">
+  <div class="d-flex align-items-center" [ngClass]="{'no-wrap': item().noWrap}">
     <a [routerLink]="[item().baseUrl, value()!.id]" [href]="[item().baseUrl, value()!.id]"
        class="text-gray-800 text-hover-primary fs-5 fw-bold">
       @if (value()!.id !== 0) {
         #
       }
-
       @if (value()!.code !== value()!.name) {
         ({{ value()!.code }})
       }
-
       {{ value()!.name }}
     </a>
   </div>
@@ -31,7 +25,7 @@
   @if (value()) {
     @switch (item().type) {
       @case ('code') {
-        <span>
+        <span [ngClass]="{'no-wrap': item().noWrap}">
           @if (value()!.id !== 0) {
             #
           }
@@ -41,7 +35,7 @@
         </span>
       }
       @case ('date') {
-        <span>
+        <span [ngClass]="{'no-wrap': item().noWrap}">
           {{ value() | date : "dd/MM/yyyy" : "" : "es-MX" }}
           @if (item().fullDate) {
             <span class="fw-light">{{ value() | date : "h:mm a" : "" : "es-MX" }}</span>
@@ -49,17 +43,17 @@
         </span>
       }
       @case ('number') {
-        <span>
+        <span [ngClass]="{'no-wrap': item().noWrap}">
           {{ value() | number }}
         </span>
       }
       @case ('currency') {
-        <span>
+        <span [ngClass]="{'no-wrap': item().noWrap}">
           {{ value() | currency : 'MXN' : 'symbol' : '1.2-2' }}
         </span>
       }
       @case ('boolean') {
-        <span>
+        <span [ngClass]="{'no-wrap': item().noWrap}">
           <div class="form-check mb-0 d-flex justify-content-center">
             <input class="form-check-input" type="checkbox" [id]="guid" [checked]="value()" disabled/>
             <label class="form-check-label" [for]="guid"></label>
@@ -67,35 +61,15 @@
         </span>
       }
       @case ('badge') {
-        <span class="badge badge-light text-gray-600 fs-7">{{ value() }}  @if (item().unit) {
-          {{ item().unit }}
-        }</span>
-      }
-      @case ('phoneNumber') {
-        <span [style.white-space]="'nowrap'" [style.display]="'inline-block'">
-          {{ value() | phoneNumber }}
+        <span class="badge badge-light text-gray-600 fs-7" [ngClass]="{'no-wrap': item().noWrap}">
+          {{ value() }}
+          @if (item().unit) {
+            {{ item().unit }}
+          }
         </span>
       }
-      @case ('sex') {
-        @switch (value().toLowerCase()) {
-          @case ('femenino') {
-            <span class="badge badge-light text-gray-600 fs-7">
-              <fa-icon [icon]="icons.faVenus" class="me-2"></fa-icon>
-              {{ value() }}</span>
-          }
-          @case ('masculino') {
-            <span class="badge badge-light text-gray-600 fs-7">
-              <fa-icon [icon]="icons.faMars" class="me-2"></fa-icon>
-              {{ value() }}</span>
-          }
-          @default {
-            <span> {{ value() }}</span>
-          }
-        }
-
-      }
       @default {
-        <span>
+        <span [ngClass]="{'no-wrap': item().noWrap}">
           {{ value() }}
           @if (item().unit) {
             {{ item().unit }}
@@ -103,6 +77,5 @@
         </span>
       }
     }
-
   }
 }

@@ -1,4 +1,11 @@
-import { FormControl, FormControlState, ValidatorFn, FormControlOptions, AsyncValidatorFn, Validators } from "@angular/forms";
+import {
+  FormControl,
+  FormControlState,
+  ValidatorFn,
+  FormControlOptions,
+  AsyncValidatorFn,
+  Validators
+} from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
 import { ControlOrientation } from "./formTypes";
 import { ControlErrors } from "./formTypes";
@@ -70,7 +77,7 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   hidden = false;
   hint: string | null = null;
   isReadonly = false;
-  use: FormUse = "detail";
+  use: FormUse = FormUse.DETAIL;
   submitted = false;
   showLabel = true;
   optional = false;

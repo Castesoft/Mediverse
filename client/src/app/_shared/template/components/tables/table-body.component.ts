@@ -1,11 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, input, InputSignal } from "@angular/core";
 
 @Component({
   host: { class: 'fw-semibold text-gray-600', },
   selector: 'tbody[templateTableBody]',
-  template: `<ng-content></ng-content>`,
+  templateUrl: './table-body.component.html',
   imports: [ CommonModule ],
   standalone: true,
 })
-export class TableBodyComponent {}
+export class TableBodyComponent {
+  count: InputSignal<number | undefined> = input();
+}

@@ -15,6 +15,7 @@ export class TableCellItem<T, TKey extends keyof any> {
   isLink = false;
   showCodeSpan = true;
   fullDate = false;
+  noWrap = false;
   baseUrl?: string;
   color?: TableCellColor;
   unit?: Units;
@@ -72,7 +73,6 @@ export type TableCells = "string" |
   "badge";
 
 export type TableCellColor = "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "light" | "dark";
-
 
 export const tableCellCreatedAt: TableCellItem<Date, 'createdAt'> = new TableCellItem<Date, "createdAt">("createdAt", "date", { fullDate: true });
 export const tableCellDescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");

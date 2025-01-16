@@ -12,7 +12,7 @@ export const consumptionLevelDictionary: NamingSubject = new NamingSubject(
   'especialidades',
   'Especialidades',
   'consumptionLevels',
-  ['admin', 'utilerias', 'codigos'],
+
 );
 
 export const consumptionLevelColumns: Column[] = [
