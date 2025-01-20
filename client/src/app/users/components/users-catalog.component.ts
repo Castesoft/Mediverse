@@ -1,64 +1,31 @@
-import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, ModelSignal, model, effect, OnInit } from "@angular/core";
-import { RouterModule } from "@angular/router";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ControlsModule } from "src/app/_forms/controls.module";
-import { Forms2Module } from "src/app/_forms2/forms-2.module";
-import BaseCatalog from "src/app/_models/base/components/extensions/baseCatalog";
-import { View, CatalogMode } from "src/app/_models/base/types";
-import { CatalogInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { Component, ModelSignal, model, inject } from "@angular/core";
+import { View, CatalogMode, } from "src/app/_models/base/types";
 import { User } from "src/app/_models/users/user";
-import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
 import { UserParams } from "src/app/_models/users/userParams";
-import { CdkModule } from "src/app/_shared/cdk.module";
-import { MaterialModule } from "src/app/_shared/material.module";
-import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { UsersTableComponent } from "src/app/users/components/users-table.component";
+import { GenericCatalogComponent } from "src/app/_shared/components/catalog-layout.component";
 import { UsersService } from "src/app/users/users.config";
-import { FormUse } from "src/app/_models/forms/formTypes";
+import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
+import { ControlsRow3Component } from "src/app/_forms2/builder/controls-row-3.component";
+import { ControlsWrapper3Component } from "src/app/_forms2/builder/controls-wrapper-3.component";
+import { FormsModule } from "@angular/forms";
+import { FilterConfiguration } from "../../_models/base/filter-types";
 
 @Component({
   selector: '[usersCatalog]',
   templateUrl: './users-catalog.component.html',
+  imports: [ UsersTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule ],
   standalone: true,
-  imports: [
-    FontAwesomeModule,
-    UsersTableComponent,
-    CommonModule,
-    RouterModule,
-    ControlsModule,
-    TablesModule,
-    CdkModule,
-    MaterialModule,
-    Forms2Module,
-  ],
 })
-export class UsersCatalogComponent extends BaseCatalog<User, UserParams, UserFiltersForm, UsersService> implements OnInit, OnDestroy, CatalogInputSignals<User, UserParams> {
+export class UsersCatalogComponent {
   item: ModelSignal<User | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<UserParams> = model.required();
+  filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration());
 
-  constructor() {
-    super(UsersService, UserFiltersForm);
-
-    effect((): void => {
-      this.form
-        .setForm(this.params())
-        .setValidation(this.validation.active());
-    });
-  }
-
-  ngOnInit(): void {
-    this.service.loadPagedList(this.key(), this.params()).subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  protected readonly FormUse = FormUse;
+  service: UsersService = inject(UsersService);
+  form = model(new UserFiltersForm());
 }

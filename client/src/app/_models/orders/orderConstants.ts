@@ -8,6 +8,7 @@ import { ColumnOptions } from 'src/app/_models/forms/options/columnOptions';
 import { Order } from "src/app/_models/orders/order";
 import { OrderParams } from "src/app/_models/orders/orderParams";
 import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/tables/tableCellItem";
+import { deliveryOrderStatuses, orderStatuses } from "src/app/orders/orders-util";
 
 export const orderDictionary: NamingSubject = new NamingSubject(
   'masculine',
@@ -32,6 +33,16 @@ export const orderColumns: Column[] = [
 
 export const orderFormInfo: FormInfo<Order> = {
   ...baseInfo,
+  status: { label: 'Estatus', type: 'select', showCodeSpan: false, selectOptions: orderStatuses },
+  deliveryStatus: { label: 'Entrega', type: 'select', showCodeSpan: false, selectOptions: deliveryOrderStatuses },
+  total: { label: 'Total', type: 'number', },
+  subtotal: { label: 'Subtotal', type: 'number', },
+  discount: { label: 'Descuento', type: 'number', },
+  tax: { label: 'Impuesto', type: 'number', },
+  amountPaid: { label: 'Pagado', type: 'number', },
+  amountDue: { label: 'Deuda', type: 'number', },
+  address: { label: 'Dirección', type: 'select' },
+
 } as FormInfo<Order>;
 
 export const orderFiltersFormInfo: FormInfo<OrderParams> = {

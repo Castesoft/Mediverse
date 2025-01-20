@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, NgModule, OnInit } from '@angular/core';
-import { ResolveFn, RouterModule } from '@angular/router';
+import { Component, NgModule, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { TemplateModule } from '../_shared/template/template.module';
 import { HomeSearchComponent } from './components/home-search.component';
 

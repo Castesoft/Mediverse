@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { EventsService } from 'src/app/events/events.config';
 import { View } from 'src/app/_models/base/types';
 import { FormUse } from 'src/app/_models/forms/formTypes';
+import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
   selector: 'div[eventSummary]',
@@ -25,4 +26,6 @@ export class EventSummaryComponent {
   item: ModelSignal<Event | null> = model.required();
   key: ModelSignal<string | null> = model.required();
   title: ModelSignal<string | null> = model.required();
+  protected readonly PhotoShape = PhotoShape;
+  protected readonly PhotoSize = PhotoSize;
 }

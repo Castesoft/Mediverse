@@ -1,4 +1,4 @@
-import { Component, ModelSignal, model, inject, signal } from "@angular/core";
+import { Component, ModelSignal, model, inject } from "@angular/core";
 import { View, CatalogMode,  } from "src/app/_models/base/types";
 import { Patient } from "src/app/_models/patients/patient";
 import { PatientParams } from "src/app/_models/patients/patientParams";

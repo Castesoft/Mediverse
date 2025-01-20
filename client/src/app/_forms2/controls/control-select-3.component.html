@@ -1,31 +1,48 @@
-<mat-form-field [appearance]="'outline'" style="width: 100%;" class="hide-bottom">
-  <mat-label>{{control().label}}</mat-label>
-  <mat-select [(value)]="control().value" (valueChange)="optionChanged($event)">
+@if (useMaterial()) {
+  <mat-form-field appearance="outline" style="width: 100%;" class="hide-bottom">
+    <mat-label>{{ control().label }}</mat-label>
+    <mat-select [value]="control().value" (selectionChange)="optionChanged($event.value)">
+      <mat-option [value]="null">Ninguno</mat-option>
 
-    <mat-option [value]="null">Ninguno</mat-option>
-
-    @if(control().value !== null && control().value!.name !== null) {
-    <mat-option selected [value]="control().value">
-        {{ control().value!.name }}
-      </mat-option>
-    }
-
-
-    @if (control().selectOptions && control().selectOptions.length && control().selectOptions.length > 0) {
-      @for (option of control().selectOptions; let idx = $index; track idx; ) {
-        @if (control().value?.code !== option.code) {
-          <mat-option [value]="option | json"
-                  [disabled]="!option.enabled">
-            @if ((control().value?.code !== option.code) && control().showCodeSpan) {
-              ({{ option.code }})
-            }
-            {{ option.name }}
-          </mat-option>
-        }
+      @if (control().value?.name) {
+        <mat-option [value]="control().value">
+          {{ control().value?.name }}
+        </mat-option>
       }
-    }
 
-  </mat-select>
-</mat-form-field>
+      @for (option of control().selectOptions; track option) {
+        <mat-option
+          [value]="option"
+          [disabled]="!option.enabled"
+          [hidden]="option.code === control().value?.code"
+        >
+          @if (control().showCodeSpan) {
+            ({{ option.code }})
+          }
+          {{ option.name }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+}
 
-<!-- <span class="code">{{control().value | json}}</span> -->
+@if (!useMaterial()) {
+  <div>
+    <label class="form-label" [class.required]="control().required">
+      {{ control().label }}
+    </label>
+
+    <select class="form-select form-select-solid" aria-label="Select example" (change)="optionChanged($event)">
+      <option [value]="null">Ninguno</option>
+
+      @for (option of control().selectOptions; track option) {
+        <option [value]="option | json" [disabled]="!option.enabled">
+          @if (control().showCodeSpan) {
+            ({{ option.code }})
+          }
+          {{ option.name }}
+        </option>
+      }
+    </select>
+  </div>
+}

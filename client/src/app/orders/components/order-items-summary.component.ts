@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, model } from '@angular/core';
+import { Component, model } from '@angular/core';
 import { Product } from "src/app/_models/products/product";
 
 @Component({

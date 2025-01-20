@@ -1,4 +1,4 @@
-import { Column, columnCreatedAt, columnEnabled, columnId, columnName } from "src/app/_models/base/column";
+import { Column, columnCreatedAt, columnId, columnName } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -34,6 +34,7 @@ export const userColumns: Column[] = [
   columnId,
   new Column('email', 'Correo electrónico'),
   columnName,
+  new Column('role', 'Roles'),
   columnCreatedAt,
 ];
 

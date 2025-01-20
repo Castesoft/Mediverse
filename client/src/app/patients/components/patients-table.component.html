@@ -15,10 +15,8 @@
     >
       <td
         tableCheckCell
-        [(isCompact)]="isCompact"
-        [idx]="idx"
-        [(dictionary)]="service.dictionary"
-        [(selected)]="item.isSelected"
+        [isCompact]="isCompact()"
+        [isChecked]="item.isSelected"
         (click)="service.setSelected$(key() || '', item)"
       ></td>
 

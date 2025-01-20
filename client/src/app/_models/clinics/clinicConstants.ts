@@ -1,4 +1,4 @@
-import { Column, columnId, columnName } from "src/app/_models/base/column";
+import { Column, columnName } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -51,10 +51,10 @@ export const clinicFiltersFormInfo: FormInfo<ClinicParams> = {
 export const clinicCells: PartialCellsOf<Clinic> = {
   createdAt: tableCellCreatedAt,
   description: tableCellDescription,
-  enabled: tableCellEnabled,
+  isEnabled: tableCellEnabled,
   name: tableCellName,
   code: tableCellCode,
-  visible: tableCellVisible,
+  isVisible: tableCellVisible,
   id: tableCellId,
   city: new TableCellItem<string, 'city'>('city', 'string'),
   country: new TableCellItem<string, 'country'>('country', 'string'),

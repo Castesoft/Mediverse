@@ -1,19 +1,39 @@
-@if(form.error !== null) {
+@if (form.error !== null) {
   <div errorsAlert3 [(error)]="form.error"></div>
 }
 
-<form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+@if (useCard()) {
+  <div class="card">
+    <div class="card-body">
+      <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+        <div formBuilder3 [controls]="[
+          form.controls.firstName,
+          form.controls.lastName,
+          form.controls.dateOfBirth,
+          form.controls.sex,
+          form.controls.email,
+          form.controls.phoneNumber,
+          form.controls.recommendedBy,
+        ]" [cols]="2"></div>
+        <button type="submit" [attr.form]="form.id" class="btn btn-primary">Enviar</button>
+      </form>
+    </div>
+  </div>
+} @else {
+  <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+    <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+      <div formBuilder3 [controls]="[
+        form.controls.firstName,
+        form.controls.lastName,
+        form.controls.dateOfBirth,
+        form.controls.sex,
+        form.controls.email,
+        form.controls.phoneNumber,
+        form.controls.recommendedBy,
+      ]" [cols]="2"></div>
+      <button type="submit" [attr.form]="form.id" class="btn btn-primary">Enviar</button>
+    </form>
+    <button class="btn btn-primary" type="submit" [attr.form]="form.id">Enviar</button>
+  </form>
+}
 
-  <div formBuilder3 [controls]="[
-    form.controls.firstName,
-    form.controls.lastName,
-    form.controls.dateOfBirth,
-    form.controls.sex,
-    form.controls.email,
-    form.controls.phoneNumber,
-    form.controls.recommendedBy,
-  ]" [cols]="2"></div>
-
-  <button type="submit" [attr.form]="form.id" class="btn btn-primary">Enviar</button>
-
-</form>

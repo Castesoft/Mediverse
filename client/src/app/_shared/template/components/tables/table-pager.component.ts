@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnChanges, inject, HostBinding, model, output, signal, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, inject, HostBinding, model, signal, SimpleChanges } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Entity } from 'src/app/_models/base/entity';
 import { EntityParams } from 'src/app/_models/base/entityParams';

@@ -2,6 +2,7 @@ import { Component, inject, output } from '@angular/core';
 import { AccountService } from 'src/app/_services/account.service';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
+import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
   selector: 'app-card-overview',
@@ -17,4 +18,7 @@ export class CardOverviewComponent {
   selectSection(section: string) {
     this.onSelectSection.emit(section);
   }
+
+  protected readonly PhotoSize = PhotoSize;
+  protected readonly PhotoShape = PhotoShape;
 }

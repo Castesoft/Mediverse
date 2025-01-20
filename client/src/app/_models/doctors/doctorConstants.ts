@@ -1,5 +1,7 @@
 import { Doctor } from "src/app/_models/doctors/doctor";
 import { FormInfo } from "src/app/_models/forms/formTypes";
+import { DoctorParams } from "src/app/_models/doctors/doctorParams";
+import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 
 
 export const doctorFormInfo: FormInfo<Doctor> = {
@@ -19,3 +21,7 @@ export const doctorFormInfo: FormInfo<Doctor> = {
   specialty: { label: 'Especialidad', type: 'text' },
   username: { label: 'Nombre de usuario', type: 'text' },
 } as unknown as FormInfo<Doctor>;
+
+export const doctorFiltersFormInfo: FormInfo<DoctorParams> = {
+  ...baseFilterFormInfo,
+} as FormInfo<DoctorParams>;

@@ -2429,6 +2429,12 @@ namespace MainService.Postgres.Migrations
                     b.Property<double?>("Dosage")
                         .HasColumnType("double precision");
 
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("LotNumber")
                         .HasColumnType("text");
 

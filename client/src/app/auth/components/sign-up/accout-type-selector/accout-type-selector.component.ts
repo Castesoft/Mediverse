@@ -1,4 +1,4 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, model } from '@angular/core';
 
 @Component({
   selector: 'app-accout-type-selector',

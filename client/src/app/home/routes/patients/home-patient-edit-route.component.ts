@@ -4,12 +4,13 @@ import { Patient } from 'src/app/_models/patients/patient';
 import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homePatientEditRoute]',
   template: `
-    <div patientDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div breadcrumbs></div>
+    <div post>
+      <div patientForm [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key"></div>
+    </div>
   `,
-  // templateUrl: './home-patient-edit-route.component.html',
   standalone: false,
 })
 export class HomePatientEditRouteComponent

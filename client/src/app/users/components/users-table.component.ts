@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
+import { Component, ModelSignal, model, OnDestroy } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -32,10 +32,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     TableMenuComponent,
   ],
 })
-export class UsersTableComponent
-  extends BaseTable<User, UserParams, UserFiltersForm, UsersService>
-  implements OnInit, OnDestroy, TableInputSignals<User, UserParams>
-{
+export class UsersTableComponent extends BaseTable<User, UserParams, UserFiltersForm, UsersService> implements OnDestroy, TableInputSignals<User, UserParams> {
   item: ModelSignal<User | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -46,11 +43,7 @@ export class UsersTableComponent
 
   constructor() {
     super(UsersService, User, { tableCells: userCells, });
-
-    effect(() => {});
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

@@ -9,13 +9,10 @@ import { FormUse } from "src/app/_models/forms/formTypes";
   template: `
     <div patientDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
   `,
-  // templateUrl: './home-patient-detail-route.component.html',
   standalone: false,
 })
 export class HomePatientCreateRouteComponent
-  extends BaseRouteDetail<Patient>
-
-{
+  extends BaseRouteDetail<Patient> {
   constructor() {
     super('patients', FormUse.CREATE);
 

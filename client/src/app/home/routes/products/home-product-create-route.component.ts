@@ -2,33 +2,33 @@ import { Component, effect } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import { Product } from 'src/app/_models/products/product';
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { Navigation } from "@angular/router";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homeProductCreateRoute]',
   template: `
-    <div productDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div breadcrumbs></div>
+    <div post>
+      <div productForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    </div>
   `,
-  // templateUrl: './home-product-detail-route.component.html',
   standalone: false,
 })
-export class HomeProductCreateRouteComponent
-  extends BaseRouteDetail<Product>
-
-{
+export class HomeProductCreateRouteComponent extends BaseRouteDetail<Product> {
   constructor() {
     super('products', FormUse.CREATE);
 
     this.key.set(`${this.router.url}#product-create`);
 
     effect(() => {
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
+      this.setKey();
     });
+  }
+
+  private setKey(): void {
+    const navigation: Navigation | null = this.router.getCurrentNavigation();
+    if (navigation !== null) {
+      this.key.set(navigation?.extras?.state?.['key'] || null);
+    }
   }
 }

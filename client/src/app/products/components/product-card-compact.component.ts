@@ -1,7 +1,7 @@
 import {CurrencyPipe, DecimalPipe} from "@angular/common";
-import {Component, inject, input, model, OnInit} from "@angular/core";
+import {Component, inject, model, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
-import {Role, View} from "src/app/_models/types";
+import {View} from "src/app/_models/types";
 import { Product } from "src/app/_models/products/product";
 import { ProductsService } from "src/app/_services/products.service";
 

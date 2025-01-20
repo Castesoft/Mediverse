@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, model, signal } from "@angular/core";
+import { Component, model, signal } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
 import { NamingSubject } from "src/app/_models/base/namingSubject";

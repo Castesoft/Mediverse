@@ -246,9 +246,10 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   /**
    * Updates an existing entity on the server and updates local data/redirects if needed.
    */
-  update(form: FormGroup2<T>, view: View, id?: number, model?: any): Observable<T> {
-    return this.http
-      .put<T>(`${this.baseUrl}${id ?? form.controls.id.value}`, model ?? form.value)
+  update(model: any, id: number | null, view: View): Observable<T> {
+    if (id === null) throw new Error("ID cannot be null");
+
+    return this.http.put<T>(`${this.baseUrl}${id}`, model)
       .pipe(
         tap((response): void => {
           if (view === "page") {
@@ -260,7 +261,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
             { duration: 3000 }
           );
           this.data.next(
-            this.data.value.map((a) => (a.id === (id ?? form.controls.id.value) ? response : a))
+            this.data.value.map((a) => (a.id === (id) ? response : a))
           );
 
           const options: SelectOption[] = this.options();

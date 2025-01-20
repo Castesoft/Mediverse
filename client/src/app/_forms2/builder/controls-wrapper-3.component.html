@@ -1,44 +1,48 @@
-@if(!hasPair()) {
+@if (!hasPair()) {
   @if (!control().hidden) {
-    @switch(control().style) {
-      @case('bootstrap') {
-        @switch(control().type) {
-          @case('text') {
-            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
+    @switch (control().style) {
+      @case ('bootstrap') {
+        @switch (control().type) {
+          @case ('text') {
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
-          @case('number') {
-            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
+          @case ('number') {
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
-          @case('search') {
+          @case ('search') {
             <h1 class="text-danger">PENDIENTE</h1>
           }
-          @case('checkbox') {
+          @case ('checkbox') {
             <div templateControlCheckbox [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('radio') {
+          @case ('radio') {
             <div templateControlCheckRadio [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('select') {
+          @case ('select') {
             <div controlSelect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('textarea') {
-            <h1 class="text-danger">PENDIENTE</h1>
+          @case ('textarea') {
+            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
           }
-          @case('date') {
+          @case ('date') {
             <div templateControlDate [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('email') {
+          @case ('email') {
             <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('tel') {
-            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
+          @case ('tel') {
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
-          @case('typeahead') {
-            <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          @case ('typeahead') {
+            <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control"
+                 [(fromWrapper)]="fromWrapper"></div>
           }
         }
       }
-      @case('material') {
+      @case ('material') {
         @switch (control().type) {
           @case ('file') {
             <div controlFile3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
@@ -59,7 +63,7 @@
             <div controlSlide3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
           @case ('textarea') {
-            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
           }
           @case ('text') {
             <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
@@ -94,19 +98,20 @@
           @case ('search') {
             <div controlSearchText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('typeahead') {
-            <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+          @case ('typeahead') {
+            <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control"
+                 [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('multiselect') {
+          @case ('multiselect') {
             <div controlMultiselect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('buttonToggleMultiple') {
+          @case ('buttonToggleMultiple') {
             <div controlButtonToggleMultiple3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('sliderRange') {
+          @case ('sliderRange') {
             <div controlSliderRange3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
-          @case('chips') {
+          @case ('chips') {
             <p>pendiente</p>
           }
         }

@@ -69,10 +69,10 @@ import { FormUse } from "src/app/_models/forms/formTypes";
         },
         // Pacientes
         {
-          data: { breadcrumb: 'Pacientes', title: 'Pacientes' },
           path: 'pacientes',
           component: HomePatientsCatalogRouteComponent,
           title: titleCatalogResolver(PatientsService),
+          data: { breadcrumb: 'Pacientes', title: 'Pacientes' },
         },
         {
           path: 'pacientes/nuevo',
@@ -84,12 +84,14 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           component: HomePatientDetailRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
           title: titleDetailResolver(PatientsService, FormUse.DETAIL, 'fullName'),
+          data: { breadcrumb: [ 'Pacientes', 'Ver Paciente' ], title: 'Ver Detalle de Paciente' }
         },
         {
           path: 'pacientes/:id/editar',
           component: HomePatientEditRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
           title: titleDetailResolver(PatientsService, FormUse.EDIT, 'fullName'),
+          data: { breadcrumb: [ 'Pacientes', 'Editar' ], title: 'Editar Paciente', },
         },
         // Citas
         {
@@ -108,6 +110,7 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           component: HomeEventDetailRouteComponent,
           resolve: { item: createItemResolver(EventsService), },
           title: titleDetailResolver(EventsService, FormUse.DETAIL),
+          data: { breadcrumb: [ 'Citas', 'Ver Cita' ], title: 'Ver Detalle de Cita' }
         },
         {
           path: 'citas/:id/editar',

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model, OnDestroy, OnInit } from "@angular/core";
+import { Component, computed, inject, model, OnDestroy, OnInit } from "@angular/core";
 import { FormUse, View } from "src/app/_models/types";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { IconsService } from "src/app/_services/icons.service";
@@ -8,7 +8,7 @@ import { CurrencyPipe, DatePipe } from "@angular/common";
 import { EventServicesSummaryComponent } from "src/app/events/components/event-services-summary.component";
 import { OrderProductsSummaryComponent } from "src/app/orders/components/order-items-summary.component";
 import { PatientSummaryCardComponent } from "src/app/patients/patient-summary-card.component";
-import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-deilvery-status-badge.component";
+import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-delivery-status-badge.component";
 import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { OrdersService } from "src/app/_services/orders.service";

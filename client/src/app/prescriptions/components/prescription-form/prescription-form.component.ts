@@ -32,7 +32,6 @@ import { PatientsService } from 'src/app/patients/patients.config';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProductsService } from 'src/app/products/products.config';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
-import { Patient } from "src/app/_models/patients/patient";
 
 @Component({
   selector: '[prescriptionForm]',

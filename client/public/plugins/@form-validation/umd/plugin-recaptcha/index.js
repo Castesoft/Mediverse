@@ -214,7 +214,7 @@
                             if (_this.timer) {
                                 clearTimeout(_this.timer);
                             }
-                            _this.timer = window.setTimeout(resolve, 1 * 1000);
+                            _this.timer = window.setTimeout(resolve, 1000);
                         });
                     });
             }

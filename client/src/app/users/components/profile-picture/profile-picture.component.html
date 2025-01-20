@@ -1,34 +1,35 @@
 <div
-    class="symbol"
-    [class.symbol-circle]="shape() === 'circle'"
+  class="symbol"
+  [class.symbol-circle]="shape() === 'circle'"
 
-    [class.symbol-50px]="size() === 'sm'"
-    [class.min-w-50px]="size() === 'sm'"
+  [class.symbol-50px]="size() === 'sm'"
+  [class.min-w-50px]="size() === 'sm'"
 
-    [class.symbol-100px]="size() === 'md'"
-    [class.min-w-100px]="size() === 'md'"
+  [class.symbol-100px]="size() === 'md'"
+  [class.min-w-100px]="size() === 'md'"
 
-    [class.symbol-125px]="size() === 'md2'"
-    [class.min-w-125px]="size() === 'md2'"
+  [class.symbol-125px]="size() === 'md2'"
+  [class.min-w-125px]="size() === 'md2'"
 
-    [class.symbol-160px]="size() === 'lg'"
-    [class.min-w-160px]="size() === 'lg'"
+  [class.symbol-160px]="size() === 'lg'"
+  [class.min-w-160px]="size() === 'lg'"
 >
-    @if (photoUrl() !== null && fullName() !== null && fullName() !== '') {
-        <img [src]="photoUrl()" [alt]="fullName()" class="w-100" />
-    } @else {
-      @if(fullName() !== null) {
-        <div
+  @if (photoUrl() !== null && fullName() !== null && fullName() !== '') {
+    <img [src]="photoUrl()" [alt]="fullName()" class="w-100"/>
+  } @else {
+    @if (fullName() !== null) {
+      <div
         [class]="'symbol-label fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(fullName()!) + ' text-' + utilsService.getBootstrapClass(fullName()!)"
         [class.fs-3]="size() === 'sm'"
         [class.fs-2x]="size() === 'md' || size() === 'md2' || size() === 'lg'"
-    >
+      >
         {{ fullName()![0] }}
-    </div>
-      }
+      </div>
     }
+  }
 
-    @if (showOnline()) {
-        <div class="position-absolute bg-success rounded-circle border border-4 border-body h-20px w-20px" style="bottom: -5px; right: -5px;"></div>
-    }
+  @if (showOnline()) {
+    <div class="position-absolute bg-success rounded-circle border border-4 border-body h-20px w-20px"
+         style="bottom: -5px; right: -5px;"></div>
+  }
 </div>

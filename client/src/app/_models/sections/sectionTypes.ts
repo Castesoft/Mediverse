@@ -1,6 +1,3 @@
-import { MatDrawerMode } from "@angular/material/sidenav";
-import { FilterOrientation, FilterPosition } from "../base/filter-types";
-
 export type Section = {
   label: string;
   route: string;

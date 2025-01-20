@@ -1,4 +1,4 @@
-import { Component, inject, input, model, OnInit } from "@angular/core";
+import { Component, inject, model, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";

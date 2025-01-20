@@ -1,9 +1,7 @@
 import {
-  baseColumns,
   Column,
   columnCreatedAt,
   columnDescription,
-  columnId,
   columnName
 } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
@@ -42,10 +40,10 @@ export const serviceFiltersFormInfo: FormInfo<ServiceParams> = {
 export const serviceCells: PartialCellsOf<Service> = {
   createdAt: tableCellCreatedAt,
   description: tableCellDescription,
-  enabled: tableCellEnabled,
+  isEnabled: tableCellEnabled,
   name: tableCellName,
   code: tableCellCode,
-  visible: tableCellVisible,
+  isVisible: tableCellVisible,
   id: tableCellId,
   price: new TableCellItem<number, 'price'>('price', 'currency'),
   discount: new TableCellItem<number, 'discount'>('discount', 'number'),

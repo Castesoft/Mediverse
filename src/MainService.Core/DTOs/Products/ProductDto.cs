@@ -14,5 +14,8 @@ public class ProductDto
     public string? Unit { get; set; }
     public double? Dosage { get; set; }
     public int? Quantity { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public bool IsEnabled { get; set; }
+    public bool IsVisible { get; set; }
+
+public DateTime CreatedAt { get; set; }
 }

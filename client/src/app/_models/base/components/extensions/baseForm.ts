@@ -94,6 +94,8 @@ export default class BaseForm<
    * @param use - A signal representing the form use case.
    */
   onSubmit(view: ModelSignal<View>, use: ModelSignal<FormUse>) {
+    console.log(this.form.getRawValue());
+    return;
     this.form.submitted = true;
     switch (this.form.use) {
       case 'create':
@@ -132,7 +134,7 @@ export default class BaseForm<
    */
   update(view: ModelSignal<View>, use: ModelSignal<FormUse>) {
     if (this.form.submittable) {
-      this.service.update(this.form, view()).subscribe({
+      this.service.update(this.form.getRawValue(), this.form.controls.id.getRawValue(), view()).subscribe({
         next: response => {
           this.form.onSuccess(response);
           this.form.use = FormUse.DETAIL;

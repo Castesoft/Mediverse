@@ -1,5 +1,4 @@
 import { Entity } from "src/app/_models/base/entity";
-import { User } from "src/app/_models/users/user";
 import { Product } from "src/app/_models/products/product";
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { Doctor } from "src/app/_models/doctors/doctor";

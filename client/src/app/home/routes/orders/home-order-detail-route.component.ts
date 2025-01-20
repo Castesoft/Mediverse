@@ -4,18 +4,13 @@ import { Order } from 'src/app/_models/orders/order';
 import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
-  // host: { class: 'card card-flush' },
   selector: 'div[homeOrderDetailRoute]',
   template: `
-    <div orderDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div orderForm [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key"></div>
   `,
-  // templateUrl: './home-order-detail-route.component.html',
   standalone: false,
 })
-export class HomeOrderDetailRouteComponent
-  extends BaseRouteDetail<Order>
-
-{
+export class HomeOrderDetailRouteComponent extends BaseRouteDetail<Order> {
   constructor() {
     super('orders', FormUse.DETAIL);
 

@@ -1,134 +1,139 @@
 <div card id="account_settings_profile_details" (mouseenter)="selectSection('account_settings_profile_details')">
-    <div cardHeader>
-      <div cardTitle [title]="'Detalles de perfil'"></div>
-    </div>
-    <form (ngSubmit)="onSubmit()">
-      <div cardBody>
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-semibold fs-6">Avatar</label>
-          <div class="col-lg-8">
-            <div class="image-input image-input-outline" style="background-image: url('media/svg/avatars/blank.svg')">
-              <div class=" w-125px h-125px" >
-                @if (form.controls.photoUrl.value !== null) {
-                  <img [src]="form.controls.photoUrl.value" class="mw-100 mh-100 rounded" alt="photo" />
-                } @else {
-                  <div userProfilePicture [fullName]="form.controls.fullName.value" [photoUrl]="form.controls.photoUrl.value"
-                    shape="square" size="md2"
-                  ></div>
-                }
-              </div>
-              <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" title="Change avatar">
-                <i class="ki-duotone ki-pencil fs-7">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                </i>
-                <input aria-label="hola" type="file" name="avatar" accept=".png, .jpg, .jpeg" (change)="onPhotoChange($event)" />
-                <input type="hidden" name="avatar_remove" />
-              </label>
-              <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" title="Cancel avatar">
-                <i class="ki-duotone ki-cross fs-2">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                </i>
-              </span>
-              <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove"
-               title="Remove avatar" (click)="removeAvatar()">
-                <i class="ki-duotone ki-cross fs-2">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                </i>
-              </span>
+  <div cardHeader>
+    <div cardTitle [title]="'Detalles de perfil'"></div>
+  </div>
+  <form (ngSubmit)="onSubmit()">
+    <div cardBody>
+      <div class="row mb-6">
+        <label class="col-lg-4 col-form-label fw-semibold fs-6">Avatar</label>
+        <div class="col-lg-8">
+          <div class="image-input image-input-outline" style="background-image: url('media/svg/avatars/blank.svg')">
+            <div class=" w-125px h-125px">
+              @if (form.controls.photoUrl.value !== null) {
+                <img [src]="form.controls.photoUrl.value" class="mw-100 mh-100 rounded" alt="photo"/>
+              } @else {
+                <div userProfilePicture [fullName]="form.controls.fullName.value"
+                     [photoUrl]="form.controls.photoUrl.value"
+                     [shape]="PhotoShape.SQUARE" [size]="PhotoSize.MEDIUM_2"
+                ></div>
+              }
             </div>
-            <div class="form-text mt-5">Tipos de archivos permitidos: png, jpg, jpeg.</div>
+            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                   data-kt-image-input-action="change" title="Change avatar">
+              <i class="ki-duotone ki-pencil fs-7">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+              <input aria-label="hola" type="file" name="avatar" accept=".png, .jpg, .jpeg"
+                     (change)="onPhotoChange($event)"/>
+              <input type="hidden" name="avatar_remove"/>
+            </label>
+            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                  data-kt-image-input-action="cancel" title="Cancel avatar">
+              <i class="ki-duotone ki-cross fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+            </span>
+            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                  data-kt-image-input-action="remove"
+                  title="Remove avatar" (click)="removeAvatar()">
+              <i class="ki-duotone ki-cross fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+            </span>
           </div>
+          <div class="form-text mt-5">Tipos de archivos permitidos: png, jpg, jpeg.</div>
         </div>
+      </div>
 
-          <div formBuilder3 [cols]="2" [controls]="[
+      <div formBuilder3 [cols]="2" [controls]="[
             form.controls.firstName,
             form.controls.lastName,
           ]"></div>
 
-          <div formBuilder3 [cols]="2" [controls]="[
+      <div formBuilder3 [cols]="2" [controls]="[
             form.controls.phoneNumber,
           ]"></div>
 
-        @if (accountService.hasRole(['Doctor'])) {
-            <div formBuilder3 [cols]="2" [controls]="[
+      @if (accountService.hasRole([ 'Doctor' ])) {
+        <div formBuilder3 [cols]="2" [controls]="[
               form.controls.licenseNumber,
               form.controls.specialtyLicense,
             ]"></div>
-            <div formBuilder3 [cols]="1" [controls]="[
+        <div formBuilder3 [cols]="1" [controls]="[
               form.controls.specialty,
               form.controls.acceptedPaymentMethods,
               form.controls.requireAnticipatedCardPayments,
             ]"></div>
 
-          <!-- <div class="row mb-6">
-            <label class="col-lg-4 col-form-label fw-semibold fs-6"
-              >Cédula/Certificación</label
-            >
-            <div class="col-lg-8 fv-row fv-plugins-icon-container">
-              <div
-                  class="fv-row fv-plugins-icon-container"
-                  inputControl
-                  formControlName="file"
-                  type="file"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                  [errors]="{
-                      required: 'Al actualizar la especialidad se requiere la cédula o certificación correspondiente.'
-                  }"
-                  (onChange)="onFileChange($event)"
-                ></div>
-            </div>
-          </div> -->
-
-          <div class="row mb-6">
-            <label class="col-lg-4 col-form-label fw-semibold fs-6"
-              >Métodos de pago aceptados</label
-            >
-            <div class="col-lg-8 fv-row fv-plugins-icon-container">
-              <!-- <div
-                class="fv-row mb-5 fv-plugins-icon-container"
-                controlCheckList
-                formControlName="AcceptedPaymentMethods"
-                [options]="paymentMethodTypes"
+        <!-- <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6"
+            >Cédula/Certificación</label
+          >
+          <div class="col-lg-8 fv-row fv-plugins-icon-container">
+            <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="file"
+                type="file"
+                [placeholder]="''"
                 [submitted]="submitted"
                 [errors]="{
-                    required: 'Selecciona al menos un método de pago.'
+                    required: 'Al actualizar la especialidad se requiere la cédula o certificación correspondiente.'
                 }"
-              ></div> -->
-              <!-- @if (showRequireAnticipatedCardPaymentsField()) {
-                <div class="d-flex flex-stack mt-5 align-items-center">
-                  <div class="me-5">
-                      <div class="fs-6 fw-semibold">Requerir pago anticipado para citas con tarjeta de crédito/débito</div>
-                  </div>
-                  <label class="form-check form-switch form-check-custom form-check-solid">
-                      <input class="form-check-input" type="checkbox" [checked]="accountService.current()!.requireAnticipatedCardPayments" (change)="setValueAnticipatedCardPayments($event)" />
-                  </label>
-                </div>
-              } -->
-            </div>
+                (onChange)="onFileChange($event)"
+              ></div>
           </div>
-        }
-      </div>
+        </div> -->
 
-      <div cardFooter>
-        <button
-          type="button"
-          class="btn btn-light btn-active-light-primary me-2"
-          (click)="onCancel()"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          id="kt_account_profile_details_submit"
-        >
-          Guardar cambios
-        </button>
-      </div>
+        <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6"
+          >Métodos de pago aceptados</label
+          >
+          <div class="col-lg-8 fv-row fv-plugins-icon-container">
+            <!-- <div
+              class="fv-row mb-5 fv-plugins-icon-container"
+              controlCheckList
+              formControlName="AcceptedPaymentMethods"
+              [options]="paymentMethodTypes"
+              [submitted]="submitted"
+              [errors]="{
+                  required: 'Selecciona al menos un método de pago.'
+              }"
+            ></div> -->
+            <!-- @if (showRequireAnticipatedCardPaymentsField()) {
+              <div class="d-flex flex-stack mt-5 align-items-center">
+                <div class="me-5">
+                    <div class="fs-6 fw-semibold">Requerir pago anticipado para citas con tarjeta de crédito/débito</div>
+                </div>
+                <label class="form-check form-switch form-check-custom form-check-solid">
+                    <input class="form-check-input" type="checkbox" [checked]="accountService.current()!.requireAnticipatedCardPayments" (change)="setValueAnticipatedCardPayments($event)" />
+                </label>
+              </div>
+            } -->
+          </div>
+        </div>
+      }
+    </div>
 
-    </form>
-  </div>
+    <div cardFooter>
+      <button
+        type="button"
+        class="btn btn-light btn-active-light-primary me-2"
+        (click)="onCancel()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        id="kt_account_profile_details_submit"
+      >
+        Guardar cambios
+      </button>
+    </div>
+
+  </form>
+</div>

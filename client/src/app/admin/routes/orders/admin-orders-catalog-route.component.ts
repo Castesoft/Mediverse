@@ -4,11 +4,17 @@ import { Order } from "src/app/_models/orders/order";
 import { OrderFiltersForm } from "src/app/_models/orders/orderFiltersForm";
 import { OrderParams } from "src/app/_models/orders/orderParams";
 import { OrdersService } from "src/app/orders/orders.config";
-import { SiteSection } from "../../../_models/sections/sectionTypes";
+import { SiteSection } from "src/app/_models/sections/sectionTypes";
 
 @Component({
   selector: 'div[adminOrdersCatalogRoute]',
-  templateUrl: './admin-orders-catalog-route.component.html',
+  template: `
+    <div breadcrumbs></div>
+    <div post>
+      <div ordersCatalog [(item)]="item" [(isCompact)]="compact.isCompact" [(key)]="key" [(mode)]="mode"
+           [(params)]="params" [(view)]="view"></div>
+    </div>
+  `,
   standalone: false,
 })
 export class AdminOrdersCatalogRouteComponent extends BaseRouteCatalog<Order, OrderParams, OrderFiltersForm, OrdersService> {

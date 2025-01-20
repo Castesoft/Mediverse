@@ -1,9 +1,9 @@
-<div [class]="divClass">
+<div class="form-check form-check-custom form-check-solid d-flex justify-content-center">
   <input
     class="form-check-input"
     type="checkbox"
-    [(ngModel)]="selected"
-    [name]="dictionary().singular"
-    [id]="cuid + 'tableCheck' + idx()"
+    [checked]="isChecked()"
+    [disabled]="isDisabled()"
+    (change)="onCheckboxChange($event)"
   />
 </div>

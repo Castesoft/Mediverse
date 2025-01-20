@@ -1,0 +1,25 @@
+<div
+  class="symbol"
+  [class.symbol-circle]="shape() === 'circle'"
+
+  [class.symbol-50px]="size() === 'sm'"
+  [class.min-w-50px]="size() === 'sm'"
+
+  [class.symbol-100px]="size() === 'md'"
+  [class.min-w-100px]="size() === 'md'"
+
+  [class.symbol-125px]="size() === 'md2'"
+  [class.min-w-125px]="size() === 'md2'"
+
+  [class.symbol-160px]="size() === 'lg'"
+  [class.min-w-160px]="size() === 'lg'"
+
+  [class.symbol-200px]="size() === 'xl'"
+  [class.min-w-200px]="size() === 'xl'"
+>
+  <img
+    [src]="photoUrl()"
+    (error)="onImageError($event)"
+    alt="med_image"
+  >
+</div>

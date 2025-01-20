@@ -1,4 +1,4 @@
-import { Component, inject, input, TemplateRef, model, HostBinding, effect } from "@angular/core";
+import { Component, inject, input, TemplateRef, model, effect } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Entity } from "src/app/_models/base/entity";
 import { IconsService } from "src/app/_services/icons.service";

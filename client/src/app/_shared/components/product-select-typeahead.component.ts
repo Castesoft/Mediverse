@@ -4,10 +4,9 @@ import { ControlTypeaheadComponent } from "src/app/_forms/control-typeahead.comp
 import { PopoverModule } from "ngx-bootstrap/popover";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ErrorsAlertComponent } from "src/app/_forms/helpers/errors-alert.component";
-import { finalize, map, Observable, Subject, takeUntil } from "rxjs";
+import { finalize, Observable, Subject, takeUntil } from "rxjs";
 import { ProductsService } from "src/app/_services/products.service";
 import { IconsService } from "src/app/_services/icons.service";
-import { ProductParams } from "src/app/_models/products/productParams";
 import { Product } from "src/app/_models/products/product";
 import { TypeaheadComplexOption } from "src/app/_models/types";
 import { createId } from "@paralleldrive/cuid2";

@@ -1,7 +1,7 @@
 import {CurrencyPipe, DecimalPipe} from "@angular/common";
 import {Component, inject, input, OnInit} from "@angular/core";
 import {Router, RouterLink} from "@angular/router";
-import {Addresses, Role, View} from "src/app/_models/types";
+import {Addresses, View} from "src/app/_models/types";
 import { Address, AddressesService } from "src/app/addresses/addresses.config";
 
 @Component({

@@ -3,6 +3,7 @@ import { Component, HostListener, inject, model } from "@angular/core";
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchService } from "src/app/_services/search.service";
 import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
+import { PhotoSize } from "src/app/_models/photos/photoTypes";
 
 /*
 
@@ -36,4 +37,5 @@ export class ResultRowComponent {
     this.service.onLeave(this.doctor());
   }
 
+  protected readonly PhotoSize = PhotoSize;
 }

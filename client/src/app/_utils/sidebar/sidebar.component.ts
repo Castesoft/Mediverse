@@ -1,13 +1,12 @@
 import { Breakpoints, BreakpointObserver, BreakpointState } from "@angular/cdk/layout";
 import { CommonModule } from "@angular/common";
-import { Component, inject, model, OnDestroy, signal, WritableSignal } from "@angular/core";
+import { Component, inject, OnDestroy } from "@angular/core";
 import { MatDrawerMode } from "@angular/material/sidenav";
 import { RouterModule } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { SidebarService } from "src/app/_services/sidebar.service";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { SidebarTreeComponent } from "src/app/_utils/sidebar/sidebar-tree.component";
 import { DrawerMode } from "../../_models/base/filter-types";
 
 interface SidebarItem {
@@ -34,6 +33,10 @@ export class SidebarComponent implements OnDestroy {
   sidebarItems: SidebarItem[] = [
     { link: '/admin', label: 'Inicio' },
     { link: '/admin/pedidos', label: 'Pedidos' },
+    { link: '/admin/productos', label: 'Productos' },
+    { link: '/admin/doctores', label: 'Doctores' },
+    { link: '/admin/usuarios', label: 'Usuarios' },
+    { link: '/admin/permisos', label: 'Permisos' },
   ]
 
   displayNameMap: Map<string, string> = new Map([

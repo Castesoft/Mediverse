@@ -1,46 +1,61 @@
-import { Component, effect } from "@angular/core";
+import { Component, effect, OnDestroy } from "@angular/core";
 import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
 import { Patient } from 'src/app/_models/patients/patient';
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { takeUntil } from "rxjs/operators";
+import { Navigation, ParamMap } from "@angular/router";
+import { Subject } from "rxjs";
 
 @Component({
-  // host: { class: 'card card-flush' },
   selector: 'div[homePatientDetailRoute]',
   template: `
-    <div patientDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div breadcrumbs></div>
+    <div post>
+      <div patientDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    </div>
   `,
-  // templateUrl: './home-patient-detail-route.component.html',
   standalone: false,
 })
-export class HomePatientDetailRouteComponent
-  extends BaseRouteDetail<Patient>
+export class HomePatientDetailRouteComponent extends BaseRouteDetail<Patient> implements OnDestroy {
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-{
   constructor() {
     super('patients', FormUse.DETAIL);
 
-    this.key.set(`${this.router.url}#patient-detail`);
+    this.key.set(`${this.router.url}#order-edit`);
 
     effect(() => {
-      this.route.paramMap.subscribe({
-        next: params => {
-          if (params.has('id')) {
-            this.id.set(+params.get('id')!);
-          }
-        },
-      });
-      this.route.data.subscribe({
-        next: (data) => {
-          this.item.set(data['item']);
-        },
-      });
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
+      this.subscribeToParamMap();
+      this.subcribeToRouteData();
+      this.setKey();
     });
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+  private subscribeToParamMap() {
+    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (params: ParamMap) => {
+        if (params.has('id')) this.id.set(+params.get('id')!);
+      },
+    });
+  }
+
+  private subcribeToRouteData() {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data) => {
+        this.item.set(data['item']);
+      },
+    });
+  }
+
+  private setKey() {
+    const navigation: Navigation | null = this.router.getCurrentNavigation();
+    if (navigation !== null) {
+      this.key.set(navigation?.extras?.state?.['key'] || null);
+    }
   }
 }

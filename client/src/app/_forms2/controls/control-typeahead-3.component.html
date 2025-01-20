@@ -9,7 +9,7 @@
            [placeholder]="control().placeholder != null && control().placeholder"
            [id]="control().id"
            [matAutocomplete]="auto"
-           class="form-control form-control-solid " [class.ps-12]="useIcon()">
+           class="form-control " [class.ps-12]="useIcon()">
     <mat-autocomplete [displayWith]="displayFn" [autoActiveFirstOption]="true" #auto="matAutocomplete">
       @for (item of filteredOptions | async; let idx = $index; track idx; ) {
         <mat-option [value]="item" [id]="item.id.toString()"
@@ -37,7 +37,7 @@
   }
 
   <input type="text" [formControl]="$any(control())" [id]="control().id" [matAutocomplete]="auto"
-         class="form-control form-control-solid " [class.ps-12]="useIcon()">
+         class="form-control " [class.ps-12]="useIcon()">
   <mat-autocomplete [displayWith]="displayFn" [autoActiveFirstOption]="true" #auto="matAutocomplete">
     @for (item of filteredOptions | async; let idx = $index; track idx; ) {
       <mat-option [value]="item" [id]="item.id.toString()"

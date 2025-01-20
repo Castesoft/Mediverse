@@ -1,11 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, model, input, HostBinding, effect, inject } from "@angular/core";
+import { Component, model, input, HostBinding, effect, ModelSignal, InputSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { createId } from "@paralleldrive/cuid2";
 import { TableCellItem } from "src/app/_models/tables/tableCellItem";
-import { IconsService } from "../../../../_services/icons.service";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { PhoneNumberPipe } from "../../../../_pipes/phone-number.pipe";
 
 
 @Component({
@@ -16,14 +12,12 @@ import { PhoneNumberPipe } from "../../../../_pipes/phone-number.pipe";
   imports: [ RouterModule, CommonModule ],
 })
 export class TableCell2Component {
-  icons = inject(IconsService);
-  item = model.required<TableCellItem<any, any>>();
-  isCompact = model.required<boolean>();
-  value = input.required<any>();
-  guid = createId();
+  item: ModelSignal<TableCellItem<any, any>> = model.required<TableCellItem<any, any>>();
+  isCompact: ModelSignal<boolean> = model.required<boolean>();
+  value: InputSignal<any> = input.required<any>();
 
-  linkClass = 'd-flex align-items-center';
-  class = '';
+  linkClass: string = 'd-flex align-items-center';
+  class: string = '';
 
   @HostBinding('class') get hostClass() {
     return this.class;

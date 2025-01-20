@@ -1,6 +1,20 @@
 import { OrderDeliveryStatus, OrderStatus } from "src/app/_models/orders/orderTypes";
 import { SelectOption } from "src/app/_models/base/selectOption";
 
+export const orderStatuses: SelectOption[] = [
+  new SelectOption({ id: 1, code: 'pending', name: 'Pendiente' }),
+  new SelectOption({ id: 2, code: 'completed', name: 'Procesando' }),
+  new SelectOption({ id: 3, code: 'cancelled', name: 'Cancelado' })
+];
+
+export const deliveryOrderStatuses: SelectOption[] = [
+  new SelectOption({ id: 1, code: 'pending', name: 'Pendiente' }),
+  new SelectOption({ id: 2, code: 'processing', name: 'Procesando' }),
+  new SelectOption({ id: 3, code: 'inprogress', name: 'En progreso' }),
+  new SelectOption({ id: 4, code: 'delivered', name: 'Entregado' }),
+  new SelectOption({ id: 5, code: 'cancelled', name: 'Cancelado' })
+];
+
 // Order Status
 export function getOrderStatus(status: OrderStatus): string {
   switch (status) {

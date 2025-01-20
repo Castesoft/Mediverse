@@ -11,7 +11,6 @@ import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { prescriptionFormInfo } from "src/app/_models/prescriptions/prescriptionConstants";
 import { User } from "src/app/_models/users/user";
 import { Patient } from 'src/app/_models/patients/patient';
-import Clinic from 'src/app/_models/clinics/clinic';
 import { isNullOrWhiteSpace } from 'src/app/_utils/util';
 
 

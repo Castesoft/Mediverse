@@ -25,7 +25,7 @@ export class User extends Entity {
 
   taxId: string | null = null;
 
-  roles: string[] = [];
+  roles: SelectOption[] = [];
   permissions: string[] = [];
 
   eventsCount = 0;

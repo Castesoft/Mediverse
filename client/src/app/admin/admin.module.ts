@@ -11,11 +11,31 @@ import { BreadcrumbsComponent } from "../_shared/components/breadcrumbs.componen
 import { PostComponent } from "../_shared/template/components/post.component";
 import { OrdersCatalogComponent } from "../orders/orders-catalog.component";
 import { ToolbarComponent } from "../_shared/template/components/toolbars/toolbar.component";
+import { AdminOrderEditRouteComponent } from "src/app/admin/routes/orders/admin-order-edit-route.component";
+import { AdminOrderCreateRouteComponent } from "src/app/admin/routes/orders/admin-order-create-route.component";
+import { OrderFormComponent } from "src/app/orders/order-form.component";
+import {
+  AdminProductsCatalogRouteComponent
+} from "src/app/admin/routes/products/admin-products-catalog-route.component";
+import { AdminProductEditRouteComponent } from "src/app/admin/routes/products/admin-product-edit-route.component";
+import { AdminProductCreateRouteComponent } from "src/app/admin/routes/products/admin-product-create-route.component";
+import { ProductsCatalogComponent } from "src/app/products/components/products-catalog.component";
+import { ProductFormComponent } from "src/app/products/product-form.component";
+import { AdminUsersCatalogRouteComponent } from "src/app/admin/routes/users/admin-users-catalog-route.component";
+import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
+import { AdminDoctorsCatalogRouteComponent } from "src/app/admin/routes/doctors/admin-doctors-catalog-route.component";
 
 @NgModule({
   declarations: [
     AdminComponent,
-    AdminOrdersCatalogRouteComponent
+    AdminOrdersCatalogRouteComponent,
+    AdminOrderEditRouteComponent,
+    AdminOrderCreateRouteComponent,
+    AdminProductsCatalogRouteComponent,
+    AdminProductEditRouteComponent,
+    AdminProductCreateRouteComponent,
+    AdminUsersCatalogRouteComponent,
+    AdminDoctorsCatalogRouteComponent
   ],
   imports: [
     CommonModule,
@@ -28,6 +48,10 @@ import { ToolbarComponent } from "../_shared/template/components/toolbars/toolba
     PostComponent,
     OrdersCatalogComponent,
     ToolbarComponent,
+    OrderFormComponent,
+    ProductsCatalogComponent,
+    ProductFormComponent,
+    UsersCatalogComponent,
   ],
 })
 export class AdminModule {}

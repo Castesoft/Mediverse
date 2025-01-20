@@ -17,5 +17,7 @@ public class ProductUpdateDto
     public decimal Price { get; set; }
 
     [Range(0, 1, ErrorMessage = "El descuento debe estar entre 0 y 1.")]
-    public double Discount { get; set; }
+    public double? Discount { get; set; }
+    public bool? IsEnabled { get; set; }
+    public bool? IsVisible { get; set; }
 }

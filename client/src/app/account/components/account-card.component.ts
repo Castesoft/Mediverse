@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Account } from 'src/app/_models/account/account';
 import { AccountService } from 'src/app/_services/account.service';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
+import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
   host: { class: '', },
@@ -58,4 +59,7 @@ export class AccountCardComponent implements OnInit {
     this.photoUrl = undefined;
     this.photoFile = undefined;
   }
+
+  protected readonly PhotoShape = PhotoShape;
+  protected readonly PhotoSize = PhotoSize;
 }

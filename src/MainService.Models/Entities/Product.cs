@@ -37,6 +37,9 @@ public class Product : BaseEntity
     public string? LotNumber { get; set; }
     public decimal? Price { get; set; }
     public double? Discount { get; set; }
+    public bool IsEnabled { get; set; } = true;
+    public bool IsVisible { get; set; } = true;
+
 
     public DoctorProduct DoctorProduct { get; set; } = null!;
     public List<ProductPhoto> ProductPhotos { get; set; } = [];

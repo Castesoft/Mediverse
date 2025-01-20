@@ -1,7 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ModalOptions } from 'ngx-bootstrap/modal';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Modal, IModal } from 'src/app/_models/modal';
 import { ConfirmComponent } from 'src/app/_services/confirm/confirm.component';
 

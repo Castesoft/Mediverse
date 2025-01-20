@@ -38,7 +38,7 @@
       <div class="me-7 mb-3 pt-9 ps-9 position-relative min-h-lg-200px min-w-lg-200px min-h-175px min-w-175px">
         <div class="symbol border border-3 border-white">
           <div userProfilePicture [fullName]="accountService.current()!.fullName" [photoUrl]="accountService.current()!.photoUrl"
-            shape="square" size="lg" [showOnline]=true
+            [shape]="PhotoShape.SQUARE" [size]="PhotoSize.LARGE" [showOnline]=true
           ></div>
         </div>
       </div>

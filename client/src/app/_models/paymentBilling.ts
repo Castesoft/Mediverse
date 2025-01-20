@@ -1,15 +1,16 @@
-import { SelectOption } from "src/app/_forms/form";
-import { FormInfo, FormGroup2 } from "src/app/_forms/form2";
 import { serviceFormInfo } from "./services/serviceConstants";
 import { Service } from "./services/service";
-import { Entity, baseInfo } from "src/app/_models/types";
+import { baseInfo, Entity } from "src/app/_models/base/entity";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { FormInfo } from "src/app/_models/forms/formTypes";
+import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 
 export class PaymentBilling extends Entity {
   services: Service[] = [];
   paymentMethod: SelectOption | null = null;
   billingAddress: string | null = null;
   insuranceProvider: string | null = null;
-  insurancePolicyNumber: string | null = null;;
+  insurancePolicyNumber: string | null = null;
   transactionId: string | null = null;
   paymentStatus: SelectOption | null = null;
   notes: string | null = null;

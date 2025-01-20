@@ -1,5 +1,29 @@
-<mat-form-field [subscriptSizing]="'fixed'" [appearance]="control().materialOptions.appearance" class="hide-bottom" style="display: flex;">
-  <mat-label>{{control().label}}</mat-label>
-  <!-- <input [(control)]="control" [formControl]="$any(control())" controlInput3 matInput /> -->
-  <textarea matInput [formControl]="$any(control())" [placeholder]="control().placeholder ?? ''"></textarea>
-</mat-form-field>
+@if (control().showLabel) {
+  <label class="form-label"
+         [ngClass]="{'required': control().required && validation.active()}">{{ control().label }}</label>
+}
+
+<textarea
+  [attr.aria-describedby]="control().helperText ? control().name + 'helpBlock' : null"
+  [attr.aria-label]="control().label + ' input'"
+  [formControl]="$any(control())"
+  [id]="control().id"
+  [readonly]="control().isReadonly"
+  [spellcheck]="false"
+  [rows]="1"
+  class="form-control text-body fs-8"
+  [ngClass]="{
+      'is-invalid': (root().submitted) && control().invalid,
+      'is-valid': (root().submitted) && control().valid
+    }"
+></textarea>
+
+@if (control().errors && root().submitted) {
+  <div invalidFeedback3
+       [control]="control()">
+  </div>
+}
+
+@if (control().helperText) {
+  <div helpBlock3 [(control)]="control"></div>
+}

@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StripeCardNumberElement, Stripe, StripeCardExpiryElement, StripeCardCvcElement, loadStripe } from '@stripe/stripe-js';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';

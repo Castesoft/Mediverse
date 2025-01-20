@@ -123,9 +123,7 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
         .setServiceOptions(this.services.options())
         .setNurseOptions(this.nurses.options());
 
-      const value = this.item();
-
-      if (value !== null) this.form.patchValue(value);
+      if (this.item() !== null) this.form.patchValue(this.item()!);
     });
   }
 

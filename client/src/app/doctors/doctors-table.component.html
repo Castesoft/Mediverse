@@ -1,0 +1,90 @@
+<thead
+  tableHeader
+  [(columns)]="service.columns"
+  [(dictionary)]="service.dictionary"
+  [(params)]="params"
+  [(mode)]="mode"
+  [(isCompact)]="isCompact"
+  (selectedChange)="service.toggleMultipleSelectedArray$(key() || '', data())"
+></thead>
+<tbody templateTableBody>
+  @for (item of data(); track item.id; let idx = $index) {
+    <tr
+      class="hover-actions-trigger btn-reveal-trigger position-static"
+      [cdkContextMenuTriggerFor]="context_menu"
+    >
+      <td
+        tableCheckCell
+        [isCompact]="isCompact()"
+        [isChecked]="item.isSelected"
+        (click)="service.setSelected$(key() || '', item)"
+      ></td>
+
+      @if (dev.isDev()) {
+        <td
+          class="name align-middle white-space-nowrap px-0 py-0"
+          [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+        >
+          <div class="d-flex align-items-center justify-content-start px-0">
+            <a
+              [routerLink]="[service.dictionary.catalogRoute, item.id]"
+              [href]="[service.dictionary.catalogRoute, item.id]"
+              class="fw-semibold text-primary"
+            >#{{ item.id | number }}</a
+            >
+          </div>
+        </td>
+      }
+
+      @if (showDoctorColumn() || params().fromSection == SiteSection.ADMIN) {
+        <td userCell [user]="item.doctor" [role]="'Doctor'"></td>
+      }
+
+      <td userCell [user]="item.patient" [role]="'Patient'"></td>
+
+      <td>
+        <div doctorsStatusBadge [statusOption]="item.status"></div>
+      </td>
+
+      <td>
+        <div doctorsDeliveryStatusBadge [statusOption]="item.deliveryStatus"></div>
+      </td>
+
+      @for (cell of row().getItems([
+        'address',
+        'subtotal',
+        'discount',
+        'tax',
+        'total',
+        'createdAt',
+      ]);
+        let idx = $index;
+        track idx) {
+        <td
+          tableCell2
+          [item]="cells()[cell.item.key]!"
+          [(isCompact)]="isCompact"
+          [value]="item[cell.item.key]"
+        ></td>
+      }
+
+      <td
+        tableMenuCell
+        [item]="item"
+        [contextMenu]="context_menu"
+        [(isCompact)]="isCompact"
+      ></td>
+      <ng-template #context_menu>
+        @defer {
+          @if (key()) {
+            <div tableMenu
+                 [siteSection]="params().fromSection || undefined"
+                 [item]="item"
+                 [key]="key()!"
+                 [service]="service"></div>
+          }
+        }
+      </ng-template>
+    </tr>
+  }
+</tbody>

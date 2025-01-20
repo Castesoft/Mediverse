@@ -8,7 +8,7 @@
               <div userProfilePicture
                 [photoUrl]="item()!.photoUrl"
                 [fullName]="item()!.fullName"
-                size="lg"
+                [size]="PhotoSize.LARGE"
               ></div>
             </div>
             <a [routerLink]="['']" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">{{item()!.fullName}}</a>

@@ -4,7 +4,7 @@ import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
 import { View, CatalogMode } from "src/app/_models/base/types";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { Sections, SiteSection } from "src/app/_models/sections/sectionTypes";
+import { Sections } from "src/app/_models/sections/sectionTypes";
 import { CompactTableService } from "src/app/_services/compact-table.service";
 import { ValidationService } from "src/app/_services/validation.service";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";

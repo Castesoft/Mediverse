@@ -6,7 +6,6 @@ import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { AccountService } from 'src/app/_services/account.service';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { AddPaymentMethodComponent } from './add-payment-method/add-payment-method.component';
-import { AddressDetailModalComponent } from 'src/app/addresses/addresses.config';
 
 @Component({
   selector: 'app-account-billing',

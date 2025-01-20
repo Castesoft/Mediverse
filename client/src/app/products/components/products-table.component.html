@@ -15,11 +15,9 @@
     >
       <td
         tableCheckCell
-        [idx]="idx"
-        [(isCompact)]="isCompact"
-        [(dictionary)]="service.dictionary"
-        [(selected)]="item.isSelected"
-        (click)="service.setSelected$(key() || '', item)"
+        [isCompact]="isCompact()"
+        [isChecked]="item.isSelected"
+        (checkboxChange)="service.setSelected$(key() || '', item)"
       ></td>
 
       @if (dev.isDev()) {
@@ -38,22 +36,61 @@
         </td>
       }
 
+      <td symbolCell [photoUrl]="item.photoUrl" [shape]="PhotoShape.SQUARE"></td>
+
+      <td>
+        <div class="fw-bolder">{{ item.name }}</div>
+        <div class="text-muted fs-7 description-truncate" [title]="item.description">
+          {{ item.description }}
+        </div>
+      </td>
+
       @for (cell of row().getItems([
-        'name',
-        'description',
         'price',
-        'quantity',
         'discount',
-        'dosage',
-        'unit',
+      ]); let idx = $index; track idx) {
+        <td
+          tableCell2
+          [item]="cells()[cell.item.key]!"
+          [(isCompact)]="isCompact"
+          [value]="item[cell.item.key]"
+        ></td>
+      }
+
+      <td class="text-end">
+        <span class="me-1">{{ item.dosage }}</span><span class="fw-semibold">{{ item.unit }}</span>
+      </td>
+
+
+      @for (cell of row().getItems([
         'lotNumber',
         'manufacturer',
-        'enabled',
-        'visible',
+      ]); let idx = $index; track idx) {
+        <td
+          tableCell2
+          [item]="cells()[cell.item.key]!"
+          [(isCompact)]="isCompact"
+          [value]="item[cell.item.key]"
+        ></td>
+      }
+
+      <td
+        tableCheckCell
+        [isCompact]="isCompact()"
+        [isChecked]="item.isEnabled"
+        (checkboxChange)="handleIsEnabledChange(item, $event)"
+      ></td>
+
+      <td
+        tableCheckCell
+        [isCompact]="isCompact()"
+        [isChecked]="item.isVisible"
+        (checkboxChange)="handleIsVisibleChange(item, $event)"
+      ></td>
+
+      @for (cell of row().getItems([
         'createdAt',
-      ]);
-        let idx = $index;
-        track idx) {
+      ]); let idx = $index; track idx) {
         <td
           tableCell2
           [item]="cells()[cell.item.key]!"
@@ -72,6 +109,7 @@
         @defer {
           @if (key()) {
             <div tableMenu
+                 [siteSection]="params().fromSection || undefined"
                  [item]="item"
                  [key]="key()!"
                  [service]="service"></div>

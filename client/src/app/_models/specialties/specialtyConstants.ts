@@ -4,7 +4,6 @@ import {
   columnCreatedAt,
   columnDescription,
   columnEnabled,
-  columnId,
   columnName,
   columnVisible
 } from "src/app/_models/base/column";

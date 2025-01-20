@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ModelSignal, model, OnDestroy, effect, input } from "@angular/core";
+import { Component, ModelSignal, model, OnDestroy, effect, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -17,6 +17,7 @@ import { EventsService } from "src/app/events/events.config";
 import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
 import { TimePeriodCellComponent } from "src/app/_shared/template/components/tables/cells/time-period-cell.component";
 import { Column } from "src/app/_models/base/column";
+import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -33,6 +34,7 @@ import { Column } from "src/app/_models/base/column";
     CommonModule,
     UserTableCellComponent,
     TimePeriodCellComponent,
+    TableMenuComponent,
   ],
 })
 export class EventsTableComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements OnDestroy, TableInputSignals<Event, EventParams> {

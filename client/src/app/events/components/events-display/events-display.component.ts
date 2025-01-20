@@ -1,4 +1,4 @@
-import { Component, inject, input, model } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { Role, View } from 'src/app/_models/types';
 import { CatalogMode } from 'src/app/_models/types';
 import { EventsService } from 'src/app/_services/events.service';

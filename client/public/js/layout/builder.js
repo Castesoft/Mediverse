@@ -14,20 +14,20 @@ var KTAppLayoutBuilder = function() {
 	var engageToggleOn;
 	var engagePrebuiltsModal;
 
-	var handleEngagePrebuilts = function() {	
+	var handleEngagePrebuilts = function() {
 		if (engagePrebuiltsModal === null) {
 			return;
-		}	
+		}
 
 		if ( KTCookie.get("app_engage_prebuilts_modal_displayed") !== "1" ) {
 			setTimeout(function() {
 				const modal = new bootstrap.Modal(engagePrebuiltsModal);
 				modal.show();
-	
+
 				const date = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
 				KTCookie.set("app_engage_prebuilts_modal_displayed", "1", {expires: date});
 			}, 3000);
-		} 
+		}
 	}
 
 	var handleEngagePrebuiltsViewMenu = function() {
@@ -37,7 +37,7 @@ var KTAppLayoutBuilder = function() {
 
 		// Toggle Handler
 		KTUtil.on(engagePrebuiltsModal, '[data-kt-mode]', 'click', function (e) {
-			const title = this.innerText;	
+			const title = this.innerText;
 			const mode = this.getAttribute("data-kt-mode");
 			const selectedLink = menu.querySelector('.menu-link.active');
 			const viewImage = document.querySelector('#kt_app_engage_prebuilts_view_image');
@@ -64,11 +64,11 @@ var KTAppLayoutBuilder = function() {
 		});
 	}
 
-	var handleEngageToggle = function() {	
+	var handleEngageToggle = function() {
 		engageToggleOff.addEventListener("click", function (e) {
 			e.preventDefault();
 
-			const date = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000); // 1 days from now
+			const date = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 days from now
 			KTCookie.set("app_engage_hide", "1", {expires: date});
 			engage.classList.add('app-engage-hide');
 		});
@@ -103,13 +103,13 @@ var KTAppLayoutBuilder = function() {
 				success: function(response, status, xhr) {
 					if (history.scrollRestoration) {
 						history.scrollRestoration = 'manual';
-					}					
-					location.reload();					
+					}
+					location.reload();
 					return;
 
 					toastr.success(
-						"Preview has been updated with current configured layout.", 
-						"Preview updated!", 
+						"Preview has been updated with current configured layout.",
+						"Preview updated!",
 						{timeOut: 0, extendedTimeOut: 0, closeButton: true, closeDuration: 0}
 					);
 
@@ -119,8 +119,8 @@ var KTAppLayoutBuilder = function() {
 				},
 				error: function(response) {
 					toastr.error(
-						"Please try it again later.", 
-						"Something went wrong!", 
+						"Please try it again later.",
+						"Something went wrong!",
 						{timeOut: 0, extendedTimeOut: 0, closeButton: true, closeDuration: 0}
 					);
 				},
@@ -136,8 +136,8 @@ var KTAppLayoutBuilder = function() {
 			e.preventDefault();
 
 			toastr.success(
-				"Process has been started and it may take a while.", 
-				"Generating HTML!", 
+				"Process has been started and it may take a while.",
+				"Generating HTML!",
 				{timeOut: 0, extendedTimeOut: 0, closeButton: true, closeDuration: 0}
 			);
 
@@ -146,7 +146,7 @@ var KTAppLayoutBuilder = function() {
 
 			// Set form action value
 			actionInput.value = "export";
-			
+
 			// Prepare form data
 			var data = $(form).serialize();
 
@@ -170,8 +170,8 @@ var KTAppLayoutBuilder = function() {
 				},
 				error: function(response) {
 					toastr.error(
-						"Please try it again later.", 
-						"Something went wrong!", 
+						"Please try it again later.",
+						"Something went wrong!",
 						{timeOut: 0, extendedTimeOut: 0, closeButton: true, closeDuration: 0}
 					);
 
@@ -190,7 +190,7 @@ var KTAppLayoutBuilder = function() {
 
 			// Set form action value
 			actionInput.value = "reset";
-			
+
 			// Prepare form data
 			var data = $(form).serialize();
 
@@ -203,13 +203,13 @@ var KTAppLayoutBuilder = function() {
 					if (history.scrollRestoration) {
 						history.scrollRestoration = 'manual';
 					}
-					
-					location.reload();					
+
+					location.reload();
 					return;
-					
+
 					toastr.success(
-						"Preview has been successfully reset and the page will be reloaded.", 
-						"Reset Preview!", 
+						"Preview has been successfully reset and the page will be reloaded.",
+						"Reset Preview!",
 						{timeOut: 0, extendedTimeOut: 0, closeButton: true, closeDuration: 0}
 					);
 
@@ -219,8 +219,8 @@ var KTAppLayoutBuilder = function() {
 				},
 				error: function(response) {
 					toastr.error(
-						"Please try it again later.", 
-						"Something went wrong!", 
+						"Please try it again later.",
+						"Something went wrong!",
 						{timeOut: 0, extendedTimeOut: 0, closeButton: true, closeDuration: 0}
 					);
 				},
@@ -244,7 +244,7 @@ var KTAppLayoutBuilder = function() {
 				KTThemeMode.setMode('light');
 			});
 		}
-		
+
 		if (checkDark) {
 			checkDark.addEventListener("click", function() {
 				this.checked = true;
@@ -284,11 +284,11 @@ var KTAppLayoutBuilder = function() {
             }
 
             url = form.getAttribute("action");
-            actionInput = document.querySelector("#kt_app_layout_builder_action");            
+            actionInput = document.querySelector("#kt_app_layout_builder_action");
             previewButton = document.querySelector("#kt_app_layout_builder_preview");
             exportButton = document.querySelector("#kt_app_layout_builder_export");
-            resetButton = document.querySelector("#kt_app_layout_builder_reset");			
-    
+            resetButton = document.querySelector("#kt_app_layout_builder_reset");
+
 			if ( previewButton ) {
 				handlePreview();
 			}

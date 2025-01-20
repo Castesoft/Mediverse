@@ -8,6 +8,7 @@ import { ShareModalComponent } from 'src/app/landing/components/doctor-profile/s
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
+import { PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
   selector: 'app-doctor-profile',
@@ -131,4 +132,6 @@ export class DoctorProfileComponent implements OnInit {
     input.setSelectionRange(0, 0);
     // You can add a toast notification here to inform the user that the URL has been copied
   }
+
+  protected readonly PhotoSize = PhotoSize;
 }

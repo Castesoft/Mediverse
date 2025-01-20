@@ -76,10 +76,10 @@ export type TableCellColor = "primary" | "secondary" | "success" | "danger" | "w
 
 export const tableCellCreatedAt: TableCellItem<Date, 'createdAt'> = new TableCellItem<Date, "createdAt">("createdAt", "date", { fullDate: true });
 export const tableCellDescription: TableCellItem<string, 'description'> = new TableCellItem<string, "description">("description", "string");
-export const tableCellEnabled: TableCellItem<boolean, 'enabled'> = new TableCellItem<boolean, "enabled">("enabled", "boolean");
+export const tableCellEnabled: TableCellItem<boolean, 'isEnabled'> = new TableCellItem<boolean, "isEnabled">("isEnabled", "boolean");
 export const tableCellName: TableCellItem<string, 'name'> = new TableCellItem<string, "name">("name", "string");
 export const tableCellCode: TableCellItem<string, 'code'> = new TableCellItem<string, "code">("code", "string");
-export const tableCellVisible: TableCellItem<boolean, 'visible'> = new TableCellItem<boolean, "visible">("visible", "boolean");
+export const tableCellVisible: TableCellItem<boolean, 'isVisible'> = new TableCellItem<boolean, "isVisible">("isVisible", "boolean");
 export const tableCellId: TableCellItem<number, 'id'> = new TableCellItem<number, "id">("id", "number");
 export const tableCellCodeNumber: TableCellItem<number, 'codeNumber'> = new TableCellItem<number, "codeNumber">("codeNumber", "number");
 export const tableCellIsSelected: TableCellItem<boolean, 'isSelected'> = new TableCellItem<boolean, "isSelected">("isSelected", "boolean");
@@ -88,10 +88,10 @@ export const tableCellIsSelected: TableCellItem<boolean, 'isSelected'> = new Tab
 export const baseTableCells: PartialCellsOf<Entity> = {
   createdAt: tableCellCreatedAt,
   description: tableCellDescription,
-  enabled: tableCellEnabled,
+  isEnabled: tableCellEnabled,
   name: tableCellName,
   code: tableCellCode,
-  visible: tableCellVisible,
+  isVisible: tableCellVisible,
   id: tableCellId,
   codeNumber: tableCellCodeNumber,
   isSelected: tableCellIsSelected,

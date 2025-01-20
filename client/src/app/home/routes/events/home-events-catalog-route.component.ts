@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnDestroy, signal } from "@angular/core";
+import { Component, inject, OnDestroy, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
 import Event from "src/app/_models/events/event";

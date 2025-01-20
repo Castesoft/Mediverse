@@ -1,4 +1,4 @@
-import { Component, input, model, NgModule } from '@angular/core';
+import { Component, model, NgModule } from '@angular/core';
 import { NamingSubject } from 'src/app/_models/base/namingSubject';
 import { CatalogMode } from 'src/app/_models/base/types';
 

@@ -8,11 +8,11 @@ import { MaterialModule } from "src/app/_shared/material.module";
   host: { class: '', },
   selector: 'div[invalidFeedback3]',
   template: `
-  @if(root().submitted === true) {
-    @for(message of control().errorMessages; let idx = $index; track idx) {
-      <mat-error>{{ message }}</mat-error>
+    @if (root().submitted) {
+      @for (message of control().errorMessages; let idx = $index; track idx) {
+        <mat-error>{{ message }}</mat-error>
+      }
     }
-  }
   `,
   standalone: true,
   imports: [ CommonModule, MaterialModule, ],

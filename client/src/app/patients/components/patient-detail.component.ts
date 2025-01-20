@@ -16,21 +16,18 @@ import { PatientFormComponent, PatientsService } from "src/app/patients/patients
 
 @Component({
   selector: 'div[patientDetail]',
-  // template: `
-  // <div container3 [type]="'inline'">
-  //   <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div>
-  // </div>
-  // <div patientForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
-  // `,
   templateUrl: './patient-detail.component.html',
   standalone: true,
-  imports: [ PatientFormComponent, ControlsModule, Forms2Module, RouterModule, CommonModule,
+  imports: [
+    PatientFormComponent,
+    ControlsModule,
+    Forms2Module,
+    RouterModule,
+    CommonModule,
     PatientFullDetailComponent,
   ],
 })
-export class PatientDetailComponent
-  extends BaseDetail<Patient, PatientParams, PatientFiltersForm, PatientsService>
-  implements DetailInputSignals<Patient> {
+export class PatientDetailComponent extends BaseDetail<Patient, PatientParams, PatientFiltersForm, PatientsService> implements DetailInputSignals<Patient> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Patient | null> = model.required();
@@ -40,5 +37,4 @@ export class PatientDetailComponent
   constructor() {
     super(PatientsService);
   }
-
 }

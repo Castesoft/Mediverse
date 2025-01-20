@@ -10,6 +10,7 @@ import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMet
 import { Specialty } from "src/app/_models/specialties/specialty";
 import { AccountService } from "src/app/_services/account.service";
 import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
+import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
   selector: 'app-card-profile-details',
@@ -131,4 +132,7 @@ export class CardProfileDetailsComponent {
       }
     });
   }
+
+  protected readonly PhotoSize = PhotoSize;
+  protected readonly PhotoShape = PhotoShape;
 }

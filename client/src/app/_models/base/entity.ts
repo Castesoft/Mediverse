@@ -12,8 +12,8 @@ export class Entity {
   code: string | null = null;
   description: string | null = null;
   isSelected: boolean = false;
-  visible: boolean = true;
-  enabled: boolean = true;
+  isVisible: boolean = true;
+  isEnabled: boolean = true;
   isCollapsed: boolean = false;
 }
 
@@ -22,9 +22,9 @@ export const baseInfo: FormInfo<Entity> = {
   codeNumber: { label: 'Número de Código', type: 'number', },
   createdAt: { label: 'Creado', type: 'date', },
   description: { label: 'Descripción', type: 'textarea', },
-  enabled: { label: 'Habilitado', type: 'slideToggle', },
+  isEnabled: { label: 'Habilitado', type: 'slideToggle', },
   id: { label: 'ID', type: 'number', },
   isSelected: { label: 'Seleccionado', type: 'checkbox', },
   name: { label: 'Nombre', type: 'text', },
-  visible: { label: 'Visible', type: 'slideToggle', },
+  isVisible: { label: 'Visible', type: 'slideToggle', },
 } as FormInfo<Entity>;

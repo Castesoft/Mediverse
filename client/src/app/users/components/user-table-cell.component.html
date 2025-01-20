@@ -1,0 +1,17 @@
+<div class="d-flex align-middle">
+  <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+    <a [routerLink]="[routerLink]">
+      <div class="symbol-label">
+        <div userProfilePicture [fullName]="user().fullName" [photoUrl]="user().photoUrl"></div>
+      </div>
+    </a>
+  </div>
+  <div class="d-flex flex-column align-middle justify-content-center">
+    <a
+      [routerLink]="[routerLink]"
+      class="text-gray-800 text-hover-primary mb-1"
+    >{{ user().fullName }}</a
+    >
+    <span>{{ user().email }}</span>
+  </div>
+</div>

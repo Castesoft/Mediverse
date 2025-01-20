@@ -4,7 +4,7 @@ export class Document {
   publicId: string | null = null;
   size: number | null = null;
   thumbnailUrl: string | null = null;
-  thumbnailPublicId: string | null = null;;
+  thumbnailPublicId: string | null = null;
   thumbnailSize: number | null = null;
   name: string | null = null;
   description: string | null = null;

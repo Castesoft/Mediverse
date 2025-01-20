@@ -18,7 +18,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
 import { UserTableCellComponent } from "../users/components/user-table-cell.component";
 import { Column } from "src/app/_models/base/column";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
-import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-deilvery-status-badge.component";
+import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-delivery-status-badge.component";
 import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
 
 @Component({

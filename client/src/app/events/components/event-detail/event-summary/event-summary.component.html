@@ -1,94 +1,96 @@
 @let _item = item();
 
-@if(_item !== null) {
+@if (_item !== null) {
   <div class="card mb-5 mb-xl-8" [ngClass]="{'flex-column': orientation() === 'vertical'}">
-      <div class="card-header border-0 py-5">
-        <span class="card-label fw-regular text-gray-500 fs--2"> Cita de </span>
-        <div
-          class="row w-100 d-flex justify-content-between align-items-center g-0"
-        >
-          <div class="col-6 p-0" [ngClass]="{'col-12': orientation() === 'vertical'}">
-            <h3 class="card-title">
-              <span class="card-label fw-bolder text-gray-900 fs-2">
-                {{ _item.dateFrom | date : "mediumDate" }}, {{ _item.dateFrom | date : "shortTime" }}
-              </span>
-            </h3>
-          </div>
-          @if (summaryMode()) {
-            <div class="col-6 p-0 d-flex justify-content-end">
-              <a
-                  class="btn btn-light-primary py-2"
-                  (click)="service.clickLink(_item, key(), use(), 'page')"
-                >
-                  Ir a la cita
-                </a>
-            </div>
-          }
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="d-flex" [ngClass]="{'flex-column align-items-center': orientation() === 'vertical'}">
-          <div class="symbol symbol-150px" [ngClass]="{'mb-5': orientation() === 'vertical', 'me-5': orientation() === 'horizontal'}">
-            <span class="symbol-label bg-light-danger">
-              <div userProfilePicture [fullName]="_item.patient.fullName" [photoUrl]="_item.patient.photoUrl"
-                [shape]="'square'"
-                [size]="'lg'"
-              ></div>
+    <div class="card-header border-0 py-5">
+      <span class="card-label fw-regular text-gray-500 fs--2"> Cita de </span>
+      <div
+        class="row w-100 d-flex justify-content-between align-items-center g-0"
+      >
+        <div class="col-6 p-0" [ngClass]="{'col-12': orientation() === 'vertical'}">
+          <h3 class="card-title">
+            <span class="card-label fw-bolder text-gray-900 fs-2">
+              {{ _item.dateFrom | date : "mediumDate" }}, {{ _item.dateFrom | date : "shortTime" }}
             </span>
+          </h3>
+        </div>
+        @if (summaryMode()) {
+          <div class="col-6 p-0 d-flex justify-content-end">
+            <a
+              class="btn btn-light-primary py-2"
+              (click)="service.clickLink(_item, key(), use(), 'page')"
+            >
+              Ir a la cita
+            </a>
           </div>
-          <div class="d-flex flex-grow-1 flex-column" [ngClass]="{'w-100': orientation() === 'vertical'}">
-            <div class="d-flex align-items-center justify-content-between mb-0">
-              <a
-                href="#"
-                class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"
-              >
-                {{ _item.patient.firstName }} {{ _item.patient.lastName }}
-              </a>
-            </div>
-            <div class="d-flex" [ngClass]="{'flex-column align-items-start': orientation() === 'vertical', 'align-items-center': orientation() === 'horizontal'}">
-              <a
-                href="#"
-                class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2 mb-sm-0 text-break"
-              >
-                <i class="ki-duotone ki-sms fs-4 me-1"
-                  ><span class="path1"></span><span class="path2"></span
-                ></i>
-                <span class="text-wrap">{{ _item.patient.email }}</span>
-              </a>
-              <a
-                href="#"
-                class="d-flex align-items-center text-gray-500 text-hover-primary me-5"
-              >
-                <i class="ki-duotone ki-phone fs-4 me-1"
-                  ><span class="path1"></span><span class="path2"></span
-                ></i>
-                {{ _item.patient.phoneNumber }}
-              </a>
-            </div>
-            <div class="d-flex flex-grow">
-              <div class="row w-100" [ngClass]="{'flex-column': orientation() === 'vertical'}">
-                <div [ngClass]="{'col-6': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
-                  <div class="fw-bold mt-5">Sexo</div>
-                  <div class="text-gray-600 mb-0">
-                    {{ _item.patient.sex }}
-                  </div>
+        }
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="d-flex" [ngClass]="{'flex-column align-items-center': orientation() === 'vertical'}">
+        <div class="symbol symbol-150px"
+             [ngClass]="{'mb-5': orientation() === 'vertical', 'me-5': orientation() === 'horizontal'}">
+          <span class="symbol-label bg-light-danger">
+            <div userProfilePicture [fullName]="_item.patient.fullName" [photoUrl]="_item.patient.photoUrl"
+                 [shape]="PhotoShape.SQUARE"
+                 [size]="PhotoSize.LARGE"
+            ></div>
+          </span>
+        </div>
+        <div class="d-flex flex-grow-1 flex-column" [ngClass]="{'w-100': orientation() === 'vertical'}">
+          <div class="d-flex align-items-center justify-content-between mb-0">
+            <a
+              href="#"
+              class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"
+            >
+              {{ _item.patient.firstName }} {{ _item.patient.lastName }}
+            </a>
+          </div>
+          <div class="d-flex"
+               [ngClass]="{'flex-column align-items-start': orientation() === 'vertical', 'align-items-center': orientation() === 'horizontal'}">
+            <a
+              href="#"
+              class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2 mb-sm-0 text-break"
+            >
+              <i class="ki-duotone ki-sms fs-4 me-1"
+              ><span class="path1"></span><span class="path2"></span
+              ></i>
+              <span class="text-wrap">{{ _item.patient.email }}</span>
+            </a>
+            <a
+              href="#"
+              class="d-flex align-items-center text-gray-500 text-hover-primary me-5"
+            >
+              <i class="ki-duotone ki-phone fs-4 me-1"
+              ><span class="path1"></span><span class="path2"></span
+              ></i>
+              {{ _item.patient.phoneNumber }}
+            </a>
+          </div>
+          <div class="d-flex flex-grow">
+            <div class="row w-100" [ngClass]="{'flex-column': orientation() === 'vertical'}">
+              <div [ngClass]="{'col-6': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
+                <div class="fw-bold mt-5">Sexo</div>
+                <div class="text-gray-600 mb-0">
+                  {{ _item.patient.sex }}
                 </div>
-                <div [ngClass]="{'col-6': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
-                  <div class="fw-bold mt-5">Fecha de Nacimiento</div>
-                  <div class="text-gray-600 mb-0">
-                    {{ _item.patient.dateOfBirth | date : "mediumDate" }}
-                  </div>
-                </div>
-
-                <!-- <div [ngClass]="{'col-4': orientation() === 'horizontal'}">
-                  <div class="fw-bold mt-5">Dirección</div>
-                  <div class="text-gray-600 mb-0"></div>
-                </div> -->
               </div>
+              <div [ngClass]="{'col-6': orientation() === 'horizontal', 'mb-4': orientation() === 'vertical'}">
+                <div class="fw-bold mt-5">Fecha de Nacimiento</div>
+                <div class="text-gray-600 mb-0">
+                  {{ _item.patient.dateOfBirth | date : "mediumDate" }}
+                </div>
+              </div>
+
+              <!-- <div [ngClass]="{'col-4': orientation() === 'horizontal'}">
+                <div class="fw-bold mt-5">Dirección</div>
+                <div class="text-gray-600 mb-0"></div>
+              </div> -->
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 }
 

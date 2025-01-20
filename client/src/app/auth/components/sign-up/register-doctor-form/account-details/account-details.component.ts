@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ControlCheckListComponent } from 'src/app/_forms/control-check-list.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';

@@ -17,6 +17,7 @@ import { EventParams } from "src/app/_models/events/eventParams";
 import { createId } from "@paralleldrive/cuid2";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 import { CalendarView } from "src/app/_models/events/eventTypes";
+import { PhotoSize } from "src/app/_models/photos/photoTypes";
 
 
 @Component({
@@ -71,4 +72,5 @@ export class PatientFullDetailComponent
     return total - paid;
   };
 
+  protected readonly PhotoSize = PhotoSize;
 }

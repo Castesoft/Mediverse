@@ -1,22 +1,62 @@
+@if (form.error !== null) {
+  <div errorsAlert3 [(error)]="form.error"></div>
+}
 
-<form (ngSubmit)="onSubmit(view, use)" [id]="form.id">
+@if (useCard()) {
+  <div class="row">
+    <div class="col-3">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>
+              Imagen
+            </h2>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="d-flex flex-grow-1 justify-content-center">
+            <div symbolCell
+                 class="justify-content-center text-center"
+                 [photoUrl]="item()?.photoUrl || null"
+                 [size]="PhotoSize.EXTRA_LARGE"
+                 [shape]="PhotoShape.SQUARE"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-9">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>
+              General
+            </h2>
+          </div>
+        </div>
+        <div class="card-body">
+          <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+            <div controlsWrapper3 [control]="form.controls.name"></div>
+            <div controlsWrapper3 [control]="form.controls.description"></div>
+            <button class="btn btn-primary" type="submit" [attr.form]="form.id">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  @if (form.error !== null) {
-    <div errorsAlert3 [(error)]="form.error"></div>
-  }
+} @else {
+  <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+    <div formBuilder3 [controls]="[
+            form.controls.name,
+            form.controls.description,
+            form.controls.manufacturer,
+            form.controls.dosage,
+            form.controls.unit,
+            form.controls.price,
+            form.controls.quantity,
+            form.controls.discount,
+      ]"></div>
+    <button class="btn btn-primary" type="submit" [attr.form]="form.id">Enviar</button>
+  </form>
+}
 
-  <div formBuilder3 [cols]="2" [controls]="[
-    form.controls.name,
-    form.controls.description,
-    form.controls.manufacturer,
-    form.controls.dosage,
-    form.controls.unit,
-    form.controls.price,
-    form.controls.discount,
-    form.controls.quantity,
-    form.controls.lotNumber,
-  ]"></div>
-
-  <button type="submit" class="btn btn-primary" [attr.form]="form.id">Enviar</button>
-
-</form>

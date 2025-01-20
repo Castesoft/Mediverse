@@ -1,9 +1,7 @@
 import {
   Column,
   columnCreatedAt,
-  columnDescription,
   columnEnabled,
-  columnId,
   columnName,
   columnVisible
 } from "src/app/_models/base/column";
@@ -53,14 +51,12 @@ export const productDictionary: NamingSubject = new NamingSubject(
 );
 
 export const productColumns: Column[] = [
+  new Column('image', 'Imagen', { options: new ColumnOptions({ justify: 'start', }) }),
   columnName,
-  columnDescription,
   new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', }) }),
-  new Column('quantity', 'Cantidad', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('dosage', 'Dosis', { options: new ColumnOptions({ justify: 'end', }) }),
-  new Column('unit', 'Unidad', { options: new ColumnOptions({ justify: 'end', }) }),
-  new Column('lotNumber', 'Número de lote', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('lotNumber', 'Lote', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('manufacturer', 'Fabricante', { options: new ColumnOptions({ justify: 'start', }) }),
   columnEnabled,
   columnVisible,
@@ -70,16 +66,16 @@ export const productColumns: Column[] = [
 export const productCells: PartialCellsOf<Product> = {
   createdAt: tableCellCreatedAt,
   description: tableCellDescription,
-  enabled: tableCellEnabled,
+  isEnabled: tableCellEnabled,
   name: tableCellName,
   code: tableCellCode,
-  visible: tableCellVisible,
+  isVisible: tableCellVisible,
   id: tableCellId,
   price: new TableCellItem<number, 'price'>('price', 'currency', { justification: 'end', }),
   quantity: new TableCellItem<number, 'quantity'>('quantity', 'number', { justification: 'end', }),
   discount: new TableCellItem<number, 'discount'>('discount', 'number', { justification: 'end', }),
   dosage: new TableCellItem<string, 'dosage'>('dosage', 'string', { justification: 'end', }),
   unit: new TableCellItem<string, 'unit'>('unit', 'string'),
-  lotNumber: new TableCellItem<string, 'lotNumber'>('lotNumber', 'string'),
+  lotNumber: new TableCellItem<string, 'lotNumber'>('lotNumber', 'badge'),
   manufacturer: new TableCellItem<string, 'manufacturer'>('manufacturer', 'string'),
 } as PartialCellsOf<Product>;

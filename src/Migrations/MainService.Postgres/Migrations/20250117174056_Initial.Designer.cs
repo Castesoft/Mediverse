@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241221221906_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250117174056_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2431,6 +2431,12 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<double?>("Dosage")
                         .HasColumnType("double precision");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LotNumber")
                         .HasColumnType("text");

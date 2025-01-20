@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
+import { Component, ModelSignal, model, OnDestroy } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -15,6 +15,8 @@ import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { ProductsService } from "src/app/products/products.config";
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
+import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
+import { PhotoShape } from "src/app/_models/photos/photoTypes";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -30,6 +32,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     MaterialModule,
     CommonModule,
     TableMenuComponent,
+    SymbolCellComponent,
   ],
 })
 export class ProductsTableComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements OnDestroy, TableInputSignals<Product, ProductParams> {
@@ -49,4 +52,24 @@ export class ProductsTableComponent extends BaseTable<Product, ProductParams, Pr
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
+
+  private updateProduct(item: Product): void {
+    this.service.update(item, item.id, "inline").subscribe({
+      error: (error) => {
+        this.toastr.error(error.message);
+      }
+    });
+  }
+
+  handleIsEnabledChange(item: Product, checked: boolean): void {
+    item.isEnabled = checked;
+    this.updateProduct(item);
+  }
+
+  handleIsVisibleChange(item: Product, checked: boolean): void {
+    item.isVisible = checked;
+    this.updateProduct(item);
+  }
+
+  protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
 }

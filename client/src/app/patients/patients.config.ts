@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, Injectable, model, ModelSignal } from "@angular/core";
+import { Component, effect, inject, Injectable, InputSignal, model, ModelSignal } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -72,13 +72,12 @@ export class PatientsCatalogModalComponent {
   standalone: true,
   imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, ]
 })
-export class PatientFormComponent
-  extends BaseForm<Patient, PatientParams, PatientFiltersForm, PatientForm, PatientsService>
-  implements FormInputSignals<Patient> {
+export class PatientFormComponent extends BaseForm<Patient, PatientParams, PatientFiltersForm, PatientForm, PatientsService> implements FormInputSignals<Patient> {
   item: ModelSignal<Patient | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
+  useCard: InputSignal<boolean> = model(true);
 
   constructor() {
     super(PatientsService, PatientForm);
@@ -88,11 +87,7 @@ export class PatientFormComponent
         .setUse(this.use())
         .setValidation(this.validation.active());
 
-      const value = this.item();
-
-      if (value !== null) {
-        this.form.patchValue(value);
-      }
+      if (this.item() !== null) this.form.patchValue(this.item()!);
     });
   }
 }

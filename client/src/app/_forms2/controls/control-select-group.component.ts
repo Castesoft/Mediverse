@@ -3,8 +3,6 @@ import { Component, computed, effect, HostBinding, model } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { GroupHelpBlockComponent } from "src/app/_forms2/helper/group-help-block.component";
 import { GroupLabelComponent } from "src/app/_forms2/helper/group-label.component";
-import { HelpBlock3Component } from "src/app/_forms2/helper/help-block-3.component";
-import { InvalidFeedback3Component } from "src/app/_forms2/helper/invalid-feedback-3.component";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { SelectOptionPair } from "src/app/_models/base/selectOptionPair";

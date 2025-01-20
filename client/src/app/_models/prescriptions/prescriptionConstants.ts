@@ -1,6 +1,6 @@
 import { accountFormInfo } from "../account/accountConstants";
 import { addressFormInfo } from "src/app/_models/addresses/addressConstants";
-import { baseColumns, Column } from "src/app/_models/base/column";
+import { Column } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";

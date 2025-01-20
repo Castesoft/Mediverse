@@ -241,3 +241,9 @@ mat-form-field.hide-bottom {
   margin-left: auto;
 }
 
+.description-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}

@@ -15,7 +15,7 @@
     @for (review of doctor()!.reviews; track $index) {
     <div class="d-flex flex-column py-6 doctor-search-result">
       <div class="d-flex gap-3">
-        <div userProfilePicture [fullName]="review.account.fullName" [photoUrl]="review.account.photoUrl" size="sm"></div>
+        <div userProfilePicture [fullName]="review.account.fullName" [photoUrl]="review.account.photoUrl" [size]="PhotoSize.SMALL"></div>
         <div class="d-flex flex-column justify-content-center">
           <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{review.account.username}}</a>
           <div class="d-flex align-items-center">

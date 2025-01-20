@@ -7,7 +7,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, Component, importProvidersFrom, inject, isDevMode, OnInit } from '@angular/core';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from "@angular/material/core";
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, provideRouter, Router, RouterOutlet, ROUTES } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router, RouterOutlet } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { FlatpickrModule } from "angularx-flatpickr";
 import { provideToastr } from 'ngx-toastr';
@@ -73,7 +73,7 @@ export class AppComponent implements OnInit {
 
     this.setCurrentUser();
 
-    google.accounts.id.initialize({
+    google.accounts?.id.initialize({
       client_id: environment.google_client_id,
       use_fedcm_for_prompt: true,
       callback: (resp: any) => {

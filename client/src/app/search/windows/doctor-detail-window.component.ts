@@ -1,4 +1,4 @@
-import { Component, input, output, effect, inject, signal, model } from '@angular/core';
+import { Component, input, output, effect, inject, model } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { AvailableTime } from 'src/app/_models/availableTime';
@@ -9,6 +9,7 @@ import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-ta
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
 import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
+import { PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
   selector: 'div[doctorDetailWindow]',
@@ -91,4 +92,6 @@ export class DoctorDetailWindowComponent {
       this.router.navigate(['/doctor', this.service.selected()!.id]);
     }
   }
+
+  protected readonly PhotoSize = PhotoSize;
 }

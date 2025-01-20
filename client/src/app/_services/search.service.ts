@@ -1,10 +1,9 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable, effect, inject, signal } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { createId } from '@paralleldrive/cuid2';
 import { Observable, tap } from "rxjs";
-import { AvailableDay } from 'src/app/_models/availableDay';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { DoctorScheduleFormPayload } from 'src/app/_models/doctorSchedules/doctorScheduleFormPayload';
 import { SearchResults } from "src/app/_models/doctorSearchResults";

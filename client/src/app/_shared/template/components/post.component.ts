@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, model } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { PaddingService } from 'src/app/_services/padding.service';
 
 

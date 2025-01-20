@@ -1,15 +1,36 @@
-<mat-form-field [subscriptSizing]="'fixed'" [appearance]="control().materialOptions.appearance" class="hide-bottom" style="display: flex;">
-  @if(control().showLabel === true){<mat-label>{{control().label}}</mat-label>}
-  <input [formControl]="$any(control())" matInput [matDatepicker]="picker" [matDatepickerFilter]="control().dateOptions.dateFilter" (click)="picker.open()">
-  @if(!control().disabled || (control().dateOptions.hideToggleButton !== null || control().dateOptions.hideToggleButton === false)) {
+<mat-form-field
+  [subscriptSizing]="'fixed'"
+  [appearance]="control().materialOptions.appearance"
+  class="hide-bottom"
+  style="display: flex;"
+>
+  @if (control().showLabel) {
+    <mat-label>
+      {{ control().label }}
+    </mat-label>
+  }
+
+  <input matInput
+         [formControl]="$any(control())"
+         [matDatepicker]="picker"
+         [matDatepickerFilter]="control().dateOptions.dateFilter"
+         (click)="picker.open()">
+
+  @if (!control().disabled || (control().dateOptions.hideToggleButton !== null || control().dateOptions.hideToggleButton === false)) {
   } @else {
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
   }
+
   <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
-@if(control().hint !== null) {
-  <mat-hint>{{control().hint}}</mat-hint>
+
+@if (control().hint !== null) {
+  <mat-hint>
+    {{ control().hint }}
+  </mat-hint>
 }
+
 @if (control().errors !== null) {
-  <div invalidFeedback3 [(control)]="control"></div>
+  <div invalidFeedback3
+       [(control)]="control"></div>
 }

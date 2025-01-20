@@ -10,7 +10,7 @@
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from "@angular/common";
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { QuillModule } from 'ngx-quill';
@@ -41,18 +41,13 @@ import NextStepForm from 'src/app/_models/events/detail/nextStepForm';
 import { EventsService } from 'src/app/events/events.config';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { IconsService } from 'src/app/_services/icons.service';
-import { SnackbarService } from 'src/app/_services/snackbar.service';
 
 import { EventSummaryComponent } from 'src/app/events/components/event-detail/event-summary/event-summary.component';
 import { EventServicesSummaryComponent } from 'src/app/events/components/event-services-summary.component';
 import {
   PrescriptionFormComponent
 } from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
-import {
-  PrescriptionsTableComponent
-} from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component';
 import { PaymentsTableComponent } from 'src/app/_shared/components/payments-table/payments-table.component';
-import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import {
   PrescriptionsCatalogComponent
 } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
@@ -60,7 +55,6 @@ import { NursesCatalogModalComponent, NursesService } from "src/app/nurses/nurse
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import Nurse from "src/app/_models/nurses/nurse";
 import { NurseParams } from "src/app/_models/nurses/nurseParams";
-import { Sex } from "src/app/_models/types";
 import { createId } from "@paralleldrive/cuid2";
 import { MatDialog } from "@angular/material/dialog";
 import { NurseDisplayCardComponent } from "../../../nurses/components/nurse-display-card.component";

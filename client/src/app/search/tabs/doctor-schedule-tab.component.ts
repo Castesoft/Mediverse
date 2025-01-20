@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, output, inject, effect, model, signal, OnInit } from '@angular/core';
+import { Component, inject, effect, model, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { AvailableTime } from 'src/app/_models/availableTime';

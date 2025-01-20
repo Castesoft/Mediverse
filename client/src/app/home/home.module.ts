@@ -43,25 +43,36 @@ import { HomeOrdersCatalogRouteComponent } from 'src/app/home/routes/orders/home
 import { HomeOrderCreateRouteComponent } from 'src/app/home/routes/orders/home-order-create-route.component';
 import { HomeOrderDetailRouteComponent } from 'src/app/home/routes/orders/home-order-detail-route.component';
 import { HomeOrderEditRouteComponent } from 'src/app/home/routes/orders/home-order-edit-route.component';
-import { HomePrescriptionsCatalogRouteComponent } from 'src/app/home/routes/prescriptions/home-prescriptions-catalog-route.component';
-import { HomePrescriptionCreateRouteComponent } from 'src/app/home/routes/prescriptions/home-prescription-create-route.component';
-import { HomePrescriptionDetailRouteComponent } from 'src/app/home/routes/prescriptions/home-prescription-detail-route.component';
-import { HomePrescriptionEditRouteComponent } from 'src/app/home/routes/prescriptions/home-prescription-edit-route.component';
+import {
+  HomePrescriptionsCatalogRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescriptions-catalog-route.component';
+import {
+  HomePrescriptionCreateRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescription-create-route.component';
+import {
+  HomePrescriptionDetailRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescription-detail-route.component';
+import {
+  HomePrescriptionEditRouteComponent
+} from 'src/app/home/routes/prescriptions/home-prescription-edit-route.component';
 import { HomeClinicCreateRouteComponent } from 'src/app/home/routes/clinics/home-clinic-create-route.component';
 import { HomeClinicDetailRouteComponent } from 'src/app/home/routes/clinics/home-clinic-detail-route.component';
 import { HomeClinicEditRouteComponent } from 'src/app/home/routes/clinics/home-clinic-edit-route.component';
 import { HomeNurseCreateRouteComponent } from 'src/app/home/routes/nurses/home-nurse-create-route.component';
 import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nurse-edit-route.component';
 import { OrdersCatalogComponent } from 'src/app/orders/orders-catalog.component';
-import { OrderDetailComponent } from 'src/app/orders/orders.config';
-import { ProductDetailComponent } from 'src/app/products/products.config';
 import { PrescriptionDetailComponent } from 'src/app/prescriptions/prescriptions.config';
-import { PrescriptionsCatalogComponent } from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component';
+import {
+  PrescriptionsCatalogComponent
+} from 'src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component';
 import { ClinicDetailComponent } from 'src/app/clinics/clinics.config';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharmacy-catalog-route.component";
 import { BreadcrumbsComponent } from "src/app/_shared/components/breadcrumbs.component";
+import { OrderFormComponent } from "src/app/orders/order-form.component";
+import { ProductFormComponent } from "src/app/products/product-form.component";
+import { PatientFormComponent } from "src/app/patients/patients.config";
 
 @NgModule({
   declarations: [
@@ -124,13 +135,14 @@ import { BreadcrumbsComponent } from "src/app/_shared/components/breadcrumbs.com
     NurseDetailComponent,
     ServiceDetailComponent,
     OrdersCatalogComponent,
-    OrderDetailComponent,
-    ProductDetailComponent,
     PrescriptionDetailComponent,
     PrescriptionsCatalogComponent,
     ClinicDetailComponent,
     BreadcrumbsComponent,
+    OrderFormComponent,
+    ProductFormComponent,
+    PatientFormComponent,
   ],
-  exports: [HomeComponent],
+  exports: [ HomeComponent ],
 })
 export class HomeModule {}

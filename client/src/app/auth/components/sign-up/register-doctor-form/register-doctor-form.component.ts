@@ -1,4 +1,4 @@
-import { Component, inject, input, model, ViewChild } from '@angular/core';
+import { Component, inject, model, ViewChild } from '@angular/core';
 import { AccountSettingsComponent } from './account-settings/account-settings.component';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { BillingDetailsComponent } from './billing-details/billing-details.component';

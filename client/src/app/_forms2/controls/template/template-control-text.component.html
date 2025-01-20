@@ -2,8 +2,9 @@
   <label class="form-label"
          [ngClass]="{'required': control().required && validation.active()}">{{ control().label }}</label>
 }
+
 <input
-  class="form-control form-control-lg form-control-solid"
+  class="form-control form-control-lg"
   [ngClass]="{
     'is-invalid': (root().submitted) && control().invalid,
     'is-valid': (root().submitted) && control().valid

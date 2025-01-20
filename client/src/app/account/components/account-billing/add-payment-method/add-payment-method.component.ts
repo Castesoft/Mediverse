@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Stripe, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, loadStripe } from '@stripe/stripe-js';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
@@ -18,7 +18,7 @@ export class AddPaymentMethodComponent implements OnInit {
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
   private bsModalService = inject(BsModalService);
-  
+
   bsModalRef = inject(BsModalRef);
   title?: string;
 

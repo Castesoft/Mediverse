@@ -10,6 +10,8 @@ using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
+using MainService.Models.Helpers.Enums;
+using Serilog;
 
 namespace MainService.Infrastructure.Data;
 
@@ -17,6 +19,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
 {
     public void Add(Product item) => context.Products.Add(item);
     public void Delete(Product item) => context.Products.Remove(item);
+    public void Update(Product item) => context.Products.Update(item);
 
     public async Task<List<Product>> GetAllAsync()
     {
@@ -35,22 +38,19 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     public async Task<Product?> GetByIdAsNoTrackingAsync(int id) =>
         await context.Products
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Product?> GetByIdAsync(int id) =>
         await context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Product?> GetByNameAsync(string name, ClaimsPrincipal user) => await context.Products
-            .Include(x => x.DoctorProduct)
-            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
-            .Where(x => x.DoctorProduct.DoctorId == user.GetUserId())
-            .SingleOrDefaultAsync(x => x.Name == name)
-        ;
+        .Include(x => x.DoctorProduct)
+        .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+        .Where(x => x.DoctorProduct.DoctorId == user.GetUserId())
+        .SingleOrDefaultAsync(x => x.Name == name);
 
     public async Task<bool> ExistsAsync(int id, ClaimsPrincipal user)
     {
@@ -73,16 +73,16 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
 
     public async Task<List<ProductSummaryDto>> GetSummaryDtosAsync(ProductParams param, ClaimsPrincipal user)
     {
-        IQueryable<Product> query = context.Products
-            .Include(x => x.DoctorProduct)
-            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
-            .AsNoTracking()
-        ;
+        var query = context.Products
+                .Include(x => x.DoctorProduct)
+                .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+                .AsNoTracking()
+            ;
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            string term = param.Search.ToLower();
-            
+            var term = param.Search.ToLower();
+
             query = query.Where(
                 x =>
                     !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
@@ -97,14 +97,14 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         }
 
         return await query
-            .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider)
-            .ToListAsync()
-        ;
+                .ProjectTo<ProductSummaryDto>(mapper.ConfigurationProvider)
+                .ToListAsync()
+            ;
     }
 
     public async Task<List<OptionDto>> GetOptionsAsync(ProductParams param)
     {
-        IQueryable<Product> query = Includes(context.Products).AsQueryable();
+        var query = Includes(context.Products).AsQueryable();
 
         query = query.Where(x => x.DoctorProduct.DoctorId == param.DoctorId || x.DoctorProduct == null);
 
@@ -118,33 +118,56 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         query
             .AsSplitQuery()
             .Include(x => x.DoctorProduct)
-            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
-        ;
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo);
 
     public async Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user)
     {
-        IQueryable<Product> query = context.Products
+        var userId = user.GetUserId();
+        var userRoles = user.GetRoles();
+
+        var query = context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
-            .AsQueryable()
-        ;
+            .AsQueryable();
 
-        query = query.Where(x => x.DoctorProduct.DoctorId == user.GetUserId() || x.DoctorProduct == null);
+        if (!string.IsNullOrEmpty(param.FromSection))
+        {
+            if (param.FromSection == SiteSection.Admin)
+            {
+                if (!userRoles.Contains(Roles.Admin.ToString()))
+                    throw new UnauthorizedAccessException("Access denied. Admin role required.");
+
+                query = query.Where(x => x.DoctorProduct == null);
+            }
+            else
+            {
+                query = query.Where(x => x.IsVisible);
+
+                if (param.DoctorId.HasValue)
+                    query = query.Where(x => x.DoctorProduct.DoctorId == userId || x.DoctorProduct == null);
+            }
+        }
+        else
+        {
+            query = query.Where(x => x.IsVisible);
+
+            if (param.DoctorId.HasValue)
+                query = query.Where(x => x.DoctorProduct.DoctorId == userId || x.DoctorProduct == null);
+        }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            string term = param.Search.ToLower();
-            
+            var term = param.Search.ToLower();
             query = query.Where(
                 x =>
-                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
-                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
-                    !string.IsNullOrEmpty(x.Unit) && x.Unit.ToLower().Contains(term) ||
-                    !string.IsNullOrEmpty(x.Manufacturer) && x.Manufacturer.ToLower().Contains(term) ||
-                    !string.IsNullOrEmpty(x.LotNumber) && x.LotNumber.ToLower().Contains(term) ||
-                    x.Price.HasValue && x.Price.Value.ToString().ToLower().Contains(term) ||
-                    x.Discount.HasValue && x.Discount.Value.ToString().ToLower().Contains(term) ||
-                    x.Dosage.HasValue && x.Dosage.Value.ToString().ToLower().Contains(term)
+                    (!string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term)) ||
+                    (!string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)) ||
+                    (!string.IsNullOrEmpty(x.Unit) && x.Unit.ToLower().Contains(term)) ||
+                    (!string.IsNullOrEmpty(x.Manufacturer) && x.Manufacturer.ToLower().Contains(term)) ||
+                    (!string.IsNullOrEmpty(x.LotNumber) && x.LotNumber.ToLower().Contains(term)) ||
+                    (x.Price.HasValue && x.Price.Value.ToString().ToLower().Contains(term)) ||
+                    (x.Discount.HasValue && x.Discount.Value.ToString().ToLower().Contains(term)) ||
+                    (x.Dosage.HasValue && x.Dosage.Value.ToString().ToLower().Contains(term))
             );
         }
 
@@ -152,25 +175,48 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         {
             query = param.Sort.ToLower() switch
             {
-                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
-                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
-                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
-                "unit" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Unit) : query.OrderByDescending(x => x.Unit),
-                "manufacturer" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Manufacturer) : query.OrderByDescending(x => x.Manufacturer),
-                "lotnumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.LotNumber) : query.OrderByDescending(x => x.LotNumber),
-                "price" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Price) : query.OrderByDescending(x => x.Price),
-                "discount" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Discount) : query.OrderByDescending(x => x.Discount),
-                "dosage" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Dosage) : query.OrderByDescending(x => x.Dosage),
-                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Id)
+                    : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Name)
+                    : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Description)
+                    : query.OrderByDescending(x => x.Description),
+                "unit" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Unit)
+                    : query.OrderByDescending(x => x.Unit),
+                "manufacturer" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Manufacturer)
+                    : query.OrderByDescending(x => x.Manufacturer),
+                "lotnumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.LotNumber)
+                    : query.OrderByDescending(x => x.LotNumber),
+                "price" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Price)
+                    : query.OrderByDescending(x => x.Price),
+                "discount" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Discount)
+                    : query.OrderByDescending(x => x.Discount),
+                "dosage" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Dosage)
+                    : query.OrderByDescending(x => x.Dosage),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.CreatedAt)
+                    : query.OrderByDescending(x => x.CreatedAt),
                 _ => query.OrderByDescending(x => x.CreatedAt),
             };
-        } else {
+        }
+        else
+        {
             query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         return await PagedList<ProductDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<ProductDto>(mapper.ConfigurationProvider), param.PageNumber, param.PageSize);
     }
+
 
     public async Task<bool> ExistsByIdAsync(int id) => await context.Products.AnyAsync(x => x.Id == id);
 

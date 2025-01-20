@@ -1,29 +1,54 @@
-@if(control().orientation === 'inline') {
-<div class="d-flex align-items-center gap-2 pe-0 me-0">
-  @if(control().showLabel === true){<label class="form-label"
-    [ngClass]="{'required': control().required && validation.active()}">{{control().label}}</label>}
-  <input matInput [matDatepicker]="picker" [formControl]="$any(control())" (click)="picker.open()"
-    [matTooltip]="tooltipText()"
-    [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
-    [autocomplete]="false" [spellcheck]="false" [id]="control().id" [readonly]="control().isReadonly"
-    class="form-control form-control-lg form-control-solid" [ngClass]="{
-      'is-invalid': (root().submitted) && control().invalid,
-      'is-valid': (root().submitted) && control().valid
-    }" [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
-    [attr.aria-label]="control().label + ' input'" type="text">
-  <mat-datepicker #picker></mat-datepicker>
-</div>
+@if (control().orientation === 'inline') {
+  <div class="d-flex align-items-center gap-2 pe-0 me-0">
+    @if (control().showLabel) {
+      <label class="form-label"
+             [ngClass]="{'required': control().required && validation.active()}">
+        {{ control().label }}
+      </label>
+    }
+    <input matInput
+           (click)="picker.open()"
+           [matDatepicker]="picker"
+           [formControl]="$any(control())"
+           [matTooltip]="tooltipText()"
+           [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
+           [autocomplete]="false"
+           [spellcheck]="false"
+           [id]="control().id"
+           [readonly]="control().isReadonly"
+           class="form-control form-control-lg"
+           [ngClass]="{
+              'is-invalid': (root().submitted) && control().invalid,
+              'is-valid': (root().submitted) && control().valid
+           }"
+           [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
+           [attr.aria-label]="control().label + ' input'" type="text">
+    <mat-datepicker #picker></mat-datepicker>
+  </div>
 } @else {
-@if(control().showLabel === true){<label class="form-label"
-  [ngClass]="{'required': control().required && validation.active()}">{{control().label}}</label>}
-<input matInput [matDatepicker]="picker" [formControl]="$any(control())" (click)="picker.open()"
-  [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
-  [autocomplete]="false" [spellcheck]="false" [id]="control().id" [readonly]="control().isReadonly"
-  class="form-control form-control-lg form-control-solid" [ngClass]="{
-    'is-invalid': (root().submitted) && control().invalid,
-    'is-valid': (root().submitted) && control().valid
-  }" [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
-  [attr.aria-label]="control().label + ' input'" type="text">
-<mat-datepicker #picker></mat-datepicker>
+  @if (control().showLabel) {
+    <label class="form-label"
+           [ngClass]="{'required': control().required && validation.active()}">
+      {{ control().label }}
+    </label>
+  }
+
+  <input matInput
+         (click)="picker.open()"
+         [matDatepicker]="picker"
+         [formControl]="$any(control())"
+         [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
+         [autocomplete]="false"
+         [spellcheck]="false"
+         [id]="control().id"
+         [readonly]="control().isReadonly"
+         class="form-control form-control-lg" [ngClass]="{
+            'is-invalid': (root().submitted) && control().invalid,
+            'is-valid': (root().submitted) && control().valid
+         }"
+         [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
+         [attr.aria-label]="control().label + ' input'" type="text">
+  <mat-datepicker #picker></mat-datepicker>
 }
+
 <div templateInvalidFeedback [(control)]="control"></div>

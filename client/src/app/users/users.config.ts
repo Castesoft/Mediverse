@@ -3,7 +3,6 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { FormUse } from "src/app/_models/forms/formTypes";
 import { User } from "src/app/_models/users/user";
 import { userDictionary, userColumns } from "src/app/_models/users/userConstants";
 import { UserFiltersForm } from "src/app/_models/users/userFiltersForm";
@@ -18,24 +17,24 @@ import { UsersCatalogComponent } from "src/app/users/components/users-catalog.co
 @Component({
   selector: 'users-catalog-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      usersCatalog
-      [(mode)]="data.mode"
-      [(key)]="data.key"
-      [(view)]="data.view"
-      [(isCompact)]="data.isCompact"
-      [(item)]="data.item"
-      [(params)]="data.params"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          usersCatalog
+          [(mode)]="data.mode"
+          [(key)]="data.key"
+          [(view)]="data.view"
+          [(isCompact)]="data.isCompact"
+          [(item)]="data.item"
+          [(params)]="data.params"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
   imports: [UsersCatalogComponent, MaterialModule, CdkModule,],
 })

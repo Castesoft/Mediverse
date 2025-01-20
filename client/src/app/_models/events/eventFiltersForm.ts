@@ -1,5 +1,4 @@
 import { createId } from "@paralleldrive/cuid2";
-import { SelectOption } from 'src/app/_models/base/selectOption';
 import { eventFiltersFormInfo } from "src/app/_models/events/eventConstants";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";

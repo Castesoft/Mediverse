@@ -15,10 +15,8 @@
     >
       <td
         tableCheckCell
-        [(isCompact)]="isCompact"
-        [idx]="idx"
-        [(dictionary)]="service.dictionary"
-        [(selected)]="item.isSelected"
+        [isCompact]="isCompact()"
+        [isChecked]="item.isSelected"
         (click)="service.setSelected$(key() || '', item)"
       ></td>
 
@@ -31,18 +29,27 @@
             [routerLink]="[service.dictionary.catalogRoute, item.id]"
             [href]="[service.dictionary.catalogRoute, item.id]"
             class="fw-semibold text-primary"
-          >#{{ item.id | number }}</a
+          >
+            #{{ item.id | number }}</a
           >
         </div>
       </td>
 
-      @for (cell of row().getItems([
-        'email',
-        'fullName',
-        'createdAt',
-      ]);
-        let idx = $index;
-        track idx) {
+      @for (cell of row().getItems([ 'email', 'fullName' ]); let idx = $index; track idx) {
+        <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
+      }
+
+      <td>
+        <div class="d-flex flex-grow-1 gap-2">
+          @for (role of item.roles; track role) {
+            <div class="badge badge-light-primary">
+              {{ role.name }}
+            </div>
+          }
+        </div>
+      </td>
+
+      @for (cell of row().getItems([ 'createdAt' ]); let idx = $index; track idx) {
         <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
       }
 

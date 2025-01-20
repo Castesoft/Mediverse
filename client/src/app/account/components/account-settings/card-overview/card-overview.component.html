@@ -8,7 +8,7 @@
           <div class="symbol symbol-125px mb-7 me-7 position-relative">
             <div userProfilePicture
             [fullName]="accountService.current()!.fullName" [photoUrl]="accountService.current()!.photoUrl"
-              shape="square" size="md"
+              [shape]="PhotoShape.SQUARE" [size]="PhotoSize.MEDIUM"
             ></div>
           </div>
           <div class="d-flex flex-column">

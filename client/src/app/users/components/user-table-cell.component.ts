@@ -1,4 +1,4 @@
-import { Component, effect, inject, model, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, model, ModelSignal, OnInit, signal, WritableSignal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Role } from 'src/app/_models/types';
 import { User } from "src/app/_models/users/user";
@@ -9,37 +9,19 @@ import { Account } from "src/app/_models/account/account";
 @Component({
   host: { class: 'align-middle flex-column-fluid border-none' },
   selector: 'td[userCell]',
-  template: `
-    <div class="d-flex align-middle">
-      <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-        <a [routerLink]="[routerLink]">
-          <div class="symbol-label">
-            <div userProfilePicture [fullName]="user().fullName" [photoUrl]="user().photoUrl"></div>
-          </div>
-        </a>
-      </div>
-      <div class="d-flex flex-column align-middle justify-content-center">
-        <a
-          [routerLink]="[routerLink]"
-          class="text-gray-800 text-hover-primary mb-1"
-        >{{ user().fullName }}</a
-        >
-        <span>{{ user().email }}</span>
-      </div>
-    </div>
-  `,
-  standalone: true,
+  templateUrl: './user-table-cell.component.html',
   imports: [ RouterModule, ProfilePictureComponent ],
+  standalone: true,
 })
 export class UserTableCellComponent<T extends User> implements OnInit {
-  service = inject(UsersService);
+  service: UsersService = inject(UsersService);
 
-  user = model.required<T>();
-  role = model.required<Role>();
+  user: ModelSignal<T> = model.required<T>();
+  role: ModelSignal<Role> = model.required<Role>();
 
   routerLink?: string;
 
-  account = signal<Account | null>(null);
+  account: WritableSignal<Account | null> = signal<Account | null>(null);
 
   constructor() {
     effect(() => {

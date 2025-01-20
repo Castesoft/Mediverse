@@ -44,7 +44,7 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
     this.controls.clinic.selectOptions = this.doctorResult.addresses.map(address => {
       const constructedAddress = new Address({ ...address });
 
-      return new SelectOption({ id: constructedAddress.id!, name: constructedAddress.address, code: constructedAddress.address, enabled: constructedAddress.enabled, visible: constructedAddress.visible });
+      return new SelectOption({ id: constructedAddress.id!, name: constructedAddress.address, code: constructedAddress.address, enabled: constructedAddress.isEnabled, visible: constructedAddress.isVisible });
     });
 
     if (this.doctorResult!.addresses.length === 1) {
@@ -52,10 +52,10 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
 
       this.controls.clinic.patchValue(new SelectOption({
         code: address.code!,
-        enabled: address.enabled,
+        enabled: address.isEnabled,
         id: address.id!,
         name: address.name!,
-        visible: address.visible,
+        visible: address.isVisible,
       }));
     }
 
@@ -72,8 +72,8 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
         id: constructedService.id!,
         name: constructedService.name!,
         code: constructedService.name!,
-        enabled: constructedService.enabled,
-        visible: constructedService.visible,
+        enabled: constructedService.isEnabled,
+        visible: constructedService.isVisible,
       });
 
       if (service.options && service.options.price) {
@@ -100,8 +100,8 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
         id: constructedMedicalInsuranceCompany.id!,
         name: constructedMedicalInsuranceCompany.name!,
         code: constructedMedicalInsuranceCompany.name!,
-        enabled: constructedMedicalInsuranceCompany.enabled,
-        visible: constructedMedicalInsuranceCompany.visible
+        enabled: constructedMedicalInsuranceCompany.isEnabled,
+        visible: constructedMedicalInsuranceCompany.isVisible
       });
 
       if (medicalInsuranceCompany.options && medicalInsuranceCompany.options.photoUrl) {
@@ -124,7 +124,7 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
     this.controls.paymentMethodType.selectOptions = this.doctorResult.paymentMethods.map(paymentMethod => {
       const constructedPaymentMethod = new PaymentMethodType({ ...paymentMethod });
 
-      return new SelectOption({ id: constructedPaymentMethod.id!, name: constructedPaymentMethod.name!, code: constructedPaymentMethod.name!, enabled: constructedPaymentMethod.enabled, visible: constructedPaymentMethod.visible });
+      return new SelectOption({ id: constructedPaymentMethod.id!, name: constructedPaymentMethod.name!, code: constructedPaymentMethod.name!, enabled: constructedPaymentMethod.isEnabled, visible: constructedPaymentMethod.isVisible });
     });
 
     if (this.doctorResult!.paymentMethods.length === 1) {

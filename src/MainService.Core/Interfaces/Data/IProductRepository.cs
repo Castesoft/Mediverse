@@ -10,6 +10,7 @@ public interface IProductRepository
 {
     void Add(Product item);
     void Delete(Product item);
+    void Update(Product item);
     Task<Product?> GetByIdAsync(int id);
     Task<Product?> GetByNameAsync(string name, ClaimsPrincipal user);
     Task<List<ProductSummaryDto>> GetSummaryDtosAsync(ProductParams param, ClaimsPrincipal user);

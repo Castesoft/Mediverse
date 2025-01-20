@@ -9,13 +9,10 @@ import { FormUse } from "src/app/_models/forms/formTypes";
   template: `
     <div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
   `,
-  // templateUrl: './home-service-edit-route.component.html',
   standalone: false,
 })
 export class HomeServiceEditRouteComponent
-  extends BaseRouteDetail<Service>
-
-{
+  extends BaseRouteDetail<Service> {
   constructor() {
     super('services', FormUse.EDIT);
 

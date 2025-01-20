@@ -4,7 +4,6 @@ import { AuthAsideComponent } from '../_shared/template/components/auth-aside.co
 import { BottomLinksComponent } from 'src/app/auth/components/bottom-links.component';
 import { PasswordResetFormComponent } from 'src/app/auth/components/password-reset-form.component';
 import { SignInBasicFormComponent } from 'src/app/auth/components/sign-in-basic-form.component';
-import { SignUpBasicFormComponent } from 'src/app/auth/components/sign-up-basic-form.component';
 import { NewPasswordComponent } from './components/new-password/new-password.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 

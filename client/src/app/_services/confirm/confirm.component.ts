@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, model } from "@angular/core";
+import { Component, inject, model } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { IModal } from "src/app/_models/modal";

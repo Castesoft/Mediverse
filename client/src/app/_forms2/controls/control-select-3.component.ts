@@ -1,4 +1,12 @@
-import { Component, computed, effect, HostBinding, inject, model, OnDestroy } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  HostBinding,
+  inject, input,
+  InputSignal, model, ModelSignal,
+  OnDestroy, Signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ValidationService } from "src/app/_services/validation.service";
@@ -11,9 +19,17 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
 
+/**
+ * This component uses an optional @Input() useMaterial to switch
+ * between a <mat-select> and a normal <select>.
+ *
+ * The form control is updated on every change, so form values
+ * properly reflect the latest selection.
+ */
 @Component({
   selector: "div[controlSelect3]",
   templateUrl: "./control-select-3.component.html",
+  styleUrls: [],
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -21,33 +37,34 @@ import { CdkModule } from "src/app/_shared/cdk.module";
     CommonModule,
     FormsModule,
     MatTooltipModule,
-    MaterialModule, CdkModule,
-  ]
+    MaterialModule,
+    CdkModule,
+  ],
 })
 export class ControlSelect3Component implements OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  validation = inject(ValidationService);
-  control = model.required<FormControl2<SelectOption | null>>();
-  fromWrapper = model.required<boolean>();  root = computed<FormGroup2<any>>(() => {
-    return this.control().root as FormGroup2<any>;
-  });
+  validation: ValidationService = inject(ValidationService);
+  control: ModelSignal<FormControl2<SelectOption | null>> = model.required<FormControl2<SelectOption | null>>();
+  fromWrapper: ModelSignal<boolean> = model.required<boolean>();
 
-  class = 'mb-0';
+  useMaterial: InputSignal<boolean> = input(false);
 
-  @HostBinding('class') get hostClass() {
+  root: Signal<FormGroup2<any>> = computed<FormGroup2<any>>(() => this.control().root as FormGroup2<any>);
+
+  class: string = "mb-0";
+
+  @HostBinding("class") get hostClass() {
     return this.class;
   }
 
   constructor() {
     effect(() => {
-      if (this.fromWrapper() === true) {
-        this.class += ' w-100';
+      if (this.fromWrapper()) {
+        this.class = "mb-0 w-100";
       } else {
-        this.class += ' col-auto px-0';
+        this.class = "mb-0 col-auto px-0";
       }
-
-      // this.control.set(this.control().setValidation(this.validation.active()));
     });
   }
 
@@ -56,26 +73,35 @@ export class ControlSelect3Component implements OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  optionChanged(option: string | null): void {
-    const controlToUpdate = this.control();
-    if (option === null) {
-      controlToUpdate.patchValue(null, { emitEvent: true, });
-    } else {
-      const value: SelectOption = JSON.parse(option);
-      controlToUpdate.patchValue(value, { emitEvent: true, });
+  /**
+   * optionChanged will be called by either:
+   * 1) mat-select (which passes the raw object in $event.value)
+   * 2) a normal <select> (which passes an Event that must be parsed).
+   */
+  optionChanged(option: SelectOption | string | Event | null): void {
+    let parsedValue: SelectOption | null = null;
+
+    // If it's an Event from a <select>, parse out the JSON string
+    if (option instanceof Event) {
+      const selectElement = option.target as HTMLSelectElement;
+      const selectedValue = selectElement.value;
+      if (selectedValue && selectedValue !== "null") {
+        parsedValue = JSON.parse(selectedValue);
+      }
     }
-    controlToUpdate.markAsDirty();
-    const controlToSet = new FormControl2<SelectOption | null>(controlToUpdate);
-    controlToSet.setParent(controlToUpdate.parent);
-    controlToSet.type = controlToUpdate.type;
-    controlToSet.selectOptions = controlToUpdate.selectOptions;
-    controlToSet.showCodeSpan = controlToUpdate.showCodeSpan;
-    controlToSet.showLabel = controlToUpdate.showLabel;
-    controlToSet.label = controlToUpdate.label;
-    
-    if (option !== null) {
-      controlToSet.patchValue(JSON.parse(option));
-      this.control.set(controlToSet);
+    // If it's a string (from e.g. Material or direct binding), we assume it's JSON unless it's "null".
+    else if (typeof option === "string") {
+      if (option !== "null") {
+        parsedValue = JSON.parse(option);
+      }
     }
+
+    // If it's an actual SelectOption object
+    else if (option && typeof option === "object") {
+      parsedValue = option;
+    }
+
+    this.control().patchValue(parsedValue, { emitEvent: true });
+    this.control().markAsDirty();
   }
 }

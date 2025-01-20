@@ -1,12 +1,9 @@
-import { Validators } from "@angular/forms";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { sexOptions, handDominanceOptions, companionFormInfo } from "src/app/_models/companions/companionConstants";
 import { FamilyMedicalHistory } from "src/app/_models/familyMedicalHistories/familyMedicalHistory";
 import { familyMedicalHistoryFormInfo } from "src/app/_models/familyMedicalHistories/familyMedicalHistoryConstants";
 import { FamilyMember } from "src/app/_models/familyMembers/familyMember";
 import { familyMemberFormInfo } from "src/app/_models/familyMembers/familyMemberConstants";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { FormInfo } from "src/app/_models/forms/formTypes";
 import { MedicalRecord } from "src/app/_models/medicalRecords/medicalRecord";
 import { medicalRecordFormInfo } from "src/app/_models/medicalRecords/medicalRecordConstants";
 import { PersonalDrugHistory } from "src/app/_models/personalDrugHistories/personalDrugHistory";

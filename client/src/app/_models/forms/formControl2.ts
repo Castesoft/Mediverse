@@ -73,6 +73,7 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   type: InputTypes = 'text';
 
   placeholder: string | null = null;
+  helperText: string | null = null;
   selectOptions: SelectOption[] = [];
   hidden = false;
   hint: string | null = null;

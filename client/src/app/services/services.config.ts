@@ -1,13 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, Injectable, ModelSignal, model, effect, NgModule } from "@angular/core";
+import { Component, inject, Injectable, ModelSignal, model, effect } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
 import BaseForm from "src/app/_models/base/components/extensions/baseForm";
-import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
-import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
@@ -22,8 +20,6 @@ import { ServiceParams } from "src/app/_models/services/serviceParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
-import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { ServicesCatalogComponent } from "src/app/services/components/services-catalog.component";
 

@@ -93,10 +93,10 @@ export const addressColumns: Column[] = [
 export const addressCells: PartialCellsOf<Address> = {
   createdAt: tableCellCreatedAt,
   description: tableCellDescription,
-  enabled: tableCellEnabled,
+  isEnabled: tableCellEnabled,
   name: tableCellName,
   code: tableCellCode,
-  visible: tableCellVisible,
+  isVisible: tableCellVisible,
   id: tableCellId,
   city: new TableCellItem<string, 'city'>('city', 'string'),
   country: new TableCellItem<string, 'country'>('country', 'string'),

@@ -11,15 +11,24 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
+using Serilog;
+using Stripe;
+using Product = MainService.Models.Entities.Product;
 
 namespace MainService.Controllers;
-public class ProductsController(IUnitOfWork uow, IProductsService service, IMapper mapper, UserManager<AppUser> userManager) : BaseApiController
+
+public class ProductsController(
+    IUnitOfWork uow,
+    IProductsService service,
+    IMapper mapper,
+    UserManager<AppUser> userManager) : BaseApiController
 {
-    private static readonly string subject = "producto";
-    private static readonly string subjectArticle = "El";
+    private const string Subject = "producto";
+    private const string SubjectArticle = "El";
 
     [HttpGet("options")]
-    public async Task<ActionResult<List<OptionDto>>> GetOptionsAsync([FromQuery] ProductParams param) {
+    public async Task<ActionResult<List<OptionDto>>> GetOptionsAsync([FromQuery] ProductParams param)
+    {
         int userId = User.GetUserId();
 
         param.DoctorId = userId;
@@ -45,76 +54,77 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
     public async Task<ActionResult<List<ProductDto>>> GetAllAsync([FromQuery] ProductParams param)
     {
         var data = await uow.ProductRepository.GetAllDtoAsync(param, User);
-        
+
         return data;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ProductDto?>> GetByIdAsync([FromRoute]int id)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ProductDto?>> GetByIdAsync([FromRoute] int id)
     {
         var item = await uow.ProductRepository.GetDtoByIdAsync(id);
 
-        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+        if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
 
         return item;
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult<ProductDto?>> UpdateAsync([FromRoute] int id, [FromBody] ProductUpdateDto request)
     {
         var item = await uow.ProductRepository.GetByIdAsync(id);
 
-        if (item == null) return NotFound($"{subjectArticle} {subject} con ID {id} no fue encontrado.");
+        if (item == null) return NotFound($"{SubjectArticle} {Subject} con ID {id} no fue encontrado.");
 
         mapper.Map(request, item);
 
-        if (!await uow.Complete()) return BadRequest($"Error al actualizar {subjectArticle} {subject} con ID {id}.");
+        uow.ProductRepository.Update(item);
 
-        var itemToReturn = await uow.ProductRepository.GetDtoByIdAsync(id);
-        return itemToReturn;
+        if (!await uow.Complete()) return BadRequest($"Error al actualizar {SubjectArticle} {Subject} con ID {id}.");
+
+        return await uow.ProductRepository.GetDtoByIdAsync(id);
     }
 
     [Authorize(Policy = "RequireAdminRole")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
         var item = await uow.ProductRepository.GetByIdAsNoTrackingAsync(id);
 
-        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+        if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
 
         var deleteResult = await service.DeleteAsync(item);
 
-        if (!deleteResult) return BadRequest($"Error al eliminar {subject} de {item.Name}.");
+        if (!deleteResult) return BadRequest($"Error al eliminar {Subject} de {item.Name}.");
 
         return Ok();
     }
-    
+
     [HttpGet("summary")]
     public async Task<ActionResult<List<ProductSummaryDto>>> GetSummaryAsync([FromQuery] ProductParams param)
     {
         var item = await uow.ProductRepository.GetSummaryDtosAsync(param, User);
 
-        if (item == null) return NotFound($"{subjectArticle} {subject} no fue encontrado.");
+        if (item == null) return NotFound($"{SubjectArticle} {Subject} no fue encontrado.");
 
         return item;
     }
 
     [HttpDelete("range/{ids}")]
-    public async Task<ActionResult> DeleteRangeAsync([FromRoute]string ids)
-    {   
+    public async Task<ActionResult> DeleteRangeAsync([FromRoute] string ids)
+    {
         var selectedIds = ids.Split(',').Select(int.Parse).ToList();
 
         foreach (var item in selectedIds)
         {
             var itemToDelete = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item);
 
-            if (itemToDelete == null) return NotFound($"{subjectArticle} {subject} de ID {item} no fue encontrado.");
+            if (itemToDelete == null) return NotFound($"{SubjectArticle} {Subject} de ID {item} no fue encontrado.");
 
             var deleteResult = await service.DeleteAsync(itemToDelete);
 
-            if (!deleteResult) return BadRequest($"Error al eliminar {subject} de {itemToDelete.Id}.");
+            if (!deleteResult) return BadRequest($"Error al eliminar {Subject} de {itemToDelete.Id}.");
         }
-        
+
         return Ok();
     }
 
@@ -123,15 +133,17 @@ public class ProductsController(IUnitOfWork uow, IProductsService service, IMapp
     {
         Product? itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
 
-        if (itemExists != null)  return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
+        if (itemExists != null)
+            return BadRequest(
+                $"{SubjectArticle} {Subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
 
         AppUser? doctor = await userManager.Users
-            .Include(x => x.DoctorProducts)
+                .Include(x => x.DoctorProducts)
                 .ThenInclude(x => x.Product)
-            .SingleOrDefaultAsync(x => x.Id == User.GetUserId())
-        ;
+                .SingleOrDefaultAsync(x => x.Id == User.GetUserId())
+            ;
 
-        if (doctor == null) return BadRequest($"Error al crear {subjectArticle} {subject}.");
+        if (doctor == null) return BadRequest($"Error al crear {SubjectArticle} {Subject}.");
 
         var item = mapper.Map<Product>(request);
 
