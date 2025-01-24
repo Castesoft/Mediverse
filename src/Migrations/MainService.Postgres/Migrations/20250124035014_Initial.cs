@@ -2269,7 +2269,8 @@ namespace MainService.Postgres.Migrations
                 columns: table => new
                 {
                     ProductId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                    PhotoId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {

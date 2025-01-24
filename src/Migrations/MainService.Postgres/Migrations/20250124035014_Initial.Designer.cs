@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250123024419_dawdawdawd")]
-    partial class dawdawdawd
+    [Migration("20250124035014_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2469,6 +2469,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<int>("PhotoId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("boolean");
 
                     b.HasKey("ProductId", "PhotoId");
 
