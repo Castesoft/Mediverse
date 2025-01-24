@@ -153,13 +153,17 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .Include(x => x.DoctorNurses)
             .Include(x => x.UserAddresses)
             .ThenInclude(x => x.Address)
-            .AsQueryable()
-        ;
+            .AsQueryable();
 
         IEnumerable<string> roles = user.GetRoles();
         int userId = user.GetUserId();
 
         query = query.Where(x => x.Id != userId);
+
+        if (!string.IsNullOrEmpty(param.Roles))
+        {
+            query = query.Where(x => x.UserRoles.Any(y => param.RoleIds.Contains(y.RoleId)));
+        }
 
         switch (param.Role)
         {

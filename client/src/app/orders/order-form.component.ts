@@ -36,7 +36,7 @@ export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFilter
         .setUse(this.use())
         .setValidation(this.validation.active());
 
-      if (this.item() !== null) this.form.patchValue(this.item()!);
+      if (this.item() !== null) this.form.patchValue(this.item()! as any);
     });
   }
 }

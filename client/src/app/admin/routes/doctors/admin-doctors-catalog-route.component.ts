@@ -13,26 +13,32 @@ import { SelectOption } from "src/app/_models/base/selectOption";
   template: `
     <div breadcrumbs></div>
     <div post>
-      <div usersCatalog [(item)]="item" [(isCompact)]="compact.isCompact" [(key)]="key" [(mode)]="mode"
-           [(params)]="params" [(view)]="view"></div>
+      @if (!isLoading) {
+        <div usersCatalog [(item)]="item" [(isCompact)]="compact.isCompact" [(key)]="key" [(mode)]="mode"
+             [(params)]="params" [(view)]="view"></div>
+      }
     </div>
   `,
   standalone: false,
 })
 export class AdminDoctorsCatalogRouteComponent extends BaseRouteCatalog<User, UserParams, UserFiltersForm, UsersService> implements OnInit {
   roles: RolesService = inject(RolesService);
+  isLoading: boolean = true;
 
   constructor() {
     super(UsersService, 'users');
-    this.params().fromSection = SiteSection.ADMIN
   }
 
   ngOnInit(): void {
-    this.roles.getOptions().subscribe(
-      {
-        next: (options) => {
-          this.params().roles = options.filter((option: SelectOption) => option.code === 'doctor')
-        }
-      });
+    this.roles.getOptions().subscribe({
+      next: (options) => {
+        this.params.update((pastValue: any) => ({
+          ...pastValue,
+          roles: options.filter((option: SelectOption) => option.code.toLowerCase() === 'doctor'),
+          fromSection: SiteSection.ADMIN,
+        }));
+        this.isLoading = false;
+      }
+    });
   }
 }

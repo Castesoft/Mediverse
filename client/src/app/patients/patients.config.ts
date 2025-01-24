@@ -87,7 +87,7 @@ export class PatientFormComponent extends BaseForm<Patient, PatientParams, Patie
         .setUse(this.use())
         .setValidation(this.validation.active());
 
-      if (this.item() !== null) this.form.patchValue(this.item()!);
+      if (this.item() !== null) this.form.patchValue(this.item()! as any);
     });
   }
 }

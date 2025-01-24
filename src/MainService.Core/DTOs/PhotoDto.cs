@@ -7,5 +7,6 @@ public class PhotoDto
     public string? Url { get; set; }
     public string? PublicId { get; set; }
     public string? Name { get; set; }
+    public bool IsMain { get; set; }
     public int Size { get; set; }
 }

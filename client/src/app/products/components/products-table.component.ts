@@ -54,7 +54,7 @@ export class ProductsTableComponent extends BaseTable<Product, ProductParams, Pr
   }
 
   private updateProduct(item: Product): void {
-    this.service.update(item, item.id, "inline").subscribe({
+    this.service.update(item, item.id!).subscribe({
       error: (error) => {
         this.toastr.error(error.message);
       }

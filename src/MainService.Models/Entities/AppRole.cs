@@ -21,6 +21,8 @@ namespace MainService.Models.Entities
                 } };
             }).ToList();
         }
+        
+        public string? TranslatedName { get; set; }
 
         public List<AppUserRole> UserRoles { get; set; } = [];
         public List<AppRolePermission> RolePermissions { get; set; } = [];

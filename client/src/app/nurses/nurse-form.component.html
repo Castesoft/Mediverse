@@ -1,5 +1,5 @@
 
-<form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+<form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
 
 <button class="btn btn-primary" type="submit" [attr.form]="form.id">Enviar</button>
 

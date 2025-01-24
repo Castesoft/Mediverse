@@ -24,6 +24,7 @@ import { ProductFormComponent } from "src/app/products/product-form.component";
 import { AdminUsersCatalogRouteComponent } from "src/app/admin/routes/users/admin-users-catalog-route.component";
 import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
 import { AdminDoctorsCatalogRouteComponent } from "src/app/admin/routes/doctors/admin-doctors-catalog-route.component";
+import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/admin-product-detail-route.component";
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { AdminDoctorsCatalogRouteComponent } from "src/app/admin/routes/doctors/
     AdminProductEditRouteComponent,
     AdminProductCreateRouteComponent,
     AdminUsersCatalogRouteComponent,
-    AdminDoctorsCatalogRouteComponent
+    AdminDoctorsCatalogRouteComponent,
+    AdminProductDetailRouteComponent
   ],
   imports: [
     CommonModule,

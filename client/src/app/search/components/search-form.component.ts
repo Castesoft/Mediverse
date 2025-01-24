@@ -41,7 +41,7 @@ export class SearchFormComponent implements OnInit {
       })
     });
 
-    this.form.patchValue(this.service.search());
+    this.form.patchValue(this.service.search() as any);
   }
 
   async ngOnInit() {

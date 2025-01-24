@@ -224,20 +224,19 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   /**
    * Creates a new entity on the server and updates local data/redirects if needed.
    */
-  create(form: FormGroup2<T>, view: View, model?: any): Observable<T> {
-    return this.http.post<T>(this.baseUrl, model ?? form.getRawValue()).pipe(
+  create(model: any, redirect: boolean = true): Observable<T> {
+    return this.http.post<T>(this.baseUrl, model).pipe(
       tap((response) => {
-        console.log("response", response);
-        this.matSnackBar.open(
-          `${this.dictionary.singularTitlecase} ${response.id} ${
-            this.dictionary.articleSex === "feminine" ? "creada" : "creado"
-          } correctamente`,
+        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id}
+        ${this.dictionary.articleSex === "feminine" ? "creada" : "creado"} correctamente`,
           "Cerrar",
           { duration: 3000 }
         );
-        if (view === "page") {
-          this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
+
+        if (redirect) {
+          this.router.navigate([ this.dictionary.catalogRoute, response.id ]).then(() => {});
         }
+
         this.data.next([ ...this.data.value, response ]);
       })
     );
@@ -246,15 +245,16 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   /**
    * Updates an existing entity on the server and updates local data/redirects if needed.
    */
-  update(model: any, id: number | null, view: View): Observable<T> {
+  update(model: any, id: number | null, redirect: boolean = true): Observable<T> {
     if (id === null) throw new Error("ID cannot be null");
 
     return this.http.put<T>(`${this.baseUrl}${id}`, model)
       .pipe(
         tap((response): void => {
-          if (view === "page") {
-            this.router.navigate([ this.dictionary.catalogRoute, response.id ]).then((): void => {});
+          if (redirect) {
+            this.router.navigate([ this.dictionary.catalogRoute, response.id ]).then(() => {});
           }
+
           this.matSnackBar.open(
             `${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`,
             "Cerrar",

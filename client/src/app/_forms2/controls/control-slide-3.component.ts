@@ -1,4 +1,4 @@
-import { Component, computed, effect, HostBinding, inject, model } from '@angular/core';
+import { Component, computed, effect, HostBinding, inject, model, ModelSignal, Signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ValidationService } from "src/app/_services/validation.service";
 import { SelectOption } from "src/app/_models/base/selectOption";
@@ -27,12 +27,10 @@ import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 export class ControlSlide3Component {
   validation = inject(ValidationService);
 
-  control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
-  fromWrapper = model.required<boolean>();
-  root = computed<FormGroup2<any>>(() => {
-    return this.control().root as FormGroup2<any>;
-  });
-  class = 'mb-0';
+  control: ModelSignal<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>> = model.required();
+  fromWrapper: ModelSignal<boolean> = model.required();
+  root: Signal<FormGroup2<any>> = computed(() => { return this.control().root as FormGroup2<any>; });
+  class: string = 'mb-0';
 
   @HostBinding('class') get hostClass() {
     return this.class;
@@ -40,7 +38,7 @@ export class ControlSlide3Component {
 
   constructor() {
     effect(() => {
-      if (this.fromWrapper() === true) {
+      if (this.fromWrapper()) {
         this.class += ' w-100';
       } else {
         this.class += ' col-auto px-0';

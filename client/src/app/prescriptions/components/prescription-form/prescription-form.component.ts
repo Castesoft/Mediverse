@@ -110,7 +110,7 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
 
     const account: Account | null = this.accountService.current();
     if (account) {
-      this.form.controls.doctor.patchValue(account as Account);
+      this.form.controls.doctor.patchValue(account as unknown as Account);
     }
   }
 

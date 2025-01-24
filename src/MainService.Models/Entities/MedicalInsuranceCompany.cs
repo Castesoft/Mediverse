@@ -11,7 +11,7 @@ namespace MainService.Models.Entities
         public List<DoctorMedicalInsuranceCompany> DoctorMedicalInsuranceCompanies { get; set; } = [];
         public List<EventMedicalInsuranceCompany> EventMedicalInsuranceCompanies { get; set; } = [];
 
-        public string? GetPhotoUrl() => MedicalInsuranceCompanyPhoto?.Photo?.Url ?? null;
+        public string? GetPhotoUrl() => MedicalInsuranceCompanyPhoto?.Photo?.Url.AbsoluteUri ?? null;
     }
 
     public class MedicalInsuranceCompanyDto : BaseCodeEntity {}

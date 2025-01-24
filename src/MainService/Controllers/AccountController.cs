@@ -19,37 +19,39 @@ using MainService.Core.DTOs;
 using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Controllers;
+
 public class AccountController(
-    UserManager<AppUser> userManager, 
-    SignInManager<AppUser> signInManager, 
-    IMapper mapper, 
-    ITokenService tokenService, 
+    UserManager<AppUser> userManager,
+    SignInManager<AppUser> signInManager,
+    IMapper mapper,
+    ITokenService tokenService,
     ICloudinaryService cloudinaryService,
-    IGoogleService googleService, 
-    IConfiguration configuration, 
-    IEmailService emailService, 
-    ITwoFactorAuthService twoFactorAuthService, 
-    IQRCoderService qrCoderService, 
-    IUnitOfWork uow, 
-    ICodeService codeService, 
-    IPhoneService phoneService, 
-    IUsersService usersService, 
-    IOptions<ClientSettings> clientSettings, 
+    IGoogleService googleService,
+    IConfiguration configuration,
+    IEmailService emailService,
+    ITwoFactorAuthService twoFactorAuthService,
+    IQRCoderService qrCoderService,
+    IUnitOfWork uow,
+    ICodeService codeService,
+    IPhoneService phoneService,
+    IUsersService usersService,
+    IOptions<ClientSettings> clientSettings,
     IPhotosService photosService,
     IStripeService stripeService
 ) : BaseApiController
 {
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<AccountDto?>> GetAccountAsync() => await usersService.GenerateAccountDtoAsync(User.GetUserId());
+    public async Task<ActionResult<AccountDto?>> GetAccountAsync() =>
+        await usersService.GenerateAccountDtoAsync(User.GetUserId());
 
     [HttpPost("login")]
-    public async Task<ActionResult<AccountDto?>> LoginAsync([FromBody]LoginDto request)
+    public async Task<ActionResult<AccountDto?>> LoginAsync([FromBody] LoginDto request)
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha proporcionado un correo.");
         if (string.IsNullOrEmpty(request.Password)) return BadRequest("No se ha proporcionado una contraseña.");
-        
-        AppUser? user = await userManager.FindByEmailAsync(request.Email);
+
+        var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user == null) return Unauthorized("Correo o contraseña incorrectos.");
 
@@ -62,30 +64,33 @@ public class AccountController(
             return Ok(new { RequiresTwoFactor = true });
         }
 
-        AccountDto? itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
         return itemToReturn;
     }
 
     [Authorize]
     [HttpGet("current")]
-    public async Task<ActionResult<AccountDto?>> GetCurrentUserAsync() => await usersService.GenerateAccountDtoAsync(User.GetUserId());
+    public async Task<ActionResult<AccountDto?>> GetCurrentUserAsync() =>
+        await usersService.GenerateAccountDtoAsync(User.GetUserId());
 
     [HttpPost("login-two-factor")]
     public async Task<ActionResult<AccountDto>> LoginTwoFactorAsync([FromBody] TwoFactorLoginDto request)
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha proporcionado un correo.");
-        if (string.IsNullOrEmpty(request.VerificationCode)) return BadRequest("No se ha proporcionado un código de verificación.");
-        
-        AppUser? user = await userManager.FindByEmailAsync(request.Email);
+        if (string.IsNullOrEmpty(request.VerificationCode))
+            return BadRequest("No se ha proporcionado un código de verificación.");
+
+        var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user == null) return Unauthorized("No se ha encontrado al usuario.");
 
-        var validVerification = await userManager.VerifyTwoFactorTokenAsync(user, userManager.Options.Tokens.AuthenticatorTokenProvider, request.VerificationCode);
+        var validVerification = await userManager.VerifyTwoFactorTokenAsync(user,
+            userManager.Options.Tokens.AuthenticatorTokenProvider, request.VerificationCode);
 
         if (!validVerification) return Unauthorized("Código de verificación incorrecto.");
 
-        AccountDto? itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
         itemToReturn!.Token = await tokenService.CreateToken(user);
 
@@ -97,23 +102,23 @@ public class AccountController(
     {
         if (string.IsNullOrEmpty(request.AccessToken)) return BadRequest("No se ha proporcionado un token de acceso.");
         if (string.IsNullOrEmpty(request.Provider)) return BadRequest("No se ha proporcionado un proveedor.");
-        
+
         var payload = await googleService.VerifyGoogleTokenAsync(request.AccessToken);
 
         if (payload == null) return Unauthorized("Token inválido.");
 
         UserLoginInfo info = new(request.Provider, payload.Subject, request.Provider);
 
-        AppUser? user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+        var user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
         if (user == null)
         {
             user = await userManager.FindByEmailAsync(payload.Email);
 
             if (user == null)
             {
-                AppUser newUser = mapper.Map<AppUser>(payload);
+                var newUser = mapper.Map<AppUser>(payload);
 
-                newUser.UserPhoto = new() { Photo = new() { Url = payload.Picture } };
+                newUser.UserPhoto = new UserPhoto { Photo = new Photo { Url = new Uri(payload.Picture) } };
 
                 var createUser = await userManager.CreateAsync(newUser);
                 if (!createUser.Succeeded) return BadRequest(createUser.Errors);
@@ -144,20 +149,20 @@ public class AccountController(
     {
         if (string.IsNullOrEmpty(request.AccessToken)) return BadRequest("No se ha proporcionado un token de acceso.");
         if (string.IsNullOrEmpty(request.Provider)) return BadRequest("No se ha proporcionado un proveedor.");
-        
+
         var payload = await googleService.VerifyGoogleTokenAsync(request.AccessToken);
 
         if (payload == null) return Unauthorized("Token inválido.");
 
         UserLoginInfo info = new(request.Provider, payload.Subject, request.Provider);
 
-        string? email = User.GetEmail();
+        var email = User.GetEmail();
 
         if (string.IsNullOrEmpty(email)) return BadRequest("No se ha proporcionado un correo.");
 
         if (email != payload.Email) return BadRequest("El correo no coincide con el de la cuenta.");
 
-        AppUser? user = await userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
 
         if (user == null) return NotFound("No se ha encontrado al usuario.");
 
@@ -178,13 +183,14 @@ public class AccountController(
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha proporcionado un correo.");
         if (!request.DateOfBirth.HasValue) return BadRequest("No se ha proporcionado una fecha de nacimiento.");
         if (string.IsNullOrEmpty(request.Password)) return BadRequest("No se ha proporcionado una contraseña.");
-        if (string.IsNullOrEmpty(request.ConfirmPassword)) return BadRequest("No se ha proporcionado una contraseña de confirmación.");
+        if (string.IsNullOrEmpty(request.ConfirmPassword))
+            return BadRequest("No se ha proporcionado una contraseña de confirmación.");
         if (!request.AgreeTerms.HasValue) return BadRequest("No se ha aceptado los términos y condiciones.");
-        
+
         using var hmac = new HMACSHA512();
-        
-        if ((await userManager.FindByEmailAsync(request.Email)) != null) 
-        return BadRequest("No puede crearse una cuenta con este correo.");
+
+        if ((await userManager.FindByEmailAsync(request.Email)) != null)
+            return BadRequest("No puede crearse una cuenta con este correo.");
 
         AppUser user = new();
 
@@ -201,23 +207,25 @@ public class AccountController(
         var addRole = await userManager.AddToRolesAsync(user, ["Patient"]);
         if (!addRole.Succeeded) return BadRequest(addRole.Errors);
 
-        string emailVerificationCode =  codeService.GenerateEmailCode();
+        var emailVerificationCode = codeService.GenerateEmailCode();
 
         user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
         user.EmailVerificationCodeSalt = hmac.Key;
         user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
 
-        if (!(await userManager.UpdateAsync(user)).Succeeded) 
-        return BadRequest("No pudo actualizarse la información del usuario.");
+        if (!(await userManager.UpdateAsync(user)).Succeeded)
+            return BadRequest("No pudo actualizarse la información del usuario.");
 
-        string clientUrl = clientSettings.Value.Url;
-        string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        string subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
-        string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
+        var clientUrl = clientSettings.Value.Url;
+        var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
+        var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
+        var htmlMessage =
+            emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
 
-        string? email = user.Email;
+        var email = user.Email;
 
-        if (!string.IsNullOrEmpty(email)) {
+        if (!string.IsNullOrEmpty(email))
+        {
             await emailService.SendMail(email, subject, htmlMessage);
         }
 
@@ -229,7 +237,7 @@ public class AccountController(
     {
         if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
 
-        DoctorRegisterDto? request = JsonSerializer.Deserialize<DoctorRegisterDto>(json);
+        var request = JsonSerializer.Deserialize<DoctorRegisterDto>(json);
 
         if (request == null) return BadRequest("Error al registrar al doctor.");
 
@@ -239,7 +247,8 @@ public class AccountController(
         if (string.IsNullOrEmpty(request.Gender)) return BadRequest("No se ha proporcionado un género.");
         if (!request.DateOfBirth.HasValue) return BadRequest("No se ha proporcionado una fecha de nacimiento.");
         if (string.IsNullOrEmpty(request.Password)) return BadRequest("No se ha proporcionado una contraseña.");
-        if (string.IsNullOrEmpty(request.ConfirmPassword)) return BadRequest("No se ha proporcionado una contraseña de confirmación.");
+        if (string.IsNullOrEmpty(request.ConfirmPassword))
+            return BadRequest("No se ha proporcionado una contraseña de confirmación.");
         if (!request.AgreeTerms.HasValue) return BadRequest("No se ha aceptado los términos y condiciones.");
         if (string.IsNullOrEmpty(request.Phone)) return BadRequest("No se ha proporcionado un número de teléfono.");
         if (string.IsNullOrEmpty(request.State)) return BadRequest("No se ha proporcionado un estado.");
@@ -247,29 +256,44 @@ public class AccountController(
         if (string.IsNullOrEmpty(request.Street)) return BadRequest("No se ha proporcionado una calle.");
         if (string.IsNullOrEmpty(request.Zipcode)) return BadRequest("No se ha proporcionado un código postal.");
         if (string.IsNullOrEmpty(request.Neighborhood)) return BadRequest("No se ha proporcionado una colonia.");
-        if (string.IsNullOrEmpty(request.ExteriorNumber)) return BadRequest("No se ha proporcionado un número exterior.");
+        if (string.IsNullOrEmpty(request.ExteriorNumber))
+            return BadRequest("No se ha proporcionado un número exterior.");
         if (string.IsNullOrEmpty(request.SpecialtyId)) return BadRequest("No se ha proporcionado una especialidad.");
-        if (string.IsNullOrEmpty(request.AcceptedPaymentMethods)) return BadRequest("No se han proporcionado métodos de pago aceptados.");
-        if (!request.RequireAnticipatedCardPayments.HasValue) return BadRequest("No se ha especificado si se requieren pagos anticipados con tarjeta.");
-        if (!request.SameAddress.HasValue) return BadRequest("No se ha especificado si la dirección de facturación es la misma que la principal.");
-        if (string.IsNullOrEmpty(request.BillingState)) return BadRequest("No se ha proporcionado un estado de facturación.");
-        if (string.IsNullOrEmpty(request.BillingCity)) return BadRequest("No se ha proporcionado una ciudad de facturación.");
-        if (string.IsNullOrEmpty(request.BillingAddress)) return BadRequest("No se ha proporcionado una dirección de facturación.");
-        if (string.IsNullOrEmpty(request.BillingZipcode)) return BadRequest("No se ha proporcionado un código postal de facturación.");
-        if (string.IsNullOrEmpty(request.BillingNeighborhood)) return BadRequest("No se ha proporcionado una colonia de facturación.");
-        if (string.IsNullOrEmpty(request.BillingExteriorNumber)) return BadRequest("No se ha proporcionado un número exterior de facturación.");
-        if (string.IsNullOrEmpty(request.DisplayName)) return BadRequest("No se ha proporcionado un nombre de visualización.");
-        if (string.IsNullOrEmpty(request.StripePaymentMethodId)) return BadRequest("No se ha proporcionado un id de método de pago de Stripe.");
-        if (string.IsNullOrEmpty(request.Last4)) return BadRequest("No se ha proporcionado los últimos 4 dígitos de la tarjeta.");
-        if (!request.ExpirationMonth.HasValue) return BadRequest("No se ha proporcionado el mes de expiración de la tarjeta.");
-        if (!request.ExpirationYear.HasValue) return BadRequest("No se ha proporcionado el año de expiración de la tarjeta.");
+        if (string.IsNullOrEmpty(request.AcceptedPaymentMethods))
+            return BadRequest("No se han proporcionado métodos de pago aceptados.");
+        if (!request.RequireAnticipatedCardPayments.HasValue)
+            return BadRequest("No se ha especificado si se requieren pagos anticipados con tarjeta.");
+        if (!request.SameAddress.HasValue)
+            return BadRequest("No se ha especificado si la dirección de facturación es la misma que la principal.");
+        if (string.IsNullOrEmpty(request.BillingState))
+            return BadRequest("No se ha proporcionado un estado de facturación.");
+        if (string.IsNullOrEmpty(request.BillingCity))
+            return BadRequest("No se ha proporcionado una ciudad de facturación.");
+        if (string.IsNullOrEmpty(request.BillingAddress))
+            return BadRequest("No se ha proporcionado una dirección de facturación.");
+        if (string.IsNullOrEmpty(request.BillingZipcode))
+            return BadRequest("No se ha proporcionado un código postal de facturación.");
+        if (string.IsNullOrEmpty(request.BillingNeighborhood))
+            return BadRequest("No se ha proporcionado una colonia de facturación.");
+        if (string.IsNullOrEmpty(request.BillingExteriorNumber))
+            return BadRequest("No se ha proporcionado un número exterior de facturación.");
+        if (string.IsNullOrEmpty(request.DisplayName))
+            return BadRequest("No se ha proporcionado un nombre de visualización.");
+        if (string.IsNullOrEmpty(request.StripePaymentMethodId))
+            return BadRequest("No se ha proporcionado un id de método de pago de Stripe.");
+        if (string.IsNullOrEmpty(request.Last4))
+            return BadRequest("No se ha proporcionado los últimos 4 dígitos de la tarjeta.");
+        if (!request.ExpirationMonth.HasValue)
+            return BadRequest("No se ha proporcionado el mes de expiración de la tarjeta.");
+        if (!request.ExpirationYear.HasValue)
+            return BadRequest("No se ha proporcionado el año de expiración de la tarjeta.");
         if (string.IsNullOrEmpty(request.Brand)) return BadRequest("No se ha proporcionado la marca de la tarjeta.");
         if (string.IsNullOrEmpty(request.Country)) return BadRequest("No se ha proporcionado el país de la tarjeta.");
 
         using var hmac = new HMACSHA512();
 
         if ((await userManager.FindByEmailAsync(request.Email)) != null)
-        return BadRequest("No puede crearse una cuenta con este correo.");
+            return BadRequest("No puede crearse una cuenta con este correo.");
 
         AppUser user = new();
 
@@ -305,12 +329,13 @@ public class AccountController(
             IsBilling = request.SameAddress.Value ? true : false
         };
 
-        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mainAddress.Address));
+        var (latitude, longitude) =
+            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mainAddress.Address));
         mainAddress.Address.Latitude = latitude;
         mainAddress.Address.Longitude = longitude;
 
         user.UserAddresses.Add(mainAddress);
-        user.DoctorClinics.Add(new() {Clinic = mainAddress.Address, IsMain = true});
+        user.DoctorClinics.Add(new DoctorClinic { Clinic = mainAddress.Address, IsMain = true });
 
         if (!request.SameAddress.Value)
         {
@@ -331,7 +356,8 @@ public class AccountController(
                 IsMain = false,
                 IsBilling = true
             };
-            (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(billingAddress.Address));
+            (latitude, longitude) =
+                await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(billingAddress.Address));
             billingAddress.Address.Latitude = latitude;
             billingAddress.Address.Longitude = longitude;
             user.UserAddresses.Add(billingAddress);
@@ -354,7 +380,7 @@ public class AccountController(
         };
         user.UserPaymentMethods.Add(paymentMethod);
 
-        List<int> acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
+        var acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
         foreach (var paymentMethodTypeId in acceptedPaymentMethods)
         {
             var paymentMethodType = new DoctorPaymentMethodType
@@ -368,34 +394,38 @@ public class AccountController(
         if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
             return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
 
-        var uploadResult = await cloudinaryService.UploadAsync(file, new() {
+        var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+        {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
             Folder = "Mediverse/DoctorMedicalLicenses",
         });
         if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
-        user.UserMedicalLicenses.Add(new (int.Parse(request.SpecialtyId), uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
+        user.UserMedicalLicenses.Add(new UserMedicalLicense(int.Parse(request.SpecialtyId), uploadResult.PublicId,
+            uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
 
-        string? email = user.Email;
+        var email = user.Email;
 
         if (string.IsNullOrEmpty(email)) return BadRequest("No se ha proporcionado un correo.");
 
-        string customerId = await stripeService.CreateCustomerAsync(email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
+        var customerId = await stripeService.CreateCustomerAsync(email, user.FirstName + " " + user.LastName,
+            request.StripePaymentMethodId);
         user.StripeCustomerId = customerId;
 
-        string emailVerificationCode = codeService.GenerateEmailCode();
+        var emailVerificationCode = codeService.GenerateEmailCode();
 
         user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
         user.EmailVerificationCodeSalt = hmac.Key;
         user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
 
-        if (!(await userManager.UpdateAsync(user)).Succeeded) 
-        return BadRequest("No pudo actualizarse la información del usuario.");
+        if (!(await userManager.UpdateAsync(user)).Succeeded)
+            return BadRequest("No pudo actualizarse la información del usuario.");
 
-        string clientUrl = clientSettings.Value.Url;
-        string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        string subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
-        string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
+        var clientUrl = clientSettings.Value.Url;
+        var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
+        var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
+        var htmlMessage =
+            emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
 
         await emailService.SendMail(email, subject, htmlMessage);
 
@@ -406,9 +436,9 @@ public class AccountController(
     [HttpGet("two-factor-setup")]
     public async Task<ActionResult<TwoFactorSetupDto>> GetTwoFactorSetupAsync()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
@@ -427,22 +457,24 @@ public class AccountController(
     [HttpPost("two-factor-verify")]
     public async Task<ActionResult> VerifyTwoFactorAsync([FromBody] TwoFactorVerifyDto request)
     {
-        if (string.IsNullOrEmpty(request.VerificationCode)) return BadRequest("El código de verificación es requerido.");
-        
-        int userId = User.GetUserId();
+        if (string.IsNullOrEmpty(request.VerificationCode))
+            return BadRequest("El código de verificación es requerido.");
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        var userId = User.GetUserId();
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        var isTokenValid = await userManager.VerifyTwoFactorTokenAsync(user, userManager.Options.Tokens.AuthenticatorTokenProvider, request.VerificationCode);
+        var isTokenValid = await userManager.VerifyTwoFactorTokenAsync(user,
+            userManager.Options.Tokens.AuthenticatorTokenProvider, request.VerificationCode);
 
         if (!isTokenValid) return BadRequest("El token es inválido.");
 
         user.TwoFactorEnabled = true;
 
-        if (!(await userManager.UpdateAsync(user)).Succeeded) 
-        return BadRequest("No pudo actualizarse la información del usuario.");
+        if (!(await userManager.UpdateAsync(user)).Succeeded)
+            return BadRequest("No pudo actualizarse la información del usuario.");
 
         return Ok();
     }
@@ -451,16 +483,16 @@ public class AccountController(
     [HttpDelete("two-factor")]
     public async Task<ActionResult> DeleteTwoFactorAsync()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         user.TwoFactorEnabled = false;
 
         if (!(await userManager.UpdateAsync(user)).Succeeded)
-        return BadRequest("No pudo actualizarse la información del usuario.");
+            return BadRequest("No pudo actualizarse la información del usuario.");
 
         await userManager.ResetAuthenticatorKeyAsync(user);
 
@@ -469,23 +501,25 @@ public class AccountController(
 
     [Authorize]
     [HttpPut]
-    public async Task<ActionResult<AccountDto?>> UpdateAsync([FromBody]UserUpdateDto request)
+    public async Task<ActionResult<AccountDto?>> UpdateAsync([FromBody] UserUpdateDto request)
     {
-        int id = User.GetUserId();
+        var id = User.GetUserId();
 
-        AppUser? item = await userManager.Users.SingleOrDefaultAsync(x => x.Id == id);
+        var item = await userManager.Users.SingleOrDefaultAsync(x => x.Id == id);
 
-        if (item != null) {
+        if (item != null)
+        {
             mapper.Map<UserUpdateDto, AppUser>(request, item);
 
             if (request.Gender == "Otro") item.Sex = request.OtherGender;
 
-            if (!(await userManager.UpdateAsync(item)).Succeeded) 
-            return BadRequest("No pudo actualizarse la información del usuario.");
+            if (!(await userManager.UpdateAsync(item)).Succeeded)
+                return BadRequest("No pudo actualizarse la información del usuario.");
 
             var itemToReturn = await usersService.GenerateAccountDtoAsync(id);
             return itemToReturn;
         }
+
         return NotFound($"El usuario con id {id} no existe.");
     }
 
@@ -495,9 +529,9 @@ public class AccountController(
     {
         var item = await userManager.Users
             .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role)
+            .ThenInclude(x => x.Role)
             .Include(x => x.UserPhoto)
-                .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.Photo)
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Email == email);
 
@@ -514,9 +548,10 @@ public class AccountController(
     [HttpPost("user-photo")]
     public async Task<ActionResult<AccountDto?>> SetUserPhotoAsync(IFormFile file)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        ImageUploadParams imageUploadParams = new() {
+        ImageUploadParams imageUploadParams = new()
+        {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
             Folder = "Mediverse/UserPhoto",
             Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
@@ -541,14 +576,14 @@ public class AccountController(
     [HttpDelete("user-photo")]
     public async Task<ActionResult<AccountDto?>> DeleteUserPhotoAsync()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
         var item = await userManager.Users
             .Include(x => x.UserPhoto)
-                .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.Photo)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
-        Photo? photo = item?.UserPhoto?.Photo;
+        var photo = item?.UserPhoto?.Photo;
 
         if (photo == null) return BadRequest("No tienes foto de perfil.");
 
@@ -563,25 +598,28 @@ public class AccountController(
     [HttpPut("doctor-banner")]
     public async Task<ActionResult<AccountDto?>> SetDoctorBannerPhotoAsync(IFormFile file)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role)
+            .ThenInclude(x => x.Role)
             .Include(x => x.DoctorBannerPhoto)
-                .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.Photo)
             .SingleOrDefaultAsync(x => x.Id == userId);
-        
-        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
-        if (!user.UserRoles.Any(x => x.Role.Name == "Doctor")) return BadRequest("No tienes permisos para realizar esta acción.");
 
-        Photo? bannerPhoto = user.DoctorBannerPhoto?.Photo;
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+        if (!user.UserRoles.Any(x => x.Role.Name == "Doctor"))
+            return BadRequest("No tienes permisos para realizar esta acción.");
+
+        var bannerPhoto = user.DoctorBannerPhoto?.Photo;
         if (bannerPhoto != null)
         {
-            if (!await photosService.DeleteAsync(bannerPhoto)) return BadRequest("Error eliminando la foto de portada.");
+            if (!await photosService.DeleteAsync(bannerPhoto))
+                return BadRequest("Error eliminando la foto de portada.");
         }
 
-        ImageUploadParams imageUploadParams = new() {
+        ImageUploadParams imageUploadParams = new()
+        {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
             Folder = "Mediverse/DoctorBannerPhoto",
         };
@@ -590,8 +628,9 @@ public class AccountController(
 
         if (result.Error != null) return BadRequest(result.Error.Message);
 
-        user.DoctorBannerPhoto = new() {
-            Photo = new() { Url = result.SecureUrl.AbsoluteUri, PublicId = result.PublicId },
+        user.DoctorBannerPhoto = new DoctorBannerPhoto
+        {
+            Photo = new Photo { Url = result.SecureUrl, PublicId = result.PublicId },
             UserId = userId
         };
 
@@ -606,22 +645,23 @@ public class AccountController(
     [HttpGet("request-password-reset-token/{email}")]
     public async Task<ActionResult<AccountDto?>> RequestPasswordResetTokenWithEmailAsync([FromRoute] string email)
     {
-        AppUser? user = await userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
         if (user == null)
         {
             return NotFound($"El usuario de correo {email} no existe.");
         }
 
-        string rawToken = await userManager.GeneratePasswordResetTokenAsync(user);
+        var rawToken = await userManager.GeneratePasswordResetTokenAsync(user);
         var resetToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
-        string clientUrl = clientSettings.Value.Url;
-        string resetUrl = $"{clientUrl}/auth/sign-in/new-password?resetToken={resetToken}&firstName={user.FirstName}&email={user.Email}";
+        var clientUrl = clientSettings.Value.Url;
+        var resetUrl =
+            $"{clientUrl}/auth/sign-in/new-password?resetToken={resetToken}&firstName={user.FirstName}&email={user.Email}";
 
-        string subject = $"🚨 ¡Recupera tu contraseña, {user.FirstName}! 🔒";
+        var subject = $"🚨 ¡Recupera tu contraseña, {user.FirstName}! 🔒";
 
-        string htmlMessage =  emailService.CreateResetPasswordEmail(user, resetUrl);
+        var htmlMessage = emailService.CreateResetPasswordEmail(user, resetUrl);
 
-        await  emailService.SendMail(email, subject, htmlMessage);
+        await emailService.SendMail(email, subject, htmlMessage);
 
         var accountToReturn = mapper.Map<AppUser, AccountDto>(user);
 
@@ -634,17 +674,20 @@ public class AccountController(
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("El correo es requerido.");
         if (string.IsNullOrEmpty(request.Token)) return BadRequest("El token es requerido.");
         if (string.IsNullOrEmpty(request.Password)) return BadRequest("La contraseña es requerida.");
-        
+
         var decodedToken = WebEncoders.Base64UrlDecode(request.Token);
-        AppUser? user = await userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByEmailAsync(request.Email);
         if (user == null) return NotFound($"El usuario de correo {request.Email} no existe.");
 
-        if (!string.IsNullOrEmpty(user.PasswordHash)) {
-            var verifyPassResult = userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+        if (!string.IsNullOrEmpty(user.PasswordHash))
+        {
+            var verifyPassResult =
+                userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (verifyPassResult == PasswordVerificationResult.Success)
                 return BadRequest("La nueva contraseña debe ser distinta a la anterior.");
 
-            var result = await userManager.ResetPasswordAsync(user, Encoding.UTF8.GetString(decodedToken), request.Password);
+            var result =
+                await userManager.ResetPasswordAsync(user, Encoding.UTF8.GetString(decodedToken), request.Password);
 
             if (!result.Succeeded)
             {
@@ -667,11 +710,12 @@ public class AccountController(
     public async Task<ActionResult> SetPassword([FromBody] PasswordSetDto request)
     {
         if (string.IsNullOrEmpty(request.Password)) return BadRequest("La contraseña es requerida.");
-        if (string.IsNullOrEmpty(request.ConfirmPassword)) return BadRequest("La contraseña de confirmación es requerida.");
-        
+        if (string.IsNullOrEmpty(request.ConfirmPassword))
+            return BadRequest("La contraseña de confirmación es requerida.");
+
         if (request.Password != request.ConfirmPassword) return BadRequest("Las contraseñas no coinciden.");
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(u => u.Email == User.GetEmail());
+        var user = await userManager.Users.SingleOrDefaultAsync(u => u.Email == User.GetEmail());
 
         if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
 
@@ -690,13 +734,14 @@ public class AccountController(
     {
         if (string.IsNullOrEmpty(request.CurrentPassword)) return BadRequest("La contraseña actual es requerida.");
         if (string.IsNullOrEmpty(request.NewPassword)) return BadRequest("La nueva contraseña es requerida.");
-        if (string.IsNullOrEmpty(request.ConfirmNewPassword)) return BadRequest("La contraseña de confirmación es requerida.");
-        
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(u => u.Email == User.GetEmail());
+        if (string.IsNullOrEmpty(request.ConfirmNewPassword))
+            return BadRequest("La contraseña de confirmación es requerida.");
+
+        var user = await userManager.Users.SingleOrDefaultAsync(u => u.Email == User.GetEmail());
 
         if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
 
-        var result = await  signInManager.CheckPasswordSignInAsync(user, request.CurrentPassword, false);
+        var result = await signInManager.CheckPasswordSignInAsync(user, request.CurrentPassword, false);
 
         if (!result.Succeeded) return Unauthorized("La contraseña actual es incorrecta.");
 
@@ -714,19 +759,19 @@ public class AccountController(
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha proporcionado un correo.");
         if (string.IsNullOrEmpty(request.Code)) return BadRequest("No se ha proporcionado un código.");
-        
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
 
         if (user == null) return NotFound($"El usuario de correo {request.Email} no existe.");
 
         if (user.EmailConfirmed) return BadRequest("Este correo ya se encuentra verificado.");
 
-        var result =  codeService.ValidateEmailCode(user, request.Code);
+        var result = codeService.ValidateEmailCode(user, request.Code);
 
         if (!result) return BadRequest("El código es incorrecto o ha expirado su validez.");
 
         user.EmailConfirmed = true;
-        
+
         var updateResult = await userManager.UpdateAsync(user);
 
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
@@ -739,12 +784,12 @@ public class AccountController(
     {
         using var hmac = new HMACSHA512();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .SingleOrDefaultAsync(x => x.Email == request.Email);
 
         if (user == null) return NotFound($"El usuario de correo {request.Email} no existe.");
 
-        string phoneNumberVerificationCode =  codeService.GeneratePhoneNumberCode();
+        var phoneNumberVerificationCode = codeService.GeneratePhoneNumberCode();
 
         user.PhoneNumber = request.PhoneNumber;
         user.PhoneNumberCountryCode = request.PhoneNumberCountryCode;
@@ -758,39 +803,39 @@ public class AccountController(
 
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
-        string message = $$"""
-        ¡Hola {{user.FirstName}} {{user.LastName}}! Nos complace que te tomes la seguridad de tu información tan seriamente como nosotros.
+        var message = $$"""
+                        ¡Hola {{user.FirstName}} {{user.LastName}}! Nos complace que te tomes la seguridad de tu información tan seriamente como nosotros.
 
-        El código para verificar este teléfono es el siguiente:
+                        El código para verificar este teléfono es el siguiente:
 
-        {{phoneNumberVerificationCode}}
+                        {{phoneNumberVerificationCode}}
 
-        Gracias por usar DocHub.
-        """;
+                        Gracias por usar DocHub.
+                        """;
 
-        var messageResponse = await  phoneService.SendMessage(user.PhoneNumberCountryCode + user.PhoneNumber, message);
+        var messageResponse = await phoneService.SendMessage(user.PhoneNumberCountryCode + user.PhoneNumber, message);
 
         return Ok();
     }
 
-    [HttpPost("phone-verification")] 
+    [HttpPost("phone-verification")]
     public async Task<ActionResult<AccountDto?>> VerifyPhoneNumber([FromBody] PhoneNumberVerificationDto request)
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha proporcionado un correo.");
         if (string.IsNullOrEmpty(request.Code)) return BadRequest("No se ha proporcionado un código.");
-        
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
+
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
 
         if (user == null) return NotFound($"El usuario de correo {request.Email} no existe.");
 
         if (user.PhoneNumberConfirmed) return BadRequest("Este número de teléfono ya ha sido verificado.");
 
-        var result =  codeService.ValidatePhoneNumberCode(user, request.Code);
+        var result = codeService.ValidatePhoneNumberCode(user, request.Code);
 
         if (!result) return BadRequest("El código es incorrecto o ha expirado su validez.");
 
         user.PhoneNumberConfirmed = true;
-        
+
         var updateResult = await userManager.UpdateAsync(user);
 
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
@@ -813,7 +858,7 @@ public class AccountController(
     [HttpGet("phoneNumberExists")]
     public async Task<ActionResult<bool>> CheckPhoneNumberExistsAsync([FromQuery] string phoneNumber)
     {
-        AppUser? user = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+        var user = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
         return user != null;
     }
 
@@ -823,7 +868,7 @@ public class AccountController(
     {
         using var hmac = new HMACSHA512();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .SingleOrDefaultAsync(x => x.Email == User.GetEmail());
 
         if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
@@ -840,7 +885,7 @@ public class AccountController(
 
         user.EmailConfirmed = false;
 
-        string emailVerificationCode =  codeService.GenerateEmailCode();
+        var emailVerificationCode = codeService.GenerateEmailCode();
         user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
         user.EmailVerificationCodeSalt = hmac.Key;
 
@@ -850,26 +895,27 @@ public class AccountController(
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
         // send email verification code
-        string clientUrl = clientSettings.Value.Url;
-        string subject = $"🔒 Verificación de correo para {user.FirstName}!";
-        string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
+        var clientUrl = clientSettings.Value.Url;
+        var subject = $"🔒 Verificación de correo para {user.FirstName}!";
+        var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
-        string? email = user.Email;
+        var email = user.Email;
 
-        if (!string.IsNullOrEmpty(email)) {
+        if (!string.IsNullOrEmpty(email))
+        {
             await emailService.SendMail(email, subject, htmlMessage);
         }
-        
+
         // return user
         return await usersService.GenerateAccountDtoAsync(user.Id);
     }
-    
+
     [HttpPut("update-phoneNumber")]
     public async Task<ActionResult<AccountDto?>> UpdateEmail(PhoneNumberUpdateDto request)
     {
         using var hmac = new HMACSHA512();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .SingleOrDefaultAsync(x => x.Email == User.GetEmail());
 
         if (user == null) return NotFound($"El usuario de número de teléfono {User.GetEmail()} no existe.");
@@ -883,12 +929,13 @@ public class AccountController(
             user.PhoneNumberCountryCode = request.PhoneNumberCountryCode;
 
             var countryCodeUpdateResult = await userManager.UpdateAsync(user);
-            if (!countryCodeUpdateResult.Succeeded) return BadRequest("Error al actualizar el código de país del número de teléfono.");
+            if (!countryCodeUpdateResult.Succeeded)
+                return BadRequest("Error al actualizar el código de país del número de teléfono.");
         }
 
         // update phoneNumber confirmation
         user.PhoneNumberConfirmed = false;
-        string phoneNumberVerificationCode =  codeService.GeneratePhoneNumberCode();
+        var phoneNumberVerificationCode = codeService.GeneratePhoneNumberCode();
 
         user.PhoneNumberVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(phoneNumberVerificationCode));
         user.PhoneNumberVerificationCodeSalt = hmac.Key;
@@ -896,23 +943,23 @@ public class AccountController(
         user.PhoneNumberVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
 
         var updateResult = await userManager.UpdateAsync(user);
-        
+
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
         // send phoneNumber verification code
-        string message = $$"""
-        ¡Hola {{user.FirstName}} {{user.LastName}}! Nos complace que te tomes la seguridad de tu información tan seriamente como nosotros.
+        var message = $$"""
+                        ¡Hola {{user.FirstName}} {{user.LastName}}! Nos complace que te tomes la seguridad de tu información tan seriamente como nosotros.
 
-        El código para verificar este teléfono es el siguiente:
+                        El código para verificar este teléfono es el siguiente:
 
-        {{phoneNumberVerificationCode}}
+                        {{phoneNumberVerificationCode}}
 
-        Gracias por usar DocHub.
-        """;
-        
-        string fullPhoneNumber = user.PhoneNumberCountryCode + user.PhoneNumber;
-        
-        var messageResponse = await  phoneService.SendMessage(fullPhoneNumber, message);
+                        Gracias por usar DocHub.
+                        """;
+
+        var fullPhoneNumber = user.PhoneNumberCountryCode + user.PhoneNumber;
+
+        var messageResponse = await phoneService.SendMessage(fullPhoneNumber, message);
 
         // return user
         return await usersService.GenerateAccountDtoAsync(user.Id);
@@ -925,7 +972,7 @@ public class AccountController(
         using var hmac = new HMACSHA512();
 
         // get user
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
         if (user == null) return NotFound($"No se ha encontrado al usuario.");
 
         if (user.EmailConfirmed) return BadRequest("Este correo ya se encuentra verificado.");
@@ -933,28 +980,29 @@ public class AccountController(
         // update email confirmation
         user.EmailConfirmed = false;
 
-        string emailVerificationCode =  codeService.GenerateEmailCode();
+        var emailVerificationCode = codeService.GenerateEmailCode();
 
         user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
         user.EmailVerificationCodeSalt = hmac.Key;
-        
+
         user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
 
         var updateResult = await userManager.UpdateAsync(user);
-        
+
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
         // send email verification code
-        string? clientUrl =  configuration.GetValue<string>("ClientUrl");
-        string subject = $"🔒 Verificación de correo para {user.FirstName}!";
-        string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
+        var clientUrl = configuration.GetValue<string>("ClientUrl");
+        var subject = $"🔒 Verificación de correo para {user.FirstName}!";
+        var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
-        string? email = user.Email;
+        var email = user.Email;
 
-        if (!string.IsNullOrEmpty(email)) {
+        if (!string.IsNullOrEmpty(email))
+        {
             await emailService.SendMail(email, subject, htmlMessage);
         }
-        
+
 
         return Ok();
     }
@@ -966,14 +1014,14 @@ public class AccountController(
         using var hmac = new HMACSHA512();
 
         // get user
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
         if (user == null) return NotFound($"No se ha encontrado al usuario.");
 
         if (user.PhoneNumberConfirmed) return BadRequest("Este número de teléfono ya se encuentra verificado.");
 
         // update phoneNumber confirmation
         user.PhoneNumberConfirmed = false;
-        string phoneNumberVerificationCode =  codeService.GeneratePhoneNumberCode();
+        var phoneNumberVerificationCode = codeService.GeneratePhoneNumberCode();
 
         user.PhoneNumberVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(phoneNumberVerificationCode));
         user.PhoneNumberVerificationCodeSalt = hmac.Key;
@@ -985,17 +1033,17 @@ public class AccountController(
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
         // send phoneNumber verification code
-        string message = $$"""
-        ¡Hola {{user.FirstName}} {{user.LastName}}! Nos complace que te tomes la seguridad de tu información tan seriamente como nosotros.
-        
-        El código para verificar este teléfono es el siguiente:
-        
-        {{phoneNumberVerificationCode}}
+        var message = $$"""
+                        ¡Hola {{user.FirstName}} {{user.LastName}}! Nos complace que te tomes la seguridad de tu información tan seriamente como nosotros.
 
-        Gracias por usar DocHub.
-        """;
+                        El código para verificar este teléfono es el siguiente:
 
-        var messageResponse = await  phoneService.SendMessage(user.PhoneNumberCountryCode + user.PhoneNumber, message);
+                        {{phoneNumberVerificationCode}}
+
+                        Gracias por usar DocHub.
+                        """;
+
+        var messageResponse = await phoneService.SendMessage(user.PhoneNumberCountryCode + user.PhoneNumber, message);
 
         return Ok();
     }
@@ -1004,11 +1052,12 @@ public class AccountController(
     [HttpGet("billing-details")]
     public async Task<ActionResult<BillingDetailsDto?>> GetBillingDetails()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        BillingDetailsDto? itemToReturn = await usersService.GetBillingDetailsAsync(userId);
+        var itemToReturn = await usersService.GetBillingDetailsAsync(userId);
 
-        if (itemToReturn == null) return NotFound($"No se han encontrado detalles de facturación para el usuario con id {userId}.");
+        if (itemToReturn == null)
+            return NotFound($"No se han encontrado detalles de facturación para el usuario con id {userId}.");
 
         itemToReturn.UserPaymentMethods = [..itemToReturn.UserPaymentMethods.OrderBy(x => !x.IsMain)];
         itemToReturn.UserAddresses = [..itemToReturn.UserAddresses.OrderBy(x => !x.IsBilling)];
@@ -1021,32 +1070,35 @@ public class AccountController(
     public async Task<ActionResult<UserPaymentMethodDto>> AddPaymentMethod(UserPaymentMethodCreateDto request)
     {
         if (string.IsNullOrEmpty(request.DisplayName)) return BadRequest("El nombre del método de pago es requerido.");
-        if (string.IsNullOrEmpty(request.Last4)) return BadRequest("Los últimos 4 dígitos de la tarjeta son requeridos.");
+        if (string.IsNullOrEmpty(request.Last4))
+            return BadRequest("Los últimos 4 dígitos de la tarjeta son requeridos.");
         if (string.IsNullOrEmpty(request.Brand)) return BadRequest("La marca de la tarjeta es requerida.");
         if (string.IsNullOrEmpty(request.Country)) return BadRequest("El país de la tarjeta es requerido.");
-        if (string.IsNullOrEmpty(request.StripePaymentMethodId)) return BadRequest("El id del método de pago de Stripe es requerido.");
+        if (string.IsNullOrEmpty(request.StripePaymentMethodId))
+            return BadRequest("El id del método de pago de Stripe es requerido.");
         if (!request.IsMain.HasValue) return BadRequest("Debes especificar si el método de pago es principal.");
         if (!request.ExpirationMonth.HasValue) return BadRequest("El mes de expiración de la tarjeta es requerido.");
         if (!request.ExpirationYear.HasValue) return BadRequest("El año de expiración de la tarjeta es requerido.");
-        
-        int userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var userId = User.GetUserId();
+
+        var user = await userManager.Users
             .Include(x => x.UserPaymentMethods)
-                .ThenInclude(x => x.PaymentMethod)
+            .ThenInclude(x => x.PaymentMethod)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         if (user.UserPaymentMethods.Count == 0)
         {
-            string? email = user.Email;
+            var email = user.Email;
 
-            if (!string.IsNullOrEmpty(email)) {
-                string customerId = await stripeService.CreateCustomerAsync(email, user.FirstName + " " + user.LastName, request.StripePaymentMethodId);
+            if (!string.IsNullOrEmpty(email))
+            {
+                var customerId = await stripeService.CreateCustomerAsync(email, user.FirstName + " " + user.LastName,
+                    request.StripePaymentMethodId);
                 user.StripeCustomerId = customerId;
             }
-            
         }
 
         if (request.IsMain.Value == true)
@@ -1055,10 +1107,11 @@ public class AccountController(
             if (mainPaymentMethod != null) mainPaymentMethod.IsMain = false;
         }
 
-        user.UserPaymentMethods.Add(new() {
+        user.UserPaymentMethods.Add(new UserPaymentMethod
+        {
             UserId = userId,
             IsMain = request.IsMain.Value,
-            PaymentMethod = new()
+            PaymentMethod = new PaymentMethod
             {
                 DisplayName = request.DisplayName,
                 StripePaymentMethodId = request.StripePaymentMethodId,
@@ -1070,12 +1123,13 @@ public class AccountController(
             }
         });
 
-        string? stripeCustomerId = user.StripeCustomerId;
+        var stripeCustomerId = user.StripeCustomerId;
 
         if (string.IsNullOrEmpty(stripeCustomerId))
             return BadRequest("No se ha encontrado un cliente de Stripe asociado a este usuario.");
 
-        if (!await stripeService.AddPaymentMethodAsync(stripeCustomerId, request.StripePaymentMethodId, request.IsMain.Value))
+        if (!await stripeService.AddPaymentMethodAsync(stripeCustomerId, request.StripePaymentMethodId,
+                request.IsMain.Value))
             return BadRequest("Error agregando el método de pago a Stripe.");
 
         if (!await uow.Complete()) return BadRequest("Error guardando el método de pago.");
@@ -1087,16 +1141,17 @@ public class AccountController(
     [HttpDelete("payment-method/{paymentMethodId}")]
     public async Task<ActionResult> DeletePaymentMethod(string paymentMethodId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserPaymentMethods)
-                .ThenInclude(x => x.PaymentMethod)
+            .ThenInclude(x => x.PaymentMethod)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        UserPaymentMethod? paymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
+        var paymentMethod =
+            user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
         if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
 
         if (paymentMethod.IsMain) return BadRequest("No puedes eliminar tu método de pago principal.");
@@ -1115,25 +1170,27 @@ public class AccountController(
     [HttpPut("payment-method/{paymentMethodId}")]
     public async Task<ActionResult> SetMainPaymentMethod(string paymentMethodId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserPaymentMethods)
-                .ThenInclude(x => x.PaymentMethod)
+            .ThenInclude(x => x.PaymentMethod)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        UserPaymentMethod? paymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
+        var paymentMethod =
+            user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
         if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
 
-        UserPaymentMethod? mainPaymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.IsMain);
-        if (mainPaymentMethod?.PaymentMethod.StripePaymentMethodId == paymentMethodId) return BadRequest("Este método de pago ya es el principal.");
+        var mainPaymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.IsMain);
+        if (mainPaymentMethod?.PaymentMethod.StripePaymentMethodId == paymentMethodId)
+            return BadRequest("Este método de pago ya es el principal.");
         if (mainPaymentMethod != null) mainPaymentMethod.IsMain = false;
 
         paymentMethod.IsMain = true;
 
-        string? stripeCustomerId = user.StripeCustomerId;
+        var stripeCustomerId = user.StripeCustomerId;
 
         if (string.IsNullOrEmpty(stripeCustomerId))
             return BadRequest("No se ha encontrado un cliente de Stripe asociado a este usuario.");
@@ -1150,11 +1207,11 @@ public class AccountController(
     [HttpPost("address")]
     public async Task<ActionResult<UserAddressDto>> AddAddress(UserAddressCreateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserAddresses)
-                .ThenInclude(x => x.Address)
+            .ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1171,13 +1228,15 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
-        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
+        var (latitude, longitude) =
+            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
 
-        user.UserAddresses.Add(new() {
+        user.UserAddresses.Add(new UserAddress
+        {
             UserId = userId,
             IsMain = request.IsMain,
             IsBilling = request.IsBilling,
-            Address = new()
+            Address = new Address
             {
                 Neighborhood = request.Neighborhood,
                 ExteriorNumber = request.ExteriorNumber,
@@ -1201,16 +1260,16 @@ public class AccountController(
     [HttpDelete("address/{addressId}")]
     public async Task<ActionResult> DeleteAddress(int addressId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserAddresses)
-                .ThenInclude(x => x.Address)
+            .ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        UserAddress? address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
+        var address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
         if (address == null) return NotFound($"La dirección con id {addressId} no existe.");
 
         if (address.IsMain) return BadRequest("No puedes eliminar tu dirección principal.");
@@ -1226,16 +1285,16 @@ public class AccountController(
     [HttpPut("address/{addressId}")]
     public async Task<ActionResult> UpdateAddress(int addressId, UserAddressUpdateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserAddresses)
-                .ThenInclude(x => x.Address)
+            .ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        UserAddress? address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
+        var address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
         if (address == null) return NotFound($"La dirección con id {addressId} no existe.");
 
         if (request.IsMain)
@@ -1250,7 +1309,8 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
-        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
+        var (latitude, longitude) =
+            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
 
         address.IsMain = request.IsMain;
         address.IsBilling = request.IsBilling;
@@ -1281,41 +1341,42 @@ public class AccountController(
     [HttpGet("payment-history")]
     public async Task<ActionResult<List<PaymentDto>>> GetPaymentHistory()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.PatientEvents)
-                .ThenInclude(x => x.Event)
-                .ThenInclude(x => x.EventPayments)
-                .ThenInclude(x => x.Payment)
-                .ThenInclude(x => x.PaymentPaymentMethodType)
-                .ThenInclude(x => x.PaymentMethodType)
+            .ThenInclude(x => x.Event)
+            .ThenInclude(x => x.EventPayments)
+            .ThenInclude(x => x.Payment)
+            .ThenInclude(x => x.PaymentPaymentMethodType)
+            .ThenInclude(x => x.PaymentMethodType)
             .Include(x => x.PatientEvents)
-                .ThenInclude(x => x.Event)
-                .ThenInclude(x => x.EventPayments)
-                .ThenInclude(x => x.Payment)
-                .ThenInclude(x => x.PaymentPaymentMethod)
-                .ThenInclude(x => x.PaymentMethod)
+            .ThenInclude(x => x.Event)
+            .ThenInclude(x => x.EventPayments)
+            .ThenInclude(x => x.Payment)
+            .ThenInclude(x => x.PaymentPaymentMethod)
+            .ThenInclude(x => x.PaymentMethod)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        return mapper.Map<List<PaymentDto>>(user.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment)));
+        return mapper.Map<List<PaymentDto>>(
+            user.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment)));
     }
 
     [Authorize]
     [HttpGet("medical-insurance-companies")]
     public async Task<ActionResult<List<UserMedicalInsuranceCompanyDto>>> GetMedicalInsuranceCompanies()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserMedicalInsuranceCompanies)
-                .ThenInclude(x => x.MedicalInsuranceCompany)
-                .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
-                .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.MedicalInsuranceCompany)
+            .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
+            .ThenInclude(x => x.Photo)
             .Include(x => x.UserMedicalInsuranceCompanies)
-                .ThenInclude(x => x.Document)
+            .ThenInclude(x => x.Document)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1325,43 +1386,50 @@ public class AccountController(
 
     [Authorize]
     [HttpPost("medical-insurance-company")]
-    public async Task<ActionResult<AccountDto?>> AddMedicalInsuranceCompanyAsync([FromForm] UserMedicalInsuranceCompanyCreateDto request)
+    public async Task<ActionResult<AccountDto?>> AddMedicalInsuranceCompanyAsync(
+        [FromForm] UserMedicalInsuranceCompanyCreateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        if (request.MedicalInsuranceCompany == null) return BadRequest("No se ha enviado la compañía de seguro médico.");
-        if (!request.MedicalInsuranceCompany.Id.HasValue) return BadRequest("No se ha enviado el ID de la compañía de seguro médico.");
-        if (!request.IsMain.HasValue) return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
+        if (request.MedicalInsuranceCompany == null)
+            return BadRequest("No se ha enviado la compañía de seguro médico.");
+        if (!request.MedicalInsuranceCompany.Id.HasValue)
+            return BadRequest("No se ha enviado el ID de la compañía de seguro médico.");
+        if (!request.IsMain.HasValue)
+            return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
         if (request.File == null) return BadRequest("No se ha enviado el documento.");
         if (string.IsNullOrEmpty(request.PolicyNumber)) return BadRequest("No se ha enviado el número de póliza.");
 
         if (!await uow.UserRepository.ExistsByIdAsync(userId))
-        return BadRequest($"Usuario de ID {userId} no fue encontrado.");
+            return BadRequest($"Usuario de ID {userId} no fue encontrado.");
 
         if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(request.MedicalInsuranceCompany.Id.Value))
-        return BadRequest($"Compañía de seguro médico de ID {request.MedicalInsuranceCompany.Id.Value} no fue encontrada.");
+            return BadRequest(
+                $"Compañía de seguro médico de ID {request.MedicalInsuranceCompany.Id.Value} no fue encontrada.");
 
-        IFormFile file = request.File;
-        bool isMain = request.IsMain.Value;
-        OptionDto medicalInsuranceCompany = request.MedicalInsuranceCompany;
-        string policyNumber = request.PolicyNumber;
-        AppUser? user = await userManager.Users
+        var file = request.File;
+        var isMain = request.IsMain.Value;
+        var medicalInsuranceCompany = request.MedicalInsuranceCompany;
+        var policyNumber = request.PolicyNumber;
+        var user = await userManager.Users
             .Include(x => x.UserMedicalInsuranceCompanies)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         if (user.UserMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompany.Id))
-        return BadRequest("Ya tienes esta compañía de seguro médico registrada.");
+            return BadRequest("Ya tienes esta compañía de seguro médico registrada.");
 
-        ImageUploadResult uploadResult = await cloudinaryService.UploadAsync(file, new() {
+        var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+        {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
             Folder = "Mediverse/UserMedicalInsuranceCompanies",
         });
 
         if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
-        ImageUploadResult uploadThumbnailResult = await cloudinaryService.UploadAsync(file, new() {
+        var uploadThumbnailResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+        {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
             Folder = "Mediverse/UserMedicalInsuranceCompanies/Thumbnails",
             Format = "jpg",
@@ -1372,15 +1440,18 @@ public class AccountController(
 
         if (isMain)
         {
-            UserMedicalInsuranceCompany? mainMedicalInsuranceCompany = user.UserMedicalInsuranceCompanies.FirstOrDefault(x => x.IsMain);
+            var mainMedicalInsuranceCompany =
+                user.UserMedicalInsuranceCompanies.FirstOrDefault(x => x.IsMain);
             if (mainMedicalInsuranceCompany != null) mainMedicalInsuranceCompany.IsMain = false;
         }
 
-        user.UserMedicalInsuranceCompanies.Add(new() {
+        user.UserMedicalInsuranceCompanies.Add(new UserMedicalInsuranceCompany
+        {
             MedicalInsuranceCompanyId = medicalInsuranceCompany.Id.Value,
             IsMain = isMain,
             PolicyNumber = request.PolicyNumber,
-            Document = new() {
+            Document = new Document
+            {
                 Url = uploadResult.SecureUrl.AbsoluteUri,
                 PublicId = uploadResult.PublicId,
                 ThumbnailUrl = uploadThumbnailResult.SecureUrl.AbsoluteUri,
@@ -1397,34 +1468,40 @@ public class AccountController(
 
     [Authorize]
     [HttpDelete("medical-insurance-company/{insuranceId}")]
-    public async Task<ActionResult<AccountDto?>> DeleteInsuranceByIdAsync([FromRoute]int insuranceId)
+    public async Task<ActionResult<AccountDto?>> DeleteInsuranceByIdAsync([FromRoute] int insuranceId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserMedicalInsuranceCompanies)
-                .ThenInclude(x => x.Document)
+            .ThenInclude(x => x.Document)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(insuranceId))
-        return BadRequest($"La compañía de seguro médico con id {insuranceId} no existe.");
+            return BadRequest($"La compañía de seguro médico con id {insuranceId} no existe.");
 
-        UserMedicalInsuranceCompany? toDelete = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == insuranceId);
-        if (toDelete == null) return NotFound($"No estás registrado con la compañía de seguro médico con id {insuranceId}.");
+        var toDelete =
+            user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == insuranceId);
+        if (toDelete == null)
+            return NotFound($"No estás registrado con la compañía de seguro médico con id {insuranceId}.");
 
         user.UserMedicalInsuranceCompanies.Remove(toDelete);
         if (!await uow.Complete()) return BadRequest("Error eliminando la compañía de seguro médico.");
 
-        if (toDelete.Document != null) {
-            if (!string.IsNullOrEmpty(toDelete.Document.PublicId)) {
-                DeletionResult deleteResponse = await cloudinaryService.DeleteAsync(toDelete.Document.PublicId);
+        if (toDelete.Document != null)
+        {
+            if (!string.IsNullOrEmpty(toDelete.Document.PublicId))
+            {
+                var deleteResponse = await cloudinaryService.DeleteAsync(toDelete.Document.PublicId);
                 if (deleteResponse.Error != null) return BadRequest(deleteResponse.Error.Message);
             }
 
-            if (!string.IsNullOrEmpty(toDelete.Document.ThumbnailPublicId)) {
-                DeletionResult thumbnailDeleteResponse = await cloudinaryService.DeleteAsync(toDelete.Document.ThumbnailPublicId);
+            if (!string.IsNullOrEmpty(toDelete.Document.ThumbnailPublicId))
+            {
+                var thumbnailDeleteResponse =
+                    await cloudinaryService.DeleteAsync(toDelete.Document.ThumbnailPublicId);
                 if (thumbnailDeleteResponse.Error != null) return BadRequest(thumbnailDeleteResponse.Error.Message);
             }
         }
@@ -1434,36 +1511,42 @@ public class AccountController(
 
     [Authorize]
     [HttpDelete("medical-insurance-company-document/{documentId}")]
-    public async Task<ActionResult<AccountDto?>> DeleteInsuranceDocumentByIdAsync([FromRoute]int documentId)
+    public async Task<ActionResult<AccountDto?>> DeleteInsuranceDocumentByIdAsync([FromRoute] int documentId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .AsNoTracking()
             .Include(x => x.UserMedicalInsuranceCompanies)
-                .ThenInclude(x => x.Document)
+            .ThenInclude(x => x.Document)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         if (!await uow.DocumentRepository.ExistsByIdAsync(documentId))
-        return BadRequest($"El documento de la compañía de seguro médico con id {documentId} no existe.");
+            return BadRequest($"El documento de la compañía de seguro médico con id {documentId} no existe.");
 
         if (!user.UserMedicalInsuranceCompanies.Any(x => x.DocumentId == documentId))
-        return BadRequest($"No estás registrado con la compañía de seguro médico que tiene el documento con id {documentId}.");
+            return BadRequest(
+                $"No estás registrado con la compañía de seguro médico que tiene el documento con id {documentId}.");
 
-        Document? document = await uow.DocumentRepository.GetByIdAsync(documentId);
+        var document = await uow.DocumentRepository.GetByIdAsync(documentId);
 
-        if (document == null) return NotFound($"No se ha encontrado el documento de la compañía de seguro médico con id {documentId}.");
+        if (document == null)
+            return NotFound($"No se ha encontrado el documento de la compañía de seguro médico con id {documentId}.");
 
-        if (document != null) {
-            if (!string.IsNullOrEmpty(document.PublicId)) {
-                DeletionResult deleteResponse = await cloudinaryService.DeleteAsync(document.PublicId);
+        if (document != null)
+        {
+            if (!string.IsNullOrEmpty(document.PublicId))
+            {
+                var deleteResponse = await cloudinaryService.DeleteAsync(document.PublicId);
                 if (deleteResponse.Error != null) return BadRequest(deleteResponse.Error.Message);
             }
 
-            if (!string.IsNullOrEmpty(document.ThumbnailPublicId)) {
-                DeletionResult thumbnailDeleteResponse = await cloudinaryService.DeleteAsync(document.ThumbnailPublicId);
+            if (!string.IsNullOrEmpty(document.ThumbnailPublicId))
+            {
+                var thumbnailDeleteResponse =
+                    await cloudinaryService.DeleteAsync(document.ThumbnailPublicId);
                 if (thumbnailDeleteResponse.Error != null) return BadRequest(thumbnailDeleteResponse.Error.Message);
             }
         }
@@ -1477,18 +1560,22 @@ public class AccountController(
 
     [Authorize]
     [HttpPut("medical-insurance-company/{medicalInsuranceCompanyId}")]
-    public async Task<ActionResult> UpdateMedicalInsuranceCompany(int medicalInsuranceCompanyId, UserMedicalInsuranceCompanyUpdateDto request)
+    public async Task<ActionResult> UpdateMedicalInsuranceCompany(int medicalInsuranceCompanyId,
+        UserMedicalInsuranceCompanyUpdateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserMedicalInsuranceCompanies)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        UserMedicalInsuranceCompany? medicalInsuranceCompany = user.UserMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId);
-        if (medicalInsuranceCompany == null) return NotFound($"La compañía de seguro médico con id {medicalInsuranceCompanyId} no existe.");
+        var medicalInsuranceCompany =
+            user.UserMedicalInsuranceCompanies.SingleOrDefault(x =>
+                x.MedicalInsuranceCompanyId == medicalInsuranceCompanyId);
+        if (medicalInsuranceCompany == null)
+            return NotFound($"La compañía de seguro médico con id {medicalInsuranceCompanyId} no existe.");
 
         if (request.IsMain)
         {
@@ -1509,49 +1596,53 @@ public class AccountController(
     [HttpGet("doctor-medical-insurance-companies")]
     public async Task<ActionResult<List<MedicalInsuranceCompanyDto>>> GetDoctorMedicalInsuranceCompanies()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.DoctorMedicalInsuranceCompanies)
-                .ThenInclude(x => x.MedicalInsuranceCompany)
-                .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
-                .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.MedicalInsuranceCompany)
+            .ThenInclude(x => x.MedicalInsuranceCompanyPhoto)
+            .ThenInclude(x => x.Photo)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        return mapper.Map<List<MedicalInsuranceCompanyDto>>(user.DoctorMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany).ToList());
+        return mapper.Map<List<MedicalInsuranceCompanyDto>>(user.DoctorMedicalInsuranceCompanies
+            .Select(x => x.MedicalInsuranceCompany).ToList());
     }
 
     [Authorize]
     [HttpPut("doctor-medical-insurance-company")]
-    public async Task<ActionResult<AccountDto?>> ToggleDoctorInsuranceAsync([FromQuery]int insuranceId, [FromQuery]bool isActive)
+    public async Task<ActionResult<AccountDto?>> ToggleDoctorInsuranceAsync([FromQuery] int insuranceId,
+        [FromQuery] bool isActive)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.DoctorMedicalInsuranceCompanies)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         if (!await uow.UserRepository.HasDoctorRoleByIdAsync(userId))
-        return BadRequest($"El usuario con id {userId} no es un doctor.");
+            return BadRequest($"El usuario con id {userId} no es un doctor.");
 
         if (!await uow.MedicalInsuranceCompanyRepository.ExistsByIdAsync(insuranceId))
-        return BadRequest($"La compañía de seguro médico con id {insuranceId} no existe.");
+            return BadRequest($"La compañía de seguro médico con id {insuranceId} no existe.");
 
         if (user.DoctorMedicalInsuranceCompanies.Any(x => x.MedicalInsuranceCompanyId == insuranceId))
         {
-            DoctorMedicalInsuranceCompany? doctorMedicalInsuranceCompany = user.DoctorMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == insuranceId);
+            var doctorMedicalInsuranceCompany =
+                user.DoctorMedicalInsuranceCompanies.SingleOrDefault(x => x.MedicalInsuranceCompanyId == insuranceId);
 
-            if (doctorMedicalInsuranceCompany != null) {
+            if (doctorMedicalInsuranceCompany != null)
+            {
                 user.DoctorMedicalInsuranceCompanies.Remove(doctorMedicalInsuranceCompany);
             }
         }
         else
         {
-            user.DoctorMedicalInsuranceCompanies.Add(new(insuranceId));
+            user.DoctorMedicalInsuranceCompanies.Add(new DoctorMedicalInsuranceCompany(insuranceId));
         }
 
         if (!await uow.Complete()) return BadRequest("Error actualizando la compañía de seguro médico del doctor.");
@@ -1565,16 +1656,18 @@ public class AccountController(
     {
         if (string.IsNullOrEmpty(request.Password)) return BadRequest("No se ha enviado la contraseña.");
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha enviado el nuevo correo.");
-        
+
         using var hmac = new HMACSHA512();
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == User.GetEmail());
 
         if (user == null) return NotFound($"El usuario de correo {User.GetEmail()} no existe.");
 
-        if (!userManager.CheckPasswordAsync(user, request.Password).Result) return BadRequest("La contraseña es incorrecta.");
+        if (!userManager.CheckPasswordAsync(user, request.Password).Result)
+            return BadRequest("La contraseña es incorrecta.");
 
-        if (await userManager.FindByEmailAsync(request.Email) != null) return BadRequest("Ya existe una cuenta con este correo.");
+        if (await userManager.FindByEmailAsync(request.Email) != null)
+            return BadRequest("Ya existe una cuenta con este correo.");
 
         var result = await userManager.SetEmailAsync(user, request.Email);
         if (!result.Succeeded) return BadRequest("Error al actualizar correo.");
@@ -1584,7 +1677,7 @@ public class AccountController(
 
         user.EmailConfirmed = false;
 
-        string emailVerificationCode =  codeService.GenerateEmailCode();
+        var emailVerificationCode = codeService.GenerateEmailCode();
         user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
         user.EmailVerificationCodeSalt = hmac.Key;
         user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
@@ -1592,12 +1685,12 @@ public class AccountController(
         var updateResult = await userManager.UpdateAsync(user);
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
-        string clientUrl = clientSettings.Value.Url;
-        string verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        string subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
-        string htmlMessage =  emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
+        var clientUrl = clientSettings.Value.Url;
+        var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
+        var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
+        var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
-        string? email = user.Email;
+        var email = user.Email;
 
         if (string.IsNullOrEmpty(email)) return BadRequest("No se ha encontrado el correo del usuario.");
 
@@ -1614,15 +1707,16 @@ public class AccountController(
     {
         if (string.IsNullOrEmpty(request.CurrentPassword)) return BadRequest("No se ha enviado la contraseña actual.");
         if (string.IsNullOrEmpty(request.NewPassword)) return BadRequest("No se ha enviado la nueva contraseña.");
-        if (string.IsNullOrEmpty(request.ConfirmPassword)) return BadRequest("No se ha enviado la confirmación de la nueva contraseña.");
-        
+        if (string.IsNullOrEmpty(request.ConfirmPassword))
+            return BadRequest("No se ha enviado la confirmación de la nueva contraseña.");
+
         if (request.NewPassword != request.ConfirmPassword) return BadRequest("Las contraseñas no coinciden.");
 
-        string? email = User.GetEmail();
+        var email = User.GetEmail();
 
         if (string.IsNullOrEmpty(email)) return BadRequest("No se ha encontrado el correo del usuario.");
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == email);
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Email == email);
 
         if (user == null) return NotFound($"El usuario de correo {email} no existe.");
 
@@ -1636,15 +1730,15 @@ public class AccountController(
     [Authorize]
     [HttpPut("account-details")]
     public async Task<ActionResult<AccountDto?>> UpdateAccountDetailsAsync(
-        [FromForm] IFormFile photo, 
-        [FromForm] IFormFile file, 
+        [FromForm] IFormFile photo,
+        [FromForm] IFormFile file,
         [FromForm] string json
     )
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
         var roles = User.GetRoles();
 
-        AccountDetailsUpdateDto? request = JsonSerializer.Deserialize<AccountDetailsUpdateDto>(json);
+        var request = JsonSerializer.Deserialize<AccountDetailsUpdateDto>(json);
 
         if (request == null) return BadRequest("No se ha enviado la información del usuario.");
 
@@ -1652,19 +1746,20 @@ public class AccountController(
         if (string.IsNullOrEmpty(request.LastName)) return BadRequest("No se ha enviado el apellido.");
         if (string.IsNullOrEmpty(request.PhoneNumber)) return BadRequest("No se ha enviado el número de teléfono.");
         if (string.IsNullOrEmpty(request.SpecialtyId)) return BadRequest("No se ha enviado la especialidad.");
-        if (string.IsNullOrEmpty(request.AcceptedPaymentMethods)) return BadRequest("No se han enviado los métodos de pago aceptados.");
+        if (string.IsNullOrEmpty(request.AcceptedPaymentMethods))
+            return BadRequest("No se han enviado los métodos de pago aceptados.");
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.UserPhoto)
-                .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.Photo)
             .Include(x => x.DoctorPaymentMethodTypes)
             .Include(x => x.UserMedicalLicenses)
-                .ThenInclude(x => x.MedicalLicense)
-                .ThenInclude(x => x.MedicalLicenseSpecialty)
+            .ThenInclude(x => x.MedicalLicense)
+            .ThenInclude(x => x.MedicalLicenseSpecialty)
             .Include(x => x.UserMedicalLicenses)
-                .ThenInclude(x => x.MedicalLicense)
-                .ThenInclude(x => x.MedicalLicenseDocument)
-                .ThenInclude(x => x.Document)
+            .ThenInclude(x => x.MedicalLicense)
+            .ThenInclude(x => x.MedicalLicenseDocument)
+            .ThenInclude(x => x.Document)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1674,15 +1769,17 @@ public class AccountController(
         // only if the claims principal has a role of doctor
         if (roles.Contains("Doctor"))
         {
-            MedicalLicense? prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
-            if (prevMedicalLicense == null || prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId != int.Parse(request.SpecialtyId))
+            var prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
+            if (prevMedicalLicense == null || prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId !=
+                int.Parse(request.SpecialtyId))
             {
                 if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
 
                 if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
                     return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
 
-                var uploadResult = await cloudinaryService.UploadAsync(file, new() {
+                var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+                {
                     File = new FileDescription(file.FileName, file.OpenReadStream()),
                     Folder = "Mediverse/DoctorMedicalLicenses",
                 });
@@ -1690,10 +1787,10 @@ public class AccountController(
 
                 if (prevMedicalLicense != null)
                 {
-                    string? publicId = prevMedicalLicense.MedicalLicenseDocument.Document.PublicId;
-                    
+                    var publicId = prevMedicalLicense.MedicalLicenseDocument.Document.PublicId;
+
                     if (string.IsNullOrEmpty(publicId)) return BadRequest("Error obteniendo el ID de la imagen.");
-                    
+
                     var deletionResult = await cloudinaryService.DeleteAsync(publicId);
                     if (deletionResult.Error != null)
                         return BadRequest("Error eliminando la prueba de especialidad anterior.");
@@ -1701,16 +1798,20 @@ public class AccountController(
 
                 user.UserMedicalLicenses.Clear();
 
-                user.UserMedicalLicenses.Add(new (int.Parse(request.SpecialtyId), uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
+                user.UserMedicalLicenses.Add(new UserMedicalLicense(int.Parse(request.SpecialtyId),
+                    uploadResult.PublicId,
+                    uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
             }
             else
             {
                 if (file != null && file.Length > 0)
                 {
-                    var medicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == int.Parse(request.SpecialtyId));
+                    var medicalLicense = user.UserMedicalLicenses.FirstOrDefault(x =>
+                        x.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == int.Parse(request.SpecialtyId));
                     if (medicalLicense == null) return BadRequest("No se ha encontrado la prueba de especialidad.");
 
-                    var uploadResult = await cloudinaryService.UploadAsync(file, new() {
+                    var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+                    {
                         File = new FileDescription(file.FileName, file.OpenReadStream()),
                         Folder = "Mediverse/DoctorMedicalLicenses",
                     });
@@ -1718,22 +1819,26 @@ public class AccountController(
 
                     var previousMedicalLicenseDocument = medicalLicense.MedicalLicense.MedicalLicenseDocument;
 
-                    string? publicId = previousMedicalLicenseDocument.Document.PublicId;
+                    var publicId = previousMedicalLicenseDocument.Document.PublicId;
 
                     if (string.IsNullOrEmpty(publicId)) return BadRequest("Error obteniendo el ID de la imagen.");
-                    
-                    var prevDocumentDeleteResult = await cloudinaryService.DeleteAsync(publicId);
-                    if (prevDocumentDeleteResult.Error != null) return BadRequest("Error eliminando la prueba de especialidad anterior.");
 
-                    medicalLicense.MedicalLicense.MedicalLicenseDocument = new(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
+                    var prevDocumentDeleteResult = await cloudinaryService.DeleteAsync(publicId);
+                    if (prevDocumentDeleteResult.Error != null)
+                        return BadRequest("Error eliminando la prueba de especialidad anterior.");
+
+                    medicalLicense.MedicalLicense.MedicalLicenseDocument =
+                        new MedicalLicenseDocument(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
                 }
             }
 
             if (!string.IsNullOrEmpty(request.AcceptedPaymentMethods))
             {
-                List<int> acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
+                var acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
                 var userPaymentMethodTypes = user.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodTypeId).ToList();
-                if (!userPaymentMethodTypes.All(acceptedPaymentMethods.Contains) || !acceptedPaymentMethods.All(userPaymentMethodTypes.Contains)) {
+                if (!userPaymentMethodTypes.All(acceptedPaymentMethods.Contains) ||
+                    !acceptedPaymentMethods.All(userPaymentMethodTypes.Contains))
+                {
                     user.DoctorPaymentMethodTypes.Clear();
 
                     foreach (var paymentMethodTypeId in acceptedPaymentMethods)
@@ -1751,13 +1856,18 @@ public class AccountController(
 
         if (user.UserPhoto != null)
         {
-            if (request.RemoveAvatar) {
-                if (!await photosService.DeleteAsync(user.UserPhoto.Photo)) return BadRequest("Error eliminando la foto.");
+            if (request.RemoveAvatar)
+            {
+                if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
+                    return BadRequest("Error eliminando la foto.");
             }
-        } else {
+        }
+        else
+        {
             if (photo != null)
             {
-                ImageUploadParams imageUploadParams = new() {
+                ImageUploadParams imageUploadParams = new()
+                {
                     File = new FileDescription(photo.FileName, photo.OpenReadStream()),
                     Folder = "Mediverse/UserPhoto",
                     Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
@@ -1779,7 +1889,8 @@ public class AccountController(
             }
         }
 
-        if (uow.HasChanges()) {
+        if (uow.HasChanges())
+        {
             if (!await uow.Complete()) return BadRequest("Error actualizando la información del usuario.");
         }
 
@@ -1792,13 +1903,13 @@ public class AccountController(
     [HttpPost("work-schedule")]
     public async Task<ActionResult<AccountDto?>> UpdateWorkScheduleAsync([FromBody] WorkScheduleUpdateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(x => x.DoctorWorkSchedules)
-                .ThenInclude(x => x.WorkSchedule)
+            .ThenInclude(x => x.WorkSchedule)
             .Include(x => x.DoctorWorkScheduleSettings)
-                .ThenInclude(x => x.WorkScheduleSettings)
+            .ThenInclude(x => x.WorkScheduleSettings)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
@@ -1821,9 +1932,11 @@ public class AccountController(
                     TimeOnly.TryParse(parts[1], out var endTime) &&
                     int.TryParse(parts[2], out var dayOfWeek))
                 {
-                    user.DoctorWorkSchedules.Add(new() {
+                    user.DoctorWorkSchedules.Add(new DoctorWorkSchedule
+                    {
                         UserId = userId,
-                        WorkSchedule = new() {
+                        WorkSchedule = new WorkSchedule
+                        {
                             StartTime = startTime,
                             EndTime = endTime,
                             DayOfWeek = dayOfWeek
@@ -1831,6 +1944,7 @@ public class AccountController(
                     });
                 }
             }
+
             if (!await uow.Complete()) return BadRequest("Error actualizando los horarios de trabajo.");
         }
 
@@ -1838,7 +1952,8 @@ public class AccountController(
         {
             if (user.DoctorWorkScheduleSettings != null)
             {
-                await uow.UserRepository.DeleteDoctorWorkScheduleSettingsAsync(user.DoctorWorkScheduleSettings.WorkScheduleSettings);
+                await uow.UserRepository.DeleteDoctorWorkScheduleSettingsAsync(user.DoctorWorkScheduleSettings
+                    .WorkScheduleSettings);
                 user.DoctorWorkScheduleSettings = null!;
             }
 
@@ -1849,7 +1964,7 @@ public class AccountController(
                 MinutesPerBlock = request.MinutesPerBlock
             };
 
-            user.DoctorWorkScheduleSettings = new()
+            user.DoctorWorkScheduleSettings = new DoctorWorkScheduleSettings
             {
                 UserId = userId,
                 WorkScheduleSettings = workScheduleSettings
@@ -1868,7 +1983,7 @@ public class AccountController(
     [HttpGet("medical-record")]
     public async Task<ActionResult<MedicalRecordDto?>> GetMedicalRecord()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
         return await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
     }
@@ -1877,15 +1992,16 @@ public class AccountController(
     [HttpPut("medical-record")]
     public async Task<ActionResult<MedicalRecordDto?>> UpdateMedicalRecord([FromBody] MedicalRecordUpdateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
             .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers)
-                .ThenInclude(mrfm => mrfm.FamilyMember.MedicalRecordFamilyMemberRelativeType)
+            .ThenInclude(mrfm => mrfm.FamilyMember.MedicalRecordFamilyMemberRelativeType)
             .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordPersonalDiseases)
             .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordSubstances)
             .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyDiseases)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType.RelativeType)
+            .Include(u =>
+                u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType.RelativeType)
             .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordOccupation.Occupation)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
@@ -1917,22 +2033,23 @@ public class AccountController(
         itemToCreate.UsesGlassesOrHearingAid = request.UsesGlassesOrHearingAid ?? false;
         itemToCreate.Comments = request.Comments;
 
-        if (request.EducationLevel != null && request.EducationLevel.Id.HasValue) 
-            itemToCreate.MedicalRecordEducationLevel = new(request.EducationLevel.Id.Value);
+        if (request.EducationLevel != null && request.EducationLevel.Id.HasValue)
+            itemToCreate.MedicalRecordEducationLevel = new MedicalRecordEducationLevel(request.EducationLevel.Id.Value);
 
-        if (request.ColorBlindness != null && request.ColorBlindness.Id.HasValue) 
-            itemToCreate.MedicalRecordColorBlindness = new(request.ColorBlindness.Id.Value);
+        if (request.ColorBlindness != null && request.ColorBlindness.Id.HasValue)
+            itemToCreate.MedicalRecordColorBlindness = new MedicalRecordColorBlindness(request.ColorBlindness.Id.Value);
 
-        if (request.Occupation != null && request.Occupation.Id.HasValue) 
-            itemToCreate.MedicalRecordOccupation = new(request.Occupation.Id.Value);
+        if (request.Occupation != null && request.Occupation.Id.HasValue)
+            itemToCreate.MedicalRecordOccupation = new MedicalRecordOccupation(request.Occupation.Id.Value);
 
-        if (request.MaritalStatus != null && request.MaritalStatus.Id.HasValue) 
-            itemToCreate.MedicalRecordMaritalStatus = new(request.MaritalStatus.Id.Value);
+        if (request.MaritalStatus != null && request.MaritalStatus.Id.HasValue)
+            itemToCreate.MedicalRecordMaritalStatus = new MedicalRecordMaritalStatus(request.MaritalStatus.Id.Value);
 
         if (request.HasCompanion.HasValue && request.HasCompanion.Value == true && request?.Companion == null)
-        return BadRequest("Si el paciente asiste solo, debe proporcionar información del acompañante.");
+            return BadRequest("Si el paciente asiste solo, debe proporcionar información del acompañante.");
 
-        if (request?.Companion != null && request.HasCompanion.HasValue && request.HasCompanion.Value == true) {
+        if (request?.Companion != null && request.HasCompanion.HasValue && request.HasCompanion.Value == true)
+        {
             Companion companion = new();
 
             if (!string.IsNullOrEmpty(request.Companion.Name)) companion.Name = request.Companion.Name;
@@ -1940,31 +2057,38 @@ public class AccountController(
             if (!string.IsNullOrEmpty(request.Companion.Sex?.Code)) companion.Sex = request.Sex?.Code;
             if (!string.IsNullOrEmpty(request.Companion.Address)) companion.Address = request.Companion.Address;
             if (!string.IsNullOrEmpty(request.Companion.HomePhone)) companion.HomePhone = request.Companion.HomePhone;
-            if (!string.IsNullOrEmpty(request.Companion.PhoneNumber)) companion.PhoneNumber = request.Companion.PhoneNumber;
+            if (!string.IsNullOrEmpty(request.Companion.PhoneNumber))
+                companion.PhoneNumber = request.Companion.PhoneNumber;
             if (!string.IsNullOrEmpty(request.Companion.Email)) companion.Email = request.Companion.Email;
-            if (request.Companion.Occupation != null && request.Companion.Occupation.Id.HasValue) companion.CompanionOccupation = new(request.Companion.Occupation.Id.Value);
-            if (request.Companion.RelativeType != null && request.Companion.RelativeType.Id.HasValue) companion.CompanionRelativeType = new(request.Companion.RelativeType.Id.Value);
+            if (request.Companion.Occupation != null && request.Companion.Occupation.Id.HasValue)
+                companion.CompanionOccupation = new CompanionOccupation(request.Companion.Occupation.Id.Value);
+            if (request.Companion.RelativeType != null && request.Companion.RelativeType.Id.HasValue)
+                companion.CompanionRelativeType = new CompanionRelativeType(request.Companion.RelativeType.Id.Value);
 
-            itemToCreate.MedicalRecordCompanion = new() { Companion = companion };
+            itemToCreate.MedicalRecordCompanion = new MedicalRecordCompanion { Companion = companion };
         }
 
         if (
-            request?.FamilyMembers.Count() > 0 && 
+            request?.FamilyMembers.Count() > 0 &&
             request.FamilyMembers[0].Name != null &&
             request.FamilyMembers[0].Age != null &&
             request.FamilyMembers[0].RelativeType != null
-        ) {
-
-        List<MedicalRecordFamilyMember> medicalRecordFamilyMembers = [];
-        for (int i = 0; i < request.FamilyMembers.Count(); i++) {
-                MedicalRecordUpdateFamilyMemberDto? fm = request.FamilyMembers[i];
+        )
+        {
+            List<MedicalRecordFamilyMember> medicalRecordFamilyMembers = [];
+            for (var i = 0; i < request.FamilyMembers.Count(); i++)
+            {
+                var fm = request.FamilyMembers[i];
                 if (fm == null) continue;
 
-                MedicalRecordFamilyMember medicalRecordFamilyMemberToCreate = new() { FamilyMember = new() };
+                MedicalRecordFamilyMember medicalRecordFamilyMemberToCreate =
+                    new() { FamilyMember = new FamilyMember() };
 
                 if (!string.IsNullOrEmpty(fm.Name)) medicalRecordFamilyMemberToCreate.FamilyMember.Name = fm.Name;
                 if (fm.Age.HasValue) medicalRecordFamilyMemberToCreate.FamilyMember.Age = fm.Age.Value;
-                if (fm.RelativeType != null && fm.RelativeType.Id.HasValue) medicalRecordFamilyMemberToCreate.FamilyMember.MedicalRecordFamilyMemberRelativeType = new(fm.RelativeType.Id.Value);
+                if (fm.RelativeType != null && fm.RelativeType.Id.HasValue)
+                    medicalRecordFamilyMemberToCreate.FamilyMember.MedicalRecordFamilyMemberRelativeType =
+                        new MedicalRecordFamilyMemberRelativeType(fm.RelativeType.Id.Value);
 
                 medicalRecordFamilyMembers.Add(medicalRecordFamilyMemberToCreate);
             }
@@ -1973,19 +2097,22 @@ public class AccountController(
         }
 
         if (
-            request?.PersonalMedicalHistory.Count() > 0 && 
+            request?.PersonalMedicalHistory.Count() > 0 &&
             request.PersonalMedicalHistory[0].Disease != null
-        ) {
-
+        )
+        {
             List<MedicalRecordPersonalDisease> medicalRecordPersonalDiseases = new();
-            for (int i = 0; i < request.PersonalMedicalHistory.Count(); i++) {
-                MedicalRecordUpdatePersonalDiseaseDto? pd = request.PersonalMedicalHistory[i];
+            for (var i = 0; i < request.PersonalMedicalHistory.Count(); i++)
+            {
+                var pd = request.PersonalMedicalHistory[i];
                 if (pd == null) continue;
 
                 MedicalRecordPersonalDisease medicalRecordPersonalDiseaseToCreate = new();
 
-                if (!string.IsNullOrEmpty(pd.Description)) medicalRecordPersonalDiseaseToCreate.Description = pd.Description;
-                if (pd.Disease != null && pd.Disease.Id.HasValue) medicalRecordPersonalDiseaseToCreate.DiseaseId = pd.Disease.Id.Value;
+                if (!string.IsNullOrEmpty(pd.Description))
+                    medicalRecordPersonalDiseaseToCreate.Description = pd.Description;
+                if (pd.Disease != null && pd.Disease.Id.HasValue)
+                    medicalRecordPersonalDiseaseToCreate.DiseaseId = pd.Disease.Id.Value;
 
                 medicalRecordPersonalDiseases.Add(medicalRecordPersonalDiseaseToCreate);
             }
@@ -1998,17 +2125,19 @@ public class AccountController(
             request?.PersonalDrugHistory.Count() > 0 &&
             request.PersonalDrugHistory[0].Substance != null &&
             request.PersonalDrugHistory[0].ConsumptionLevel != null
-        ) {
-
+        )
+        {
             List<MedicalRecordSubstance> medicalRecordSubstances = [];
-            for(int i = 0; i < request.PersonalDrugHistory.Count(); i++) {
-                MedicalRecordUpdatePersonalSubstanceDto? ps = request.PersonalDrugHistory[i];
+            for (var i = 0; i < request.PersonalDrugHistory.Count(); i++)
+            {
+                var ps = request.PersonalDrugHistory[i];
                 if (ps.Substance == null) continue;
 
                 MedicalRecordSubstance medicalRecordSubstanceToCreate = new();
 
                 if (ps.Substance != null) medicalRecordSubstanceToCreate.SubstanceId = ps.Substance.Id;
-                if (ps.ConsumptionLevel != null) medicalRecordSubstanceToCreate.ConsumptionLevelId = ps.ConsumptionLevel.Id;
+                if (ps.ConsumptionLevel != null)
+                    medicalRecordSubstanceToCreate.ConsumptionLevelId = ps.ConsumptionLevel.Id;
                 if (ps.StartAge.HasValue) medicalRecordSubstanceToCreate.StartAge = ps.StartAge.Value;
                 if (ps.EndAge.HasValue) medicalRecordSubstanceToCreate.EndAge = ps.EndAge.Value;
                 if (ps.IsCurrent.HasValue) medicalRecordSubstanceToCreate.IsCurrent = ps.IsCurrent.Value;
@@ -2024,17 +2153,19 @@ public class AccountController(
             request?.FamilyMedicalHistory.Count() > 0 &&
             request.FamilyMedicalHistory[0].Disease != null &&
             request.FamilyMedicalHistory[0].RelativeType != null
-        ) {
-
+        )
+        {
             List<MedicalRecordFamilyDisease> medicalRecordFamilyDiseases = [];
-            for (int i = 0; i < request.FamilyMedicalHistory.Count(); i++) {
-                MedicalRecordUpdateFamilyDiseaseDto? fd = request.FamilyMedicalHistory[i];
+            for (var i = 0; i < request.FamilyMedicalHistory.Count(); i++)
+            {
+                var fd = request.FamilyMedicalHistory[i];
                 if (fd == null) continue;
 
                 MedicalRecordFamilyDisease medicalRecordFamilyDiseaseToCreate = new();
 
                 if (fd.Disease != null) medicalRecordFamilyDiseaseToCreate.DiseaseId = fd.Disease.Id;
-                if (fd.RelativeType != null && fd.RelativeType.Id.HasValue) medicalRecordFamilyDiseaseToCreate.RelativeTypeId = fd.RelativeType.Id.Value;
+                if (fd.RelativeType != null && fd.RelativeType.Id.HasValue)
+                    medicalRecordFamilyDiseaseToCreate.RelativeTypeId = fd.RelativeType.Id.Value;
 
                 medicalRecordFamilyDiseases.Add(medicalRecordFamilyDiseaseToCreate);
             }
@@ -2045,7 +2176,8 @@ public class AccountController(
         user.UserMedicalRecord = new UserMedicalRecord();
         user.UserMedicalRecord.MedicalRecord = itemToCreate;
 
-        if (uow.HasChanges()) {
+        if (uow.HasChanges())
+        {
             if (!await uow.Complete()) return BadRequest("Error actualizando el historial clínico.");
         }
 
@@ -2056,9 +2188,9 @@ public class AccountController(
     [HttpGet("satisfaction-surveys")]
     public async Task<ActionResult<List<SatisfactionSurveyDto>>> GetSatisfactionSurveys()
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         var events = await uow.EventRepository.GetPendingSatisfactionSurveysAsync(userId);
@@ -2070,13 +2202,13 @@ public class AccountController(
     [HttpPost("review")]
     public async Task<ActionResult> SubmitReview([FromBody] ReviewCreateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        Event? patientEvent = await uow.EventRepository.GetByIdAsync(request.EventId);
-        
+        var patientEvent = await uow.EventRepository.GetByIdAsync(request.EventId);
+
         if (patientEvent == null) return NotFound($"El evento con id {request.EventId} no existe.");
 
         patientEvent.IsServiceRecommended = request.IsServiceRecommended;
@@ -2085,10 +2217,12 @@ public class AccountController(
         {
             Rating = request.Rating,
             Content = request.Comment,
-            DoctorReview = new() {
+            DoctorReview = new DoctorReview
+            {
                 DoctorId = patientEvent.DoctorEvent.Doctor.Id,
             },
-            UserReview = new() {
+            UserReview = new UserReview
+            {
                 UserId = userId,
             }
         };
@@ -2097,7 +2231,8 @@ public class AccountController(
 
         await uow.UserRepository.AddReviewAsync(review);
 
-        if (uow.HasChanges()) {
+        if (uow.HasChanges())
+        {
             if (!await uow.Complete()) return BadRequest("Error creando la revisión.");
         }
 
@@ -2108,18 +2243,19 @@ public class AccountController(
     [HttpPost("review/skip/{eventId}")]
     public async Task<ActionResult> SkipReview([FromRoute] int eventId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        Event? patientEvent = await uow.EventRepository.GetByIdAsync(eventId);
+        var patientEvent = await uow.EventRepository.GetByIdAsync(eventId);
 
         if (patientEvent == null) return NotFound($"El evento con id {eventId} no existe.");
 
         patientEvent.IsSatisfactionSurveyCompleted = true;
 
-        if (uow.HasChanges()) {
+        if (uow.HasChanges())
+        {
             if (!await uow.Complete()) return BadRequest("Error omitiendo la revisión.");
         }
 

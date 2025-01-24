@@ -23,20 +23,24 @@ import {
   tableCellName,
   tableCellVisible
 } from "src/app/_models/tables/tableCellItem";
+import { Validators } from "@angular/forms";
 
 
 export const productFormInfo: FormInfo<Product> = {
   ...baseInfo,
   discount: { label: 'Descuento', type: 'number', },
-  dosage: { label: 'Dosis', type: 'text', },
-  isInternal: { label: 'Interno', type: 'checkbox', },
-  lotNumber: { label: 'Número de lote', type: 'text', },
-  manufacturer: { label: 'Fabricante', type: 'text', },
+  discountType: { label: 'Tipo de descuento', type: 'text', },
+  description: { label: 'Descripción', type: 'textarea', rows: 6, validators: [ Validators.required ] },
+  name: { label: 'Nombre', type: 'text', validators: [ Validators.required ] },
+  dosage: { label: 'Dosis', type: 'number', validators: [ Validators.required ] },
+  isInternal: { label: 'Interno', type: 'slideToggle', },
+  lotNumber: { label: 'Número de lote', type: 'text', validators: [ Validators.required ] },
+  manufacturer: { label: 'Fabricante', type: 'text', validators: [ Validators.required ] },
   photoUrl: { label: 'URL de la foto', type: 'text', },
-  price: { label: 'Precio', type: 'number', },
+  price: { label: 'Precio Base', type: 'number', validators: [ Validators.required ] },
   quantity: { label: 'Cantidad', type: 'number', },
-  unit: { label: 'Unidad', type: 'text', },
-} as FormInfo<Product>;
+  unit: { label: 'Unidad', type: 'text', validators: [ Validators.required ] },
+} as unknown as FormInfo<Product>;
 
 export const productFiltersFormInfo: FormInfo<ProductParams> = {
   ...baseFilterFormInfo,
@@ -56,7 +60,7 @@ export const productColumns: Column[] = [
   new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('dosage', 'Dosis', { options: new ColumnOptions({ justify: 'end', }) }),
-  new Column('lotNumber', 'Lote', { options: new ColumnOptions({ justify: 'end', }) }),
+  new Column('lotNumber', 'Lote', { options: new ColumnOptions({ justify: 'start', }) }),
   new Column('manufacturer', 'Fabricante', { options: new ColumnOptions({ justify: 'start', }) }),
   columnEnabled,
   columnVisible,

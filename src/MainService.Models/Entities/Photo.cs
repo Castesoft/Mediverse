@@ -4,7 +4,7 @@ namespace MainService.Models.Entities;
 
 public class Photo : BaseEntity
 {
-    public string? Url { get; set; }
+    public Uri? Url { get; set; }
     public string? PublicId { get; set; }
     public int? Size { get; set; }
 
@@ -22,7 +22,7 @@ public class Photo : BaseEntity
 
     public Photo(ImageUploadResult result, int userId)
     {
-        Url = result.SecureUrl.AbsoluteUri;
+        Url = result.SecureUrl;
         PublicId = result.PublicId;
         UserPhoto = new UserPhoto(userId);
     }

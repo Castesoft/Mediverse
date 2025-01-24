@@ -5,7 +5,7 @@
 @if (useCard()) {
   <div class="card">
     <div class="card-body">
-      <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+      <form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
         <div formBuilder3 [controls]="[
           form.controls.firstName,
           form.controls.lastName,
@@ -20,8 +20,8 @@
     </div>
   </div>
 } @else {
-  <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
-    <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+  <form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
+    <form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
       <div formBuilder3 [controls]="[
         form.controls.firstName,
         form.controls.lastName,

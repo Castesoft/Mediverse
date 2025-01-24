@@ -24,7 +24,8 @@
             <div controlSelect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
           @case ('textarea') {
-            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
+            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
           @case ('date') {
             <div templateControlDate [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
@@ -39,6 +40,9 @@
           @case ('typeahead') {
             <div controlTypeahead3 (onSelectionChange)="onSelectionChange.emit($event)" [(control)]="control"
                  [(fromWrapper)]="fromWrapper"></div>
+          }
+          @case ('slideToggle') {
+            <div controlSlide3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
         }
       }
@@ -63,7 +67,8 @@
             <div controlSlide3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
           @case ('textarea') {
-            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper" [showBottomMargin]="showBottomMargin()"></div>
+            <div controlTextarea3 [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
           @case ('text') {
             <div controlText3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>

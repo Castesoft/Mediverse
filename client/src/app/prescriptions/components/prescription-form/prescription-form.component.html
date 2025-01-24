@@ -1,7 +1,7 @@
 @if (form.error) {
   <div errorsAlert3 [(error)]="form.error"></div>
 }
-<form class="prescription-pad bg-body" [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+<form class="prescription-pad bg-body" [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
 
   <div class="prescription-header">
     <div class="logo">

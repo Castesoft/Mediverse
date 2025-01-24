@@ -1,4 +1,4 @@
-<form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+<form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
   <div container3 [type]="'card'">
     @if (form.error) {
       <div errorsAlert3 [(error)]="form.error"></div>

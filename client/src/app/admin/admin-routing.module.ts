@@ -11,6 +11,14 @@ import {
 } from "src/app/admin/routes/products/admin-products-catalog-route.component";
 import { AdminUsersCatalogRouteComponent } from "src/app/admin/routes/users/admin-users-catalog-route.component";
 import { AdminDoctorsCatalogRouteComponent } from "src/app/admin/routes/doctors/admin-doctors-catalog-route.component";
+import { AdminProductCreateRouteComponent } from "src/app/admin/routes/products/admin-product-create-route.component";
+import { AdminProductEditRouteComponent } from "src/app/admin/routes/products/admin-product-edit-route.component";
+import { ProductsService } from "src/app/products/products.config";
+import { HomePatientDetailRouteComponent } from "src/app/home/routes/patients/home-patient-detail-route.component";
+import { PatientsService } from "src/app/patients/patients.config";
+import titleDetailResolver from "src/app/_utils/serviceHelper/functions/titleDetailResolver";
+import { FormUse } from "src/app/_models/forms/formTypes";
+import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/admin-product-detail-route.component";
 
 @NgModule({
   imports: [
@@ -45,6 +53,26 @@ import { AdminDoctorsCatalogRouteComponent } from "src/app/admin/routes/doctors/
             component: AdminProductsCatalogRouteComponent,
             title: 'Productos | Catálogo',
             data: { breadcrumb: 'Productos', title: 'Administrar Productos', },
+          },
+          {
+            path: 'productos/nuevo'
+            , component: AdminProductCreateRouteComponent,
+            title: 'Productos | Crear Producto',
+            data: { breadcrumb: [ 'Productos', 'Crear' ], title: 'Crear Producto', },
+          },
+          {
+            path: 'productos/:id',
+            component: AdminProductDetailRouteComponent,
+            resolve: { item: createItemResolver(ProductsService), },
+            title: 'Productos | Ver Detalle',
+            data: { breadcrumb: [ 'Productos', 'Detalle' ], title: 'Detalle Producto', },
+          },
+          {
+            path: 'productos/:id/editar',
+            component: AdminProductEditRouteComponent,
+            title: 'Productos | Editar Producto',
+            data: { breadcrumb: [ 'Productos', 'Editar' ], title: 'Editar Producto', },
+            resolve: { item: createItemResolver(ProductsService) },
           },
           // Usuarios
           {

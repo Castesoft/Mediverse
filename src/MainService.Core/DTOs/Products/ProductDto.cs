@@ -17,5 +17,6 @@ public class ProductDto
     public bool IsEnabled { get; set; }
     public bool IsVisible { get; set; }
 
-public DateTime CreatedAt { get; set; }
+    public ICollection<PhotoDto> Photos { get; set; } = [];
+    public DateTime CreatedAt { get; set; }
 }

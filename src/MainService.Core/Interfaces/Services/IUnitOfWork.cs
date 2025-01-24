@@ -29,6 +29,7 @@ public interface IUnitOfWork
     ISpecialtyRepository SpecialtyRepository { get; }
     ISearchRepository SearchRepository { get; }
     IDocumentRepository DocumentRepository { get; }
+    IRoleRepository RoleRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();

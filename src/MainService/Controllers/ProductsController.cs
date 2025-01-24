@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using MainService.Core.Extensions;
 using MainService.Core.DTOs.Products;
 using MainService.Core.Helpers.Pagination;
@@ -21,6 +23,7 @@ public class ProductsController(
     IUnitOfWork uow,
     IProductsService service,
     IMapper mapper,
+    ICloudinaryService cloudinaryService,
     UserManager<AppUser> userManager) : BaseApiController
 {
     private const string Subject = "producto";
@@ -69,20 +72,82 @@ public class ProductsController(
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<ProductDto?>> UpdateAsync([FromRoute] int id, [FromBody] ProductUpdateDto request)
+    public async Task<ActionResult<ProductDto>> UpdateAsync([FromRoute] int id, [FromForm] ProductUpdateDto request)
     {
         var item = await uow.ProductRepository.GetByIdAsync(id);
+        if (item == null)
+            return NotFound($"{SubjectArticle} {Subject} con ID {id} no fue encontrado.");
 
-        if (item == null) return NotFound($"{SubjectArticle} {Subject} con ID {id} no fue encontrado.");
+        if (request.Name != null) item.Name = request.Name;
+        if (request.Description != null) item.Description = request.Description;
+        if (request.Price.HasValue) item.Price = request.Price.Value;
+        if (request.Discount.HasValue) item.Discount = request.Discount.Value;
+        if (request.LotNumber != null) item.LotNumber = request.LotNumber;
+        if (request.Unit != null) item.Unit = request.Unit;
+        if (request.Dosage.HasValue) item.Dosage = request.Dosage.Value;
+        if (request.Manufacturer != null) item.Manufacturer = request.Manufacturer;
+        if (request.IsEnabled.HasValue) item.IsEnabled = request.IsEnabled.Value;
+        if (request.IsVisible.HasValue) item.IsVisible = request.IsVisible.Value;
 
-        mapper.Map(request, item);
+        if (request.RemovedImageIds != null && request.RemovedImageIds.Any())
+        {
+            var photosToRemove = item.ProductPhotos
+                .Where(pp => request.RemovedImageIds.Contains(pp.PhotoId.ToString()))
+                .ToList();
+
+            foreach (var photo in photosToRemove)
+            {
+                if (!string.IsNullOrEmpty(photo.Photo.PublicId))
+                {
+                    await cloudinaryService.DeleteAsync(photo.Photo.PublicId);
+                }
+
+                item.ProductPhotos.Remove(photo);
+                uow.PhotoRepository.Delete(photo.Photo);
+            }
+        }
+
+        if (request.Files != null && request.Files.Count > 0)
+        {
+            foreach (var file in request.Files)
+            {
+                var uploadResult = await UploadImage(file);
+                if (uploadResult != null)
+                {
+                    item.ProductPhotos.Add(new ProductPhoto(new Photo
+                    {
+                        Url = uploadResult.SecureUrl,
+                        PublicId = uploadResult.PublicId,
+                        Size = (int?)file.Length
+                    }));
+                }
+            }
+        }
+
+        if (item.ProductPhotos.Count != 0)
+        {
+            var mainPhotoIndex = request.MainImageIndex;
+            if (mainPhotoIndex >= 0 && mainPhotoIndex < item.ProductPhotos.Count)
+            {
+                foreach (var (photo, index) in item.ProductPhotos.Select((p, i) => (p, i)))
+                {
+                    photo.IsMain = index == mainPhotoIndex;
+                }
+            }
+        }
 
         uow.ProductRepository.Update(item);
 
-        if (!await uow.Complete()) return BadRequest($"Error al actualizar {SubjectArticle} {Subject} con ID {id}.");
+        if (!await uow.Complete())
+        {
+            return BadRequest($"Error al actualizar {SubjectArticle} {Subject} con ID {id}.");
+        }
 
-        return await uow.ProductRepository.GetDtoByIdAsync(id);
+        var updatedItem = await uow.ProductRepository.GetDtoByIdAsync(id);
+        if (updatedItem != null) return updatedItem;
+        return BadRequest($"Error al recuperar el producto actualizado.");
     }
+
 
     [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id:int}")]
@@ -129,30 +194,83 @@ public class ProductsController(
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductDto?>> CreateAsync([FromBody] ProductCreateDto request)
+    public async Task<ActionResult<ProductDto>> CreateAsync([FromForm] ProductCreateDto request)
     {
-        Product? itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
-
+        var itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
         if (itemExists != null)
-            return BadRequest(
-                $"{SubjectArticle} {Subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
+        {
+            return BadRequest($"El producto de nombre '{request.Name}' ya existe.");
+        }
 
-        AppUser? doctor = await userManager.Users
-                .Include(x => x.DoctorProducts)
-                .ThenInclude(x => x.Product)
-                .SingleOrDefaultAsync(x => x.Id == User.GetUserId())
-            ;
+        var doctor = await userManager.Users
+            .Include(x => x.DoctorProducts)
+            .ThenInclude(x => x.Product)
+            .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
 
-        if (doctor == null) return BadRequest($"Error al crear {SubjectArticle} {Subject}.");
+        if (doctor == null)
+            return BadRequest($"Error al crear el producto.");
 
-        var item = mapper.Map<Product>(request);
+        var item = new Product
+        {
+            Name = request.Name,
+            Description = request.Description,
+            Price = request.Price,
+            Discount = request.Discount,
+            LotNumber = request.LotNumber,
+            Unit = request.Unit,
+            Dosage = request.Dosage,
+            Manufacturer = request.Manufacturer,
+        };
 
-        doctor.DoctorProducts.Add(new(item));
+        if (request.IsEnabled.HasValue) item.IsEnabled = request.IsEnabled.Value;
+        if (request.IsVisible.HasValue) item.IsVisible = request.IsVisible.Value;
+
+        if (request.Files != null && request.Files.Count > 0)
+        {
+            foreach (var file in request.Files)
+            {
+                var uploadResult = await UploadImage(file);
+                if (uploadResult != null)
+                {
+                    item.ProductPhotos.Add(new ProductPhoto(new Photo
+                    {
+                        Url = uploadResult.SecureUrl,
+                        PublicId = uploadResult.PublicId,
+                        Size = (int?)file.Length
+                    }));
+                }
+            }
+
+            if (item.ProductPhotos.Count != 0)
+            {
+                item.SetMainPhoto();
+            }
+        }
+
+        uow.ProductRepository.Add(item);
+
+        if (!request.IsInternal.HasValue || !request.IsInternal.Value)
+        {
+            doctor.DoctorProducts.Add(new DoctorProduct(item));
+        }
 
         await userManager.UpdateAsync(doctor);
 
         var itemToReturn = await uow.ProductRepository.GetDtoByIdAsync(item.Id);
+        if (itemToReturn != null) return itemToReturn;
+        return BadRequest($"Error al recuperar el {Subject} creado.");
+    }
 
-        return itemToReturn;
+    private async Task<ImageUploadResult?> UploadImage(IFormFile file)
+    {
+        var fileName = Guid.NewGuid().ToString();
+        var uploadParams = new ImageUploadParams
+        {
+            Folder = "Mediverse/Products",
+            File = new FileDescription(fileName, file.OpenReadStream())
+        };
+
+        var uploadResult = await cloudinaryService.UploadAsync(file, uploadParams);
+        return uploadResult.StatusCode == System.Net.HttpStatusCode.OK ? uploadResult : null;
     }
 }

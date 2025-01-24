@@ -40,7 +40,7 @@ export class UserFormComponent
       const value = this.item();
 
       if (value !== null) {
-        this.form.patchValue(value);
+        this.form.patchValue(value as any);
       }
     });
   }

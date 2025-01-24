@@ -22,7 +22,6 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     private const string Subject = "usuario";
     private const string SubjectArticle = "El";
 
-
     public async Task<ActionResult<PagedList<UserDto>>> GetPagedListAsync([FromQuery] UserParams param)
     {
         PagedList<UserDto> pagedList = await uow.UserRepository.GetPagedListAsync(param, User);

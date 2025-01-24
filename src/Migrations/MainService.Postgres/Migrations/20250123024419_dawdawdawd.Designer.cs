@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250117174056_Initial")]
-    partial class Initial
+    [Migration("20250123024419_dawdawdawd")]
+    partial class dawdawdawd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -230,6 +230,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("TranslatedName")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

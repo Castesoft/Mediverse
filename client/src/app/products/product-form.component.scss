@@ -1,0 +1,125 @@
+.image-scroll-container {
+  overflow-x: auto;
+  padding-bottom: 0.5em;
+
+  .d-flex {
+    flex-wrap: nowrap;
+  }
+}
+
+.image-thumbnail {
+  border: 1px solid #E4E6EF;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  max-width: 200px;
+  flex: 0 0 auto;
+
+  .z-index-10 {
+    z-index: 10;
+  }
+
+  .image-actions {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .action-buttons {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    gap: 5px;
+  }
+
+  &.upload-placeholder {
+    border: 2px dashed #E4E6EF;
+    background-color: rgba(#E4E6EF, 0.1);
+    cursor: pointer;
+    min-width: 200px;
+    display: flex;
+
+    &:hover {
+      border-color: #3699FF;
+      background-color: rgba(54, 153, 255, 0.05);
+      color: #3699FF !important;
+
+      .ki-plus-square {
+        color: #3699FF !important;
+      }
+    }
+  }
+
+  &:hover {
+    border-color: #3699FF;
+
+    .image-actions,
+    .action-buttons {
+      opacity: 1;
+    }
+  }
+}
+
+.ki-plus-square {
+  transition: color 0.3s ease;
+}
+
+.dropzone {
+  border: 2px dashed #E4E6EF;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #3699FF;
+    background-color: rgba(54, 153, 255, 0.05);
+  }
+}
+
+.dropzone-active {
+  border-color: #3699FF;
+  background-color: rgba(54, 153, 255, 0.1);
+}
+
+.main-thumbnail {
+  max-width: 200px;
+  margin: 0 auto;
+  border: 1px solid rgba(54, 153, 255, 0.5);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  symbol-cell {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.main-image-badge {
+  opacity: 1 !important;
+  background: rgba(54, 153, 255, 0.9);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.main-image-badge-select {
+  background: rgba(54, 153, 255, 0.9);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

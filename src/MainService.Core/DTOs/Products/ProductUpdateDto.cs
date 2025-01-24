@@ -1,23 +1,23 @@
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
-namespace MainService.Core.DTOs.Products;
-
-public class ProductUpdateDto
+namespace MainService.Core.DTOs.Products
 {
-    [Required(ErrorMessage = "El nombre es requerido.")]
-    [StringLength(100, MinimumLength = 3, ErrorMessage = "El nombre debe tener entre 3 y 100 caracteres.")]
-    public string? Name { get; set; }
-    
-    [Required(ErrorMessage = "La descripción es requerida.")]
-    [StringLength(500, MinimumLength = 3, ErrorMessage = "La descripción debe tener entre 3 y 500 caracteres.")]
-    public string? Description { get; set; }
-
-    [Required(ErrorMessage = "El precio es requerido.")]
-    [Range(1, 1000000, ErrorMessage = "El precio debe estar entre 1 y 1000000.")]
-    public decimal Price { get; set; }
-
-    [Range(0, 1, ErrorMessage = "El descuento debe estar entre 0 y 1.")]
-    public double? Discount { get; set; }
-    public bool? IsEnabled { get; set; }
-    public bool? IsVisible { get; set; }
+    public class ProductUpdateDto
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public decimal? Price { get; set; }
+        public string? LotNumber { get; set; }
+        public string? Unit { get; set; }
+        public double? Dosage { get; set; }
+        public string? Manufacturer { get; set; }
+        public int MainImageIndex { get; set; }
+        public int? Quantity { get; set; }
+        public bool? IsInternal { get; set; }
+        public bool? IsEnabled { get; set; }
+        public bool? IsVisible { get; set; }
+        public double? Discount { get; set; }
+        public ICollection<IFormFile>? Files { get; set; }
+        public List<string>? RemovedImageIds { get; set; }
+    }
 }

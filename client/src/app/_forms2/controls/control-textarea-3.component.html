@@ -10,8 +10,8 @@
   [id]="control().id"
   [readonly]="control().isReadonly"
   [spellcheck]="false"
-  [rows]="1"
-  class="form-control text-body fs-8"
+  [rows]="control().rows || 1"
+  class="form-control"
   [ngClass]="{
       'is-invalid': (root().submitted) && control().invalid,
       'is-valid': (root().submitted) && control().valid

@@ -83,7 +83,6 @@ public class PhotoRepository(DataContext context, IMapper mapper) : IPhotoReposi
                 x =>
                     !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
                     !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) ||
-                    !string.IsNullOrEmpty(x.Url) && x.Url.ToLower().Contains(term) ||
                     !string.IsNullOrEmpty(x.PublicId) && x.PublicId.ToLower().Contains(term) ||
                     x.Size.HasValue && x.Size.Value.ToString().ToLower().Contains(term)
             );

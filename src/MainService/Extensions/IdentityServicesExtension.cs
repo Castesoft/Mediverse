@@ -59,7 +59,7 @@ public static class IdentityServiceExtensions
 
         services.AddAuthorization(options =>
         {
-            foreach (AppRole role in SeedData.getRolesWithPermissions()) {
+            foreach (AppRole role in SeedData.GetRolesWithPermissions()) {
 
                 if (!string.IsNullOrEmpty(role.Name)) {
                     options.AddPolicy(role.Name, policy => {

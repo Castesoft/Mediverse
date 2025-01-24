@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from "@angular/core";
 import { PaddingService } from 'src/app/_services/padding.service';
 
-
 @Component({
   host: { class: 'post fs-6 d-flex flex-column-fluid', },
   selector: 'div[post]',

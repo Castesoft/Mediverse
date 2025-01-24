@@ -257,7 +257,7 @@ public static class Seed
     {
         if (await roleManager.Roles.AnyAsync()) return;
 
-        var seedingRoles = SeedData.getRolesWithPermissions().ToList();
+        var seedingRoles = SeedData.GetRolesWithPermissions().ToList();
 
         var idx = 1;
 
@@ -323,7 +323,7 @@ public static class Seed
             {
                 Photo = new Photo
                 {
-                    Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1711576883/Castesoft/logo_ytz4ej.png",
+                    Url = new Uri("https://res.cloudinary.com/dmjdskgd4/image/upload/v1711576883/Castesoft/logo_ytz4ej.png"),
                     Name = "Foto chida",
                     Size = 2,
                 }
@@ -344,7 +344,7 @@ public static class Seed
                 Photo = new Photo
                 {
                     Url =
-                        "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*",
+                        new Uri("https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*"),
                     PublicId = "avatars/ramiro_castellanos_barron",
                     Size = 24471, Name = "Foto_ramiro.png"
                 }
@@ -353,7 +353,7 @@ public static class Seed
             {
                 Signature = new Photo
                 {
-                    Url = "https://cdn.shopify.com/s/files/1/0594/4639/5086/files/Slanted_Signature.jpg",
+                    Url = new Uri("https://cdn.shopify.com/s/files/1/0594/4639/5086/files/Slanted_Signature.jpg"),
                     Name = "Firma chida",
                     Size = 2,
                 }

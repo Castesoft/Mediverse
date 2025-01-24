@@ -101,6 +101,7 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   suffix: string | null = null;
   materialOptions = new MaterialOptions();
   dateOptions = new DateOptions();
+  rows: number | null = null; // For TextArea
 
   constructor(
     value: FormControlState<T> | T,

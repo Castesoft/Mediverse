@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace MainService.Core.DTOs.Products;
 
@@ -16,6 +17,27 @@ public class ProductCreateDto
     [Range(1, 1000000, ErrorMessage = "El precio debe estar entre 1 y 1000000.")]
     public decimal Price { get; set; }
     
-    [Range(0, 1, ErrorMessage = "El descuento debe estar entre 0 y 1.")]
-    public double Discount { get; set; }
+    [Required(ErrorMessage = "El número de lote es requerido.")]
+    public string? LotNumber { get; set; }
+    
+    [Required(ErrorMessage = "La unidad es requerida.")]
+    public string? Unit { get; set; }
+    
+    [Required(ErrorMessage = "La dosis es requerida.")]
+    [Range(0, 100000, ErrorMessage = "La dosis debe estar entre 0 y 100000.")]
+    public double? Dosage { get; set; }
+    
+    [Required(ErrorMessage = "El fabricante es requerido.")]
+    public string? Manufacturer { get; set; }
+    
+    public int? Quantity { get; set; }
+    
+    public bool? IsInternal { get; set; }
+    public bool? IsEnabled { get; set; }
+    public bool? IsVisible { get; set; }
+    
+    [Range(0, 100, ErrorMessage = "El descuento debe estar entre 0 y 100.")]
+    public double? Discount { get; set; }
+    public int MainImageIndex { get; set; }
+    public ICollection<IFormFile>? Files { get; set; }
 }
