@@ -6,10 +6,10 @@
  * @property {string | null} caption - The caption for the photo.
  */
 export class Photo {
-  id: number | null = null;
-  url: string | null = null;
+  id?: number;
+  url?: string;
+  file?: File;
   isMain: boolean = false;
-  file: File | null = null;
 
   constructor(init?: Partial<Photo>) {
     Object.assign(this, init);

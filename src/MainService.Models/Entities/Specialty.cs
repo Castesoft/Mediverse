@@ -3,6 +3,7 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Models.Entities;
 public class Specialty : BaseCodeEntity
 {
+    public List<DoctorSpecialty> DoctorSpecialties { get; set; } = [];
     public List<MedicalLicenseSpecialty> MedicalLicenseSpecialties { get; set; } = [];
     public List<SpecialtyService> SpecialtyServices { get; set; } = [];
     public List<SpecialitySubSpecialty> SpecialitySubSpecialties { get; set; } = [];

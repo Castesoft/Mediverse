@@ -12,7 +12,6 @@ using MainService.Core.DTOs.Events;
 using Stripe;
 using MainService.Models.Entities.Aggregate;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 
 namespace MainService.Controllers;
 

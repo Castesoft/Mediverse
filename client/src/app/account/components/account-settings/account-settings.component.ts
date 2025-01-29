@@ -3,30 +3,47 @@ import { RouterModule } from '@angular/router';
 import { Account } from 'src/app/_models/account/account';
 import { AccountService } from 'src/app/_services/account.service';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
-import { CardConnectedAccountsComponent } from 'src/app/account/components/account-settings/card-connected-accounts/card-connected-accounts.component';
-import { CardDeactivateComponent } from 'src/app/account/components/account-settings/card-deactivate/card-deactivate.component';
-import { CardNotificationsComponent } from 'src/app/account/components/account-settings/card-notifications/card-notifications.component';
-import { CardOverviewComponent } from 'src/app/account/components/account-settings/card-overview/card-overview.component';
-import { CardProfileDetailsComponent } from 'src/app/account/components/account-settings/card-profile-details/card-profile-details.component';
-import { CardSigninMethodComponent } from 'src/app/account/components/account-settings/card-signin-method/card-signin-method.component';
+import {
+  CardConnectedAccountsComponent
+} from 'src/app/account/components/account-settings/card-connected-accounts/card-connected-accounts.component';
+import {
+  CardDeactivateComponent
+} from 'src/app/account/components/account-settings/card-deactivate/card-deactivate.component';
+import {
+  CardNotificationsComponent
+} from 'src/app/account/components/account-settings/card-notifications/card-notifications.component';
+import {
+  CardOverviewComponent
+} from 'src/app/account/components/account-settings/card-overview/card-overview.component';
+import {
+  CardProfileDetailsComponent
+} from 'src/app/account/components/account-settings/card-profile-details/card-profile-details.component';
+import {
+  CardSigninMethodComponent
+} from 'src/app/account/components/account-settings/card-signin-method/card-signin-method.component';
 import { NavMenuComponent } from 'src/app/account/components/account-settings/nav-menu/nav-menu.component';
 
 @Component({
   selector: 'app-account-settings',
   standalone: true,
-  imports: [TemplateModule, RouterModule, NavMenuComponent, CardOverviewComponent, CardSigninMethodComponent,
-    CardProfileDetailsComponent, CardConnectedAccountsComponent, CardNotificationsComponent, CardDeactivateComponent],
+  imports: [
+    TemplateModule,
+    RouterModule,
+    NavMenuComponent,
+    CardOverviewComponent,
+    CardSigninMethodComponent,
+    CardProfileDetailsComponent,
+    CardConnectedAccountsComponent,
+    CardNotificationsComponent,
+    CardDeactivateComponent
+  ],
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss'
 })
 export class AccountSettingsComponent {
-  accountService = inject(AccountService);
+  accountService: AccountService = inject(AccountService);
   account: Account | null = null;
   currentSection: string = 'account_settings_overview';
-
-  ngOnInit(): void {
-
-  }
 
   selectSection(section: string) {
     this.currentSection = section;

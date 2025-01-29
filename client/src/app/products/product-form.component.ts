@@ -10,17 +10,18 @@ import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm"
 import { ProductForm } from "src/app/_models/products/productForm";
 import { FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormUse } from "src/app/_models/forms/formTypes";
-import { View } from "src/app/_models/base/types";
+import { confirmActionModal, View } from "src/app/_models/base/types";
 import { ProductsService } from "src/app/products/products.config";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
-import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 import { TooltipDirective } from "ngx-bootstrap/tooltip";
-import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { ConfirmService } from "src/app/_services/confirm/confirm.service";
-import { Modal } from "src/app/_models/modal";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
+import { ImageHandlerService } from "src/app/_services/image-handler.service";
+import { ImageSelectorComponent } from "src/app/_shared/components/image-selector.component";
+import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { Photo } from "src/app/_models/forms/example/_models/photo";
+import { ImageThumbnailSelectorComponent } from "src/app/_shared/components/image-thumbnail-selector.component";
 
 @Component({
   selector: "[productForm]",
@@ -32,8 +33,9 @@ import { Photo } from "src/app/_models/forms/example/_models/photo";
     RouterModule,
     ControlsModule,
     Forms2Module,
-    SymbolCellComponent,
     TooltipDirective,
+    ImageSelectorComponent,
+    ImageThumbnailSelectorComponent,
   ]
 })
 export class ProductFormComponent extends BaseForm<Product, ProductParams, ProductFiltersForm, ProductForm, ProductsService> implements OnInit, FormInputSignals<Product> {
@@ -42,6 +44,7 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
   protected readonly FormUse: typeof FormUse = FormUse;
 
+  readonly imageHandler: ImageHandlerService = inject(ImageHandlerService);
   private confirmService: ConfirmService = inject(ConfirmService);
 
   item: ModelSignal<Product | null> = model.required();
@@ -50,9 +53,6 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
   key: ModelSignal<string | null> = model.required();
   useCard: InputSignal<boolean> = input(true);
   siteSection: InputSignal<SiteSection | undefined> = input();
-
-  images: Photo[] = [];
-  mainImageIndex: number = 0;
 
   constructor() {
     super(ProductsService, ProductForm);
@@ -72,34 +72,16 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
   }
 
   private initializeImages(): void {
-    this.images = [];
-    if (this.item()?.photos?.length) {
-      let mainIndex = 0;
-      this.item()!.photos?.forEach((photo, index) => {
-        this.images.push({
-          file: null,
-          url: photo.url,
-          id: photo.id,
-          isMain: photo.isMain
-        });
-
-        if (this.item()!.photos?.length === 1) {
-          this.images[0].isMain = true;
-        }
-
-        if (photo.isMain) {
-          mainIndex = index;
-        }
-      });
-      this.mainImageIndex = mainIndex;
-    } else {
-      this.images.push(new Photo({ isMain: true }));
-      this.mainImageIndex = 0;
-    }
+    const initialPhotos: Photo[] = this.item()?.photos?.map((p: Photo) => ({
+      id: p.id,
+      url: p.url,
+      isMain: p.isMain
+    })) || [];
+    this.imageHandler.initialize(initialPhotos);
   }
 
   hasRealImages(): boolean {
-    return this.images.some((img: Photo) => !!img.url || !!img.file);
+    return this.imageHandler.getImages().some((img: Photo) => !!img.url || !!img.file);
   }
 
   private subscribeToFormValueChanges(): void {
@@ -127,158 +109,42 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
     });
   }
 
-  isDragging = false;
-
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-    this.isDragging = true;
-  }
-
-  onDragLeave(event: DragEvent): void {
-    event.preventDefault();
-    this.isDragging = false;
-  }
-
-  onDrop(event: DragEvent): void {
-    event.preventDefault();
-    this.isDragging = false;
-
-    if (event.dataTransfer?.files) {
-      const files = Array.from(event.dataTransfer.files);
-      this.handleFiles(files);
-    }
-  }
-
-  private handleFiles(files: File[]): void {
-    if (this.images.length === 1 && !this.images[0].url && !this.images[0].file) {
-      this.images = [];
-    }
-
-    if (files.length + this.images.length > 10) {
-      alert('Máximo 10 imágenes permitidas');
-      return;
-    }
-
-    files.forEach(file => {
-      if (file.size > 5 * 1024 * 1024) {
-        alert(`El archivo ${file.name} excede el tamaño máximo de 5MB`);
-        return;
-      }
-
-      this.images.push({
-        id: null,
-        url: URL.createObjectURL(file),
-        file: file,
-        isMain: this.images.length === 0
-      });
-    });
-
-    this.updateMainImage();
-  }
-
-  onFilesSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const files = Array.from(input.files);
-      this.handleFiles(files);
-    }
-  }
-
-  removeImage(index: number): void {
-    const image: Photo = this.images[index];
-    const wasMain: boolean = image.isMain;
-
-    if (image.id) {
-      image.url = null;
-    } else {
-      this.images.splice(index, 1);
-    }
-
-    if (wasMain) {
-      this.updateMainImage();
-    } else {
-      if (index < this.mainImageIndex) {
-        this.mainImageIndex--;
-      }
-    }
-  }
-
-  setMainImage(index: number): void {
-    if (index < 0 || index >= this.images.length) return;
-
-    this.images.forEach((img, i) => img.isMain = i === index);
-    this.mainImageIndex = index;
-  }
-
-  private updateMainImage(): void {
-    const validImages: Photo[] = this.images.filter((img: Photo) => img.url || img.file);
-
-    if (validImages.length === 0) {
-      this.mainImageIndex = -1;
-      return;
-    }
-
-    const hasMain: boolean = validImages.some((img: Photo) => img.isMain);
-    if (!hasMain) {
-      const newIndex: number = this.images.indexOf(validImages[0]);
-      this.setMainImage(newIndex);
-    }
-  }
-
   async onSubmit(): Promise<void> {
-    const confirm: Modal = {
-      title: "Confirmar",
-      message: "¿Está seguro de que desea guardar los cambios?",
-      btnOkText: "Guardar",
-      btnCancelText: "Cancelar",
-      result: false,
-    };
-
-    const authorized: boolean = await firstValueFrom(this.confirmService.confirm(confirm));
+    const authorized: boolean = await firstValueFrom(this.confirmService.confirm(confirmActionModal));
     if (!authorized) return;
 
     const formData = new FormData();
-    formData.append('mainImageIndex', this.mainImageIndex.toString());
+    formData.append('mainImageIndex', this.imageHandler.getMainImageIndex().toString());
 
-    const removedIds = this.images
-      .filter(img => img.id && !img.url)
-      .map(img => img.id!.toString());
+    const removedIds: string[] = this.imageHandler.getRemovedIds();
+    removedIds.forEach((id: string) => formData.append('removedImageIds', id));
 
-    removedIds.forEach(id => formData.append('removedImageIds', id));
+    this.imageHandler.getImages()
+      .filter((image: Photo) => image.file)
+      .forEach((image: Photo) => formData.append('files', image.file!));
 
-    this.images
-      .filter(image => image.file)
-      .forEach((image) => {
-        formData.append('files', image.file!);
-      });
-
-    const productData = this.form.getRawValue();
-    Object.keys(productData).forEach(key => {
-      const value = productData[key as keyof typeof productData];
+    const productData: any = this.form.getRawValue();
+    Object.keys(productData).forEach((key: string) => {
+      const value: any = productData[key as keyof typeof productData];
       if (value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
     });
 
-    const isNew: boolean = !this.item() || !this.item()?.id;
-    if (isNew) {
-      this.service.create(formData).subscribe({
-        next: (product) => {
-          console.log('Product created:', product);
-        },
-        error: (err) => {
-          console.error('Error creating product:', err);
-        }
-      });
-    } else {
-      this.service.update(formData, this.item()?.id!).subscribe({
-        next: (product) => {
-          console.log('Product updated:', product);
-        },
-        error: (err) => {
-          console.error('Error updating product:', err);
-        }
-      });
-    }
+    const isNew: boolean = !this.item()?.id;
+    const observable: Observable<Product> = isNew
+      ? this.service.create(formData)
+      : this.service.update(formData, this.item()!.id!);
+
+    observable.subscribe({
+      next: (product) => {
+        console.log(isNew ? 'Created:' : 'Updated:', product)
+        this.toastr.success(`Producto ${isNew ? 'creado' : 'actualizado'} exitosamente`);
+      },
+      error: (err) => {
+        console.error(`Error ${isNew ? 'creating' : 'updating'} product:`, err)
+        this.toastr.error(`Error ${isNew ? 'creando' : 'actualizando'} el producto`);
+      }
+    });
   }
 }

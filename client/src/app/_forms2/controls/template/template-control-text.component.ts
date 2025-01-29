@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, HostBinding, inject, input, model } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  HostBinding,
+  inject,
+  input,
+  InputSignal,
+  model,
+  ModelSignal, Signal
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   TemplateInvalidFeedbackComponent
@@ -17,18 +27,21 @@ import { ValidationService } from 'src/app/_services/validation.service';
   imports: [ FormsModule, ReactiveFormsModule, CommonModule, TemplateInvalidFeedbackComponent, ],
 })
 export class TemplateControlTextComponent {
-  validation = inject(ValidationService);
+  validation: ValidationService = inject(ValidationService);
 
-  control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
-  fromWrapper = model.required<boolean>();
-  root = computed<FormGroup2<any>>(() => {
-    return this.control().root as FormGroup2<any>;
-  });
+  control: ModelSignal<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>> = model.required();
+  fromWrapper: ModelSignal<boolean> = model.required();
+
+  root: Signal<FormGroup2<any>> = computed(() => this.control().root as FormGroup2<any>);
 
   // Show bottom margins (mb-10)
-  showBottomMargin = input<boolean>(true);
+  showBottomMargin: InputSignal<boolean> = input(true);
 
   class = 'fv-row fv-plugins-icon-container';
+
+  @HostBinding('class') get hostClass() {
+    return this.class;
+  }
 
   constructor() {
     effect(() => {
@@ -43,9 +56,4 @@ export class TemplateControlTextComponent {
       }
     });
   }
-
-  @HostBinding('class') get hostClass() {
-    return this.class;
-  }
-
 }

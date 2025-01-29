@@ -18,7 +18,8 @@
             <div templateControlCheckbox [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
           }
           @case ('radio') {
-            <div templateControlCheckRadio [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div templateControlCheckRadio [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
           @case ('select') {
             <div controlSelect3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>

@@ -4,6 +4,7 @@ using MainService.Core.DTOs.Addresses;
 using MainService.Core.DTOs.Clinics;
 using MainService.Core.DTOs.DeliveryStatuses;
 using MainService.Core.DTOs.Events;
+using MainService.Core.DTOs.MedicalRecord;
 using MainService.Core.DTOs.Nurses;
 using MainService.Core.DTOs.Orders;
 using MainService.Core.DTOs.OrderStatuses;
@@ -153,8 +154,12 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors.Select(x => x.Doctor)))
             .ForMember(dest => dest.MedicalInsuranceCompanies,
                 opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies))
+            .ForMember(dest => dest.Specialty, opt => opt.MapFrom(src => src.DoctorSpecialty.Specialty))
             .ForMember(dest => dest.DoctorInsuranceCompanies,
                 opt => opt.MapFrom(src => src.DoctorMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)));
+
+
+        CreateMap<Specialty, OptionDto>();
 
         CreateMap<WorkSchedule, WorkScheduleDto>();
         CreateMap<WorkScheduleSettings, WorkScheduleSettingsDto>();
@@ -393,6 +398,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count()))
             .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()));
 
+        CreateMap<DoctorEvent, EventDto>();
+
         CreateMap<AppUser, UserDto>()
             .ForMember(dest => dest.Street,
                 opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Street))
@@ -408,24 +415,25 @@ public class MappingProfiles : Profile
                 opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Country))
             .ForMember(dest => dest.Zipcode,
                 opt => opt.MapFrom(src => src.UserAddresses.FirstOrDefault(x => x.IsMain).Address.Zipcode))
+            .ForMember(dest => dest.MedicalInsuranceCompanies,
+                opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies))
+            // .ForMember(dest => dest.DoctorPayments,
+            //     opt => opt.MapFrom(src =>
+            //         src.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment))))
+            // .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
+            // .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors))
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
-            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
             .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Any()))
             .ForMember(dest => dest.Age,
                 opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
-            .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role)))
             .ForMember(dest => dest.Permissions,
                 opt => opt.MapFrom(src => src.UserPermissions.Select(x => x.Permission)))
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
-            .ForMember(dest => dest.MedicalInsuranceCompanies,
-                opt => opt.MapFrom(src => src.UserMedicalInsuranceCompanies))
-            .ForMember(dest => dest.DoctorPayments,
-                opt => opt.MapFrom(src =>
-                    src.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment))))
-            .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
-            .ForMember(dest => dest.SharedDoctors, opt => opt.MapFrom(src => src.Doctors));
+            .ForMember(dest => dest.PhotoUrl,
+                opt => opt.MapFrom(src => src.UserPhoto != null ? src.UserPhoto.Photo.Url.AbsoluteUri : null))
+            .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role)))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
         CreateMap<DoctorPatient, DoctorPatientDto>();
 

@@ -33,13 +33,13 @@ public class AppUser : IdentityUser<int>
 
     // Base account properties
     public List<UserAddress> UserAddresses { get; set; } = [];
-    public UserPhoto UserPhoto { get; set; } = null!;
+    public UserPhoto? UserPhoto { get; set; } = null!;
     public DoctorBannerPhoto DoctorBannerPhoto { get; set; } = null!;
     public List<AppUserRole> UserRoles { get; set; } = [];
     public List<AppUserPermission> UserPermissions { get; set; } = [];
     public List<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
     public List<UserReview> UserReviews { get; set; } = [];
-    public UserMedicalRecord UserMedicalRecord { get; set; } = null!;
+    public UserMedicalRecord? UserMedicalRecord { get; set; } = null!;
 
     // User Billing Information Properties
     public List<UserPaymentMethod> UserPaymentMethods { get; set; } = [];
@@ -71,6 +71,7 @@ public class AppUser : IdentityUser<int>
     public List<DoctorNurse> NursesDoctor { get; set; } = [];
     
     public DoctorSignature DoctorSignature { get; set; } = null!;
+    public DoctorSpecialty DoctorSpecialty { get; set; } = null!;
     public List<PatientEvent> PatientEvents { get; set; } = [];
     public List<PatientPrescription> PatientPrescriptions { get; set; } = [];
     public List<DoctorPrescription> DoctorPrescriptions { get; set; } = [];

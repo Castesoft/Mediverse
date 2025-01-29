@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using MainService.Core.DTOs;
+using MainService.Core.DTOs.MedicalRecord;
 using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;

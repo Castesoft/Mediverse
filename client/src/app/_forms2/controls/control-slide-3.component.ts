@@ -25,7 +25,7 @@ import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
   ],
 })
 export class ControlSlide3Component {
-  validation = inject(ValidationService);
+  validation: ValidationService = inject(ValidationService);
 
   control: ModelSignal<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>> = model.required();
   fromWrapper: ModelSignal<boolean> = model.required();

@@ -4,6 +4,8 @@ namespace MainService.Models.Entities
 {
     public class UserMedicalRecord
     {
+        public UserMedicalRecord() {}
+        public UserMedicalRecord(MedicalRecord medicalRecord) => MedicalRecord = medicalRecord;
         public int UserId { get; set; }
         public AppUser User { get; set; } = null!;
         public int MedicalRecordId { get; set; }
@@ -69,6 +71,7 @@ namespace MainService.Models.Entities
     {
         public MedicalRecordEducationLevel() {}
         public MedicalRecordEducationLevel(int educationLevelId) => EducationLevelId = educationLevelId;
+        public MedicalRecordEducationLevel(EducationLevel educationLevel) => EducationLevel = educationLevel;
         public MedicalRecordEducationLevel(int educationLevelId, int medicalRecordId)
         {
             EducationLevelId = educationLevelId;
@@ -93,6 +96,7 @@ namespace MainService.Models.Entities
     public class MedicalRecordOccupation
     {
         public MedicalRecordOccupation() {}
+        public MedicalRecordOccupation(Occupation occupation) => Occupation = occupation;
         public MedicalRecordOccupation(int occupationId) => OccupationId = occupationId;
         public MedicalRecordOccupation(int occupationId, int medicalRecordId)
         {
@@ -120,6 +124,7 @@ namespace MainService.Models.Entities
     public class MedicalRecordMaritalStatus
     {
         public MedicalRecordMaritalStatus() {}
+        public MedicalRecordMaritalStatus(MaritalStatus maritalStatus) => MaritalStatus = maritalStatus;
         public MedicalRecordMaritalStatus(int maritalStatusId) => MaritalStatusId = maritalStatusId;
         public MedicalRecordMaritalStatus(int maritalStatusId, int medicalRecordId)
         {
@@ -145,6 +150,7 @@ namespace MainService.Models.Entities
 
     public class MedicalRecordColorBlindness {
         public MedicalRecordColorBlindness() {}
+        public MedicalRecordColorBlindness(ColorBlindness colorBlindness) => ColorBlindness = colorBlindness;
         public MedicalRecordColorBlindness(int colorBlindnessId) => ColorBlindnessId = colorBlindnessId;
         
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; } = null!;
@@ -169,6 +175,8 @@ namespace MainService.Models.Entities
     }
 
     public class MedicalRecordFamilyMember {
+        public MedicalRecordFamilyMember() {}
+        public MedicalRecordFamilyMember(FamilyMember familyMember) => FamilyMember = familyMember;
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; } = null!;
         public int FamilyMemberId { get; set; } public FamilyMember FamilyMember { get; set; } = null!;
     }
@@ -191,6 +199,7 @@ namespace MainService.Models.Entities
     public class MedicalRecordFamilyMemberRelativeType
     {
         public MedicalRecordFamilyMemberRelativeType() {}
+        public MedicalRecordFamilyMemberRelativeType(RelativeType relativeType) => RelativeType = relativeType;
         public MedicalRecordFamilyMemberRelativeType(int relativeTypeId) => RelativeTypeId = relativeTypeId;
         public MedicalRecordFamilyMemberRelativeType(int relativeTypeId, int familyMemberId)
         {
@@ -216,12 +225,15 @@ namespace MainService.Models.Entities
 
     public class MedicalRecordCompanion
     {
+        public MedicalRecordCompanion() {}
+        public MedicalRecordCompanion(Companion companion) => Companion = companion;
         public int MedicalRecordId { get; set; } public MedicalRecord MedicalRecord { get; set; } = null!;
         public int CompanionId { get; set; } public Companion Companion { get; set; } = null!;
     }
 
     public class CompanionRelativeType {
         public CompanionRelativeType() {}
+        public CompanionRelativeType(RelativeType relativeType) => RelativeType = relativeType;
         public CompanionRelativeType(int relativeTypeId) => RelativeTypeId = relativeTypeId;
         public CompanionRelativeType(int relativeTypeId, int companionId)
         {
@@ -235,6 +247,7 @@ namespace MainService.Models.Entities
 
     public class CompanionOccupation {
         public CompanionOccupation() {}
+        public CompanionOccupation(Occupation occupation) => Occupation = occupation;
         public CompanionOccupation(int occupationId) => OccupationId = occupationId;
         public CompanionOccupation(int occupationId, int companionId)
         {

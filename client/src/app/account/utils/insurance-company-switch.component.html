@@ -1,11 +1,11 @@
-<!-- <strong>Value: </strong><code>{{item().enabled}}</code> -->
 <div class="d-flex flex-stack mt-5">
   <div class="me-5">
     <img src="{{ item().options?.photoUrl }}" alt="{{ item().name }}"
-      class="w-50px me-3" />
-    <label class="fs-6 fw-semibold form-label">{{item().name}}</label>
+         class="w-50px me-3"/>
+    <label class="fs-6 fw-semibold form-label">{{ item().name }}</label>
   </div>
   <label class="form-check form-switch form-check-custom form-check-solid">
-    <input class="form-check-input" type="checkbox" [checked]="true" [(ngModel)]="item().enabled" (ngModelChange)="onChange($event)" />
+    <input class="form-check-input" type="checkbox" [checked]="true" [(ngModel)]="item().enabled"
+           (ngModelChange)="onChange($event)"/>
   </label>
 </div>

@@ -1,7 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, contentChild, effect, ElementRef, inject, model } from '@angular/core';
+import {
+  Component,
+  computed,
+  contentChild,
+  effect,
+  ElementRef,
+  inject,
+  model,
+  ModelSignal,
+  Signal
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TemplateInvalidFeedbackComponent } from 'src/app/_forms2/controls/template/template-invalid-feedback.component';
+import {
+  TemplateInvalidFeedbackComponent
+} from 'src/app/_forms2/controls/template/template-invalid-feedback.component';
 import { DateRange } from 'src/app/_models/base/dateRange';
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormControl2 } from 'src/app/_models/forms/formControl2';
@@ -16,13 +28,13 @@ import { ValidationService } from 'src/app/_services/validation.service';
   imports: [ FormsModule, ReactiveFormsModule, CommonModule, TemplateInvalidFeedbackComponent, ],
 })
 export class TemplateControlCheckboxComponent {
-  validation = inject(ValidationService);
+  validation: ValidationService = inject(ValidationService);
 
-  customLabel = contentChild<ElementRef>('customLabel');
+  customLabel: Signal<ElementRef | undefined> = contentChild<ElementRef>('customLabel');
 
-  control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>>();
-  fromWrapper = model.required<boolean>();
-  root = computed<FormGroup2<any>>(() => {
+  control: ModelSignal<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>> = model.required();
+  fromWrapper: ModelSignal<boolean> = model.required();
+  root: Signal<FormGroup2<any>> = computed<FormGroup2<any>>(() => {
     return this.control().root as FormGroup2<any>;
   });
 

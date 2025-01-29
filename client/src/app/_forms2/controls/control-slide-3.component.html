@@ -1,27 +1,28 @@
 @if (control().orientation === 'inline') {
-  <div class="form-check form-switch d-flex align-items-center gap-2 justify-content-between ps-0">
-    <label
-      class="form-label ps-0 col-form-label fw-semibold fs-8 text-nowrap"
-      [for]="control().id"
-    >
-      {{ control().label }}
-    </label>
-    <input
-      type="checkbox"
-      class="form-check-input"
-      role="switch"
-      [formControl]="$any(control())"
-      [id]="control().id"
-    >
+  <div class="d-flex flex-row align-items-center justify-content-between w-100 flex-grow-1" style="min-height: 38px">
+    @if (control().showLabel) {
+      <label class="form-label" [for]="control().id"
+             [ngClass]="{'required': control().required && validation.active()}">
+        {{ control().label }}
+      </label>
+    }
+    <div class="form-check form-switch">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        role="switch"
+        [formControl]="$any(control())"
+        [id]="control().id"
+      >
+    </div>
   </div>
 } @else {
-  <div class="form-check form-switch d-flex align-items-center gap-2 justify-content-between ps-0">
-    <label
-      class="form-label"
-      [for]="control().id"
-    >
-      {{ control().label }}
-    </label>
+  <div class="form-check form-switch">
+    @if (control().showLabel) {
+      <label class="form-check-label" [for]="control().id">
+        {{ control().label }}
+      </label>
+    }
     <input
       type="checkbox"
       class="form-check-input"

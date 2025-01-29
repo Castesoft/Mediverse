@@ -2,7 +2,7 @@ using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using MainService.Core.Interfaces.Services;
-using MainService.Core.DTOs;
+using MainService.Core.DTOs.MedicalRecord;
 using MainService.Core.Helpers.Pagination;
 using MainService.Extensions;
 using MainService.Models.Entities.Aggregate;

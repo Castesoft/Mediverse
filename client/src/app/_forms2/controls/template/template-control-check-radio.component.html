@@ -1,78 +1,34 @@
-<!-- <code class="json">{{control().valid | json}}</code>
-<code class="json">{{control().value | json}}</code> -->
+<!--@if (control().orientation === 'inline') {-->
 
-@if(control().orientation === 'inline') {
-  <div class="d-flex align-items-center gap-2" [style.min-height.px]="40">
-    @if (control().showLabel) {
-      <label [for]="control().id" [ngClass]="{'required': control().required && validation.active()}"
-             class="form-label text-nowrap">
-        {{ control().label }}
-        @if (control().optional) {
-          @if (validation.isOptional(control()) || !control().isReadonly) {
-            <span optionalSpan3></span>
-          }
-        }
-        @if (control().isNew) {
-          <span newBadge3></span>
-        }
-      </label>
-    }
-    @for (option of control().selectOptions; let idx = $index; track idx) {
-      <div class="form-check">
-        <input
-          class="form-check-input"
-          [readonly]="control().isReadonly"
-          [ngClass]="{
-            'is-invalid': (root().submitted) && control().invalid,
-            'is-valid': (root().submitted) && control().valid
-          }"
-          type="radio"
-          (change)="handleValueChange(option)"
-          [disabled]="control().disabled"
-          [checked]="control().value && option.code === $any(control().value).code"
-          [value]="option | json"
-          [id]="control().id+option.id+option.name"
-          [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
-          [attr.aria-label]="control().label + ' input'"
-        >
-        <label class="form-check-label text-nowrap"
-               [for]="control().id+option.id+option.name">
-          @if (control().showCodeSpan) {
-            ({{ option.code }})
-          }
-          {{ option.name }}
-        </label>
-      </div>
-    }
-  </div>
-} @else {
-  @if (control().showLabel) {
-    <label [for]="control().id" [ngClass]="{'required': control().required && validation.active()}"
-           class="form-label text-nowrap">
-      {{ control().label }}
-      @if (control().optional) {
-        @if (validation.isOptional(control()) || !control().isReadonly) {
-          <span optionalSpan3></span>
-        }
+@if (control().showLabel) {
+  <label [for]="control().id" [ngClass]="{'required': control().required && validation.active()}"
+         class="form-label text-nowrap">
+    {{ control().label }}
+    @if (control().optional) {
+      @if (validation.isOptional(control()) || !control().isReadonly) {
+        <span optionalSpan3></span>
       }
-      @if (control().isNew) {
-        <span newBadge3></span>
-      }
-    </label>
-  }
+    }
+    @if (control().isNew) {
+      <span newBadge3></span>
+    }
+  </label>
+}
+
+<div class="d-flex align-items-center gap-2" [style.min-height.px]="40">
   @for (option of control().selectOptions; let idx = $index; track idx) {
-    <div class="form-check" [style.min-height.px]="40">
+    <div class="form-check">
       <input
         class="form-check-input"
         [readonly]="control().isReadonly"
         [ngClass]="{
-          'is-invalid': (root().submitted) && control().invalid,
-          'is-valid': (root().submitted) && control().valid
-        }"
+            'is-invalid': (root().submitted) && control().invalid,
+            'is-valid': (root().submitted) && control().valid
+          }"
         type="radio"
         (change)="handleValueChange(option)"
         [disabled]="control().disabled"
-        [checked]="option === control().value"
+        [checked]="control().value && option.code === $any(control().value).code"
         [value]="option | json"
         [id]="control().id+option.id+option.name"
         [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
@@ -87,5 +43,49 @@
       </label>
     </div>
   }
-}
+</div>
+
+<!--} @else {-->
+<!--  @if (control().showLabel) {-->
+<!--    <label [for]="control().id" [ngClass]="{'required': control().required && validation.active()}"-->
+<!--           class="form-label text-nowrap">-->
+<!--      {{ control().label }}-->
+<!--      @if (control().optional) {-->
+<!--        @if (validation.isOptional(control()) || !control().isReadonly) {-->
+<!--          <span optionalSpan3></span>-->
+<!--        }-->
+<!--      }-->
+<!--      @if (control().isNew) {-->
+<!--        <span newBadge3></span>-->
+<!--      }-->
+<!--    </label>-->
+<!--  }-->
+<!--  @for (option of control().selectOptions; let idx = $index; track idx) {-->
+<!--    <div class="form-check" [style.min-height.px]="40">-->
+<!--      <input-->
+<!--        class="form-check-input"-->
+<!--        [readonly]="control().isReadonly"-->
+<!--        [ngClass]="{-->
+<!--          'is-invalid': (root().submitted) && control().invalid,-->
+<!--          'is-valid': (root().submitted) && control().valid-->
+<!--        }"-->
+<!--        type="radio"-->
+<!--        (change)="handleValueChange(option)"-->
+<!--        [disabled]="control().disabled"-->
+<!--        [checked]="option === control().value"-->
+<!--        [value]="option | json"-->
+<!--        [id]="control().id+option.id+option.name"-->
+<!--        [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"-->
+<!--        [attr.aria-label]="control().label + ' input'"-->
+<!--      >-->
+<!--      <label class="form-check-label text-nowrap"-->
+<!--             [for]="control().id+option.id+option.name">-->
+<!--        @if (control().showCodeSpan) {-->
+<!--          ({{ option.code }})-->
+<!--        }-->
+<!--        {{ option.name }}-->
+<!--      </label>-->
+<!--    </div>-->
+<!--  }-->
+<!--}-->
 <div templateInvalidFeedback [(control)]="control"></div>

@@ -1,0 +1,85 @@
+<div class="fv-row mb-2"
+     (dragover)="onDragOver($event)"
+     (dragleave)="onDragLeave($event)"
+     (drop)="onDrop($event)"
+     [class.dropzone-active]="isDragging">
+  <div class="dropzone dz-clickable"
+       [class.d-none]="hasRealImages()"
+       (click)="fileInput.click()">
+    <div class="dz-message needsclick">
+      <i class="ki-duotone ki-file-up text-primary fs-3x">
+        <span class="path1"></span>
+        <span class="path2"></span>
+      </i>
+      <div class="ms-4">
+        <h3 class="fs-5 fw-bold text-gray-900 mb-1">
+          Arrastra imágenes aquí o haz clic para subir
+        </h3>
+        <span class="fs-7 fw-semibold text-gray-400">
+          Máximo {{ maxFiles() }} imágenes ({{ maxFileSizeMB() }}MB cada una)
+          Formatos aceptados: {{ allowedTypes() }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <input #fileInput type="file" hidden [accept]="allowedTypes()" multiple (change)="onFilesSelected($event)">
+
+  @if (hasRealImages()) {
+    <div class="image-scroll-container">
+      <div class="d-flex flex-row flex-nowrap gap-4">
+        @for (image of imageHandler.getImages(); track $index) {
+          @if (image.url) {
+            <div class="position-relative image-thumbnail"
+                 [class.main-image]="image.isMain">
+              <div
+                class="d-flex justify-content-between align-items-start position-absolute top-0 start-0 w-100 p-2 z-index-10">
+                @if (editable()) {
+                  <div class="action-buttons">
+                    <button type="button"
+                            class="btn btn-icon btn-sm btn-danger"
+                            (click)="imageHandler.removeImage($index)">
+                      <i class="ki-duotone ki-trash fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                      </i>
+                    </button>
+                  </div>
+
+                  @if (image.isMain) {
+                    <div class="main-image-badge">Principal</div>
+                  } @else {
+                    <div class="action-buttons">
+                      <button class="main-image-badge-select"
+                              (click)="imageHandler.setMainImage($index)">
+                        Hacer principal
+                      </button>
+                    </div>
+                  }
+                }
+              </div>
+              <div symbolCell
+                   class="justify-content-center text-center"
+                   [photoUrl]="image.url || null"
+                   [size]="thumbnailSize()"
+                   [shape]="thumbnailShape()"></div>
+            </div>
+          }
+        }
+        @if (editable() && imageHandler.getImages().length < maxFiles()) {
+          <div class="image-thumbnail upload-placeholder align-items-center justify-content-center"
+               (click)="fileInput.click()">
+            <div class="d-flex flex-column align-items-center text-center p-2 gap-4">
+              <i class="ki-duotone ki-file-up text-gray-600 fs-3x">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+              <span class="fs-7 fw-semibold text-gray-600">Agregar más imágenes</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

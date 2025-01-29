@@ -15,8 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
 using System.Text.Json;
-using MainService.Core.DTOs;
+using MainService.Core.DTOs.MedicalRecord;
 using MainService.Models.Entities.Aggregate;
+using Serilog;
 
 namespace MainService.Controllers;
 
@@ -37,7 +38,8 @@ public class AccountController(
     IUsersService usersService,
     IOptions<ClientSettings> clientSettings,
     IPhotosService photosService,
-    IStripeService stripeService
+    IStripeService stripeService,
+    IMedicalRecordsService medicalRecordsService
 ) : BaseApiController
 {
     [Authorize]
@@ -1729,27 +1731,26 @@ public class AccountController(
 
     [Authorize]
     [HttpPut("account-details")]
-    public async Task<ActionResult<AccountDto?>> UpdateAccountDetailsAsync(
-        [FromForm] IFormFile photo,
-        [FromForm] IFormFile file,
-        [FromForm] string json
-    )
+    public async Task<ActionResult<AccountDto>> UpdateAccountDetailsAsync([FromForm] AccountDetailsUpdateDto request)
     {
         var userId = User.GetUserId();
         var roles = User.GetRoles();
 
-        var request = JsonSerializer.Deserialize<AccountDetailsUpdateDto>(json);
+        Log.Information("Update request for user {UserId}: {@Request}", userId, request);
 
-        if (request == null) return BadRequest("No se ha enviado la información del usuario.");
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        if (string.IsNullOrEmpty(request.FirstName)) return BadRequest("No se ha enviado el nombre.");
-        if (string.IsNullOrEmpty(request.LastName)) return BadRequest("No se ha enviado el apellido.");
-        if (string.IsNullOrEmpty(request.PhoneNumber)) return BadRequest("No se ha enviado el número de teléfono.");
-        if (string.IsNullOrEmpty(request.SpecialtyId)) return BadRequest("No se ha enviado la especialidad.");
-        if (string.IsNullOrEmpty(request.AcceptedPaymentMethods))
-            return BadRequest("No se han enviado los métodos de pago aceptados.");
+        var user = await GetUserWithDependencies(userId);
+        if (user == null) return NotFound($"User with id {userId} not found.");
 
-        var user = await userManager.Users
+        await HandleUserUpdate(user, request, roles);
+
+        return Ok(await usersService.GenerateAccountDtoAsync(userId));
+    }
+
+    private async Task<AppUser?> GetUserWithDependencies(int userId)
+    {
+        return await userManager.Users
             .Include(x => x.UserPhoto)
             .ThenInclude(x => x.Photo)
             .Include(x => x.DoctorPaymentMethodTypes)
@@ -1760,143 +1761,190 @@ public class AccountController(
             .ThenInclude(x => x.MedicalLicense)
             .ThenInclude(x => x.MedicalLicenseDocument)
             .ThenInclude(x => x.Document)
-            .SingleOrDefaultAsync(x => x.Id == userId);
+            .Include(x => x.DoctorSpecialty).ThenInclude(x => x.Specialty)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(x => x.Id == userId);
+    }
 
-        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+    private async Task HandleUserUpdate(AppUser user, AccountDetailsUpdateDto request, IEnumerable<string> roles)
+    {
+        mapper.Map(request, user);
 
-        mapper.Map<AccountDetailsUpdateDto, AppUser>(request, user);
-
-        // only if the claims principal has a role of doctor
         if (roles.Contains("Doctor"))
         {
-            var prevMedicalLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain)?.MedicalLicense;
-            if (prevMedicalLicense == null || prevMedicalLicense.MedicalLicenseSpecialty.SpecialtyId !=
-                int.Parse(request.SpecialtyId))
-            {
-                if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
-
-                if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
-                    return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
-
-                var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
-                {
-                    File = new FileDescription(file.FileName, file.OpenReadStream()),
-                    Folder = "Mediverse/DoctorMedicalLicenses",
-                });
-                if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
-
-                if (prevMedicalLicense != null)
-                {
-                    var publicId = prevMedicalLicense.MedicalLicenseDocument.Document.PublicId;
-
-                    if (string.IsNullOrEmpty(publicId)) return BadRequest("Error obteniendo el ID de la imagen.");
-
-                    var deletionResult = await cloudinaryService.DeleteAsync(publicId);
-                    if (deletionResult.Error != null)
-                        return BadRequest("Error eliminando la prueba de especialidad anterior.");
-                }
-
-                user.UserMedicalLicenses.Clear();
-
-                user.UserMedicalLicenses.Add(new UserMedicalLicense(int.Parse(request.SpecialtyId),
-                    uploadResult.PublicId,
-                    uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
-            }
-            else
-            {
-                if (file != null && file.Length > 0)
-                {
-                    var medicalLicense = user.UserMedicalLicenses.FirstOrDefault(x =>
-                        x.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == int.Parse(request.SpecialtyId));
-                    if (medicalLicense == null) return BadRequest("No se ha encontrado la prueba de especialidad.");
-
-                    var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
-                    {
-                        File = new FileDescription(file.FileName, file.OpenReadStream()),
-                        Folder = "Mediverse/DoctorMedicalLicenses",
-                    });
-                    if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
-
-                    var previousMedicalLicenseDocument = medicalLicense.MedicalLicense.MedicalLicenseDocument;
-
-                    var publicId = previousMedicalLicenseDocument.Document.PublicId;
-
-                    if (string.IsNullOrEmpty(publicId)) return BadRequest("Error obteniendo el ID de la imagen.");
-
-                    var prevDocumentDeleteResult = await cloudinaryService.DeleteAsync(publicId);
-                    if (prevDocumentDeleteResult.Error != null)
-                        return BadRequest("Error eliminando la prueba de especialidad anterior.");
-
-                    medicalLicense.MedicalLicense.MedicalLicenseDocument =
-                        new MedicalLicenseDocument(uploadResult.PublicId, uploadResult.SecureUrl.AbsoluteUri);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(request.AcceptedPaymentMethods))
-            {
-                var acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
-                var userPaymentMethodTypes = user.DoctorPaymentMethodTypes.Select(x => x.PaymentMethodTypeId).ToList();
-                if (!userPaymentMethodTypes.All(acceptedPaymentMethods.Contains) ||
-                    !acceptedPaymentMethods.All(userPaymentMethodTypes.Contains))
-                {
-                    user.DoctorPaymentMethodTypes.Clear();
-
-                    foreach (var paymentMethodTypeId in acceptedPaymentMethods)
-                    {
-                        var paymentMethodType = new DoctorPaymentMethodType
-                        {
-                            DoctorId = user.Id,
-                            PaymentMethodTypeId = paymentMethodTypeId
-                        };
-                        user.DoctorPaymentMethodTypes.Add(paymentMethodType);
-                    }
-                }
-            }
+            await HandleMedicalLicenseUpdate(user, request);
+            HandlePaymentMethodsUpdate(user, request);
         }
 
-        if (user.UserPhoto != null)
+        await HandlePhotoUpdate(user, request);
+    }
+
+    private async Task HandleMedicalLicenseUpdate(AppUser user, AccountDetailsUpdateDto request)
+    {
+        if (request.GetSpecialty()?.Id == null)
+            throw new ArgumentException("Specialty information is required");
+
+        var mainLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain);
+        var shouldUpdateLicense = mainLicense?.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId !=
+                                  request.GetSpecialty()?.Id.Value;
+
+        // TODO - Handle specialty change
+        if (shouldUpdateLicense)
         {
-            if (request.RemoveAvatar)
-            {
-                if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
-                    return BadRequest("Error eliminando la foto.");
-            }
+            await HandleSpecialtyChange(user, request, request.GetSpecialty().Id.Value, mainLicense);
         }
-        else
+        else if (request.File != null && request.File.Length > 0)
         {
-            if (photo != null)
-            {
-                ImageUploadParams imageUploadParams = new()
-                {
-                    File = new FileDescription(photo.FileName, photo.OpenReadStream()),
-                    Folder = "Mediverse/UserPhoto",
-                    Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
-                };
-
-                var result = await cloudinaryService.UploadAsync(photo, imageUploadParams);
-
-                if (result.Error != null) return BadRequest(result.Error.Message);
-
-                if (user.UserPhoto != null)
-                {
-                    if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
-                        return BadRequest("Error eliminando la foto anterior.");
-                }
-
-                Photo newPhoto = new(result, userId);
-
-                uow.PhotoRepository.Add(newPhoto);
-            }
+            await UpdateExistingMedicalLicense(mainLicense!, request.File);
         }
+    }
 
-        if (uow.HasChanges())
+    private async Task HandleSpecialtyChange(AppUser user, AccountDetailsUpdateDto request, int specialtyId,
+        UserMedicalLicense? existingLicense)
+    {
+        // TODO - File handling
+        // if (request.File == null || request.File.Length == 0)
+        //     throw new ArgumentException("Medical license proof is required for specialty change");
+        // var uploadResult = await HandleFileUpload(request.File, "Mediverse/DoctorMedicalLicenses");
+        // await RemoveExistingMedicalLicense(existingLicense);
+
+        var specialty = await uow.SpecialtyRepository.GetByIdAsync(specialtyId);
+        if (specialty == null) throw new ArgumentException($"Specialty with id {specialtyId} does not exist");
+
+        user.DoctorSpecialty = new DoctorSpecialty(specialty);
+
+        // user.UserMedicalLicenses.Clear();
+        // user.UserMedicalLicenses.Add(CreateNewMedicalLicense(specialtyId, uploadResult));
+    }
+
+    private async Task RemoveExistingMedicalLicense(UserMedicalLicense? license)
+    {
+        if (license?.MedicalLicense.MedicalLicenseDocument?.Document?.PublicId == null) return;
+
+        var deletionResult =
+            await cloudinaryService.DeleteAsync(license.MedicalLicense.MedicalLicenseDocument.Document.PublicId);
+        if (deletionResult.Error != null)
+            throw new ApplicationException("Error deleting previous medical license: " + deletionResult.Error.Message);
+    }
+
+    private static UserMedicalLicense CreateNewMedicalLicense(int specialtyId, ImageUploadResult uploadResult)
+    {
+        return new UserMedicalLicense(
+            specialtyId,
+            uploadResult.PublicId,
+            uploadResult.SecureUrl.AbsoluteUri)
         {
-            if (!await uow.Complete()) return BadRequest("Error actualizando la información del usuario.");
+            IsMain = true
+        };
+    }
+
+    private async Task<ImageUploadResult> HandleFileUpload(IFormFile file, string folder)
+    {
+        await using var stream = file.OpenReadStream();
+        var uploadParams = new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, stream),
+            Folder = folder
+        };
+
+        var uploadResult = await cloudinaryService.UploadAsync(file, uploadParams);
+        if (uploadResult.Error != null)
+            throw new ApplicationException($"File upload failed: {uploadResult.Error.Message}");
+
+        return uploadResult;
+    }
+
+    private async Task UpdateExistingMedicalLicense(UserMedicalLicense license, IFormFile file)
+    {
+        if (license.MedicalLicense.MedicalLicenseDocument?.Document == null)
+            throw new ArgumentException("Existing medical license document not found");
+
+        var uploadResult = await HandleFileUpload(file, "Mediverse/DoctorMedicalLicenses");
+        await DeleteCloudinaryResource(license.MedicalLicense.MedicalLicenseDocument.Document.PublicId);
+
+        license.MedicalLicense.MedicalLicenseDocument = new MedicalLicenseDocument(
+            uploadResult.PublicId,
+            uploadResult.SecureUrl.AbsoluteUri);
+    }
+
+    private async Task DeleteCloudinaryResource(string publicId)
+    {
+        var deletionResult = await cloudinaryService.DeleteAsync(publicId);
+        if (deletionResult.Error != null)
+            throw new ApplicationException("Error deleting Cloudinary resource: " + deletionResult.Error.Message);
+    }
+
+    private void HandlePaymentMethodsUpdate(AppUser user, AccountDetailsUpdateDto request)
+    {
+        if (string.IsNullOrEmpty(request.AcceptedPaymentMethods)) return;
+
+        var newPaymentMethods = request.AcceptedPaymentMethods
+            .Split(',')
+            .Select(int.Parse)
+            .ToList();
+
+        var currentPaymentMethods = user.DoctorPaymentMethodTypes
+            .Select(x => x.PaymentMethodTypeId)
+            .ToList();
+
+        if (!newPaymentMethods.SequenceEqual(currentPaymentMethods))
+        {
+            user.DoctorPaymentMethodTypes.Clear();
+            user.DoctorPaymentMethodTypes.AddRange(newPaymentMethods.Select(id =>
+                new DoctorPaymentMethodType
+                {
+                    DoctorId = user.Id,
+                    PaymentMethodTypeId = id
+                }));
         }
+    }
 
-        var itemToReturn = await usersService.GenerateAccountDtoAsync(userId);
+    private async Task HandlePhotoUpdate(AppUser user, AccountDetailsUpdateDto request)
+    {
+        if (request.RemoveAvatar)
+        {
+            await HandleAvatarRemoval(user);
+        }
+        else if (request.Photo != null)
+        {
+            await HandleNewPhotoUpload(user, request.Photo);
+        }
+    }
 
-        return itemToReturn;
+    private async Task HandleAvatarRemoval(AppUser user)
+    {
+        if (user.UserPhoto?.Photo == null) return;
+
+        if (!await photosService.DeleteAsync(user.UserPhoto.Photo))
+            throw new ApplicationException("Failed to delete user photo");
+
+        user.UserPhoto = null;
+    }
+
+    private async Task HandleNewPhotoUpload(AppUser user, IFormFile photo)
+    {
+        var uploadResult = await HandleFileUpload(photo, "Mediverse/UserPhoto", true);
+        var newPhoto = new Photo(uploadResult, user.Id);
+
+        if (user.UserPhoto?.Photo != null)
+            await photosService.DeleteAsync(user.UserPhoto.Photo);
+
+        uow.PhotoRepository.Add(newPhoto);
+        user.UserPhoto = new UserPhoto { Photo = newPhoto };
+    }
+
+    private async Task<ImageUploadResult> HandleFileUpload(IFormFile file, string folder, bool isAvatar = false)
+    {
+        var uploadParams = new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = folder,
+            Transformation = isAvatar
+                ? new Transformation().Height(500).Width(500).Crop("fill").Gravity("face")
+                : null
+        };
+
+        return await cloudinaryService.UploadAsync(file, uploadParams);
     }
 
     [Authorize]
@@ -1993,195 +2041,13 @@ public class AccountController(
     public async Task<ActionResult<MedicalRecordDto?>> UpdateMedicalRecord([FromBody] MedicalRecordUpdateDto request)
     {
         var userId = User.GetUserId();
+        var result = await medicalRecordsService.UpdateMedicalRecordAsync(userId, request);
 
-        var user = await userManager.Users
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers)
-            .ThenInclude(mrfm => mrfm.FamilyMember.MedicalRecordFamilyMemberRelativeType)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordPersonalDiseases)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordSubstances)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyDiseases)
-            .Include(u =>
-                u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType.RelativeType)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordOccupation.Occupation)
-            .SingleOrDefaultAsync(x => x.Id == userId);
+        if (result.Result is BadRequestObjectResult badRequest) return BadRequest(badRequest.Value);
 
-        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
-
-        if (user.UserMedicalRecord != null)
-        {
-            var existingUserMedicalRecord = user.UserMedicalRecord;
-
-            await uow.UserRepository.DeleteMedicalRecordAsync(existingUserMedicalRecord);
-        }
-
-        MedicalRecord itemToCreate = new();
-
-        itemToCreate.PatientName = request.PatientName!;
-        itemToCreate.Age = request.Age ?? 0;
-        itemToCreate.Sex = request.Sex?.Code ?? string.Empty;
-        itemToCreate.BirthPlace = string.IsNullOrEmpty(request.BirthPlace) ? string.Empty : request.BirthPlace;
-        itemToCreate.BirthDate = request.BirthDate ?? DateTime.MinValue;
-        itemToCreate.YearsOfSchooling = request.YearsOfSchooling ?? 0;
-        itemToCreate.HandDominance = request.HandDominance?.Code ?? string.Empty;
-        itemToCreate.CurrentLivingSituation = request.CurrentLivingSituation ?? string.Empty;
-        itemToCreate.CurrentAddress = request.CurrentAddress ?? string.Empty;
-        itemToCreate.HomePhone = request.HomePhone;
-        itemToCreate.MobilePhone = request.MobilePhone ?? string.Empty;
-        itemToCreate.Email = request.Email ?? string.Empty;
-        itemToCreate.HasCompanion = request.HasCompanion ?? false;
-        itemToCreate.EconomicDependence = request.EconomicDependence ?? string.Empty;
-        itemToCreate.UsesGlassesOrHearingAid = request.UsesGlassesOrHearingAid ?? false;
-        itemToCreate.Comments = request.Comments;
-
-        if (request.EducationLevel != null && request.EducationLevel.Id.HasValue)
-            itemToCreate.MedicalRecordEducationLevel = new MedicalRecordEducationLevel(request.EducationLevel.Id.Value);
-
-        if (request.ColorBlindness != null && request.ColorBlindness.Id.HasValue)
-            itemToCreate.MedicalRecordColorBlindness = new MedicalRecordColorBlindness(request.ColorBlindness.Id.Value);
-
-        if (request.Occupation != null && request.Occupation.Id.HasValue)
-            itemToCreate.MedicalRecordOccupation = new MedicalRecordOccupation(request.Occupation.Id.Value);
-
-        if (request.MaritalStatus != null && request.MaritalStatus.Id.HasValue)
-            itemToCreate.MedicalRecordMaritalStatus = new MedicalRecordMaritalStatus(request.MaritalStatus.Id.Value);
-
-        if (request.HasCompanion.HasValue && request.HasCompanion.Value == true && request?.Companion == null)
-            return BadRequest("Si el paciente asiste solo, debe proporcionar información del acompañante.");
-
-        if (request?.Companion != null && request.HasCompanion.HasValue && request.HasCompanion.Value == true)
-        {
-            Companion companion = new();
-
-            if (!string.IsNullOrEmpty(request.Companion.Name)) companion.Name = request.Companion.Name;
-            if (request.Companion.Age.HasValue) companion.Age = request.Companion.Age.Value;
-            if (!string.IsNullOrEmpty(request.Companion.Sex?.Code)) companion.Sex = request.Sex?.Code;
-            if (!string.IsNullOrEmpty(request.Companion.Address)) companion.Address = request.Companion.Address;
-            if (!string.IsNullOrEmpty(request.Companion.HomePhone)) companion.HomePhone = request.Companion.HomePhone;
-            if (!string.IsNullOrEmpty(request.Companion.PhoneNumber))
-                companion.PhoneNumber = request.Companion.PhoneNumber;
-            if (!string.IsNullOrEmpty(request.Companion.Email)) companion.Email = request.Companion.Email;
-            if (request.Companion.Occupation != null && request.Companion.Occupation.Id.HasValue)
-                companion.CompanionOccupation = new CompanionOccupation(request.Companion.Occupation.Id.Value);
-            if (request.Companion.RelativeType != null && request.Companion.RelativeType.Id.HasValue)
-                companion.CompanionRelativeType = new CompanionRelativeType(request.Companion.RelativeType.Id.Value);
-
-            itemToCreate.MedicalRecordCompanion = new MedicalRecordCompanion { Companion = companion };
-        }
-
-        if (
-            request?.FamilyMembers.Count() > 0 &&
-            request.FamilyMembers[0].Name != null &&
-            request.FamilyMembers[0].Age != null &&
-            request.FamilyMembers[0].RelativeType != null
-        )
-        {
-            List<MedicalRecordFamilyMember> medicalRecordFamilyMembers = [];
-            for (var i = 0; i < request.FamilyMembers.Count(); i++)
-            {
-                var fm = request.FamilyMembers[i];
-                if (fm == null) continue;
-
-                MedicalRecordFamilyMember medicalRecordFamilyMemberToCreate =
-                    new() { FamilyMember = new FamilyMember() };
-
-                if (!string.IsNullOrEmpty(fm.Name)) medicalRecordFamilyMemberToCreate.FamilyMember.Name = fm.Name;
-                if (fm.Age.HasValue) medicalRecordFamilyMemberToCreate.FamilyMember.Age = fm.Age.Value;
-                if (fm.RelativeType != null && fm.RelativeType.Id.HasValue)
-                    medicalRecordFamilyMemberToCreate.FamilyMember.MedicalRecordFamilyMemberRelativeType =
-                        new MedicalRecordFamilyMemberRelativeType(fm.RelativeType.Id.Value);
-
-                medicalRecordFamilyMembers.Add(medicalRecordFamilyMemberToCreate);
-            }
-
-            itemToCreate.MedicalRecordFamilyMembers = medicalRecordFamilyMembers;
-        }
-
-        if (
-            request?.PersonalMedicalHistory.Count() > 0 &&
-            request.PersonalMedicalHistory[0].Disease != null
-        )
-        {
-            List<MedicalRecordPersonalDisease> medicalRecordPersonalDiseases = new();
-            for (var i = 0; i < request.PersonalMedicalHistory.Count(); i++)
-            {
-                var pd = request.PersonalMedicalHistory[i];
-                if (pd == null) continue;
-
-                MedicalRecordPersonalDisease medicalRecordPersonalDiseaseToCreate = new();
-
-                if (!string.IsNullOrEmpty(pd.Description))
-                    medicalRecordPersonalDiseaseToCreate.Description = pd.Description;
-                if (pd.Disease != null && pd.Disease.Id.HasValue)
-                    medicalRecordPersonalDiseaseToCreate.DiseaseId = pd.Disease.Id.Value;
-
-                medicalRecordPersonalDiseases.Add(medicalRecordPersonalDiseaseToCreate);
-            }
-
-            itemToCreate.MedicalRecordPersonalDiseases = medicalRecordPersonalDiseases;
-        }
-
-
-        if (
-            request?.PersonalDrugHistory.Count() > 0 &&
-            request.PersonalDrugHistory[0].Substance != null &&
-            request.PersonalDrugHistory[0].ConsumptionLevel != null
-        )
-        {
-            List<MedicalRecordSubstance> medicalRecordSubstances = [];
-            for (var i = 0; i < request.PersonalDrugHistory.Count(); i++)
-            {
-                var ps = request.PersonalDrugHistory[i];
-                if (ps.Substance == null) continue;
-
-                MedicalRecordSubstance medicalRecordSubstanceToCreate = new();
-
-                if (ps.Substance != null) medicalRecordSubstanceToCreate.SubstanceId = ps.Substance.Id;
-                if (ps.ConsumptionLevel != null)
-                    medicalRecordSubstanceToCreate.ConsumptionLevelId = ps.ConsumptionLevel.Id;
-                if (ps.StartAge.HasValue) medicalRecordSubstanceToCreate.StartAge = ps.StartAge.Value;
-                if (ps.EndAge.HasValue) medicalRecordSubstanceToCreate.EndAge = ps.EndAge.Value;
-                if (ps.IsCurrent.HasValue) medicalRecordSubstanceToCreate.IsCurrent = ps.IsCurrent.Value;
-                if (!string.IsNullOrEmpty(ps.Other)) medicalRecordSubstanceToCreate.Other = ps.Other;
-
-                medicalRecordSubstances.Add(medicalRecordSubstanceToCreate);
-            }
-
-            itemToCreate.MedicalRecordSubstances = medicalRecordSubstances;
-        }
-
-        if (
-            request?.FamilyMedicalHistory.Count() > 0 &&
-            request.FamilyMedicalHistory[0].Disease != null &&
-            request.FamilyMedicalHistory[0].RelativeType != null
-        )
-        {
-            List<MedicalRecordFamilyDisease> medicalRecordFamilyDiseases = [];
-            for (var i = 0; i < request.FamilyMedicalHistory.Count(); i++)
-            {
-                var fd = request.FamilyMedicalHistory[i];
-                if (fd == null) continue;
-
-                MedicalRecordFamilyDisease medicalRecordFamilyDiseaseToCreate = new();
-
-                if (fd.Disease != null) medicalRecordFamilyDiseaseToCreate.DiseaseId = fd.Disease.Id;
-                if (fd.RelativeType != null && fd.RelativeType.Id.HasValue)
-                    medicalRecordFamilyDiseaseToCreate.RelativeTypeId = fd.RelativeType.Id.Value;
-
-                medicalRecordFamilyDiseases.Add(medicalRecordFamilyDiseaseToCreate);
-            }
-
-            itemToCreate.MedicalRecordFamilyDiseases = medicalRecordFamilyDiseases;
-        }
-
-        user.UserMedicalRecord = new UserMedicalRecord();
-        user.UserMedicalRecord.MedicalRecord = itemToCreate;
-
-        if (uow.HasChanges())
-        {
-            if (!await uow.Complete()) return BadRequest("Error actualizando el historial clínico.");
-        }
-
-        return await uow.UserRepository.GetMedicalRecordDtoAsync(userId);
+        return result.Value != null
+            ? Ok(result.Value)
+            : NotFound("Medical record not found");
     }
 
     [Authorize]

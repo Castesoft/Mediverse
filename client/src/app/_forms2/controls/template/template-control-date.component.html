@@ -1,54 +1,52 @@
-@if (control().orientation === 'inline') {
-  <div class="d-flex align-items-center gap-2 pe-0 me-0">
-    @if (control().showLabel) {
-      <label class="form-label"
-             [ngClass]="{'required': control().required && validation.active()}">
-        {{ control().label }}
-      </label>
-    }
-    <input matInput
-           (click)="picker.open()"
-           [matDatepicker]="picker"
-           [formControl]="$any(control())"
-           [matTooltip]="tooltipText()"
-           [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
-           [autocomplete]="false"
-           [spellcheck]="false"
-           [id]="control().id"
-           [readonly]="control().isReadonly"
-           class="form-control form-control-lg"
-           [ngClass]="{
-              'is-invalid': (root().submitted) && control().invalid,
-              'is-valid': (root().submitted) && control().valid
-           }"
-           [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
-           [attr.aria-label]="control().label + ' input'" type="text">
-    <mat-datepicker #picker></mat-datepicker>
-  </div>
-} @else {
-  @if (control().showLabel) {
-    <label class="form-label"
-           [ngClass]="{'required': control().required && validation.active()}">
-      {{ control().label }}
-    </label>
-  }
+<!--  <div class="d-flex align-items-center gap-2 pe-0 me-0">-->
+<!--    @if (control().showLabel) {-->
+<!--      <label class="form-label"-->
+<!--             [ngClass]="{'required': control().required && validation.active()}">-->
+<!--        {{ control().label }}-->
+<!--      </label>-->
+<!--    }-->
+<!--    <input matInput-->
+<!--           (click)="picker.open()"-->
+<!--           [matDatepicker]="picker"-->
+<!--           [formControl]="$any(control())"-->
+<!--           [matTooltip]="tooltipText()"-->
+<!--           [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"-->
+<!--           [autocomplete]="false"-->
+<!--           [spellcheck]="false"-->
+<!--           [id]="control().id"-->
+<!--           [readonly]="control().isReadonly"-->
+<!--           class="form-control form-control-lg"-->
+<!--           [ngClass]="{-->
+<!--              'is-invalid': (root().submitted) && control().invalid,-->
+<!--              'is-valid': (root().submitted) && control().valid-->
+<!--           }"-->
+<!--           [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"-->
+<!--           [attr.aria-label]="control().label + ' input'" type="text">-->
+<!--    <mat-datepicker #picker></mat-datepicker>-->
+<!--  </div>-->
 
-  <input matInput
-         (click)="picker.open()"
-         [matDatepicker]="picker"
-         [formControl]="$any(control())"
-         [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
-         [autocomplete]="false"
-         [spellcheck]="false"
-         [id]="control().id"
-         [readonly]="control().isReadonly"
-         class="form-control form-control-lg" [ngClass]="{
+@if (control().showLabel) {
+  <label class="form-label"
+         [ngClass]="{'required': control().required && validation.active()}">
+    {{ control().label }}
+  </label>
+}
+
+<input matInput
+       (click)="picker.open()"
+       [matDatepicker]="picker"
+       [formControl]="$any(control())"
+       [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"
+       [autocomplete]="false"
+       [spellcheck]="false"
+       [id]="control().id"
+       [readonly]="control().isReadonly"
+       class="form-control form-control-lg" [ngClass]="{
             'is-invalid': (root().submitted) && control().invalid,
             'is-valid': (root().submitted) && control().valid
          }"
-         [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
-         [attr.aria-label]="control().label + ' input'" type="text">
-  <mat-datepicker #picker></mat-datepicker>
-}
+       [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
+       [attr.aria-label]="control().label + ' input'" type="text">
+<mat-datepicker #picker></mat-datepicker>
 
 <div templateInvalidFeedback [(control)]="control"></div>

@@ -1,7 +1,5 @@
-using MainService.Core.DTOs;
 using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
-using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Core.Extensions;
 using MainService.Extensions;

@@ -1,15 +1,17 @@
 @if (control().orientation === 'inline') {
   <div class="d-flex align-items-center gap-2">
     <mat-checkbox [formControl]="$any(control())" [id]="control().id">
-      <span class="col-form-label fw-semibold fs-8 text-nowrap">{{ control().label }}</span>
+      @if (control().showLabel) {
+        <span class="col-form-label fw-semibold fs-8 text-nowrap">{{ control().label }}</span>
+      }
     </mat-checkbox>
   </div>
 } @else {
   <mat-checkbox [formControl]="$any(control())">{{ control().label }}</mat-checkbox>
 }
 
-@if(control().hint !== null) {
-  <mat-hint>{{control().hint}}</mat-hint>
+@if (control().hint !== null) {
+  <mat-hint>{{ control().hint }}</mat-hint>
 }
 @if (control().errors !== null) {
   <div invalidFeedback3 [(control)]="control"></div>

@@ -30,7 +30,10 @@ import {
   templateUrl: './template-control-date.component.html',
   imports: [
     ReactiveFormsModule,
-    CommonModule, CdkModule, MaterialModule, TemplateInvalidFeedbackComponent,
+    CommonModule,
+    CdkModule,
+    MaterialModule,
+    TemplateInvalidFeedbackComponent,
     Forms2HelperModule,
   ],
   providers: [ DatePipe, ],
@@ -52,7 +55,7 @@ export class TemplateControlDateComponent {
     return this.control().root as FormGroup2<any>;
   });
 
-  class = 'fw-semibold mb-0';
+  class: string = 'fw-semibold mb-0';
 
   @HostBinding('class') get hostClass() {
     return this.class;

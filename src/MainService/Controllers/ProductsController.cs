@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
 using Serilog;
-using Stripe;
 using Product = MainService.Models.Entities.Product;
 
 namespace MainService.Controllers;
@@ -198,17 +197,14 @@ public class ProductsController(
     {
         var itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
         if (itemExists != null)
-        {
             return BadRequest($"El producto de nombre '{request.Name}' ya existe.");
-        }
 
         var doctor = await userManager.Users
             .Include(x => x.DoctorProducts)
             .ThenInclude(x => x.Product)
             .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
 
-        if (doctor == null)
-            return BadRequest($"Error al crear el producto.");
+        if (doctor == null) return BadRequest($"Error al crear el producto.");
 
         var item = new Product
         {
@@ -243,21 +239,38 @@ public class ProductsController(
 
             if (item.ProductPhotos.Count != 0)
             {
-                item.SetMainPhoto();
+                int mainImageIndex = request.MainImageIndex;
+
+                if (mainImageIndex >= 0 && mainImageIndex < item.ProductPhotos.Count)
+                {
+                    foreach (var (photo, index) in item.ProductPhotos.Select((p, i) => (p, i)))
+                    {
+                        photo.IsMain = index == mainImageIndex;
+                    }
+                }
+                else
+                {
+                    item.ProductPhotos.First().IsMain = true;
+                }
+
+                var mainPhoto = item.ProductPhotos.FirstOrDefault(p => p.IsMain);
+                Log.Information(mainPhoto != null
+                        ? "Main photo confirmed at index {Index}"
+                        : "WARNING: No main photo set!",
+                    item.ProductPhotos.ToList().IndexOf(mainPhoto!));
             }
         }
 
         uow.ProductRepository.Add(item);
 
         if (!request.IsInternal.HasValue || !request.IsInternal.Value)
-        {
             doctor.DoctorProducts.Add(new DoctorProduct(item));
-        }
 
-        await userManager.UpdateAsync(doctor);
+        if (!await uow.Complete()) return BadRequest("Error al guardar el producto.");
 
         var itemToReturn = await uow.ProductRepository.GetDtoByIdAsync(item.Id);
         if (itemToReturn != null) return itemToReturn;
+
         return BadRequest($"Error al recuperar el {Subject} creado.");
     }
 

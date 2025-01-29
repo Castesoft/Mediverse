@@ -1,39 +1,64 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, model, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect, HostBinding,
+  inject,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  output, OutputEmitterRef,
+  Signal
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TemplateInvalidFeedbackComponent } from 'src/app/_forms2/controls/template/template-invalid-feedback.component';
+import {
+  TemplateInvalidFeedbackComponent
+} from 'src/app/_forms2/controls/template/template-invalid-feedback.component';
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormControl2 } from 'src/app/_models/forms/formControl2';
 import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 import { ValidationService } from 'src/app/_services/validation.service';
+import { OptionalSpan3Component } from "src/app/_forms2/helper/optional-span-3.component";
+import { NewBadge3Component } from "src/app/_forms2/helper/new-badge-3.component";
 
 @Component({
-  host: { class: 'fv-row mb-10 fv-plugins-icon-container', },
   selector: 'div[templateControlCheckRadio]',
   templateUrl: './template-control-check-radio.component.html',
   standalone: true,
-  imports: [ FormsModule, ReactiveFormsModule, CommonModule, TemplateInvalidFeedbackComponent, ],
+  imports: [ FormsModule, ReactiveFormsModule, CommonModule, TemplateInvalidFeedbackComponent, OptionalSpan3Component, NewBadge3Component, ],
 })
 export class TemplateControlCheckRadioComponent {
-validation = inject(ValidationService);
+  readonly validation: ValidationService = inject(ValidationService);
 
-  control = model.required<FormControl2<string | number | boolean | Date | SelectOption | null>>();
-  fromWrapper = model.required<boolean>();
-  root = computed<FormGroup2<any>>(() => {
-    return this.control().root as FormGroup2<any>;
-  });
+  control: ModelSignal<FormControl2<string | number | boolean | Date | SelectOption | null>> = model.required();
+  fromWrapper: ModelSignal<boolean> = model.required();
+  root: Signal<FormGroup2<any>> = computed(() => { return this.control().root as FormGroup2<any>; });
 
-  selected = output<SelectOption>();
-  selectedValue = new SelectOption();
+  // Show bottom margins (mb-10)
+  showBottomMargin: InputSignal<boolean> = input(true);
+
+  selected: OutputEmitterRef<SelectOption> = output();
+  selectedValue: SelectOption = new SelectOption();
+
+  class: string = "fv-row fv-plugins-icon-container fw-semibold mb-0";
+
+  @HostBinding("class") get hostClass() {
+    return this.class;
+  }
 
   constructor() {
     effect(() => {
       this.control.set(this.control().setValidation(this.validation.active()));
+
+      if (this.showBottomMargin()) {
+        this.class += ` mb-10`;
+      }
     });
   }
 
   handleValueChange(option: SelectOption): void {
-    const selected = this.control().selectOptions.find(o => o === option);
+    const selected: SelectOption | undefined = this.control().selectOptions.find((o: SelectOption) => o === option);
     if (selected && this.selectedValue.name !== selected.name) {
       this.selectedValue = selected;
       this.selected.emit(selected);

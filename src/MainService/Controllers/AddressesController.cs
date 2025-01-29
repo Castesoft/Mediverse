@@ -2,14 +2,9 @@ using MainService.Core.DTOs.Addresses;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
-using MainService.Core.Extensions;
 using MainService.Extensions;
-using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 
 namespace MainService.Controllers;
 

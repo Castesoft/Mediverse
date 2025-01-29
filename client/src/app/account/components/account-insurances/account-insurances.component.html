@@ -1,4 +1,4 @@
-@if (service.current() !== null) {
+@if (account() !== null) {
   <div class="card mb-5 mb-xl-10">
     <div class="card-header">
       <div class="card-title">
@@ -7,8 +7,8 @@
     </div>
     <div class="card-body">
       <div class="row gx-9 gy-6">
-        @for (insurance of service.current()?.medicalInsuranceCompanies; let idx = $index; track idx) {
-          <div insuranceCompanyItem [(item)]="service.current()!.medicalInsuranceCompanies[idx]"
+        @for (insurance of account()?.medicalInsuranceCompanies; let idx = $index; track idx) {
+          <div insuranceCompanyItem [(item)]="account()!.medicalInsuranceCompanies[idx]"
                [use]="FormUse.EDIT"></div>
         }
         <div insuranceCompanyItem [item]="null" [use]="FormUse.CREATE"></div>
@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  @if (service.hasRole([ 'Doctor' ])) {
+  @if (accountsService.hasRole([ 'Doctor' ])) {
     <div class="card mb-5 mb-xl-10">
       <div class="card-header">
         <div class="card-title">
@@ -24,9 +24,8 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="fs-6 fw-semibold text-muted">Los seguros seleccionados aparecerán a los pacientes al momento de
-          agendar
-          una cita.
+        <div class="fs-6 fw-semibold text-muted">
+          Los seguros seleccionados aparecerán a los pacientes al momento de agendar una cita.
         </div>
         <div class="row gx-9 gy-6">
           @for (item of medicalInsuranceCompanyOptions(); let idx = $index; track idx) {

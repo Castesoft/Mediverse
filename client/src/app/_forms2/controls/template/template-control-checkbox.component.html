@@ -5,8 +5,10 @@
     [formControl]="control()" [id]="control().id">
   <span class="form-check-label fw-semibold text-gray-700 fs-6">
 
-    @if(customLabel() === undefined) {
-      {{ control().label }}
+    @if (customLabel() === undefined) {
+      @if (control().showLabel) {
+        {{ control().label }}
+      }
     } @else {
       <div #customLabel>
         <ng-content></ng-content>

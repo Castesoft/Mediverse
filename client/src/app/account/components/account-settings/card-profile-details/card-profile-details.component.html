@@ -1,73 +1,101 @@
-<div card id="account_settings_profile_details" (mouseenter)="selectSection('account_settings_profile_details')">
-  <div cardHeader>
-    <div cardTitle [title]="'Detalles de perfil'"></div>
+<div class="card mb-5 mb-xl-10" id="account_settings_profile_details"
+     (mouseenter)="selectSection('account_settings_profile_details')">
+  <div class="card-header">
+    <div class="card-title">
+      <h3>Detalles del Perfil</h3>
+    </div>
   </div>
   <form (ngSubmit)="onSubmit()">
-    <div cardBody>
+    <div class="card-body border-top pt-9">
       <div class="row mb-6">
-        <label class="col-lg-4 col-form-label fw-semibold fs-6">Avatar</label>
+        <label class="col-lg-4 col-form-label fw-semibold fs-6">
+          Foto de Perfil
+        </label>
         <div class="col-lg-8">
-          <div class="image-input image-input-outline" style="background-image: url('media/svg/avatars/blank.svg')">
-            <div class=" w-125px h-125px">
-              @if (form.controls.photoUrl.value !== null) {
-                <img [src]="form.controls.photoUrl.value" class="mw-100 mh-100 rounded" alt="photo"/>
-              } @else {
-                <div userProfilePicture [fullName]="form.controls.fullName.value"
-                     [photoUrl]="form.controls.photoUrl.value"
-                     [shape]="PhotoShape.SQUARE" [size]="PhotoSize.MEDIUM_2"
-                ></div>
-              }
-            </div>
-            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                   data-kt-image-input-action="change" title="Change avatar">
-              <i class="ki-duotone ki-pencil fs-7">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-              <input aria-label="hola" type="file" name="avatar" accept=".png, .jpg, .jpeg"
-                     (change)="onPhotoChange($event)"/>
-              <input type="hidden" name="avatar_remove"/>
-            </label>
-            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                  data-kt-image-input-action="cancel" title="Cancel avatar">
-              <i class="ki-duotone ki-cross fs-2">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-            </span>
-            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                  data-kt-image-input-action="remove"
-                  title="Remove avatar" (click)="removeAvatar()">
-              <i class="ki-duotone ki-cross fs-2">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-            </span>
-          </div>
-          <div class="form-text mt-5">Tipos de archivos permitidos: png, jpg, jpeg.</div>
+          <div imageThumbnailSelector
+               [editable]="true"
+               [singleSelect]="true"
+               [thumbnailShape]="PhotoShape.SQUARE"
+               [thumbnailSize]="PhotoSize.LARGE"
+          ></div>
         </div>
       </div>
 
-      <div formBuilder3 [cols]="2" [controls]="[
-            form.controls.firstName,
-            form.controls.lastName,
-          ]"></div>
+      <div class="row mb-6">
+        <label class="col-lg-4 col-form-label fw-semibold fs-6">
+          Nombre Completo
+        </label>
+        <div class="col-lg-8">
+          <div class="row">
+            <div class="col-6">
+              <div controlsWrapper3 [control]="form.controls.firstName" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-6">
+              <div controlsWrapper3 [control]="form.controls.lastName" [showBottomMargin]="false"></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div formBuilder3 [cols]="2" [controls]="[
-            form.controls.phoneNumber,
-          ]"></div>
+      <div class="row mb-6">
+        <label class="col-lg-4 col-form-label fw-semibold fs-6">
+          Teléfono
+        </label>
+        <div class="col-lg-8">
+          <div controlsWrapper3 [control]="form.controls.phoneNumber" [showBottomMargin]="false"></div>
+        </div>
+      </div>
 
       @if (accountService.hasRole([ 'Doctor' ])) {
-        <div formBuilder3 [cols]="2" [controls]="[
-              form.controls.licenseNumber,
-              form.controls.specialtyLicense,
-            ]"></div>
-        <div formBuilder3 [cols]="1" [controls]="[
-              form.controls.specialty,
-              form.controls.acceptedPaymentMethods,
-              form.controls.requireAnticipatedCardPayments,
-            ]"></div>
+        <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6">
+            Cédula Profesional
+          </label>
+          <div class="col-lg-8">
+            <div controlsWrapper3 [control]="form.controls.licenseNumber" [showBottomMargin]="false"></div>
+          </div>
+        </div>
 
+        <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6">
+            Cédula de Especialidad
+          </label>
+          <div class="col-lg-8">
+            <div controlsWrapper3 [control]="form.controls.specialtyLicense" [showBottomMargin]="false"></div>
+          </div>
+        </div>
+
+        <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6">
+            Especialidad
+          </label>
+          <div class="col-lg-8">
+            <div controlsWrapper3 [control]="form.controls.specialty" [showBottomMargin]="false"></div>
+          </div>
+        </div>
+
+        <div class="row mb-6">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6">
+            Métodos de Pago Aceptados
+          </label>
+          <div class="col-lg-8">
+            <div controlsWrapper3 [control]="form.controls.acceptedPaymentMethods" [showBottomMargin]="false"></div>
+          </div>
+        </div>
+
+        <div class="row mb-0 align-items-center">
+          <label class="col-lg-4 col-form-label fw-semibold fs-6">
+            Requiere Pagos Anticipados con Tarjeta
+          </label>
+          <div class="col-lg-8 align-items-center">
+            <div controlsWrapper3 [control]="form.controls.requireAnticipatedCardPayments"
+                 [showBottomMargin]="false"></div>
+          </div>
+        </div>
+      }
+    </div>
+    <div class="card-body pt-0">
+      @if (accountService.hasRole([ 'Doctor' ])) {
         <!-- <div class="row mb-6">
           <label class="col-lg-4 col-form-label fw-semibold fs-6"
             >Cédula/Certificación</label
@@ -88,33 +116,23 @@
           </div>
         </div> -->
 
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-semibold fs-6"
-          >Métodos de pago aceptados</label
-          >
-          <div class="col-lg-8 fv-row fv-plugins-icon-container">
-            <!-- <div
-              class="fv-row mb-5 fv-plugins-icon-container"
-              controlCheckList
-              formControlName="AcceptedPaymentMethods"
-              [options]="paymentMethodTypes"
-              [submitted]="submitted"
-              [errors]="{
-                  required: 'Selecciona al menos un método de pago.'
-              }"
-            ></div> -->
-            <!-- @if (showRequireAnticipatedCardPaymentsField()) {
-              <div class="d-flex flex-stack mt-5 align-items-center">
-                <div class="me-5">
-                    <div class="fs-6 fw-semibold">Requerir pago anticipado para citas con tarjeta de crédito/débito</div>
-                </div>
-                <label class="form-check form-switch form-check-custom form-check-solid">
-                    <input class="form-check-input" type="checkbox" [checked]="accountService.current()!.requireAnticipatedCardPayments" (change)="setValueAnticipatedCardPayments($event)" />
-                </label>
-              </div>
-            } -->
-          </div>
-        </div>
+          <!--        <div class="row mb-6">-->
+          <!--          <label class="col-lg-4 col-form-label fw-semibold fs-6">-->
+          <!--            Métodos de pago aceptados-->
+          <!--          </label>-->
+          <!--          <div class="col-lg-8 fv-row fv-plugins-icon-container">-->
+          <!--            <div-->
+          <!--              class="fv-row mb-5 fv-plugins-icon-container"-->
+          <!--              controlCheckList-->
+          <!--              formControlName="AcceptedPaymentMethods"-->
+          <!--              [options]="paymentMethodTypes"-->
+          <!--              [submitted]="false"-->
+          <!--              [errors]="{-->
+          <!--                  required: 'Selecciona al menos un método de pago.'-->
+          <!--              }"-->
+          <!--            ></div>  -->
+          <!--          </div>-->
+          <!--        </div>-->
       }
     </div>
 

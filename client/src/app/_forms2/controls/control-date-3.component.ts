@@ -9,11 +9,11 @@ import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module";
 import { DateRange } from "src/app/_models/base/dateRange";
-import {provideMomentDateAdapter} from '@angular/material-moment-adapter';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
-import {default as _rollupMoment} from 'moment';
+import { default as _rollupMoment } from 'moment';
 
 const moment = _rollupMoment || _moment;
 
@@ -36,10 +36,13 @@ export const MY_FORMATS = {
   templateUrl: './control-date-3.component.html',
   imports: [
     ReactiveFormsModule,
-    CommonModule, CdkModule, MaterialModule,
+    CommonModule,
+    CdkModule,
+    MaterialModule,
     Forms2HelperModule,
-   ],
-  providers: [ DatePipe,
+  ],
+  providers: [
+    DatePipe,
     provideMomentDateAdapter(MY_FORMATS),
   ],
   standalone: true,
@@ -67,7 +70,7 @@ export class ControlDate3Component {
 
   constructor() {
     effect(() => {
-      if (this.fromWrapper() === true) {
+      if (this.fromWrapper()) {
         this.class += ' w-100';
       } else {
         this.class += ' col-auto px-0';

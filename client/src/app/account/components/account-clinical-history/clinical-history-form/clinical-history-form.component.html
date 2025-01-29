@@ -1,327 +1,405 @@
-@if (form.error) {
-  <div errorsAlert3 [(error)]="form.error"></div>
-}
+<div class="d-flex flex-column flex-lg-row">
+  <app-clinical-history-nav-menu
+    [currentSection]="currentSection"
+    (onSelectSection)="selectSection($event)">
+  </app-clinical-history-nav-menu>
 
-<form [id]="form.id" (ngSubmit)="onSubmit()">
-  <div class="card  mb-4">
-    <div class="card-header">
-      <h3 class="card-title">Datos de identificación del paciente</h3>
-  </div>
-    <div class="card-body">
-    <div formBuilder3 [controls]="[
-      form.controls.patientName,
-    ]" [cols]="1"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.age,
-      form.controls.sex,
-    ]" [cols]="2"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.birthPlace,
-      form.controls.birthDate,
-    ]" [cols]="2"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.educationLevel,
-      form.controls.yearsOfSchooling,
-    ]" [cols]="2"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.occupation,
-      form.controls.handDominance,
-    ]" [cols]="2"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.maritalStatus,
-      form.controls.currentLivingSituation,
-    ]" [cols]="2"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.currentAddress,
-    ]" [cols]="1"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.mobilePhone,
-      form.controls.homePhone,
-    ]" [cols]="2"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.email,
-    ]" [cols]="1"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.hasCompanion,
-      form.controls.economicDependence,
-    ]" [cols]="2"></div>
-    <div formBuilder3 [controls]="[
-      form.controls.usesGlassesOrHearingAid,
-      form.controls.colorBlindness,
-    ]" [cols]="2"></div>
-    </div>
-  </div>
+  <div class="flex-md-row-fluid ms-lg-12">
+    @if (form.error) {
+      <div errorsAlert3 [(error)]="form.error"></div>
+    }
 
-  <div class="card  mb-4">
-    <div class="card-header">
-      <h3 class="card-title">
-        Datos generales del acompañante
-      </h3>
-    </div>
-    <div class="card-body">
-      <div formBuilder3 [controls]="[
-        form.controls.companion.controls.name,
-      ]" [cols]="1"></div>
-      <div formBuilder3 [controls]="[
-        form.controls.companion.controls.age,
-        form.controls.companion.controls.sex,
-        form.controls.companion.controls.relativeType,
-        form.controls.companion.controls.occupation,
-      ]" [cols]="2"></div>
-      <div formBuilder3 [controls]="[
-        form.controls.companion.controls.address,
-      ]" [cols]="1"></div>
-      <div formBuilder3 [controls]="[
-        form.controls.companion.controls.phoneNumber,
-        form.controls.companion.controls.homeNumber,
-      ]" [cols]="2"></div>
-      <div formBuilder3 [controls]="[
-        form.controls.companion.controls.email,
-      ]" [cols]="1"></div>
-    </div>
-  </div>
+    <form [id]="form.id" (ngSubmit)="onSubmit()">
+      <!-- Patient Identification Section -->
+      <div class="card mb-5 mb-xl-10" id="clinical_history_patient_identification"
+           (mouseenter)="selectSection('clinical_history_patient_identification')">
+        <div class="card-header">
+          <h3 class="card-title">Datos de identificación del paciente</h3>
+        </div>
+        <div class="card-body border-top">
+          <!-- Personal Information -->
+          <div class="row mb-6">
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.patientName" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.sex" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.birthDate" [showBottomMargin]="false"></div>
+            </div>
+          </div>
 
-  <div class="card  mb-4">
-    <div class="card-header">
-      <h3 class="card-title">Estructura Familiar</h3>
-      <div class="card-toolbar">
-        <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMember()">
-          Agregar Familiar
-        </button>
-    </div>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table g-1">
-          <thead>
-            <tr class="fw-bold fs-6 text-gray-800">
-              <th>Relación</th>
-              <th>Nombre</th>
-              <th>Edad</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for(group of form.controls.familyMembers.controls; let idx = $index; track idx) {
-              <tr>
-                <td>
-                  <div controlsWrapper3 [(control)]="group.controls.relativeType"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="group.controls.name"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="group.controls.age" style="max-width: 80px;"></div>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-light-danger btn-sm" [disabled]="form.controls.familyMembers.controls.length === 1" (click)="form.removeFamilyMember(idx)">
-                    <i class="ki-duotone ki-trash fs-4">
-                      <span class="path1"></span>
-                      <span class="path2"></span>
-                      <span class="path3"></span>
-                      <span class="path4"></span>
-                      <span class="path5"></span>
-                    </i>
-                  </button>
-                </td>
+          <div class="row mb-6">
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.age" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.birthPlace" [showBottomMargin]="false"></div>
+            </div>
+          </div>
+
+          <!-- Education/Occupation -->
+          <div class="row mb-6">
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.educationLevel" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.yearsOfSchooling" [showBottomMargin]="false"></div>
+            </div>
+          </div>
+
+          <div class="row mb-6">
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.occupation" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.handDominance" [showBottomMargin]="false"></div>
+            </div>
+          </div>
+
+          <!-- Living Situation -->
+          <div class="row mb-6">
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.maritalStatus" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.currentLivingSituation" [showBottomMargin]="false"></div>
+            </div>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="row mb-6 gy-6">
+            <div class="col-12">
+              <div controlsWrapper3 [(control)]="form.controls.currentAddress" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.mobilePhone" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.homePhone" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.email" [showBottomMargin]="false"></div>
+            </div>
+          </div>
+
+          <!-- Health & Dependency -->
+          <div class="row">
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.colorBlindness" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-4">
+              <div controlsWrapper3 [(control)]="form.controls.economicDependence" [showBottomMargin]="false"></div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-md-4">
+              <div controlSlide3 [(control)]="form.controls.hasCompanion" [fromWrapper]="false"></div>
+              <div controlSlide3 [(control)]="form.controls.usesGlassesOrHearingAid" [fromWrapper]="false"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Companion Data Section -->
+      <div class="card mb-5 mb-xl-10" id="clinical_history_companion_data"
+           (mouseenter)="selectSection('clinical_history_companion_data')">
+        <div class="card-header">
+          <h3 class="card-title">Datos generales del acompañante</h3>
+        </div>
+        <div class="card-body border-top">
+          <div class="row gy-6">
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.name"
+                   [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.age" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.sex" [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.relativeType"
+                   [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-12">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.occupation"
+                   [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-12">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.address"
+                   [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.phoneNumber"
+                   [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-md-6">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.homeNumber"
+                   [showBottomMargin]="false"></div>
+            </div>
+            <div class="col-12">
+              <div controlsWrapper3 [(control)]="form.controls.companion.controls.email"
+                   [showBottomMargin]="false"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Family Structure -->
+      <div class="card mb-5 mb-xl-10" id="clinical_history_family_structure"
+           (mouseenter)="selectSection('clinical_history_family_structure')">
+        <div class="card-header">
+          <h3 class="card-title">Estructura Familiar</h3>
+          <div class="card-toolbar">
+            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMember()">
+              <i class="ki-duotone ki-plus"> </i>
+              Agregar Familiar
+            </button>
+          </div>
+        </div>
+        <div class="card-body border-top">
+          <div class="table-responsive">
+            <table class="table g-1">
+              <thead>
+              <tr class="fw-bold fs-6 text-gray-800">
+                <th>Relación</th>
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th></th>
               </tr>
-            }
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                @for (group of form.controls.familyMembers.controls; let idx = $index; track idx) {
+                  <tr>
+                    <td>
+                      <div controlsWrapper3 [(control)]="group.controls.relativeType"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="group.controls.name"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="group.controls.age" style="max-width: 80px;"></div>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-light-danger btn-sm"
+                              [disabled]="form.controls.familyMembers.controls.length === 1"
+                              (click)="form.removeFamilyMember(idx)">
+                        <i class="ki-duotone ki-trash fs-4">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                          <span class="path3"></span>
+                          <span class="path4"></span>
+                          <span class="path5"></span>
+                        </i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card  mb-4">
-    <div class="card-header">
-      <h3 class="card-title">
-        Antecedentes personales
-      </h3>
-      <div class="card-toolbar">
-        <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalMedicalHistory()">
-          Agregar Antecedente
-        </button>
-    </div>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table g-1">
-          <thead>
-            <tr class="fw-bold fs-6 text-gray-800">
-              <th>Enfermedad</th>
-              <th>Especificar (tipo, tiempo con enfermedad, etc.)</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for(group of form.controls.personalMedicalHistory.controls; let idx = $index; track idx) {
-              <tr>
-                <td>
-                  <div controlsWrapper3 [(control)]="group.controls.disease"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="group.controls.description"></div>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-light-danger btn-sm" (click)="form.removePersonalMedicalHistory(idx)">
-                    <i class="ki-duotone ki-trash fs-4">
-                      <span class="path1"></span>
-                      <span class="path2"></span>
-                      <span class="path3"></span>
-                      <span class="path4"></span>
-                      <span class="path5"></span>
-                    </i>
-                  </button>
-                </td>
+      <!-- Antecedentes personales -->
+      <div class="card mb-5 mb-xl-10" id="clinical_history_personal_history"
+           (mouseenter)="selectSection('clinical_history_personal_history')">
+        <div class="card-header">
+          <h3 class="card-title">
+            Antecedentes personales
+          </h3>
+          <div class="card-toolbar">
+            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalMedicalHistory()">
+              <i class="ki-duotone ki-plus"> </i>
+              Agregar Antecedente
+            </button>
+          </div>
+        </div>
+        <div class="card-body border-top">
+          <div class="table-responsive">
+            <table class="table g-1">
+              <thead>
+              <tr class="fw-bold fs-6 text-gray-800">
+                <th>Enfermedad</th>
+                <th>Especificar (tipo, tiempo con enfermedad, etc.)</th>
+                <th></th>
               </tr>
-            }
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                @for (group of form.controls.personalMedicalHistory.controls; let idx = $index; track idx) {
+                  <tr>
+                    <td>
+                      <div controlsWrapper3 [(control)]="group.controls.disease"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="group.controls.description"></div>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-light-danger btn-sm"
+                              (click)="form.removePersonalMedicalHistory(idx)">
+                        <i class="ki-duotone ki-trash fs-4">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                          <span class="path3"></span>
+                          <span class="path4"></span>
+                          <span class="path5"></span>
+                        </i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card  mb-4">
-    <div class="card-header">
-      <h3 class="card-title">
-        Consumo de Sustancias
-      </h3>
-      <div class="card-toolbar">
-        <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalDrugHistory()">
-          Agregar Sustancia
-        </button>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table g-1">
-          <thead>
-            <tr class="fw-bold fs-6 text-gray-800">
-              <th>
-                Sustancia
-              </th>
-              <th>
-                Nivel de consumo
-              </th>
-              <th class="text-nowrap">
-                Edad de inicio
-              </th>
-              <th class="text-nowrap">
-                Edad de finalización
-              </th>
-              <th>
-                Activo
-              </th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for(drugHistory of form.controls.personalDrugHistory.controls; let idx = $index; track idx) {
-              <tr>
-                <td>
-                  <div controlsWrapper3 [(control)]="drugHistory.controls.substance" style="width: 250px;"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="drugHistory.controls.consumptionLevel" style="width: 200px;"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="drugHistory.controls.startAge"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="drugHistory.controls.endAge"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="drugHistory.controls.isCurrent"></div>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-light-danger btn-sm" (click)="form.removePersonalDrugHistory(idx)">
-                    <i class="ki-duotone ki-trash fs-4">
-                      <span class="path1"></span>
-                      <span class="path2"></span>
-                      <span class="path3"></span>
-                      <span class="path4"></span>
-                      <span class="path5"></span>
-                    </i>
-                  </button>
-                </td>
+      <!-- Consumo de Sustancias -->
+      <div class="card mb-5 mb-xl-10" id="clinical_history_substance_use"
+           (mouseenter)="selectSection('clinical_history_substance_use')">
+        <div class="card-header">
+          <h3 class="card-title">
+            Consumo de Sustancias
+          </h3>
+          <div class="card-toolbar">
+            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalDrugHistory()">
+              <i class="ki-duotone ki-plus"> </i>
+              Agregar Sustancia
+            </button>
+          </div>
+        </div>
+        <div class="card-body border-top">
+          <div class="table-responsive">
+            <table class="table g-1">
+              <thead>
+              <tr class="fw-bold fs-6 text-gray-800">
+                <th>Sustancia</th>
+                <th>Nivel de consumo</th>
+                <th class="text-nowrap">Edad de inicio</th>
+                <th class="text-nowrap">Edad de finalización</th>
+                <th>Activo</th>
+                <th></th>
               </tr>
-            }
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                @for (drugHistory of form.controls.personalDrugHistory.controls; let idx = $index; track idx) {
+                  <tr>
+                    <td>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.substance" style="width: 250px;"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.consumptionLevel"
+                           style="width: 200px;"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.startAge"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.endAge"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.isCurrent"></div>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-light-danger btn-sm"
+                              (click)="form.removePersonalDrugHistory(idx)">
+                        <i class="ki-duotone ki-trash fs-4">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                          <span class="path3"></span>
+                          <span class="path4"></span>
+                          <span class="path5"></span>
+                        </i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card  mb-4">
-    <div class="card-header">
-      <h3 class="card-title">
-        Antecedentes familiares
-      </h3>
-      <div class="card-toolbar">
-        <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMedicalHistory()">
-          Agregar Antecedente
-        </button>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table g-1">
-          <thead>
-            <tr class="fw-bold fs-6 text-gray-800">
-              <th class="text-nowrap">Enfermedad</th>
-              <th class="text-nowrap">Familiar que lo padece</th>
-              <th class="text-nowrap">Especificar (tipo, tiempo con enfermedad, etc.)</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for(medicalHistory of form.controls.familyMedicalHistory.controls; let idx = $index; track idx) {
-              <tr>
-                <td>
-                  <div controlsWrapper3 [(control)]="medicalHistory.controls.disease" style="max-width: 250px;"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="medicalHistory.controls.relativeType"></div>
-                </td>
-                <td>
-                  <div controlsWrapper3 [(control)]="medicalHistory.controls.description"></div>
-                </td>
-                <td>
-                  <div class="d-flex align-items-center justify-content-center">
-                    <button type="button" class="btn btn-light-danger btn-sm" (click)="form.removeFamilyMedicalHistory(idx)">
-                      <i class="ki-duotone ki-trash fs-4">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                        <span class="path3"></span>
-                        <span class="path4"></span>
-                        <span class="path5"></span>
-                      </i>
-                    </button>
-                  </div>
-                </td>
+      <!-- Antecedentes familiares -->
+      <div class="card mb-5 mb-xl-10" id="clinical_history_family_history"
+           (mouseenter)="selectSection('clinical_history_family_history')">
+        <div class="card-header">
+          <h3 class="card-title">
+            Antecedentes familiares
+          </h3>
+          <div class="card-toolbar">
+            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMedicalHistory()">
+              <i class="ki-duotone ki-plus"> </i>
+              Agregar Antecedente
+            </button>
+          </div>
+        </div>
+        <div class="card-body border-top">
+          <div class="table-responsive">
+            <table class="table g-1">
+              <thead>
+              <tr class="fw-bold fs-6 text-gray-800">
+                <th class="text-nowrap">Enfermedad</th>
+                <th class="text-nowrap">Familiar que lo padece</th>
+                <th class="text-nowrap">Especificar (tipo, tiempo con enfermedad, etc.)</th>
+                <th></th>
               </tr>
-            }
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                @for (medicalHistory of form.controls.familyMedicalHistory.controls; let idx = $index; track idx) {
+                  <tr>
+                    <td>
+                      <div controlsWrapper3 [(control)]="medicalHistory.controls.disease"
+                           style="max-width: 250px;"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="medicalHistory.controls.relativeType"></div>
+                    </td>
+                    <td>
+                      <div controlsWrapper3 [(control)]="medicalHistory.controls.description"></div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center justify-content-center">
+                        <button type="button" class="btn btn-light-danger btn-sm"
+                                (click)="form.removeFamilyMedicalHistory(idx)">
+                          <i class="ki-duotone ki-trash fs-4">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                            <span class="path4"></span>
+                            <span class="path5"></span>
+                          </i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <!-- Comentarios adicionales -->
+      <div class="card mb-5 mb-xl-10" id="clinical_history_additional_comments"
+           (mouseenter)="selectSection('clinical_history_additional_comments')">
+        <div class="card-header">
+          <h3 class="card-title">
+            Comentarios Adicionales
+          </h3>
+        </div>
+        <div class="card-body border-top">
+          <div controlsWrapper3 [(control)]="form.controls.comments" [showBottomMargin]="false"></div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary btn-md" [attr.form]="form.id">Guardar</button>
+      </div>
+    </form>
   </div>
-
-  <div class="card  mb-4">
-    <div class="card-header">
-      <h3 class="card-title">
-        Comentarios Adicionales
-      </h3>
-    </div>
-    <div class="card-body">
-    <div formBuilder3 [controls]="[
-      form.controls.comments,
-    ]" [cols]="1"></div>
-    </div>
-  </div>
-
-
-    <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-primary btn-md" [attr.form]="form.id">Guardar</button>
-    </div>
-  </form>
+</div>

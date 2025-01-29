@@ -1,0 +1,120 @@
+<div class="flex-column flex-md-row-auto w-100 w-lg-250px w-xxl-275px">
+  <div
+    #stickyRef
+    class="sticky card mb-6 mb-xl-9"
+    style="animation-duration: 0.3s"
+    [class.fixed]="isSticky"
+  >
+    <div class="card-body py-10 px-6">
+      <ul
+        id="kt_clinical_history"
+        class="nav nav-flush menu menu-column menu-rounded menu-title-gray-600 menu-bullet-gray-300 menu-state-bg menu-state-bullet-primary fw-semibold fs-6 mb-2"
+      >
+        <!-- 1) Identificación del paciente -->
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/cuenta/expediente#clinical_history_patient_identification"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'clinical_history_patient_identification'"
+            (click)="selectSection('clinical_history_patient_identification')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Identificación del paciente</span>
+          </a>
+        </li>
+
+        <!-- 2) Datos del acompañante -->
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/cuenta/expediente#clinical_history_companion_data"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'clinical_history_companion_data'"
+            (click)="selectSection('clinical_history_companion_data')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Datos del acompañante</span>
+          </a>
+        </li>
+
+        <!-- 3) Estructura Familiar -->
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/cuenta/expediente#clinical_history_family_structure"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'clinical_history_family_structure'"
+            (click)="selectSection('clinical_history_family_structure')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Estructura Familiar</span>
+          </a>
+        </li>
+
+        <!-- 4) Antecedentes personales -->
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/cuenta/expediente#clinical_history_personal_history"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'clinical_history_personal_history'"
+            (click)="selectSection('clinical_history_personal_history')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Antecedentes personales</span>
+          </a>
+        </li>
+
+        <!-- 5) Consumo de Sustancias -->
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/cuenta/expediente#clinical_history_substance_use"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'clinical_history_substance_use'"
+            (click)="selectSection('clinical_history_substance_use')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Consumo de Sustancias</span>
+          </a>
+        </li>
+
+        <!-- 6) Antecedentes familiares -->
+        <li class="menu-item px-3 pt-0 pb-1">
+          <a
+            href="/cuenta/expediente#clinical_history_family_history"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'clinical_history_family_history'"
+            (click)="selectSection('clinical_history_family_history')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Antecedentes familiares</span>
+          </a>
+        </li>
+
+        <!-- 7) Comentarios adicionales -->
+        <li class="menu-item px-3 pt-0">
+          <a
+            href="/cuenta/expediente#clinical_history_additional_comments"
+            class="menu-link px-3 nav-link"
+            [class.active]="currentSection() === 'clinical_history_additional_comments'"
+            (click)="selectSection('clinical_history_additional_comments')"
+          >
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Comentarios Adicionales</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

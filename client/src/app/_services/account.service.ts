@@ -65,15 +65,15 @@ export class AccountService {
   setCurrentUser(user: Account) {
     localStorage.setItem('user', JSON.stringify(user));
     this.current.set(user);
-    this.getCurrent().subscribe({
-      next: response => {
-        // console.log('response', response);
-        this.current.set(response);
-      }
-    });
+    //
+    // this.getCurrent().subscribe({
+    //   next: response => {
+    //     this.current.set(response);
+    //   }
+    // });
   }
 
-  private getCurrent(): Observable<Account> {
+  getCurrent(): Observable<Account> {
     return this.http.get<Account>(`${this.baseUrl}`).pipe(
       map(response => {
         return response;
@@ -329,7 +329,7 @@ export class AccountService {
 
   addMedicalInsurance(value: FormData) {
     return this.http.post<Account>(`${this.baseUrl}medical-insurance-company`, value).pipe(
-      tap(response => {
+      tap((response: Account) => {
         this.current.set(response);
         this.snackBar.open('Póliza de seguro añadida correctamente', 'Cerrar', { duration: 5000 });
       })
@@ -338,7 +338,7 @@ export class AccountService {
 
   updateMedicalInsurance(model: any) {
     return this.http.put<Account>(`${this.baseUrl}medical-insurance-company`, model).pipe(
-      tap(response => {
+      tap((response: Account) => {
         this.current.set(response);
         this.snackBar.open('Póliza de seguro actualizada correctamente', 'Cerrar', { duration: 5000 });
       })
@@ -346,24 +346,22 @@ export class AccountService {
   }
 
   toggleDoctorInsurance(insuranceId: number, isActive: boolean): Observable<Account> {
-    let params = new HttpParams();
+    let params: HttpParams = new HttpParams();
 
     params = params.append('insuranceId', insuranceId.toString());
     params = params.append('isActive', isActive);
 
-    // console.log('params', params);
-
     return this.http.put<Account>(`${this.baseUrl}doctor-medical-insurance-company`, null, { params: params, }).pipe(
-      tap(account => {
+      tap((account: Account) => {
         this.snackBar.open('Póliza de seguro actualizada correctamente', 'Cerrar', { duration: 5000 });
-        this.current.set(account);
+        this.setCurrentUser(account);
       }),
     );
   }
 
   getPaymentHistory() {
     return this.http.get<Payment[]>(`${this.baseUrl}payment-history`).pipe(
-      tap(payments => {
+      tap((payments: Payment[]) => {
         this.userPaymentHistory.set(payments);
       })
     );
@@ -371,7 +369,7 @@ export class AccountService {
 
   setDoctorBanner(value: any) {
     return this.http.put<Account>(`${this.baseUrl}doctor-banner`, value).pipe(
-      map(response => {
+      map((response: Account) => {
         this.snackbarService.success('Banner actualizado correctamente');
         this.setCurrentUser(response);
         return response;
@@ -381,7 +379,7 @@ export class AccountService {
 
   changeEmail(value: any) {
     return this.http.put<Account>(`${this.baseUrl}email`, value).pipe(
-      map(response => {
+      map((response: Account) => {
         this.snackbarService.success('Email cambiado correctamente');
         this.setCurrentUser(response);
         return response;
@@ -391,7 +389,7 @@ export class AccountService {
 
   setPassword(value: any) {
     return this.http.put<Account>(`${this.baseUrl}set-password`, value).pipe(
-      map(response => {
+      map((response: Account) => {
         this.snackbarService.success('Contraseña establecida correctamente');
         this.setCurrentUser({ ...this.current()!, linkedEmail: true });
         return response;
@@ -401,7 +399,7 @@ export class AccountService {
 
   changePassword(value: any) {
     return this.http.put<Account>(`${this.baseUrl}password`, value).pipe(
-      map(response => {
+      map((response: Account) => {
         this.snackbarService.success('Contraseña cambiada correctamente');
         return response;
       })
@@ -410,9 +408,10 @@ export class AccountService {
 
   updateAccountDetails(value: any) {
     return this.http.put<Account>(`${this.baseUrl}account-details`, value).pipe(
-      map(response => {
+      map((response: Account) => {
+        console.log('update account details response', response);
         this.snackbarService.success('Detalles del perfil actualizados correctamente');
-        this.setCurrentUser(response);
+        this.setCurrentUser({ ...this.current(), ...response });
         return response;
       })
     );
@@ -425,7 +424,7 @@ export class AccountService {
       endTime,
       minutesPerBlock
     }).pipe(
-      map(response => {
+      map((response: Account) => {
         this.snackbarService.success('Horario de trabajo actualizado correctamente');
         this.setCurrentUser(response);
         return response;

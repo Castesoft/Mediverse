@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, model, effect } from "@angular/core";
+import { Component, inject, model, effect, OnInit, ModelSignal } from "@angular/core";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { FormControl2 } from "src/app/_models/forms/formControl2";
@@ -16,111 +16,120 @@ import { OccupationsService } from "src/app/occupations/occupations.config";
 import { RelativeTypesService } from "src/app/relativeTypes/relativeTypes.config";
 import { SubstancesService } from "src/app/substances/substances.config";
 
+import { NavMenuComponent } from "src/app/account/components/account-settings/nav-menu/nav-menu.component";
+import {
+  ClinicalHistoryNavMenuComponent
+} from "src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-nav-menu.component";
+
 @Component({
   selector: 'div[clinicalHistoryForm]',
   standalone: true,
-  imports: [ CommonModule, Forms2Module, ],
+  imports: [
+    CommonModule,
+    Forms2Module,
+    NavMenuComponent,
+    ClinicalHistoryNavMenuComponent
+  ],
   templateUrl: './clinical-history-form.component.html'
 })
-export class ClinicalHistoryFormComponent {
-  snackbarService = inject(SnackbarService);
-  accountService = inject(AccountService);
+export class ClinicalHistoryFormComponent implements OnInit {
+  snackbarService: SnackbarService = inject(SnackbarService);
+  accountService: AccountService = inject(AccountService);
 
-  occupations = inject(OccupationsService);
-  relativeTypes = inject(RelativeTypesService);
-  colorBlindnesses = inject(ColorBlindnessesService);
-  maritalStatuses = inject(MaritalStatusesService);
-  educationLevels = inject(EducationLevelsService);
-  substances = inject(SubstancesService);
-  consumptionLevels = inject(ConsumptionLevelsService);
-  diseases = inject(DiseasesService);
+  diseases: DiseasesService = inject(DiseasesService);
+  substances: SubstancesService = inject(SubstancesService);
+  occupations: OccupationsService = inject(OccupationsService);
+  relativeTypes: RelativeTypesService = inject(RelativeTypesService);
+  maritalStatuses: MaritalStatusesService = inject(MaritalStatusesService);
+  educationLevels: EducationLevelsService = inject(EducationLevelsService);
+  colorBlindnesses: ColorBlindnessesService = inject(ColorBlindnessesService);
+  consumptionLevels: ConsumptionLevelsService = inject(ConsumptionLevelsService);
 
-  medicalRecord = model.required<MedicalRecord>();
+  currentSection: string = 'patientIdentification';
 
-  form = new MedicalRecordForm();
+  medicalRecord: ModelSignal<MedicalRecord> = model.required();
+  form: MedicalRecordForm = new MedicalRecordForm();
 
   constructor() {
-    this.occupations.getOptions().subscribe();
-    this.relativeTypes.getOptions().subscribe();
-    this.colorBlindnesses.getOptions().subscribe();
-    this.maritalStatuses.getOptions().subscribe();
-    this.educationLevels.getOptions().subscribe();
-    this.substances.getOptions().subscribe();
-    this.consumptionLevels.getOptions().subscribe();
-    this.diseases.getOptions().subscribe();
-
     effect(() => {
-      console.log('effect');
-
+      this.form.diseaseOptions = this.diseases.options();
+      this.form.substanceOptions = this.substances.options();
       this.form.occupationOptions = this.occupations.options();
       this.form.relativeTypeOptions = this.relativeTypes.options();
-      this.form.colorBlindnessOptions = this.colorBlindnesses.options();
       this.form.maritalStatusOptions = this.maritalStatuses.options();
       this.form.educationLevelOptions = this.educationLevels.options();
-      this.form.substanceOptions = this.substances.options();
+      this.form.colorBlindnessOptions = this.colorBlindnesses.options();
       this.form.consumptionLevelOptions = this.consumptionLevels.options();
-      this.form.diseaseOptions = this.diseases.options();
 
       this.form.controls.occupation.selectOptions = this.form.occupationOptions;
+      this.form.controls.maritalStatus.selectOptions = this.form.maritalStatusOptions;
+      this.form.controls.colorBlindness.selectOptions = this.form.colorBlindnessOptions;
+      this.form.controls.educationLevel.selectOptions = this.form.educationLevelOptions;
       this.form.controls.companion.controls.occupation.selectOptions = this.form.occupationOptions;
       this.form.controls.companion.controls.relativeType.selectOptions = this.form.relativeTypeOptions;
-      this.form.controls.colorBlindness.selectOptions = this.form.colorBlindnessOptions;
-      this.form.controls.maritalStatus.selectOptions = this.form.maritalStatusOptions;
-      this.form.controls.educationLevel.selectOptions = this.form.educationLevelOptions;
 
-      this.form.controls.familyMembers.controls.forEach((group, index) => {
+      this.form.controls.familyMembers.controls.forEach((group) => {
         group.controls.relativeType.selectOptions = this.form.relativeTypeOptions;
       });
 
-      this.form.controls.familyMedicalHistory.controls.forEach((group, index) => {
+      this.form.controls.familyMedicalHistory.controls.forEach((group) => {
         group.controls.relativeType.selectOptions = this.form.relativeTypeOptions;
         group.controls.disease.selectOptions = this.form.diseaseOptions;
       });
 
-      this.form.controls.personalMedicalHistory.controls.forEach((group, index) => {
+      this.form.controls.personalMedicalHistory.controls.forEach((group) => {
         group.controls.disease.selectOptions = this.form.diseaseOptions;
       });
 
-      this.form.controls.personalDrugHistory.controls.forEach((group, index) => {
+      this.form.controls.personalDrugHistory.controls.forEach((group) => {
         group.controls.substance.selectOptions = this.form.substanceOptions;
         group.controls.consumptionLevel.selectOptions = this.form.consumptionLevelOptions;
       });
 
       this.form.patch(this.medicalRecord());
     });
+  }
 
-    const attendedAloneControl = this.form.controls.hasCompanion as FormControl2<boolean | null>;
+  ngOnInit(): void {
+    this.loadOptions();
+    this.setAssistedAttendance();
+  }
 
-    attendedAloneControl.valueChanges.subscribe({
-      next: value => {
-        if (value !== null) {
-          if (value === true) {
-            this.form.controls.companion.enable();
-          } else {
-            this.form.controls.companion.disable();
-            this.form.controls.companion.clearValidators();
-            this.form.controls.companion.updateValueAndValidity();
-          }
+  private loadOptions(): void {
+    this.diseases.getOptions().subscribe();
+    this.substances.getOptions().subscribe();
+    this.occupations.getOptions().subscribe();
+    this.relativeTypes.getOptions().subscribe();
+    this.maritalStatuses.getOptions().subscribe();
+    this.educationLevels.getOptions().subscribe();
+    this.colorBlindnesses.getOptions().subscribe();
+    this.consumptionLevels.getOptions().subscribe();
+  }
+
+  private setAssistedAttendance(): void {
+    this.form.controls.hasCompanion.valueChanges.subscribe({
+      next: (value: boolean | null) => {
+        if (value === null) return;
+        if (value) {
+          this.form.controls.companion.enable();
+        } else {
+          this.form.controls.companion.disable();
+          this.form.controls.companion.clearValidators();
+          this.form.controls.companion.updateValueAndValidity();
         }
       }
     })
   }
 
-  ngOnInit(): void {
-
+  selectSection(section: string) {
+    this.currentSection = section;
   }
 
   onSubmit() {
-    // if (this.form.invalid) {
-    //   this.snackbarService.error('Por favor, complete todos los campos requeridos.');
-    //   return;
-    // }
     this.form.setSubmitted();
 
-    this.accountService.updateMedicalRecord({
-      ...this.form.value,
-    }).subscribe({
-      next: response => {
+    this.accountService.updateMedicalRecord({ ...this.form.value }).subscribe({
+      next: (response: MedicalRecord) => {
         this.form.patch(response);
         this.snackbarService.success('Historia clínica actualizada correctamente.');
         this.form.markAsPristine();

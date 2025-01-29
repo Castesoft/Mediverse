@@ -39,7 +39,7 @@ export const accountFormInfo: FormInfo<Account> = {
   phoneNumber: { label: 'Teléfono', type: 'text' },
   phoneNumberCountryCode: { label: 'Código de país de teléfono', type: 'text' },
   photoUrl: { label: 'URL de foto', type: 'text' },
-  requireAnticipatedCardPayments: { label: 'Requiere pagos anticipados con tarjeta', type: 'checkbox' },
+  requireAnticipatedCardPayments: { label: 'Requiere pagos anticipados con tarjeta', type: 'slideToggle' },
   requiresTwoFactor: { label: 'Requiere autenticación de dos factores', type: 'checkbox' },
   roles: {},
   sex: { label: 'Sexo', type: 'select' },

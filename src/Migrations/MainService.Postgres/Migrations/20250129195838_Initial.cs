@@ -2488,6 +2488,30 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorSpecialty",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    SpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorSpecialty", x => new { x.DoctorId, x.SpecialtyId });
+                    table.ForeignKey(
+                        name: "FK_DoctorSpecialty_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorSpecialty_Specialties_SpecialtyId",
+                        column: x => x.SpecialtyId,
+                        principalTable: "Specialties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MedicalLicenseSpecialty",
                 columns: table => new
                 {
@@ -2898,6 +2922,17 @@ namespace MainService.Postgres.Migrations
                 table: "DoctorSignature",
                 column: "SignatureId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorSpecialty_DoctorId",
+                table: "DoctorSpecialty",
+                column: "DoctorId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorSpecialty_SpecialtyId",
+                table: "DoctorSpecialty",
+                column: "SpecialtyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DoctorWorkSchedules_WorkScheduleId",
@@ -3432,6 +3467,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "DoctorSignature");
+
+            migrationBuilder.DropTable(
+                name: "DoctorSpecialty");
 
             migrationBuilder.DropTable(
                 name: "DoctorWorkSchedules");

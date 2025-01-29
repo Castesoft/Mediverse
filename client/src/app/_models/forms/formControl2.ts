@@ -76,6 +76,7 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   helperText: string | null = null;
   selectOptions: SelectOption[] = [];
   hidden = false;
+  solid: boolean = false;
   hint: string | null = null;
   isReadonly = false;
   use: FormUse = FormUse.DETAIL;

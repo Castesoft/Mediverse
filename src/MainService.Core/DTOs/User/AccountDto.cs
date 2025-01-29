@@ -18,6 +18,7 @@ public class AccountDto
     public string? PhotoUrl { get; set; }
     public string? BannerUrl { get; set; }
     public string? MainSpecialty { get; set; }
+    public OptionDto? Specialty { get; set; }
     public bool? LinkedEmail { get; set; }
     public bool? LinkedGoogle { get; set; }
     public bool? TwoFactorEnabled { get; set; }

@@ -1,4 +1,3 @@
-using MainService.Core.DTOs;
 using MainService.Core.DTOs.Services;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;

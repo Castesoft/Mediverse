@@ -969,6 +969,24 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("DoctorSignature");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorSpecialty", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SpecialtyId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DoctorId", "SpecialtyId");
+
+                    b.HasIndex("DoctorId")
+                        .IsUnique();
+
+                    b.HasIndex("SpecialtyId");
+
+                    b.ToTable("DoctorSpecialty");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
                 {
                     b.Property<int>("UserId")
@@ -3515,6 +3533,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Signature");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorSpecialty", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithOne("DoctorSpecialty")
+                        .HasForeignKey("MainService.Models.Entities.DoctorSpecialty", "DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Specialty", "Specialty")
+                        .WithMany("DoctorSpecialties")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Specialty");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
@@ -4593,6 +4630,9 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("DoctorSignature")
                         .IsRequired();
 
+                    b.Navigation("DoctorSpecialty")
+                        .IsRequired();
+
                     b.Navigation("DoctorWorkScheduleSettings")
                         .IsRequired();
 
@@ -4618,15 +4658,13 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("UserMedicalLicenses");
 
-                    b.Navigation("UserMedicalRecord")
-                        .IsRequired();
+                    b.Navigation("UserMedicalRecord");
 
                     b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
 
-                    b.Navigation("UserPhoto")
-                        .IsRequired();
+                    b.Navigation("UserPhoto");
 
                     b.Navigation("UserReviews");
 
@@ -4947,6 +4985,8 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Specialty", b =>
                 {
+                    b.Navigation("DoctorSpecialties");
+
                     b.Navigation("MedicalLicenseSpecialties");
 
                     b.Navigation("SpecialitySubSpecialties");

@@ -34,12 +34,12 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
     public async Task<AccountDto?> GenerateAccountDtoAsync(int userId)
     {
-        AppUser? user = await Includes(userManager.Users)
+        var user = await Includes(userManager.Users)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return null;
 
-        AccountDto itemToReturn = mapper.Map<AppUser, AccountDto>(user);
+        var itemToReturn = mapper.Map<AppUser, AccountDto>(user);
 
         itemToReturn.LinkedEmail = !string.IsNullOrEmpty(user.PasswordHash);
         itemToReturn.LinkedGoogle = userManager.GetLoginsAsync(user).Result.Any(x => x.LoginProvider == "GOOGLE");
@@ -150,30 +150,42 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
     private static IQueryable<AppUser> Includes(IQueryable<AppUser> query) =>
         query
             .AsSplitQuery()
-
             .Include(x => x.UserMedicalInsuranceCompanies)
                 .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
             .Include(x => x.UserMedicalInsuranceCompanies)
                 .ThenInclude(x => x.Document)
-
             .Include(x => x.DoctorMedicalInsuranceCompanies)
                 .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
-            
+            .Include(x => x.DoctorSpecialty)
+                .ThenInclude(x => x.Specialty)
             .Include(x => x.UserPhoto.Photo)
             .Include(x => x.DoctorBannerPhoto.Photo)
-            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
-            .Include(x => x.UserPermissions).ThenInclude(x => x.Permission)
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .Include(x => x.UserPermissions)
+                .ThenInclude(x => x.Permission)
             .Include(x => x.UserMedicalLicenses)
                 .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
             .Include(x => x.UserMedicalLicenses)
                 .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
-            .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
-            .Include(x => x.DoctorPaymentMethodTypes).ThenInclude(x => x.PaymentMethodType)
-            .Include(x => x.DoctorWorkSchedules).ThenInclude(x => x.WorkSchedule)
-            .Include(x => x.DoctorWorkScheduleSettings).ThenInclude(x => x.WorkScheduleSettings)
-            .Include(x => x.DoctorClinics).ThenInclude(x => x.Clinic).ThenInclude(x => x.ClinicLogo).ThenInclude(x => x.Photo)
-            .Include(x => x.Doctors).ThenInclude(x => x.Doctor).ThenInclude(x => x.UserMedicalLicenses).ThenInclude(x => x.MedicalLicense).ThenInclude(x => x.MedicalLicenseSpecialty).ThenInclude(x => x.Specialty)
-        ;
+            .Include(x => x.UserAddresses)
+                .ThenInclude(x => x.Address)
+            .Include(x => x.DoctorPaymentMethodTypes)
+                .ThenInclude(x => x.PaymentMethodType)
+            .Include(x => x.DoctorWorkSchedules)
+                .ThenInclude(x => x.WorkSchedule)
+            .Include(x => x.DoctorWorkScheduleSettings)
+                .ThenInclude(x => x.WorkScheduleSettings)
+            .Include(x => x.DoctorClinics)
+                .ThenInclude(x => x.Clinic)
+                    .ThenInclude(x => x.ClinicLogo)
+                        .ThenInclude(x => x.Photo)
+            .Include(x => x.Doctors)
+                .ThenInclude(x => x.Doctor)
+                    .ThenInclude(x => x.UserMedicalLicenses)
+                        .ThenInclude(x => x.MedicalLicense)
+                            .ThenInclude(x => x.MedicalLicenseSpecialty)
+                                .ThenInclude(x => x.Specialty);
 
     public async Task<bool> AddPatientToDoctorAsync(int doctorId, int patientId)
     {
