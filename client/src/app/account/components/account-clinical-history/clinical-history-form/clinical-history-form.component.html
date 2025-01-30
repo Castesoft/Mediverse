@@ -163,7 +163,7 @@
         </div>
         <div class="card-body border-top">
           <div class="table-responsive">
-            <table class="table g-1">
+            <table class="table gy-3 gx-1">
               <thead>
               <tr class="fw-bold fs-6 text-gray-800">
                 <th>Relación</th>
@@ -176,13 +176,14 @@
                 @for (group of form.controls.familyMembers.controls; let idx = $index; track idx) {
                   <tr>
                     <td>
-                      <div controlsWrapper3 [(control)]="group.controls.relativeType"></div>
+                      <div controlsWrapper3 [(control)]="group.controls.relativeType" [showBottomMargin]="false"></div>
                     </td>
                     <td>
-                      <div controlsWrapper3 [(control)]="group.controls.name"></div>
+                      <div controlsWrapper3 [(control)]="group.controls.name" [showBottomMargin]="false"></div>
                     </td>
                     <td>
-                      <div controlsWrapper3 [(control)]="group.controls.age" style="max-width: 80px;"></div>
+                      <div controlsWrapper3 [(control)]="group.controls.age" style="max-width: 80px;"
+                           [showBottomMargin]="false"></div>
                     </td>
                     <td>
                       <button type="button" class="btn btn-light-danger btn-sm"
@@ -221,7 +222,7 @@
         </div>
         <div class="card-body border-top">
           <div class="table-responsive">
-            <table class="table g-1">
+            <table class="table gy-3 gx-1">
               <thead>
               <tr class="fw-bold fs-6 text-gray-800">
                 <th>Enfermedad</th>
@@ -233,10 +234,10 @@
                 @for (group of form.controls.personalMedicalHistory.controls; let idx = $index; track idx) {
                   <tr>
                     <td>
-                      <div controlsWrapper3 [(control)]="group.controls.disease"></div>
+                      <div controlsWrapper3 [(control)]="group.controls.disease" [showBottomMargin]="false"></div>
                     </td>
                     <td>
-                      <div controlsWrapper3 [(control)]="group.controls.description"></div>
+                      <div controlsWrapper3 [(control)]="group.controls.description" [showBottomMargin]="false"></div>
                     </td>
                     <td>
                       <button type="button" class="btn btn-light-danger btn-sm"
@@ -274,7 +275,7 @@
         </div>
         <div class="card-body border-top">
           <div class="table-responsive">
-            <table class="table g-1">
+            <table class="table gy-3 gx-1">
               <thead>
               <tr class="fw-bold fs-6 text-gray-800">
                 <th>Sustancia</th>
@@ -286,23 +287,26 @@
               </tr>
               </thead>
               <tbody>
-                @for (drugHistory of form.controls.personalDrugHistory.controls; let idx = $index; track idx) {
+                @for (drugHistory of form.controls.personalDrugHistory.controls; let idx = $index; let last = $last; track idx) {
                   <tr>
                     <td>
-                      <div controlsWrapper3 [(control)]="drugHistory.controls.substance" style="width: 250px;"></div>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.substance" style="width: 250px;"
+                           [showBottomMargin]="false"></div>
                     </td>
                     <td>
                       <div controlsWrapper3 [(control)]="drugHistory.controls.consumptionLevel"
-                           style="width: 200px;"></div>
+                           style="width: 200px;" [showBottomMargin]="false"></div>
                     </td>
                     <td>
-                      <div controlsWrapper3 [(control)]="drugHistory.controls.startAge"></div>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.startAge"
+                           [showBottomMargin]="false"></div>
                     </td>
                     <td>
-                      <div controlsWrapper3 [(control)]="drugHistory.controls.endAge"></div>
+                      <div controlsWrapper3 [(control)]="drugHistory.controls.endAge" [showBottomMargin]="false"></div>
                     </td>
-                    <td>
-                      <div controlsWrapper3 [(control)]="drugHistory.controls.isCurrent"></div>
+                    <td class="align-middle text-center justify-content-center">
+                      <div class="h-100 d-flex align-items-center" controlsWrapper3
+                           [(control)]="drugHistory.controls.isCurrent" [showBottomMargin]="false"></div>
                     </td>
                     <td>
                       <button type="button" class="btn btn-light-danger btn-sm"

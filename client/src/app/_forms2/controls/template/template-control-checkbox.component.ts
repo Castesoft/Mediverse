@@ -4,8 +4,8 @@ import {
   computed,
   contentChild,
   effect,
-  ElementRef,
-  inject,
+  ElementRef, HostBinding,
+  inject, input, InputSignal,
   model,
   ModelSignal,
   Signal
@@ -21,7 +21,6 @@ import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
-  host: { class: 'fv-row mb-10 fv-plugins-icon-container', },
   selector: 'div[templateControlCheckbox]',
   templateUrl: './template-control-checkbox.component.html',
   standalone: true,
@@ -33,14 +32,27 @@ export class TemplateControlCheckboxComponent {
   customLabel: Signal<ElementRef | undefined> = contentChild<ElementRef>('customLabel');
 
   control: ModelSignal<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>> = model.required();
+  showBottomMargin: InputSignal<boolean> = input(true);
   fromWrapper: ModelSignal<boolean> = model.required();
   root: Signal<FormGroup2<any>> = computed<FormGroup2<any>>(() => {
     return this.control().root as FormGroup2<any>;
   });
 
+  class: string = "fv-row fv-plugins-icon-container";
+
+  @HostBinding('class') get hostClass() {
+    return this.class;
+  }
+
   constructor() {
     effect(() => {
       this.control.set(this.control().setValidation(this.validation.active()));
+
+      if (this.showBottomMargin()) {
+        this.class += ` mb-10`;
+      }
+
+      console.log('templateControlCheckbox class:', this.class);
     });
   }
 }

@@ -69,6 +69,8 @@ export class MedicalRecordForm extends FormGroup2<MedicalRecord> {
 
     super.patchValue(value);
 
+    console.log('medicalRecord: ', value);
+
     value.familyMembers.forEach((item, index) => {
       const itemExists: boolean = this.controls.familyMembers.controls.some((group) => group.controls.id.value === item.id);
       if (!itemExists) {

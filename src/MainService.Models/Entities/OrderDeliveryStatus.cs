@@ -5,6 +5,13 @@ namespace MainService.Models.Entities
         public OrderDeliveryStatus() {}
 
         public OrderDeliveryStatus(int deliveryStatusId) => DeliveryStatusId = deliveryStatusId;
+        public OrderDeliveryStatus(DeliveryStatus status) => DeliveryStatus = status;
+
+        public OrderDeliveryStatus(Order order, DeliveryStatus deliveryStatus)
+        {
+            Order = order;
+            DeliveryStatus = deliveryStatus;
+        }
 
         public int OrderId { get; set; }
         public Order Order { get; set; } = null!;

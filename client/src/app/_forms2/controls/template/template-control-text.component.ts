@@ -37,7 +37,7 @@ export class TemplateControlTextComponent {
   // Show bottom margins (mb-10)
   showBottomMargin: InputSignal<boolean> = input(true);
 
-  class = 'fv-row fv-plugins-icon-container';
+  class: string = 'fv-row fv-plugins-icon-container';
 
   @HostBinding('class') get hostClass() {
     return this.class;

@@ -21,6 +21,7 @@ public static class ApplicationServicesExtensions
         services.Configure<ClientSettings>(config.GetSection("ClientSettings"));
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+        // TODO: Add hosted services
         // services.AddHostedService<CronJobsService>();
 
         // Services

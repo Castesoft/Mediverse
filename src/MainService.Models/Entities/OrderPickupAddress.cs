@@ -11,6 +11,7 @@ public class OrderPickupAddress
         OrderId = orderId;
         AddressId = addressId;
     }
+    public OrderPickupAddress(Address address) => PickupAddress = address;
     
     public int OrderId { get; set; }
     public int AddressId { get; set; }

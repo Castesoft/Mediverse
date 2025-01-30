@@ -22,56 +22,66 @@ namespace MainService.Infrastructure.Data
 
             if (!string.IsNullOrEmpty(param.Specialty))
             {
-                query = query.Where(x => 
-                    x.UserMedicalLicenses.Any(y => y.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name == param.Specialty) ||
+                query = query.Where(x =>
+                    x.UserMedicalLicenses.Any(y =>
+                        y.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name == param.Specialty) ||
                     EF.Functions.ILike(x.FirstName + " " + x.LastName, $"%{param.Specialty}%")
                 );
             }
 
             if (param.SpecialtyId.HasValue)
             {
-                query = query.Where(x => x.UserMedicalLicenses.Any(y => y.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == param.SpecialtyId));
+                query = query.Where(x =>
+                    x.UserMedicalLicenses.Any(y =>
+                        y.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId == param.SpecialtyId));
             }
 
-            if (param.GetSpecialtyIds().Count() > 0) {
-                query = query.Where(x => x.UserMedicalLicenses.Any(y => param.GetSpecialtyIds().Contains(y.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId)));
+            if (param.GetSpecialtyIds().Count != 0)
+            {
+                query = query.Where(x => x.UserMedicalLicenses.Any(y =>
+                    param.GetSpecialtyIds().Contains(y.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId)));
             }
 
             if (!string.IsNullOrEmpty(param.Location))
             {
-                GooglePlacesDetailsResult? location = await googleService.GetLocationByPlaceIdAsync(param.Location);
+                var location = await googleService.GetLocationByPlaceIdAsync(param.Location);
 
-                if (location != null) {
-                    if (location.Geometry != null) {
-                        Geometry geometry = location.Geometry;
+                if (location != null && location.Geometry != null)
+                {
+                    var geometry = location.Geometry;
 
-                        if (
-                            geometry.Location != null &&
-                            geometry.Location.Lat.HasValue &&
-                            geometry.Location.Lng.HasValue
-                        ) {
-                            double latitude = geometry.Location.Lat.Value;
-                            param.Latitude = latitude;
-                            double longitude = geometry.Location.Lng.Value;
-                            param.Longitude = longitude;
-                            double radiusInKm = 50.0;
+                    if (
+                        geometry.Location != null &&
+                        geometry.Location.Lat.HasValue &&
+                        geometry.Location.Lng.HasValue
+                    )
+                    {
+                        var latitude = geometry.Location.Lat.Value;
+                        var longitude = geometry.Location.Lng.Value;
+                        const double radiusInKm = 50.0;
 
-                            query = query.Where(x => x.DoctorClinics.Any(a => 
-                                6371 * Math.Acos(
-                                    Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude! / 180) *
-                                    Math.Cos(Math.PI * (double)a.Clinic.Longitude! / 180 - Math.PI * longitude / 180) +
-                                    Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
-                                ) <= radiusInKm
-                            ));
+                        param.Latitude = latitude;
+                        param.Longitude = longitude;
 
-                            query = query.OrderBy(x => x.DoctorClinics
-                                .Min(a => 6371 * Math.Acos(
-                                    Math.Cos(Math.PI * latitude / 180) * Math.Cos(Math.PI * (double)a.Clinic.Latitude! / 180) *
-                                    Math.Cos(Math.PI * (double)a.Clinic.Longitude! / 180 - Math.PI * longitude / 180) +
-                                    Math.Sin(Math.PI * latitude / 180) * Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
-                                ))
-                            );
-                        }
+                        query = query.Where(x => x.DoctorClinics.Any(a =>
+                            6371 * Math.Acos(
+                                Math.Cos(Math.PI * latitude / 180) *
+                                Math.Cos(Math.PI * (double)a.Clinic.Latitude! / 180) *
+                                Math.Cos(Math.PI * (double)a.Clinic.Longitude! / 180 - Math.PI * longitude / 180) +
+                                Math.Sin(Math.PI * latitude / 180) *
+                                Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
+                            ) <= radiusInKm
+                        ));
+
+                        query = query.OrderBy(x => x.DoctorClinics
+                            .Min(a => 6371 * Math.Acos(
+                                Math.Cos(Math.PI * latitude / 180) *
+                                Math.Cos(Math.PI * (double)a.Clinic.Latitude! / 180) *
+                                Math.Cos(Math.PI * (double)a.Clinic.Longitude! / 180 - Math.PI * longitude / 180) +
+                                Math.Sin(Math.PI * latitude / 180) *
+                                Math.Sin(Math.PI * (double)a.Clinic.Latitude / 180)
+                            ))
+                        );
                     }
                 }
             }
@@ -80,54 +90,50 @@ namespace MainService.Infrastructure.Data
                 query.AsNoTracking().ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider),
                 param.PageNumber, param.PageSize);
         }
+
         public async Task<DoctorSearchResultDto?> GetDoctorByIdAsync(int id) =>
             await context.Users
                 .Include(x => x.UserMedicalLicenses)
-                    .ThenInclude(x => x.MedicalLicense)
-                    .ThenInclude(x => x.MedicalLicenseSpecialty)
-                    .ThenInclude(x => x.Specialty)
+                .ThenInclude(x => x.MedicalLicense)
+                .ThenInclude(x => x.MedicalLicenseSpecialty)
+                .ThenInclude(x => x.Specialty)
                 .Include(x => x.DoctorClinics)
-                    .ThenInclude(x => x.Clinic)
+                .ThenInclude(x => x.Clinic)
                 .Include(x => x.DoctorWorkSchedules)
-                    .ThenInclude(x => x.WorkSchedule)
+                .ThenInclude(x => x.WorkSchedule)
                 .Include(x => x.DoctorEvents)
-                    .ThenInclude(x => x.Event)
+                .ThenInclude(x => x.Event)
                 .Include(x => x.DoctorReviews)
-                    .ThenInclude(x => x.Review)
-                    .ThenInclude(x => x.UserReview)
-                    .ThenInclude(x => x.User)
+                .ThenInclude(x => x.Review)
+                .ThenInclude(x => x.UserReview)
+                .ThenInclude(x => x.User)
                 .Include(x => x.DoctorMedicalInsuranceCompanies)
-                    .ThenInclude(x => x.MedicalInsuranceCompany)
+                .ThenInclude(x => x.MedicalInsuranceCompany)
                 .Include(x => x.Patients)
-                    .ThenInclude(x => x.Patient)
+                .ThenInclude(x => x.Patient)
                 .Where(x => x.Id == id)
                 .AsQueryable()
                 .AsNoTracking()
                 .ProjectTo<DoctorSearchResultDto>(mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync()
-            ;
+                .FirstOrDefaultAsync();
 
         private static IQueryable<AppUser> Includes(IQueryable<AppUser> query) =>
             query
                 .AsSplitQuery()
                 .Include(x => x.UserMedicalLicenses)
-                    .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
                 .Include(x => x.DoctorClinics)
-                    .ThenInclude(x => x.Clinic)
+                .ThenInclude(x => x.Clinic)
                 .Include(x => x.DoctorWorkSchedules)
-                    .ThenInclude(x => x.WorkSchedule)
+                .ThenInclude(x => x.WorkSchedule)
                 .Include(x => x.DoctorEvents)
-                    .ThenInclude(x => x.Event)
+                .ThenInclude(x => x.Event)
                 .Include(x => x.DoctorReviews)
-                    .ThenInclude(x => x.Review.UserReview.User)
-
+                .ThenInclude(x => x.Review.UserReview.User)
                 .Include(x => x.DoctorMedicalInsuranceCompanies)
-                    .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
-
+                .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
                 .Include(x => x.Patients)
-                    .ThenInclude(x => x.Patient)
-                .AsQueryable()
-            ;
+                .ThenInclude(x => x.Patient)
+                .AsQueryable();
     }
-
 }

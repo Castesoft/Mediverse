@@ -9,6 +9,11 @@ public class PatientOrder
         PatientId = patientId;
         OrderId = orderId;
     }
+    public PatientOrder(AppUser patient, Order order)
+    {
+        Patient = patient;
+        Order = order;
+    }
     
     public int PatientId { get; set; }
     public int OrderId { get; set; }

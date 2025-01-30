@@ -10,6 +10,11 @@ public class PrescriptionOrder
         PrescriptionId = prescriptionId;
         OrderId = orderId;
     }
+    public PrescriptionOrder(Prescription prescription, Order order)
+    {
+        Prescription = prescription;
+        Order = order;
+    }
     
     public int PrescriptionId { get; set; }
     public int OrderId { get; set; }

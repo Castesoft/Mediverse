@@ -11,6 +11,12 @@ public class OrderDeliveryAddress
         OrderId = orderId;
         AddressId = addressId;
     }
+    public OrderDeliveryAddress(Address address, Order order)
+    {
+        DeliveryAddress = address;
+        Order = order;
+    }
+    public OrderDeliveryAddress(Address address) => DeliveryAddress = address;
     
     public int OrderId { get; set; }
     public int AddressId { get; set; }

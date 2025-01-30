@@ -38,7 +38,7 @@ public class MappingProfiles : Profile
 
         CreateMap<AppUser, DoctorSearchResultDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto != null ? src.UserPhoto.Photo.Url.AbsoluteUri : null))
             .ForMember(dest => dest.Specialties,
                 opt => opt.MapFrom(src =>
                     src.UserMedicalLicenses.Select(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)))

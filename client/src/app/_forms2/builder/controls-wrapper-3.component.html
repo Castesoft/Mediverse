@@ -15,7 +15,8 @@
             <h1 class="text-danger">PENDIENTE</h1>
           }
           @case ('checkbox') {
-            <div templateControlCheckbox [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div templateControlCheckbox [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
           @case ('radio') {
             <div templateControlCheckRadio [(control)]="control" [(fromWrapper)]="fromWrapper"

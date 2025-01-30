@@ -27,5 +27,5 @@ export class OrdersCatalogComponent {
   filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration());
 
   service: OrdersService = inject(OrdersService);
-  form = model(new OrderFiltersForm());
+  form: ModelSignal<OrderFiltersForm> = model(new OrderFiltersForm());
 }

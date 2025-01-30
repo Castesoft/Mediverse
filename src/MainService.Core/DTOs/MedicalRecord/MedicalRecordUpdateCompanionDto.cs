@@ -8,7 +8,7 @@ public class MedicalRecordUpdateCompanionDto
     public string? Name { get; set; }
     public OptionDto? Sex { get; set; }
     public string? Address { get; set; }
-    public string? HomePhone { get; set; }
+    public string? HomeNumber { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Email { get; set; }
     public OptionDto? RelativeType { get; set; }

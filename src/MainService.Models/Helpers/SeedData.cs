@@ -648,7 +648,7 @@ namespace MainService.Models.Helpers
 
         public static readonly List<Product> products =
         [
-            new Product
+            new()
             {
                 Name = "Metformina",
                 Description = "Tratamiento de la diabetes tipo 2.",
@@ -672,7 +672,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "A12345",
             },
 
-            new Product
+            new()
             {
                 Name = "Lisinopril",
                 Description = "Tratamiento de la hipertensión.",
@@ -696,7 +696,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "B23456",
             },
 
-            new Product
+            new()
             {
                 Name = "Ibuprofeno",
                 Description = "Antiinflamatorio y analgésico.",
@@ -720,7 +720,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "C34567",
             },
 
-            new Product
+            new()
             {
                 Name = "Paracetamol",
                 Description = "Analgésico y antipirético.",
@@ -744,7 +744,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "D45678",
             },
 
-            new Product
+            new()
             {
                 Name = "Atorvastatina",
                 Description = "Reducción del colesterol.",
@@ -767,7 +767,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "E56789",
             },
 
-            new Product
+            new()
             {
                 Name = "Amoxicilina",
                 Description = "Antibiótico de amplio espectro.",
@@ -791,7 +791,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "F67890",
             },
 
-            new Product
+            new()
             {
                 Name = "Amlodipino",
                 Description = "Tratamiento de la hipertensión y angina.",
@@ -815,7 +815,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "G78901",
             },
 
-            new Product
+            new()
             {
                 Name = "Omeprazol",
                 Description = "Tratamiento de la acidez y úlceras gástricas.",
@@ -839,7 +839,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "H89012",
             },
 
-            new Product
+            new()
             {
                 Name = "Simvastatina",
                 Description = "Reducción del colesterol.",
@@ -863,7 +863,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "I90123",
             },
 
-            new Product
+            new()
             {
                 Name = "Levotiroxina",
                 Description = "Tratamiento del hipotiroidismo.",
@@ -887,7 +887,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "J01234",
             },
 
-            new Product
+            new()
             {
                 Name = "Clopidogrel",
                 Description = "Prevención de eventos trombóticos.",
@@ -911,7 +911,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "K12345",
             },
 
-            new Product
+            new()
             {
                 Name = "Furosemida",
                 Description = "Diurético para la hipertensión y edema.",
@@ -935,7 +935,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "L23456",
             },
 
-            new Product
+            new()
             {
                 Name = "Sertralina",
                 Description = "Antidepresivo.",
@@ -957,7 +957,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "M34567",
             },
 
-            new Product
+            new()
             {
                 Name = "Losartán",
                 Description = "Tratamiento de la hipertensión.",
@@ -981,7 +981,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "N45678",
             },
 
-            new Product
+            new()
             {
                 Name = "Salbutamol",
                 Description = "Broncodilatador para el asma.",
@@ -1005,7 +1005,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "O56789",
             },
 
-            new Product
+            new()
             {
                 Name = "Prednisona",
                 Description = "Corticosteroide antiinflamatorio.",
@@ -1029,7 +1029,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "P67890",
             },
 
-            new Product
+            new()
             {
                 Name = "Tramadol",
                 Description = "Analgésico para el dolor moderado a severo.",
@@ -1053,7 +1053,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "Q78901",
             },
 
-            new Product
+            new()
             {
                 Name = "Cetirizina",
                 Description = "Antihistamínico para alergias.",
@@ -1077,7 +1077,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "R89012",
             },
 
-            new Product
+            new()
             {
                 Name = "Insulina Glargina",
                 Description = "Tratamiento de la diabetes.",
@@ -1101,7 +1101,7 @@ namespace MainService.Models.Helpers
                 LotNumber = "90123",
             },
 
-            new Product
+            new()
             {
                 Name = "Digoxina",
                 Description = "Tratamiento de insuficiencia cardíaca.",

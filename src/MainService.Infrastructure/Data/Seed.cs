@@ -85,24 +85,20 @@ public static class Seed
 
     private static async Task<List<Specialty>> SeedSpecialtiesAsync(DataContext context)
     {
-        if (!await context.Specialties.AnyAsync())
+        if (await context.Specialties.AnyAsync()) return [];
+        var specialties = SeedDataSpecialties.specialties.ToList();
+
+        foreach (var specialty in specialties)
         {
-            var specialties = SeedDataSpecialties.specialties.ToList();
-
-            foreach (var specialty in specialties)
-            {
-                specialty.Code = specialty.Name;
-            }
-
-            await context.Specialties.AddRangeAsync(specialties);
-            await context.SaveChangesAsync();
-
-            return await context.Specialties
-                .AsNoTracking()
-                .ToListAsync();
+            specialty.Code = specialty.Name;
         }
 
-        return [];
+        await context.Specialties.AddRangeAsync(specialties);
+        await context.SaveChangesAsync();
+
+        return await context.Specialties
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     private static async Task<List<DeliveryStatus>> SeedDeliveryStatusesAsync(DataContext context)
@@ -267,7 +263,7 @@ public static class Seed
             if (role.Name != null) await roleManager.CreateAsync(new AppRole(role.Name));
         }
 
-        Log.Information($"{seedingRoles.Count()} roles created.");
+        Log.Information($"{seedingRoles.Count} roles created.");
 
         idx = 1;
 
@@ -319,11 +315,12 @@ public static class Seed
             DateOfBirth = new DateOnly(2000, 5, 2),
             PhoneNumberCountryCode = "+52",
             UserAddresses = SeedData.GenerateUserAddresses(),
-            UserPhoto = new UserPhoto()
+            UserPhoto = new UserPhoto
             {
                 Photo = new Photo
                 {
-                    Url = new Uri("https://res.cloudinary.com/dmjdskgd4/image/upload/v1711576883/Castesoft/logo_ytz4ej.png"),
+                    Url = new Uri(
+                        "https://res.cloudinary.com/dmjdskgd4/image/upload/v1711576883/Castesoft/logo_ytz4ej.png"),
                     Name = "Foto chida",
                     Size = 2,
                 }
@@ -344,7 +341,8 @@ public static class Seed
                 Photo = new Photo
                 {
                     Url =
-                        new Uri("https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*"),
+                        new Uri(
+                            "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*"),
                     PublicId = "avatars/ramiro_castellanos_barron",
                     Size = 24471, Name = "Foto_ramiro.png"
                 }
@@ -565,7 +563,7 @@ public static class Seed
 
         foreach (var service in services.Take(random.Next(4, services.Count + 1)))
         {
-            doctor.DoctorServices.Add(new DoctorService()
+            doctor.DoctorServices.Add(new DoctorService
             {
                 Service = new Service
                 {
@@ -581,7 +579,6 @@ public static class Seed
 
         return await context.DoctorServices.Where(x => x.DoctorId == doctor.Id).ToListAsync();
     }
-
 
     private static async Task SeedRandomDoctorData(DataContext context, UserManager<AppUser> userManager)
     {
@@ -901,9 +898,10 @@ public static class Seed
 
         for (var j = 1; j < Random.Next(1, 4); j++)
         {
+            var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
             var newPrescriptionItems = new List<PrescriptionItem>();
             var existingMedicineIds = new HashSet<int>();
-            var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
+            var order = new Order();
 
             for (var k = 1; k < Random.Next(1, 4); k++)
             {
@@ -921,38 +919,75 @@ public static class Seed
 
                 existingMedicineIds.Add(randomMedicineId);
 
-                var randomMedicine = doctorProducts.Select(x => x.Product)
-                    .FirstOrDefault(p => p.Id == randomMedicineId);
+                var randomMedicine =
+                    doctorProducts.Select(x => x.Product).FirstOrDefault(p => p.Id == randomMedicineId);
                 if (randomMedicine == null)
                 {
                     Log.Error($"Failed to find medicine with ID {randomMedicineId}");
                     continue;
                 }
 
+                var quantity = Random.Next(1, 10);
+
                 var newPrescriptionItem = new PrescriptionItem
                 {
                     ItemId = randomMedicineId,
                     Item = randomMedicine,
-                    Quantity = Random.Next(1, 10),
+                    Quantity = quantity,
                     Dosage = 500,
                     Instructions = "Tomar 1 tableta cada 6 horas",
                     Unit = "mg"
                 };
 
                 newPrescriptionItems.Add(newPrescriptionItem);
+
+                var orderItem = new OrderItem
+                {
+                    Quantity = quantity,
+                    Dosage = randomMedicine.Dosage,
+                    Instructions = newPrescriptionItem.Instructions,
+                    Unit = randomMedicine.Unit,
+                    Price = randomMedicine.Price,
+                    Discount = 0,
+                    Item = randomMedicine
+                };
+
+                order.OrderItems.Add(orderItem);
             }
 
-            patientEvent.Event.EventPrescriptions.Add(new EventPrescription
+            var deliveryStatus = SeedData.deliveryStatuses[Random.Next(SeedData.deliveryStatuses.Count)];
+            order.OrderDeliveryStatus = new OrderDeliveryStatus(deliveryStatus);
+
+            var status = SeedData.orderStatuses[Random.Next(SeedData.orderStatuses.Count)];
+            order.OrderOrderStatus = new OrderOrderStatus(status);
+
+            var deliveryAddress = patient.UserAddresses.FirstOrDefault(x => x.IsMain)?.Address;
+            if (deliveryAddress != null)
             {
-                Prescription = new Prescription
-                {
-                    ExchangeAmount = Random.Next(1, 6),
-                    Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
-                    PatientPrescription = new PatientPrescription { Patient = patient },
-                    DoctorPrescription = new DoctorPrescription { Doctor = doctor },
-                    PrescriptionItems = newPrescriptionItems,
-                }
-            });
+                order.OrderDeliveryAddress = new OrderDeliveryAddress(deliveryAddress);
+                order.OrderPickupAddress = new OrderPickupAddress(deliveryAddress);
+            }
+
+            order.Subtotal = order.OrderItems.Sum(x => x.Price * x.Quantity);
+            order.Tax = order.Subtotal * 0.16m;
+            order.Discount = 0;
+            order.AmountPaid = 0;
+            order.Total = order.Subtotal + order.Tax - (decimal?)order.Discount;
+            order.AmountDue = order.Total;
+            order.PatientOrder = new PatientOrder(patient, order);
+            order.DoctorOrder = new DoctorOrder(doctor, order);
+
+            var prescription = new Prescription
+            {
+                ExchangeAmount = Random.Next(1, 6),
+                Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
+                PatientPrescription = new PatientPrescription { Patient = patient },
+                DoctorPrescription = new DoctorPrescription { Doctor = doctor },
+                PrescriptionItems = newPrescriptionItems,
+                PrescriptionOrder = new PrescriptionOrder(order)
+            };
+
+            patientEvent.Event.EventPrescriptions.Add(new EventPrescription(prescription));
         }
     }
 }
