@@ -58,7 +58,7 @@ public class MappingProfiles : Profile
         CreateMap<Review, DoctorReviewDto>()
             .ForMember(dest => dest.UserName,
                 opt => opt.MapFrom(src => src.UserReview.User.FirstName + " " + src.UserReview.User.LastName))
-            .ForMember(dest => dest.UserPhotoUrl, opt => opt.MapFrom(src => src.UserReview.User.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.UserPhotoUrl, opt => opt.MapFrom(src => src.UserReview.User.UserPhoto != null ? src.UserReview.User.UserPhoto.Photo.Url.AbsoluteUri : null))
             .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
@@ -74,7 +74,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
             .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
             .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode))
-            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.ClinicLogo.Photo.Url));
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.ClinicLogo != null ? src.ClinicLogo.Photo.Url : null));
 
         CreateMap<Event, SatisfactionSurveyDto>()
             .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id))
@@ -120,7 +120,7 @@ public class MappingProfiles : Profile
         CreateMap<Address, ClinicDto>()
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
             .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ClinicLogo.Photo.Url));
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ClinicLogo != null ? src.ClinicLogo.Photo.Url : null));
 
         CreateMap<AppUser, AccountDto>()
             .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.GetSex()))
@@ -128,7 +128,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.EmailConfirmed))
             .ForMember(dest => dest.IsPhoneNumberVerified, opt => opt.MapFrom(src => src.PhoneNumberConfirmed))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto != null ? src.UserPhoto.Photo.Url.AbsoluteUri : null))
             .ForMember(dest => dest.BannerUrl, opt => opt.MapFrom(src => src.DoctorBannerPhoto.Photo.Url))
             .ForMember(dest => dest.MainSpecialty,
                 opt => opt.MapFrom(src =>
@@ -230,7 +230,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Age,
                 opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url));
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto != null ? src.UserPhoto.Photo.Url.AbsoluteUri : null));
 
         CreateMap<Event, EventDto>()
             .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.EventService.Service))
@@ -257,7 +257,17 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
             .ForMember(dest => dest.LogoUrl,
-                opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url));
+                opt => opt.MapFrom(src =>
+                    src.EventPrescription != null &&
+                    src.EventPrescription.Event != null &&
+                    src.EventPrescription.Event.EventClinic != null &&
+                    src.EventPrescription.Event.EventClinic.Clinic != null &&
+                    src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo != null &&
+                    src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo != null &&
+                    src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url != null
+                        ? src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url.AbsoluteUri
+                        : null
+                ));
 
         CreateMap<AppUser, EventDoctorFieldsDto>()
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src => src.DoctorClinics));
@@ -282,13 +292,31 @@ public class MappingProfiles : Profile
         CreateMap<Prescription, PrescriptionDto>()
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientPrescription.Patient))
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorPrescription.Doctor))
-            .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.EventPrescription.Event))
-            .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
-            .ForMember(dest => dest.LogoUrl,
-                opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url))
+            .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src =>
+                src.EventPrescription != null &&
+                src.EventPrescription.Event != null &&
+                src.EventPrescription.Event.EventClinic != null &&
+                src.EventPrescription.Event.EventClinic.Clinic != null
+                    ? src.EventPrescription.Event.EventClinic.Clinic
+                    : null
+            ))
             .ForMember(dest => dest.OrderId,
-                opt => opt.MapFrom(src => src.PrescriptionOrder != null ? src.PrescriptionOrder.Order.Id : 0));
+                opt => opt.MapFrom(src => src.PrescriptionOrder != null ? src.PrescriptionOrder.Order.Id : 0))
+            .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.EventPrescription.Event))
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src =>
+                src.EventPrescription != null &&
+                src.EventPrescription.Event != null &&
+                src.EventPrescription.Event.EventClinic != null &&
+                src.EventPrescription.Event.EventClinic.Clinic != null &&
+                src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo != null &&
+                src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo != null &&
+                src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url != null
+                    ? src.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo.Url.AbsoluteUri 
+                    : null
+            ));
+
+
 
         CreateMap<PrescriptionUpdateDto, Prescription>()
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));
@@ -363,19 +391,26 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.AccessGranted, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Doctor.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Doctor.LastName))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Doctor.UserPhoto.Photo.Url));
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Doctor.UserPhoto != null ? src.Doctor.UserPhoto.Photo.Url.AbsoluteUri : null));
 
         CreateMap<AppUser, NurseDto>()
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto != null ? src.UserPhoto.Photo.Url.AbsoluteUri : null))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
             .ForMember(dest => dest.Age,
                 opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
 
         CreateMap<AppUser, PatientDto>()
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.PhotoUrl, 
+                opt => opt.MapFrom(src => 
+                    src.UserPhoto != null &&
+                    src.UserPhoto.Photo != null &&
+                    src.UserPhoto.Photo.Url != null
+                        ? src.UserPhoto.Photo.Url.AbsoluteUri 
+                        : null
+                ))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count() > 0))
+            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count > 0))
             .ForMember(dest => dest.Age,
                 opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
@@ -383,20 +418,20 @@ public class MappingProfiles : Profile
                 opt => opt.MapFrom(src =>
                     src.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment))))
             .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
-            .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count()))
-            .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count()))
-            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()));
+            .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count))
+            .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count))
+            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count));
 
         CreateMap<AppUser, NurseDto>()
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto.Photo.Url))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.UserPhoto != null ? src.UserPhoto.Photo.Url.AbsoluteUri : null))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count() > 0))
+            .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count > 0))
             .ForMember(dest => dest.Age,
                 opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
-            .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count()))
-            .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count()))
-            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count()));
+            .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count))
+            .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count))
+            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count));
 
         CreateMap<DoctorEvent, EventDto>();
 
@@ -517,7 +552,11 @@ public class MappingProfiles : Profile
             }));
 
         CreateMap<Service, ServiceDto>()
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ServicePhotos.FirstOrDefault().Photo.Url));
+            .ForMember(dest => dest.PhotoUrl,
+                opt => opt.MapFrom(src =>
+                    src.ServicePhotos.FirstOrDefault() != null
+                        ? src.ServicePhotos.FirstOrDefault().Photo.Url.AbsoluteUri
+                        : null));
 
         CreateMap<PaymentMethodType, PaymentMethodTypeDto>();
 

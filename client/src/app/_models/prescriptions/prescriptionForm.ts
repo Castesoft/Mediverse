@@ -158,7 +158,7 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         this.controls.notes.patchValue(prescription.notes);
         this.controls.date.patchValue(prescription.date, { emitEvent: false });
         this.controls.clinic.patchValue(clinic as Address, { emitEvent: false });
-        this.controls.clinic.controls.photoUrl.patchValue(clinic.photoUrl);
+        this.controls.clinic.controls.photoUrl.patchValue(clinic?.photoUrl);
         this.controls.doctor.patchValue(doctor as Account, { emitEvent: false });
         this.controls.patient.patchValue(patient as Patient, { emitEvent: false });
       }
