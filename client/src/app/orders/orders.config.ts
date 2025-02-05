@@ -17,6 +17,7 @@ import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { OrdersCatalogComponent } from "src/app/orders/orders-catalog.component";
 import { OrderFormComponent } from "src/app/orders/order-form.component";
+import { OrderHistory } from "src/app/_models/orders/orderHistory";
 
 @Component({
   selector: 'orders-catalog-modal',
@@ -52,6 +53,10 @@ export class OrdersCatalogModalComponent {
 export class OrdersService extends ServiceHelper<Order, OrderParams, FormGroup2<OrderParams>> {
   constructor() {
     super(OrderParams, 'orders', orderDictionary, orderColumns);
+  }
+
+  getHistory(id: number) {
+    return this.http.get<OrderHistory[]>(`${this.baseUrl}${id}/history`);
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {

@@ -22,35 +22,34 @@ import {
   TABLE_HEADER_TR_CLASS
 } from "src/app/_shared/template/components/tables/tableConstants";
 
-
 @Component({
   selector: "thead[tableHeader]",
   templateUrl: "./table-header.component.html",
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [ CommonModule, FontAwesomeModule, FormsModule, TableHeaderCheckCellComponent, ],
+  imports: [ CommonModule, FontAwesomeModule, FormsModule, TableHeaderCheckCellComponent ]
 })
 export class TableHeaderComponent implements OnInit {
   private dev = inject(DevService);
   icons = inject(IconsService);
 
-  // inputs
-  // required
+  // Inputs
   columns = model.required<Column[]>();
-  params = model.required<EntityParams<any> | any | null>();
   isCompact = model.required<boolean>();
-  mode = model.required<CatalogMode>();
-  dictionary = model.required<NamingSubject>();
+  mode = model<CatalogMode>("view");
   show = input<boolean>(true);
   disableFirstCellPadding = input<boolean>(false);
 
+  params = model<EntityParams<any> | null>(null);
+  dictionary = model<NamingSubject | null>(null);
+
   selected = model(false);
 
-  // optional
+  // Optional inputs
   sortable = input<boolean>(true);
   showActions = input<boolean>(true);
 
-  // outputs
+  // Outputs
   onParamsChange = output<SortOptions>();
   onSelectAll = output<boolean>();
 
@@ -61,7 +60,15 @@ export class TableHeaderComponent implements OnInit {
   tableHeaderCheckCellThClass = TABLE_HEADER_CHECK_CELL_TH_CLASS;
 
   constructor() {
-    effect(() => { });
+    effect(() => {
+      if (!this.params()) {
+        this.params.set(new EntityParams<any>('defaultKey', {}));
+      }
+
+      if (!this.dictionary()) {
+        this.dictionary.set(new NamingSubject('masculine', 'entidad', 'entidades', 'Entidades', 'entities'));
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -73,10 +80,9 @@ export class TableHeaderComponent implements OnInit {
   }
 
   getIcon(columnName: string) {
-    if (this.params().sort === columnName && this.params().isSortAscending) {
+    if (this.params() && this.params()!.sort?.name === columnName && this.params()!.isSortAscending) {
       return faSortUp;
-    } else if (this.params().sort === columnName &&
-      !this.params().isSortAscending) {
+    } else if (this.params() && this.params()!.sort?.name === columnName && !this.params()!.isSortAscending) {
       return faSortDown;
     } else {
       return faSort;
@@ -84,8 +90,10 @@ export class TableHeaderComponent implements OnInit {
   }
 
   onClick(name: string) {
-    this.params.update((oldValues: EntityParams<Entity>) => {
-      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
+    if (!this.params()) return;
+    this.params.update((oldValues: EntityParams<Entity> | null) => {
+      if (!oldValues) return null;
+      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues });
       newValues.sort = new SelectOption({ name: name, code: name });
       newValues.isSortAscending = !oldValues.isSortAscending;
       return newValues;

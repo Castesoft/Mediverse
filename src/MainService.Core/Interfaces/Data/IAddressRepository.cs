@@ -16,6 +16,7 @@ void Add(Address item);
     Task<Address?> GetByIdAsNoTrackingAsync(int id);
     Task<List<Address>> GetAllAsync();
     Task<List<AddressDto>> GetAllDtoAsync(AddressParams param);
+    Task<List<OptionDto>> GetOptionsAsync(AddressParams param);
     Task<PagedList<AddressDto>> GetPagedListAsync(AddressParams param, ClaimsPrincipal user);
     Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode);
     Task<bool> ExistsByIdAsync(int id);

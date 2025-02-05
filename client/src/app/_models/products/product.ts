@@ -14,6 +14,11 @@ export class Product extends Entity {
   photoUrl: string | null = null;
   photos?: Photo[];
   isInternal: boolean | null = false;
+  sku: string | null = null;
+  barcode: string | null = null;
+  category: string | null = null;
+  // tags: string[] | null = null; TODO: Implement tags
+  costPrice: number | null = null;
 
   constructor(init?: Partial<Product>) {
     super();

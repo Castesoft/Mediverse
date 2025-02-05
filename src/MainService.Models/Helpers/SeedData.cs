@@ -21,11 +21,11 @@ namespace MainService.Models.Helpers
 
         public static List<UserPaymentMethod> GetUserPaymentMethods(AppUser user)
         {
-            PaymentMethod paymentMethod = GetRandomPaymentMethod();
+            var paymentMethod = GetRandomPaymentMethod();
 
             List<UserPaymentMethod> userPaymentMethod = [];
 
-            for (int i = 0; i < Random.Next(2, 6); i++)
+            for (var i = 0; i < Random.Next(2, 6); i++)
             {
                 userPaymentMethod.Add(new UserPaymentMethod
                 {
@@ -48,7 +48,7 @@ namespace MainService.Models.Helpers
         }
     }
 
-    public static partial class SeedEventPayments
+    public static class SeedEventPayments
     {
         private static readonly Random Random = new();
 
@@ -74,17 +74,17 @@ namespace MainService.Models.Helpers
 
             if (!hasPayment) return [];
 
-            int paymentCount = Random.Next(1, 4);
-            decimal? totalAmount = @event.EventService.Service.Price;
-            decimal? remainingAmount = totalAmount;
+            var paymentCount = Random.Next(1, 4);
+            var totalAmount = @event.EventService.Service.Price;
+            var remainingAmount = totalAmount;
             List<EventPayment> payments = [];
 
             if (totalAmount.HasValue && remainingAmount.HasValue)
             {
-                for (int i = 0; i < paymentCount; i++)
+                for (var i = 0; i < paymentCount; i++)
                 {
-                    bool isLastPayment = i == paymentCount - 1;
-                    decimal? paymentAmount = isLastPayment
+                    var isLastPayment = i == paymentCount - 1;
+                    var paymentAmount = isLastPayment
                         ? remainingAmount // En el último pago, asignar todo el monto restante
                         : Random.Next(1,
                             (int)remainingAmount); // Asegurarse de que el valor mínimo sea menor que el valor máximo
@@ -645,6 +645,75 @@ namespace MainService.Models.Helpers
 
             return rolesWithPermissions;
         }
+        
+        public static readonly List<Warehouse> warehouses =
+        [
+            new()
+            {
+                Name = "Almacén Central",
+                Description = "Almacén principal de la empresa.",
+                Address = new Address
+                {
+                    Street = "Av. Central",
+                    City = "Ciudad de México",
+                    State = "CDMX",
+                    Zipcode = "12345",
+                    Country = "México"
+                }
+            },
+            new()
+            {
+                Name = "Almacén Norte",
+                Description = "Almacén en la zona norte de la ciudad.",
+                Address = new Address
+                {
+                    Street = "Av. Norte",
+                    City = "Ciudad de México",
+                    State = "CDMX",
+                    Zipcode = "54321",
+                    Country = "México"
+                }
+            },
+            new()
+            {
+                Name = "Almacén Sur",
+                Description = "Almacén en la zona sur de la ciudad.",
+                Address = new Address
+                {
+                    Street = "Av. Sur",
+                    City = "Ciudad de México",
+                    State = "CDMX",
+                    Zipcode = "67890",
+                    Country = "México"
+                }
+            },
+            new()
+            {
+                Name = "Almacén Este",
+                Description = "Almacén en la zona este de la ciudad.",
+                Address = new Address
+                {
+                    Street = "Av. Este",
+                    City = "Ciudad de México",
+                    State = "CDMX",
+                    Zipcode = "98765",
+                    Country = "México"
+                }
+            },
+            new()
+            {
+                Name = "Almacén Oeste",
+                Description = "Almacén en la zona oeste de la ciudad.",
+                Address = new Address
+                {
+                    Street = "Av. Oeste",
+                    City = "Ciudad de México",
+                    State = "CDMX",
+                    Zipcode = "13579",
+                    Country = "México"
+                }
+            }
+        ];
 
         public static readonly List<Product> products =
         [
@@ -654,16 +723,19 @@ namespace MainService.Models.Helpers
                 Description = "Tratamiento de la diabetes tipo 2.",
                 Price = 200,
                 Dosage = 850,
+                SKU = "MET-001",
+                Barcode = "0123456789012",
+                Category = "Antidiabetics",
+                CostPrice = 150,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://chedrauimx.vtexassets.com/arquivos/ids/32138501-800-auto?v=638560236813070000&width=800&height=auto&aspect=true"),
+                            Url = new Uri(
+                                "https://chedrauimx.vtexassets.com/arquivos/ids/32138501-800-auto?v=638560236813070000&width=800&height=auto&aspect=true"),
                         }
                     }
                 ],
@@ -672,22 +744,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "A12345",
             },
 
+
             new()
             {
                 Name = "Lisinopril",
                 Description = "Tratamiento de la hipertensión.",
                 Price = 150,
                 Dosage = 10,
+                SKU = "LIS-002",
+                Barcode = "1123456789012",
+                Category = "Antihypertensive",
+                CostPrice = 110,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://i0.wp.com/prixz.com/salud/wp-content/uploads/2020/06/lisinopril.jpg?fit=720%2C440&ssl=1"),
+                            Url = new Uri(
+                                "https://i0.wp.com/prixz.com/salud/wp-content/uploads/2020/06/lisinopril.jpg?fit=720%2C440&ssl=1"),
                         }
                     }
                 ],
@@ -696,22 +772,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "B23456",
             },
 
+
             new()
             {
                 Name = "Ibuprofeno",
                 Description = "Antiinflamatorio y analgésico.",
                 Price = 100,
                 Dosage = 400,
+                SKU = "IBU-003",
+                Barcode = "2123456789012",
+                Category = "Analgesic",
+                CostPrice = 80,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.benavides.com.mx/media/catalog/product/cache/13134524bf2f7c32f6bea508eba7e730/2/0/20231002_1042110.jpg"),
+                            Url = new Uri(
+                                "https://www.benavides.com.mx/media/catalog/product/cache/13134524bf2f7c32f6bea508eba7e730/2/0/20231002_1042110.jpg"),
                         }
                     }
                 ],
@@ -720,22 +800,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "C34567",
             },
 
+
             new()
             {
                 Name = "Paracetamol",
                 Description = "Analgésico y antipirético.",
                 Price = 50,
                 Dosage = 500,
+                SKU = "PAR-004",
+                Barcode = "3123456789012",
+                Category = "Antipyretic",
+                CostPrice = 40,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.soriana.com/on/demandware.static/-/Sites-soriana-grocery-master-catalog/default/dw83b430ea/images/product/7500093754574_A.jpg"),
+                            Url = new Uri(
+                                "https://www.soriana.com/on/demandware.static/-/Sites-soriana-grocery-master-catalog/default/dw83b430ea/images/product/7500093754574_A.jpg"),
                         }
                     }
                 ],
@@ -744,15 +828,20 @@ namespace MainService.Models.Helpers
                 LotNumber = "D45678",
             },
 
+
             new()
             {
                 Name = "Atorvastatina",
                 Description = "Reducción del colesterol.",
                 Price = 180,
                 Dosage = 20,
+                SKU = "ATO-005",
+                Barcode = "4123456789012",
+                Category = "Cholesterol",
+                CostPrice = 140,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -767,22 +856,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "E56789",
             },
 
+
             new()
             {
                 Name = "Amoxicilina",
                 Description = "Antibiótico de amplio espectro.",
                 Price = 120,
                 Dosage = 500,
+                SKU = "AMO-006",
+                Barcode = "5123456789012",
+                Category = "Antibiotic",
+                CostPrice = 100,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7501349021570.jpg?scale=500&qlty=75"),
+                            Url = new Uri(
+                                "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7501349021570.jpg?scale=500&qlty=75"),
                         }
                     }
                 ],
@@ -791,22 +884,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "F67890",
             },
 
+
             new()
             {
                 Name = "Amlodipino",
                 Description = "Tratamiento de la hipertensión y angina.",
                 Price = 140,
                 Dosage = 5,
+                SKU = "AML-007",
+                Barcode = "6123456789012",
+                Category = "Antihypertensive",
+                CostPrice = 120,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7502216793378.jpg?scale=500&qlty=75"),
+                            Url = new Uri(
+                                "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7502216793378.jpg?scale=500&qlty=75"),
                         }
                     }
                 ],
@@ -815,22 +912,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "G78901",
             },
 
+
             new()
             {
                 Name = "Omeprazol",
                 Description = "Tratamiento de la acidez y úlceras gástricas.",
                 Price = 90,
                 Dosage = 20,
+                SKU = "OME-008",
+                Barcode = "7123456789012",
+                Category = "Gastrointestinal",
+                CostPrice = 70,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7501277093472.jpg?scale=500&qlty=75"),
+                            Url = new Uri(
+                                "https://resources.sanborns.com.mx/imagenes-sanborns-ii/1200/7501277093472.jpg?scale=500&qlty=75"),
                         }
                     }
                 ],
@@ -839,22 +940,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "H89012",
             },
 
+
             new()
             {
                 Name = "Simvastatina",
                 Description = "Reducción del colesterol.",
                 Price = 170,
                 Dosage = 20,
+                SKU = "SIM-009",
+                Barcode = "8123456789012",
+                Category = "Cholesterol",
+                CostPrice = 150,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.movil.farmaciasguadalajara.com/wcsstore/FGCAS/wcs/products/1187074_A_1280_AL.jpg"),
+                            Url = new Uri(
+                                "https://www.movil.farmaciasguadalajara.com/wcsstore/FGCAS/wcs/products/1187074_A_1280_AL.jpg"),
                         }
                     }
                 ],
@@ -863,22 +968,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "I90123",
             },
 
+
             new()
             {
                 Name = "Levotiroxina",
                 Description = "Tratamiento del hipotiroidismo.",
                 Price = 130,
                 Dosage = 100,
+                SKU = "LEV-010",
+                Barcode = "9123456789012",
+                Category = "Thyroid",
+                CostPrice = 110,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.plmconnection.com/plmservices/PharmaSearchEngine/Mexico/DEF/SIDEF/400x400/ifa_celtics_levotiroxina_tab_100mcg_c100.png"),
+                            Url = new Uri(
+                                "https://www.plmconnection.com/plmservices/PharmaSearchEngine/Mexico/DEF/SIDEF/400x400/ifa_celtics_levotiroxina_tab_100mcg_c100.png"),
                         }
                     }
                 ],
@@ -887,22 +996,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "J01234",
             },
 
+
             new()
             {
                 Name = "Clopidogrel",
                 Description = "Prevención de eventos trombóticos.",
                 Price = 250,
                 Dosage = 75,
+                SKU = "CLO-011",
+                Barcode = "0223456789012",
+                Category = "Antiplatelet",
+                CostPrice = 200,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://resources.sears.com.mx/medios-plazavip/s2/23552/3904489/62d92f55d4bce-03c29096-bcb9-45f2-b8d2-69637743f15d-1600x1600.jpg?scale=500&qlty=75"),
+                            Url = new Uri(
+                                "https://resources.sears.com.mx/medios-plazavip/s2/23552/3904489/62d92f55d4bce-03c29096-bcb9-45f2-b8d2-69637743f15d-1600x1600.jpg?scale=500&qlty=75"),
                         }
                     }
                 ],
@@ -911,22 +1024,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "K12345",
             },
 
+
             new()
             {
                 Name = "Furosemida",
                 Description = "Diurético para la hipertensión y edema.",
                 Price = 110,
                 Dosage = 40,
+                SKU = "FUR-012",
+                Barcode = "1223456789012",
+                Category = "Diuretic",
+                CostPrice = 90,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750157390847L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"),
+                            Url = new Uri(
+                                "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750157390847L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"),
                         }
                     }
                 ],
@@ -935,15 +1052,20 @@ namespace MainService.Models.Helpers
                 LotNumber = "L23456",
             },
 
+
             new()
             {
                 Name = "Sertralina",
                 Description = "Antidepresivo.",
                 Price = 220,
                 Dosage = 50,
+                SKU = "SER-013",
+                Barcode = "2223456789012",
+                Category = "Antidepressant",
+                CostPrice = 180,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -957,22 +1079,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "M34567",
             },
 
+
             new()
             {
                 Name = "Losartán",
                 Description = "Tratamiento de la hipertensión.",
                 Price = 160,
                 Dosage = 50,
+                SKU = "LOS-014",
+                Barcode = "3223456789012",
+                Category = "Antihypertensive",
+                CostPrice = 130,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://chedrauimx.vtexassets.com/arquivos/ids/32159730-800-auto?v=638560300075600000&width=800&height=auto&aspect=true"),
+                            Url = new Uri(
+                                "https://chedrauimx.vtexassets.com/arquivos/ids/32159730-800-auto?v=638560300075600000&width=800&height=auto&aspect=true"),
                         }
                     }
                 ],
@@ -981,22 +1107,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "N45678",
             },
 
+
             new()
             {
                 Name = "Salbutamol",
                 Description = "Broncodilatador para el asma.",
                 Price = 130,
                 Dosage = 100,
+                SKU = "SAL-015",
+                Barcode = "4223456789012",
+                Category = "Bronchodilator",
+                CostPrice = 100,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.fahorro.com/media/catalog/product/7/5/7501043100595.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=265&width=265&canvas=265:265"),
+                            Url = new Uri(
+                                "https://www.fahorro.com/media/catalog/product/7/5/7501043100595.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=265&width=265&canvas=265:265"),
                         }
                     }
                 ],
@@ -1005,22 +1135,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "O56789",
             },
 
+
             new()
             {
                 Name = "Prednisona",
                 Description = "Corticosteroide antiinflamatorio.",
                 Price = 200,
                 Dosage = 5,
+                SKU = "PRE-016",
+                Barcode = "5223456789012",
+                Category = "Corticosteroid",
+                CostPrice = 170,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.plmconnection.com/plmservices/PharmaSearchEngine/Mexico/DEF/SIDEF/400x400/amsa_prednisona_tabs_5mg_20.png"),
+                            Url = new Uri(
+                                "https://www.plmconnection.com/plmservices/PharmaSearchEngine/Mexico/DEF/SIDEF/400x400/amsa_prednisona_tabs_5mg_20.png"),
                         }
                     }
                 ],
@@ -1029,22 +1163,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "P67890",
             },
 
+
             new()
             {
                 Name = "Tramadol",
                 Description = "Analgésico para el dolor moderado a severo.",
                 Price = 300,
                 Dosage = 150,
+                SKU = "TRA-017",
+                Barcode = "6223456789012",
+                Category = "Analgesic",
+                CostPrice = 250,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750138454555L.jpg"),
+                            Url = new Uri(
+                                "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750138454555L.jpg"),
                         }
                     }
                 ],
@@ -1053,22 +1191,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "Q78901",
             },
 
+
             new()
             {
                 Name = "Cetirizina",
                 Description = "Antihistamínico para alergias.",
                 Price = 80,
                 Dosage = 10,
+                SKU = "CET-018",
+                Barcode = "7223456789012",
+                Category = "Antihistamine",
+                CostPrice = 60,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.fahorro.com/media/catalog/product/7/5/7502223706156.png?optimize=medium&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700&format=jpeg"),
+                            Url = new Uri(
+                                "https://www.fahorro.com/media/catalog/product/7/5/7502223706156.png?optimize=medium&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700&format=jpeg"),
                         }
                     }
                 ],
@@ -1077,22 +1219,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "R89012",
             },
 
+
             new()
             {
                 Name = "Insulina Glargina",
                 Description = "Tratamiento de la diabetes.",
                 Price = 400,
                 Dosage = 100,
+                SKU = "INS-019",
+                Barcode = "8223456789012",
+                Category = "Diabetes",
+                CostPrice = 350,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://www.movil.farmaciasguadalajara.com/wcsstore/FGCAS/wcs/products/1234889_A_1280_AL.jpg"),
+                            Url = new Uri(
+                                "https://www.movil.farmaciasguadalajara.com/wcsstore/FGCAS/wcs/products/1234889_A_1280_AL.jpg"),
                         }
                     }
                 ],
@@ -1101,22 +1247,26 @@ namespace MainService.Models.Helpers
                 LotNumber = "90123",
             },
 
+
             new()
             {
                 Name = "Digoxina",
                 Description = "Tratamiento de insuficiencia cardíaca.",
                 Price = 210,
                 Dosage = 1,
+                SKU = "DIG-020",
+                Barcode = "9223456789012",
+                Category = "Cardiac",
+                CostPrice = 170,
                 ProductPhotos =
                 [
-                    new ProductPhoto
+                    new ProductPhoto()
                     {
                         IsMain = true,
                         Photo = new Photo
                         {
-                            Url =
-                                new Uri(
-                                    "https://representacionland.com/wp-content/uploads/2023/03/Digoxina-025mg-tab-estuche-x-10tag-LAND.jpg"),
+                            Url = new Uri(
+                                "https://representacionland.com/wp-content/uploads/2023/03/Digoxina-025mg-tab-estuche-x-10tag-LAND.jpg"),
                         }
                     }
                 ],
@@ -1124,8 +1274,8 @@ namespace MainService.Models.Helpers
                 Manufacturer = "HeartMeds",
                 LotNumber = "T01234",
             }
-
         ];
+
 
         public static readonly IEnumerable<Service> services =
         [
@@ -1193,12 +1343,12 @@ namespace MainService.Models.Helpers
         public static string GenerateMexicanPhoneNumber()
         {
             Random random = new();
-            string areaCode = GenerateMexicanAreaCode();
-            string phoneNumber = areaCode;
+            var areaCode = GenerateMexicanAreaCode();
+            var phoneNumber = areaCode;
 
-            int remainingLength = 10 - phoneNumber.Length;
+            var remainingLength = 10 - phoneNumber.Length;
 
-            for (int i = 0; i < remainingLength; i++)
+            for (var i = 0; i < remainingLength; i++)
             {
                 phoneNumber += random.Next(0, 10).ToString();
             }
@@ -1557,7 +1707,7 @@ namespace MainService.Models.Helpers
                 return malePhotos[random.Next(malePhotos.Count)];
             }
 
-            int randomIndex = random.Next(femalePhotos.Count);
+            var randomIndex = random.Next(femalePhotos.Count);
             return femalePhotos[randomIndex];
         }
 
@@ -1602,9 +1752,9 @@ namespace MainService.Models.Helpers
         {
             Random random = new();
 
-            int year = random.Next(minYear, maxYear + 1);
-            int month = random.Next(1, 13);
-            int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
+            var year = random.Next(minYear, maxYear + 1);
+            var month = random.Next(1, 13);
+            var day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
 
             return new DateOnly(year, month, day);
         }
@@ -1613,12 +1763,12 @@ namespace MainService.Models.Helpers
         {
             Random random = new();
 
-            DateTime yesterday = DateTime.UtcNow.AddDays(-1);
-            int maxYear = yesterday.Year;
+            var yesterday = DateTime.UtcNow.AddDays(-1);
+            var maxYear = yesterday.Year;
 
-            int year = random.Next(minYear, maxYear + 1);
+            var year = random.Next(minYear, maxYear + 1);
 
-            int month = (year == maxYear) ? random.Next(1, yesterday.Month + 1) : random.Next(1, 13);
+            var month = (year == maxYear) ? random.Next(1, yesterday.Month + 1) : random.Next(1, 13);
             int day;
             if (year == maxYear && month == yesterday.Month)
             {
@@ -1626,13 +1776,13 @@ namespace MainService.Models.Helpers
             }
             else
             {
-                int daysInMonth = DateTime.DaysInMonth(year, month);
+                var daysInMonth = DateTime.DaysInMonth(year, month);
                 day = random.Next(1, daysInMonth + 1);
             }
 
-            int hour = random.Next(0, 24);
-            int minute = random.Next(0, 60);
-            int second = random.Next(0, 60);
+            var hour = random.Next(0, 24);
+            var minute = random.Next(0, 60);
+            var second = random.Next(0, 60);
 
             return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
         }
@@ -1735,13 +1885,13 @@ namespace MainService.Models.Helpers
             Random random = new();
             List<AppUser> users = [];
 
-            for (int i = 0; i < quantity; i++)
+            for (var i = 0; i < quantity; i++)
             {
-                string sex = GetRandomSex();
-                string firstName = GetRandomFirstName(sex);
-                string lastName = GetRandomLastName();
-                string email = ConstructFullEmailAddress(firstName, lastName, GetRandomEmailDomain(), i);
-                string userName = email;
+                var sex = GetRandomSex();
+                var firstName = GetRandomFirstName(sex);
+                var lastName = GetRandomLastName();
+                var email = ConstructFullEmailAddress(firstName, lastName, GetRandomEmailDomain(), i);
+                var userName = email;
 
                 AppUser user = new()
                 {
@@ -2141,14 +2291,14 @@ namespace MainService.Models.Helpers
         public static List<UserAddress> GenerateUserAddresses()
         {
             List<UserAddress> userAddresses = [];
-            int numberOfAddresses = Random.Next(1, 4);
+            var numberOfAddresses = Random.Next(1, 4);
 
             var addresses = GetAddresses();
 
-            for (int i = 0; i < numberOfAddresses; i++)
+            for (var i = 0; i < numberOfAddresses; i++)
             {
                 if (addresses.Count == 0) break;
-                int addressIndex = Random.Next(addresses.Count);
+                var addressIndex = Random.Next(addresses.Count);
                 userAddresses.Add(new UserAddress { Address = addresses[addressIndex] });
                 addresses.RemoveAt(addressIndex);
             }
@@ -2161,7 +2311,7 @@ namespace MainService.Models.Helpers
         public static List<DoctorClinic> GenerateDoctorClinics()
         {
             List<DoctorClinic> doctorClinics = [];
-            int count = Random.Next(1, 4);
+            var count = Random.Next(1, 4);
 
             var clinics = GetAddresses();
 
@@ -2178,10 +2328,10 @@ namespace MainService.Models.Helpers
                 };
             }
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 if (clinics.Count == 0) break;
-                int addressIndex = Random.Next(clinics.Count);
+                var addressIndex = Random.Next(clinics.Count);
                 doctorClinics.Add(new DoctorClinic { Clinic = clinics[addressIndex] });
                 clinics.RemoveAt(addressIndex);
             }

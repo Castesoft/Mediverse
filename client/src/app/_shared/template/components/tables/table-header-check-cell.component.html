@@ -5,7 +5,6 @@
     [(ngModel)]="selected"
     (ngModelChange)="selected.set($event)"
     [disabled]="mode() !== 'view'"
-    [name]="dictionary().singular"
     [id]="cuid() + 'tableCheckHeader'"
   >
 </div>

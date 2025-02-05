@@ -32,6 +32,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<PrescriptionItem> PrescriptionItems { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderHistory> OrderHistories { get; set; }
     public DbSet<UserPaymentMethod> UserPaymentMethods { get; set; }
     public DbSet<UserTaxRegime> UserTaxRegimes { get; set; }
     public DbSet<UserMedicalLicense> UserMedicalLicenses { get; set; }
@@ -87,6 +88,9 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<MedicalRecordFamilyMemberRelativeType> MedicalRecordFamilyMemberRelativeTypes { get; set; }
     public DbSet<DeliveryStatus> DeliveryStatuses { get; set; }
     public DbSet<OrderStatus> OrderStatuses { get; set; }
+    public DbSet<Warehouse> Warehouses { get; set; }
+    public DbSet<WarehouseProduct> WarehouseProducts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

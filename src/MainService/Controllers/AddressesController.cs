@@ -3,6 +3,7 @@ using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
+using MainService.Models.Entities.Aggregate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +34,7 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service) : B
         return data;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<AddressDto?>> GetByIdAsync([FromRoute]int id)
     {
         var item = await uow.AddressRepository.GetDtoByIdAsync(id);
@@ -42,9 +43,17 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service) : B
 
         return item;
     }
+    
+    [HttpGet("options")]
+    public async Task<ActionResult<List<OptionDto>>> GetOptionsAsync([FromQuery] AddressParams param)
+    {
+        var data = await uow.AddressRepository.GetOptionsAsync(param);
+        
+        return data;
+    }
 
     // [Authorize(Policy = "RequireAdminRole")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
         var item = await uow.AddressRepository.GetByIdAsNoTrackingAsync(id);

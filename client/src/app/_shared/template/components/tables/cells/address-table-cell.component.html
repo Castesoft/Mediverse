@@ -1,0 +1,49 @@
+<div class="d-flex flex-column justify-content-center">
+  @if (address() && address()!.street) {
+    <div class="d-flex flex-row align-items-center gap-2">
+      <i class="ki-duotone ki-map-marker fs-4 text-primary"></i>
+      <div class="text-gray-800 fs-6">
+        <span>{{ address()!.street }}</span>
+        @if (address() && address()!.exteriorNumber) {
+          <span> {{ address()!.exteriorNumber }}</span>
+        }
+        @if (address() && address()!.interiorNumber) {
+          <span> / {{ address()!.interiorNumber }}</span>
+        }
+        @if (address() && address()!.neighborhood) {
+          <span>, {{ address()!.neighborhood }}</span>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="text-muted fs-6">No address provided</div>
+  }
+
+  @if (address() && (address()!.city || address()!.state || address()!.zipcode || address()!.country)) {
+    <div class="d-flex flex-row align-items-center gap-2">
+      <i class="ki-duotone ki-location-pin fs-5 text-secondary"></i>
+      <div class="text-gray-600 fs-7">
+        @if (address() && address()!.city) {
+          <span>{{ address()!.city }}</span>
+        }
+        @if (address() && address()!.state) {
+          <span>, {{ address()!.state }}</span>
+        }
+        @if (address() && address()!.zipcode) {
+          <span>, {{ address()!.zipcode }}</span>
+        }
+        @if (address() && address()!.country) {
+          <span>, {{ address()!.country }}</span>
+        }
+      </div>
+    </div>
+  }
+
+  @if (!compact()) {
+    @if (address() && address()!.address) {
+      <div class="mt-1 text-muted fs-8">
+        {{ address() ? address()!.address : '' }}
+      </div>
+    }
+  }
+</div>

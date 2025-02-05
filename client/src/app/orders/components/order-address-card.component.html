@@ -1,0 +1,54 @@
+<div class="card h-100">
+  <div class="card-header border-bottom-0 pb-0">
+    <div class="card-title d-flex justify-content-between align-items-center">
+      <h2 class="fw-bold mb-0 fs-4 text-gray-800">
+        {{ title() }}
+        @if (address()?.isMain) {
+          <span class="badge bg-primary ms-2">Principal</span>
+        }
+      </h2>
+
+      @if (address()) {
+        <button
+          class="btn btn-sm btn-light-primary"
+          (click)="openInMaps()"
+        >
+          <i class="ki-outline ki-map fs-4 me-2"></i>
+          Ver en mapa
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="card-body pt-0">
+    @if (address()) {
+      <div class="d-flex flex-column gap-2">
+        <div class="d-flex align-items-center text-gray-600">
+          <i class="ki-outline ki-location fs-4 text-muted me-2"></i>
+          <div class="d-flex flex-column">
+            <span class="fw-semibold fs-5 mb-1">{{ formattedStreetLine() }}</span>
+
+            @for (line of formattedLocationLines(); track $index) {
+              <span class="text-muted fs-6">{{ line }}</span>
+            }
+
+            @if (address()!.photoUrl) {
+              <div class="mt-2">
+                <img [src]="address()!.photoUrl"
+                     alt="Address photo"
+                     class="img-thumbnail rounded"
+                     style="max-width: 200px;">
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="d-flex align-items-center justify-content-center py-5 h-100">
+        <div class="text-center">
+          <div class="text-muted fw-semibold fs-6">No hay dirección registrada</div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

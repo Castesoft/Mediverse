@@ -61,6 +61,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICodeService, CodeService>();
         services.AddScoped<IPhoneService, PhoneService>();
         services.AddScoped<IEventsService, EventsService>();
+        services.AddScoped<IWarehousesService, WarehousesService>();
         services.AddSingleton(Log.Logger);
 
         services.AddCors(opt =>

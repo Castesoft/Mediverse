@@ -13,7 +13,7 @@ import { SelectOption } from "src/app/_models/base/selectOption";
     <span
       [class.badge-lg]="size() === 'lg'"
       [class.badge-sm]="size() === 'sm'"
-      class="badge badge-{{ statusClass }}"
+      class="badge badge-light-{{ statusClass }}"
     >
       {{ parsedStatus }}
     </span>`,

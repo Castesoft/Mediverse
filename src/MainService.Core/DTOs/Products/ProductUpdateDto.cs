@@ -11,6 +11,10 @@ namespace MainService.Core.DTOs.Products
         public string? Unit { get; set; }
         public double? Dosage { get; set; }
         public string? Manufacturer { get; set; }
+        public string? SKU { get; set; }
+        public string? Barcode { get; set; }
+        public string? Category { get; set; }
+        public decimal? CostPrice { get; set; }
         public int MainImageIndex { get; set; }
         public int? Quantity { get; set; }
         public bool? IsInternal { get; set; }

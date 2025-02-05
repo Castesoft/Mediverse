@@ -1,19 +1,18 @@
 using MainService.Core.DTOs.Orders;
 using MainService.Core.Extensions;
+using MainService.Core.Helpers;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace MainService.Controllers;
 
-public class OrdersController(
-    IUnitOfWork uow
-// ,IMapper mapper, 
-// UserManager<AppUser> userManager
-) : BaseApiController
+public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : BaseApiController
 {
     private const string Subject = "orden";
     private const string SubjectArticle = "La";
@@ -32,7 +31,7 @@ public class OrdersController(
         return pagedList;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderDto?>> GetByIdAsync([FromRoute] int id)
     {
         var order = await uow.OrderRepository.GetDtoByIdAsync(id);
@@ -43,62 +42,68 @@ public class OrdersController(
     }
 
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<OrderDto?>> UpdateAsync([FromRoute] int id, [FromBody] OrderUpdateDto request)
+    [Authorize]
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<OrderDto>> UpdateAsync([FromRoute] int id, [FromBody] OrderUpdateDto request)
     {
-        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{SubjectArticle} {Subject} no existe");
-
-        if (request.DeliveryStatus == null) return BadRequest("El estado de entrega es requerido");
-        if (!request.DeliveryStatus.Id.HasValue) return BadRequest("El estado de entrega es requerido");
-        if (request.Status == null) return BadRequest("El estado es requerido");
-        if (!request.Status.Id.HasValue) return BadRequest("El estado es requerido");
-
-        Order? order = await uow.OrderRepository.GetByIdAsync(id);
+        var userId = User.GetUserId();
+        if (userId == 0) return Unauthorized();
+        
+        try
+        {
+            var result = await ordersService.UpdateAsync(request, id, userId);
+            return Ok(result);
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error al actualizar {SubjectArticle} {Subject} con ID {Id}", SubjectArticle, Subject, id);
+            return StatusCode(500, ex.Message);
+        }
+    }
+    
+    [HttpGet("{id:int}/history")]
+    public async Task<ActionResult<List<OrderHistoryDto>>?> GetHistoryAsync([FromRoute] int id)
+    {
+        var order = await uow.OrderRepository.GetByIdAsync(id);
 
         if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
 
-        if (!await uow.DeliveryStatusRepository.ExistsByIdAsync(request.DeliveryStatus.Id.Value))
-            return NotFound("Estado de entrega no existe");
-        if (!await uow.OrderStatusRepository.ExistsByIdAsync(request.Status.Id.Value))
-            return NotFound("Estado de orden no existe");
+        var history = await uow.OrderRepository.GetHistoryByIdAsync(id);
 
-        order.OrderDeliveryStatus = new(request.DeliveryStatus.Id.Value);
-        order.OrderOrderStatus = new(request.Status.Id.Value);
-
-        if (uow.HasChanges())
-        {
-            if (!await uow.Complete())
-                return BadRequest($"Error al actualizar {SubjectArticle} {Subject} con ID {id}.");
-        }
-
-        return await uow.OrderRepository.GetDtoByIdAsync(id);
+        return history;
     }
 
-    [HttpPut("{id}/approve")]
+    [HttpPut("{id:int}/approve")]
     public async Task<ActionResult<OrderDto?>> ApproveAsync([FromRoute] int id)
     {
         if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{SubjectArticle} {Subject} no existe");
 
-        OrderStatus? orderStatus = await uow.OrderStatusRepository.GetByNameAsync("Completado");
-        DeliveryStatus? deliveryStatus = await uow.DeliveryStatusRepository.GetByNameAsync("Procesando");
+        var orderStatus = await uow.OrderStatusRepository.GetByNameAsync("Completado");
+        var deliveryStatus = await uow.DeliveryStatusRepository.GetByNameAsync("Procesando");
 
         if (orderStatus == null) return NotFound("Estado de orden no existe");
         if (deliveryStatus == null) return NotFound("Estado de entrega no existe");
 
-        Order? order = await uow.OrderRepository.GetByIdAsync(id);
+        var order = await uow.OrderRepository.GetByIdAsync(id);
 
         if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
 
         // order.Status = OrderStatus.Completed;
         // order.DeliveryStatus = OrderDeliveryStatus.Processing;
 
-        order.OrderOrderStatus = new(orderStatus.Id);
-        order.OrderDeliveryStatus = new(deliveryStatus.Id);
+        order.OrderOrderStatus = new OrderOrderStatus(orderStatus.Id);
+        order.OrderDeliveryStatus = new OrderDeliveryStatus(deliveryStatus.Id);
 
-        if (uow.HasChanges())
-        {
-            if (!await uow.Complete()) return BadRequest($"Error al aprobar {SubjectArticle} {Subject} con ID {id}.");
-        }
+        if (!uow.HasChanges()) return await uow.OrderRepository.GetDtoByIdAsync(id);
+        if (!await uow.Complete()) return BadRequest($"Error al aprobar {SubjectArticle} {Subject} con ID {id}.");
 
         return await uow.OrderRepository.GetDtoByIdAsync(id);
     }

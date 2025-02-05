@@ -3,11 +3,11 @@ import { SelectOption } from "src/app/_models/base/selectOption";
 
 export const orderStatuses: SelectOption[] = [
   new SelectOption({ id: 1, code: 'pending', name: 'Pendiente' }),
-  new SelectOption({ id: 2, code: 'completed', name: 'Procesando' }),
+  new SelectOption({ id: 2, code: 'completed', name: 'Completado' }),
   new SelectOption({ id: 3, code: 'cancelled', name: 'Cancelado' })
 ];
 
-export const deliveryOrderStatuses: SelectOption[] = [
+export const orderDeliveryStatuses: SelectOption[] = [
   new SelectOption({ id: 1, code: 'pending', name: 'Pendiente' }),
   new SelectOption({ id: 2, code: 'processing', name: 'Procesando' }),
   new SelectOption({ id: 3, code: 'inprogress', name: 'En progreso' }),
@@ -42,6 +42,58 @@ export function getOrderStatusBadgeColor(status: OrderStatus): string {
   }
 }
 
+export function parseOrderHistoryChangeType(value: string | null) {
+  if (!value) return null;
+
+  switch (value.toLowerCase()) {
+    case 'created':
+      return 'Creado';
+    case 'updated':
+      return 'Actualizado';
+    case 'statuschanged':
+      return 'Estado Cambiado';
+    case 'deliverystatuschanged':
+      return 'Estado de Entrega Cambiado';
+    case 'paymentprocessed':
+      return 'Pago Procesado';
+    case 'itemsmodified':
+      return 'Productos Modificados';
+    case 'addressupdated':
+      return 'Dirección Actualizada';
+    case 'cancelled':
+      return 'Cancelado';
+    case 'noteadded':
+      return 'Nota Agregada';
+    case 'prescriptionlinked':
+      return 'Receta Vinculada';
+    default:
+      return null;
+  }
+}
+
+export function parseOrderHistoryProperty(value: string | null) {
+  if (!value) return null;
+
+  switch (value.toLowerCase()) {
+    case 'orderstatus':
+      return 'Estado de Orden';
+    case 'deliverystatus':
+      return 'Estado de Entrega';
+    case 'paymentstatus':
+      return 'Estado de Pago';
+    case 'items':
+      return 'Productos';
+    case 'address':
+      return 'Dirección';
+    case 'note':
+      return 'Nota';
+    case 'prescription':
+      return 'Receta';
+    default:
+      return null;
+  }
+}
+
 export function parseOrderStatusFromSelectOption(statusOption: SelectOption | null): OrderStatus | null {
   const code: string | undefined = statusOption?.code;
 
@@ -72,6 +124,24 @@ export function getOrderDeliveryStatus(status: OrderDeliveryStatus): string {
       return 'Cancelado';
     default:
       return '';
+  }
+}
+
+export function parseOrderDeliveryStatusIndex(status: SelectOption): number {
+  const parsedStatus: OrderDeliveryStatus | null = parseOrderDeliveryStatusFromSelectOption(status);
+  switch (parsedStatus) {
+    case OrderDeliveryStatus.Pending:
+      return 0;
+    case OrderDeliveryStatus.Processing:
+      return 1;
+    case OrderDeliveryStatus.InProgress:
+      return 2;
+    case OrderDeliveryStatus.Delivered:
+      return 3;
+    case OrderDeliveryStatus.Cancelled:
+      return 4;
+    default:
+      return 0;
   }
 }
 

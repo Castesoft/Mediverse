@@ -2,21 +2,21 @@ import { Component, input, InputSignal } from "@angular/core";
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
-  host: { class: 'align-middle flex-column-fluid border-none' },
+  host: { class: 'align-middle border-none' },
   selector: "td[symbolCell], div[symbolCell]",
   templateUrl: "./symbol-cell.component.html",
   standalone: true,
 })
 export class SymbolCellComponent {
-  photoUrl: InputSignal<string | null> = input.required<string | null>();
+  photoUrl: InputSignal<string | null> = input.required();
 
-  shape: InputSignal<PhotoShape> = input<PhotoShape>(PhotoShape.CIRCLE);
-  size: InputSignal<PhotoSize> = input<PhotoSize>(PhotoSize.SMALL);
-  showOnline: InputSignal<boolean> = input<boolean>(false);
+  shape: InputSignal<PhotoShape> = input(PhotoShape.CIRCLE as PhotoShape);
+  size: InputSignal<PhotoSize> = input(PhotoSize.SMALL as PhotoSize);
+  showOnline: InputSignal<boolean> = input(false);
 
   onImageError(event: Event) {
     const imgElement = event.target as HTMLImageElement;
-    const originalSrc = imgElement.src;
+    const originalSrc: string = imgElement.src;
 
     if (originalSrc !== 'media/misc/not-found.png') {
       imgElement.src = 'media/misc/not-found.png';

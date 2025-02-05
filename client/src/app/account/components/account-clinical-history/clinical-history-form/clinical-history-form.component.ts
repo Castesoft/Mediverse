@@ -27,7 +27,6 @@ import {
   imports: [
     CommonModule,
     Forms2Module,
-    NavMenuComponent,
     ClinicalHistoryNavMenuComponent
   ],
   templateUrl: './clinical-history-form.component.html'

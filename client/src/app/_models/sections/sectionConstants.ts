@@ -97,6 +97,10 @@ export const sectionDictionary: SectionDictionary = {
     label: 'Utilidades',
     route: '/home/utils',
   },
+  warehouses: {
+    label: 'Almacenes',
+    route: '/admin/warehouses',
+  }
 };
 
 

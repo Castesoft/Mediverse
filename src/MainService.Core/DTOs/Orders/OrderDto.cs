@@ -17,8 +17,8 @@ public class OrderDto : BaseEntity
 
     public UserDto? Patient { get; set; }
     public UserDto? Doctor { get; set; }
-    public OptionDto? PickupAddress { get; set; }
-    public OptionDto? DeliveryAddress { get; set; }
+    public AddressDto? PickupAddress { get; set; }
+    public AddressDto? DeliveryAddress { get; set; }
     public List<OrderItemDto> Items { get; set; } = [];
     public OptionDto? Status { get; set; }
     public OptionDto? DeliveryStatus { get; set; }

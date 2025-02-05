@@ -1,0 +1,118 @@
+<thead
+  tableHeader
+  [columns]="columns"
+  [isCompact]="true"
+></thead>
+<tbody templateTableBody>
+  @for (item of warehouseProducts(); track item; let i = $index) {
+    <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+      <td
+        tableCheckCell
+        [isCompact]="true"
+        [isChecked]="item.isSelected"
+        (checkboxChange)="warehouseProductsService.setSelected$(key || '', item)"
+      ></td>
+
+      <td class="name align-middle white-space-nowrap px-0 py-0">
+        <div class="d-flex align-items-center justify-content-start px-0">
+          <a class="fw-semibold text-primary">
+            # {{ item.productId | number }}
+          </a>
+        </div>
+      </td>
+
+      <!-- Quantity / Stock -->
+      <td>
+        @if (editable()) {
+          <input type="number" class="form-control" [(ngModel)]="item.quantity">
+        } @else {
+          {{ item.quantity }}
+        }
+      </td>
+
+      <!-- Reserved Quantity -->
+      <td>
+        @if (editable()) {
+          <input type="number" class="form-control" [(ngModel)]="item.reservedQuantity">
+        } @else {
+          {{ item.reservedQuantity }}
+        }
+      </td>
+
+      <!-- Damaged Quantity -->
+      <td>
+        @if (editable()) {
+          <input type="number" class="form-control" [(ngModel)]="item.damagedQuantity">
+        } @else {
+          {{ item.damagedQuantity }}
+        }
+      </td>
+
+      <!-- On Hold Quantity -->
+      <td>
+        @if (editable()) {
+          <input type="number" class="form-control" [(ngModel)]="item.onHoldQuantity">
+        } @else {
+          {{ item.onHoldQuantity }}
+        }
+      </td>
+
+      <!-- Reorder Level -->
+      <td>
+        @if (editable()) {
+          <input type="number" class="form-control" [(ngModel)]="item.reorderLevel">
+        } @else {
+          {{ item.reorderLevel }}
+        }
+      </td>
+
+      <!-- Safety Stock -->
+      <td>
+        @if (editable()) {
+          <input type="number" class="form-control" [(ngModel)]="item.safetyStock">
+        } @else {
+          {{ item.safetyStock }}
+        }
+      </td>
+
+      <!-- Lot Number -->
+      <td>
+        @if (editable()) {
+          <input type="text" class="form-control" [(ngModel)]="item.lotNumber">
+        } @else {
+          {{ item.lotNumber || '-' }}
+        }
+      </td>
+
+      <!-- Expiration Date -->
+      <td>
+        @if (editable()) {
+          <input type="date" class="form-control" [(ngModel)]="item.expirationDate">
+        } @else {
+          {{ item.expirationDate | date:'shortDate' }}
+        }
+      </td>
+
+      <!-- Last Updated (display only) -->
+      <td>
+        {{ item.lastUpdated | date:'short' }}
+      </td>
+
+      <td
+        tableMenuCell
+        [item]="item"
+        [contextMenu]="context_menu"
+        [isCompact]="true"
+      ></td>
+      <ng-template #context_menu>
+        @defer {
+          <div tableMenu
+               [siteSection]="undefined"
+               [item]="item"
+               [key]="key"
+               [service]="warehouseProductsService"></div>
+        }
+      </ng-template>
+    </tr>
+  }
+</tbody>

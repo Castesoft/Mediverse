@@ -29,6 +29,17 @@ export class Address extends Entity {
   }
 
   get address(): string {
-    return `${this.street} ${this.exteriorNumber} ${this.interiorNumber}, ${this.neighborhood}, ${this.city}, ${this.state}, ${this.country}, ${this.zipcode}`;
+    return [
+      this.street,
+      this.exteriorNumber,
+      this.interiorNumber,
+      this.neighborhood,
+      this.city,
+      this.state,
+      this.country,
+    ]
+      .filter(part => part)
+      .join(', ')
+      .trim();
   }
 }

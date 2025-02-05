@@ -36,6 +36,7 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public IOrderRepository OrderRepository => new OrderRepository(context, mapper);
     public ISearchRepository SearchRepository => new SearchRepository(context, mapper, googleService);
     public IRoleRepository RoleRepository => new RoleRepository(context, mapper);
+    public IWarehouseRepository WarehouseRepository => new WarehouseRepository(context, mapper);
 
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;
     public void DetachEntity<T>(T entity) where T : class => context.Entry(entity).State = EntityState.Detached;

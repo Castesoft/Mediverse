@@ -10,7 +10,7 @@ import { ValidationService } from "src/app/_services/validation.service";
   host: { class: "" },
   templateUrl: './control-label-3.component.html',
   standalone: true,
-  imports: [OptionalSpan3Component, ]
+  imports: [ OptionalSpan3Component, ]
 })
 export class ControlLabel3Component {
   validation = inject(ValidationService);
@@ -18,7 +18,7 @@ export class ControlLabel3Component {
   control = model.required<FormControl2<string | number | boolean | Date | DateRange | SelectOption | SelectOption[] | File | File[] | null>>();
 
   @HostBinding("class") get class() {
-    return this.control().orientation === "inline" ? "col-form-label fw-semibold fs-8 text-nowrap d-flex" : "form-label fw-semibold fs-8 text-nowrap";
+    return this.control().orientation === "inline" ? "col-form-label fw-semibold text-nowrap d-flex" : "form-label fw-semibold text-nowrap";
   }
 
   @HostBinding("for") get for() {

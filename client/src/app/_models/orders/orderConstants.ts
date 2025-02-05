@@ -8,7 +8,7 @@ import { ColumnOptions } from 'src/app/_models/forms/options/columnOptions';
 import { Order } from "src/app/_models/orders/order";
 import { OrderParams } from "src/app/_models/orders/orderParams";
 import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/tables/tableCellItem";
-import { deliveryOrderStatuses, orderStatuses } from "src/app/orders/orders-util";
+import { orderDeliveryStatuses, orderStatuses } from "src/app/orders/orders-util";
 
 export const orderDictionary: NamingSubject = new NamingSubject(
   'masculine',
@@ -23,7 +23,7 @@ export const orderColumns: Column[] = [
   new Column('patient', 'Paciente'),
   new Column('status', 'Estado'),
   new Column('deliveryStatus', 'Entrega'),
-  new Column('address', 'Dirección'),
+  new Column('deliveryAddress', 'Dirección'),
   new Column('subtotal', 'Subtotal', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('discount', 'Descuento', { options: new ColumnOptions({ justify: 'end', }) }),
   new Column('tax', 'Impuesto', { options: new ColumnOptions({ justify: 'end', }) }),
@@ -34,16 +34,16 @@ export const orderColumns: Column[] = [
 export const orderFormInfo: FormInfo<Order> = {
   ...baseInfo,
   status: { label: 'Estatus', type: 'select', showCodeSpan: false, selectOptions: orderStatuses },
-  deliveryStatus: { label: 'Entrega', type: 'select', showCodeSpan: false, selectOptions: deliveryOrderStatuses },
+  deliveryStatus: { label: 'Entrega', type: 'select', showCodeSpan: false, selectOptions: orderDeliveryStatuses },
   total: { label: 'Total', type: 'number', },
   subtotal: { label: 'Subtotal', type: 'number', },
   discount: { label: 'Descuento', type: 'number', },
   tax: { label: 'Impuesto', type: 'number', },
   amountPaid: { label: 'Pagado', type: 'number', },
   amountDue: { label: 'Deuda', type: 'number', },
-  address: { label: 'Dirección', type: 'select' },
+  deliveryAddress: { label: 'Dirección', type: 'select' },
 
-} as FormInfo<Order>;
+} as unknown as FormInfo<Order>;
 
 export const orderFiltersFormInfo: FormInfo<OrderParams> = {
   ...baseFilterFormInfo,
@@ -63,5 +63,5 @@ export const orderCells: PartialCellsOf<Order> = {
     showCodeSpan: false,
   }),
   status: new TableCellItem<SelectOption, 'status'>('status', 'code', { isLink: false, showCodeSpan: false, }),
-  address: new TableCellItem<SelectOption, 'address'>('address', 'code', { isLink: false, showCodeSpan: false, }),
+  deliveryAddress: new TableCellItem<SelectOption, 'deliveryAddress'>('deliveryAddress', 'code', { isLink: false, showCodeSpan: false, }),
 } as PartialCellsOf<Order>;

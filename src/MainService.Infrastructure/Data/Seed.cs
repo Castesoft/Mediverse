@@ -482,9 +482,63 @@ public static class Seed
 
     private static async Task SeedProductsAsync(DataContext context)
     {
-        if (await context.Products.AnyAsync()) return;
-        await context.Products.AddRangeAsync(SeedData.products.ToArray());
+        if (!await context.Products.AnyAsync())
+        {
+            await context.Products.AddRangeAsync(SeedData.products.ToArray());
+            await context.SaveChangesAsync();
+            Log.Information("Seeding products.");
+        }
+
+        if (!await context.WarehouseProducts.AnyAsync())
+        {
+            await SeedWarehouseProductsAsync(context);
+        }
+    }
+
+    /// <summary>
+    /// Seeds the warehouses (if needed) and creates dummy relationships between warehouses and products.
+    /// </summary>
+    private static async Task SeedWarehouseProductsAsync(DataContext context)
+    {
+        if (!await context.Warehouses.AnyAsync())
+        {
+            await context.Warehouses.AddRangeAsync(SeedData.warehouses.ToArray());
+            await context.SaveChangesAsync();
+            Log.Information("Seeding warehouses.");
+        }
+
+        var warehouses = await context.Warehouses.ToListAsync();
+        var products = await context.Products.ToListAsync();
+
+        foreach (var product in products)
+        {
+            var numberOfWarehouses = Random.Next(1, Math.Min(3, warehouses.Count) + 1);
+            // Randomly shuffle and pick the warehouses.
+            var selectedWarehouses = warehouses.OrderBy(_ => Random.Next()).Take(numberOfWarehouses).ToList();
+
+            foreach (var warehouse in selectedWarehouses)
+            {
+                var warehouseProduct = new WarehouseProduct
+                {
+                    WarehouseId = warehouse.Id,
+                    ProductId = product.Id,
+                    Quantity = Random.Next(50, 201),
+                    ReservedQuantity = Random.Next(0, 20),
+                    DamagedQuantity = Random.Next(0, 5),
+                    OnHoldQuantity = Random.Next(0, 3),
+                    ReorderLevel = 10,
+                    SafetyStock = 5,
+                    LastUpdated = DateTime.UtcNow,
+                    LotNumber = product.LotNumber,
+                    ExpirationDate = DateTime.UtcNow.AddMonths(Random.Next(6, 25))
+                };
+
+                context.WarehouseProducts.Add(warehouseProduct);
+            }
+        }
+
         await context.SaveChangesAsync();
+        Log.Information("Seeding warehouse-product relations.");
     }
 
     private static async Task SeedServicesAsync(DataContext context)
@@ -986,6 +1040,28 @@ public static class Seed
                 PrescriptionItems = newPrescriptionItems,
                 PrescriptionOrder = new PrescriptionOrder(order)
             };
+
+            order.OrderHistories.Add(new OrderHistory
+            {
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                User = doctor,
+                ChangeType = OrderChangeType.Created,
+                Property = OrderProperty.OrderStatus,
+                OldValue = null,
+                NewValue = null
+            });
+
+            order.OrderHistories.Add(new OrderHistory
+            {
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                User = doctor,
+                ChangeType = OrderChangeType.PrescriptionLinked,
+                Property = OrderProperty.Items,
+                OldValue = null,
+                NewValue = null
+            });
 
             patientEvent.Event.EventPrescriptions.Add(new EventPrescription(prescription));
         }

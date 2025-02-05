@@ -87,6 +87,10 @@ public class ProductsController(
         if (request.Manufacturer != null) item.Manufacturer = request.Manufacturer;
         if (request.IsEnabled.HasValue) item.IsEnabled = request.IsEnabled.Value;
         if (request.IsVisible.HasValue) item.IsVisible = request.IsVisible.Value;
+        if (request.SKU != null) item.SKU = request.SKU;
+        if (request.Barcode != null) item.Barcode = request.Barcode;
+        if (request.Category != null) item.Category = request.Category;
+        if (request.CostPrice.HasValue) item.CostPrice = request.CostPrice.Value;
 
         if (request.RemovedImageIds != null && request.RemovedImageIds.Any())
         {
@@ -204,7 +208,7 @@ public class ProductsController(
             .ThenInclude(x => x.Product)
             .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
 
-        if (doctor == null) return BadRequest($"Error al crear el producto.");
+        if (doctor == null) return BadRequest("Error al crear el producto.");
 
         var item = new Product
         {
@@ -216,11 +220,16 @@ public class ProductsController(
             Unit = request.Unit,
             Dosage = request.Dosage,
             Manufacturer = request.Manufacturer,
+            SKU = request.SKU,
+            Barcode = request.Barcode,
+            Category = request.Category,
+            CostPrice = request.CostPrice
         };
 
         if (request.IsEnabled.HasValue) item.IsEnabled = request.IsEnabled.Value;
         if (request.IsVisible.HasValue) item.IsVisible = request.IsVisible.Value;
 
+        // Existing image upload logic.
         if (request.Files != null && request.Files.Count > 0)
         {
             foreach (var file in request.Files)

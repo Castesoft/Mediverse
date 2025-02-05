@@ -3,6 +3,7 @@ import { Product } from "src/app/_models/products/product";
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { Doctor } from "src/app/_models/doctors/doctor";
 import { Patient } from "src/app/_models/patients/patient";
+import { Address } from "src/app/_models/addresses/address";
 
 
 export class Order extends Entity {
@@ -14,7 +15,8 @@ export class Order extends Entity {
   amountDue: number | null = null;
   patient: Patient = new Patient();
   doctor: Doctor = new Doctor();
-  address: SelectOption | null = null;
+  deliveryAddress: Address | null = null;
+  pickupAddress: Address | null = null;
   items: Product[] = [];
   status: SelectOption | null = null;
   deliveryStatus: SelectOption | null = null;

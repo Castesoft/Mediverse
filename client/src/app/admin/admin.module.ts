@@ -25,6 +25,19 @@ import { AdminUsersCatalogRouteComponent } from "src/app/admin/routes/users/admi
 import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
 import { AdminDoctorsCatalogRouteComponent } from "src/app/admin/routes/doctors/admin-doctors-catalog-route.component";
 import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/admin-product-detail-route.component";
+import { AdminOrderDetailRouteComponent } from "src/app/admin/routes/orders/admin-order-detail-route.component";
+import {
+  AdminWarehousesCatalogRouteComponent
+} from "src/app/admin/routes/warehouses/admin-warehouses-catalog-route.component";
+import { WarehousesCatalogComponent } from "src/app/warehouses/warehouses-catalog.component";
+import {
+  AdminWarehouseCreateRouteComponent
+} from "src/app/admin/routes/warehouses/admin-warehouse-create-route.component";
+import {
+  AdminWarehouseDetailRouteComponent
+} from "src/app/admin/routes/warehouses/admin-warehouse-detail-route.component";
+import { AdminWarehouseEditRouteComponent } from "src/app/admin/routes/warehouses/admin-warehouse-edit-route.component";
+import { WarehouseFormComponent } from "src/app/warehouses/warehouse-form.component";
 
 @NgModule({
   declarations: [
@@ -32,12 +45,17 @@ import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/
     AdminOrdersCatalogRouteComponent,
     AdminOrderEditRouteComponent,
     AdminOrderCreateRouteComponent,
+    AdminOrderDetailRouteComponent,
     AdminProductsCatalogRouteComponent,
     AdminProductEditRouteComponent,
     AdminProductCreateRouteComponent,
+    AdminProductDetailRouteComponent,
     AdminUsersCatalogRouteComponent,
     AdminDoctorsCatalogRouteComponent,
-    AdminProductDetailRouteComponent
+    AdminWarehousesCatalogRouteComponent,
+    AdminWarehouseCreateRouteComponent,
+    AdminWarehouseDetailRouteComponent,
+    AdminWarehouseEditRouteComponent
   ],
   imports: [
     CommonModule,
@@ -54,6 +72,8 @@ import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/
     ProductsCatalogComponent,
     ProductFormComponent,
     UsersCatalogComponent,
+    WarehousesCatalogComponent,
+    WarehouseFormComponent,
   ],
 })
 export class AdminModule {}

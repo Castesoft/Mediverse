@@ -3,6 +3,7 @@ using MainService.Core.Interfaces.Services;
 using MainService.Models.Entities;
 
 namespace MainService.Infrastructure.Services;
+
 public class AddressesService(IUnitOfWork uow) : IAddressesService
 {
     public async Task<bool> DeleteAsync(Address item)
@@ -10,7 +11,7 @@ public class AddressesService(IUnitOfWork uow) : IAddressesService
         // Elimina todas las entidades relacionadas
         // if (!await DeletePhotosAsync(advice)) return false;
         // if (!await DeleteInformationAsync(advice)) return false;
-        
+
         Address? itemToDelete = await uow.AddressRepository.GetByIdAsync(item.Id);
 
         if (itemToDelete == null) return false;
@@ -18,7 +19,7 @@ public class AddressesService(IUnitOfWork uow) : IAddressesService
         uow.AddressRepository.Delete(itemToDelete);
 
         if (!await uow.Complete()) return false;
-        
+
         return true;
     }
 
@@ -26,4 +27,4 @@ public class AddressesService(IUnitOfWork uow) : IAddressesService
     {
         return await uow.AddressRepository.GetZipcodeAddressOptionsAsync(zipcode);
     }
-} 
+}

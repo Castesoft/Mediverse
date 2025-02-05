@@ -12,6 +12,7 @@ public interface IOrderRepository
     Task<bool> ExistsByIdAsync(int id);
     Task<OrderDto?> GetDtoByIdAsync(int id);
     Task<Order?> GetByIdAsNoTrackingAsync(int id);
+    Task<List<OrderHistoryDto>> GetHistoryByIdAsync(int orderId);
     Task<List<Order>> GetAllAsync();
     Task<List<OrderDto>> GetAllDtoAsync(OrderParams param);
     Task<PagedList<OrderDto>> GetPagedListAsync(OrderParams param);

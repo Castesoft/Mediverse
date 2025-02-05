@@ -12,6 +12,11 @@ public class ProductDto
     public string? Manufacturer { get; set; }
     public string? LotNumber { get; set; }
     public string? Unit { get; set; }
+    public string? SKU { get; set; }
+    public string? Barcode { get; set; }
+    public string? Category { get; set; }
+    public List<string>? Tags { get; set; }
+    public decimal? CostPrice { get; set; }
     public double? Dosage { get; set; }
     public int? Quantity { get; set; }
     public bool IsEnabled { get; set; }

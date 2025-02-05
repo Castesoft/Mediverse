@@ -1,0 +1,48 @@
+@if (form.error !== null) {
+  <div errorsAlert3 [(error)]="form.error"></div>
+}
+
+@if (useCard()) {
+  <div class="card">
+    <div class="card-body">
+      <form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
+        <div class="row">
+          <div class="col-6" controlsWrapper3 [control]="form.controls.name"></div>
+          <div class="col-6" controlsWrapper3 [control]="form.controls.description"></div>
+        </div>
+        <div controlTypeahead3 [(control)]="form.controls.address.controls.select" [fromWrapper]="false"></div>
+      </form>
+    </div>
+    <div class="card-footer border-0 pt-0 text-end">
+      <button type="submit" [attr.form]="form.id" class="btn btn-primary">Enviar</button>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="card card-flush">
+      <div class="card-header align-items-center py-5 gap-2 gap-md-5 pb-0">
+        <div class="card-title">
+          <h2>Productos del Almacén</h2>
+        </div>
+      </div>
+      <div class="card-body pt-0">
+        <div tableWrapper>
+          <table warehouseProductsTable
+                 [warehouseProducts]="item()?.warehouseProducts || []"
+                 [editable]="use() === FormUse.EDIT">
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div>
+    <form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true)">
+      <div controlsWrapper3 [control]="form.controls.name"></div>
+      <div controlsWrapper3 [control]="form.controls.description"></div>
+      <div controlTypeahead3 [(control)]="form.controls.address.controls.select" [fromWrapper]="false"></div>
+    </form>
+    <button type="submit" [attr.form]="form.id" class="btn btn-primary">Enviar</button>
+  </div>
+}
+

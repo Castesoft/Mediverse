@@ -1,7 +1,7 @@
 @if (show()) {
   <tr [class]="trClass" role="row">
     @if (mode() !== 'readonly') {
-      <th tableHeaderCheckCell [(isCompact)]="isCompact" [(dictionary)]="dictionary" [(mode)]="mode"
+      <th tableHeaderCheckCell [(isCompact)]="isCompact" [(mode)]="mode"
           [(selected)]="selected"></th>
 
     }
@@ -9,12 +9,12 @@
       @if (!column.devModeOnly || (column.devModeOnly && isDev)) {
         <th (click)="onClick(column.name)" class="dt-orderable-asc dt-orderable-desc"
             [tabIndex]="mode() === 'readonly' ? -1 : 0" rowspan="1" colspan="1"
-            [attr.aria-label]="(column.label + ': ' + (column.name === params()?.sort ?
+            [attr.aria-label]="(column.label + ': ' + (column.name === params()?.sort?.name ?
               (params()?.isSortAscending ? 'Activate to invert sorting' : 'Activate to remove sorting') : 'Activate to sort'))"
             [ngClass]="{
               'text-end pe-2': column.options?.justify === 'end',
-              'dt-ordering-asc': params()?.isSortAscending && column.name === params()?.sort,
-              'dt-ordering-desc': !params()?.isSortAscending && column.name === params()?.sort,
+              'dt-ordering-asc': params()?.isSortAscending && column.name === params()?.sort?.name,
+              'dt-ordering-desc': !params()?.isSortAscending && column.name === params()?.sort?.name,
             }">
 
           <span class="dt-column-title text-gray-500" role="button">{{ column.label }}</span>

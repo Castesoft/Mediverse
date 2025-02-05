@@ -19,9 +19,8 @@ import { SiteSection } from "src/app/_models/sections/sectionTypes";
   standalone: false,
 })
 export class AdminOrderEditRouteComponent extends BaseRouteDetail<Order> implements OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
-
   protected readonly SiteSection: typeof SiteSection = SiteSection;
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor() {
     super('orders', FormUse.EDIT);

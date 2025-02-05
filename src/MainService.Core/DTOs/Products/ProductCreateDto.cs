@@ -40,4 +40,8 @@ public class ProductCreateDto
     public double? Discount { get; set; }
     public int MainImageIndex { get; set; }
     public ICollection<IFormFile>? Files { get; set; }
+    public string? SKU { get; set; }
+    public string? Barcode { get; set; }
+    public string? Category { get; set; }
+    public decimal? CostPrice { get; set; }
 }

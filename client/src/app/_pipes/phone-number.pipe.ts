@@ -5,9 +5,9 @@ import { Pipe } from "@angular/core";
 })
 export class PhoneNumberPipe {
   transform(inputVal: string) {
-    const areaCodeStr = inputVal.slice(0, 2);
-    const midSectionStr = inputVal.slice(2, 6);
-    const lastSectionStr = inputVal.slice(6, 10);
+    const areaCodeStr: string = inputVal.slice(0, 2);
+    const midSectionStr: string = inputVal.slice(2, 6);
+    const lastSectionStr: string = inputVal.slice(6, 10);
 
     return `${areaCodeStr} ${midSectionStr} ${lastSectionStr}`;
   }

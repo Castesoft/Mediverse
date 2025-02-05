@@ -19,6 +19,18 @@ import { PatientsService } from "src/app/patients/patients.config";
 import titleDetailResolver from "src/app/_utils/serviceHelper/functions/titleDetailResolver";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/admin-product-detail-route.component";
+import { AdminOrderDetailRouteComponent } from "src/app/admin/routes/orders/admin-order-detail-route.component";
+import {
+  AdminWarehousesCatalogRouteComponent
+} from "src/app/admin/routes/warehouses/admin-warehouses-catalog-route.component";
+import {
+  AdminWarehouseCreateRouteComponent
+} from "src/app/admin/routes/warehouses/admin-warehouse-create-route.component";
+import { WarehousesService } from "src/app/warehouses/warehouses.config";
+import {
+  AdminWarehouseDetailRouteComponent
+} from "src/app/admin/routes/warehouses/admin-warehouse-detail-route.component";
+import { AdminWarehouseEditRouteComponent } from "src/app/admin/routes/warehouses/admin-warehouse-edit-route.component";
 
 @NgModule({
   imports: [
@@ -33,6 +45,13 @@ import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/
             component: AdminOrdersCatalogRouteComponent,
             title: 'Pedidos | Catálogo',
             data: { breadcrumb: 'Pedidos', title: 'Administrar Pedidos', },
+          },
+          {
+            path: 'pedidos/:id',
+            component: AdminOrderDetailRouteComponent,
+            title: 'Pedidos | Ver Detalle',
+            data: { breadcrumb: [ 'Pedidos', 'Detalle' ], title: 'Detalle Pedido', },
+            resolve: { item: createItemResolver(OrdersService) },
           },
           {
             path: 'pedidos/:id/editar',
@@ -55,8 +74,8 @@ import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/
             data: { breadcrumb: 'Productos', title: 'Administrar Productos', },
           },
           {
-            path: 'productos/nuevo'
-            , component: AdminProductCreateRouteComponent,
+            path: 'productos/nuevo',
+            component: AdminProductCreateRouteComponent,
             title: 'Productos | Crear Producto',
             data: { breadcrumb: [ 'Productos', 'Crear' ], title: 'Crear Producto', },
           },
@@ -73,6 +92,33 @@ import { AdminProductDetailRouteComponent } from "src/app/admin/routes/products/
             title: 'Productos | Editar Producto',
             data: { breadcrumb: [ 'Productos', 'Editar' ], title: 'Editar Producto', },
             resolve: { item: createItemResolver(ProductsService) },
+          },
+          // Almacenes
+          {
+            path: 'almacenes',
+            component: AdminWarehousesCatalogRouteComponent,
+            title: 'Almacenes | Catálogo',
+            data: { breadcrumb: 'Almacenes', title: 'Administrar Almacenes', },
+          },
+          {
+            path: 'almacenes/nuevo',
+            component: AdminWarehouseCreateRouteComponent,
+            title: 'Almacenes | Crear Almacén',
+            data: { breadcrumb: [ 'Almacenes', 'Crear' ], title: 'Crear Almacén', },
+          },
+          {
+            path: 'almacenes/:id',
+            component: AdminWarehouseDetailRouteComponent,
+            resolve: { item: createItemResolver(WarehousesService), },
+            title: 'Almacenes | Ver Detalle',
+            data: { breadcrumb: [ 'Almacenes', 'Detalle' ], title: 'Detalle Almacén', },
+          },
+          {
+            path: 'almacenes/:id/editar',
+            component: AdminWarehouseEditRouteComponent,
+            title: 'Almacenes | Editar Almacén',
+            data: { breadcrumb: [ 'Almacenes', 'Editar' ], title: 'Editar Almacén', },
+            resolve: { item: createItemResolver(WarehousesService) },
           },
           // Usuarios
           {

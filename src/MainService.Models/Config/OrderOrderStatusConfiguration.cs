@@ -14,15 +14,13 @@ namespace MainService.Models.Config
                 .HasOne(x => x.Order)
                 .WithOne(x => x.OrderOrderStatus)
                 .HasForeignKey<OrderOrderStatus>(x => x.OrderId)
-                .OnDelete(DeleteBehavior.Cascade)
-            ;
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder
                 .HasOne(x => x.OrderStatus)
                 .WithMany(x => x.OrderOrderStatuses)
                 .HasForeignKey(x => x.OrderStatusId)
-                .OnDelete(DeleteBehavior.Cascade)
-            ;
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -22,7 +22,10 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
     public void Delete(Order item) => context.Orders.Remove(item);
 
     public async Task<Order?> GetByIdAsync(int id) =>
-        await context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
+        await context.Orders
+            .Include(x => x.OrderDeliveryStatus).ThenInclude(x => x.DeliveryStatus)
+            .Include(x => x.OrderOrderStatus).ThenInclude(x => x.OrderStatus)
+            .Where(x => x.Id == id).FirstOrDefaultAsync();
 
     public async Task<bool> ExistsByIdAsync(int id) => await context.Orders.AnyAsync(x => x.Id == id);
 
@@ -50,6 +53,17 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
+
+    public async Task<List<OrderHistoryDto>> GetHistoryByIdAsync(int orderId)
+    {
+        return await context.OrderHistories
+            .Include(x => x.Order)
+            .Include(x => x.User).ThenInclude(x => x.UserPhoto)
+            .Where(x => x.OrderId == orderId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ProjectTo<OrderHistoryDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 
     public async Task<List<Order>> GetAllAsync() =>
         await context.Orders.ToListAsync();

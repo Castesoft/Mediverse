@@ -35,6 +35,7 @@ export class SidebarComponent implements OnDestroy {
     { link: '/admin/pedidos', label: 'Pedidos' },
     { link: '/admin/productos', label: 'Productos' },
     { link: '/admin/doctores', label: 'Doctores' },
+    { link: '/admin/almacenes', label: 'Almacenes' },
     { link: '/admin/usuarios', label: 'Usuarios' },
     { link: '/admin/permisos', label: 'Permisos' },
   ]

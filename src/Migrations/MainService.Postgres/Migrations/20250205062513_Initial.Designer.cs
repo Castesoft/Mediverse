@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250129195838_Initial")]
+    [Migration("20250205062513_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace MainService.Postgres.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -103,6 +103,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Cities");
@@ -144,6 +147,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Settlement")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Zipcode")
                         .HasColumnType("text");
 
@@ -168,6 +174,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -1056,6 +1065,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("ThumbnailUrl")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Url")
                         .HasColumnType("text");
 
@@ -1144,6 +1156,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("NextSteps")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -1314,6 +1329,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("SiteName")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Url")
                         .HasColumnType("text");
 
@@ -1444,6 +1462,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("SpecialtyLicense")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("MedicalLicenses");
@@ -1559,6 +1580,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("Sex")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool?>("UsesGlassesOrHearingAid")
                         .HasColumnType("boolean");
@@ -1893,6 +1917,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<decimal?>("Total")
                         .HasColumnType("numeric");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Orders");
@@ -1932,6 +1959,53 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("OrderDeliveryStatus");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChangeType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Property")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrderHistories");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
@@ -2117,6 +2191,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("StripePaymentIntent")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Payments");
@@ -2159,6 +2236,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("StripePaymentMethodId")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -2261,6 +2341,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("PaymentStatuses");
@@ -2292,6 +2375,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Phone");
@@ -2319,6 +2405,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<int?>("Size")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Url")
                         .HasColumnType("text");
@@ -2350,6 +2439,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("Notes")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -2406,6 +2498,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Unit")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("PrescriptionId", "ItemId");
 
                     b.HasIndex("ItemId");
@@ -2440,6 +2535,16 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("CostPrice")
+                        .HasColumnType("numeric");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -2472,8 +2577,15 @@ namespace MainService.Postgres.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Unit")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -2562,6 +2674,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<int?>("Rating")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Reviews");
@@ -2591,6 +2706,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -2701,6 +2819,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("SubSpecialties");
@@ -2765,6 +2886,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -2930,6 +3054,89 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("UserTaxRegimes");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.ToTable("Warehouses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.WarehouseProduct", b =>
+                {
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DamagedQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LotNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("OnHoldQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ReorderLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("ReservedQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("SafetyStock")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("WarehouseId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("WarehouseProducts");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.WorkSchedule", b =>
                 {
                     b.Property<int>("Id")
@@ -2955,6 +3162,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<TimeOnly?>("StartTime")
                         .HasColumnType("time without time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -2986,6 +3196,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("interval");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -4065,6 +4278,23 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.OrderHistory", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithMany("OrderHistories")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Product", "Item")
@@ -4508,6 +4738,36 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.WarehouseProduct", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Product", "Product")
+                        .WithMany("WarehouseProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Warehouse", "Warehouse")
+                        .WithMany("WarehouseProducts")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Warehouse");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppRole", null)
@@ -4842,6 +5102,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("OrderDeliveryStatus")
                         .IsRequired();
 
+                    b.Navigation("OrderHistories");
+
                     b.Navigation("OrderItems");
 
                     b.Navigation("OrderOrderStatus")
@@ -4954,6 +5216,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("PrescriptionItems");
 
                     b.Navigation("ProductPhotos");
+
+                    b.Navigation("WarehouseProducts");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
@@ -5012,6 +5276,11 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Navigation("UserTaxRegime")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>
+                {
+                    b.Navigation("WarehouseProducts");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.WorkSchedule", b =>

@@ -14,6 +14,7 @@ using MainService.Core.DTOs.Products;
 using MainService.Core.DTOs.Search;
 using MainService.Core.DTOs.Services;
 using MainService.Core.DTOs.User;
+using MainService.Core.DTOs.Warehouses;
 using MainService.Core.Extensions;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
@@ -85,9 +86,17 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DateTo, opt => opt.MapFrom(src => src.DateTo));
 
         CreateMap<Address, AddressDto>()
-            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.DoctorClinic.IsMain))
-            .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
-            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.ClinicLogo.Photo.Url));
+            .ForMember(dest => dest.IsMain,
+                opt => opt.MapFrom(src => src.DoctorClinic != null ? src.DoctorClinic.IsMain : false))
+            .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count));
+            // TODO
+            // .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src =>
+            //     src.ClinicLogo != null &&
+            //     src.ClinicLogo.Photo != null &&
+            //     src.ClinicLogo.Photo.Url != null
+            //         ? src.ClinicLogo.Photo.Url
+            //         : null
+            // ));
 
         CreateMap<UserAddressCreateDto, Address>();
         CreateMap<UserAddressUpdateDto, Address>();
@@ -251,6 +260,9 @@ public class MappingProfiles : Profile
 
         CreateMap<PaymentStatus, PaymentStatusDto>();
 
+        CreateMap<OrderHistory, OrderHistoryDto>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
+
         CreateMap<Prescription, EventPrescriptionDto>()
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientPrescription.Patient))
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorPrescription.Doctor))
@@ -336,8 +348,8 @@ public class MappingProfiles : Profile
 
         CreateMap<Order, OrderDto>()
             .ForMember(dest => dest.DeliveryAddress,
-                opt => opt.MapFrom(src => src.OrderDeliveryAddress.DeliveryAddress))
-            .ForMember(dest => dest.PickupAddress, opt => opt.MapFrom(src => src.OrderPickupAddress.PickupAddress))
+                opt => opt.MapFrom(src => src.OrderDeliveryAddress != null ? src.OrderDeliveryAddress.DeliveryAddress : null))
+            // .ForMember(dest => dest.PickupAddress, opt => opt.MapFrom(src => src.OrderPickupAddress != null ? src.OrderPickupAddress.PickupAddress : null))
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientOrder.Patient))
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorOrder.Doctor))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems))
@@ -521,6 +533,9 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src =>
                 src.ProductPhotos.FirstOrDefault(pp => pp.IsMain).Photo.Url.AbsoluteUri
                 ?? src.ProductPhotos.FirstOrDefault().Photo.Url.AbsoluteUri));
+
+        CreateMap<Warehouse, WarehouseDto>();
+        CreateMap<WarehouseProduct, WarehouseProductDto>();
 
         CreateMap<Product, ProductSummaryDto>()
             .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
