@@ -37,7 +37,10 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     TableMenuComponent,
   ],
 })
-export class EventsTableComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements OnDestroy, TableInputSignals<Event, EventParams> {
+export class EventsTableComponent
+  extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
+  implements OnDestroy, TableInputSignals<Event, EventParams>
+{
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();

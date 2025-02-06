@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, model, ModelSignal } from "@angular/core";
+import { Component, effect, inject, model, ModelSignal, OnDestroy, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -26,6 +26,8 @@ import {
   FilterPosition,
   DrawerMode
 } from "../../_models/base/filter-types";
+import BaseCatalog from 'src/app/_models/base/components/extensions/baseCatalog';
+import CatalogInputSignals from 'src/app/_models/base/components/interfaces/catalogInputSignals';
 
 @Component({
   selector: '[eventsCatalog]',
@@ -45,7 +47,10 @@ import {
     GenericCatalogComponent,
   ],
 })
-export class EventsCatalogComponent {
+export class EventsCatalogComponent
+  extends BaseCatalog<Event, EventParams, EventFiltersForm, EventsService>
+  implements CatalogInputSignals<Event, EventParams>
+{
   private readonly clinics: ClinicsService = inject(ClinicsService);
   private readonly patients: PatientsService = inject(PatientsService);
   private readonly services: ServicesService = inject(ServicesService);
@@ -66,22 +71,24 @@ export class EventsCatalogComponent {
   calendarView: ModelSignal<CalendarView> = model.required<CalendarView>();
   filtersCollapsed: ModelSignal<boolean> = model.required<boolean>();
 
-  service: EventsService = inject(EventsService);
-  form = model(new EventFiltersForm());
+  filtersForm = signal(new EventFiltersForm());
 
   constructor() {
-    effect((): void => this.setOptions())
-  }
+    super(EventsService, EventFiltersForm);
 
-  private setOptions(): void {
     this.clinics.getOptions().subscribe();
     this.patients.getOptions().subscribe();
     this.services.getOptions().subscribe();
     this.nurses.getOptions().subscribe();
 
-    this.form().controls.clinics.selectOptions = this.clinics.options();
-    this.form().controls.patients.selectOptions = this.patients.options();
-    this.form().controls.services.selectOptions = this.services.options();
-    this.form().controls.nurses.selectOptions = this.nurses.options();
+    effect(() => {
+      this.filtersForm()
+        .setValidation(this.validation.active())
+        .setClinicOptions(this.clinics.options())
+        .setPatientOptions(this.patients.options())
+        .setServiceOptions(this.services.options())
+        .setNurseOptions(this.nurses.options())
+      ;
+    });
   }
 }
