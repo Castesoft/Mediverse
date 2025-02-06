@@ -93,4 +93,16 @@ public class AppUser : IdentityUser<int>
                 "Femenino" => new(2, "Femenino", "Hembra"),
                 _ => new(3, "unknown", "Desconocido"),
             };
+
+    public string? GetPhotoUrl() {
+        if (UserPhoto != null &&
+            UserPhoto.Photo != null &&
+            UserPhoto.Photo.Url != null &&
+            !string.IsNullOrEmpty(UserPhoto.Photo.Url.AbsoluteUri))
+        {
+            return UserPhoto.Photo.Url.AbsoluteUri;
+        }
+
+        return null;
+    }
 }

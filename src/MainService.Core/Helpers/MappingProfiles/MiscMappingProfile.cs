@@ -78,7 +78,8 @@ namespace MainService.Core.Helpers.MappingProfiles
 
             // Map Service to ServiceDto.
             CreateMap<Service, ServiceDto>()
-                .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom<ServicePhotoUrlResolver>());
+                .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.GetPhotoUrl()))
+            ;
 
             // Map PaymentMethodType.
             CreateMap<PaymentMethodType, PaymentMethodTypeDto>();

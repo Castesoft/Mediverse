@@ -120,6 +120,7 @@ namespace MainService.Infrastructure.Data
         private static IQueryable<AppUser> Includes(IQueryable<AppUser> query) =>
             query
                 .AsSplitQuery()
+                .Include(x => x.UserPhoto.Photo)
                 .Include(x => x.UserMedicalLicenses)
                 .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
                 .Include(x => x.DoctorClinics)

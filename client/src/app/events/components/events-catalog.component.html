@@ -47,33 +47,40 @@
     </div>
   </ng-template>
   <ng-template #entityTable let-list="list">
-    @switch (calendarView()) {
-      @case ('table') {
-        <table eventsTable
+    @defer (on viewport) {
+      @switch (calendarView()) {
+        @case ('table') {
+          <table eventsTable
+                 [(mode)]="mode"
+                 [(isCompact)]="isCompact"
+                 [data]="list"
+                 [(key)]="key"
+                 [(view)]="view"
+                 [(item)]="item"
+                 [(params)]="params">
+          </table>
+        }
+        @case ('calendar') {
+          <div eventsCalendar
                [(mode)]="mode"
                [(isCompact)]="isCompact"
                [data]="list"
                [(key)]="key"
                [(view)]="view"
                [(item)]="item"
-               [(params)]="params">
-        </table>
+               [(params)]="params"
+               [(filtersCollapsed)]="filtersCollapsed">
+          </div>
+        }
+        @default () {
+          <p>Invalid view</p>
+        }
       }
-      @case ('calendar') {
-        <div eventsCalendar
-             [(mode)]="mode"
-             [(isCompact)]="isCompact"
-             [data]="list"
-             [(key)]="key"
-             [(view)]="view"
-             [(item)]="item"
-             [(params)]="params"
-             [(filtersCollapsed)]="filtersCollapsed">
-        </div>
-      }
-      @default () {
-        <p>Invalid view</p>
-      }
+    } @loading {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    @placeholder(minimum 1000ms) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
   </ng-template>
 </div>

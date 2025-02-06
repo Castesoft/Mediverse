@@ -108,7 +108,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
     public async Task<Event?> GetByIdAsync(int id) =>
         await context.Events
-            .Include(x => x.PatientEvent)
+            .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
             .Include(x => x.DoctorEvent)
                 .ThenInclude(x => x.Doctor)
             .SingleOrDefaultAsync(x => x.Id == id)
@@ -127,7 +127,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.EventService)
             .Include(x => x.EventClinic)
             .Include(x => x.DoctorEvent)
-            .Include(x => x.PatientEvent).ThenInclude(x => x.Patient)
+            .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
             .Include(x => x.NurseEvents)
             .Include(x => x.EventPrescriptions).ThenInclude(x => x.Prescription)
             .Include(x => x.EventPaymentMethodType)
@@ -196,7 +196,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.EventService)
             .Include(x => x.EventClinic)
             .Include(x => x.DoctorEvent)
-            .Include(x => x.PatientEvent)
+            .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
             .Include(x => x.NurseEvents)
             .Include(x => x.EventPrescriptions)
                 .ThenInclude(x => x.Prescription)

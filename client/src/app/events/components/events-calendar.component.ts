@@ -27,6 +27,7 @@ import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { EventsService } from 'src/app/events/events.config';
 import { calcDateDiff } from 'src/app/_utils/util';
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { SiteSection } from 'src/app/_models/sections/sectionTypes';
 
 @Component({
   host: { class: 'pb-6' },
@@ -99,12 +100,7 @@ export class EventsCalendarComponent
     super(EventsService, Event);
 
     effect(() => {
-      console.log('eventsCalendar', this.filtersCollapsed());
-      console.log('eventsCalendar', this.fullcalendar());
-
-
-      this.fullcalendar().getApi().destroy();
-      this.fullcalendar().getApi().render();
+      
     });
   }
 
@@ -112,6 +108,8 @@ export class EventsCalendarComponent
     forwardRef(() => Calendar);
 
     this.calendarOptions.events = this.data().map((event: Event) => {
+      console.log('event', event);
+
       return {
         patient: `${event.patient?.firstName} ${event.patient?.lastName || ''}`,
         doctor: `${event.doctor?.firstName} ${event.doctor?.lastName || ''}`,
@@ -156,7 +154,7 @@ export class EventsCalendarComponent
       allDay: arg.allDay,
       dateFrom: arg.date,
       dateTo: arg.date,
-    }), this.key(), FormUse.DETAIL, 'modal');
+    }), this.key(), FormUse.CREATE, 'modal', SiteSection.HOME);
   }
 
   formatTimeRange = (start: Date, end: Date): string => {

@@ -19,6 +19,11 @@ public class AddressMappingProfile : Profile
             .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom<ClinicLogoUrlResolver>());
 
+        CreateMap<Address, DoctorClinicDto>()
+            .ForMember(dest => dest.IsMain,
+                opt => opt.MapFrom(src => src.DoctorClinic != null ? src.DoctorClinic.IsMain : false))
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.GetPhotoUrl()));
+
         // Map Address to AddressDto.
         CreateMap<Address, AddressDto>()
             .ForMember(dest => dest.IsMain,

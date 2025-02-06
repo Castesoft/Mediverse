@@ -45,7 +45,7 @@ export function getFormHeaderText(
         break;
       case 'detail':
         if (id === null) {
-          throw new Error('FormHeaderComponent: id is required for edit mode');
+          throw new Error('FormHeaderComponent: id is required for detail mode');
         } else if (id !== null) {
           stringToReturn = `${dictionary.singularTitlecase} #${decimalPipe.transform(id)}`;
         }

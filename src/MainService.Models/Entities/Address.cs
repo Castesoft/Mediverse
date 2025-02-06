@@ -31,5 +31,17 @@ namespace MainService.Models.Entities
 
         public double GetLatitude() => Latitude ?? 0;
         public double GetLongitude() => Longitude ?? 0;
+
+        public string? GetPhotoUrl() {
+            if (ClinicLogo != null &&
+                ClinicLogo.Photo != null &&
+                ClinicLogo.Photo.Url != null &&
+                !string.IsNullOrEmpty(ClinicLogo.Photo.Url.AbsoluteUri))
+            {
+                return ClinicLogo.Photo.Url.AbsoluteUri;
+            }
+
+            return null;
+        }
     }
 }

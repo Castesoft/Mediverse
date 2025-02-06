@@ -61,7 +61,7 @@ export class EventsCatalogModalComponent {
 })
 export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<EventParams>> {
   constructor() {
-    super(EventParams, 'events', eventDictionary, eventColumns);
+    super(EventParams, 'events', eventDictionary, eventColumns, EventDetailModalComponent);
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {

@@ -52,6 +52,7 @@ export function isSelectOptionArray(value: any, controlInfo: ControlInfo<any>): 
     // For empty arrays, check if controlInfo indicates it's a SelectOption[]
     return controlInfo && (controlInfo.type === 'multiselect' ||
       controlInfo.type === 'select' ||
+      controlInfo.type === 'radioChips' ||
       controlInfo.type === 'buttonToggleMultiple'
     );
   }

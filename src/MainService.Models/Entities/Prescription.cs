@@ -11,4 +11,19 @@ public class Prescription : BaseEntity
     public List<PrescriptionItem> PrescriptionItems { get; set; } = [];
     public PrescriptionOrder PrescriptionOrder { get; set; } = null!;
     public PrescriptionClinic PrescriptionClinic { get; set; } = null!;
+
+    public string? GetPhotoUrl() {
+        if (PrescriptionClinic != null &&
+            PrescriptionClinic.Clinic != null &&
+            PrescriptionClinic.Clinic.ClinicLogo != null &&
+            PrescriptionClinic.Clinic.ClinicLogo.Photo != null &&
+            PrescriptionClinic.Clinic.ClinicLogo.Photo.Url != null &&
+            !string.IsNullOrEmpty(PrescriptionClinic.Clinic.ClinicLogo.Photo.Url.AbsoluteUri)
+        )
+        {
+            return PrescriptionClinic.Clinic.ClinicLogo.Photo.Url.AbsoluteUri;
+        }
+
+        return null;
+    }
 }

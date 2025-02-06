@@ -75,7 +75,16 @@ public class OrderEventMappingProfile : Profile
                 opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
             // Use the custom resolver for LogoUrl.
-            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom<PrescriptionLogoUrlResolver>());
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.GetPhotoUrl()));
+
+        CreateMap<Prescription, PrescriptionDto>()
+            .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientPrescription.Patient))
+            .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorPrescription.Doctor))
+            .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.EventPrescription.Event))
+            .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
+            .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.GetPhotoUrl()))
+            .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.PrescriptionOrder != null ? src.PrescriptionOrder.Order.Id : 0));
 
         // Map PrescriptionUpdateDto to Prescription.
         CreateMap<PrescriptionUpdateDto, Prescription>()
@@ -121,5 +130,20 @@ public class OrderEventMappingProfile : Profile
 
         // Map DoctorEvent to EventDto.
         CreateMap<DoctorEvent, EventDto>();
+
+        CreateMap<PaymentMethod, UserPaymentMethodDto>()
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.UserPaymentMethod.IsMain));
+
+        CreateMap<UserPaymentMethod, UserPaymentMethodDto>()
+            .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.PaymentMethod.Brand))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.PaymentMethod.Country))
+            .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.PaymentMethod.DisplayName))
+            .ForMember(dest => dest.ExpirationMonth, opt => opt.MapFrom(src => src.PaymentMethod.ExpirationMonth))
+            .ForMember(dest => dest.ExpirationYear, opt => opt.MapFrom(src => src.PaymentMethod.ExpirationYear))
+            .ForMember(dest => dest.Last4, opt => opt.MapFrom(src => src.PaymentMethod.Last4))
+            .ForMember(dest => dest.StripePaymentMethodId, opt => opt.MapFrom(src => src.PaymentMethod.StripePaymentMethodId))
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMain));
+
+        CreateMap<PaymentStatus, PaymentStatusDto>();
     }
 }
