@@ -1,31 +1,43 @@
 @if (show()) {
   <tr [class]="trClass" role="row">
     @if (mode() !== 'readonly') {
-      <th tableHeaderCheckCell [(isCompact)]="isCompact" [(mode)]="mode"
-          [(selected)]="selected"></th>
-
+      <th tableHeaderCheckCell
+          [(isCompact)]="isCompact"
+          [(mode)]="mode"
+          [(selected)]="selected"
+          [ngStyle]="{'padding-top': disableFirstCellPadding() ? '0' : null}">
+      </th>
     }
     @for (column of columns(); track column; let idx = $index; let last = $last; let first = $first) {
       @if (!column.devModeOnly || (column.devModeOnly && isDev)) {
-        <th (click)="onClick(column.name)" class="dt-orderable-asc dt-orderable-desc"
-            [tabIndex]="mode() === 'readonly' ? -1 : 0" rowspan="1" colspan="1"
+        <th (click)="onClick(column.name)"
+            class="dt-orderable-asc dt-orderable-desc"
+            [tabIndex]="mode() === 'readonly' ? -1 : 0"
+            rowspan="1"
+            colspan="1"
             [attr.aria-label]="(column.label + ': ' + (column.name === params()?.sort?.name ?
               (params()?.isSortAscending ? 'Activate to invert sorting' : 'Activate to remove sorting') : 'Activate to sort'))"
             [ngClass]="{
               'text-end pe-2': column.options?.justify === 'end',
               'dt-ordering-asc': params()?.isSortAscending && column.name === params()?.sort?.name,
-              'dt-ordering-desc': !params()?.isSortAscending && column.name === params()?.sort?.name,
-            }">
-
-          <span class="dt-column-title text-gray-500" role="button">{{ column.label }}</span>
+              'dt-ordering-desc': !params()?.isSortAscending && column.name === params()?.sort?.name
+            }"
+            [ngStyle]="{'padding-top': disableFirstCellPadding() ? '0' : null}">
+          <span class="dt-column-title text-gray-500" role="button">
+            {{ column.label }}
+          </span>
           <span class="dt-column-order"></span>
         </th>
       }
     }
-
     @if (showActions()) {
-      <th class="text-end dt-orderable-none" rowspan="1" colspan="1" aria-label="Actions">
-        <span class="dt-column-title text-gray-500">Opciones</span><span class="dt-column-order"></span>
+      <th class="text-end dt-orderable-none"
+          rowspan="1"
+          colspan="1"
+          aria-label="Actions"
+          [ngStyle]="{'padding-top': disableFirstCellPadding() ? '0' : null}">
+        <span class="dt-column-title text-gray-500">Opciones</span>
+        <span class="dt-column-order"></span>
       </th>
     }
   </tr>

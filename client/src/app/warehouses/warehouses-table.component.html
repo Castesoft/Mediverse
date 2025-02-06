@@ -17,7 +17,7 @@
         tableCheckCell
         [isCompact]="isCompact()"
         [isChecked]="item.isSelected"
-        (click)="service.setSelected$(key() || '', item)"
+        (click)="service.toggleMultipleSelected$(key() || '', item)"
       ></td>
 
       @if (dev.isDev()) {

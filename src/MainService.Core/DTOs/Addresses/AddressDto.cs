@@ -1,6 +1,5 @@
 namespace MainService.Core.DTOs.Addresses
 {
-
     public class AddressDto : BaseAddressDto
     {
         public string? Description { get; set; }

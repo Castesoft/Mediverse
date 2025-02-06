@@ -374,7 +374,12 @@
                 @for (log of orderHistories; track log; let idx = $index) {
                   <tr>
                     <td>
-                      {{ log.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
+                      <span>
+                      {{ log.createdAt | date:'dd/MM/yyyy' }}
+                      </span>
+                      <span class="fw-light">
+                      {{ log.createdAt | date:'HH:mm:ss' }}
+                      </span>
                     </td>
                     <td>
                       {{ log.user?.email }}

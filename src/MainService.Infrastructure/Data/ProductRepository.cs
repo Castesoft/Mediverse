@@ -44,11 +44,13 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         await context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+            .Include(x => x.WarehouseProducts)
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Product?> GetByNameAsync(string name, ClaimsPrincipal user) => await context.Products
         .Include(x => x.DoctorProduct)
         .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+        .Include(x => x.WarehouseProducts)
         .Where(x => x.DoctorProduct.DoctorId == user.GetUserId())
         .SingleOrDefaultAsync(x => x.Name == name);
 
@@ -57,6 +59,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         return await context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+            .Include(x => x.WarehouseProducts)
             .AnyAsync(x => x.Id == id && x.DoctorProduct.DoctorId == user.GetUserId());
     }
 
@@ -64,6 +67,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
     {
         var item = await context.Products
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+            .Include(x => x.WarehouseProducts)
             .AsNoTracking()
             .ProjectTo<ProductDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
@@ -76,6 +80,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         var query = context.Products
                 .Include(x => x.DoctorProduct)
                 .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+                .Include(x => x.WarehouseProducts)
                 .AsNoTracking()
             ;
 
@@ -118,7 +123,8 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         query
             .AsSplitQuery()
             .Include(x => x.DoctorProduct)
-            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo);
+            .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+            .Include(x => x.WarehouseProducts);
 
     public async Task<PagedList<ProductDto>> GetPagedListAsync(ProductParams param, ClaimsPrincipal user)
     {
@@ -128,6 +134,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         var query = context.Products
             .Include(x => x.DoctorProduct)
             .Include(x => x.ProductPhotos).ThenInclude(x => x.Photo)
+            .Include(x => x.WarehouseProducts)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(param.FromSection))

@@ -20,6 +20,9 @@ import { Column } from "src/app/_models/base/column";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
 import { OrdersDeliveryStatusBadgeComponent } from "src/app/orders/components/orders-delivery-status-badge.component";
 import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-status-badge.component";
+import {
+  AddressTableCellComponent
+} from "src/app/_shared/template/components/tables/cells/address-table-cell.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -38,6 +41,7 @@ import { OrdersStatusBadgeComponent } from "src/app/orders/components/orders-sta
     UserTableCellComponent,
     OrdersDeliveryStatusBadgeComponent,
     OrdersStatusBadgeComponent,
+    AddressTableCellComponent,
   ],
 })
 export class OrdersTableComponent extends BaseTable<Order, OrderParams, OrderFiltersForm, OrdersService> implements OnDestroy, TableInputSignals<Order, OrderParams> {

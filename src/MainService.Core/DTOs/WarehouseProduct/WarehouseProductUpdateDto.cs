@@ -1,12 +1,7 @@
-using MainService.Core.DTOs.Products;
+namespace MainService.Core.DTOs.WarehouseProduct;
 
-namespace MainService.Core.DTOs.Warehouses;
-
-public class WarehouseProductDto
+public class WarehouseProductUpdateDto
 {
-    public int Id { get; set; }
-    public ProductSummaryDto? Product { get; set; } = null!;
-    public int WarehouseId { get; set; }
     public int ProductId { get; set; }
     public int Quantity { get; set; }
     public int ReservedQuantity { get; set; }
@@ -14,8 +9,6 @@ public class WarehouseProductDto
     public int OnHoldQuantity { get; set; }
     public int ReorderLevel { get; set; }
     public int SafetyStock { get; set; }
-    public DateTime LastUpdated { get; set; }
     public string? LotNumber { get; set; }
     public DateTime? ExpirationDate { get; set; }
-    public bool IsSelected { get; set; } = false;
 }

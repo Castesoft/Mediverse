@@ -50,8 +50,9 @@
         <div ordersDeliveryStatusBadge [statusOption]="item.deliveryStatus"></div>
       </td>
 
+      <td addressTableCell [address]="item.deliveryAddress"></td>
+
       @for (cell of row().getItems([
-        'deliveryAddress',
         'subtotal',
         'discount',
         'tax',

@@ -9,9 +9,9 @@ import { baseTableCells, PartialCellsOf, TableCellItem } from "src/app/_models/t
 
 export const warehouseProductDictionary: NamingSubject = new NamingSubject(
   'masculine',
-  'almacén',
-  'almacenes',
-  'Almacenes',
+  'producto de almacén',
+  'productos de almacén',
+  'Productos de Almacén',
   'warehouseProducts'
 );
 

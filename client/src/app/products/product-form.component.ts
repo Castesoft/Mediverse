@@ -22,6 +22,8 @@ import { ImageSelectorComponent } from "src/app/_shared/components/image-selecto
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { Photo } from "src/app/_models/forms/example/_models/photo";
 import { ImageThumbnailSelectorComponent } from "src/app/_shared/components/image-thumbnail-selector.component";
+import { WarehousesService } from "src/app/warehouses/warehouses.config";
+import { WarehouseSelectionTableComponent } from "src/app/warehouses/components/warehouse-selection-table.component";
 
 @Component({
   selector: "[productForm]",
@@ -36,6 +38,7 @@ import { ImageThumbnailSelectorComponent } from "src/app/_shared/components/imag
     TooltipDirective,
     ImageSelectorComponent,
     ImageThumbnailSelectorComponent,
+    WarehouseSelectionTableComponent
   ]
 })
 export class ProductFormComponent extends BaseForm<Product, ProductParams, ProductFiltersForm, ProductForm, ProductsService> implements OnInit, FormInputSignals<Product> {
@@ -45,6 +48,7 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
   protected readonly FormUse: typeof FormUse = FormUse;
 
   readonly imageHandler: ImageHandlerService = inject(ImageHandlerService);
+  private warehousesService: WarehousesService = inject(WarehousesService);
   private confirmService: ConfirmService = inject(ConfirmService);
 
   item: ModelSignal<Product | null> = model.required();
@@ -54,6 +58,10 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
   useCard: InputSignal<boolean> = input(true);
   siteSection: InputSignal<SiteSection | undefined> = input();
 
+  availableWarehouses: any[] = [];
+  selectedWarehouseIds: number[] = [];
+  warehousesChanged: boolean = false;
+
   constructor() {
     super(ProductsService, ProductForm);
 
@@ -62,13 +70,20 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
         .setUse(this.use())
         .setValidation(this.validation.active());
 
-      if (this.item() !== null) this.form.patchValue(this.item() as any);
+      if (this.item() !== null) {
+        this.form.patchValue(this.item() as any);
+      }
     });
   }
 
   ngOnInit(): void {
     this.subscribeToFormValueChanges();
     this.initializeImages();
+    this.loadAvailableWarehouses();
+
+    if (this.item() && this.item()!.warehouseProducts) {
+      this.selectedWarehouseIds = this.item()!.warehouseProducts?.map((wp: any) => wp.warehouseId) || [];
+    }
   }
 
   private initializeImages(): void {
@@ -109,6 +124,38 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
     });
   }
 
+  loadAvailableWarehouses(): void {
+    this.warehousesService.getOptions().subscribe((options: any[]) => {
+      this.availableWarehouses = options;
+    });
+  }
+
+  onWarehouseSelectionChanged(newSelection: number[]): void {
+    this.selectedWarehouseIds = newSelection;
+    this.warehousesChanged = true;
+  }
+
+  saveWarehouseChanges(): void {
+    if (!this.item() || !this.item()!.id) return;
+
+    const updateDto = {
+      ProductId: this.item()!.id,
+      WarehouseIds: this.selectedWarehouseIds
+    };
+
+    this.service.updateWarehouses(updateDto, this.item()!.id!).subscribe({
+      next: (product) => {
+        this.toastr.success('Updated product warehouses successfully.');
+        this.warehousesChanged = false;
+        this.item()!.warehouseProducts = product.warehouseProducts;
+      },
+      error: (err) => {
+        console.error('Error updating product warehouses', err);
+        this.toastr.error('Error updating product warehouses.');
+      }
+    });
+  }
+
   async onSubmit(): Promise<void> {
     const authorized: boolean = await firstValueFrom(this.confirmService.confirm(confirmActionModal));
     if (!authorized) return;
@@ -138,11 +185,11 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
 
     observable.subscribe({
       next: (product) => {
-        console.log(isNew ? 'Created:' : 'Updated:', product)
+        console.log(isNew ? 'Created:' : 'Updated:', product);
         this.toastr.success(`Producto ${isNew ? 'creado' : 'actualizado'} exitosamente`);
       },
       error: (err) => {
-        console.error(`Error ${isNew ? 'creating' : 'updating'} product:`, err)
+        console.error(`Error ${isNew ? 'creating' : 'updating'} product:`, err);
         this.toastr.error(`Error ${isNew ? 'creando' : 'actualizando'} el producto`);
       }
     });

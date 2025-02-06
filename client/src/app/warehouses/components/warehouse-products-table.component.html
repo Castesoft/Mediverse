@@ -2,6 +2,7 @@
   tableHeader
   [columns]="columns"
   [isCompact]="true"
+  (selectedChange)="warehouseProductsService.toggleMultipleSelectedArray$(key || '', warehouseProducts())"
 ></thead>
 <tbody templateTableBody>
   @for (item of warehouseProducts(); track item; let i = $index) {
@@ -10,21 +11,29 @@
         tableCheckCell
         [isCompact]="true"
         [isChecked]="item.isSelected"
-        (checkboxChange)="warehouseProductsService.setSelected$(key || '', item)"
+        (click)="warehouseProductsService.toggleMultipleSelected$(key || '', item)"
       ></td>
 
-      <td class="name align-middle white-space-nowrap px-0 py-0">
-        <div class="d-flex align-items-center justify-content-start px-0">
-          <a class="fw-semibold text-primary">
-            # {{ item.productId | number }}
-          </a>
-        </div>
-      </td>
+      @if (item.product) {
+        <td symbolCell [photoUrl]="item.product.photoUrl || null" [shape]="PhotoShape.SQUARE"></td>
+        <td>
+          <div class="fw-bolder">{{ item.product.name }}</div>
+          <div class="text-muted fs-7 description-truncate" [title]="item.product.description">
+            {{ item.product.description }}
+          </div>
+        </td>
+      } @else {
+        <td></td>
+        <td></td>
+      }
 
-      <!-- Quantity / Stock -->
+      <!-- Stock / Quantity -->
       <td>
         @if (editable()) {
-          <input type="number" class="form-control" [(ngModel)]="item.quantity">
+          <input type="number" class="form-control"
+                 [(ngModel)]="item.quantity"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.quantity }}
         }
@@ -33,7 +42,10 @@
       <!-- Reserved Quantity -->
       <td>
         @if (editable()) {
-          <input type="number" class="form-control" [(ngModel)]="item.reservedQuantity">
+          <input type="number" class="form-control"
+                 [(ngModel)]="item.reservedQuantity"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.reservedQuantity }}
         }
@@ -42,7 +54,10 @@
       <!-- Damaged Quantity -->
       <td>
         @if (editable()) {
-          <input type="number" class="form-control" [(ngModel)]="item.damagedQuantity">
+          <input type="number" class="form-control"
+                 [(ngModel)]="item.damagedQuantity"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.damagedQuantity }}
         }
@@ -51,7 +66,10 @@
       <!-- On Hold Quantity -->
       <td>
         @if (editable()) {
-          <input type="number" class="form-control" [(ngModel)]="item.onHoldQuantity">
+          <input type="number" class="form-control"
+                 [(ngModel)]="item.onHoldQuantity"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.onHoldQuantity }}
         }
@@ -60,7 +78,10 @@
       <!-- Reorder Level -->
       <td>
         @if (editable()) {
-          <input type="number" class="form-control" [(ngModel)]="item.reorderLevel">
+          <input type="number" class="form-control"
+                 [(ngModel)]="item.reorderLevel"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.reorderLevel }}
         }
@@ -69,7 +90,10 @@
       <!-- Safety Stock -->
       <td>
         @if (editable()) {
-          <input type="number" class="form-control" [(ngModel)]="item.safetyStock">
+          <input type="number" class="form-control"
+                 [(ngModel)]="item.safetyStock"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.safetyStock }}
         }
@@ -78,7 +102,10 @@
       <!-- Lot Number -->
       <td>
         @if (editable()) {
-          <input type="text" class="form-control" [(ngModel)]="item.lotNumber">
+          <input type="text" class="form-control"
+                 [(ngModel)]="item.lotNumber"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.lotNumber || '-' }}
         }
@@ -87,13 +114,16 @@
       <!-- Expiration Date -->
       <td>
         @if (editable()) {
-          <input type="date" class="form-control" [(ngModel)]="item.expirationDate">
+          <input type="date" class="form-control"
+                 [(ngModel)]="item.expirationDate"
+                 (ngModelChange)="markChanged(item)"
+                 [ngStyle]="{'min-width': '100px'}">
         } @else {
           {{ item.expirationDate | date:'shortDate' }}
         }
       </td>
 
-      <!-- Last Updated (display only) -->
+      <!-- Last Updated -->
       <td>
         {{ item.lastUpdated | date:'short' }}
       </td>

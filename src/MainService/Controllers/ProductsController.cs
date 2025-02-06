@@ -3,6 +3,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using MainService.Core.Extensions;
 using MainService.Core.DTOs.Products;
+using MainService.Core.DTOs.WarehouseProduct;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
@@ -69,6 +70,44 @@ public class ProductsController(
 
         return item;
     }
+    
+    [HttpPut("update-warehouses/{id:int}")]
+    public async Task<ActionResult<ProductDto>> UpdateProductWarehouses(int id, [FromBody] ProductWarehouseUpdateDto updateDto)
+    {
+        var product = await uow.ProductRepository.GetByIdAsync(id);
+        if (product == null)
+            return NotFound($"Product with ID {id} not found.");
+
+        var currentWarehouseIds = product.WarehouseProducts.Select(wp => wp.WarehouseId).ToList();
+
+        var warehousesToAdd = updateDto.WarehouseIds.Except(currentWarehouseIds).ToList();
+        var warehousesToRemove = currentWarehouseIds.Except(updateDto.WarehouseIds).ToList();
+
+        foreach (var wid in warehousesToAdd)
+        {
+            product.WarehouseProducts.Add(new WarehouseProduct
+            {
+                ProductId = product.Id,
+                WarehouseId = wid,
+                
+                Quantity = 0,
+                ReservedQuantity = 0,
+                DamagedQuantity = 0,
+                OnHoldQuantity = 0,
+                ReorderLevel = 0,
+                SafetyStock = 0,
+                LastUpdated = DateTime.UtcNow
+            });
+        }
+
+        product.WarehouseProducts.RemoveAll(wp => warehousesToRemove.Contains(wp.WarehouseId));
+
+        await uow.Complete();
+
+        var updatedDto = mapper.Map<ProductDto>(product);
+        return Ok(updatedDto);
+    }
+
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult<ProductDto>> UpdateAsync([FromRoute] int id, [FromForm] ProductUpdateDto request)
@@ -92,6 +131,15 @@ public class ProductsController(
         if (request.Category != null) item.Category = request.Category;
         if (request.CostPrice.HasValue) item.CostPrice = request.CostPrice.Value;
 
+        Log.Information(request.IsEnabled.HasValue
+                ? "Product {Name} is now {Status}. Value: {Value}"
+                : "Product {Name} status remains unchanged. Current Value: {Value}",
+            item.Name, item.IsEnabled ? "enabled" : "disabled", item.IsEnabled);
+
+        Log.Information(request.IsVisible.HasValue
+                ? "Product {Name} is now {Status}. Value: {Value}"
+                : "Product {Name} visibility remains unchanged. Current Value: {Value}",
+            item.Name, item.IsVisible ? "visible" : "hidden", item.IsVisible);
         if (request.RemovedImageIds != null && request.RemovedImageIds.Any())
         {
             var photosToRemove = item.ProductPhotos

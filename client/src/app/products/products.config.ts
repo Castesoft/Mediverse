@@ -54,6 +54,10 @@ export class ProductsService extends ServiceHelper<Product, ProductParams, FormG
     return this.http.put<Product>(`${this.baseUrl}${id}`, model);
   }
 
+  updateWarehouses(model: any, id: number) {
+    return this.http.put<Product>(`${this.baseUrl}update-warehouses/${id}`, model);
+  }
+
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       ProductsCatalogModalComponent,

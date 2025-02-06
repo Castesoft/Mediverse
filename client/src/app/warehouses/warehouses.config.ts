@@ -17,6 +17,7 @@ import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { WarehousesCatalogComponent } from "src/app/warehouses/warehouses-catalog.component";
 import { WarehouseFormComponent } from "src/app/warehouses/warehouse-form.component";
+import { Product } from "src/app/_models/products/product";
 
 @Component({
   selector: 'warehouses-catalog-modal',
@@ -74,6 +75,13 @@ export class WarehousesService extends ServiceHelper<Warehouse, WarehouseParams,
     });
   };
 
+  override update(model: any, id: number) {
+    return this.http.put<Warehouse>(`${this.baseUrl}${id}`, model);
+  }
+
+  updateProducts(model: any, id: number) {
+    return this.http.put<Warehouse>(`${this.baseUrl}update-products/${id}`, model);
+  }
 }
 
 @Component({

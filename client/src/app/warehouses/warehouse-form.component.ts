@@ -50,6 +50,8 @@ export class WarehouseFormComponent extends BaseForm<Warehouse, WarehouseParams,
   useCard: InputSignal<boolean> = input(true);
   siteSection: InputSignal<SiteSection | undefined> = input();
 
+  hasWarehouseProductChanges: boolean = false;
+
   constructor() {
     super(WarehousesService, WarehouseForm);
 
@@ -77,6 +79,10 @@ export class WarehouseFormComponent extends BaseForm<Warehouse, WarehouseParams,
     });
   }
 
+  onWarehouseProductsChanged(changed: boolean) {
+    this.hasWarehouseProductChanges = changed;
+  }
+
   private initForm(): void {
     this.form.controls.address.controls.select.label = 'Dirección';
   }
@@ -93,7 +99,7 @@ export class WarehouseFormComponent extends BaseForm<Warehouse, WarehouseParams,
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Warehouse> = isNew
       ? this.service.create(this.form.getRawValue())
-      : this.service.update(this.form.getRawValue(), this.item()!.id!, false);
+      : this.service.update(this.form.getRawValue(), this.item()!.id!);
 
     observable.subscribe({
       next: (warehouse) => {
@@ -104,6 +110,41 @@ export class WarehouseFormComponent extends BaseForm<Warehouse, WarehouseParams,
       error: (err) => {
         console.error(`Error ${isNew ? 'creating' : 'updating'} warehouse:`, err);
         this.toastr.error(`Error ${isNew ? 'creando' : 'actualizando'} el almacén`);
+      }
+    });
+  }
+
+  saveWarehouseProducts(): void {
+    if (!this.item()) return;
+    if (!this.item()?.id) return;
+
+    const updateDto = {
+      id: this.item()!.id,
+      addressId: this.item()!.address?.id || 0,
+      warehouseProducts: this.item()!.warehouseProducts
+        .filter(x => (x as any).hasChanges)
+        .map(x => ({
+          productId: x.product?.id,
+          quantity: x.quantity,
+          reservedQuantity: x.reservedQuantity,
+          damagedQuantity: x.damagedQuantity,
+          onHoldQuantity: x.onHoldQuantity,
+          reorderLevel: x.reorderLevel,
+          safetyStock: x.safetyStock,
+          lotNumber: x.lotNumber,
+          expirationDate: x.expirationDate
+        }))
+    };
+
+    this.service.updateProducts(updateDto, this.item()!.id!).subscribe({
+      next: (warehouse) => {
+        this.toastr.success('Productos del almacén actualizados exitosamente.');
+        this.item()!.warehouseProducts.forEach(x => (x as any).hasChanges = false);
+        this.hasWarehouseProductChanges = false;
+      },
+      error: (err) => {
+        console.error('Error updating warehouse products', err);
+        this.toastr.error('Error actualizando productos del almacén.');
       }
     });
   }

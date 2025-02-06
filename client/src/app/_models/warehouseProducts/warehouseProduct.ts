@@ -1,6 +1,8 @@
 import { Entity } from "src/app/_models/base/entity";
+import { Product } from "src/app/_models/products/product";
 
 export class WarehouseProduct extends Entity {
+  product?: Partial<Product>;
   warehouseId!: number;
   productId!: number;
   quantity!: number;

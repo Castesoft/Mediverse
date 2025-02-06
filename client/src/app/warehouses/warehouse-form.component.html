@@ -29,10 +29,19 @@
         <div tableWrapper>
           <table warehouseProductsTable
                  [warehouseProducts]="item()?.warehouseProducts || []"
+                 (changesMade)="onWarehouseProductsChanged($event)"
                  [editable]="use() === FormUse.EDIT">
           </table>
         </div>
       </div>
+
+      @if (hasWarehouseProductChanges) {
+        <div class="card-footer border-0 pt-0 text-end">
+          <button type="button" class="btn btn-primary" (click)="saveWarehouseProducts()">
+            Guardar Cambios en Productos
+          </button>
+        </div>
+      }
     </div>
   </div>
 } @else {

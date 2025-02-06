@@ -1,3 +1,5 @@
+using MainService.Core.DTOs.Warehouses;
+
 namespace MainService.Core.DTOs.Products;
 
 public class ProductDto
@@ -23,5 +25,6 @@ public class ProductDto
     public bool IsVisible { get; set; }
 
     public ICollection<PhotoDto> Photos { get; set; } = [];
+    public ICollection<WarehouseProductDto> WarehouseProducts { get; set; } = [];
     public DateTime CreatedAt { get; set; }
 }

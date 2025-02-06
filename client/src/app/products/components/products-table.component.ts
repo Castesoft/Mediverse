@@ -54,7 +54,13 @@ export class ProductsTableComponent extends BaseTable<Product, ProductParams, Pr
   }
 
   private updateProduct(item: Product): void {
-    this.service.update(item, item.id!).subscribe({
+    const formData = new FormData();
+
+    formData.append('id', item.id!.toString());
+    formData.append('isEnabled', item.isEnabled.toString());
+    formData.append('isVisible', item.isVisible.toString());
+
+    this.service.update(formData, item.id!).subscribe({
       error: (error) => {
         this.toastr.error(error.message);
       }

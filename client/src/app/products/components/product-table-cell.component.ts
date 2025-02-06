@@ -40,27 +40,30 @@ export class ProductTableSexCellComponent {
   selector: 'td[productCell]',
   template: `
     @if (routerLink) {
-    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-      <a [routerLink]="[routerLink]">
-        <div class="symbol-label">
-          @if (item().photoUrl) {
-          <img [src]="item().photoUrl" alt="Emma Smith" class="w-100" />
-          } @else {
-          <div class="symbol-label fs-3 bg-light-danger text-danger">
-            {{ item().name![0] }}
+      <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+        <a [routerLink]="[routerLink]">
+          <div class="symbol-label">
+            @if (item().photoUrl) {
+              <img [src]="item().photoUrl" alt="Emma Smith" class="w-100"/>
+            } @else {
+              <div class="symbol-label fs-3 bg-light-danger text-danger">
+                {{ item().name![0] }}
+              </div>
+            }
           </div>
-          }
-        </div>
-      </a>
-    </div>
-    <div class="d-flex flex-column">
-      <a
-        [routerLink]="[routerLink]"
-        class="text-gray-800 text-hover-primary mb-1"
-        >{{ item().name }}</a
-      >
-      <span>{{ item().price | currency }}</span>
-    </div>
+        </a>
+      </div>
+      <div class="d-flex flex-column">
+        <a
+          [routerLink]="[routerLink]"
+          class="text-gray-800 text-hover-primary mb-1"
+        >
+          {{ item().name }}
+        </a>
+        <span>
+          {{ item().price | currency }}
+        </span>
+      </div>
     }
   `,
   standalone: true,

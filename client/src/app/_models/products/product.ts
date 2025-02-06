@@ -1,5 +1,6 @@
 import { Entity } from "src/app/_models/base/entity";
 import { Photo } from "src/app/_models/forms/example/_models/photo";
+import { WarehouseProduct } from "src/app/_models/warehouseProducts/warehouseProduct";
 
 
 export class Product extends Entity {
@@ -19,6 +20,8 @@ export class Product extends Entity {
   category: string | null = null;
   // tags: string[] | null = null; TODO: Implement tags
   costPrice: number | null = null;
+
+  warehouseProducts?: Partial<WarehouseProduct>[] = [];
 
   constructor(init?: Partial<Product>) {
     super();
