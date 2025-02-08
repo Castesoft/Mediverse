@@ -1,4 +1,4 @@
-import { Component, ModelSignal, model, inject } from "@angular/core";
+import { Component, ModelSignal, model, inject, InputSignal, input } from "@angular/core";
 import { View, CatalogMode, } from "src/app/_models/base/types";
 import { User } from "src/app/_models/users/user";
 import { UserParams } from "src/app/_models/users/userParams";
@@ -10,6 +10,8 @@ import { ControlsRow3Component } from "src/app/_forms2/builder/controls-row-3.co
 import { ControlsWrapper3Component } from "src/app/_forms2/builder/controls-wrapper-3.component";
 import { FormsModule } from "@angular/forms";
 import { FilterConfiguration } from "../../_models/base/filter-types";
+import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: '[usersCatalog]',

@@ -31,6 +31,8 @@ import {
   AdminWarehouseDetailRouteComponent
 } from "src/app/admin/routes/warehouses/admin-warehouse-detail-route.component";
 import { AdminWarehouseEditRouteComponent } from "src/app/admin/routes/warehouses/admin-warehouse-edit-route.component";
+import { AdminDoctorDetailRouteComponent } from "src/app/admin/routes/doctors/admin-doctors-detail-route.component";
+import { UsersService } from "src/app/users/users.config";
 
 @NgModule({
   imports: [
@@ -133,6 +135,13 @@ import { AdminWarehouseEditRouteComponent } from "src/app/admin/routes/warehouse
             component: AdminDoctorsCatalogRouteComponent,
             title: 'Doctores | Administrar',
             data: { breadcrumb: 'Doctores', title: 'Administrar Doctores', },
+          },
+          {
+            path: 'doctores/:id',
+            component: AdminDoctorDetailRouteComponent,
+            title: 'Doctores | Ver Detalle',
+            data: { breadcrumb: [ 'Doctores', 'Detalle' ], title: 'Detalle Doctor', },
+            resolve: { item: createItemResolver(UsersService) },
           }
           // Permisos
         ]

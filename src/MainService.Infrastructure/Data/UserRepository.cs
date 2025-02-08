@@ -63,23 +63,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .ThenInclude(x => x.MedicalInsuranceCompany)
             .Include(x => x.PatientEvents)
             .ThenInclude(x => x.Event)
-            .ThenInclude(x => x.EventPayments)
-            .ThenInclude(x => x.Payment)
-            .ThenInclude(x => x.PaymentPaymentMethod)
-            .Include(x => x.PatientEvents)
-            .ThenInclude(x => x.Event)
-            .ThenInclude(x => x.EventPayments)
-            .ThenInclude(x => x.Payment)
-            .ThenInclude(x => x.PaymentPaymentMethodType)
-            .Include(x => x.PatientEvents)
-            .ThenInclude(x => x.Event)
-            .ThenInclude(x => x.EventPayments)
-            .ThenInclude(x => x.Payment)
-            .ThenInclude(x => x.EventPayment)
-            .ThenInclude(x => x.Event)
-            .ThenInclude(x => x.DoctorEvent)
-            .ThenInclude(x => x.Doctor)
-            .Include(x => x.Doctors);
+            .ThenInclude(x => x.Payments);
 
     public async Task<List<UserSummaryDto>> GetSummaryDtosAsync(UserParams param, ClaimsPrincipal user)
     {

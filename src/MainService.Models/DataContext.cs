@@ -53,11 +53,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; }
     public DbSet<WorkSchedule> WorkSchedules { get; set; }
     public DbSet<DoctorWorkSchedule> DoctorWorkSchedules { get; set; }
-    public DbSet<EventPaymentStatus> EventPaymentStatuses { get; set; }
-    public DbSet<PaymentStatus> PaymentStatuses { get; set; }
     public DbSet<Payment> Payments { get; set; }
-    public DbSet<PaymentPaymentMethodType> PaymentPaymentMethodTypes { get; set; }
-    public DbSet<EventPayment> EventPayments { get; set; }
     public DbSet<DoctorReview> DoctorReviews { get; set; }
     public DbSet<UserReview> UserReviews { get; set; }
     public DbSet<Review> Reviews { get; set; }
@@ -90,6 +86,9 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<OrderStatus> OrderStatuses { get; set; }
     public DbSet<Warehouse> Warehouses { get; set; }
     public DbSet<WarehouseProduct> WarehouseProducts { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<SubscriptionHistory> SubscriptionHistories { get; set; }
+    public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -27,7 +27,7 @@ var KTSubscriptionsList = function () {
             "lengthChange": false,
             'columnDefs': [
                 { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
-                { orderable: false, targets: 6 }, // Disable ordering on column 6 (actions)                
+                { orderable: false, targets: 6 }, // Disable ordering on column 6 (actions)
             ]
         });
 
@@ -41,7 +41,7 @@ var KTSubscriptionsList = function () {
 
     // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
     var handleSearch = function () {
-        const filterSearch = document.querySelector('[data-kt-subscription-table-filter="search"]');
+        const filterSearch = document.querySelector('[data-kt-subscriptions-table-filter="search"]');
         filterSearch.addEventListener('keyup', function (e) {
             datatable.search(e.target.value).draw();
         });
@@ -50,9 +50,9 @@ var KTSubscriptionsList = function () {
     // Filter Datatable
     var handleFilter = function () {
         // Select filter options
-        const filterForm = document.querySelector('[data-kt-subscription-table-filter="form"]');
-        const filterButton = filterForm.querySelector('[data-kt-subscription-table-filter="filter"]');
-        const resetButton = filterForm.querySelector('[data-kt-subscription-table-filter="reset"]');
+        const filterForm = document.querySelector('[data-kt-subscriptions-table-filter="form"]');
+        const filterButton = filterForm.querySelector('[data-kt-subscriptions-table-filter="filter"]');
+        const resetButton = filterForm.querySelector('[data-kt-subscriptions-table-filter="reset"]');
         const selectOptions = filterForm.querySelectorAll('select');
 
         // Filter datatable on submit
@@ -156,10 +156,10 @@ var KTSubscriptionsList = function () {
         const checkboxes = table.querySelectorAll('[type="checkbox"]');
 
         // Select elements
-        toolbarBase = document.querySelector('[data-kt-subscription-table-toolbar="base"]');
-        toolbarSelected = document.querySelector('[data-kt-subscription-table-toolbar="selected"]');
-        selectedCount = document.querySelector('[data-kt-subscription-table-select="selected_count"]');
-        const deleteSelected = document.querySelector('[data-kt-subscription-table-select="delete_selected"]');
+        toolbarBase = document.querySelector('[data-kt-subscriptions-table-toolbar="base"]');
+        toolbarSelected = document.querySelector('[data-kt-subscriptions-table-toolbar="selected"]');
+        selectedCount = document.querySelector('[data-kt-subscriptions-table-select="selected_count"]');
+        const deleteSelected = document.querySelector('[data-kt-subscriptions-table-select="delete_selected"]');
 
         // Toggle delete selected toolbar
         checkboxes.forEach(c => {
@@ -227,7 +227,7 @@ var KTSubscriptionsList = function () {
 
     // Toggle toolbars
     const toggleToolbars = () => {
-        // Select refreshed checkbox DOM elements 
+        // Select refreshed checkbox DOM elements
         const allCheckboxes = table.querySelectorAll('tbody [type="checkbox"]');
 
         // Detect checkboxes state & count
@@ -254,7 +254,7 @@ var KTSubscriptionsList = function () {
     }
 
     return {
-        // Public functions  
+        // Public functions
         init: function () {
             table = document.getElementById('kt_subscriptions_table');
 

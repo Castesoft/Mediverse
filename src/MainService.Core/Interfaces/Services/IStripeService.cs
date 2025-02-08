@@ -10,6 +10,6 @@ namespace MainService.Core.Interfaces.Services
         Task<bool> AddPaymentMethodAsync(string customerId, string paymentMethodId, bool isMain);
         Task<bool> DeletePaymentMethodAsync(string paymentMethodId);
         Task<bool> SetMainPaymentMethodAsync(string customerId, string paymentMethodId);
-        Task<PaymentIntent> CreatePaymentIntentAsync(string customerId, string paymentMethodId, string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents);
+        Task<PaymentIntent?> CreatePaymentIntentAsync(string customerId, string paymentMethodId, string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents);
     }
 }

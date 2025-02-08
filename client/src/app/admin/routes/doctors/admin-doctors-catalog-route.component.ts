@@ -27,6 +27,24 @@ export class AdminDoctorsCatalogRouteComponent extends BaseRouteCatalog<User, Us
 
   constructor() {
     super(UsersService, 'users');
+    this.service.clickLinkHandler = (item, key, use, view, siteSection) => {
+      if (view === 'page') {
+        this.router.navigate([ `/admin/doctores/${item?.id}` ]).then();
+      } else if (view === 'modal' && this.service.modalComponent) {
+        this.service.matDialog.open(this.service.modalComponent, {
+          data: {
+            item,
+            key,
+            use,
+            view,
+            title: `Doctor ${item?.id} Details`,
+          },
+          disableClose: true,
+          hasBackdrop: false,
+          panelClass: [ 'window' ]
+        });
+      }
+    };
   }
 
   ngOnInit(): void {

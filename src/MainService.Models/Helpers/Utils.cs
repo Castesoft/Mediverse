@@ -1,5 +1,4 @@
 using MainService.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Models.Helpers;
 public static class Utils

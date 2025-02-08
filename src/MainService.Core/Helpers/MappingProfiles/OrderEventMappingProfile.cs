@@ -16,17 +16,8 @@ public class OrderEventMappingProfile : Profile
         CreateMap<Payment, PaymentDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
-            .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => src.CreatedAt))
-            .ForMember(dest => dest.PaymentMethod,
-                opt => opt.MapFrom(src => src.PaymentPaymentMethod.PaymentMethod))
-            .ForMember(dest => dest.PaymentMethodType,
-                opt => opt.MapFrom(src => src.PaymentPaymentMethodType.PaymentMethodType))
-            .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src =>
-                (src.EventPayment != null && src.EventPayment.Event != null &&
-                 src.EventPayment.Event.DoctorEvent != null && src.EventPayment.Event.DoctorEvent.Doctor != null)
-                    ? src.EventPayment.Event.DoctorEvent.Doctor.Id
-                    : 0));
-
+            .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => src.CreatedAt));
+        
         // Map Order to OrderDto.
         CreateMap<Order, OrderDto>()
             .ForMember(dest => dest.DeliveryAddress, opt => opt.MapFrom(src =>
@@ -117,10 +108,8 @@ public class OrderEventMappingProfile : Profile
                 opt => opt.MapFrom(src => src.EventPaymentMethodType.PaymentMethodType))
             .ForMember(dest => dest.MedicalInsuranceCompany,
                 opt => opt.MapFrom(src => src.EventMedicalInsuranceCompany.MedicalInsuranceCompany))
-            .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => src.EventPayments.Select(x => x.Payment)))
             .ForMember(dest => dest.Prescriptions,
-                opt => opt.MapFrom(src => src.EventPrescriptions.Select(x => x.Prescription)))
-            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.EventPaymentStatus.PaymentStatus));
+                opt => opt.MapFrom(src => src.EventPrescriptions.Select(x => x.Prescription)));
 
         // Map Event to EventSummaryDto.
         CreateMap<Event, EventSummaryDto>()

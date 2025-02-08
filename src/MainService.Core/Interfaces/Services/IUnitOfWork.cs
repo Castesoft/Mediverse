@@ -31,6 +31,10 @@ public interface IUnitOfWork
     IDocumentRepository DocumentRepository { get; }
     IRoleRepository RoleRepository { get; }
     IWarehouseRepository WarehouseRepository { get; }
+    IPaymentRepository PaymentRepository { get; }
+    ISubscriptionRepository SubscriptionRepository { get; }
+    ISubscriptionHistoryRepository SubscriptionHistoryRepository { get; }
+    ISubscriptionPlanRepository SubscriptionPlanRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();

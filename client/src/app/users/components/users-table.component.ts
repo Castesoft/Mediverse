@@ -15,6 +15,7 @@ import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { UsersService } from "src/app/users/users.config";
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
+import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -30,6 +31,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     MaterialModule,
     CommonModule,
     TableMenuComponent,
+    UserTableCellComponent,
   ],
 })
 export class UsersTableComponent extends BaseTable<User, UserParams, UserFiltersForm, UsersService> implements OnDestroy, TableInputSignals<User, UserParams> {
@@ -42,7 +44,7 @@ export class UsersTableComponent extends BaseTable<User, UserParams, UserFilters
   data: ModelSignal<User[]> = model.required();
 
   constructor() {
-    super(UsersService, User, { tableCells: userCells, });
+    super(UsersService, User, { tableCells: userCells });
   }
 
   ngOnDestroy(): void {

@@ -45,6 +45,8 @@ import {
   ],
 })
 export class OrdersTableComponent extends BaseTable<Order, OrderParams, OrderFiltersForm, OrdersService> implements OnDestroy, TableInputSignals<Order, OrderParams> {
+  protected readonly SiteSection:typeof SiteSection = SiteSection;
+
   item: ModelSignal<Order | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -76,6 +78,4 @@ export class OrdersTableComponent extends BaseTable<Order, OrderParams, OrderFil
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
-  protected readonly SiteSection = SiteSection;
 }

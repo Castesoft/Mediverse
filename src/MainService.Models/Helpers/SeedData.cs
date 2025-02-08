@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using MainService.Models.Entities;
+using MainService.Models.Helpers.Constants;
 
 namespace MainService.Models.Helpers
 {
@@ -52,94 +53,59 @@ namespace MainService.Models.Helpers
     {
         private static readonly Random Random = new();
 
-        private static PaymentMethodType GetRandomPaymentMethodType()
+        public static List<Payment> GetEventPayments(Event @event)
         {
-            var paymentMethods = SeedData.paymentMethodTypes.ToList();
-            return paymentMethods[Random.Next(paymentMethods.Count)];
-        }
-
-        // 50/50 que un servicio vaya a tener al menos un pago
-        // si si fue pagado, 1-3 pagos
-        // para cada uno de los pagos, seleccionar aleatoriamente el tipo de pago
-        // 50/50 si el total de los pagos es igual al total del servicio/evento
-
-        // code review
-        // asignar el EventPaymentStatus adecuado
-
-        // cuando el pago sea con tarjeta ..... en el seeding los usuarios ya tienen métodos de pago (crédito/débito)?
-
-        public static List<EventPayment> GetEventPayments(Event @event, AppUser user)
-        {
+            // 50/50 chance that this event will have at least one payment.
             var hasPayment = Random.Next(0, 2) > 0;
-
             if (!hasPayment) return [];
 
             var paymentCount = Random.Next(1, 4);
+            
             var totalAmount = @event.EventService.Service.Price;
             var remainingAmount = totalAmount;
-            List<EventPayment> payments = [];
 
-            if (totalAmount.HasValue && remainingAmount.HasValue)
+            var payments = new List<Payment>();
+
+            for (var i = 0; i < paymentCount; i++)
             {
-                for (var i = 0; i < paymentCount; i++)
+                var isLastPayment = i == paymentCount - 1;
+                var paymentAmount = isLastPayment ? remainingAmount : Random.Next(1, (int)remainingAmount);
+                remainingAmount -= paymentAmount;
+                
+                PaymentStatus status;
+                if (i == paymentCount - 1 && paymentCount == 1)
+                    status = PaymentStatus.Succeeded;
+                else if (remainingAmount <= 0)
+                    status = PaymentStatus.Succeeded;
+                else
+                    status = PaymentStatus.Processing;
+
+                var payment = new Payment
                 {
-                    var isLastPayment = i == paymentCount - 1;
-                    var paymentAmount = isLastPayment
-                        ? remainingAmount // En el último pago, asignar todo el monto restante
-                        : Random.Next(1,
-                            (int)remainingAmount); // Asegurarse de que el valor mínimo sea menor que el valor máximo
+                    Amount = paymentAmount,
+                    Currency = "MXN",
+                    PaymentDate = DateTime.UtcNow,
+                    PaymentStatus = status,
+                };
 
-                    var paymentMethodType = GetRandomPaymentMethodType();
-
-                    var payment = new EventPayment
-                    {
-                        Payment = new Payment
-                        {
-                            Amount = paymentAmount,
-                            PaymentPaymentMethodType = new PaymentPaymentMethodType
-                            {
-                                PaymentMethodTypeId = paymentMethodType.Id
-                            }
-                        }
-                    };
-
-                    if (paymentMethodType.Name == "Tarjeta de Crédito" || paymentMethodType.Name == "Tarjeta de Débito")
-                    {
-                        if (user.UserPaymentMethods.Any()) // Verificar si hay métodos de pago disponibles
-                        {
-                            payment.Payment.PaymentPaymentMethod = new PaymentPaymentMethod
-                            {
-                                PaymentMethodId = user.UserPaymentMethods
-                                    .ElementAt(Random.Next(user.UserPaymentMethods.Count)).PaymentMethodId
-                            };
-                        }
-                        else
-                        {
-                            // Manejar el caso en el que no haya métodos de pago disponibles
-                            payment.Payment.PaymentPaymentMethod = null!; // o alguna lógica alternativa
-                        }
-                    }
-
-                    payments.Add(payment);
-                    remainingAmount -= paymentAmount;
-                }
+                payments.Add(payment);
             }
 
             return payments;
         }
 
-
         public static PaymentStatus GetPaymentStatus(Event @event)
         {
-            if (@event.EventPayments.Count == 0) return SeedData.paymentStatuses.First(x => x.Name == "Pendiente");
+            var totalPaid = @event.Payments.Sum(p => p.Amount);
+            var servicePrice = @event.EventService.Service.Price;
 
-            var totalPayments = @event.EventPayments.Sum(x => x.Payment.Amount);
-            var totalService = @event.EventService.Service.Price;
-
-            if (totalPayments == totalService) return SeedData.paymentStatuses.First(x => x.Name == "Pagado");
-            if (totalPayments > 0) return SeedData.paymentStatuses.First(x => x.Name == "Parcialmente Pagado");
-
-            return SeedData.paymentStatuses.First(x => x.Name == "Pendiente");
+            if (totalPaid >= servicePrice)
+                return PaymentStatus.Succeeded;
+            
+            if (totalPaid > 0)
+                return PaymentStatus.Processing;
+            
+            return PaymentStatus.RequiresPaymentMethod;
         }
     }
 
@@ -560,22 +526,6 @@ namespace MainService.Models.Helpers
             }
         ];
 
-        public static readonly IEnumerable<PaymentStatus> paymentStatuses =
-        [
-            new("Pagado", "#28a745", "El pago ha sido completado con éxito."),
-            new("Parcialmente Pagado", "#ffc107", "El pago ha sido parcialmente completado."),
-            new("Reembolsado", "#dc3545", "El pago ha sido reembolsado."),
-            new("Pendiente", "#007bff", "El pago está pendiente de confirmación."),
-            new("Cancelado", "#6c757d", "El pago ha sido cancelado."),
-            new("Fallido", "#dc3545", "El pago ha fallado."),
-            new("Procesando", "#17a2b8", "El pago está siendo procesado."),
-            new("Enviado", "#28a745", "El pago ha sido enviado."),
-            new("Entregado", "#28a745", "El pago ha sido entregado."),
-            new("Completado", "#28a745", "El pago ha sido completado."),
-            new("En Espera", "#ffc107", "El pago está en espera."),
-            new("En Proceso", "#17a2b8", "El pago está en proceso."),
-        ];
-
         public static readonly IEnumerable<PaymentMethodType> paymentMethodTypes =
         [
             new() { Name = "Tarjeta de Crédito" },
@@ -584,6 +534,34 @@ namespace MainService.Models.Helpers
             new() { Name = "Efectivo" },
             new() { Name = "Paypal" }
         ];
+        
+        public static readonly List<SubscriptionPlan> SubscriptionPlans = new()
+        {
+            new SubscriptionPlan
+            {
+                Name = SubscriptionPlanName.Basic,
+                Description = "Basic plan with limited features.",
+                Price = 100,
+                BillingFrequencyInMonths = 1,
+                StripePlanId = "plan_basic_001"
+            },
+            new SubscriptionPlan
+            {
+                Name = SubscriptionPlanName.Premium,
+                Description = "Premium plan with extra features.",
+                Price = 250,
+                BillingFrequencyInMonths = 1,
+                StripePlanId = "plan_premium_001"
+            },
+            new SubscriptionPlan
+            {
+                Name = SubscriptionPlanName.Enterprise,
+                Description = "Enterprise plan with full features and support.",
+                Price = 500,
+                BillingFrequencyInMonths = 1,
+                StripePlanId = "plan_enterprise_001"
+            }
+        };
 
         public static IEnumerable<AppRole> GetRolesWithPermissions()
         {

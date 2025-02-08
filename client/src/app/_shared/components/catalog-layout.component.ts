@@ -65,6 +65,7 @@ export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>
   mode: ModelSignal<CatalogMode> = model.required();
   view: ModelSignal<View> = model.required();
   isCompact: ModelSignal<boolean> = model.required();
+  embedded: ModelSignal<boolean> = model(false);
 
   // Don't modify these:
   @ContentChild('entityTable') entityTable!: TemplateRef<any>;

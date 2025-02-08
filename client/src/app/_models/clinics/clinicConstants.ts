@@ -1,4 +1,4 @@
-import { Column, columnName } from "src/app/_models/base/column";
+import { Column, columnCreatedAt, columnName } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -23,18 +23,11 @@ export const clinicDictionary: NamingSubject = new NamingSubject(
   'clínicas',
   'Clínicas',
   'clinics',
-
 );
 
 export const clinicColumns: Column[] = [
   columnName,
-  new Column('street', 'Calle'),
-  new Column('exteriorNumber', 'Número exterior'),
-  new Column('interiorNumber', 'Número interior'),
-  new Column('neighborhood', 'Colonia'),
-  new Column('city', 'Ciudad'),
-  new Column('state', 'Estado'),
-  new Column('country', 'País'),
+  new Column('address', 'Dirección'),
   new Column('zipcode', 'Código postal'),
 ];
 
@@ -63,7 +56,7 @@ export const clinicCells: PartialCellsOf<Clinic> = {
   nursesCount: new TableCellItem<number, 'nursesCount'>('nursesCount', 'number'),
   state: new TableCellItem<string, 'state'>('state', 'string'),
   isMain: new TableCellItem<boolean, 'isMain'>('isMain', 'boolean'),
-  zipcode: new TableCellItem<string, 'zipcode'>('zipcode', 'string'),
+  zipcode: new TableCellItem<string, 'zipcode'>('zipcode', 'badge'),
   street: new TableCellItem<string, 'street'>('street', 'string'),
   exteriorNumber: new TableCellItem<string, 'exteriorNumber'>('exteriorNumber', 'string'),
   interiorNumber: new TableCellItem<string, 'interiorNumber'>('interiorNumber', 'string'),

@@ -1,5 +1,3 @@
-using System;
-
 namespace MainService.Models.Entities
 {
     public class WarehouseProduct

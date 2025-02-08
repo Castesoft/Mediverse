@@ -22,7 +22,7 @@ public class Service : BaseEntity
         Discount = discount;
     }
 
-    public decimal? Price { get; set; }
+    public decimal Price { get; set; }
     public double? Discount { get; set; }
 
     public DoctorService DoctorService { get; set; } = null!;

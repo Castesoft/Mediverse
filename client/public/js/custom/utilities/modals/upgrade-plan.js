@@ -40,11 +40,11 @@ var KTModalUpgradePlan = function () {
 
             planPeriodMonthButton.classList.remove('active');
             planPeriodAnnualButton.classList.add('active');
-            
+
             changePlanPrices('annual');
         });
     }
-    
+
     var handlePlanUpgrade = function () {
         if ( !planUpgradeButton ) {
             return;
@@ -68,12 +68,12 @@ var KTModalUpgradePlan = function () {
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    el.setAttribute('data-kt-indicator', 'on');            
+                    el.setAttribute('data-kt-indicator', 'on');
                     el.disabled = true;
 
                     setTimeout(function() {
                         Swal.fire({
-                            text: 'Your subscription plan has been successfully upgraded', 
+                            text: 'Your subscriptions plan has been successfully upgraded',
                             icon: 'success',
                             confirmButtonText: "Ok",
                             buttonsStyling: false,
@@ -85,8 +85,8 @@ var KTModalUpgradePlan = function () {
                         })
 
                     }, 2000);
-                } 
-            });            
+                }
+            });
         });
     }
 

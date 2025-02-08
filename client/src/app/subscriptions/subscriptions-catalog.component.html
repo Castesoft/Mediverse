@@ -1,5 +1,3 @@
-{{ params().fromSection }}
-
 <div catalogLayout
      [service]="service"
      [(form)]="form"
@@ -10,6 +8,7 @@
      [(filterConfig)]="filterConfig"
      [(item)]="item"
      [(params)]="params"
+     [(embedded)]="embedded"
 >
   <ng-template #entityFilterForm>
     <div controlsRow3 [grid]="filterConfig().orientation == 'horizontal' ? 5 : 1">
@@ -17,7 +16,7 @@
     </div>
   </ng-template>
   <ng-template #entityTable let-list="list">
-    <table doctorsTable
+    <table subscriptionsTable
            [(mode)]="mode"
            [(isCompact)]="isCompact"
            [data]="list"

@@ -551,41 +551,6 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Payments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: true),
-                    StripePaymentIntent = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PaymentStatuses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Color = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
                 {
@@ -728,7 +693,7 @@ namespace MainService.Postgres.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Price = table.Column<decimal>(type: "numeric", nullable: true),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
                     Discount = table.Column<double>(type: "double precision", nullable: true),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
@@ -775,6 +740,25 @@ namespace MainService.Postgres.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_States", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubscriptionPlans",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    BillingFrequencyInMonths = table.Column<int>(type: "integer", nullable: false),
+                    StripePlanId = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubscriptionPlans", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1212,6 +1196,36 @@ namespace MainService.Postgres.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PatientEvent_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Currency = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PaymentStatus = table.Column<string>(type: "text", nullable: false),
+                    StripePaymentIntent = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    StripePaymentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    StripeInvoiceId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    EventId = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
@@ -1849,102 +1863,6 @@ namespace MainService.Postgres.Migrations
                         name: "FK_EventPaymentMethodType_PaymentMethodTypes_PaymentMethodType~",
                         column: x => x.PaymentMethodTypeId,
                         principalTable: "PaymentMethodTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EventPayments",
-                columns: table => new
-                {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EventPayments", x => new { x.EventId, x.PaymentId });
-                    table.ForeignKey(
-                        name: "FK_EventPayments_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EventPayments_Payments_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PaymentPaymentMethod",
-                columns: table => new
-                {
-                    PaymentId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentPaymentMethod", x => new { x.PaymentId, x.PaymentMethodId });
-                    table.ForeignKey(
-                        name: "FK_PaymentPaymentMethod_PaymentMethods_PaymentMethodId",
-                        column: x => x.PaymentMethodId,
-                        principalTable: "PaymentMethods",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PaymentPaymentMethod_Payments_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PaymentPaymentMethodTypes",
-                columns: table => new
-                {
-                    PaymentId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentPaymentMethodTypes", x => new { x.PaymentId, x.PaymentMethodTypeId });
-                    table.ForeignKey(
-                        name: "FK_PaymentPaymentMethodTypes_PaymentMethodTypes_PaymentMethodT~",
-                        column: x => x.PaymentMethodTypeId,
-                        principalTable: "PaymentMethodTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PaymentPaymentMethodTypes_Payments_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EventPaymentStatuses",
-                columns: table => new
-                {
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentStatusId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EventPaymentStatuses", x => new { x.EventId, x.PaymentStatusId });
-                    table.ForeignKey(
-                        name: "FK_EventPaymentStatuses_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EventPaymentStatuses_PaymentStatuses_PaymentStatusId",
-                        column: x => x.PaymentStatusId,
-                        principalTable: "PaymentStatuses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -2667,6 +2585,42 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Subscriptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    SubscriptionPlanId = table.Column<int>(type: "integer", nullable: false),
+                    SubscriptionStartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SubscriptionEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    NextBillingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StripeSubscriptionId = table.Column<string>(type: "text", nullable: true),
+                    StripeCustomerId = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscriptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_SubscriptionPlans_SubscriptionPlanId",
+                        column: x => x.SubscriptionPlanId,
+                        principalTable: "SubscriptionPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MedicalLicenseSubSpecialties",
                 columns: table => new
                 {
@@ -2850,6 +2804,39 @@ namespace MainService.Postgres.Migrations
                         name: "FK_WarehouseProducts_Warehouses_WarehouseId",
                         column: x => x.WarehouseId,
                         principalTable: "Warehouses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubscriptionHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SubscriptionId = table.Column<int>(type: "integer", nullable: false),
+                    ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    OldStatus = table.Column<string>(type: "text", nullable: false),
+                    NewStatus = table.Column<string>(type: "text", nullable: false),
+                    Note = table.Column<string>(type: "text", nullable: true),
+                    AppUserId = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubscriptionHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubscriptionHistories_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SubscriptionHistories_Subscriptions_SubscriptionId",
+                        column: x => x.SubscriptionId,
+                        principalTable: "Subscriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -3101,23 +3088,6 @@ namespace MainService.Postgres.Migrations
                 column: "PaymentMethodTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventPayments_PaymentId",
-                table: "EventPayments",
-                column: "PaymentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EventPaymentStatuses_EventId",
-                table: "EventPaymentStatuses",
-                column: "EventId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EventPaymentStatuses_PaymentStatusId",
-                table: "EventPaymentStatuses",
-                column: "PaymentStatusId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EventPrescription_PrescriptionId",
                 table: "EventPrescription",
                 column: "PrescriptionId",
@@ -3365,26 +3335,9 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentPaymentMethod_PaymentId",
-                table: "PaymentPaymentMethod",
-                column: "PaymentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PaymentPaymentMethod_PaymentMethodId",
-                table: "PaymentPaymentMethod",
-                column: "PaymentMethodId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PaymentPaymentMethodTypes_PaymentId",
-                table: "PaymentPaymentMethodTypes",
-                column: "PaymentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PaymentPaymentMethodTypes_PaymentMethodTypeId",
-                table: "PaymentPaymentMethodTypes",
-                column: "PaymentMethodTypeId");
+                name: "IX_Payments_EventId",
+                table: "Payments",
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionClinic_ClinicId",
@@ -3442,6 +3395,26 @@ namespace MainService.Postgres.Migrations
                 table: "StateCity",
                 column: "CityId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionHistories_AppUserId",
+                table: "SubscriptionHistories",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionHistories_SubscriptionId",
+                table: "SubscriptionHistories",
+                column: "SubscriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_SubscriptionPlanId",
+                table: "Subscriptions",
+                column: "SubscriptionPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_UserId",
+                table: "Subscriptions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserAddresses_AddressId",
@@ -3623,12 +3596,6 @@ namespace MainService.Postgres.Migrations
                 name: "EventPaymentMethodType");
 
             migrationBuilder.DropTable(
-                name: "EventPayments");
-
-            migrationBuilder.DropTable(
-                name: "EventPaymentStatuses");
-
-            migrationBuilder.DropTable(
                 name: "EventPrescription");
 
             migrationBuilder.DropTable(
@@ -3707,10 +3674,7 @@ namespace MainService.Postgres.Migrations
                 name: "PatientPrescription");
 
             migrationBuilder.DropTable(
-                name: "PaymentPaymentMethod");
-
-            migrationBuilder.DropTable(
-                name: "PaymentPaymentMethodTypes");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "PrescriptionClinic");
@@ -3735,6 +3699,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "StateCity");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionHistories");
 
             migrationBuilder.DropTable(
                 name: "UserAddresses");
@@ -3785,7 +3752,7 @@ namespace MainService.Postgres.Migrations
                 name: "WorkScheduleSettings");
 
             migrationBuilder.DropTable(
-                name: "PaymentStatuses");
+                name: "PaymentMethodTypes");
 
             migrationBuilder.DropTable(
                 name: "ColorBlindnesses");
@@ -3827,12 +3794,6 @@ namespace MainService.Postgres.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "PaymentMethodTypes");
-
-            migrationBuilder.DropTable(
-                name: "Payments");
-
-            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
@@ -3852,6 +3813,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "States");
+
+            migrationBuilder.DropTable(
+                name: "Subscriptions");
 
             migrationBuilder.DropTable(
                 name: "Documents");
@@ -3878,9 +3842,6 @@ namespace MainService.Postgres.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "TaxRegime");
 
             migrationBuilder.DropTable(
@@ -3888,6 +3849,12 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "Warehouses");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionPlans");
 
             migrationBuilder.DropTable(
                 name: "Addresses");

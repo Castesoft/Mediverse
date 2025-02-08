@@ -2,6 +2,7 @@ using MainService.Core.Interfaces.Services;
 using MainService.Models;
 using MainService.Models.Entities;
 using MainService.Models.Helpers;
+using MainService.Models.Helpers.Constants;
 using MainService.Models.Helpers.SeedDataZipcodes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -237,17 +238,6 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
-    private static async Task<List<PaymentStatus>> SeedPaymentStatusesAsync(DataContext context)
-    {
-        if (await context.PaymentStatuses.AnyAsync()) return [];
-        await context.PaymentStatuses.AddRangeAsync(SeedData.paymentStatuses);
-        await context.SaveChangesAsync();
-
-        return await context.PaymentStatuses
-            .AsNoTracking()
-            .ToListAsync();
-    }
-
     public static async Task SeedRolesAndPermissionsAsync(RoleManager<AppRole> roleManager,
         IPermissionManager permissionManager)
     {
@@ -281,6 +271,92 @@ public static class Seed
         // TODO
     }
 
+    private static async Task SeedSubscriptionPlansAsync(DataContext context)
+    {
+        if (await context.SubscriptionPlans.AnyAsync()) return;
+
+        // Use the subscription plans defined in SeedData.
+        await context.SubscriptionPlans.AddRangeAsync(SeedData.SubscriptionPlans.ToArray());
+        await context.SaveChangesAsync();
+
+        Log.Information("Subscription plans seeded.");
+    }
+
+    private static async Task SeedSubscriptionsAsync(DataContext context)
+    {
+        if (await context.Subscriptions.AnyAsync()) return;
+
+        var subscriptionPlans = await context.SubscriptionPlans.ToListAsync();
+        if (subscriptionPlans.Count == 0)
+            throw new Exception("No subscription plans found. Ensure SeedSubscriptionPlansAsync has run.");
+
+        var users = await context.Users.ToListAsync();
+
+        foreach (var user in users)
+        {
+            var chosenPlan = subscriptionPlans[Random.Next(subscriptionPlans.Count)];
+
+            // Simulate a subscription that started between 1 and 12 months ago.
+            var startDate = DateTime.UtcNow.AddMonths(-Random.Next(1, 13));
+            // Next billing date is based on the plan’s billing frequency.
+            var nextBillingDate = startDate.AddMonths(chosenPlan.BillingFrequencyInMonths);
+
+            var subscription = new Subscription
+            {
+                UserId = user.Id,
+                SubscriptionPlanId = chosenPlan.Id,
+                SubscriptionStartDate = startDate,
+                NextBillingDate = nextBillingDate,
+                Status = SubscriptionStatus.Active,
+                StripeSubscriptionId = "sub_demo_" + user.Id,
+                StripeCustomerId = user.StripeCustomerId
+            };
+            context.Subscriptions.Add(subscription);
+
+            var historyCount = Random.Next(2, 6);
+            var historyTime = startDate;
+            var previousStatus = SubscriptionStatus.Pending;
+
+            for (var i = 0; i < historyCount; i++)
+            {
+                var monthsToAdvance = Random.Next(1, 4);
+                historyTime = historyTime.AddMonths(monthsToAdvance);
+
+                SubscriptionStatus newStatus;
+                if (i == historyCount - 1)
+                {
+                    newStatus = SubscriptionStatus.Active;
+                }
+                else
+                {
+                    var r = Random.Next(3);
+                    newStatus = r switch
+                    {
+                        0 => SubscriptionStatus.Cancelled,
+                        1 => SubscriptionStatus.Expired,
+                        _ => SubscriptionStatus.Active,
+                    };
+                }
+
+                var history = new SubscriptionHistory
+                {
+                    Subscription = subscription,
+                    ChangedAt = historyTime,
+                    OldStatus = previousStatus,
+                    NewStatus = newStatus,
+                    Note = $"Status changed from {previousStatus} to {newStatus} on {historyTime:MM/dd/yyyy}"
+                };
+
+                context.SubscriptionHistories.Add(history);
+                previousStatus = newStatus;
+            }
+        }
+
+        await context.SaveChangesAsync();
+        Log.Information("Subscriptions and subscription histories seeded.");
+    }
+
+
     public static async Task SeedAsync(UserManager<AppUser> userManager, DataContext context, int doctorCount = 300,
         int patientCount = 100)
     {
@@ -299,7 +375,6 @@ public static class Seed
         var substances = await SeedSubstancesAsync(context);
         var consumptionLevels = await SeedConsumptionLevelsAsync(context);
         await SeedMedicalInsuranceCompaniesAsync(context);
-        var paymentStatuses = await SeedPaymentStatusesAsync(context);
         await SeedMexicoStates(context);
 
         if (await userManager.Users.AnyAsync()) return;
@@ -478,6 +553,8 @@ public static class Seed
         await SeedMedicalRecordsAsync(context, userManager, educationLevels, occupations, maritalStatuses,
             colorBlindnesses,
             relativeTypes, diseases, substances, consumptionLevels);
+        await SeedSubscriptionPlansAsync(context);
+        await SeedSubscriptionsAsync(context);
     }
 
     private static async Task SeedProductsAsync(DataContext context)
@@ -898,40 +975,29 @@ public static class Seed
 
     private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices, AppUser patient)
     {
-        if (doctorServices == null || doctorServices.Count == 0)
-        {
-            throw new ArgumentException("Doctor services list cannot be null or empty", nameof(doctorServices));
-        }
-
         var eventDate = DateGenerator.GenerateRandomDate(DateTime.UtcNow.Year, DateTime.UtcNow.Month);
-
         var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
-
         var isMainClinic = Random.Next(0, 2) > 0;
         var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
 
-        PatientEvent newPatientEvent = new()
+        var newEvent = new Event
         {
-            Event = new Event
+            DoctorEvent = new DoctorEvent(doctor),
+            DateFrom = eventDate.ToUniversalTime(),
+            DateTo = eventDate.AddHours(1).ToUniversalTime(),
+            EventService = new EventService(selectedService),
+            Payments = SeedEventPayments.GetEventPayments(new Event
             {
-                DoctorEvent = new DoctorEvent(doctor),
-                DateFrom = eventDate.ToUniversalTime(),
-                DateTo = eventDate.AddHours(1).ToUniversalTime(),
-                EventService = new EventService(selectedService),
-            }
+                EventService = new EventService(selectedService)
+            })
         };
 
-        newPatientEvent.Event.EventPayments = SeedEventPayments.GetEventPayments(newPatientEvent.Event, patient);
-        newPatientEvent.Event.EventPaymentStatus = new EventPaymentStatus
-        {
-            PaymentStatus = SeedEventPayments.GetPaymentStatus(newPatientEvent.Event)
-        };
+        if (randomClinic != null)
+            newEvent.EventClinic = new EventClinic(randomClinic);
 
-        if (randomClinic != null) newPatientEvent.Event.EventClinic = new EventClinic(randomClinic);
-
-        return newPatientEvent;
+        var patientEvent = new PatientEvent { Event = newEvent };
+        return patientEvent;
     }
-
 
     private static void AddNursesToEvent(PatientEvent patientEvent, List<DoctorNurse> doctorNurses)
     {

@@ -11,22 +11,21 @@ namespace MainService.Infrastructure.Services
             StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
 
             var service = new PaymentMethodService();
-            PaymentMethodAttachOptions options = new() { Customer = customerId };
-            PaymentMethod paymentMethod = await service.AttachAsync(paymentMethodId, options);
+            var options = new PaymentMethodAttachOptions { Customer = customerId };
+            var paymentMethod = await service.AttachAsync(paymentMethodId, options);
 
             if (paymentMethod.Id == null) return false;
 
-            if (isMain)
+            if (!isMain) return true;
+
+            var customerService = new CustomerService();
+            await customerService.UpdateAsync(customerId, new CustomerUpdateOptions
             {
-                var customerService = new CustomerService();
-                await customerService.UpdateAsync(customerId, new CustomerUpdateOptions
+                InvoiceSettings = new CustomerInvoiceSettingsOptions
                 {
-                    InvoiceSettings = new CustomerInvoiceSettingsOptions
-                    {
-                        DefaultPaymentMethod = paymentMethodId
-                    }
-                });
-            }
+                    DefaultPaymentMethod = paymentMethodId
+                }
+            });
 
             return true;
         }
@@ -36,7 +35,7 @@ namespace MainService.Infrastructure.Services
             StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
 
             var customerService = new CustomerService();
-            Customer customer = await customerService.CreateAsync(new CustomerCreateOptions
+            var customer = await customerService.CreateAsync(new CustomerCreateOptions
             {
                 Email = email,
                 Name = name,
@@ -93,7 +92,7 @@ namespace MainService.Infrastructure.Services
                 //         State = user.UserAddresses.FirstOrDefault()?.Address.State,
                 //     },
                 //     Phone = user.PhoneNumber,
-                    
+
                 // },
                 // ExternalAccount = new AccountExternalAccountOptions
                 // {
@@ -108,7 +107,8 @@ namespace MainService.Infrastructure.Services
             return await accountService.CreateAsync(options);
         }
 
-        public async Task<PaymentIntent> CreatePaymentIntentAsync(string customerId, string paymentMethodId, string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents)
+        public async Task<PaymentIntent?> CreatePaymentIntentAsync(string customerId, string paymentMethodId,
+            string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents)
         {
             StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
 
@@ -144,6 +144,7 @@ namespace MainService.Infrastructure.Services
             {
                 return true;
             }
+
             return true;
         }
 

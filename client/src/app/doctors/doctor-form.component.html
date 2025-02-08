@@ -2,29 +2,142 @@
   <div errorsAlert3 [(error)]="form.error"></div>
 }
 
-@if (useCard()) {
-  <div class="card">
-    <div class="card-body">
-      <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
-        <div formBuilder3 [controls]="[
-            form.controls.total,
-            form.controls.subtotal,
-            form.controls.status,
-            form.controls.deliveryStatus
-          ]"></div>
-        <button class="btn btn-primary" type="submit" [attr.form]="form.id">Enviar</button>
-      </form>
+<div class="d-flex flex-column flex-lg-row">
+  <div class="flex-column flex-lg-row-auto w-lg-250px w-xl-350px mb-10">
+    <div class="card mb-5 mb-xl-8">
+      <div class="card-body">
+        <div class="d-flex flex-center flex-column py-5">
+          <div
+            symbolCell
+            class="mb-7"
+            [size]="PhotoSize.MEDIUM"
+            [shape]="PhotoShape.CIRCLE"
+            [photoUrl]="item()?.photoUrl || null">
+          </div>
+
+          <a href="#" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-3">
+            {{ item()?.firstName }} {{ item()?.lastName }}
+          </a>
+
+          <div class="mb-9">
+            <div class="d-flex gap-2">
+              @for (role of item()?.roles; track role) {
+                <div class="badge badge-lg badge-light-primary d-inline">
+                  {{ role.name }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="d-flex flex-stack fs-4 py-3 justify-content-start w-100">
+            <div class="fw-bold rotate collapsible"
+                 (click)="isCollapsed = !isCollapsed"
+                 [attr.aria-expanded]="!isCollapsed"
+                 role="button"
+                 aria-controls="collapseDetails"
+                 style="cursor: pointer;">
+              Detalles
+              <span class="ms-2 rotate" [ngClass]="{'rotate-180': !isCollapsed}">
+                <i class="ki-duotone ki-down fs-3"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="separator w-100"></div>
+
+          <div class="w-100" id="collapseDetails" [isAnimated]="true" [collapse]="isCollapsed">
+            <div class="pb-5 fs-6">
+              <div class="fw-bold mt-5">ID de la Cuenta</div>
+              <div class="text-gray-600">
+                {{ item()?.id }}
+              </div>
+
+              <div class="fw-bold mt-5">Email</div>
+              <div class="text-gray-600">
+                <a href="#" class="text-gray-600 text-hover-primary">
+                  {{ item()?.email }}
+                </a>
+              </div>
+
+              <div class="fw-bold mt-5">Especialidad</div>
+              <div class="text-gray-600">
+                {{ item()?.specialty || 'N/A' }}
+              </div>
+
+              <div class="fw-bold mt-3">Edad</div>
+              <div class="text-gray-600">
+                {{ item()?.age || 'N/A' }} años
+              </div>
+
+              <div class="fw-bold mt-3">Sexo</div>
+              <div class="text-gray-600">
+                <span *ngIf="item()?.sex">{{ item()?.sex }}</span>
+              </div>
+
+              <div class="fw-bold mt-3">Educación</div>
+              <div class="text-gray-600">
+                {{ item()?.education || 'No especificado' }}
+              </div>
+
+              <div class="fw-bold mt-3">Recomendado por</div>
+              <div class="text-gray-600">
+                {{ item()?.recommendedBy || 'N/A' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-} @else {
-  <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
-    <div formBuilder3 [controls]="[
-        form.controls.total,
-        form.controls.subtotal,
-        form.controls.status,
-        form.controls.deliveryStatus
-      ]"></div>
-    <button class="btn btn-primary" type="submit" [attr.form]="form.id">Enviar</button>
-  </form>
-}
 
+  <div class="flex-lg-row-fluid ms-lg-15">
+    <!-- Tabs start -->
+    <div class="d-flex flex-grow-1 mb-5 mb-xl-7 justify-content-between">
+      <div>
+        <ul
+          class="nav nav-tabs nav-stretch nav-line-tabs border-transparent fs-4 nav-line-tabs-2x"
+          role="tablist"
+        >
+          <li class="nav-item" role="presentation">
+            <a class="nav-link fw-semibold text-active-primary" style="cursor: pointer;"
+               [class.active]="activeTab === 'clinics'"
+               (click)="onSelectTab('clinics')">Clínicas</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link fw-semibold text-active-primary" style="cursor: pointer;"
+               [class.active]="activeTab === 'payments'"
+               (click)="onSelectTab('payments')">Pagos</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- Tabs end -->
+
+    <!-- Tab content start -->
+    @switch (activeTab) {
+      @case ('clinics') {
+        <div clinicsCatalog
+             [item]="clinicItem"
+             [view]="clinicView"
+             [key]="clinicKey"
+             [isCompact]="clinicIsCompact"
+             [embedded]="clinicEmbedded"
+             [mode]="clinicMode"
+             [params]="clinicParams"
+        ></div>
+      }
+      @case ('payments') {
+        <div subscriptionsCatalog
+             [item]="subscriptionItem"
+             [view]="subscriptionView"
+             [key]="subscriptionKey"
+             [isCompact]="subscriptionIsCompact"
+             [embedded]="subscriptionEmbedded"
+             [mode]="subscriptionMode"
+             [params]="subscriptionParams"
+        ></div>
+      }
+    }
+    <!-- Tab content end -->
+  </div>
+</div>

@@ -28,6 +28,7 @@ export type Sections =
   'products' |
   'prescriptions' |
   'warehouses' |
+  'doctors' |
   'clinics';
 
 export type SectionDictionary = {

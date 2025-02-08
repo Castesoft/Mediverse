@@ -123,7 +123,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
     public async Task<PagedList<EventDto>> GetPagedListAsync(EventParams param)
     {
-        IQueryable<Event> query = context.Events
+        var query = context.Events
             .Include(x => x.EventService)
             .Include(x => x.EventClinic)
             .Include(x => x.DoctorEvent)
@@ -132,9 +132,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             .Include(x => x.EventPrescriptions).ThenInclude(x => x.Prescription)
             .Include(x => x.EventPaymentMethodType)
             .Include(x => x.EventMedicalInsuranceCompany)
-            .Include(x => x.EventPayments).ThenInclude(x => x.Payment.PaymentPaymentMethod.PaymentMethod)
-            .Include(x => x.EventPayments).ThenInclude(x => x.Payment.PaymentPaymentMethodType.PaymentMethodType)
-            .Include(x => x.EventPaymentStatus.PaymentStatus)
+            .Include(x => x.Payments)
             .AsQueryable()
         ;
 
@@ -202,16 +200,8 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
                 .ThenInclude(x => x.Prescription)
             .Include(x => x.EventPaymentMethodType)
             .Include(x => x.EventMedicalInsuranceCompany)
-            .Include(x => x.EventPayments)
-                .ThenInclude(x => x.Payment)
-                .ThenInclude(x => x.PaymentPaymentMethod)
-                .ThenInclude(x => x.PaymentMethod)
-            .Include(x => x.EventPayments)
-                .ThenInclude(x => x.Payment)
-                .ThenInclude(x => x.PaymentPaymentMethodType)
-                .ThenInclude(x => x.PaymentMethodType)
-            .AsQueryable()
-        ;
+            .Include(x => x.Payments)
+            .AsQueryable();
 
         if (param.DoctorId.HasValue) {
             query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);

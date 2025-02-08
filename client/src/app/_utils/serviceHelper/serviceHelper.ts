@@ -24,6 +24,7 @@ import { DevService } from "../../_services/dev.service";
 import { SelectionService } from "src/app/_models/services/selection.service";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { ClickLinkHandler } from "src/app/_utils/serviceHelper/clickLinkHandler";
 
 /**
  * A helper class that provides common service functionalities for handling entities, parameters, forms, etc.
@@ -35,14 +36,17 @@ import { SiteSection } from "src/app/_models/sections/sectionTypes";
  */
 export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extends FormGroup2<U>, W extends Component = any> {
   protected http = inject(HttpClient);
-  protected matDialog = inject(MatDialog);
   protected router = inject(Router);
   protected confirm = inject(ConfirmService);
   protected matSnackBar = inject(MatSnackBar);
   readonly dev = inject(DevService);
 
   private readonly selectionService: SelectionService<T> = inject(SelectionService<T>);
-  private readonly modalComponent?: Type<W>;
+
+  matDialog = inject(MatDialog);
+  readonly modalComponent?: Type<W>;
+
+  clickLinkHandler?: ClickLinkHandler<T>;
 
   selected$ = (key: string) => this.selectionService.getSelection$(key);
   getSelected$ = (key: string) =>
@@ -132,10 +136,21 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     this.data.next(updated);
   }
 
-  clickLink(item: T | null, key: string | null, use: FormUse = FormUse.DETAIL, view: View, siteSection?: SiteSection): void {
+  clickLink(
+    item: T | null,
+    key: string | null,
+    use: FormUse = FormUse.DETAIL,
+    view: View,
+    siteSection?: SiteSection
+  ): void {
+    if (this.clickLinkHandler) {
+      this.clickLinkHandler(item, key, use, view, siteSection);
+      return;
+    }
+
     if (view === 'modal' && this.modalComponent) {
       this.matDialog.open<W, DetailDialog<T>>(this.modalComponent, this.buildModalConfig(item, key, use, view));
-    } else if (view === 'modal' && this.modalComponent === undefined) {
+    } else if (view === 'modal' && !this.modalComponent) {
       console.error("Modal component not defined during constructor initialization");
     } else {
       this.router.navigate([ this.dictionary.buildFromSiteSection(use, item?.id, siteSection) ]).then((): void => {});

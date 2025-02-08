@@ -1,7 +1,11 @@
 namespace MainService.Models.Entities;
+
 public class PaymentMethod : BaseEntity
 {
-    public PaymentMethod() { }
+    public PaymentMethod()
+    {
+    }
+
     public PaymentMethod(string brand, string stripePaymentMethodId)
     {
         Brand = brand;
@@ -17,5 +21,4 @@ public class PaymentMethod : BaseEntity
     public string? StripePaymentMethodId { get; set; }
 
     public UserPaymentMethod UserPaymentMethod { get; set; } = null!;
-    public List<PaymentPaymentMethod> PaymentPaymentMethods { get; set; } = [];
 }

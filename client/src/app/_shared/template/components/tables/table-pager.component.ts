@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnChanges, inject, HostBinding, model, signal, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  HostBinding,
+  inject,
+  effect,
+  model,
+  signal, ModelSignal, WritableSignal
+} from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Entity } from 'src/app/_models/base/entity';
 import { EntityParams } from 'src/app/_models/base/entityParams';
@@ -7,54 +14,54 @@ import { IconsService } from 'src/app/_services/icons.service';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { Pagination } from 'src/app/_utils/serviceHelper/pagination/pagination';
 
-
 @Component({
   host: { class: 'row' },
   selector: 'div[tablePager]',
   templateUrl: './table-pager.component.html',
   standalone: true,
-  imports: [ CommonModule, MaterialModule, FontAwesomeModule, ]
+  imports: [ CommonModule, MaterialModule, FontAwesomeModule ]
 })
-export class TablePagerComponent implements OnInit, OnChanges {
-  icons = inject(IconsService);
+export class TablePagerComponent {
+  readonly icons: IconsService = inject(IconsService);
 
-  @HostBinding('class') get hostClasses() {
-    return this.isCompact() ? 'row align-items-center justify-content-between py-2 pe-0 fs-9' : 'row align-items-center justify-content-end pt-4 pe-0 fs-8';
+  @HostBinding('class')
+  get hostClasses(): string {
+    return this.isCompact()
+      ? 'row align-items-center justify-content-between py-0 pe-0 fs-9'
+      : 'row align-items-center justify-content-end pt-4 pe-0 fs-8';
   }
 
-  params = model.required<EntityParams<Entity>>();
-  pagination = model.required<Pagination>();
-  isCompact = model.required<boolean>();
+  params: ModelSignal<EntityParams<Entity>> = model.required();
+  pagination: ModelSignal<Pagination> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
 
-  hideShowing = model<boolean>(false);
-  hideShowAll = model<boolean>(false);
+  hideShowing: ModelSignal<boolean> = model(false);
+  hideShowAll: ModelSignal<boolean> = model(false);
+  isLastPage: WritableSignal<boolean> = signal(false);
 
-  isLastPage = signal<boolean>(false);
-
-  ngOnInit(): void {
-    this.setIsLastPage();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['totalItems'] || changes['itemsPerPage'] || changes['currentPage']) {
+  constructor() {
+    effect(() => {
       this.setIsLastPage();
-    }
+    });
   }
 
   get totalPages(): number {
-    return Math.ceil((this.pagination().totalItems || 0) / (this.pagination().itemsPerPage || 1));
+    return Math.ceil(
+      (this.pagination().totalItems || 0) /
+      (this.pagination().itemsPerPage || 1)
+    );
   }
 
-  setIsLastPage(): void {
+  private setIsLastPage(): void {
     this.isLastPage.set(this.pagination().currentPage === this.totalPages);
   }
 
   get pages(): number[] {
-    let pages = [];
-    const totalPages = this.totalPages;
-    const currentPage = this.pagination().currentPage;
-    const maxPagesToShow = 5;
-    const halfPagesToShow = Math.floor(maxPagesToShow / 2);
+    const pages: number[] = [];
+    const totalPages: number = this.totalPages;
+    const currentPage: number = this.pagination().currentPage;
+    const maxPagesToShow: number = 5;
+    const halfPagesToShow: number = Math.floor(maxPagesToShow / 2);
 
     let startPage: number, endPage: number;
 
@@ -74,56 +81,54 @@ export class TablePagerComponent implements OnInit, OnChanges {
       }
     }
 
-    for (let i = startPage; i <= endPage; i++) {
+    for (let i: number = startPage; i <= endPage; i++) {
       pages.push(i);
     }
-
     return pages;
   }
 
   navigateToPage(page: number): void {
     this.params.update((oldValues: EntityParams<Entity>) => {
-      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
+      const newValues = new EntityParams<Entity>(oldValues.key, { ...oldValues });
       newValues.pageNumber = page;
-
       return newValues;
     });
   }
 
   onNext(): void {
     this.params.update((oldValues: EntityParams<Entity>) => {
-      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
-      if (newValues.pageNumber !== null) newValues.pageNumber++;
-
+      const newValues = new EntityParams<Entity>(oldValues.key, { ...oldValues });
+      if (newValues.pageNumber !== null) {
+        newValues.pageNumber++;
+      }
       return newValues;
     });
   }
 
   onPrevious(): void {
     this.params.update((oldValues: EntityParams<Entity>) => {
-      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
-      if (newValues.pageNumber !== null) newValues.pageNumber--;
-
+      const newValues = new EntityParams<Entity>(oldValues.key, { ...oldValues });
+      if (newValues.pageNumber !== null) {
+        newValues.pageNumber--;
+      }
       return newValues;
     });
   }
 
-  onLoadMore() {
+  onLoadMore(): void {
     this.params.update((oldValues: EntityParams<Entity>) => {
-      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
+      const newValues = new EntityParams<Entity>(oldValues.key, { ...oldValues });
       newValues.pageSize = 50;
       newValues.pageNumber = 1;
-
       return newValues;
     });
   }
 
-  onLoadLess() {
+  onLoadLess(): void {
     this.params.update((oldValues: EntityParams<Entity>) => {
-      const newValues: EntityParams<Entity> = new EntityParams<Entity>(oldValues.key, { ...oldValues, });
+      const newValues = new EntityParams<Entity>(oldValues.key, { ...oldValues });
       newValues.pageSize = 10;
       newValues.pageNumber = 1;
-
       return newValues;
     });
   }

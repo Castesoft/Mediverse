@@ -1348,22 +1348,13 @@ public class AccountController(
         var user = await userManager.Users
             .Include(x => x.PatientEvents)
             .ThenInclude(x => x.Event)
-            .ThenInclude(x => x.EventPayments)
-            .ThenInclude(x => x.Payment)
-            .ThenInclude(x => x.PaymentPaymentMethodType)
-            .ThenInclude(x => x.PaymentMethodType)
-            .Include(x => x.PatientEvents)
-            .ThenInclude(x => x.Event)
-            .ThenInclude(x => x.EventPayments)
-            .ThenInclude(x => x.Payment)
-            .ThenInclude(x => x.PaymentPaymentMethod)
-            .ThenInclude(x => x.PaymentMethod)
+            .ThenInclude(x => x.Payments)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         return mapper.Map<List<PaymentDto>>(
-            user.PatientEvents.SelectMany(x => x.Event.EventPayments.Select(y => y.Payment)));
+            user.PatientEvents.SelectMany(x => x.Event.Payments).ToList());
     }
 
     [Authorize]

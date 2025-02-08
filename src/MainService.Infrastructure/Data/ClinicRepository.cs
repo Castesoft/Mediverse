@@ -1,15 +1,14 @@
-using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Clinics;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
-using MainService.Core.Extensions;
 using MainService.Models;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Entities;
+using Serilog;
 
 namespace MainService.Infrastructure.Data;
 
@@ -19,38 +18,40 @@ public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepo
         await context.Addresses
             .AsNoTracking()
             .ProjectTo<ClinicDto>(mapper.ConfigurationProvider)
-            .ToListAsync()
-        ;
-        
+            .ToListAsync();
+
 
     public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId) =>
         await context.Addresses
             .Include(x => x.DoctorClinic)
-            .AnyAsync(x => x.Id == id && x.DoctorClinic.DoctorId == doctorId)
-        ;
+            .AnyAsync(x => x.Id == id && x.DoctorClinic.DoctorId == doctorId);
 
-    public async Task<ClinicDto?> GetDtoByIdAsync(int id) => 
+    public async Task<ClinicDto?> GetDtoByIdAsync(int id) =>
         await context.Addresses
             .AsNoTracking()
             .ProjectTo<ClinicDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<PagedList<ClinicDto>> GetPagedListAsync(ClinicParams param)
     {
-        IQueryable<Address> query = context.Addresses
-            .Include(x => x.DoctorClinic.Clinic.ClinicLogo.Photo)
-            .AsQueryable()
-        ;
+        var query = context.Addresses
+            .Include(x => x.ClinicLogo)
+            .ThenInclude(cl => cl.Photo)
+            .Include(x => x.DoctorClinic)
+            .AsQueryable();
 
-        if (param.DoctorId.HasValue) {
+        Log.Information("DoctorId: {DoctorId}", param.DoctorId);
+        Log.Information("SiteSection: {SiteSection}", param.FromSection);
+        
+        if (param.DoctorId.HasValue)
+        {
             query = query.Where(x => x.DoctorClinic.DoctorId == param.DoctorId);
         }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
-            string term = param.Search.ToLower();
-            
+            var term = param.Search.ToLower();
+
             query = query.Where(
                 x =>
                     !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
@@ -73,43 +74,72 @@ public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepo
         {
             query = param.Sort.ToLower() switch
             {
-                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
-                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
-                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
-                "street" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Street) : query.OrderByDescending(x => x.Street),
-                "interiornumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.InteriorNumber) : query.OrderByDescending(x => x.InteriorNumber),
-                "exteriornumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.ExteriorNumber) : query.OrderByDescending(x => x.ExteriorNumber),
-                "neighborhood" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Neighborhood) : query.OrderByDescending(x => x.Neighborhood),
-                "city" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.City) : query.OrderByDescending(x => x.City),
-                "state" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.State) : query.OrderByDescending(x => x.State),
-                "country" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Country) : query.OrderByDescending(x => x.Country),
-                "zipcode" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Zipcode) : query.OrderByDescending(x => x.Zipcode),
-                "notes" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Notes) : query.OrderByDescending(x => x.Notes),
-                "crossstreet1" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CrossStreet1) : query.OrderByDescending(x => x.CrossStreet1),
-                "crossstreet2" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CrossStreet2) : query.OrderByDescending(x => x.CrossStreet2),
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Id)
+                    : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Name)
+                    : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Description)
+                    : query.OrderByDescending(x => x.Description),
+                "street" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Street)
+                    : query.OrderByDescending(x => x.Street),
+                "interiornumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.InteriorNumber)
+                    : query.OrderByDescending(x => x.InteriorNumber),
+                "exteriornumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.ExteriorNumber)
+                    : query.OrderByDescending(x => x.ExteriorNumber),
+                "neighborhood" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Neighborhood)
+                    : query.OrderByDescending(x => x.Neighborhood),
+                "city" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.City)
+                    : query.OrderByDescending(x => x.City),
+                "state" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.State)
+                    : query.OrderByDescending(x => x.State),
+                "country" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Country)
+                    : query.OrderByDescending(x => x.Country),
+                "zipcode" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Zipcode)
+                    : query.OrderByDescending(x => x.Zipcode),
+                "notes" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Notes)
+                    : query.OrderByDescending(x => x.Notes),
+                "crossstreet1" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.CrossStreet1)
+                    : query.OrderByDescending(x => x.CrossStreet1),
+                "crossstreet2" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.CrossStreet2)
+                    : query.OrderByDescending(x => x.CrossStreet2),
                 _ => query.OrderByDescending(x => x.CreatedAt),
             };
-        } else {
+        }
+        else
+        {
             query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         return await PagedList<ClinicDto>.CreateAsync(
-            query.AsNoTracking().ProjectTo<ClinicDto>(mapper.ConfigurationProvider),
-            param.PageNumber, param.PageSize)
-        ;
+            query.ProjectTo<ClinicDto>(mapper.ConfigurationProvider),
+            param.PageNumber, param.PageSize);
     }
 
     public async Task<bool> DoctorHasAddressAsync(int doctorId, int addressId) =>
         await context.Addresses
             .Include(x => x.DoctorClinic)
-            .AnyAsync(x => x.Id == addressId && x.DoctorClinic.DoctorId == doctorId)
-        ;
+            .AnyAsync(x => x.Id == addressId && x.DoctorClinic.DoctorId == doctorId);
 
     public async Task<List<OptionDto>> GetClinicOptionsForDoctorAsync(AddressParams param)
     {
-        IQueryable<Address> query = Includes(context.Addresses).AsQueryable();
+        var query = Includes(context.Addresses).AsQueryable();
 
-        if (param.DoctorId.HasValue) {
+        if (param.DoctorId.HasValue)
+        {
             query = query.Where(x => x.DoctorClinic.DoctorId == param.DoctorId);
         }
 
@@ -119,21 +149,20 @@ public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepo
             .ToListAsync();
     }
 
-    private static IQueryable<Address> Includes(IQueryable<Address> query) => 
+    private static IQueryable<Address> Includes(IQueryable<Address> query) =>
         query
             .AsSplitQuery()
             .AsQueryable()
-            .Include(x => x.DoctorClinic.Clinic.ClinicLogo.Photo)
-    ;
+            .Include(x => x.DoctorClinic.Clinic.ClinicLogo.Photo);
 
     public async Task<List<OptionDto>> GetOptionsAsync(ClinicParams param)
     {
-        IQueryable<Address> query = context.Addresses
+        var query = context.Addresses
             .Include(x => x.DoctorClinic)
-            .AsQueryable()
-        ;
+            .AsQueryable();
 
-        if (param.DoctorId.HasValue) {
+        if (param.DoctorId.HasValue)
+        {
             query = query.Where(x => x.DoctorClinic.DoctorId == param.DoctorId.Value);
         }
 

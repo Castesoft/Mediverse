@@ -24,8 +24,9 @@ export class ClinicsCatalogComponent {
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<ClinicParams> = model.required();
+  embedded: ModelSignal<boolean> = model(false);
   filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration());
 
   service: ClinicsService = inject(ClinicsService);
-  form = model(new ClinicFiltersForm());
+  form: ModelSignal<ClinicFiltersForm> = model(new ClinicFiltersForm());
 }

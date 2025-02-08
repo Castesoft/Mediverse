@@ -12,7 +12,10 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public IProductRepository ProductRepository => new ProductRepository(context, mapper);
     public IDocumentRepository DocumentRepository => new DocumentRepository(context, mapper);
     public IPaymentMethodTypeRepository PaymentMethodTypeRepository => new PaymentMethodTypeRepository(context, mapper);
-    public IMedicalInsuranceCompanyRepository MedicalInsuranceCompanyRepository => new MedicalInsuranceCompanyRepository(context, mapper);
+
+    public IMedicalInsuranceCompanyRepository MedicalInsuranceCompanyRepository =>
+        new MedicalInsuranceCompanyRepository(context, mapper);
+
     public ISpecialtyRepository SpecialtyRepository => new SpecialtyRepository(context, mapper);
     public IDiseaseRepository DiseaseRepository => new DiseaseRepository(context, mapper);
     public ISubstanceRepository SubstanceRepository => new SubstanceRepository(context, mapper);
@@ -37,6 +40,10 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public ISearchRepository SearchRepository => new SearchRepository(context, mapper, googleService);
     public IRoleRepository RoleRepository => new RoleRepository(context, mapper);
     public IWarehouseRepository WarehouseRepository => new WarehouseRepository(context, mapper);
+    public IPaymentRepository PaymentRepository => new PaymentRepository(context, mapper);
+    public ISubscriptionRepository SubscriptionRepository => new SubscriptionRepository(context, mapper);
+    public ISubscriptionHistoryRepository SubscriptionHistoryRepository => new SubscriptionHistoryRepository(context);
+    public ISubscriptionPlanRepository SubscriptionPlanRepository => new SubscriptionPlanRepository(context);
 
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;
     public void DetachEntity<T>(T entity) where T : class => context.Entry(entity).State = EntityState.Detached;

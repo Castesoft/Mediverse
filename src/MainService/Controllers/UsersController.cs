@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using MainService.Core.DTOs.Patients;
 
 namespace MainService.Controllers;
 
@@ -22,7 +21,7 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
 
     public async Task<ActionResult<PagedList<UserDto>>> GetPagedListAsync([FromQuery] UserParams param)
     {
-        PagedList<UserDto> pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
+        var pagedList = await uow.UserRepository.GetPagedListAsync(param, User);
 
         foreach (var item in pagedList)
         {
@@ -46,11 +45,11 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
         return data;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<UserDto?>> GetByIdAsync([FromRoute] int id)
     {
-        UserDto? item = await uow.UserRepository.GetDtoByIdAsync(id);
-        PatientDto? patient = await uow.PatientRepository.GetDtoByIdAsync(id);
+        var item = await uow.UserRepository.GetDtoByIdAsync(id);
+        var patient = await uow.PatientRepository.GetDtoByIdAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
         if (patient == null) return NotFound($"Paciente de ID {id} no fue encontrado.");
@@ -59,22 +58,22 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
             item.SharedDoctors.Any(x => x.DoctorId == User.GetUserId() && x.HasPatientInformationAccess);
         item.SharedDoctors = [];
 
-        if (!item.HasPatientInformationAccess)
+        switch (item.HasPatientInformationAccess)
         {
-            item.MedicalInsuranceCompanies = [];
-        }
-
-        if (item.HasPatientInformationAccess)
-        {
-            item.MedicalRecord = await uow.UserRepository.GetMedicalRecordDtoAsync(id);
+            case false:
+                item.MedicalInsuranceCompanies = [];
+                break;
+            case true:
+                item.MedicalRecord = await uow.UserRepository.GetMedicalRecordDtoAsync(id);
+                break;
         }
 
         var doctorEvents = item.DoctorEvents.ToList();
         item.DoctorEvents = doctorEvents.Where(e => e.Doctor?.Id == User.GetUserId()).ToList();
         item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();
-        foreach (var _event in item.DoctorEvents)
+        foreach (var @event in item.DoctorEvents)
         {
-            _event.Patient = patient;
+            @event.Patient = patient;
         }
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
@@ -93,7 +92,7 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     }
 
     // [Authorize(Policy = "RequireAdminRole")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
         var item = await uow.UserRepository.GetByIdAsNoTrackingAsync(id);
@@ -133,7 +132,7 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
     {
         string[] requestedRoles = [.. roles.Split(',')];
 
-        AppUser? item = await userManager.Users
+        var item = await userManager.Users
                 .Include(x => x.UserRoles).ThenInclude(x => x.Role)
                 .SingleOrDefaultAsync(x => x.Email == email)
             ;

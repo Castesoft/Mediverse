@@ -36,24 +36,26 @@
         </td>
       }
 
-      @for (cell of row().getItems([
-        'name',
-        'street',
-        'exteriorNumber',
-        'interiorNumber',
-        'neighborhood',
-        'zipcode',
-        'city',
-        'state',
-        'country',
-        'nursesCount',
-        'isMain',
-        'createdAt',
-      ]);
-        let idx = $index;
-        track idx) {
-        <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
-      }
+      <td>
+        <div class="d-flex align-items-center text-nowrap">
+          <div>
+            {{ item.name }}
+          </div>
+          @if (item.isMain) {
+            <div>
+              <span class="badge badge-light-primary fs-8 ms-2">
+                Principal
+              </span>
+            </div>
+          }
+        </div>
+      </td>
+      <td addressTableCell [address]="item"></td>
+      <td>
+        <span class="badge badge-light fs-8">
+          {{ item.zipcode }}
+        </span>
+      </td>
 
       <td
         tableMenuCell
@@ -65,6 +67,7 @@
         @defer {
           @if (key()) {
             <div tableMenu
+                 [siteSection]="params().fromSection || undefined"
                  [item]="item"
                  [key]="key()!"
                  [service]="service"></div>

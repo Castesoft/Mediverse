@@ -19,11 +19,5 @@ public class EventPaymentMethodTypeConfiguration : IEntityTypeConfiguration<Even
             .WithOne(x => x.EventPaymentMethodType)
             .HasForeignKey<EventPaymentMethodType>(x => x.EventId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder
-            .HasOne(x => x.PaymentMethodType)
-            .WithMany(x => x.EventPaymentMethodTypes)
-            .HasForeignKey(x => x.PaymentMethodTypeId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

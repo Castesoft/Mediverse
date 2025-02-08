@@ -45,23 +45,23 @@ export class UsersCatalogModalComponent {
 @Component({
   selector: 'user-detail-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      userDetail
-      [(use)]="data.use"
-      [(view)]="data.view"
-      [(key)]="data.key"
-      [(item)]="data.item"
-      [(title)]="data.title"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          userDetail
+          [(use)]="data.use"
+          [(view)]="data.view"
+          [(key)]="data.key"
+          [(item)]="data.item"
+          [(title)]="data.title"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
   imports: [UserDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })

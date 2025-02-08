@@ -15,6 +15,9 @@ import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 import { ClinicsService } from "src/app/clinics/clinics.config";
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
+import {
+  AddressTableCellComponent
+} from "src/app/_shared/template/components/tables/cells/address-table-cell.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -30,12 +33,10 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     MaterialModule,
     CommonModule,
     TableMenuComponent,
+    AddressTableCellComponent,
   ],
 })
-export class ClinicsTableComponent
-  extends BaseTable<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService>
-  implements OnInit, OnDestroy, TableInputSignals<Clinic, ClinicParams>
-{
+export class ClinicsTableComponent extends BaseTable<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService> implements OnDestroy, TableInputSignals<Clinic, ClinicParams> {
   item: ModelSignal<Clinic | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -46,11 +47,7 @@ export class ClinicsTableComponent
 
   constructor() {
     super(ClinicsService, Clinic, { tableCells: clinicCells, });
-
-    effect(() => {});
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
