@@ -110,14 +110,14 @@ export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFilter
     return value ? new SelectOption({ code: value.toLowerCase(), name: value, id: 0 }) : null;
   }
 
-  async onSubmit(): Promise<void> {
+  override async onSubmit(): Promise<void> {
     const authorized: boolean = await firstValueFrom(this.confirmService.confirm(confirmActionModal));
     if (!authorized) return;
 
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Order> = isNew
-      ? this.service.create(this.form.getRawValue())
-      : this.service.update(this.form.getRawValue(), this.item()!.id!, false);
+      ? this.service.create(this.form, this.view(), { use: this.use(), value: this.form.getRawValue(), })
+      : this.service.update(this.form, this.view(), { use: this.use(), value: this.form.getRawValue(), id: this.form.controls.id.value ?? undefined, });
 
     observable.subscribe({
       next: (order) => {

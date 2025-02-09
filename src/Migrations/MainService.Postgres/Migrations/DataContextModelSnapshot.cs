@@ -2353,6 +2353,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -4958,13 +4961,15 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("UserMedicalLicenses");
 
-                    b.Navigation("UserMedicalRecord");
+                    b.Navigation("UserMedicalRecord")
+                        .IsRequired();
 
                     b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
 
-                    b.Navigation("UserPhoto");
+                    b.Navigation("UserPhoto")
+                        .IsRequired();
 
                     b.Navigation("UserReviews");
 
@@ -5131,7 +5136,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("DoctorOrder")
                         .IsRequired();
 
-                    b.Navigation("OrderDeliveryAddress");
+                    b.Navigation("OrderDeliveryAddress")
+                        .IsRequired();
 
                     b.Navigation("OrderDeliveryStatus")
                         .IsRequired();
@@ -5143,7 +5149,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("OrderOrderStatus")
                         .IsRequired();
 
-                    b.Navigation("OrderPickupAddress");
+                    b.Navigation("OrderPickupAddress")
+                        .IsRequired();
 
                     b.Navigation("PatientOrder")
                         .IsRequired();

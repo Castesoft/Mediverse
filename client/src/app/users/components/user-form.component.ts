@@ -20,10 +20,9 @@ import { UsersService } from "src/app/users/users.config";
   imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]
 })
 export class UserFormComponent
-  extends BaseForm<
-    User, UserParams, UserFiltersForm, UserForm, UsersService
-  >
-  implements FormInputSignals<User> {
+  extends BaseForm<User, UserParams, UserFiltersForm, UserForm, UsersService>
+  implements FormInputSignals<User>
+{
   item: ModelSignal<User | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();

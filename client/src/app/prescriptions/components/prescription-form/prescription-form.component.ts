@@ -50,8 +50,11 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss',
 })
-export class PrescriptionFormComponent extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService> implements OnInit, OnDestroy, FormInputSignals<Prescription> {
-  accountService = inject(AccountService);
+export class PrescriptionFormComponent
+  extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService>
+  implements OnInit, OnDestroy, FormInputSignals<Prescription>
+{
+  readonly accountService = inject(AccountService);
 
   private productsService = inject(ProductsService);
   private patientsService = inject(PatientsService);
@@ -83,12 +86,27 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     this.patientsService.getOptions().subscribe();
     this.clinicsService.getOptions().subscribe();
 
-    effect((): void => {
-      this.form.setUse(this.use());
-      this.form.setValidation(this.validation.active());
-      this.form.productOptions = this.productsService.options();
-      this.form.patientOptions = this.patientsService.options();
-      this.form.clinicOptions = this.clinicsService.options();
+    effect(() => {
+      this.form
+        .setUse(this.use())
+        .setValidation(this.validation.active())
+        .setProductOptions(this.productsService.options())
+        .setPatientOptions(this.patientsService.options())
+        .setClinicOptions(this.clinicsService.options());
+      ;
+
+      if (this.use() === 'create') {
+
+      } else {
+        const item = this.item();
+
+        if (item !== null) {
+          console.log('item', item);
+
+          this.form.patch(item);
+        }
+      }
+
     });
 
     this.subscribeToFormValueChanges();

@@ -2,6 +2,11 @@ namespace MainService.Models.Entities;
 
 public class Order : BaseEntity
 {
+    public Order()
+    {
+    }
+
+
     public decimal? Total { get; set; }
     public decimal? Subtotal { get; set; }
     public double? Discount { get; set; }
@@ -12,8 +17,8 @@ public class Order : BaseEntity
     public PrescriptionOrder PrescriptionOrder { get; set; } = null!;
     public PatientOrder PatientOrder { get; set; } = null!;
     public DoctorOrder DoctorOrder { get; set; } = null!;
-    public OrderDeliveryAddress? OrderDeliveryAddress { get; set; }
-    public OrderPickupAddress? OrderPickupAddress { get; set; }
+    public OrderDeliveryAddress OrderDeliveryAddress { get; set; } = null!;
+    public OrderPickupAddress OrderPickupAddress { get; set; } = null!;
     public List<OrderItem> OrderItems { get; set; } = [];
     public List<OrderHistory> OrderHistories { get; set; } = [];
 

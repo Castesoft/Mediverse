@@ -72,7 +72,10 @@ export class PatientsCatalogModalComponent {
   standalone: true,
   imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, ]
 })
-export class PatientFormComponent extends BaseForm<Patient, PatientParams, PatientFiltersForm, PatientForm, PatientsService> implements FormInputSignals<Patient> {
+export class PatientFormComponent
+  extends BaseForm<Patient, PatientParams, PatientFiltersForm, PatientForm, PatientsService>
+  implements FormInputSignals<Patient>
+{
   item: ModelSignal<Patient | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();

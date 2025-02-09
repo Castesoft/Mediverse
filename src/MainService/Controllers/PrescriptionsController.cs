@@ -60,6 +60,7 @@ public class PrescriptionsController(
         [FromBody] PrescriptionCreateDto request
     )
     {
+        if (!request.Date.HasValue) return BadRequest("La fecha es requerida");
         if (request.Patient == null) return BadRequest("El paciente es requerido");
         if (!request.Patient.Id.HasValue) return BadRequest("El paciente es requerido");
         if (request.Clinic == null) return BadRequest("La clínica es requerida");
@@ -113,6 +114,7 @@ public class PrescriptionsController(
         if (request.ExchangeAmount.HasValue) prescriptionToCreate.ExchangeAmount = request.ExchangeAmount.Value;
 
         prescriptionToCreate.Notes = notes;
+        prescriptionToCreate.Date = request.Date.Value;
         prescriptionToCreate.PatientPrescription = new PatientPrescription(patientId);
         prescriptionToCreate.DoctorPrescription = new DoctorPrescription(doctorId);
         prescriptionToCreate.PrescriptionClinic = new PrescriptionClinic(clinicId);
@@ -178,21 +180,27 @@ public class PrescriptionsController(
         if (globalProducts.Count != 0)
         {
             order = await ordersService.CreateAsync(globalProducts, patientId, doctorId);
-        }
 
-        if (order != null)
-        {
-            order.PrescriptionOrder = new PrescriptionOrder(prescriptionToCreate.Id);
+            if (order.OrderDeliveryAddress != null && order.OrderDeliveryAddress.AddressId == 0) {
+                order.OrderDeliveryAddress = null!;
+            }
 
-            uow.OrderRepository.Add(order);
-
-            if (uow.HasChanges())
+            if (order != null)
             {
-                if (!await uow.Complete()) return BadRequest("Error al crear la orden.");
+                order.PrescriptionOrder = new PrescriptionOrder(prescriptionToCreate.Id);
+
+                uow.OrderRepository.Add(order);
+
+                if (uow.HasChanges())
+                {
+                    if (!await uow.Complete()) return BadRequest("Error al crear la orden.");
+                }
             }
         }
 
-        return await uow.PrescriptionRepository.GetDtoByIdAsync(prescriptionToCreate.Id);
+        PrescriptionDto? itemToReturn = await uow.PrescriptionRepository.GetDtoByIdAsync(prescriptionToCreate.Id);
+
+        return itemToReturn;
     }
 
     [HttpDelete("{id:int}")]

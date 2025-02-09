@@ -17,6 +17,7 @@ import { ProductsService } from "src/app/products/products.config";
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
 import { PhotoShape } from "src/app/_models/photos/photoTypes";
+import { FormUse } from 'src/app/_models/forms/formTypes';
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -35,7 +36,10 @@ import { PhotoShape } from "src/app/_models/photos/photoTypes";
     SymbolCellComponent,
   ],
 })
-export class ProductsTableComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements OnDestroy, TableInputSignals<Product, ProductParams> {
+export class ProductsTableComponent
+  extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService>
+  implements OnDestroy, TableInputSignals<Product, ProductParams>
+{
   item: ModelSignal<Product | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -60,7 +64,11 @@ export class ProductsTableComponent extends BaseTable<Product, ProductParams, Pr
     formData.append('isEnabled', item.isEnabled.toString());
     formData.append('isVisible', item.isVisible.toString());
 
-    this.service.update(formData, item.id!).subscribe({
+    const productId = item.id;
+
+    if (productId === null) throw new Error('Product ID is null');
+
+    this.service.update({} as any, this.view(), { use: FormUse.EDIT, value: formData, id: productId, }).subscribe({
       error: (error) => {
         this.toastr.error(error.message);
       }

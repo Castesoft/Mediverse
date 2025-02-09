@@ -2,7 +2,7 @@
   <div errorsAlert3 [(error)]="form.error"></div>
 }
 
-<form [id]="form.id" (ngSubmit)="service.create(form.getRawValue(), true).subscribe()">
+<form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
   <mat-stepper orientation="vertical" [linear]="true" #stepper [(selectedIndex)]="selectedIndex"
                style="background: transparent!important;">
     <mat-step [stepControl]="form.controls.patient.controls.select">

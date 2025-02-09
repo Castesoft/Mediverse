@@ -1,6 +1,7 @@
 namespace MainService.Models.Entities;
 public class Prescription : BaseEntity
 {
+    public DateTime? Date { get; set; }
     public int? ExchangeAmount { get; set; }
     public string? Notes { get; set; }
     

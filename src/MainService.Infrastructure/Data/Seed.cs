@@ -12,7 +12,7 @@ namespace MainService.Infrastructure.Data;
 
 public static class Seed
 {
-    private static readonly Random Random = new();
+    private static readonly Random random = new();
 
     private static async Task SeedMexicoStates(DataContext context)
     {
@@ -294,10 +294,10 @@ public static class Seed
 
         foreach (var user in users)
         {
-            var chosenPlan = subscriptionPlans[Random.Next(subscriptionPlans.Count)];
+            var chosenPlan = subscriptionPlans[random.Next(subscriptionPlans.Count)];
 
             // Simulate a subscription that started between 1 and 12 months ago.
-            var startDate = DateTime.UtcNow.AddMonths(-Random.Next(1, 13));
+            var startDate = DateTime.UtcNow.AddMonths(-random.Next(1, 13));
             // Next billing date is based on the plan’s billing frequency.
             var nextBillingDate = startDate.AddMonths(chosenPlan.BillingFrequencyInMonths);
 
@@ -313,13 +313,13 @@ public static class Seed
             };
             context.Subscriptions.Add(subscription);
 
-            var historyCount = Random.Next(2, 6);
+            var historyCount = random.Next(2, 6);
             var historyTime = startDate;
             var previousStatus = SubscriptionStatus.Pending;
 
             for (var i = 0; i < historyCount; i++)
             {
-                var monthsToAdvance = Random.Next(1, 4);
+                var monthsToAdvance = random.Next(1, 4);
                 historyTime = historyTime.AddMonths(monthsToAdvance);
 
                 SubscriptionStatus newStatus;
@@ -329,7 +329,7 @@ public static class Seed
                 }
                 else
                 {
-                    var r = Random.Next(3);
+                    var r = random.Next(3);
                     newStatus = r switch
                     {
                         0 => SubscriptionStatus.Cancelled,
@@ -532,8 +532,8 @@ public static class Seed
 
         foreach (var item in doctors)
         {
-            var numberOfPatients = Random.Next(1, 20);
-            var assignedPatients = patients.OrderBy(_ => Random.Next()).Take(numberOfPatients).ToList();
+            var numberOfPatients = random.Next(1, 20);
+            var assignedPatients = patients.OrderBy(_ => random.Next()).Take(numberOfPatients).ToList();
 
             foreach (var patient in assignedPatients.Where(patient =>
                          !doctorPatientRelationships.Any(dp => dp.DoctorId == item.Id && dp.PatientId == patient.Id)))
@@ -589,9 +589,9 @@ public static class Seed
 
         foreach (var product in products)
         {
-            var numberOfWarehouses = Random.Next(1, Math.Min(3, warehouses.Count) + 1);
+            var numberOfWarehouses = random.Next(1, Math.Min(3, warehouses.Count) + 1);
             // Randomly shuffle and pick the warehouses.
-            var selectedWarehouses = warehouses.OrderBy(_ => Random.Next()).Take(numberOfWarehouses).ToList();
+            var selectedWarehouses = warehouses.OrderBy(_ => random.Next()).Take(numberOfWarehouses).ToList();
 
             foreach (var warehouse in selectedWarehouses)
             {
@@ -599,15 +599,15 @@ public static class Seed
                 {
                     WarehouseId = warehouse.Id,
                     ProductId = product.Id,
-                    Quantity = Random.Next(50, 201),
-                    ReservedQuantity = Random.Next(0, 20),
-                    DamagedQuantity = Random.Next(0, 5),
-                    OnHoldQuantity = Random.Next(0, 3),
+                    Quantity = random.Next(50, 201),
+                    ReservedQuantity = random.Next(0, 20),
+                    DamagedQuantity = random.Next(0, 5),
+                    OnHoldQuantity = random.Next(0, 3),
                     ReorderLevel = 10,
                     SafetyStock = 5,
                     LastUpdated = DateTime.UtcNow,
                     LotNumber = product.LotNumber,
-                    ExpirationDate = DateTime.UtcNow.AddMonths(Random.Next(6, 25))
+                    ExpirationDate = DateTime.UtcNow.AddMonths(random.Next(6, 25))
                 };
 
                 context.WarehouseProducts.Add(warehouseProduct);
@@ -964,7 +964,7 @@ public static class Seed
     private static void SeedPatientEventsAsync(AppUser doctor, AppUser patient,
         List<DoctorNurse> doctorNurses, List<DoctorProduct> doctorProducts, List<DoctorService> doctorServices)
     {
-        for (var i = 2; i < Random.Next(2, 11); i++)
+        for (var i = 2; i < random.Next(2, 11); i++)
         {
             var newPatientEvent = CreatePatientEvent(doctor, doctorServices, patient);
             AddNursesToEvent(newPatientEvent, doctorNurses);
@@ -976,8 +976,8 @@ public static class Seed
     private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices, AppUser patient)
     {
         var eventDate = DateGenerator.GenerateRandomDate(DateTime.UtcNow.Year, DateTime.UtcNow.Month);
-        var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
-        var isMainClinic = Random.Next(0, 2) > 0;
+        var selectedService = doctorServices[random.Next(doctorServices.Count)].Service;
+        var isMainClinic = random.Next(0, 2) > 0;
         var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
 
         var newEvent = new Event
@@ -1001,9 +1001,9 @@ public static class Seed
 
     private static void AddNursesToEvent(PatientEvent patientEvent, List<DoctorNurse> doctorNurses)
     {
-        if (Random.Next(0, 2) <= 0) return;
+        if (random.Next(0, 2) <= 0) return;
 
-        var randomNurses = doctorNurses.Select(x => x.Nurse).Take(Random.Next(1, 4)).ToList();
+        var randomNurses = doctorNurses.Select(x => x.Nurse).Take(random.Next(1, 4)).ToList();
 
         foreach (var nurse in randomNurses)
         {
@@ -1014,16 +1014,16 @@ public static class Seed
     private static void AddPrescriptionsToEvent(PatientEvent patientEvent, List<DoctorProduct> doctorProducts,
         AppUser patient, AppUser doctor)
     {
-        if (Random.Next(0, 2) <= 0) return;
+        if (random.Next(0, 2) <= 0) return;
 
-        for (var j = 1; j < Random.Next(1, 4); j++)
+        for (var j = 1; j < random.Next(1, 4); j++)
         {
             var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
             var newPrescriptionItems = new List<PrescriptionItem>();
             var existingMedicineIds = new HashSet<int>();
             var order = new Order();
 
-            for (var k = 1; k < Random.Next(1, 4); k++)
+            for (var k = 1; k < random.Next(1, 4); k++)
             {
                 if (existingMedicineIds.Count >= productIds.Count)
                 {
@@ -1034,7 +1034,7 @@ public static class Seed
                 int randomMedicineId;
                 do
                 {
-                    randomMedicineId = productIds[Random.Next(productIds.Count)];
+                    randomMedicineId = productIds[random.Next(productIds.Count)];
                 } while (existingMedicineIds.Contains(randomMedicineId));
 
                 existingMedicineIds.Add(randomMedicineId);
@@ -1047,7 +1047,7 @@ public static class Seed
                     continue;
                 }
 
-                var quantity = Random.Next(1, 10);
+                var quantity = random.Next(1, 10);
 
                 var newPrescriptionItem = new PrescriptionItem
                 {
@@ -1075,10 +1075,10 @@ public static class Seed
                 order.OrderItems.Add(orderItem);
             }
 
-            var deliveryStatus = SeedData.deliveryStatuses[Random.Next(SeedData.deliveryStatuses.Count)];
+            var deliveryStatus = SeedData.deliveryStatuses[random.Next(SeedData.deliveryStatuses.Count)];
             order.OrderDeliveryStatus = new OrderDeliveryStatus(deliveryStatus);
 
-            var status = SeedData.orderStatuses[Random.Next(SeedData.orderStatuses.Count)];
+            var status = SeedData.orderStatuses[random.Next(SeedData.orderStatuses.Count)];
             order.OrderOrderStatus = new OrderOrderStatus(status);
 
             var deliveryAddress = patient.UserAddresses.FirstOrDefault(x => x.IsMain)?.Address;
@@ -1099,7 +1099,8 @@ public static class Seed
 
             var prescription = new Prescription
             {
-                ExchangeAmount = Random.Next(1, 6),
+                Date = DateTime.SpecifyKind(new DateTime(random.Next(2019, 2024), random.Next(1, 12), random.Next(1, 28)), DateTimeKind.Utc),
+                ExchangeAmount = random.Next(1, 6),
                 Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
                 PatientPrescription = new PatientPrescription { Patient = patient },
                 DoctorPrescription = new DoctorPrescription { Doctor = doctor },

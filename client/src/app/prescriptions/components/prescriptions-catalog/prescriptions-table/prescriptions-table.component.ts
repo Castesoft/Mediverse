@@ -63,7 +63,10 @@ import { FormUse } from "src/app/_models/forms/formTypes";
     TableMenuComponent,
   ],
 })
-export class PrescriptionsTableComponent extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> implements OnDestroy, TableInputSignals<Prescription, PrescriptionParams> {
+export class PrescriptionsTableComponent
+  extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
+  implements OnDestroy, TableInputSignals<Prescription, PrescriptionParams>
+{
   item: ModelSignal<Prescription | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();

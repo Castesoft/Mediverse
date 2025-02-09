@@ -30,23 +30,26 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
   private _patientOptions: SelectOption[] = [];
   private _clinicOptions: SelectOption[] = [];
 
-  set productOptions(value: SelectOption[]) {
+  setProductOptions(value: SelectOption[]): this {
     this._productOptions = value;
     if (this.controls.items.controls.length && this.controls.items.controls.length > 0) {
       this.controls.items.controls.forEach(x => {
         x.controls.selectProduct.selectOptions = this._productOptions;
       });
     }
+    return this;
   }
 
-  set patientOptions(value: SelectOption[]) {
+  setPatientOptions(value: SelectOption[]): this {
     this._patientOptions = value;
     this.controls.patient.controls.select.selectOptions = this._patientOptions;
+    return this;
   }
 
-  set clinicOptions(value: SelectOption[]) {
+  setClinicOptions(value: SelectOption[]): this {
     this._clinicOptions = value;
     this.controls.clinic.controls.select.selectOptions = this._clinicOptions;
+    return this;
   }
 
   constructor() {
@@ -301,25 +304,13 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     this.updateValueAndValidity();
   }
 
-  get payload(): {
-    items: {
-      product: SelectOption | null;
-      quantity: number | null;
-      instructions: string | null;
-      dosage: number | null;
-      unit: string | null;
-    }[];
-    patient: SelectOption | null;
-    event: SelectOption | null;
-    clinic: SelectOption | null;
-    exchangeAmount: number | null;
-    notes: string | null;
-  } {
+  get payload(): any {
     const patient = this.controls.patient.controls;
     const clinic = this.controls.clinic.controls;
     const event = this.controls.event.controls;
 
     return {
+      date: this.controls.date.value,
       items: this.controls.items.controls.map(x => ({
         product: x.controls.selectProduct.value,
         quantity: x.controls.quantity.value,

@@ -15,8 +15,4 @@ export class WarehouseProductsService extends ServiceHelper<WarehouseProduct, Wa
   constructor() {
     super(WarehouseProductParams, 'warehouseProducts', warehouseProductDictionary, warehouseProductColumns);
   }
-
-  override update(model: any, id: number) {
-    return this.http.put<WarehouseProduct>(`${this.baseUrl}${id}`, model);
-  }
 }

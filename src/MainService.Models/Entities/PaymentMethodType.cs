@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Models.Entities;
 

@@ -44,7 +44,9 @@ namespace MainService.Infrastructure.Services
                 .Select(x => x.AddressId)
                 .SingleOrDefaultAsync();
 
-            order.OrderDeliveryAddress = new OrderDeliveryAddress(addressId.Value);
+            if (addressId.HasValue) {
+                order.OrderDeliveryAddress = new OrderDeliveryAddress(addressId.Value);
+            }
 
             foreach (var orderItem in items)
             {
