@@ -81,13 +81,13 @@ public class PrescriptionsController(
         if (!await uow.PatientRepository.ExistsAsync(request.Patient.Id.Value, doctorId))
             return BadRequest($"El paciente {request.Patient.Id.Value} no corresponde al doctor {doctorId}.");
 
-        if (request.Event is { Id: not null })
+        if (request.EventId.HasValue)
         {
-            if (!await uow.EventRepository.ExistsByIdAsync(request.Event.Id.Value))
-                return NotFound($"La cita con Id {request.Event.Id} no existe");
+            if (!await uow.EventRepository.ExistsByIdAsync(request.EventId.Value))
+                return NotFound($"La cita con Id {request.EventId} no existe");
 
-            if (!await uow.EventRepository.DoctorHasEventAsync(doctorId, request.Event.Id.Value))
-                return BadRequest($"La cita {request.Event.Id.Value} no corresponde al doctor {doctorId}.");
+            if (!await uow.EventRepository.DoctorHasEventAsync(doctorId, request.EventId.Value))
+                return BadRequest($"La cita {request.EventId.Value} no corresponde al doctor {doctorId}.");
         }
 
         if (request.Clinic == null) return BadRequest("La clínica es requerida");
@@ -119,12 +119,12 @@ public class PrescriptionsController(
         prescriptionToCreate.DoctorPrescription = new DoctorPrescription(doctorId);
         prescriptionToCreate.PrescriptionClinic = new PrescriptionClinic(clinicId);
 
-        if (request.Event is { Id: not null })
-            prescriptionToCreate.EventPrescription = new EventPrescription(request.Event.Id.Value);
+        if (request.EventId.HasValue)
+            prescriptionToCreate.EventPrescription = new EventPrescription(request.EventId.Value);
 
         List<OrderProduct> globalProducts = [];
 
-        foreach (var item in request.Items)
+        foreach (PrescriptionItemCreateDto item in request.Items)
         {
             if (item.Product == null) continue;
 
@@ -133,7 +133,7 @@ public class PrescriptionsController(
             if (!await uow.ProductRepository.ExistsByIdAsync(item.Product.Id.Value))
                 return NotFound($"Producto {item.Product.Id.Value} no existe");
 
-            var product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item.Product.Id.Value);
+            Product? product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item.Product.Id.Value);
             if (product == null) return NotFound($"Producto {item.Product.Id.Value} no existe");
 
             if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id.Value))
@@ -165,6 +165,19 @@ public class PrescriptionsController(
                 orderItemToAdd.Product = product;
 
                 globalProducts.Add(orderItemToAdd);
+
+                // prescriptionProduct
+                PrescriptionProduct itemToAdd = new();
+
+                if (!string.IsNullOrEmpty(item.Instructions)) itemToAdd.Instructions = item.Instructions;
+                if (item.Quantity.HasValue) itemToAdd.Quantity = item.Quantity.Value;
+
+                if (item.Dosage.HasValue) itemToAdd.Dosage = product.Dosage;
+                if (item.Product != null) itemToAdd.ProductId = product.Id;
+                itemToAdd.Unit = product.Unit;
+                itemToAdd.Name = product.Name;
+
+                prescriptionToCreate.PrescriptionItems.Add(itemToAdd);
             }
         }
 

@@ -18,6 +18,7 @@ import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { Account } from 'src/app/_models/account/account';
 import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
 import { View } from 'src/app/_models/base/types';
+import { Doctor } from 'src/app/_models/doctors/doctor';
 import { FormInputSignals } from 'src/app/_models/forms/formComponentInterfaces';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
@@ -87,6 +88,10 @@ export class PrescriptionFormComponent
     this.clinicsService.getOptions().subscribe();
 
     effect(() => {
+
+      console.log('prescriptionItem', this.item());
+
+
       this.form
         .setUse(this.use())
         .setValidation(this.validation.active())
@@ -103,7 +108,19 @@ export class PrescriptionFormComponent
         if (item !== null) {
           console.log('item', item);
 
-          this.form.patch(item);
+          // this.form.customPatch(item);
+          this.form.patchValue(item);
+        }
+      }
+
+      if (this.fromEventWindow() === true) {
+        if (this.use() === 'create') {
+          const item = this.item();
+
+          if (item !== null) {
+            // this.form.customPatch(item);
+            this.form.patchValue(item);
+          }
         }
       }
 
@@ -128,7 +145,7 @@ export class PrescriptionFormComponent
 
     const account: Account | null = this.accountService.current();
     if (account) {
-      this.form.controls.doctor.patchValue(account as unknown as Account);
+      this.form.controls.doctor.patchValue(new Doctor({...account} as any));
     }
   }
 

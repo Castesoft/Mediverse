@@ -205,9 +205,12 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
     if (event.prescriptions) this.prescriptions.set(event.prescriptions);
     if (event.createdAt) prescriptionDefaultValues.date = new Date(event.createdAt);
     if (event.patient) prescriptionDefaultValues.patient = event.patient;
+    if (event.clinic) prescriptionDefaultValues.clinic = event.clinic;
+    if (event.id) prescriptionDefaultValues.event.id = event.id;
+    if (event.doctor) prescriptionDefaultValues.doctor = event.doctor;
     if (event.nurses) this.nurses.setMultipleSelected(this.nurseCuid, event.nurses);
 
-    this.prescriptionItem.set(prescriptionDefaultValues);
+    this.prescriptionItem.update(_ => prescriptionDefaultValues);
   }
 
   onSubmitEvolution(): void {
