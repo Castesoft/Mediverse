@@ -1971,42 +1971,6 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("OrderHistories");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer");
-
-                    b.Property<double?>("Discount")
-                        .HasColumnType("double precision");
-
-                    b.Property<double?>("Dosage")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Instructions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Unit")
-                        .HasColumnType("text");
-
-                    b.HasKey("OrderId", "ItemId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("OrderItems");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
                 {
                     b.Property<int>("OrderId")
@@ -2041,6 +2005,42 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("OrderPickupAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderProduct", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<double?>("Discount")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Dosage")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.OrderStatus", b =>
@@ -2394,48 +2394,6 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("PrescriptionClinic");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
-                {
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<double?>("Dosage")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Instructions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Unit")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("PrescriptionId", "ItemId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("PrescriptionItems");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
                 {
                     b.Property<int>("PrescriptionId")
@@ -2453,6 +2411,68 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("PrescriptionOrder");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Discount")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Dosage")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LotNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("PrescriptionItems");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
@@ -4325,25 +4345,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Product", "Item")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Order", "Order")
@@ -4380,6 +4381,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("PickupAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderProduct", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Product", "Product")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -4468,24 +4488,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Prescription");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Product", "Item")
-                        .WithMany("PrescriptionItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
-                        .WithMany("PrescriptionItems")
-                        .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("Prescription");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Order", "Order")
@@ -4503,6 +4505,24 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionProduct", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithMany("PrescriptionItems")
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Product", "Product")
+                        .WithMany("PrescriptionProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Prescription");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ProductPhoto", b =>
@@ -5231,7 +5251,7 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("OrderItems");
 
-                    b.Navigation("PrescriptionItems");
+                    b.Navigation("PrescriptionProducts");
 
                     b.Navigation("ProductPhotos");
 

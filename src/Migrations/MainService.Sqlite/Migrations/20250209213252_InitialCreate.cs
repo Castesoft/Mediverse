@@ -2206,7 +2206,7 @@ namespace MainService.Sqlite.Migrations
                 columns: table => new
                 {
                     OrderId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: true),
                     Dosage = table.Column<double>(type: "REAL", nullable: true),
                     Instructions = table.Column<string>(type: "TEXT", nullable: true),
@@ -2217,7 +2217,7 @@ namespace MainService.Sqlite.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItems", x => new { x.OrderId, x.ItemId });
+                    table.PrimaryKey("PK_OrderItems", x => new { x.OrderId, x.ProductId });
                     table.ForeignKey(
                         name: "FK_OrderItems_Orders_OrderId",
                         column: x => x.OrderId,
@@ -2225,8 +2225,8 @@ namespace MainService.Sqlite.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrderItems_Products_ItemId",
-                        column: x => x.ItemId,
+                        name: "FK_OrderItems_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -2236,21 +2236,27 @@ namespace MainService.Sqlite.Migrations
                 name: "PrescriptionItems",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     PrescriptionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: true),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: true),
                     Dosage = table.Column<double>(type: "REAL", nullable: true),
                     Instructions = table.Column<string>(type: "TEXT", nullable: true),
                     Unit = table.Column<string>(type: "TEXT", nullable: true),
+                    Manufacturer = table.Column<string>(type: "TEXT", nullable: true),
+                    LotNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    Price = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Discount = table.Column<double>(type: "REAL", nullable: true),
+                    PhotoUrl = table.Column<string>(type: "TEXT", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PrescriptionItems", x => new { x.PrescriptionId, x.ItemId });
+                    table.PrimaryKey("PK_PrescriptionItems", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PrescriptionItems_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
@@ -2258,8 +2264,8 @@ namespace MainService.Sqlite.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PrescriptionItems_Products_ItemId",
-                        column: x => x.ItemId,
+                        name: "FK_PrescriptionItems_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -3290,9 +3296,9 @@ namespace MainService.Sqlite.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_ItemId",
+                name: "IX_OrderItems_ProductId",
                 table: "OrderItems",
-                column: "ItemId");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderOrderStatus_OrderId",
@@ -3351,9 +3357,14 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrescriptionItems_ItemId",
+                name: "IX_PrescriptionItems_PrescriptionId",
                 table: "PrescriptionItems",
-                column: "ItemId");
+                column: "PrescriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionItems_ProductId",
+                table: "PrescriptionItems",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionOrder_OrderId",

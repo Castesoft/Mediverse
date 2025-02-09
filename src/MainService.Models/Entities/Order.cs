@@ -19,7 +19,7 @@ public class Order : BaseEntity
     public DoctorOrder DoctorOrder { get; set; } = null!;
     public OrderDeliveryAddress OrderDeliveryAddress { get; set; } = null!;
     public OrderPickupAddress OrderPickupAddress { get; set; } = null!;
-    public List<OrderItem> OrderItems { get; set; } = [];
+    public List<OrderProduct> OrderItems { get; set; } = [];
     public List<OrderHistory> OrderHistories { get; set; } = [];
 
     public OrderOrderStatus OrderOrderStatus { get; set; } = null!;

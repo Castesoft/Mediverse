@@ -122,7 +122,7 @@ public class PrescriptionsController(
         if (request.Event is { Id: not null })
             prescriptionToCreate.EventPrescription = new EventPrescription(request.Event.Id.Value);
 
-        List<OrderItem> globalProducts = [];
+        List<OrderProduct> globalProducts = [];
 
         foreach (var item in request.Items)
         {
@@ -138,13 +138,13 @@ public class PrescriptionsController(
 
             if (await uow.ProductRepository.DoctorHasProductAsync(doctorId, item.Product.Id.Value))
             {
-                PrescriptionItem itemToAdd = new();
+                PrescriptionProduct itemToAdd = new();
 
                 if (!string.IsNullOrEmpty(item.Instructions)) itemToAdd.Instructions = item.Instructions;
                 if (item.Quantity.HasValue) itemToAdd.Quantity = item.Quantity.Value;
 
                 if (item.Dosage.HasValue) itemToAdd.Dosage = product.Dosage;
-                if (item.Product != null) itemToAdd.ItemId = product.Id;
+                if (item.Product != null) itemToAdd.ProductId = product.Id;
                 itemToAdd.Unit = product.Unit;
                 itemToAdd.Name = product.Name;
 
@@ -152,17 +152,17 @@ public class PrescriptionsController(
             }
             else if (await uow.ProductRepository.IsGlobalAsync(item.Product.Id.Value))
             {
-                OrderItem orderItemToAdd = new();
+                OrderProduct orderItemToAdd = new();
 
                 if (item.Quantity.HasValue) orderItemToAdd.Quantity = item.Quantity.Value;
                 if (!string.IsNullOrEmpty(item.Instructions)) orderItemToAdd.Instructions = item.Instructions;
 
-                if (item.Product != null) orderItemToAdd.ItemId = product.Id;
+                if (item.Product != null) orderItemToAdd.ProductId = product.Id;
                 if (item.Dosage.HasValue) orderItemToAdd.Dosage = product.Dosage;
                 if (!string.IsNullOrEmpty(item.Unit)) orderItemToAdd.Unit = product.Unit;
                 orderItemToAdd.Price = product.Price;
                 orderItemToAdd.Discount = product.Discount;
-                orderItemToAdd.Item = product;
+                orderItemToAdd.Product = product;
 
                 globalProducts.Add(orderItemToAdd);
             }

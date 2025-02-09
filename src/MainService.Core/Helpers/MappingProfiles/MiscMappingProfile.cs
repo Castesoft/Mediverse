@@ -11,6 +11,7 @@ using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Resolvers;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
+using MainService.Core.DTOs.Prescription;
 
 namespace MainService.Core.Helpers.MappingProfiles
 {
@@ -56,6 +57,19 @@ namespace MainService.Core.Helpers.MappingProfiles
                 .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
                 .ForMember(dest => dest.IsInternal, opt => opt.MapFrom(src => src.DoctorProduct == null))
                 .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom<ProductPhotoUrlResolver>());
+
+            CreateMap<Product, PrescriptionItemDto>()
+                .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Discount))
+                .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Manufacturer))
+                .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.LotNumber))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
+            ;
 
             // Map ProductUpdateDto to Product.
             CreateMap<ProductUpdateDto, Product>();

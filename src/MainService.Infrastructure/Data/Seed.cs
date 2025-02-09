@@ -1019,7 +1019,7 @@ public static class Seed
         for (var j = 1; j < random.Next(1, 4); j++)
         {
             var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
-            var newPrescriptionItems = new List<PrescriptionItem>();
+            var newPrescriptionItems = new List<PrescriptionProduct>();
             var existingMedicineIds = new HashSet<int>();
             var order = new Order();
 
@@ -1049,10 +1049,10 @@ public static class Seed
 
                 var quantity = random.Next(1, 10);
 
-                var newPrescriptionItem = new PrescriptionItem
+                var newPrescriptionItem = new PrescriptionProduct
                 {
-                    ItemId = randomMedicineId,
-                    Item = randomMedicine,
+                    ProductId = randomMedicineId,
+                    Product = randomMedicine,
                     Quantity = quantity,
                     Dosage = 500,
                     Instructions = "Tomar 1 tableta cada 6 horas",
@@ -1061,7 +1061,7 @@ public static class Seed
 
                 newPrescriptionItems.Add(newPrescriptionItem);
 
-                var orderItem = new OrderItem
+                var orderItem = new OrderProduct
                 {
                     Quantity = quantity,
                     Dosage = randomMedicine.Dosage,
@@ -1069,7 +1069,7 @@ public static class Seed
                     Unit = randomMedicine.Unit,
                     Price = randomMedicine.Price,
                     Discount = 0,
-                    Item = randomMedicine
+                    Product = randomMedicine
                 };
 
                 order.OrderItems.Add(orderItem);

@@ -29,8 +29,8 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<DoctorNurse> DoctorNurses { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Prescription> Prescriptions { get; set; }
-    public DbSet<PrescriptionItem> PrescriptionItems { get; set; }
-    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<PrescriptionProduct> PrescriptionItems { get; set; }
+    public DbSet<OrderProduct> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderHistory> OrderHistories { get; set; }
     public DbSet<UserPaymentMethod> UserPaymentMethods { get; set; }

@@ -20,53 +20,28 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
 
     public async Task<PrescriptionDto?> GetDtoByIdAsync(int id) =>
         await context.Prescriptions
-            .Include(x => x.DoctorPrescription)
-            .ThenInclude(x => x.Doctor)
-            .Include(x => x.PrescriptionItems)
-            .ThenInclude(x => x.Item)
-            .Include(x => x.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo)
-            .Include(x => x.PatientPrescription.Patient.UserPhoto.Photo)
-            .Include(x => x.PrescriptionOrder.Order)
-            .Include(x => x.PrescriptionClinic.Clinic.ClinicLogo.Photo)
+            .ApplyIncludes()
             .ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Prescription?> GetByIdAsync(int id) =>
         await context.Prescriptions
-            .Include(x => x.DoctorPrescription)
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .ApplyIncludes()
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<PagedList<PrescriptionDto>> GetPagedListAsync(PrescriptionParams param, ClaimsPrincipal user)
     {
-        var query = context.Prescriptions
-            .Include(x => x.PatientPrescription)
-            .ThenInclude(x => x.Patient)
-            .Include(x => x.DoctorPrescription)
-            .ThenInclude(x => x.Doctor)
-            .Include(x => x.EventPrescription)
-            .ThenInclude(ep => ep.Event)
-            .ThenInclude(e => e.EventClinic)
-            .ThenInclude(ec => ec.Clinic)
-            .ThenInclude(c => c.ClinicLogo)
-            .ThenInclude(cl => cl.Photo)
-            .Include(x => x.PrescriptionItems)
-            .Include(x => x.PrescriptionOrder)
-            .ThenInclude(po => po.Order)
-            .AsQueryable();
-
-        var roles = user.GetRoles();
+        List<string> roles = user.GetRoles().ToList();
         var userId = user.GetUserId();
 
-        query = query.Where(x => x.DoctorPrescription.Doctor.Id == userId);
+        param.Roles = roles;
+        param.UserId = userId;
 
-        if (!string.IsNullOrEmpty(param.Search))
-        {
-        }
-
-        if (param.EventId.HasValue)
-        {
-            query = query.Where(x => x.EventPrescription.EventId == param.EventId);
-        }
+        IQueryable<Prescription> query = context.Prescriptions
+            .ApplyIncludes()
+            .ApplyFilters(param)
+            .AsQueryable();
 
         return await PagedList<PrescriptionDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<PrescriptionDto>(mapper.ConfigurationProvider),
@@ -75,13 +50,36 @@ public class PrescriptionRepository(DataContext context, IMapper mapper) : IPres
 
     public async Task<Prescription?> GetByIdAsNoTrackingAsync(int id) =>
         await context.Prescriptions
+            .ApplyIncludes()
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 }
 
 public static class PrescriptionRepositoryExtensions
 {
+    public static IQueryable<Prescription> ApplyIncludes(this IQueryable<Prescription> query) =>
+        query
+            .Include(x => x.DoctorPrescription.Doctor)
+            .Include(x => x.PrescriptionItems).ThenInclude(x => x.Product)
+            .Include(x => x.EventPrescription.Event.EventClinic.Clinic.ClinicLogo.Photo)
+            .Include(x => x.PatientPrescription.Patient.UserPhoto.Photo)
+            .Include(x => x.PrescriptionOrder.Order)
+            .Include(x => x.PrescriptionClinic.Clinic.ClinicLogo.Photo)
+        ;
+    
     public static IQueryable<Prescription> ApplyFilters(this IQueryable<Prescription> query, PrescriptionParams param) {
+
+        if (param.UserId.HasValue) 
+        {
+            query = query.Where(x => x.DoctorPrescription.Doctor.Id == param.UserId.Value);
+        }
+        
+        if (param.EventId.HasValue)
+        {
+            query = query.Where(x => x.EventPrescription.EventId == param.EventId);
+        }
+        
         if (param.Sort != null && !string.IsNullOrEmpty(param.Sort))
         {
             query = param.Sort.ToLower() switch
@@ -108,6 +106,12 @@ public static class PrescriptionRepositoryExtensions
                     !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
                     !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)
             );
+        }
+
+        if (param.ForTypeahead.HasValue) {
+            if (param.ForTypeahead.Value) {
+                query = query.Take(50);
+            }
         }
 
         return query;
