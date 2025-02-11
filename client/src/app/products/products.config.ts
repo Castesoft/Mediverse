@@ -50,10 +50,6 @@ export class ProductsService extends ServiceHelper<Product, ProductParams, FormG
     super(ProductParams, 'products', productDictionary, productColumns);
   }
 
-  override update(model: any, id: number) {
-    return this.http.put<Product>(`${this.baseUrl}${id}`, model);
-  }
-
   updateWarehouses(model: any, id: number) {
     return this.http.put<Product>(`${this.baseUrl}update-warehouses/${id}`, model);
   }

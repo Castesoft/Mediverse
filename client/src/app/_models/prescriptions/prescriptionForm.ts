@@ -1,17 +1,16 @@
-import { Validators } from "@angular/forms";
-import { Account } from "../account/account";
-import { Address } from "src/app/_models/addresses/address";
-import { Column } from "src/app/_models/base/column";
-import { SelectOption } from "src/app/_models/base/selectOption";
-import { FormGroup2 } from "src/app/_models/forms/formGroup2";
-import { medicalLicenseFormInfo } from "../medicalLicenses/medicalLicenseConstants";
-import { MedicalLicense } from "../medicalLicenses/medicalLicense";
-import { PrescriptionItem, prescriptionItemInfo } from "src/app/_models/prescriptionItem";
-import { Prescription } from "src/app/_models/prescriptions/prescription";
-import { prescriptionFormInfo } from "src/app/_models/prescriptions/prescriptionConstants";
-import { User } from "src/app/_models/users/user";
+import { Validators } from '@angular/forms';
+import { Address } from 'src/app/_models/addresses/address';
+import { Column } from 'src/app/_models/base/column';
+import { SelectOption } from 'src/app/_models/base/selectOption';
+import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
+import { PrescriptionItem, prescriptionItemInfo } from 'src/app/_models/prescriptionItem';
+import { Prescription } from 'src/app/_models/prescriptions/prescription';
+import { prescriptionFormInfo } from 'src/app/_models/prescriptions/prescriptionConstants';
+import { User } from 'src/app/_models/users/user';
 import { Patient } from 'src/app/_models/patients/patient';
 import { isNullOrWhiteSpace } from 'src/app/_utils/util';
+import { medicalLicenseFormInfo } from 'src/app/_models/medicalLicenses/medicalLicenseConstants';
+import { MedicalLicense } from 'src/app/_models/medicalLicenses/medicalLicense';
 
 
 export class PrescriptionForm extends FormGroup2<Prescription> {
@@ -30,23 +29,26 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
   private _patientOptions: SelectOption[] = [];
   private _clinicOptions: SelectOption[] = [];
 
-  set productOptions(value: SelectOption[]) {
+  setProductOptions(value: SelectOption[]): this {
     this._productOptions = value;
     if (this.controls.items.controls.length && this.controls.items.controls.length > 0) {
       this.controls.items.controls.forEach(x => {
         x.controls.selectProduct.selectOptions = this._productOptions;
       });
     }
+    return this;
   }
 
-  set patientOptions(value: SelectOption[]) {
+  setPatientOptions(value: SelectOption[]): this {
     this._patientOptions = value;
     this.controls.patient.controls.select.selectOptions = this._patientOptions;
+    return this;
   }
 
-  set clinicOptions(value: SelectOption[]) {
+  setClinicOptions(value: SelectOption[]): this {
     this._clinicOptions = value;
     this.controls.clinic.controls.select.selectOptions = this._clinicOptions;
+    return this;
   }
 
   constructor() {
@@ -100,39 +102,47 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
    */
   patch(prescription: Prescription | null, fromEventWindow: boolean = false): void {
     if (this.use === 'create') {
-      const doctor = prescription?.doctor;
-      this.controls.doctor.patchValue(doctor as Account);
-      this.controls.date.patchValue(new Date());
 
-      if (doctor && doctor.doctorClinics.length && doctor.doctorClinics.length > 0) {
-        const clinic = doctor.doctorClinics[0];
-        this.controls.clinic.patchValue(new Address({
-          city: clinic.city,
-          country: clinic.country,
-          exteriorNumber: clinic.exteriorNumber,
-          interiorNumber: clinic.interiorNumber,
-          photoUrl: clinic.logoUrl,
-          isMain: clinic.isMain,
-          latitude: clinic.latitude,
-          longitude: clinic.longitude,
-          neighborhood: clinic.neighborhood,
-          zipcode: clinic.zipcode,
-          state: clinic.state,
-          street: clinic.street,
-        }));
+      if (
+        prescription !== null &&
+        prescription.doctor !== null
+      ) {
+        const doctor = prescription.doctor;
+        this.controls.doctor.patchValue(doctor);
+
+        this.controls.date.patchValue(new Date());
+
+        if (doctor && doctor.clinics.length && doctor.clinics.length > 0) {
+          const clinic = doctor.clinics[0];
+          this.controls.clinic.patchValue(new Address({
+            city: clinic.city,
+            country: clinic.country,
+            exteriorNumber: clinic.exteriorNumber,
+            interiorNumber: clinic.interiorNumber,
+            photoUrl: clinic.logoUrl,
+            isMain: clinic.isMain,
+            latitude: clinic.latitude,
+            longitude: clinic.longitude,
+            neighborhood: clinic.neighborhood,
+            zipcode: clinic.zipcode,
+            state: clinic.state,
+            street: clinic.street,
+          }));
+        }
+
+        if (doctor && doctor.medicalLicenses.length && doctor.medicalLicenses.length > 0) {
+          doctor.medicalLicenses.forEach(license => {
+            this.controls.doctor.controls.medicalLicenses.push(new FormGroup2<MedicalLicense>(MedicalLicense, new MedicalLicense({
+              ...license,
+              licenseNumber: license.licenseNumber,
+              specialtyId: license.specialtyId,
+              specialtyLicense: license.specialtyLicense,
+              specialtyName: license.specialtyName,
+            }), medicalLicenseFormInfo));
+          });
+        }
       }
 
-      if (doctor && doctor.medicalLicenses.length && doctor.medicalLicenses.length > 0) {
-        doctor.medicalLicenses.forEach(license => {
-          this.controls.doctor.controls.medicalLicenses.push(new FormGroup2<MedicalLicense>(MedicalLicense, new MedicalLicense({
-            ...license,
-            licenseNumber: license.licenseNumber,
-            specialtyId: license.specialtyId,
-            specialtyLicense: license.specialtyLicense,
-            specialtyName: license.specialtyName,
-          }), medicalLicenseFormInfo));
-        });
-      }
     }
 
     if (this.use === 'detail' || this.use === 'edit') {
@@ -157,10 +167,10 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
 
         this.controls.notes.patchValue(prescription.notes);
         this.controls.date.patchValue(prescription.date, { emitEvent: false });
-        this.controls.clinic.patchValue(clinic as Address, { emitEvent: false });
+        this.controls.clinic.patchValue(clinic, { emitEvent: false });
         this.controls.clinic.controls.photoUrl.patchValue(clinic?.photoUrl);
-        this.controls.doctor.patchValue(doctor as Account, { emitEvent: false });
-        this.controls.patient.patchValue(patient as Patient, { emitEvent: false });
+        this.controls.doctor.patchValue(doctor, { emitEvent: false });
+        this.controls.patient.patchValue(patient, { emitEvent: false });
       }
     }
 
@@ -301,25 +311,27 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     this.updateValueAndValidity();
   }
 
-  get payload(): {
-    items: {
-      product: SelectOption | null;
-      quantity: number | null;
-      instructions: string | null;
-      dosage: number | null;
-      unit: string | null;
-    }[];
-    patient: SelectOption | null;
-    event: SelectOption | null;
-    clinic: SelectOption | null;
-    exchangeAmount: number | null;
-    notes: string | null;
-  } {
+  // customPatch(prescription: Prescription) {
+  //   console.log('customPatch', prescription);
+
+
+  //   this.patch(prescription);
+
+  //   if (
+  //     prescription.event !== null &&
+  //     prescription.event.id !== null
+  //   ) {
+  //     this.controls.event.controls.id.patchValue(prescription.event.id);
+  //   }
+  // }
+
+  get payload(): any {
     const patient = this.controls.patient.controls;
     const clinic = this.controls.clinic.controls;
     const event = this.controls.event.controls;
 
     return {
+      date: this.controls.date.value,
       items: this.controls.items.controls.map(x => ({
         product: x.controls.selectProduct.value,
         quantity: x.controls.quantity.value,
@@ -330,9 +342,7 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
       patient: patient.id.value === null ? null : new SelectOption({
         id: patient.id.value,
       }),
-      event: event.id.value === null ? null : new SelectOption({
-        id: event.id.value,
-      }),
+      eventId: this.controls.event.controls.id.value,
       clinic: clinic.id.value === null ? null : new SelectOption({
         id: clinic.id.value,
       }),

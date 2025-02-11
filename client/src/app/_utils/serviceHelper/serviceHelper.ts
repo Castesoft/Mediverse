@@ -25,6 +25,7 @@ import { SelectionService } from "src/app/_models/services/selection.service";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
 import { ClickLinkHandler } from "src/app/_utils/serviceHelper/clickLinkHandler";
+import SubmitOptions from 'src/app/_utils/serviceHelper/types/submitOptions';
 
 /**
  * A helper class that provides common service functionalities for handling entities, parameters, forms, etc.
@@ -239,19 +240,15 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   /**
    * Creates a new entity on the server and updates local data/redirects if needed.
    */
-  create(model: any, redirect: boolean = true): Observable<T> {
-    return this.http.post<T>(this.baseUrl, model).pipe(
-      tap((response) => {
-        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id}
-        ${this.dictionary.articleSex === "feminine" ? "creada" : "creado"} correctamente`,
-          "Cerrar",
-          { duration: 3000 }
-        );
-
-        if (redirect) {
-          this.router.navigate([ this.dictionary.catalogRoute, response.id ]).then(() => {});
+  create(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
+    return this.http.post<T>(
+      _options?.id ? `${this.baseUrl}${_options.id}` : this.baseUrl,
+      _options?.value ?? form.value).pipe(
+      tap(response => {
+        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} creado correctamente`, 'Cerrar', { duration: 3000 });
+        if (view === 'page') {
+          this.router.navigate([this.dictionary.catalogRoute, response.id]);
         }
-
         this.data.next([ ...this.data.value, response ]);
       })
     );
@@ -260,35 +257,54 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   /**
    * Updates an existing entity on the server and updates local data/redirects if needed.
    */
-  update(model: any, id: number | null, redirect: boolean = true): Observable<T> {
-    if (id === null) throw new Error("ID cannot be null");
+  update(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
+    return this.http.put<T>(`${this.baseUrl}${_options?.id ?? form.controls.id.value}`, _options?.value ?? form.value).pipe(
+      tap(response => {
+        console.log('response', response);
 
-    return this.http.put<T>(`${this.baseUrl}${id}`, model)
-      .pipe(
-        tap((response): void => {
-          if (redirect) {
-            this.router.navigate([ this.dictionary.catalogRoute, response.id ]).then(() => {});
+        if (view === 'page') {
+          this.router.navigate([this.dictionary.catalogRoute, response.id]);
+        }
+        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`, 'Cerrar', { duration: 3000 });
+
+        const id = _options?.id;
+
+        if (id !== undefined) {
+          if (this.data.value.length === 0) {
+            this.data.next([ response ]);
+          } else if (this.data.value.length > 0) {
+            this.data.next(this.data.value.map(a => a.id === id ? response : a));
           }
+        }
 
-          this.matSnackBar.open(
-            `${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`,
-            "Cerrar",
-            { duration: 3000 }
-          );
-          this.data.next(
-            this.data.value.map((a) => (a.id === (id) ? response : a))
-          );
+        if (this.options().length === 0) {
+          this.options.update(oldValues => {
 
-          const options: SelectOption[] = this.options();
-          const index: number = options.findIndex((o) => o.id === id);
+            const optionToAdd = new SelectOption();
+
+            if (response.name) optionToAdd.name = response.name;
+            if (response.code) optionToAdd.code = response.code;
+            if (response.id) optionToAdd.id = response.id;
+            if (response.isVisible) optionToAdd.visible = response.isVisible;
+            if (response.isEnabled) optionToAdd.enabled = response.isEnabled;
+
+            return [ optionToAdd ];
+          });
+        } else if (this.options().length > 0) {
+          const options = this.options();
+          const index = options.findIndex(o => o.id === id);
           if (index !== -1) {
-            const option: SelectOption = options[index];
+            const option = options[index];
+
             if (response.name) option.name = response.name;
             if (response.code) option.code = response.code;
+
             this.options.set(options);
           }
-        })
-      );
+
+        }
+      })
+    );
   }
 
   /**

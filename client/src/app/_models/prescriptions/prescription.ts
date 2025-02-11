@@ -1,10 +1,10 @@
-import { Account } from "../account/account";
 import { Entity } from "src/app/_models/base/entity";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import Clinic from "src/app/_models/clinics/clinic";
 import Event from "src/app/_models/events/event";
 import { PrescriptionItem } from "src/app/_models/prescriptionItem";
 import { Patient } from "../patients/patient";
+import { Doctor } from 'src/app/_models/doctors/doctor';
 
 
 export class Prescription extends Entity {
@@ -14,7 +14,7 @@ export class Prescription extends Entity {
   orderId: number | null = null;
   date: Date | null = null;
 
-  doctor: Account = new Account();
+  doctor: Doctor = new Doctor();
 
   clinic: Clinic = new Clinic();
   event: Event = new Event();

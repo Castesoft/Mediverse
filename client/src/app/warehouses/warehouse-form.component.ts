@@ -92,14 +92,14 @@ export class WarehouseFormComponent extends BaseForm<Warehouse, WarehouseParams,
     this.form.controls.address.controls.select.selectOptions = this.addressesService.options();
   }
 
-  async onSubmit(): Promise<void> {
+  override async onSubmit(): Promise<void> {
     const authorized: boolean = await firstValueFrom(this.confirmService.confirm(confirmActionModal));
     if (!authorized) return;
 
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Warehouse> = isNew
-      ? this.service.create(this.form.getRawValue())
-      : this.service.update(this.form.getRawValue(), this.item()!.id!);
+      ? this.service.create(this.form, this.view(), { use: this.use(), value: this.form.getRawValue()})
+      : this.service.update(this.form, this.view(), { use: this.use(), value: this.form.getRawValue(), id: this.form.controls.id.value ?? undefined, });
 
     observable.subscribe({
       next: (warehouse) => {

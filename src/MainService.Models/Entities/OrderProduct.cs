@@ -1,9 +1,9 @@
 namespace MainService.Models.Entities;
 
-public class OrderItem
+public class OrderProduct
 {
-    public OrderItem() {}
-    public OrderItem(Product item) => Item = item;
+    public OrderProduct() {}
+    public OrderProduct(Product item) => Product = item;
     public int? Quantity { get; set; }
     public double? Dosage { get; set; }
     public string? Instructions { get; set; }
@@ -14,6 +14,6 @@ public class OrderItem
 
     public int OrderId { get; set; }
     public Order Order { get; set; } = null!;
-    public int ItemId { get; set; }
-    public Product Item { get; set; } = null!;
+    public int ProductId { get; set; }
+    public Product Product { get; set; } = null!;
 }

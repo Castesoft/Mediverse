@@ -5,7 +5,7 @@ namespace MainService.Core.Interfaces.Services
 {
     public interface IOrdersService
     {
-        Task<Order> CreateAsync(List<OrderItem> items, int customerId, int doctorId);
+        Task<Order> CreateAsync(List<OrderProduct> items, int customerId, int doctorId);
         Task<OrderDto?> UpdateAsync(OrderUpdateDto request, int orderId, int userId);
     }
 }

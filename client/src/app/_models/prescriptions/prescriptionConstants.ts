@@ -1,20 +1,20 @@
-import { accountFormInfo } from "../account/accountConstants";
-import { addressFormInfo } from "src/app/_models/addresses/addressConstants";
-import { Column } from "src/app/_models/base/column";
-import { baseInfo } from "src/app/_models/base/entity";
-import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
-import { NamingSubject } from "src/app/_models/base/namingSubject";
-import { FormInfo } from "src/app/_models/forms/formTypes";
+import { addressFormInfo } from 'src/app/_models/addresses/addressConstants';
+import { Column } from 'src/app/_models/base/column';
+import { baseInfo } from 'src/app/_models/base/entity';
+import { baseFilterFormInfo } from 'src/app/_models/base/entityParams';
+import { NamingSubject } from 'src/app/_models/base/namingSubject';
+import { doctorFormInfo } from 'src/app/_models/doctors/doctorConstants';
+import { FormInfo } from 'src/app/_models/forms/formTypes';
 import { patientFormInfo } from 'src/app/_models/patients/patientConstants';
-import { prescriptionItemInfo } from "src/app/_models/prescriptionItem";
+import { prescriptionItemInfo } from 'src/app/_models/prescriptionItem';
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
-import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
+import { PrescriptionParams } from 'src/app/_models/prescriptions/prescriptionParams';
 import { baseTableCells, PartialCellsOf } from 'src/app/_models/tables/tableCellItem';
 
 
 export const prescriptionFormInfo: FormInfo<Prescription> = {
   ...baseInfo,
-  doctor: accountFormInfo,
+  doctor: doctorFormInfo,
   exchangeAmount: { label: 'Monto de cambio', type: 'number', },
   isCollapsed: { label: 'Colapsado', type: 'checkbox', },
   items: prescriptionItemInfo,

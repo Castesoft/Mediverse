@@ -75,10 +75,6 @@ export class WarehousesService extends ServiceHelper<Warehouse, WarehouseParams,
     });
   };
 
-  override update(model: any, id: number) {
-    return this.http.put<Warehouse>(`${this.baseUrl}${id}`, model);
-  }
-
   updateProducts(model: any, id: number) {
     return this.http.put<Warehouse>(`${this.baseUrl}update-products/${id}`, model);
   }

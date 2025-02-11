@@ -200,11 +200,13 @@ import { FormUse } from "src/app/_models/forms/formTypes";
         {
           path: 'recetas/nuevo',
           component: HomePrescriptionCreateRouteComponent,
+          resolve: { item: () => null, },
           title: titleDetailResolver(PrescriptionsService, FormUse.CREATE),
         },
         {
           path: 'recetas/:id',
           component: HomePrescriptionDetailRouteComponent,
+          resolve: { item: createItemResolver(PrescriptionsService), },
           title: titleDetailResolver(PrescriptionsService, FormUse.DETAIL),
         },
         {

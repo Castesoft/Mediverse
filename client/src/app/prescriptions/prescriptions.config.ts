@@ -197,6 +197,7 @@ export class DetailComponent extends BaseRouteDetail<Prescription> {
       this.route.data.subscribe({
         next: (data) => {
           this.item.set(data['item']);
+          console.log('item', this.item());
         },
       });
       const navigation = this.router.getCurrentNavigation();

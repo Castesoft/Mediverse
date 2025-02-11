@@ -1,4 +1,4 @@
-using MainService.Models.Entities.Aggregate;
+using MainService.Models.Entities;
 
 namespace MainService.Core.DTOs.OrderStatuses
 {

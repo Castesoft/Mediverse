@@ -15,7 +15,7 @@ namespace MainService.Sqlite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
 
             modelBuilder.Entity("MainService.Models.Entities.Address", b =>
                 {
@@ -91,6 +91,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Cities");
@@ -130,6 +133,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Settlement")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Zipcode")
                         .HasColumnType("TEXT");
 
@@ -151,6 +157,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -209,6 +218,9 @@ namespace MainService.Sqlite.Migrations
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TranslatedName")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -937,6 +949,24 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("DoctorSignature");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorSpecialty", b =>
+                {
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SpecialtyId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DoctorId", "SpecialtyId");
+
+                    b.HasIndex("DoctorId")
+                        .IsUnique();
+
+                    b.HasIndex("SpecialtyId");
+
+                    b.ToTable("DoctorSpecialty");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
                 {
                     b.Property<int>("UserId")
@@ -999,6 +1029,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ThumbnailUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
@@ -1086,6 +1119,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("NextSteps")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Events");
@@ -1127,22 +1163,6 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("EventMedicalInsuranceCompany");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.EventPayment", b =>
-                {
-                    b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("EventId", "PaymentId");
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
-
-                    b.ToTable("EventPayments");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.EventPaymentMethodType", b =>
                 {
                     b.Property<int>("EventId")
@@ -1159,24 +1179,6 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("PaymentMethodTypeId");
 
                     b.ToTable("EventPaymentMethodType");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.EventPaymentStatus", b =>
-                {
-                    b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PaymentStatusId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("EventId", "PaymentStatusId");
-
-                    b.HasIndex("EventId")
-                        .IsUnique();
-
-                    b.HasIndex("PaymentStatusId");
-
-                    b.ToTable("EventPaymentStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
@@ -1249,6 +1251,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SiteName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
@@ -1375,6 +1380,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("SpecialtyLicense")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("MedicalLicenses");
@@ -1487,6 +1495,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Sex")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<bool?>("UsesGlassesOrHearingAid")
@@ -1814,6 +1825,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<decimal?>("Total")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Orders");
@@ -1855,40 +1869,49 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("OrderDeliveryStatus");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
+            modelBuilder.Entity("MainService.Models.Entities.OrderHistory", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ChangeType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ItemId")
+                    b.Property<int>("Property")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double?>("Discount")
-                        .HasColumnType("REAL");
-
-                    b.Property<double?>("Dosage")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Instructions")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("Quantity")
+                    b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Unit")
-                        .HasColumnType("TEXT");
+                    b.HasKey("Id");
 
-                    b.HasKey("OrderId", "ItemId");
+                    b.HasIndex("OrderId");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderHistories");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
@@ -1925,6 +1948,42 @@ namespace MainService.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("OrderPickupAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderProduct", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("Discount")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Dosage")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.OrderStatus", b =>
@@ -2019,22 +2078,51 @@ namespace MainService.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("EventId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StripeInvoiceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StripePaymentId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("StripePaymentIntent")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Payments");
                 });
@@ -2073,6 +2161,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("StripePaymentMethodId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -2118,65 +2209,6 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("PaymentMethodTypes");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethod", b =>
-                {
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PaymentMethodId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("PaymentId", "PaymentMethodId");
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
-
-                    b.HasIndex("PaymentMethodId");
-
-                    b.ToTable("PaymentPaymentMethod");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethodType", b =>
-                {
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PaymentMethodTypeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("PaymentId", "PaymentMethodTypeId");
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
-
-                    b.HasIndex("PaymentMethodTypeId");
-
-                    b.ToTable("PaymentPaymentMethodTypes");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.PaymentStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Color")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaymentStatuses");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>
                 {
                     b.Property<int>("Id")
@@ -2199,6 +2231,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -2227,6 +2262,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int?>("Size")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Url")
                         .HasColumnType("TEXT");
 
@@ -2244,6 +2282,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -2254,6 +2295,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -2279,45 +2323,6 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("PrescriptionClinic");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
-                {
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<double?>("Dosage")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Instructions")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Unit")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("PrescriptionId", "ItemId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("PrescriptionItems");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
                 {
                     b.Property<int>("PrescriptionId")
@@ -2337,11 +2342,81 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("PrescriptionOrder");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Discount")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Dosage")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LotNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("PrescriptionItems");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("CostPrice")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -2356,6 +2431,12 @@ namespace MainService.Sqlite.Migrations
                     b.Property<double?>("Dosage")
                         .HasColumnType("REAL");
 
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LotNumber")
                         .HasColumnType("TEXT");
 
@@ -2369,7 +2450,14 @@ namespace MainService.Sqlite.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Unit")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -2383,6 +2471,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("PhotoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsMain")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProductId", "PhotoId");
@@ -2452,6 +2543,9 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int?>("Rating")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Reviews");
@@ -2477,7 +2571,10 @@ namespace MainService.Sqlite.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("Price")
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -2585,9 +2682,146 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("SubSpecialties");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Subscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("NextBillingDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("SubscriptionEndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SubscriptionPlanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("SubscriptionStartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionPlanId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Subscriptions");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.SubscriptionHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("AppUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NewStatus")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OldStatus")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SubscriptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("SubscriptionHistories");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.SubscriptionPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BillingFrequencyInMonths")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("StripePlanId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubscriptionPlans");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
@@ -2644,6 +2878,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -2810,6 +3047,87 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("UserTaxRegimes");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.ToTable("Warehouses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.WarehouseProduct", b =>
+                {
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DamagedQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LotNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OnHoldQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReorderLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("ReservedQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("SafetyStock")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("WarehouseId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("WarehouseProducts");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.WorkSchedule", b =>
                 {
                     b.Property<int>("Id")
@@ -2832,6 +3150,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<TimeOnly?>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -2861,6 +3182,9 @@ namespace MainService.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -3408,6 +3732,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Signature");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.DoctorSpecialty", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
+                        .WithOne("DoctorSpecialty")
+                        .HasForeignKey("MainService.Models.Entities.DoctorSpecialty", "DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Specialty", "Specialty")
+                        .WithMany("DoctorSpecialties")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Specialty");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.DoctorWorkSchedule", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
@@ -3484,25 +3827,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("MedicalInsuranceCompany");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.EventPayment", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Event", "Event")
-                        .WithMany("EventPayments")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.Payment", "Payment")
-                        .WithOne("EventPayment")
-                        .HasForeignKey("MainService.Models.Entities.EventPayment", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Payment");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.EventPaymentMethodType", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -3512,7 +3836,7 @@ namespace MainService.Sqlite.Migrations
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.PaymentMethodType", "PaymentMethodType")
-                        .WithMany("EventPaymentMethodTypes")
+                        .WithMany()
                         .HasForeignKey("PaymentMethodTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3520,25 +3844,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Event");
 
                     b.Navigation("PaymentMethodType");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.EventPaymentStatus", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Event", "Event")
-                        .WithOne("EventPaymentStatus")
-                        .HasForeignKey("MainService.Models.Entities.EventPaymentStatus", "EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.PaymentStatus", "PaymentStatus")
-                        .WithMany("EventPaymentStatuses")
-                        .HasForeignKey("PaymentStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("PaymentStatus");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.EventPrescription", b =>
@@ -3918,23 +4223,21 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.OrderItem", b =>
+            modelBuilder.Entity("MainService.Models.Entities.OrderHistory", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Product", "Item")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MainService.Models.Entities.Order", "Order")
-                        .WithMany("OrderItems")
+                        .WithMany("OrderHistories")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Item");
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.OrderOrderStatus", b =>
@@ -3973,6 +4276,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("PickupAddress");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.OrderProduct", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Product", "Product")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientEvent", b =>
@@ -4032,42 +4354,14 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Prescription");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethod", b =>
+            modelBuilder.Entity("MainService.Models.Entities.Payment", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.Payment", "Payment")
-                        .WithOne("PaymentPaymentMethod")
-                        .HasForeignKey("MainService.Models.Entities.PaymentPaymentMethod", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("MainService.Models.Entities.Event", "Event")
+                        .WithMany("Payments")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
-                        .WithMany("PaymentPaymentMethods")
-                        .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Payment");
-
-                    b.Navigation("PaymentMethod");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.PaymentPaymentMethodType", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Payment", "Payment")
-                        .WithOne("PaymentPaymentMethodType")
-                        .HasForeignKey("MainService.Models.Entities.PaymentPaymentMethodType", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.PaymentMethodType", "PaymentMethodType")
-                        .WithMany("PaymentPaymentMethodTypes")
-                        .HasForeignKey("PaymentMethodTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Payment");
-
-                    b.Navigation("PaymentMethodType");
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionClinic", b =>
@@ -4089,24 +4383,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Prescription");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.PrescriptionItem", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.Product", "Item")
-                        .WithMany("PrescriptionItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
-                        .WithMany("PrescriptionItems")
-                        .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("Prescription");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionOrder", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Order", "Order")
@@ -4124,6 +4400,24 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PrescriptionProduct", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
+                        .WithMany("PrescriptionItems")
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Product", "Product")
+                        .WithMany("PrescriptionProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Prescription");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ProductPhoto", b =>
@@ -4200,6 +4494,40 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Service");
 
                     b.Navigation("Specialty");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Subscription", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.SubscriptionPlan", "SubscriptionPlan")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("SubscriptionPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SubscriptionPlan");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.SubscriptionHistory", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", null)
+                        .WithMany("SubscriptionHistories")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("MainService.Models.Entities.Subscription", "Subscription")
+                        .WithMany("SubscriptionHistories")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
@@ -4361,6 +4689,36 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.WarehouseProduct", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Product", "Product")
+                        .WithMany("WarehouseProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Warehouse", "Warehouse")
+                        .WithMany("WarehouseProducts")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Warehouse");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppRole", null)
@@ -4486,6 +4844,9 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("DoctorSignature")
                         .IsRequired();
 
+                    b.Navigation("DoctorSpecialty")
+                        .IsRequired();
+
                     b.Navigation("DoctorWorkScheduleSettings")
                         .IsRequired();
 
@@ -4504,6 +4865,10 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("PatientPrescriptions");
 
                     b.Navigation("Patients");
+
+                    b.Navigation("SubscriptionHistories");
+
+                    b.Navigation("Subscriptions");
 
                     b.Navigation("UserAddresses");
 
@@ -4590,11 +4955,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("EventPaymentMethodType")
                         .IsRequired();
 
-                    b.Navigation("EventPaymentStatus")
-                        .IsRequired();
-
-                    b.Navigation("EventPayments");
-
                     b.Navigation("EventPrescriptions");
 
                     b.Navigation("EventService")
@@ -4604,6 +4964,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("PatientEvent")
                         .IsRequired();
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.FamilyMember", b =>
@@ -4689,17 +5051,21 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("DoctorOrder")
                         .IsRequired();
 
-                    b.Navigation("OrderDeliveryAddress");
+                    b.Navigation("OrderDeliveryAddress")
+                        .IsRequired();
 
                     b.Navigation("OrderDeliveryStatus")
                         .IsRequired();
+
+                    b.Navigation("OrderHistories");
 
                     b.Navigation("OrderItems");
 
                     b.Navigation("OrderOrderStatus")
                         .IsRequired();
 
-                    b.Navigation("OrderPickupAddress");
+                    b.Navigation("OrderPickupAddress")
+                        .IsRequired();
 
                     b.Navigation("PatientOrder")
                         .IsRequired();
@@ -4713,22 +5079,8 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("OrderOrderStatuses");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Payment", b =>
-                {
-                    b.Navigation("EventPayment")
-                        .IsRequired();
-
-                    b.Navigation("PaymentPaymentMethod")
-                        .IsRequired();
-
-                    b.Navigation("PaymentPaymentMethodType")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>
                 {
-                    b.Navigation("PaymentPaymentMethods");
-
                     b.Navigation("UserPaymentMethod")
                         .IsRequired();
                 });
@@ -4736,15 +5088,6 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethodType", b =>
                 {
                     b.Navigation("DoctorPaymentMethodTypes");
-
-                    b.Navigation("EventPaymentMethodTypes");
-
-                    b.Navigation("PaymentPaymentMethodTypes");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.PaymentStatus", b =>
-                {
-                    b.Navigation("EventPaymentStatuses");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Phone", b =>
@@ -4803,9 +5146,11 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("OrderItems");
 
-                    b.Navigation("PrescriptionItems");
+                    b.Navigation("PrescriptionProducts");
 
                     b.Navigation("ProductPhotos");
+
+                    b.Navigation("WarehouseProducts");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.RelativeType", b =>
@@ -4840,6 +5185,8 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.Specialty", b =>
                 {
+                    b.Navigation("DoctorSpecialties");
+
                     b.Navigation("MedicalLicenseSpecialties");
 
                     b.Navigation("SpecialitySubSpecialties");
@@ -4853,6 +5200,16 @@ namespace MainService.Sqlite.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Subscription", b =>
+                {
+                    b.Navigation("SubscriptionHistories");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.SubscriptionPlan", b =>
+                {
+                    b.Navigation("Subscriptions");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Substance", b =>
                 {
                     b.Navigation("MedicalRecordSubstances");
@@ -4862,6 +5219,11 @@ namespace MainService.Sqlite.Migrations
                 {
                     b.Navigation("UserTaxRegime")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>
+                {
+                    b.Navigation("WarehouseProducts");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.WorkSchedule", b =>

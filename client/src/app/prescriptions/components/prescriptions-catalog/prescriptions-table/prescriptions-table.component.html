@@ -64,7 +64,7 @@
       <td class="align-middle">{{ item.notes }}</td>
 
       <td class="align-middle" style="white-space: nowrap;">
-        {{ item.createdAt | date }}
+        {{ item.date | date : 'dd/MM/yyyy' : '' : 'es-MX' }}
         @if (item.isCollapsed) {
           <i class="ki-duotone ki-down ms-2 fs-4"><span class="path1"></span><span class="path2"></span></i>
         } @else {

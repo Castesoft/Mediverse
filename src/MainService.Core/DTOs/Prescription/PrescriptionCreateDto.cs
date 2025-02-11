@@ -1,5 +1,3 @@
-
-
 using System.ComponentModel.DataAnnotations;
 using MainService.Models.Entities.Aggregate;
 
@@ -7,13 +5,16 @@ namespace MainService.Core.DTOs.Prescription;
 
 public class PrescriptionCreateDto
 {
+    [Required(ErrorMessage = "La fecha es requerida.")]
+    public DateTime? Date { get; set; }
+    
     [Required(ErrorMessage = "Los medicamentos son requeridos.")]
     public List<PrescriptionItemCreateDto> Items { get; set; } = [];
 
     [Required(ErrorMessage = "El paciente es requerido.")]
     public OptionDto? Patient { get; set; }
     
-    public OptionDto? Event { get; set; }
+    public int? EventId { get; set; }
 
     [Required(ErrorMessage = "La clínica es requerida.")]
     public OptionDto? Clinic { get; set; }

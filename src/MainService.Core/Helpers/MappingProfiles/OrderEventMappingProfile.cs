@@ -25,32 +25,32 @@ public class OrderEventMappingProfile : Profile
                 opt => opt.MapFrom(src => src.OrderDeliveryStatus.DeliveryStatus));
 
         // Map OrderItem to OrderItemDto.
-        CreateMap<OrderItem, OrderItemDto>()
+        CreateMap<OrderProduct, OrderItemDto>()
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Item.Unit))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item.Name))
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item.Description))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item.Price))
-            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
-            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
-            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber));
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Product.Unit))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
+            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Product.Discount))
+            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Product.Manufacturer))
+            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Product.LotNumber));
 
         // Map OrderItem to PrescriptionItemDto.
-        CreateMap<OrderItem, PrescriptionItemDto>()
+        CreateMap<OrderProduct, PrescriptionItemDto>()
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Item.Unit))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item.Name))
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item.Description))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item.Price))
-            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
-            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
-            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber));
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Product.Unit))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
+            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Product.Discount))
+            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Product.Manufacturer))
+            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Product.LotNumber));
 
         // Map Prescription to EventPrescriptionDto.
         CreateMap<Prescription, EventPrescriptionDto>()
@@ -66,8 +66,8 @@ public class OrderEventMappingProfile : Profile
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientPrescription.Patient))
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorPrescription.Doctor))
             .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.EventPrescription.Event))
-            .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.EventPrescription.Event.EventClinic.Clinic))
-            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
+            .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.PrescriptionClinic.Clinic))
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems.Select(x => x.Product)))
             .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.GetPhotoUrl()))
             .ForMember(dest => dest.OrderId,
                 opt => opt.MapFrom(src => src.PrescriptionOrder != null ? src.PrescriptionOrder.Order.Id : 0));
@@ -77,18 +77,18 @@ public class OrderEventMappingProfile : Profile
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));
 
         // Map PrescriptionItem to PrescriptionItemDto.
-        CreateMap<PrescriptionItem, PrescriptionItemDto>()
+        CreateMap<PrescriptionProduct, PrescriptionItemDto>()
             .ForMember(dest => dest.Dosage, opt => opt.MapFrom(src => src.Dosage))
             .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions))
             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Item.Unit))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item.Name))
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item.Description))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item.Price))
-            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Item.Discount))
-            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Item.Manufacturer))
-            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Item.LotNumber))
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Item.CreatedAt));
+            .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Product.Unit))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
+            .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Product.Discount))
+            .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Product.Manufacturer))
+            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Product.LotNumber))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Product.CreatedAt));
 
         // Map Event to EventDto.
         CreateMap<Event, EventDto>()

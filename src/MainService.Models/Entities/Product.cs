@@ -32,8 +32,8 @@ namespace MainService.Models.Entities
         public bool IsVisible { get; set; } = true;
         public DoctorProduct DoctorProduct { get; set; } = null!;
         public List<ProductPhoto> ProductPhotos { get; set; } = [];
-        public List<PrescriptionItem> PrescriptionItems { get; set; } = [];
-        public List<OrderItem> OrderItems { get; set; } = [];
+        public List<PrescriptionProduct> PrescriptionProducts { get; set; } = [];
+        public List<OrderProduct> OrderItems { get; set; } = [];
 
         public List<WarehouseProduct> WarehouseProducts { get; set; } = [];
 

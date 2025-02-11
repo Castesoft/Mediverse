@@ -12,7 +12,7 @@ namespace MainService.Infrastructure.Services
         private const string Subject = "orden";
         private const string SubjectArticle = "La";
 
-        public async Task<Order> CreateAsync(List<OrderItem> items, int customerId, int doctorId)
+        public async Task<Order> CreateAsync(List<OrderProduct> items, int customerId, int doctorId)
         {
             var orderStatus = await context.OrderStatuses.SingleOrDefaultAsync(x => x.Name == "Pendiente");
             var deliveryStatus = await context.DeliveryStatuses.SingleOrDefaultAsync(x => x.Name == "Pendiente");
@@ -44,17 +44,19 @@ namespace MainService.Infrastructure.Services
                 .Select(x => x.AddressId)
                 .SingleOrDefaultAsync();
 
-            order.OrderDeliveryAddress = new OrderDeliveryAddress(addressId.Value);
+            if (addressId.HasValue) {
+                order.OrderDeliveryAddress = new OrderDeliveryAddress(addressId.Value);
+            }
 
             foreach (var orderItem in items)
             {
                 order.OrderItems.Add(orderItem);
-                order.Subtotal += orderItem.Item.Price * orderItem.Quantity;
+                order.Subtotal += orderItem.Product.Price * orderItem.Quantity;
             }
 
             foreach (var orderItem in order.OrderItems)
             {
-                orderItem.Item = null!;
+                orderItem.Product = null!;
             }
 
             order.Tax = order.Subtotal * (decimal)0.16;
