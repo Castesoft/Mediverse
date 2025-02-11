@@ -961,14 +961,16 @@ public static class Seed
         return familyMembers[Random.Shared.Next(familyMembers.Length)];
     }
 
-    private static void SeedPatientEventsAsync(AppUser doctor, AppUser patient,
-        List<DoctorNurse> doctorNurses, List<DoctorProduct> doctorProducts, List<DoctorService> doctorServices)
+    private static void SeedPatientEventsAsync(AppUser doctor, AppUser patient, List<DoctorNurse> doctorNurses,
+        List<DoctorProduct> doctorProducts, List<DoctorService> doctorServices)
     {
         for (var i = 2; i < Random.Next(2, 11); i++)
         {
             var newPatientEvent = CreatePatientEvent(doctor, doctorServices, patient);
+
             AddNursesToEvent(newPatientEvent, doctorNurses);
             AddPrescriptionsToEvent(newPatientEvent, doctorProducts, patient, doctor);
+
             patient.PatientEvents.Add(newPatientEvent);
         }
     }
@@ -976,11 +978,13 @@ public static class Seed
     private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices, AppUser patient)
     {
         var eventDate = DateGenerator.GenerateRandomDate(DateTime.UtcNow.Year, DateTime.UtcNow.Month);
+
         var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
+
         var isMainClinic = Random.Next(0, 2) > 0;
         var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
 
-        var newEvent = new Event
+        var evt = new Event
         {
             DoctorEvent = new DoctorEvent(doctor),
             DateFrom = eventDate.ToUniversalTime(),
@@ -992,10 +996,23 @@ public static class Seed
             })
         };
 
-        if (randomClinic != null)
-            newEvent.EventClinic = new EventClinic(randomClinic);
+        if (evt.Payments.Count != 0 && patient.PaymentMethods.Count != 0)
+        {
+            foreach (var payment in evt.Payments)
+            {
+                var assignedMethod = patient.PaymentMethods.OrderBy(x => Random.Next()).First();
+                payment.PaymentMethod = assignedMethod;
+            }
+        }
 
-        var patientEvent = new PatientEvent { Event = newEvent };
+        evt.PaymentStatus = evt.Payments.Sum(p => p.Amount) >= selectedService.Price
+            ? PaymentStatus.Succeeded
+            : PaymentStatus.RequiresPaymentMethod;
+
+        if (randomClinic != null)
+            evt.EventClinic = new EventClinic(randomClinic);
+
+        var patientEvent = new PatientEvent { Event = evt };
         return patientEvent;
     }
 

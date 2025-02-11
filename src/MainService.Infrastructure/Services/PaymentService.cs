@@ -29,7 +29,7 @@ public class PaymentService(IUnitOfWork uow, IMapper mapper, IStripeService stri
         {
             Amount = paymentDto.Amount,
             Currency = paymentDto.Currency,
-            PaymentDate = DateTime.UtcNow,
+            Date = DateTime.UtcNow,
             StripePaymentIntent = paymentIntent.Id,
             PaymentStatus = status,
             EventId = paymentDto.EventId

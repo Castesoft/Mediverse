@@ -7,12 +7,14 @@ import { EventsService } from 'src/app/events/events.config';
 import { View } from 'src/app/_models/base/types';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
+import { TooltipDirective } from "ngx-bootstrap/tooltip";
 
 @Component({
   selector: 'div[eventSummary]',
   standalone: true,
-  imports: [CommonModule, ProfilePictureComponent],
+  imports: [ CommonModule, ProfilePictureComponent, TooltipDirective ],
   templateUrl: './event-summary.component.html',
+  styleUrls: ['./event-summary.component.scss']
 })
 export class EventSummaryComponent {
   router = inject(Router);

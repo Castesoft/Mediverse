@@ -1,13 +1,21 @@
 import { Entity } from "src/app/_models/base/entity";
-import { SelectOption } from "src/app/_models/base/selectOption";
-import { UserPaymentMethod } from "src/app/_models/billingDetails";
-
+import Event from "src/app/_models/events/event";
+import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 
 export class Payment extends Entity {
-  amount: number | null = null;
-  paymentMethod: UserPaymentMethod = new UserPaymentMethod();
-  paymentMethodType: SelectOption | null = null;
-  date: Date | null = null;
+  eventId?: number;
+  amount?: number;
+  currency?: string = "MXN";
+  date?: Date;
+  stripePaymentIntent?: string;
+  stripePaymentId?: string;
+  stripeInvoiceId?: string;
+  paymentMethod?: Partial<PaymentMethod>;
+  paymentStatus?: string;
+  doctorId?: number;
+  customerStripeId?: string;
+  paymentMethodId?: number;
+  event?: Partial<Event>;
 
   constructor(init?: Partial<Payment>) {
     super();

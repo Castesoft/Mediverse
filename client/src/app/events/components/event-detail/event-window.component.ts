@@ -47,7 +47,6 @@ import { EventServicesSummaryComponent } from 'src/app/events/components/event-s
 import {
   PrescriptionFormComponent
 } from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
-import { PaymentsTableComponent } from 'src/app/_shared/components/payments-table/payments-table.component';
 import {
   PrescriptionsCatalogComponent
 } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
@@ -57,7 +56,11 @@ import Nurse from "src/app/_models/nurses/nurse";
 import { NurseParams } from "src/app/_models/nurses/nurseParams";
 import { createId } from "@paralleldrive/cuid2";
 import { MatDialog } from "@angular/material/dialog";
-import { NurseDisplayCardComponent } from "../../../nurses/components/nurse-display-card.component";
+import { NurseDisplayCardComponent } from "src/app/nurses/components/nurse-display-card.component";
+import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
+import { Payment } from "src/app/_models/payments/payment";
+import { PaymentParams } from "src/app/_models/payments/paymentParams";
+import { SiteSection } from "src/app/_models/sections/sectionTypes";
 
 @Component({
   selector: 'div[eventWindow]',
@@ -77,10 +80,10 @@ import { NurseDisplayCardComponent } from "../../../nurses/components/nurse-disp
     Forms2Module,
     EventServicesSummaryComponent,
     PrescriptionFormComponent,
-    PaymentsTableComponent,
     EventSummaryComponent,
     PrescriptionsCatalogComponent,
     NurseDisplayCardComponent,
+    PaymentsCatalogComponent,
   ]
 })
 export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFiltersForm, EventsService> implements OnInit, DetailInputSignals<Event>, OnInit {
@@ -126,10 +129,23 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   nurseCatalogMode: WritableSignal<CatalogMode> = signal<CatalogMode>('select');
   nurseParams: WritableSignal<NurseParams> = signal<NurseParams>(new NurseParams(createId()));
 
+  // Payment signals
+  paymentItem: Payment | null = null;
+  paymentView: View = 'page';
+  paymentKey: string = createId();
+  paymentIsCompact: boolean = true;
+  paymentEmbedded: boolean = true;
+  paymentUseCard: boolean = false;
+  paymentMode: CatalogMode = 'readonly';
+  paymentParams: PaymentParams = new PaymentParams(this.paymentKey, {
+    fromSection: SiteSection.HOME,
+    eventId: null
+  });
+
   @ViewChild('staticTabs', { static: false }) staticTabs!: TabsetComponent;
 
-  evolutionForm = new EvolutionForm();
-  nextStepForm = new NextStepForm();
+  evolutionForm: EvolutionForm = new EvolutionForm();
+  nextStepForm: NextStepForm = new NextStepForm();
 
   constructor() {
     super(EventsService);
@@ -146,6 +162,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
         this.isNextStepsEditing = event.nextSteps == null;
         this.isEvolutionEditing = event.evolution == null;
         this.updatePrescriptionParams(event.id);
+        this.updatePaymentParams(event.id);
       }
     })
 
@@ -168,6 +185,10 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
   private updatePrescriptionParams(eventId: number | null): void {
     this.prescriptionParams.set(new PrescriptionParams(`${this.router.url}#event-detail`, { eventId }));
+  }
+
+  private updatePaymentParams(eventId: number | null): void {
+    this.paymentParams = new PaymentParams(this.paymentKey, { fromSection: SiteSection.HOME, eventId });
   }
 
   private subscribeToSelectedNurses(): void {

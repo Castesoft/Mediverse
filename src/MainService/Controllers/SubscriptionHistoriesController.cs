@@ -1,9 +1,14 @@
 using AutoMapper;
 using MainService.Core.DTOs.Subscriptions;
+using MainService.Core.Extensions;
+using MainService.Core.Helpers.Pagination;
+using MainService.Core.Helpers.Params;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MainService.Core.Interfaces.Services;
+using MainService.Extensions;
 using MainService.Models.Entities;
+using MainService.Models.Helpers.Enums;
 
 namespace MainService.Controllers
 {
@@ -12,6 +17,23 @@ namespace MainService.Controllers
     [Route("api/[controller]")]
     public class SubscriptionHistoriesController(IUnitOfWork uow, IMapper mapper) : BaseApiController
     {
+        [HttpGet]
+        public async Task<ActionResult<PagedList<SubscriptionHistoryDto>>> GetPagedListAsync(
+            [FromQuery] SubscriptionHistoryParams param)
+        {
+            if (param.FromSection != SiteSection.Admin)
+            {
+                param.DoctorId = User.GetUserId();
+            }
+
+            var pagedList = await uow.SubscriptionHistoryRepository.GetPagedListAsync(param);
+
+            Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
+                pagedList.TotalCount, pagedList.TotalPages));
+
+            return pagedList;
+        }
+
         [HttpGet("subscription/{subscriptionId:int}")]
         public async Task<ActionResult<List<SubscriptionHistoryDto>>> GetHistoryBySubscriptionId(int subscriptionId)
         {

@@ -365,22 +365,17 @@ public class AccountController(
             user.UserAddresses.Add(billingAddress);
         }
 
-        var paymentMethod = new UserPaymentMethod
+        var paymentMethod = new PaymentMethod
         {
-            UserId = user.Id,
-            IsMain = true,
-            PaymentMethod = new PaymentMethod
-            {
-                DisplayName = request.DisplayName,
-                StripePaymentMethodId = request.StripePaymentMethodId,
-                Last4 = request.Last4,
-                ExpirationMonth = request.ExpirationMonth,
-                ExpirationYear = request.ExpirationYear,
-                Brand = request.Brand,
-                Country = request.Country
-            }
+            DisplayName = request.DisplayName,
+            StripePaymentMethodId = request.StripePaymentMethodId,
+            Last4 = request.Last4,
+            ExpirationMonth = request.ExpirationMonth,
+            ExpirationYear = request.ExpirationYear,
+            Brand = request.Brand,
+            Country = request.Country
         };
-        user.UserPaymentMethods.Add(paymentMethod);
+        user.PaymentMethods.Add(paymentMethod);
 
         var acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
         foreach (var paymentMethodTypeId in acceptedPaymentMethods)
@@ -1061,7 +1056,7 @@ public class AccountController(
         if (itemToReturn == null)
             return NotFound($"No se han encontrado detalles de facturación para el usuario con id {userId}.");
 
-        itemToReturn.UserPaymentMethods = [..itemToReturn.UserPaymentMethods.OrderBy(x => !x.IsMain)];
+        itemToReturn.UserPaymentMethods = [..itemToReturn.UserPaymentMethods.OrderBy(x => !x.IsDefault)];
         itemToReturn.UserAddresses = [..itemToReturn.UserAddresses.OrderBy(x => !x.IsBilling)];
 
         return itemToReturn;
@@ -1085,13 +1080,12 @@ public class AccountController(
         var userId = User.GetUserId();
 
         var user = await userManager.Users
-            .Include(x => x.UserPaymentMethods)
-            .ThenInclude(x => x.PaymentMethod)
+            .Include(x => x.PaymentMethods)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        if (user.UserPaymentMethods.Count == 0)
+        if (user.PaymentMethods.Count == 0)
         {
             var email = user.Email;
 
@@ -1105,25 +1099,21 @@ public class AccountController(
 
         if (request.IsMain.Value == true)
         {
-            var mainPaymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.IsMain);
-            if (mainPaymentMethod != null) mainPaymentMethod.IsMain = false;
+            var mainPaymentMethod = user.PaymentMethods.SingleOrDefault(x => x.IsDefault);
+            if (mainPaymentMethod != null) mainPaymentMethod.IsDefault = false;
         }
 
-        user.UserPaymentMethods.Add(new UserPaymentMethod
+        var paymentMethod = new PaymentMethod
         {
-            UserId = userId,
-            IsMain = request.IsMain.Value,
-            PaymentMethod = new PaymentMethod
-            {
-                DisplayName = request.DisplayName,
-                StripePaymentMethodId = request.StripePaymentMethodId,
-                Last4 = request.Last4,
-                ExpirationMonth = request.ExpirationMonth,
-                ExpirationYear = request.ExpirationYear,
-                Brand = request.Brand,
-                Country = request.Country
-            }
-        });
+            DisplayName = request.DisplayName,
+            StripePaymentMethodId = request.StripePaymentMethodId,
+            Last4 = request.Last4,
+            ExpirationMonth = request.ExpirationMonth,
+            ExpirationYear = request.ExpirationYear,
+            Brand = request.Brand,
+            Country = request.Country
+        };
+        user.PaymentMethods.Add(paymentMethod);
 
         var stripeCustomerId = user.StripeCustomerId;
 
@@ -1136,7 +1126,7 @@ public class AccountController(
 
         if (!await uow.Complete()) return BadRequest("Error guardando el método de pago.");
 
-        return mapper.Map<UserPaymentMethodDto>(user.UserPaymentMethods.Last());
+        return mapper.Map<UserPaymentMethodDto>(user.PaymentMethods.Last());
     }
 
     [Authorize]
@@ -1146,19 +1136,18 @@ public class AccountController(
         var userId = User.GetUserId();
 
         var user = await userManager.Users
-            .Include(x => x.UserPaymentMethods)
-            .ThenInclude(x => x.PaymentMethod)
+            .Include(x => x.PaymentMethods)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         var paymentMethod =
-            user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
+            user.PaymentMethods.SingleOrDefault(x => x.StripePaymentMethodId == paymentMethodId);
         if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
 
-        if (paymentMethod.IsMain) return BadRequest("No puedes eliminar tu método de pago principal.");
+        if (paymentMethod.IsDefault) return BadRequest("No puedes eliminar tu método de pago principal.");
 
-        user.UserPaymentMethods.Remove(paymentMethod);
+        user.PaymentMethods.Remove(paymentMethod);
 
         if (!await stripeService.DeletePaymentMethodAsync(paymentMethodId))
             return BadRequest("Error eliminando el método de pago de Stripe.");
@@ -1175,22 +1164,21 @@ public class AccountController(
         var userId = User.GetUserId();
 
         var user = await userManager.Users
-            .Include(x => x.UserPaymentMethods)
-            .ThenInclude(x => x.PaymentMethod)
+            .Include(x => x.PaymentMethods)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
         var paymentMethod =
-            user.UserPaymentMethods.SingleOrDefault(x => x.PaymentMethod.StripePaymentMethodId == paymentMethodId);
+            user.PaymentMethods.SingleOrDefault(x => x.StripePaymentMethodId == paymentMethodId);
         if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
 
-        var mainPaymentMethod = user.UserPaymentMethods.SingleOrDefault(x => x.IsMain);
-        if (mainPaymentMethod?.PaymentMethod.StripePaymentMethodId == paymentMethodId)
+        var mainPaymentMethod = user.PaymentMethods.SingleOrDefault(x => x.IsDefault);
+        if (mainPaymentMethod?.StripePaymentMethodId == paymentMethodId)
             return BadRequest("Este método de pago ya es el principal.");
-        if (mainPaymentMethod != null) mainPaymentMethod.IsMain = false;
+        if (mainPaymentMethod != null) mainPaymentMethod.IsDefault = false;
 
-        paymentMethod.IsMain = true;
+        paymentMethod.IsDefault = true;
 
         var stripeCustomerId = user.StripeCustomerId;
 

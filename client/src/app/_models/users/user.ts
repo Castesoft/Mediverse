@@ -1,9 +1,11 @@
 import { Entity } from "src/app/_models/base/entity";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import Event from "../events/event";
-import { Payment } from "../payments/payment";
-import { UserMedicalInsuranceCompany } from "./userMedicalInsuranceCompany/userMedicalInsuranceCompany";
-import { MedicalRecord } from "../medicalRecords/medicalRecord";
+import Event from "src/app/_models/events/event";
+import { Payment } from "src/app/_models/payments/payment";
+import {
+  UserMedicalInsuranceCompany
+} from "src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
+import { MedicalRecord } from "src/app/_models/medicalRecords/medicalRecord";
 
 
 export class User extends Entity {
@@ -12,11 +14,11 @@ export class User extends Entity {
   lastName: string | null = null;
   fullName: string | null = null;
   email: string | null = null;
-  isEmailVerified = false;
+  isEmailVerified: boolean = false;
   phoneNumber: string | null = null;
   phoneNumberCountryCode: string | null = null;
-  isPhoneNumberVerified = false;
-  hasAccount = false;
+  isPhoneNumberVerified: boolean = false;
+  hasAccount: boolean = false;
   age: number | null = null;
   sex: SelectOption | null = null;
   photoUrl: string | null = null;
@@ -28,9 +30,9 @@ export class User extends Entity {
   roles: SelectOption[] = [];
   permissions: string[] = [];
 
-  eventsCount = 0;
-  eventsAmount = 0;
-  eventsPayable = 0;
+  eventsCount: number = 0;
+  eventsAmount: number = 0;
+  eventsPayable: number = 0;
 
   street: string | null = null;
   exteriorNumber: string | null = null;
@@ -48,7 +50,7 @@ export class User extends Entity {
   doctorEvents: Event[] = [];
   doctorPayments: Payment[] = [];
   medicalRecord: MedicalRecord = new MedicalRecord();
-  hasPatientInformationAccess = false;
+  hasPatientInformationAccess: boolean = false;
 
   select: SelectOption | null = null;
 

@@ -33,7 +33,6 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderHistory> OrderHistories { get; set; }
-    public DbSet<UserPaymentMethod> UserPaymentMethods { get; set; }
     public DbSet<UserTaxRegime> UserTaxRegimes { get; set; }
     public DbSet<UserMedicalLicense> UserMedicalLicenses { get; set; }
     public DbSet<MedicalLicense> MedicalLicenses { get; set; }

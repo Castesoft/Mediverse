@@ -25,7 +25,7 @@ public class EventDto
     public List<PaymentDto> Payments { get; set; } = [];
     public string? Evolution { get; set; }
     public string? NextSteps { get; set; }
-    public PaymentStatusDto? PaymentStatus { get; set; }
+    public string PaymentStatus { get; set; } = string.Empty;
 }
 
 public class EventUpdateDto

@@ -104,6 +104,10 @@ export const sectionDictionary: SectionDictionary = {
   doctors: {
     label: 'Médicos',
     route: '/admin/doctors',
+  },
+  subscriptions: {
+    label: 'Suscripciones',
+    route: '/admin/subscriptions',
   }
 };
 

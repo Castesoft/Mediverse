@@ -1,5 +1,3 @@
-
-
 using AutoMapper;
 using MainService.Core.DTOs.User;
 using MainService.Core.Interfaces.Services;
@@ -10,13 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace MainService.Infrastructure.Services;
-public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICloudinaryService cloudinaryService, IMapper mapper, ITokenService tokenService, DataContext context) : IUsersService
+
+public class UsersService(
+    IUnitOfWork uow,
+    UserManager<AppUser> userManager,
+    ICloudinaryService cloudinaryService,
+    IMapper mapper,
+    ITokenService tokenService,
+    DataContext context) : IUsersService
 {
     public async Task<bool> DeleteAsync(AppUser item)
     {
         if (!await DeleteUserPhotoAsync(item)) return false;
 
-        AppUser? itemToDelete = await userManager.Users
+        var itemToDelete = await userManager.Users
             .Include(x => x.UserRoles).ThenInclude(x => x.Role)
             .Include(x => x.UserPhoto).ThenInclude(x => x.Photo)
             .SingleOrDefaultAsync(x => x.Id == item.Id);
@@ -67,7 +72,8 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
         var deleteResult = await cloudinaryService.DeleteAsync(photo.PublicId);
 
         if (deleteResult.Result != "ok")
-            Log.Warning($"La foto de perfil con ID {photo.Id} no pudo ser eliminada de Cloudinary. Resultado: {deleteResult.Result}.");
+            Log.Warning(
+                $"La foto de perfil con ID {photo.Id} no pudo ser eliminada de Cloudinary. Resultado: {deleteResult.Result}.");
 
         uow.PhotoRepository.Delete(photo);
 
@@ -78,8 +84,8 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
     private async Task<bool> DeleteFromRolesAsync(AppUser user)
     {
-        int count = user.UserRoles.Count();
-        
+        var count = user.UserRoles.Count();
+
         if (count == 0) return true;
 
         List<string> roles = count > 1 ? user.UserRoles.Select(x => x.Role.Name!).ToList() : [];
@@ -91,10 +97,12 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
         return true;
     }
 
-    public async Task<bool> PhoneExistsAsync(string phoneNumber) => await userManager.Users.AnyAsync(x => x.PhoneNumber == phoneNumber);
+    public async Task<bool> PhoneExistsAsync(string phoneNumber) =>
+        await userManager.Users.AnyAsync(x => x.PhoneNumber == phoneNumber);
+
     public async Task<bool> EmailExistsAsync(string email) => await userManager.Users.AnyAsync(x => x.Email == email);
 
-    
+
     public async Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync()
     {
         return await uow.UserRepository.GetPaymentMethodTypesAsync();
@@ -107,14 +115,12 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
     public async Task<BillingDetailsDto?> GetBillingDetailsAsync(int userId)
     {
-        AppUser? user = await userManager.Users
-            .Include(x => x.UserPaymentMethods).ThenInclude(x => x.PaymentMethod)
+        var user = await userManager.Users
+            .Include(x => x.PaymentMethods)
             .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
-        if (user == null) return null;
-
-        return mapper.Map<AppUser, BillingDetailsDto>(user);
+        return user == null ? null : mapper.Map<AppUser, BillingDetailsDto>(user);
     }
 
     public Task<int> GetSpecialistsQuantityAsync()
@@ -128,7 +134,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
     public async Task<bool> UpdateStripeConnectAccountId(int userId, string stripeConnectAccountId)
     {
-        AppUser? user = await context.Users
+        var user = await context.Users
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == userId);
 
@@ -138,7 +144,7 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
 
         user.StripeConnectAccountId = stripeConnectAccountId;
 
-        IdentityResult result = await userManager.UpdateAsync(user);
+        var result = await userManager.UpdateAsync(user);
 
         if (!result.Succeeded) return false;
 
@@ -151,51 +157,51 @@ public class UsersService(IUnitOfWork uow, UserManager<AppUser> userManager, ICl
         query
             .AsSplitQuery()
             .Include(x => x.UserMedicalInsuranceCompanies)
-                .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
+            .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
             .Include(x => x.UserMedicalInsuranceCompanies)
-                .ThenInclude(x => x.Document)
+            .ThenInclude(x => x.Document)
             .Include(x => x.DoctorMedicalInsuranceCompanies)
-                .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
+            .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
             .Include(x => x.DoctorSpecialty)
-                .ThenInclude(x => x.Specialty)
+            .ThenInclude(x => x.Specialty)
             .Include(x => x.UserPhoto.Photo)
             .Include(x => x.DoctorBannerPhoto.Photo)
             .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role)
+            .ThenInclude(x => x.Role)
             .Include(x => x.UserPermissions)
-                .ThenInclude(x => x.Permission)
+            .ThenInclude(x => x.Permission)
             .Include(x => x.UserMedicalLicenses)
-                .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
             .Include(x => x.UserMedicalLicenses)
-                .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
             .Include(x => x.UserAddresses)
-                .ThenInclude(x => x.Address)
+            .ThenInclude(x => x.Address)
             .Include(x => x.DoctorPaymentMethodTypes)
-                .ThenInclude(x => x.PaymentMethodType)
+            .ThenInclude(x => x.PaymentMethodType)
             .Include(x => x.DoctorWorkSchedules)
-                .ThenInclude(x => x.WorkSchedule)
+            .ThenInclude(x => x.WorkSchedule)
             .Include(x => x.DoctorWorkScheduleSettings)
-                .ThenInclude(x => x.WorkScheduleSettings)
+            .ThenInclude(x => x.WorkScheduleSettings)
             .Include(x => x.DoctorClinics)
-                .ThenInclude(x => x.Clinic)
-                    .ThenInclude(x => x.ClinicLogo)
-                        .ThenInclude(x => x.Photo)
+            .ThenInclude(x => x.Clinic)
+            .ThenInclude(x => x.ClinicLogo)
+            .ThenInclude(x => x.Photo)
             .Include(x => x.Doctors)
-                .ThenInclude(x => x.Doctor)
-                    .ThenInclude(x => x.UserMedicalLicenses)
-                        .ThenInclude(x => x.MedicalLicense)
-                            .ThenInclude(x => x.MedicalLicenseSpecialty)
-                                .ThenInclude(x => x.Specialty);
+            .ThenInclude(x => x.Doctor)
+            .ThenInclude(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense)
+            .ThenInclude(x => x.MedicalLicenseSpecialty)
+            .ThenInclude(x => x.Specialty);
 
     public async Task<bool> AddPatientToDoctorAsync(int doctorId, int patientId)
     {
         if (await uow.UserRepository.ExistsByIdAsync(patientId) == false) return false;
 
         if (await uow.UserRepository.ExistsByIdAsync(doctorId) == false) return false;
-        
+
         if (await DoesPatientBelongToDoctorAsync(doctorId, patientId)) return true;
 
-        DoctorPatient itemToAdd = new (doctorId, patientId);
+        DoctorPatient itemToAdd = new(doctorId, patientId);
 
         context.DoctorPatients.Add(itemToAdd);
 

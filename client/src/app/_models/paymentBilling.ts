@@ -38,18 +38,3 @@ export class PaymentBillingForm extends FormGroup2<PaymentBilling> {
     super(PaymentBilling, new PaymentBilling(), paymentBillingInfo);
   }
 }
-
-export enum PaymentMethod {
-  Cash = 'Efectivo',
-  CreditCard = 'Tarjeta de crédito',
-  DebitCard = 'Tarjeta de débito',
-  Insurance = 'Seguro médico',
-  BankTransfer = 'Transferencia bancaria',
-  Other = 'Otro',
-}
-
-export enum PaymentStatus {
-  Paid = 'Pagada',
-  Pending = 'Pendiente',
-  Failed = 'Fallado',
-}

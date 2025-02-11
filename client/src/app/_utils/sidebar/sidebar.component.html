@@ -1,43 +1,36 @@
 <mat-toolbar class="bg-body w-100" style="width: 100vw">
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon"
-          (click)="service.opened = !service.opened">
+  <button mat-icon-button
+          class="example-icon"
+          aria-label="Toggle navigation"
+          (click)="sidebarService.opened = !sidebarService.opened">
     <mat-icon>menu</mat-icon>
   </button>
   <div>
     <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img
-        [src]="'media/logos/logo-compact.svg'"
-        alt="Logo"
-        height="30"
-        class="d-inline-block align-text-top"
-      />
+      <img src="media/logos/logo-compact.svg"
+           alt="Logo"
+           height="30"
+           class="d-inline-block align-text-top"/>
       <span class="ms-2">DocHub</span>
       <span class="badge badge-light-info ms-2">Admin</span>
     </a>
   </div>
 </mat-toolbar>
 
-<mat-sidenav-container
-  autosize
-  style="width: 100%; background-color: transparent; height: calc(100vh - 64px);"
->
-  <mat-sidenav
-    class="bg-body"
-    [opened]="!service.opened"
-    [mode]="mode"
-    [fixedInViewport]="true"
-    style="width: 240px"
-    [fixedTopGap]="64"
-  >
+<mat-sidenav-container autosize style="width: 100%; background-color: transparent; height: calc(100vh - 64px);">
+  <mat-sidenav class="bg-body"
+               [opened]="!sidebarService.opened"
+               [mode]="mode"
+               fixedInViewport
+               [fixedTopGap]="64"
+               style="width: 240px">
     <div class="container px-2 py-1">
       <div class="d-flex flex-column">
         <mat-nav-list>
           @for (item of sidebarItems; track item) {
-            <a
-              mat-list-item
-              routerLinkActive="active"
-              [routerLink]="item.link"
-            >
+            <a mat-list-item
+               routerLinkActive="active"
+               [routerLink]="item.link">
               @if (item.icon) {
                 <mat-icon class="me-2">{{ item.icon }}</mat-icon>
               }

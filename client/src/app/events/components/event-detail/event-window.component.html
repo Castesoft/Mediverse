@@ -261,8 +261,16 @@
             </div>
           </div>
         } @else if (lowerTab === 'pagos') {
-          <app-payments-table [title]="'Pagos'" [payments]="item()!!.payments" [showTabs]="false"
-                              [view]="'inline'"></app-payments-table>
+          <div paymentsCatalog
+               [item]="paymentItem"
+               [view]="paymentView"
+               [key]="paymentKey"
+               [useCard]="paymentUseCard"
+               [isCompact]="paymentIsCompact"
+               [embedded]="paymentEmbedded"
+               [mode]="paymentMode"
+               [params]="paymentParams"
+          ></div>
         } @else if (lowerTab === 'especialistas') {
           @if (item()!!.nurses && item()!!.nurses!.length > 0) {
             <div class="row row-cols-1 row-cols-md-2 g-4">

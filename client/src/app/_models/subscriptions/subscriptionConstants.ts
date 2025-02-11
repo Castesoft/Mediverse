@@ -9,10 +9,10 @@ import { baseTableCells, PartialCellsOf } from "src/app/_models/tables/tableCell
 
 export const subscriptionDictionary: NamingSubject = new NamingSubject(
   'feminine',
-  'subscription',
-  'subscriptions',
-  'Subscriptions',
-  'subscriptions'
+  'suscripción',
+  'suscripciones',
+  'Suscripciones',
+  'suscripciones'
 );
 
 export const subscriptionColumns: Column[] = [

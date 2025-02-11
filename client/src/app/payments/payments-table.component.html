@@ -1,0 +1,74 @@
+<thead
+  tableHeader
+  [(columns)]="service.columns"
+  [(dictionary)]="service.dictionary"
+  [(params)]="params"
+  [(mode)]="mode"
+  [(isCompact)]="isCompact"
+  (selectedChange)="service.toggleMultipleSelectedArray$(key() || '', data())">
+</thead>
+<tbody templateTableBody>
+  @for (item of data(); track item) {
+    <tr class="hover-actions-trigger btn-reveal-trigger position-static" [cdkContextMenuTriggerFor]="context_menu">
+      @if (mode() !== 'readonly') {
+        <td tableCheckCell [isCompact]="isCompact()" [isChecked]="item.isSelected"
+            (click)="service.setSelected$(key() || '', item)"></td>
+      }
+
+      @if (dev.isDev()) {
+        <td class="name align-middle white-space-nowrap px-0 py-0" [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }">
+          <div class="d-flex align-items-center justify-content-start px-0">
+            <a [routerLink]="[service.dictionary.catalogRoute, item.id]"
+               [href]="[service.dictionary.catalogRoute, item.id]" class="fw-semibold text-primary">
+              #{{ item.id | number }}
+            </a>
+          </div>
+        </td>
+      }
+
+      <td class="nowrap">
+        <span class="fw-bold">
+          {{ item.date | date:'dd/MM/yyyy' }}
+        </span>
+        <span class="fw-light text-gray-600">
+          {{ item.date | date:'HH:mm' }}
+        </span>
+      </td>
+
+      <td>
+        {{ item.amount | currency:'MXN':'symbol':'1.2-2' }}
+      </td>
+
+      <td>
+        @if (item.paymentStatus) {
+          <div paymentStatusCell [status]="item.paymentStatus"></div>
+        }
+      </td>
+
+      <td>
+        @if (item.event) {
+          <div eventTableCell [event]="item.event"></div>
+        }
+      </td>
+
+      <td>
+        @if (item.paymentMethod) {
+          <div paymentMethodCell [paymentMethod]="item.paymentMethod"></div>
+        } @else {
+          <span class="text-gray-600">
+            N/A
+          </span>
+        }
+      </td>
+
+      <td tableMenuCell [item]="item" [contextMenu]="context_menu" [(isCompact)]="isCompact"></td>
+
+      <ng-template #context_menu>
+        @if (key()) {
+          <div tableMenu [siteSection]="params().fromSection || undefined" [item]="item" [key]="key()!"
+               [service]="service"></div>
+        }
+      </ng-template>
+    </tr>
+  }
+</tbody>

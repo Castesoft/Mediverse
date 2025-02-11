@@ -1,0 +1,83 @@
+/* Overall card styling */
+.subscription-card {
+  margin: 1rem 0;
+  border: 1px solid #e3e6f0;
+  border-radius: 0.5rem;
+  background-color: #fff;
+
+  .card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .card-body {
+    padding: 1rem;
+
+    .info-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+
+      .info-label {
+        flex: 0 0 200px;
+        font-weight: 600;
+        color: #343a40;
+      }
+
+      .info-value {
+        flex: 1 1 auto;
+        color: #495057;
+      }
+    }
+  }
+}
+
+/* History item styling */
+.history-item {
+  border: 0;
+  border-bottom: 1px solid #e3e6f0;
+  padding: 0.75rem 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .history-date,
+  .history-status,
+  .history-note {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .old-status {
+    text-decoration: line-through;
+    color: #dc3545;
+  }
+
+  .new-status {
+    font-weight: bold;
+    color: #28a745;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .subscription-card {
+    .card-body {
+      .info-row {
+        flex-direction: column;
+
+        .info-label {
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+  }
+}

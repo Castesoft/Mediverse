@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Bogus;
 using MainService.Models.Entities;
 using MainService.Models.Helpers.Constants;
 
@@ -6,46 +7,63 @@ namespace MainService.Models.Helpers
 {
     public static class StripePaymentMethods
     {
-        private static readonly Random Random = new();
-
-        private static readonly List<PaymentMethod> PaymentMethods =
-        [
-            new("Visa", "pm_card_visa"),
-            new("Visa", "pm_card_visa_debit"),
-            new("Mastercard", "pm_card_mastercard"),
-            new("Mastercard", "pm_card_mastercard_debit"),
-            new("Mastercard", "pm_card_mastercard_prepaid"),
-            new("American Express", "pm_card_amex"),
-        ];
-
-        private static PaymentMethod GetRandomPaymentMethod() => PaymentMethods[Random.Next(PaymentMethods.Count)];
-
-        public static List<UserPaymentMethod> GetUserPaymentMethods(AppUser user)
+        private static readonly List<PaymentMethod> PaymentMethodTemplates = new()
         {
-            var paymentMethod = GetRandomPaymentMethod();
+            new PaymentMethod("Visa", "pm_card_visa"),
+            new PaymentMethod("Visa", "pm_card_visa_debit"),
+            new PaymentMethod("Mastercard", "pm_card_mastercard"),
+            new PaymentMethod("Mastercard", "pm_card_mastercard_debit"),
+            new PaymentMethod("Mastercard", "pm_card_mastercard_prepaid"),
+            new PaymentMethod("American Express", "pm_card_amex"),
+        };
 
-            List<UserPaymentMethod> userPaymentMethod = [];
+        private static PaymentMethod GetRandomPaymentMethodTemplate() =>
+            PaymentMethodTemplates[new Random().Next(PaymentMethodTemplates.Count)];
 
-            for (var i = 0; i < Random.Next(2, 6); i++)
-            {
-                userPaymentMethod.Add(new UserPaymentMethod
+        public static List<PaymentMethod> GetUserPaymentMethods(AppUser user)
+        {
+            var faker = new Faker<PaymentMethod>()
+                .RuleFor(pm => pm.DisplayName, f => $"{user.FirstName} {user.LastName}".ToUpper())
+                .RuleFor(pm => pm.CardholderName, f => $"{user.FirstName} {user.LastName}")
+                .RuleFor(pm => pm.Brand, f =>
                 {
-                    PaymentMethod = new PaymentMethod
+                    var template = GetRandomPaymentMethodTemplate();
+                    return template.Brand;
+                })
+                .RuleFor(pm => pm.StripePaymentMethodId, (f, pm) =>
+                {
+                    return pm.Brand switch
                     {
-                        DisplayName = $"{user.FirstName} {user.LastName}".ToUpper(),
-                        Brand = paymentMethod.Brand,
-                        Country = "MX",
-                        ExpirationMonth = Random.Next(1, 13),
-                        ExpirationYear = Random.Next(2025, 2030),
-                        Last4 = Random.Next(1000, 9999).ToString(),
-                        StripePaymentMethodId = paymentMethod.StripePaymentMethodId,
-                    }
-                });
-            }
+                        "Visa" => f.PickRandom(
+                            "pm_card_visa",
+                            "pm_card_visa_debit"
+                        ),
+                        "Mastercard" => f.PickRandom(
+                            "pm_card_mastercard",
+                            "pm_card_mastercard_debit",
+                            "pm_card_mastercard_prepaid"
+                        ),
+                        _ => "pm_card_amex"
+                    };
+                })
+                .RuleFor(pm => pm.Country, f => "MX")
+                .RuleFor(pm => pm.ExpirationMonth, f => f.Random.Int(1, 12))
+                .RuleFor(pm => pm.ExpirationYear, f => f.Random.Int(2025, 2030))
+                .RuleFor(pm => pm.Last4, f => f.Random.Number(1000, 9999).ToString())
+                .RuleFor(pm => pm.Funding, f => f.PickRandom(new[] { "credit", "debit" }))
+                .RuleFor(pm => pm.BillingAddress, f => f.Address.StreetAddress())
+                .RuleFor(pm => pm.BillingZipCode, f => f.Address.ZipCode())
+                .RuleFor(pm => pm.BillingCity, f => f.Address.City())
+                .RuleFor(pm => pm.BillingCountry, f => "MX")
+                .RuleFor(pm => pm.IsActive, f => true)
+                .RuleFor(pm => pm.IsDefault, f => false);
 
-            userPaymentMethod[Random.Next(userPaymentMethod.Count)].IsMain = true;
+            var count = new Random().Next(2, 6);
+            var paymentMethods = faker.Generate(count);
 
-            return userPaymentMethod;
+            paymentMethods[new Random().Next(paymentMethods.Count)].IsDefault = true;
+
+            return paymentMethods;
         }
     }
 
@@ -53,58 +71,31 @@ namespace MainService.Models.Helpers
     {
         private static readonly Random Random = new();
 
-        public static List<Payment> GetEventPayments(Event @event)
+        public static List<Payment> GetEventPayments(Event evt)
         {
-            // 50/50 chance that this event will have at least one payment.
-            var hasPayment = Random.Next(0, 2) > 0;
-            if (!hasPayment) return [];
-
-            var paymentCount = Random.Next(1, 4);
-            
-            var totalAmount = @event.EventService.Service.Price;
-            var remainingAmount = totalAmount;
-
-            var payments = new List<Payment>();
-
-            for (var i = 0; i < paymentCount; i++)
+            if (!(Random.NextDouble() < 0.8)) return [];
+            var fullPayment = new Payment
             {
-                var isLastPayment = i == paymentCount - 1;
-                var paymentAmount = isLastPayment ? remainingAmount : Random.Next(1, (int)remainingAmount);
-                remainingAmount -= paymentAmount;
-                
-                PaymentStatus status;
-                if (i == paymentCount - 1 && paymentCount == 1)
-                    status = PaymentStatus.Succeeded;
-                else if (remainingAmount <= 0)
-                    status = PaymentStatus.Succeeded;
-                else
-                    status = PaymentStatus.Processing;
+                Amount = evt.EventService.Service.Price,
+                Currency = "MXN",
+                Date = DateTime.UtcNow,
+                PaymentStatus = PaymentStatus.Succeeded,
+            };
 
-                var payment = new Payment
-                {
-                    Amount = paymentAmount,
-                    Currency = "MXN",
-                    PaymentDate = DateTime.UtcNow,
-                    PaymentStatus = status,
-                };
-
-                payments.Add(payment);
-            }
-
-            return payments;
+            return [fullPayment];
         }
 
-        public static PaymentStatus GetPaymentStatus(Event @event)
+        public static PaymentStatus GetPaymentStatus(Event evt)
         {
-            var totalPaid = @event.Payments.Sum(p => p.Amount);
-            var servicePrice = @event.EventService.Service.Price;
+            var totalPaid = evt.Payments.Sum(p => p.Amount);
+            var servicePrice = evt.EventService.Service.Price;
 
             if (totalPaid >= servicePrice)
                 return PaymentStatus.Succeeded;
-            
+
             if (totalPaid > 0)
                 return PaymentStatus.Processing;
-            
+
             return PaymentStatus.RequiresPaymentMethod;
         }
     }
@@ -534,7 +525,7 @@ namespace MainService.Models.Helpers
             new() { Name = "Efectivo" },
             new() { Name = "Paypal" }
         ];
-        
+
         public static readonly List<SubscriptionPlan> SubscriptionPlans = new()
         {
             new SubscriptionPlan
@@ -623,7 +614,7 @@ namespace MainService.Models.Helpers
 
             return rolesWithPermissions;
         }
-        
+
         public static readonly List<Warehouse> warehouses =
         [
             new()
@@ -707,7 +698,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 150,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -735,7 +726,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 110,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -763,7 +754,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 80,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -791,7 +782,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 40,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -819,7 +810,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 140,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -847,7 +838,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 100,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -875,7 +866,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 120,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -903,7 +894,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 70,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -931,7 +922,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 150,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -959,7 +950,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 110,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -987,7 +978,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 200,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1015,7 +1006,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 90,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1043,7 +1034,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 180,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1070,7 +1061,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 130,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1098,7 +1089,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 100,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1126,7 +1117,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 170,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1154,7 +1145,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 250,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1182,7 +1173,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 60,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1210,7 +1201,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 350,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1238,7 +1229,7 @@ namespace MainService.Models.Helpers
                 CostPrice = 170,
                 ProductPhotos =
                 [
-                    new ProductPhoto()
+                    new ProductPhoto
                     {
                         IsMain = true,
                         Photo = new Photo
@@ -1861,7 +1852,7 @@ namespace MainService.Models.Helpers
         public static List<AppUser> GenerateUsersForSeeding(int quantity, Roles role)
         {
             Random random = new();
-            List<AppUser> users = [];
+            List<AppUser> users = new();
 
             for (var i = 0; i < quantity; i++)
             {
@@ -1871,7 +1862,7 @@ namespace MainService.Models.Helpers
                 var email = ConstructFullEmailAddress(firstName, lastName, GetRandomEmailDomain(), i);
                 var userName = email;
 
-                AppUser user = new()
+                var user = new AppUser
                 {
                     FirstName = firstName,
                     LastName = lastName,
@@ -1885,7 +1876,10 @@ namespace MainService.Models.Helpers
                     UserAddresses = GenerateUserAddresses(),
                 };
 
-                user.UserPaymentMethods.AddRange(StripePaymentMethods.GetUserPaymentMethods(user));
+                foreach (var paymentMethod in StripePaymentMethods.GetUserPaymentMethods(user))
+                {
+                    user.PaymentMethods.Add(paymentMethod);
+                }
 
                 if (role == Roles.Nurse || role == Roles.Doctor)
                 {
@@ -1906,6 +1900,7 @@ namespace MainService.Models.Helpers
 
             return users;
         }
+
 
         public static List<Address> GetAddresses()
         {

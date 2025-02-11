@@ -1,0 +1,33 @@
+<div class="payment-method-cell" [tooltip]="tooltipText">
+  <div class="d-flex align-items-center">
+    @if (paymentMethod().funding === 'cash') {
+      <i class="ki-duotone ki-cash fs-2x"></i>
+      <span>Efectivo</span>
+    } @else {
+      @switch (paymentMethod().brand?.toLowerCase()) {
+        @case ('visa') {
+          <div cardIcon [brand]="CardBrand.VISA"></div>
+        }
+        @case ('mastercard') {
+          <div cardIcon [brand]="CardBrand.MASTERCARD"></div>
+        }
+        @case ('american express') {
+          <div cardIcon [brand]="CardBrand.AMEX"></div>
+        }
+        @default {
+          <i class="ki-duotone ki-credit-card fs-2x"></i>
+        }
+      }
+      <span class="d-flex align-items-center ms-4">
+        <div class="text-gray-400 me-1">••••</div>
+        <div class="fw-bold">
+          @if (paymentMethod().last4) {
+            {{ paymentMethod().last4 }}
+          } @else {
+            ----
+          }
+        </div>
+      </span>
+    }
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, inject, input, TemplateRef, model, effect } from "@angular/core";
+import { Component, inject, input, TemplateRef, model, ModelSignal, InputSignal } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Entity } from "src/app/_models/base/entity";
 import { IconsService } from "src/app/_services/icons.service";
@@ -11,18 +11,12 @@ import { MaterialModule } from "src/app/_shared/material.module";
   selector: 'td[tableMenuCell]',
   templateUrl: './table-menu-cell.component.html',
   standalone: true,
-  imports: [MaterialModule, CdkModule, FontAwesomeModule],
+  imports: [ MaterialModule, CdkModule, FontAwesomeModule ],
 })
 export class TableMenuCellComponent {
-  icons = inject(IconsService);
+  icons: IconsService = inject(IconsService);
 
-  contextMenu = input.required<TemplateRef<any>>();
-  item = model.required<Entity>();
-  isCompact = model.required<boolean>();
-
-  constructor() {
-    effect(() => {
-
-    });
-  }
+  contextMenu: InputSignal<TemplateRef<any>> = input.required<TemplateRef<any>>();
+  item: ModelSignal<Entity> = model.required<Entity>();
+  isCompact: ModelSignal<boolean> = model.required<boolean>();
 }

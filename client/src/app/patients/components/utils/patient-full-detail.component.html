@@ -132,7 +132,7 @@
               </div>
             }
           } @else if (activeTab === 'payments') {
-            <app-payments-table [title]="'Pagos'" [payments]="item()!.doctorPayments!" [showTabs]="false" [view]="'inline'"></app-payments-table>
+            <h3 class="text-danger">PENDIENTE</h3>
           } @else if (activeTab === 'insurances') {
             @if (item()!.hasPatientInformationAccess) {
               @if (item()!.medicalInsuranceCompanies && item()!.medicalInsuranceCompanies.length > 0) {

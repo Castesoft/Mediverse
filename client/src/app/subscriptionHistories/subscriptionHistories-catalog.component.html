@@ -1,0 +1,29 @@
+<div catalogLayout
+     [service]="service"
+     [(form)]="form"
+     [(mode)]="mode"
+     [(key)]="key"
+     [(view)]="view"
+     [(isCompact)]="isCompact"
+     [(filterConfig)]="filterConfig"
+     [(item)]="item"
+     [(params)]="params"
+     [(embedded)]="embedded"
+>
+  <ng-template #entityFilterForm>
+    <div controlsRow3 [grid]="filterConfig().orientation == 'horizontal' ? 5 : 1">
+      <div controlsWrapper3 [(control)]="form().controls.search" [showBottomMargin]="false"></div>
+    </div>
+  </ng-template>
+  <ng-template #entityTable let-list="list">
+    <table subscriptionHistoriesTable
+           [(mode)]="mode"
+           [(isCompact)]="isCompact"
+           [data]="list"
+           [(key)]="key"
+           [(view)]="view"
+           [(item)]="item"
+           [(params)]="params">
+    </table>
+  </ng-template>
+</div>

@@ -12,7 +12,6 @@ import { PatientParams } from "src/app/_models/patients/patientParams";
 import { PatientsService } from "src/app/patients/patients.config";
 import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 import { ClinicalHistoryFormComponent } from 'src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
-import { PaymentsTableComponent } from 'src/app/_shared/components/payments-table/payments-table.component';
 import { EventParams } from "src/app/_models/events/eventParams";
 import { createId } from "@paralleldrive/cuid2";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
@@ -25,7 +24,7 @@ import { PhotoSize } from "src/app/_models/photos/photoTypes";
   templateUrl: './patient-full-detail.component.html',
   standalone: true,
   imports: [ CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ProfilePictureComponent,
-    ClinicalHistoryFormComponent, PaymentsTableComponent, EventsCatalogComponent,
+    ClinicalHistoryFormComponent, EventsCatalogComponent,
    ]
 })
 export class PatientFullDetailComponent

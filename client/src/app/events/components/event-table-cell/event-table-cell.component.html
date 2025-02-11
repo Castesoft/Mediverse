@@ -1,0 +1,12 @@
+<td timePeriodCell
+    class="py-0"
+    [from]="event().dateFrom || null"
+    [to]="event().dateTo  || null"
+    [showDate]="true"
+    [allDay]="event().allDay || false">
+</td>
+
+<div class="event-summary">
+  <span class="service-name">{{ event().service?.name }}</span>
+  <span class="doctor-name">{{ event().doctor?.firstName }} {{ event().doctor?.lastName }}</span>
+</div>

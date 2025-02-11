@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
 export type Theme = 'light' | 'dark' | 'auto';
 
@@ -6,15 +6,15 @@ export type Theme = 'light' | 'dark' | 'auto';
   providedIn: 'root',
 })
 export class ThemeService {
-  theme = signal<Theme>('auto');
+  theme: WritableSignal<Theme> = signal<Theme>('auto');
 
   constructor() {
     this.init();
   }
 
   init() {
-    const storedTheme = localStorage.getItem('theme');
-    const isDarkModePreferred = window.matchMedia(
+    const storedTheme: string | null = localStorage.getItem('theme');
+    const isDarkModePreferred: boolean = window.matchMedia(
       '(prefers-color-scheme: dark)'
     ).matches;
     if (storedTheme !== null) {
@@ -37,7 +37,7 @@ export class ThemeService {
   }
 
   private setMediaQueryListener(): void {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const prefersDark: MediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
     this.updateAutoTheme(prefersDark.matches);
     prefersDark.addEventListener('change', (event) => {
       this.updateAutoTheme(event.matches);
@@ -45,14 +45,14 @@ export class ThemeService {
   }
 
   private updateAutoTheme(isDark: boolean): void {
-    const autoTheme = isDark ? 'dark' : 'light';
+    const autoTheme: 'dark' | 'light' = isDark ? 'dark' : 'light';
     this.updateThemeClass(autoTheme);
     this.theme.set(autoTheme);
   }
 
   private updateThemeClass(theme: Theme): void {
-    const root = document.documentElement;
-    const body = document.body;
+    const root: HTMLElement = document.documentElement;
+    const body: HTMLElement = document.body;
     if (theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
@@ -77,7 +77,7 @@ export class ThemeService {
   }
 
   cycle(): void {
-    const currentTheme = this.theme();
+    const currentTheme: Theme = this.theme();
     if (currentTheme === 'light') {
       this.set('dark');
     } else if (currentTheme === 'dark') {
@@ -88,7 +88,7 @@ export class ThemeService {
   }
 
   toggle(): void {
-    const currentTheme = this.getEffectiveTheme();
+    const currentTheme: Theme = this.getEffectiveTheme();
     if (currentTheme === 'dark') {
       this.set('light');
     } else {

@@ -20,11 +20,6 @@ namespace MainService.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedList<SubscriptionDto>>> GetPagedListAsync([FromQuery] SubscriptionParams param)
         {
-            if (!param.DoctorId.HasValue && param.FromSection == SiteSection.Admin)
-            {
-                return BadRequest("When requesting from admin section, DoctorId is required.");
-            }
-
             if (param.FromSection != SiteSection.Admin)
             {
                 param.DoctorId = User.GetUserId();

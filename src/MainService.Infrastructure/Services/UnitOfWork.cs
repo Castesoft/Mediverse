@@ -42,7 +42,7 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public IWarehouseRepository WarehouseRepository => new WarehouseRepository(context, mapper);
     public IPaymentRepository PaymentRepository => new PaymentRepository(context, mapper);
     public ISubscriptionRepository SubscriptionRepository => new SubscriptionRepository(context, mapper);
-    public ISubscriptionHistoryRepository SubscriptionHistoryRepository => new SubscriptionHistoryRepository(context);
+    public ISubscriptionHistoryRepository SubscriptionHistoryRepository => new SubscriptionHistoryRepository(context, mapper);
     public ISubscriptionPlanRepository SubscriptionPlanRepository => new SubscriptionPlanRepository(context);
 
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;

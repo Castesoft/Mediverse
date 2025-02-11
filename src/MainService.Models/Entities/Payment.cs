@@ -8,7 +8,7 @@ public class Payment : BaseEntity
 
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "MXN";
-    public DateTime PaymentDate { get; set; }
+    public DateTime Date { get; set; }
     public PaymentStatus PaymentStatus { get; set; }
 
     public string? StripePaymentIntent { get; set; }
@@ -18,4 +18,6 @@ public class Payment : BaseEntity
 
     public int? EventId { get; set; }
     public Event? Event { get; set; }
+    public int? PaymentMethodId { get; set; }
+    public PaymentMethod? PaymentMethod { get; set; }
 }

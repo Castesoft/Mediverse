@@ -135,7 +135,7 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.UserAddresses,
                 opt => opt.MapFrom(src => src.UserAddresses.Select(x => x.Address)))
             .ForMember(dest => dest.UserPaymentMethods,
-                opt => opt.MapFrom(src => src.UserPaymentMethods.Select(x => x.PaymentMethod)));
+                opt => opt.MapFrom(src => src.PaymentMethods));
 
         // Map AppUser to UserSummaryDto.
         CreateMap<AppUser, UserSummaryDto>()
@@ -268,7 +268,7 @@ public class UserMappingProfile : Profile
 
         CreateMap<AppUser, BillingDetailsDto>()
             .ForMember(dest => dest.UserAddresses, opt => opt.MapFrom(src => src.UserAddresses.Select(x => x.Address)))
-            .ForMember(dest => dest.UserPaymentMethods, opt => opt.MapFrom(src => src.UserPaymentMethods.Select(x => x.PaymentMethod)))
+            .ForMember(dest => dest.UserPaymentMethods, opt => opt.MapFrom(src => src.PaymentMethods));
         ;
 
         CreateMap<Address, UserAddressDto>()

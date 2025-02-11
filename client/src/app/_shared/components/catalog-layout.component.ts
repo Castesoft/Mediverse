@@ -12,7 +12,7 @@ import {
   TemplateRef,
   WritableSignal
 } from '@angular/core';
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToastrService } from 'ngx-toastr';
@@ -50,6 +50,7 @@ import { FormUse } from "src/app/_models/forms/formTypes";
     FormsModule,
     MaterialModule,
     CollapseDirective,
+    NgClass,
   ],
 })
 export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>, F extends FormGroup2<P>, Z extends ServiceHelper<T, P, F>> implements OnDestroy {
@@ -66,6 +67,8 @@ export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>
   view: ModelSignal<View> = model.required();
   isCompact: ModelSignal<boolean> = model.required();
   embedded: ModelSignal<boolean> = model(false);
+  useCard: ModelSignal<boolean> = model(true);
+  title: ModelSignal<string | undefined> = model();
 
   // Don't modify these:
   @ContentChild('entityTable') entityTable!: TemplateRef<any>;

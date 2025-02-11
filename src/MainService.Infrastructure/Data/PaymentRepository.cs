@@ -1,4 +1,8 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MainService.Core.DTOs.User;
+using MainService.Core.Helpers.Pagination;
+using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
@@ -25,5 +29,66 @@ public class PaymentRepository(DataContext context, IMapper mapper) : IPaymentRe
         return await context.Payments
             .Where(p => p.EventId == eventId)
             .ToListAsync();
+    }
+
+    public async Task<PagedList<PaymentDto>> GetPagedListAsync(PaymentParams param)
+    {
+        var query = context.Payments
+            .Include(x => x.Event).ThenInclude(x => x.DoctorEvent)
+            .Include(x => x.Event).ThenInclude(x => x.Payments).ThenInclude(x => x.PaymentMethod)
+            .Include(x => x.PaymentMethod)
+            .AsQueryable();
+
+        if (param.DoctorId.HasValue)
+        {
+            query = query.Where(x => x.Event.DoctorEvent.DoctorId == param.DoctorId);
+        }
+
+        if (param.EventId.HasValue)
+        {
+            query = query.Where(x => x.EventId == param.EventId);
+        }
+
+        if (!string.IsNullOrEmpty(param.Search))
+        {
+            var term = param.Search.ToLower();
+
+            query = query.Where(
+                x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                    !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)
+            );
+        }
+
+        if (!string.IsNullOrEmpty(param.Sort))
+        {
+            query = param.Sort.ToLower() switch
+            {
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Id)
+                    : query.OrderByDescending(x => x.Id),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Name)
+                    : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Description)
+                    : query.OrderByDescending(x => x.Description),
+            };
+        }
+        else
+        {
+            query = query.OrderByDescending(x => x.CreatedAt);
+        }
+
+        return await PagedList<PaymentDto>.CreateAsync(
+            query.ProjectTo<PaymentDto>(mapper.ConfigurationProvider),
+            param.PageNumber,
+            param.PageSize
+        );
+    }
+
+    public void Delete(Payment payment)
+    {
+        context.Payments.Remove(payment);
     }
 }

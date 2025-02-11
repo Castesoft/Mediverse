@@ -100,7 +100,7 @@ export class EventsCalendarComponent
     super(EventsService, Event);
 
     effect(() => {
-      
+
     });
   }
 

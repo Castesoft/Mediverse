@@ -79,7 +79,7 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
         item: null,
       },
       disableClose: true,
-      hasBackdrop: false,
+      hasBackdrop: true,
       panelClass: [ "window" ]
     });
   };
@@ -137,7 +137,9 @@ export class EventDetailComponent
   selector: 'event-detail-modal',
   template: `
     @defer {
-      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle class="card-title text-gray-900 fw-bold my-1 fs-2">
+        {{ data.title }}
+      </h1>
       <mat-dialog-content>
         <div
           eventDetail

@@ -1,0 +1,80 @@
+<thead
+  tableHeader
+  [(columns)]="service.columns"
+  [(dictionary)]="service.dictionary"
+  [(params)]="params"
+  [(mode)]="mode"
+  [(isCompact)]="isCompact"
+  (selectedChange)="service.toggleMultipleSelectedArray$(key() || '', data())">
+</thead>
+
+<tbody templateTableBody>
+  @for (item of data(); track item) {
+    <tr class="hover-actions-trigger btn-reveal-trigger position-static"
+        [cdkContextMenuTriggerFor]="context_menu">
+      <td tableCheckCell
+          [isCompact]="isCompact()"
+          [isChecked]="item.isSelected"
+          (click)="service.setSelected$(key() || '', item)">
+      </td>
+
+      <!-- Subscription ID -->
+      @if (dev.isDev()) {
+        <td
+          class="name align-middle white-space-nowrap px-0 py-0"
+          [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+        >
+          <div class="d-flex align-items-center justify-content-start px-0">
+            <a
+              [routerLink]="[service.dictionary.catalogRoute, item.id]"
+              [href]="[service.dictionary.catalogRoute, item.id]"
+              class="fw-semibold text-primary"
+            >
+              #{{ item.id | number }}</a
+            >
+          </div>
+        </td>
+      }
+
+      <!-- Changed At Date -->
+      <td class="nowrap">{{ item.changedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+
+      <!-- Status Change: Display old status and new status -->
+      <td class="nowrap align-items-center">
+        @if (item.oldStatus) {
+          <span class="badge badge-light-danger me-1">{{ item.oldStatus }}</span>
+        }
+
+        @if (item.newStatus) {
+          <i class="ki-duotone ki-arrow-right mx-1">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+          <span class="badge badge-light-success">{{ item.newStatus }}</span>
+        }
+      </td>
+
+      <!-- Optional Note -->
+      @if (item.note) {
+        <td>
+          {{ item.note }}
+        </td>
+      } @else {
+        <td>
+          <em>Sin notas adicionales</em>
+        </td>
+      }
+
+      <td tableMenuCell [item]="item" [contextMenu]="context_menu" [(isCompact)]="isCompact"></td>
+
+      <ng-template #context_menu>
+        <div tableMenu
+             [siteSection]="params().fromSection || undefined"
+             [item]="item"
+             [key]="key()!"
+             [service]="service">
+        </div>
+      </ng-template>
+    </tr>
+  }
+</tbody>

@@ -168,7 +168,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
         title: title,
       },
       disableClose: true,
-      hasBackdrop: false,
+      hasBackdrop: true,
       panelClass: [ 'window' ]
     };
   }

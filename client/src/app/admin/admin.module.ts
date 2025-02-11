@@ -40,6 +40,10 @@ import { AdminWarehouseEditRouteComponent } from "src/app/admin/routes/warehouse
 import { WarehouseFormComponent } from "src/app/warehouses/warehouse-form.component";
 import { AdminDoctorDetailRouteComponent } from "src/app/admin/routes/doctors/admin-doctors-detail-route.component";
 import { DoctorFormComponent } from "src/app/doctors/doctor-form.component";
+import {
+  AdminSubscriptionsCatalogRouteComponent
+} from "src/app/admin/routes/subscriptions/admin-subscriptions-catalog-route.component";
+import { SubscriptionsCatalogComponent } from "src/app/subscriptions/subscriptions-catalog.component";
 
 @NgModule({
   declarations: [
@@ -58,7 +62,8 @@ import { DoctorFormComponent } from "src/app/doctors/doctor-form.component";
     AdminWarehousesCatalogRouteComponent,
     AdminWarehouseCreateRouteComponent,
     AdminWarehouseDetailRouteComponent,
-    AdminWarehouseEditRouteComponent
+    AdminWarehouseEditRouteComponent,
+    AdminSubscriptionsCatalogRouteComponent
   ],
   imports: [
     CommonModule,
@@ -78,6 +83,7 @@ import { DoctorFormComponent } from "src/app/doctors/doctor-form.component";
     WarehousesCatalogComponent,
     WarehouseFormComponent,
     DoctorFormComponent,
+    SubscriptionsCatalogComponent,
   ],
 })
 export class AdminModule {}

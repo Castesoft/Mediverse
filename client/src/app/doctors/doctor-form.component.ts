@@ -17,9 +17,14 @@ import { ClinicsCatalogComponent } from "src/app/clinics/components/clinics-cata
 import Clinic from "src/app/_models/clinics/clinic";
 import { createId } from "@paralleldrive/cuid2";
 import ClinicParams from "src/app/_models/clinics/clinicParams";
-import { SubscriptionsCatalogComponent } from "src/app/subscriptions/subscriptions-catalog.component";
-import { Subscription } from "src/app/_models/subscriptions/subscription";
-import { SubscriptionParams } from "src/app/_models/subscriptions/subscriptionParams";
+import {
+  SubscriptionHistoryHistoriesCatalogComponent
+} from "src/app/subscriptionHistories/subscriptionHistories-catalog.component";
+import { SubscriptionHistory } from "src/app/_models/subscriptionHistories/subscriptionHistory";
+import { SubscriptionHistoryParams } from "src/app/_models/subscriptionHistories/subscriptionHistoryParams";
+import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
+import { Payment } from "src/app/_models/payments/payment";
+import { PaymentParams } from "src/app/_models/payments/paymentParams";
 
 @Component({
   selector: "[doctorForm]",
@@ -34,7 +39,8 @@ import { SubscriptionParams } from "src/app/_models/subscriptions/subscriptionPa
     SymbolCellComponent,
     CollapseDirective,
     ClinicsCatalogComponent,
-    SubscriptionsCatalogComponent,
+    SubscriptionHistoryHistoriesCatalogComponent,
+    PaymentsCatalogComponent,
   ]
 })
 export class DoctorFormComponent {
@@ -58,13 +64,27 @@ export class DoctorFormComponent {
   clinicMode: CatalogMode = 'view';
   clinicParams: ClinicParams = new ClinicParams(this.clinicKey, { fromSection: SiteSection.ADMIN, doctorId: null });
 
-  subscriptionItem: Subscription | null = null;
-  subscriptionView: View = 'page';
-  subscriptionKey: string = createId();
-  subscriptionIsCompact: boolean = true;
-  subscriptionEmbedded: boolean = true;
-  subscriptionMode: CatalogMode = 'view';
-  subscriptionParams: SubscriptionParams = new SubscriptionParams(this.subscriptionKey, { fromSection: SiteSection.ADMIN, doctorId: null });
+  subscriptionHistoryItem: SubscriptionHistory | null = null;
+  subscriptionHistoryView: View = 'page';
+  subscriptionHistoryKey: string = createId();
+  subscriptionHistoryIsCompact: boolean = true;
+  subscriptionHistoryEmbedded: boolean = true;
+  subscriptionHistoryMode: CatalogMode = 'view';
+  subscriptionHistoryParams: SubscriptionHistoryParams = new SubscriptionHistoryParams(this.subscriptionHistoryKey, {
+    fromSection: SiteSection.ADMIN,
+    doctorId: null
+  });
+
+  paymentItem: Payment | null = null;
+  paymentView: View = 'page';
+  paymentKey: string = createId();
+  paymentIsCompact: boolean = true;
+  paymentEmbedded: boolean = true;
+  paymentMode: CatalogMode = 'view';
+  paymentParams: PaymentParams = new PaymentParams(this.paymentKey, {
+    fromSection: SiteSection.ADMIN,
+    doctorId: null
+  });
 
   form: FormGroup2<Doctor> = new FormGroup2(Doctor, new Doctor, doctorFormInfo);
   isCollapsed: boolean = false;
@@ -78,9 +98,11 @@ export class DoctorFormComponent {
         .setUse(this.use())
         .setValidation(this.validation.active());
 
-      if (this.item() !== null && this.clinicParams.doctorId === null && this.subscriptionParams.doctorId === null) {
+      if (this.item() !== null) {
         this.clinicParams.doctorId = this.item()!.id;
-        this.subscriptionParams.doctorId = this.item()!.id;
+        this.paymentParams.doctorId = this.item()!.id;
+        this.subscriptionHistoryParams.doctorId = this.item()!.id;
+
         this.form.patchValue(this.item()!);
       }
     });

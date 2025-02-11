@@ -1,0 +1,93 @@
+@if (subscription()) {
+  <div class="card subscription-card">
+    <!-- Card Header -->
+    <div class="card-header">
+      <h3 class="card-title mb-0">Subscription Information</h3>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body">
+      <!-- Subscription Plan -->
+      <div class="info-row">
+        <span class="info-label">Plan:</span>
+        <span class="info-value">{{ subscription()?.subscriptionPlanName }}</span>
+      </div>
+
+      <!-- Subscription Start Date -->
+      <div class="info-row">
+        <span class="info-label">Start Date:</span>
+        <span class="info-value">{{ subscription()?.subscriptionStartDate | date: 'mediumDate' }}</span>
+      </div>
+
+      <!-- Subscription End Date (optional) -->
+      @if (subscription()!.subscriptionEndDate) {
+        <div class="info-row">
+          <span class="info-label">End Date:</span>
+          <span class="info-value">{{ subscription()?.subscriptionEndDate | date: 'mediumDate' }}</span>
+        </div>
+      }
+
+      <!-- Subscription Status -->
+      <div class="info-row">
+        <span class="info-label">Status:</span>
+        <span class="info-value">
+          {{ getTranslatedStatus(subscription()!.status.toString()) }}
+        </span>
+      </div>
+
+      <!-- Next Billing Date (optional) -->
+      @if (subscription()!.nextBillingDate) {
+        <div class="info-row">
+          <span class="info-label">Next Billing Date:</span>
+          <span class="info-value">{{ subscription()?.nextBillingDate | date: 'mediumDate' }}</span>
+        </div>
+      }
+
+      <!-- Stripe Subscription and Customer IDs (optional) -->
+      @if (subscription()!.stripeSubscriptionId) {
+        <div class="info-row">
+          <span class="info-label">Stripe Subscription ID:</span>
+          <span class="info-value">{{ subscription()?.stripeSubscriptionId }}</span>
+        </div>
+      }
+
+      @if (subscription()!.stripeCustomerId) {
+        <div class="info-row">
+          <span class="info-label">Stripe Customer ID:</span>
+          <span class="info-value">{{ subscription()?.stripeCustomerId }}</span>
+        </div>
+      }
+
+      <!-- Subscription History (if available) -->
+      @if (subscription()!.subscriptionHistories && subscription()!.subscriptionHistories!.length > 0) {
+        <div class="mt-4">
+          <h5 class="mb-3">Subscription History</h5>
+          <ul class="list-group">
+            @for (history of subscription()?.subscriptionHistories; track history) {
+              <li class="list-group-item history-item">
+                <div class="history-date">
+                  <strong>Date:</strong> {{ history.changedAt | date: 'medium' }}
+                </div>
+                <div class="history-status">
+                  <strong>Changed:</strong>
+                  <span class="old-status">{{ getTranslatedStatus(history.oldStatus) }}</span>
+                  <i class="bi bi-arrow-right mx-1" aria-hidden="true"></i>
+                  <span class="new-status">{{ getTranslatedStatus(history.newStatus) }}</span>
+                </div>
+                @if (history.note) {
+                  <div class="history-note">
+                    <strong>Note:</strong> {{ history.note }}
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="alert alert-info" role="alert">
+    No subscription information available.
+  </div>
+}

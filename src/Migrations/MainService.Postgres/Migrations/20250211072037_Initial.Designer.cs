@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250208004840_Initial")]
+    [Migration("20250211072037_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1157,6 +1157,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("NextSteps")
                         .HasColumnType("text");
 
+                    b.Property<int?>("PaymentStatus")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -2153,6 +2156,9 @@ namespace MainService.Postgres.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -2162,8 +2168,8 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
@@ -2188,6 +2194,8 @@ namespace MainService.Postgres.Migrations
 
                     b.HasIndex("EventId");
 
+                    b.HasIndex("PaymentMethodId");
+
                     b.ToTable("Payments");
                 });
 
@@ -2199,7 +2207,22 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BillingAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BillingCity")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BillingCountry")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BillingZipCode")
+                        .HasColumnType("text");
+
                     b.Property<string>("Brand")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CardholderName")
                         .HasColumnType("text");
 
                     b.Property<string>("Country")
@@ -2220,6 +2243,15 @@ namespace MainService.Postgres.Migrations
                     b.Property<int?>("ExpirationYear")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Funding")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Last4")
                         .HasColumnType("text");
 
@@ -2232,7 +2264,12 @@ namespace MainService.Postgres.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("PaymentMethods");
                 });
@@ -3047,25 +3084,6 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("UserMedicalRecords");
-                });
-
-            modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("UserId", "PaymentMethodId");
-
-                    b.HasIndex("PaymentMethodId")
-                        .IsUnique();
-
-                    b.ToTable("UserPaymentMethods");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
@@ -4446,7 +4464,24 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("Payments")
+                        .HasForeignKey("PaymentMethodId");
+
                     b.Navigation("Event");
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("PaymentMethods")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionClinic", b =>
@@ -4698,25 +4733,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
-                        .WithOne("UserPaymentMethod")
-                        .HasForeignKey("MainService.Models.Entities.UserPaymentMethod", "PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.AppUser", "User")
-                        .WithMany("UserPaymentMethods")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PaymentMethod");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Photo", "Photo")
@@ -4951,6 +4967,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("Patients");
 
+                    b.Navigation("PaymentMethods");
+
                     b.Navigation("SubscriptionHistories");
 
                     b.Navigation("Subscriptions");
@@ -4962,8 +4980,6 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("UserMedicalLicenses");
 
                     b.Navigation("UserMedicalRecord");
-
-                    b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
 
@@ -5162,8 +5178,7 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>
                 {
-                    b.Navigation("UserPaymentMethod")
-                        .IsRequired();
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethodType", b =>
