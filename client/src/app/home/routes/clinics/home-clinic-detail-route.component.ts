@@ -9,6 +9,7 @@ import { CalendarView } from 'src/app/_models/events/eventTypes';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { ClinicsService } from 'src/app/clinics/clinics.config';
+import { NurseParams } from 'src/app/_models/nurses/nurseParams';
 
 @Component({
   host: { class: '' },
@@ -36,6 +37,14 @@ export class HomeClinicDetailRouteComponent
   eventCalendarView = signal<CalendarView>('table');
   eventFiltersCollapsed = signal(true);
 
+  nurseItem = signal(null);
+  nurseView = signal<View>('inline');
+  nurseKey = signal<string>(`${this.router.url}#nurse-detail`);
+  nurseMode = signal<CatalogMode>('readonly');
+  nurseParams = signal<NurseParams>(new NurseParams(createId()));
+  nurseCalendarView = signal<CalendarView>('table');
+  nurseFiltersCollapsed = signal(true);
+
   hostClass = '';
 
   constructor() {
@@ -54,8 +63,16 @@ export class HomeClinicDetailRouteComponent
         next: params => {
           if (params.has('id')) {
             this.id.set(+params.get('id')!);
+
             this.eventParams.update(oldValues => {
               return new EventParams(this.key(), {
+                ...oldValues,
+                clinicId: this.id(),
+              });
+            });
+
+            this.nurseParams.update(oldValues => {
+              return new NurseParams(this.key(), {
                 ...oldValues,
                 clinicId: this.id(),
               });
@@ -63,6 +80,7 @@ export class HomeClinicDetailRouteComponent
           }
         },
       });
+      
       this.route.data.subscribe({
         next: (data) => {
           this.item.set(data['item']);

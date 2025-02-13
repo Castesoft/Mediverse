@@ -62,4 +62,30 @@ export class ImageThumbnailSelectorComponent {
   hasRealImages(): boolean {
     return this.imageHandler.getImages().some((img: Photo) => !!img.url || !!img.file);
   }
+
+  getSymbolString(): string | null {
+
+    const mainImage = this.imageHandler.getMainImage();
+
+    if (
+      mainImage !== undefined &&
+      mainImage.url !== undefined
+    ) {
+      return mainImage.url;
+    }
+
+    const images = this.imageHandler.getImages();
+
+    if (
+      images.length &&
+      images.length > 0 &&
+      images[0].url !== undefined
+    ) {
+      return images[0].url;
+    }
+
+    return null;
+
+  }
+
 }

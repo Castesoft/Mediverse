@@ -145,7 +145,66 @@
               </div>
               </div>
               <div class="card-body pt-0 pb-5">
+                <ul>
+                  @if(_item.isMain) {
+                    <li>
+                      <span class="badge badge-light-success">Principal</span>
+                    </li>
+                  }
+                  <li>
+                    <strong>Nombre: </strong>
+                    <span>{{ _item.name }}</span>
+                  </li>
+                  <li>
+                    <strong>Descripción: </strong>
+                    <span>{{ _item.description }}</span>
+                  </li>
 
+                  <div class="separator my-10"></div>
+
+                  <h4 class="mt-5">Dirección</h4>
+
+                  <li>
+                    <strong>Código postal: </strong>
+                    <span>{{ _item.zipcode }}</span>
+                  </li>
+
+                  <li>
+                    <strong>Calle: </strong>
+                    <span>{{ _item.street }}</span>
+                  </li>
+
+                  <li>
+                    <strong>Número exterior: </strong>
+                    <span>{{ _item.exteriorNumber }}</span>
+                  </li>
+
+                  <li>
+                    <strong>Número interior: </strong>
+                    <span>{{ _item.interiorNumber }}</span>
+                  </li>
+
+                  <li>
+                    <strong>Colonia: </strong>
+                    <span>{{ _item.neighborhood }}</span>
+                  </li>
+
+                  <li>
+                    <strong>Ciudad: </strong>
+                    <span>{{ _item.city }}</span>
+                  </li>
+
+                  <li>
+                    <strong>Estado: </strong>
+                    <span>{{ _item.state }}</span>
+                  </li>
+
+                  <li>
+                    <strong>País: </strong>
+                    <span>{{ _item.country }}</span>
+                  </li>
+
+                </ul>
               </div>
 
             }
@@ -195,7 +254,15 @@
               </div>
               </div>
               <div class="card-body pt-0 pb-5">
-
+                <div
+                  nursesCatalog
+                  [(isCompact)]="compact.isCompact"
+                  [(item)]="nurseItem"
+                  [(key)]="nurseKey"
+                  [(mode)]="nurseMode"
+                  [(params)]="nurseParams"
+                  [(view)]="nurseView"
+                  ></div>
               </div>
 
             }
