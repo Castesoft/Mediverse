@@ -14,6 +14,8 @@ using MainService.Core.DTOs.Addresses;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Helpers.Enums;
 using Serilog;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 
 namespace MainService.Controllers;
 
@@ -23,7 +25,9 @@ public class ClinicsController(
     IAddressesService service,
     UserManager<AppUser> userManager,
     IMapper mapper,
-    IGoogleService googleService) : BaseApiController
+    IGoogleService googleService,
+    ICloudinaryService cloudinaryService
+    ) : BaseApiController
 {
     private const string Subject = "clínica";
     private const string SubjectArticle = "La";
@@ -69,7 +73,7 @@ public class ClinicsController(
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ClinicDto?>> GetByIdAsync([FromRoute] int id)
     {
-        var item = await uow.ClinicRepository.GetDtoByIdAsync(id);
+        ClinicDto? item = await uow.ClinicRepository.GetDtoByIdAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
 
@@ -142,6 +146,54 @@ public class ClinicsController(
         clinic.Longitude = longitude;
         clinic.Latitude = latitude;
 
+        // Existing image upload logic.
+        if (request.Files.Count() > 0 && request.MainImageIndex.HasValue)
+        {
+            foreach (IFormFile file in request.Files)
+            {
+                var fileName = Guid.NewGuid().ToString();
+                var uploadParams = new ImageUploadParams
+                {
+                    Folder = "Mediverse/Clinics",
+                    File = new FileDescription(fileName, file.OpenReadStream())
+                };
+
+                ImageUploadResult uploadResult = await cloudinaryService.UploadAsync(file, uploadParams);
+
+                if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+                
+                clinic.ClinicPhotos.Add(new ClinicPhoto(new Photo
+                {
+                    Url = uploadResult.SecureUrl,
+                    PublicId = uploadResult.PublicId,
+                    Size = (int?)file.Length
+                }));
+            }
+
+            if (clinic.ClinicPhotos.Count() != 0)
+            {
+                int mainImageIndex = request.MainImageIndex.Value;
+
+                if (mainImageIndex >= 0 && mainImageIndex < clinic.ClinicPhotos.Count())
+                {
+                    foreach (var (photo, index) in clinic.ClinicPhotos.Select((p, i) => (p, i)))
+                    {
+                        photo.IsMain = index == mainImageIndex;
+                    }
+                }
+                else
+                {
+                    clinic.ClinicPhotos.First().IsMain = true;
+                }
+
+                ClinicPhoto? mainPhoto = clinic.ClinicPhotos.FirstOrDefault(p => p.IsMain);
+
+                Log.Information(mainPhoto != null
+                        ? "Main photo confirmed at index {Index}"
+                        : "WARNING: No main photo set!",
+                    clinic.ClinicPhotos.ToList().IndexOf(mainPhoto!));
+            }
+        }
         doctor.DoctorClinics.Add(new DoctorClinic(clinic, request.IsMain.Value));
 
         IdentityResult updateResult = await userManager.UpdateAsync(doctor);
@@ -221,4 +273,17 @@ public class ClinicsController(
     public async Task<ActionResult<List<ZipcodeAddressOption>>> GetZipcodeAddressOptionsAsync(
         [FromRoute] string zipcode) =>
         await service.GetZipcodeAddressOptionsAsync(zipcode);
+
+    private async Task<ImageUploadResult?> UploadImage(IFormFile file)
+    {
+        var fileName = Guid.NewGuid().ToString();
+        var uploadParams = new ImageUploadParams
+        {
+            Folder = "Mediverse/Clinics",
+            File = new FileDescription(fileName, file.OpenReadStream())
+        };
+
+        var uploadResult = await cloudinaryService.UploadAsync(file, uploadParams);
+        return uploadResult.StatusCode == System.Net.HttpStatusCode.OK ? uploadResult : null;
+    }
 }

@@ -436,7 +436,7 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("PhotoId")
                         .IsUnique();
 
-                    b.ToTable("ClinicLogo");
+                    b.ToTable("ClinicLogos");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
@@ -452,6 +452,25 @@ namespace MainService.Sqlite.Migrations
                     b.HasIndex("ClinicId");
 
                     b.ToTable("ClinicNurses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ClinicPhoto", b =>
+                {
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ClinicId", "PhotoId");
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
+
+                    b.ToTable("ClinicPhotos");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
@@ -1118,6 +1137,9 @@ namespace MainService.Sqlite.Migrations
 
                     b.Property<string>("NextSteps")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("PaymentStatus")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
@@ -2089,6 +2111,9 @@ namespace MainService.Sqlite.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -2098,8 +2123,8 @@ namespace MainService.Sqlite.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
@@ -2124,6 +2149,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.HasIndex("EventId");
 
+                    b.HasIndex("PaymentMethodId");
+
                     b.ToTable("Payments");
                 });
 
@@ -2133,7 +2160,22 @@ namespace MainService.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("BillingAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BillingCity")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BillingCountry")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BillingZipCode")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Brand")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CardholderName")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
@@ -2154,6 +2196,15 @@ namespace MainService.Sqlite.Migrations
                     b.Property<int?>("ExpirationYear")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Funding")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Last4")
                         .HasColumnType("TEXT");
 
@@ -2166,7 +2217,12 @@ namespace MainService.Sqlite.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("PaymentMethods");
                 });
@@ -2974,25 +3030,6 @@ namespace MainService.Sqlite.Migrations
                     b.ToTable("UserMedicalRecords");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PaymentMethodId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("UserId", "PaymentMethodId");
-
-                    b.HasIndex("PaymentMethodId")
-                        .IsUnique();
-
-                    b.ToTable("UserPaymentMethods");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.Property<int>("UserId")
@@ -3407,6 +3444,25 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("Clinic");
 
                     b.Navigation("Nurse");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ClinicPhoto", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Clinic")
+                        .WithMany("ClinicPhotos")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Photo", "Photo")
+                        .WithOne("ClinicPhoto")
+                        .HasForeignKey("MainService.Models.Entities.ClinicPhoto", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Photo");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
@@ -4361,7 +4417,24 @@ namespace MainService.Sqlite.Migrations
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("Payments")
+                        .HasForeignKey("PaymentMethodId");
+
                     b.Navigation("Event");
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("PaymentMethods")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PrescriptionClinic", b =>
@@ -4613,25 +4686,6 @@ namespace MainService.Sqlite.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.UserPaymentMethod", b =>
-                {
-                    b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
-                        .WithOne("UserPaymentMethod")
-                        .HasForeignKey("MainService.Models.Entities.UserPaymentMethod", "PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainService.Models.Entities.AppUser", "User")
-                        .WithMany("UserPaymentMethods")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PaymentMethod");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Photo", "Photo")
@@ -4762,6 +4816,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("ClinicNurses");
 
+                    b.Navigation("ClinicPhotos");
+
                     b.Navigation("DoctorClinic")
                         .IsRequired();
 
@@ -4866,6 +4922,8 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("Patients");
 
+                    b.Navigation("PaymentMethods");
+
                     b.Navigation("SubscriptionHistories");
 
                     b.Navigation("Subscriptions");
@@ -4878,8 +4936,6 @@ namespace MainService.Sqlite.Migrations
 
                     b.Navigation("UserMedicalRecord")
                         .IsRequired();
-
-                    b.Navigation("UserPaymentMethods");
 
                     b.Navigation("UserPermissions");
 
@@ -5081,8 +5137,7 @@ namespace MainService.Sqlite.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>
                 {
-                    b.Navigation("UserPaymentMethod")
-                        .IsRequired();
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethodType", b =>
@@ -5098,6 +5153,9 @@ namespace MainService.Sqlite.Migrations
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>
                 {
                     b.Navigation("ClinicLogo")
+                        .IsRequired();
+
+                    b.Navigation("ClinicPhoto")
                         .IsRequired();
 
                     b.Navigation("DoctorBannerPhoto")

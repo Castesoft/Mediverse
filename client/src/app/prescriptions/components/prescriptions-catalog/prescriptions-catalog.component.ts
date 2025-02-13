@@ -12,11 +12,12 @@ import {
   PrescriptionsTableComponent
 } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-table/prescriptions-table.component";
 import { FilterConfiguration } from "../../../_models/base/filter-types";
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: '[prescriptionsCatalog]',
   templateUrl: './prescriptions-catalog.component.html',
-  imports: [ PrescriptionsTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule, PrescriptionsTableComponent ],
+  imports: [ PrescriptionsTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule, PrescriptionsTableComponent, MatProgressBarModule, ],
   standalone: true,
 })
 export class PrescriptionsCatalogComponent {

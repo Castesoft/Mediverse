@@ -28,16 +28,22 @@ public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepo
 
     public async Task<ClinicDto?> GetDtoByIdAsync(int id) =>
         await context.Addresses
+            .Include(x => x.DoctorClinic.Doctor)
+            .Include(x => x.ClinicLogo.Photo)
+            .Include(x => x.ClinicPhotos).ThenInclude(x => x.Photo)
+            .Include(x => x.ClinicNurses).ThenInclude(x => x.Nurse)
             .AsNoTracking()
             .ProjectTo<ClinicDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id);
+            .SingleOrDefaultAsync(x => x.Id == id)
+        ;
 
     public async Task<PagedList<ClinicDto>> GetPagedListAsync(ClinicParams param)
     {
         var query = context.Addresses
-            .Include(x => x.ClinicLogo)
-            .ThenInclude(cl => cl.Photo)
-            .Include(x => x.DoctorClinic)
+            .Include(x => x.DoctorClinic.Doctor)
+            .Include(x => x.ClinicLogo.Photo)
+            .Include(x => x.ClinicPhotos).ThenInclude(x => x.Photo)
+            .Include(x => x.ClinicNurses).ThenInclude(x => x.Nurse)
             .AsQueryable();
 
         Log.Information("DoctorId: {DoctorId}", param.DoctorId);

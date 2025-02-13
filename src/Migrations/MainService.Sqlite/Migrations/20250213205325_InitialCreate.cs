@@ -286,6 +286,7 @@ namespace MainService.Sqlite.Migrations
                     IsServiceRecommended = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsSatisfactionSurveyEmailSent = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsSatisfactionSurveyCompleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "INTEGER", nullable: true),
                     Evolution = table.Column<string>(type: "TEXT", nullable: true),
                     NextSteps = table.Column<string>(type: "TEXT", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
@@ -503,29 +504,6 @@ namespace MainService.Sqlite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PaymentMethods",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DisplayName = table.Column<string>(type: "TEXT", nullable: true),
-                    Last4 = table.Column<string>(type: "TEXT", nullable: true),
-                    Brand = table.Column<string>(type: "TEXT", nullable: true),
-                    Country = table.Column<string>(type: "TEXT", nullable: true),
-                    ExpirationMonth = table.Column<int>(type: "INTEGER", nullable: true),
-                    ExpirationYear = table.Column<int>(type: "INTEGER", nullable: true),
-                    StripePaymentMethodId = table.Column<string>(type: "TEXT", nullable: true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1081,6 +1059,44 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentMethods",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CardholderName = table.Column<string>(type: "TEXT", nullable: true),
+                    Funding = table.Column<string>(type: "TEXT", nullable: true),
+                    BillingAddress = table.Column<string>(type: "TEXT", nullable: true),
+                    BillingZipCode = table.Column<string>(type: "TEXT", nullable: true),
+                    BillingCity = table.Column<string>(type: "TEXT", nullable: true),
+                    BillingCountry = table.Column<string>(type: "TEXT", nullable: true),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DisplayName = table.Column<string>(type: "TEXT", nullable: true),
+                    Last4 = table.Column<string>(type: "TEXT", nullable: true),
+                    Brand = table.Column<string>(type: "TEXT", nullable: true),
+                    Country = table.Column<string>(type: "TEXT", nullable: true),
+                    ExpirationMonth = table.Column<int>(type: "INTEGER", nullable: true),
+                    ExpirationYear = table.Column<int>(type: "INTEGER", nullable: true),
+                    StripePaymentMethodId = table.Column<string>(type: "TEXT", nullable: true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentMethods_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserAddresses",
                 columns: table => new
                 {
@@ -1196,36 +1212,6 @@ namespace MainService.Sqlite.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PatientEvent_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Payments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Amount = table.Column<double>(type: "decimal(18,2)", nullable: false),
-                    Currency = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    PaymentStatus = table.Column<string>(type: "TEXT", nullable: false),
-                    StripePaymentIntent = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    StripePaymentId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    StripeInvoiceId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    EventId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Payments_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
@@ -1795,31 +1781,6 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserPaymentMethods",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false),
-                    IsMain = table.Column<bool>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserPaymentMethods", x => new { x.UserId, x.PaymentMethodId });
-                    table.ForeignKey(
-                        name: "FK_UserPaymentMethods_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserPaymentMethods_PaymentMethods_PaymentMethodId",
-                        column: x => x.PaymentMethodId,
-                        principalTable: "PaymentMethods",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DoctorPaymentMethodTypes",
                 columns: table => new
                 {
@@ -1940,7 +1901,7 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClinicLogo",
+                name: "ClinicLogos",
                 columns: table => new
                 {
                     AddressId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -1948,15 +1909,40 @@ namespace MainService.Sqlite.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClinicLogo", x => new { x.AddressId, x.PhotoId });
+                    table.PrimaryKey("PK_ClinicLogos", x => new { x.AddressId, x.PhotoId });
                     table.ForeignKey(
-                        name: "FK_ClinicLogo_Addresses_AddressId",
+                        name: "FK_ClinicLogos_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClinicLogo_Photos_PhotoId",
+                        name: "FK_ClinicLogos_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicPhotos",
+                columns: table => new
+                {
+                    ClinicId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PhotoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsMain = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicPhotos", x => new { x.ClinicId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_ClinicPhotos_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClinicPhotos_Photos_PhotoId",
                         column: x => x.PhotoId,
                         principalTable: "Photos",
                         principalColumn: "Id",
@@ -2815,6 +2801,42 @@ namespace MainService.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Amount = table.Column<double>(type: "decimal(18,2)", nullable: false),
+                    Currency = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    PaymentStatus = table.Column<string>(type: "TEXT", nullable: false),
+                    StripePaymentIntent = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    StripePaymentId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    StripeInvoiceId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Payments_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SubscriptionHistories",
                 columns: table => new
                 {
@@ -2896,14 +2918,14 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClinicLogo_AddressId",
-                table: "ClinicLogo",
+                name: "IX_ClinicLogos_AddressId",
+                table: "ClinicLogos",
                 column: "AddressId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClinicLogo_PhotoId",
-                table: "ClinicLogo",
+                name: "IX_ClinicLogos_PhotoId",
+                table: "ClinicLogos",
                 column: "PhotoId",
                 unique: true);
 
@@ -2911,6 +2933,12 @@ namespace MainService.Sqlite.Migrations
                 name: "IX_ClinicNurses_ClinicId",
                 table: "ClinicNurses",
                 column: "ClinicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicPhotos_PhotoId",
+                table: "ClinicPhotos",
+                column: "PhotoId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompanionOccupations_CompanionId",
@@ -3341,9 +3369,19 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentMethods_UserId",
+                table: "PaymentMethods",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payments_EventId",
                 table: "Payments",
                 column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_PaymentMethodId",
+                table: "Payments",
+                column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionClinic_ClinicId",
@@ -3462,12 +3500,6 @@ namespace MainService.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPaymentMethods_PaymentMethodId",
-                table: "UserPaymentMethods",
-                column: "PaymentMethodId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserPermissions_PermissionId",
                 table: "UserPermissions",
                 column: "PermissionId");
@@ -3532,10 +3564,13 @@ namespace MainService.Sqlite.Migrations
                 name: "CityNeighborhood");
 
             migrationBuilder.DropTable(
-                name: "ClinicLogo");
+                name: "ClinicLogos");
 
             migrationBuilder.DropTable(
                 name: "ClinicNurses");
+
+            migrationBuilder.DropTable(
+                name: "ClinicPhotos");
 
             migrationBuilder.DropTable(
                 name: "CompanionOccupations");
@@ -3727,9 +3762,6 @@ namespace MainService.Sqlite.Migrations
                 name: "UserMedicalRecords");
 
             migrationBuilder.DropTable(
-                name: "UserPaymentMethods");
-
-            migrationBuilder.DropTable(
                 name: "UserPermissions");
 
             migrationBuilder.DropTable(
@@ -3805,6 +3837,9 @@ namespace MainService.Sqlite.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
+                name: "PaymentMethods");
+
+            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
@@ -3839,9 +3874,6 @@ namespace MainService.Sqlite.Migrations
 
             migrationBuilder.DropTable(
                 name: "MedicalRecords");
-
-            migrationBuilder.DropTable(
-                name: "PaymentMethods");
 
             migrationBuilder.DropTable(
                 name: "Permissions");

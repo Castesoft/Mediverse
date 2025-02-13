@@ -15,14 +15,21 @@
     </div>
   </ng-template>
   <ng-template #entityTable let-list="list">
-    <table prescriptionsTable
-           [(mode)]="mode"
-           [(isCompact)]="isCompact"
-           [data]="list"
-           [(key)]="key"
-           [(view)]="view"
-           [(item)]="item"
-           [(params)]="params">
-    </table>
+    @defer(on viewport) {
+      <table prescriptionsTable
+             [(mode)]="mode"
+             [(isCompact)]="isCompact"
+             [data]="list"
+             [(key)]="key"
+             [(view)]="view"
+             [(item)]="item"
+             [(params)]="params">
+      </table>
+    }@loading {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }@placeholder(minimum 1000ms) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
   </ng-template>
 </div>

@@ -19,6 +19,8 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<Product> Products { get; set; }
     public DbSet<DoctorPhone> DoctorPhones { get; set; }
     public DbSet<DoctorLink> DoctorLinks { get; set; }
+    public DbSet<ClinicLogo> ClinicLogos { get; set; }
+    public DbSet<ClinicPhoto> ClinicPhotos { get; set; }
     public DbSet<DoctorClinic> DoctorClinics { get; set; }
     public DbSet<ClinicNurse> ClinicNurses { get; set; }
     public DbSet<Address> Addresses { get; set; }

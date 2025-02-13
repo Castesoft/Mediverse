@@ -28,6 +28,7 @@ namespace MainService.Models.Entities
         public List<OrderPickupAddress> OrderPickupAddresses { get; set; } = [];
         public UserAddress UserAddress { get; set; } = null!;
         public List<PrescriptionClinic> PrescriptionClinics { get; set; } = [];
+        public List<ClinicPhoto> ClinicPhotos { get; set; } = [];
 
         public double GetLatitude() => Latitude ?? 0;
         public double GetLongitude() => Longitude ?? 0;

@@ -2,23 +2,27 @@ using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace MainService.Models.Config;
-public class ClinicLogoConfiguration : IEntityTypeConfiguration<ClinicLogo>
+namespace MainService.Models.Config
 {
-    public void Configure(EntityTypeBuilder<ClinicLogo> builder)
+    public class ClinicPhotoConfiguration : IEntityTypeConfiguration<ClinicPhoto>
     {
-        builder.HasKey(x => new { x.AddressId, x.PhotoId });
+        public void Configure(EntityTypeBuilder<ClinicPhoto> builder)
+        {
+            builder.HasKey(x => new { x.ClinicId, x.PhotoId });
 
-        builder
-            .HasOne(x => x.Photo)
-            .WithOne(x => x.ClinicLogo)
-            .HasForeignKey<ClinicLogo>(x => x.PhotoId)
-            .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .HasOne(x => x.Photo)
+                .WithOne(x => x.ClinicPhoto)
+                .HasForeignKey<ClinicPhoto>(x => x.PhotoId)
+                .OnDelete(DeleteBehavior.Cascade)
+            ;
 
-        builder
-            .HasOne(x => x.Address)
-            .WithOne(x => x.ClinicLogo)
-            .HasForeignKey<ClinicLogo>(x => x.AddressId)
-            .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .HasOne(x => x.Clinic)
+                .WithMany(x => x.ClinicPhotos)
+                .HasForeignKey(x => x.ClinicId)
+                .OnDelete(DeleteBehavior.Cascade)
+            ;
+        }
     }
 }

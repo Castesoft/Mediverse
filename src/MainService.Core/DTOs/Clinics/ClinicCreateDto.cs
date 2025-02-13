@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace MainService.Core.DTOs.Addresses
 {
@@ -45,6 +46,9 @@ namespace MainService.Core.DTOs.Addresses
         // THESE ARE PROPERTIES THAT ARE NOT REQUIRED IN THE DTO FOR THE COORDINATES
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+
+        public int? MainImageIndex { get; set; }
+        public List<IFormFile> Files { get; set; } = [];
     }
 }
 

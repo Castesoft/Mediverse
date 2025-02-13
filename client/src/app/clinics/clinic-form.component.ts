@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ModelSignal, model, effect, inject, InputSignal, input, signal } from '@angular/core';
+import { Component, ModelSignal, model, effect, inject, InputSignal, input, signal, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
 import { ControlsModule } from 'src/app/_forms/controls.module';
@@ -38,7 +38,7 @@ import { ClinicsService } from 'src/app/clinics/clinics.config';
 })
 export class ClinicFormComponent
   extends BaseForm<Clinic, ClinicParams, ClinicFiltersForm, ClinicForm, ClinicsService>
-  implements FormInputSignals<Clinic>
+  implements FormInputSignals<Clinic>, OnInit
 {
   protected readonly SiteSection: typeof SiteSection = SiteSection;
   protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
@@ -94,7 +94,7 @@ export class ClinicFormComponent
     return this.imageHandler.getImages().some((img: Photo) => !!img.url || !!img.file);
   }
 
-override async onSubmit(): Promise<void> {
+  override async onSubmit(): Promise<void> {
     const authorized: boolean = await firstValueFrom(this.confirmService.confirm(confirmActionModal));
     if (!authorized) return;
 

@@ -455,7 +455,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("PhotoId")
                         .IsUnique();
 
-                    b.ToTable("ClinicLogo");
+                    b.ToTable("ClinicLogos");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ClinicNurse", b =>
@@ -471,6 +471,25 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("ClinicId");
 
                     b.ToTable("ClinicNurses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ClinicPhoto", b =>
+                {
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("ClinicId", "PhotoId");
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
+
+                    b.ToTable("ClinicPhotos");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ColorBlindness", b =>
@@ -3532,6 +3551,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Nurse");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ClinicPhoto", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Address", "Clinic")
+                        .WithMany("ClinicPhotos")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Photo", "Photo")
+                        .WithOne("ClinicPhoto")
+                        .HasForeignKey("MainService.Models.Entities.ClinicPhoto", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Photo");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.CompanionOccupation", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Companion", "Companion")
@@ -4883,6 +4921,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("ClinicNurses");
 
+                    b.Navigation("ClinicPhotos");
+
                     b.Navigation("DoctorClinic")
                         .IsRequired();
 
@@ -5218,6 +5258,9 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.Photo", b =>
                 {
                     b.Navigation("ClinicLogo")
+                        .IsRequired();
+
+                    b.Navigation("ClinicPhoto")
                         .IsRequired();
 
                     b.Navigation("DoctorBannerPhoto")

@@ -11,6 +11,7 @@ public class Photo : BaseEntity
     public UserPhoto UserPhoto { get; set; } = null!;
     public DoctorBannerPhoto DoctorBannerPhoto { get; set; } = null!;
     public ClinicLogo ClinicLogo { get; set; } = null!;
+    public ClinicPhoto ClinicPhoto { get; set; } = null!;
     public ProductPhoto ProductPhoto { get; set; } = null!;
     public ServicePhoto ServicePhoto { get; set; } = null!;
     public DoctorSignature DoctorSignature { get; set; } = null!;

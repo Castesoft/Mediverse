@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1902,7 +1902,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClinicLogo",
+                name: "ClinicLogos",
                 columns: table => new
                 {
                     AddressId = table.Column<int>(type: "integer", nullable: false),
@@ -1910,15 +1910,40 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClinicLogo", x => new { x.AddressId, x.PhotoId });
+                    table.PrimaryKey("PK_ClinicLogos", x => new { x.AddressId, x.PhotoId });
                     table.ForeignKey(
-                        name: "FK_ClinicLogo_Addresses_AddressId",
+                        name: "FK_ClinicLogos_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClinicLogo_Photos_PhotoId",
+                        name: "FK_ClinicLogos_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicPhotos",
+                columns: table => new
+                {
+                    ClinicId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicPhotos", x => new { x.ClinicId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_ClinicPhotos_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClinicPhotos_Photos_PhotoId",
                         column: x => x.PhotoId,
                         principalTable: "Photos",
                         principalColumn: "Id",
@@ -2894,14 +2919,14 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClinicLogo_AddressId",
-                table: "ClinicLogo",
+                name: "IX_ClinicLogos_AddressId",
+                table: "ClinicLogos",
                 column: "AddressId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClinicLogo_PhotoId",
-                table: "ClinicLogo",
+                name: "IX_ClinicLogos_PhotoId",
+                table: "ClinicLogos",
                 column: "PhotoId",
                 unique: true);
 
@@ -2909,6 +2934,12 @@ namespace MainService.Postgres.Migrations
                 name: "IX_ClinicNurses_ClinicId",
                 table: "ClinicNurses",
                 column: "ClinicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicPhotos_PhotoId",
+                table: "ClinicPhotos",
+                column: "PhotoId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompanionOccupations_CompanionId",
@@ -3534,10 +3565,13 @@ namespace MainService.Postgres.Migrations
                 name: "CityNeighborhood");
 
             migrationBuilder.DropTable(
-                name: "ClinicLogo");
+                name: "ClinicLogos");
 
             migrationBuilder.DropTable(
                 name: "ClinicNurses");
+
+            migrationBuilder.DropTable(
+                name: "ClinicPhotos");
 
             migrationBuilder.DropTable(
                 name: "CompanionOccupations");
