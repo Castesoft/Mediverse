@@ -1,3 +1,4 @@
+import { addressFormInfo } from 'src/app/_models/addresses/addressConstants';
 import { Column, columnCreatedAt, columnName } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
@@ -32,9 +33,19 @@ export const clinicColumns: Column[] = [
 ];
 
 export const clinicFormInfo: FormInfo<Clinic> = {
-  ...baseInfo,
+  ...addressFormInfo,
 
-  select: { label: 'Clínica', type: 'select' },
+  name: { ...addressFormInfo.name, solid: true, },
+  street: { ...addressFormInfo.street, solid: true, },
+  exteriorNumber: { ...addressFormInfo.exteriorNumber, solid: true, },
+  interiorNumber: { ...addressFormInfo.interiorNumber, solid: true, },
+  neighborhood: { ...addressFormInfo.neighborhood, solid: true, },
+  city: { ...addressFormInfo.city, solid: true, },
+  state: { ...addressFormInfo.state, solid: true, },
+  zipcode: { ...addressFormInfo.zipcode, solid: true, },
+  country: { ...addressFormInfo.country, solid: true, },
+
+
 } as FormInfo<Clinic>;
 
 export const clinicFiltersFormInfo: FormInfo<ClinicParams> = {

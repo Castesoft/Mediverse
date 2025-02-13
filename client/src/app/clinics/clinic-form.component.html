@@ -1,0 +1,170 @@
+@if (form.error !== null) {
+  <div errorsAlert3 [(error)]="form.error"></div>
+}
+
+@if (useCard()) {
+  <div class="row">
+    <div class="col-3">
+      <div class="row gap-6">
+        <!-- <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <h2>
+                  Miniatura
+                </h2>
+              </div>
+            </div>
+            <div class="card-body pt-0">
+              <div
+                imageThumbnailSelector
+                [maxFiles]="10"
+                [maxFileSizeMB]="5"
+                [editable]="use() !== FormUse.DETAIL"
+                [thumbnailSize]="PhotoSize.LARGE"
+                [thumbnailShape]="PhotoShape.SQUARE"
+              ></div>
+              @if (use() !== FormUse.DETAIL) {
+                <div class="text-muted fs-7 text-center mt-6">
+                  Suba imágenes del producto. Formatos aceptados: *.png, *.jpg, *.jpeg.
+                </div>
+              }
+            </div>
+          </div>
+        </div> -->
+
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title w-100 me-0">
+                <div class="d-flex flex-grow justify-content-between w-full align-items-center w-100">
+                  <h2>Estado</h2>
+                  @if (form.controls.isEnabled.value && form.controls.isVisible.value) {
+                    <div class="rounded-circle bg-success w-15px h-15px"></div>
+                  } @else {
+                    <div class="rounded-circle bg-warning w-15px h-15px"></div>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="card-body pt-0">
+              <div class="d-flex flex-column gap-2">
+                <div controlsWrapper3 [control]="form.controls.isEnabled"></div>
+                <div controlsWrapper3 [control]="form.controls.isVisible"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-9">
+      <div class="row gap-6">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <h2>
+                  General
+                </h2>
+              </div>
+            </div>
+            <div class="card-body pt-0">
+              <form [id]="form.id" (ngSubmit)="onSubmit()">
+
+                <div templateControlCheckbox [(control)]="form.controls.isMain" [(fromWrapper)]="fromWrapper"></div>
+
+                <div templateControlText [(control)]="form.controls.name" [(fromWrapper)]="fromWrapper"></div>
+
+                <div templateControlTextarea [(control)]="form.controls.description" [(fromWrapper)]="fromWrapper"></div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <h2>
+                  Dirección
+                </h2>
+              </div>
+            </div>
+            <div class="card-body pt-0">
+              <form [id]="form.id" (ngSubmit)="onSubmit()">
+
+                <div templateControlText [(control)]="form.controls.street" [(fromWrapper)]="fromWrapper"></div>
+
+                <div controlsRow3 [grid]="3">
+                  <div templateControlText [(control)]="form.controls.zipcode" [(fromWrapper)]="fromWrapper"></div>
+                  <div templateControlText [(control)]="form.controls.exteriorNumber" [(fromWrapper)]="fromWrapper"></div>
+                  <div templateControlText [(control)]="form.controls.interiorNumber" [(fromWrapper)]="fromWrapper"></div>
+                </div>
+
+                <div templateControlText [(control)]="form.controls.neighborhood" [(fromWrapper)]="fromWrapper"></div>
+
+                <div controlsRow3 [grid]="2">
+                  <div templateControlText [(control)]="form.controls.city" [(fromWrapper)]="fromWrapper"></div>
+                  <div templateControlText [(control)]="form.controls.state" [(fromWrapper)]="fromWrapper"></div>
+                </div>
+
+                <div controlsRow3 [grid]="3">
+                  <div templateControlText [(control)]="form.controls.country" [(fromWrapper)]="fromWrapper"></div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <h2>Imágenes</h2>
+              </div>
+            </div>
+            <div class="card-body pt-0">
+              <div imageSelector
+                   [maxFiles]="10"
+                   [maxFileSizeMB]="5"
+                   [editable]="use() !== FormUse.DETAIL"
+                   [thumbnailSize]="PhotoSize.LARGE"
+                   [thumbnailShape]="PhotoShape.SQUARE"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        @if (use() !== FormUse.DETAIL) {
+          <div class="col-12">
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-light me-5 text-muted">
+                Cancelar
+              </button>
+              <button type="button" class="btn btn-primary" (click)="onSubmit()">
+                <span class="indicator-label">
+                  Guardar Cambios
+                </span>
+                <span class="indicator-progress">
+                  Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+} @else {
+  <form [id]="form.id" (ngSubmit)="onSubmit()">
+    <div formBuilder3 [controls]="[
+            form.controls.name,
+            form.controls.description,
+      ]"></div>
+    <button class="btn btn-primary" type="submit" [attr.form]="form.id">Enviar</button>
+  </form>
+}
+

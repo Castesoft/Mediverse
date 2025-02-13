@@ -4,10 +4,13 @@ import Clinic from 'src/app/_models/clinics/clinic';
 import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
-  host: { class: 'card card-flush' },
+  host: { class: '' },
   selector: 'div[homeClinicCreateRoute]',
   template: `
-    <div clinicDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div breadcrumbs></div>
+    <div post>
+      <div clinicForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    </div>
   `,
   // templateUrl: './home-clinic-detail-route.component.html',
   standalone: false,

@@ -1,6 +1,7 @@
 import { Addresses } from "src/app/_models/addresses/addressTypes";
 import { Entity } from "src/app/_models/base/entity";
 import { SelectOption } from "src/app/_models/base/selectOption";
+import { Photo } from 'src/app/_models/forms/example/_models/photo';
 
 
 export class Address extends Entity {
@@ -21,6 +22,8 @@ export class Address extends Entity {
   isMain: boolean | null = null;
 
   select: SelectOption | null = null;
+
+  photos: Photo[] = [];
 
   constructor(init?: Partial<Omit<Address, 'address'>>) {
     super();

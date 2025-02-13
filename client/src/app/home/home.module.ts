@@ -73,6 +73,7 @@ import { BreadcrumbsComponent } from "src/app/_shared/components/breadcrumbs.com
 import { OrderFormComponent } from "src/app/orders/order-form.component";
 import { ProductFormComponent } from "src/app/products/product-form.component";
 import { PatientFormComponent } from "src/app/patients/patients.config";
+import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
 
 @NgModule({
   declarations: [
@@ -142,6 +143,7 @@ import { PatientFormComponent } from "src/app/patients/patients.config";
     OrderFormComponent,
     ProductFormComponent,
     PatientFormComponent,
+    ClinicFormComponent,
   ],
   exports: [ HomeComponent ],
 })

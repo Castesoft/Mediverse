@@ -103,7 +103,8 @@ export class ServiceFormComponent
     effect(() => {
       this.form
         .setUse(this.use())
-        .setValidation(this.validation.active());
+        .setValidation(this.validation.active())
+      ;
 
       const value = this.item();
 

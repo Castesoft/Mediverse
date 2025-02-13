@@ -46,6 +46,58 @@ public class AddressMappingProfile : Profile
         CreateMap<UserAddressUpdateDto, Address>();
 
         // Map ClinicCreateDto to Address.
-        CreateMap<ClinicCreateDto, Address>();
+        CreateMap<ClinicCreateDto, Address>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Latitude, opt => opt.Ignore())
+            .ForMember(dest => dest.Longitude, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Notes, opt => opt.Ignore())
+            
+            .ForMember(dest => dest.ClinicLogo, opt => opt.Ignore())
+            .ForMember(dest => dest.DoctorClinic, opt => opt.Ignore())
+            .ForMember(dest => dest.ClinicNurses, opt => opt.Ignore())
+            .ForMember(dest => dest.OrderDeliveryAddresses, opt => opt.Ignore())
+            .ForMember(dest => dest.OrderPickupAddresses, opt => opt.Ignore())
+            .ForMember(dest => dest.UserAddress, opt => opt.Ignore())
+            .ForMember(dest => dest.PrescriptionClinics, opt => opt.Ignore())
+
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.InteriorNumber))
+            .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.ExteriorNumber))
+            .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Neighborhood))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode))
+        ;
+
+        CreateMap<ClinicUpdateDto, Address>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Latitude, opt => opt.Ignore())
+            .ForMember(dest => dest.Longitude, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Notes, opt => opt.Ignore())
+            
+            .ForMember(dest => dest.ClinicLogo, opt => opt.Ignore())
+            .ForMember(dest => dest.DoctorClinic, opt => opt.Ignore())
+            .ForMember(dest => dest.ClinicNurses, opt => opt.Ignore())
+            .ForMember(dest => dest.OrderDeliveryAddresses, opt => opt.Ignore())
+            .ForMember(dest => dest.OrderPickupAddresses, opt => opt.Ignore())
+            .ForMember(dest => dest.UserAddress, opt => opt.Ignore())
+            .ForMember(dest => dest.PrescriptionClinics, opt => opt.Ignore())
+
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.InteriorNumber))
+            .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.ExteriorNumber))
+            .ForMember(dest => dest.Neighborhood, opt => opt.MapFrom(src => src.Neighborhood))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode))
+        ;
     }
 }

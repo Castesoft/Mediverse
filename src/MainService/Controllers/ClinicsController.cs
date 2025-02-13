@@ -13,6 +13,7 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.DTOs.Addresses;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Helpers.Enums;
+using Serilog;
 
 namespace MainService.Controllers;
 
@@ -110,65 +111,109 @@ public class ClinicsController(
     }
 
     [HttpPost]
-    public async Task<ActionResult<ClinicDto?>> CreateClinicAsync([FromBody] ClinicCreateDto request)
+    public async Task<ActionResult<ClinicDto?>> AddAsync([FromForm] ClinicCreateDto request)
     {
-        var doctor = await userManager.Users
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Street)) return BadRequest("La calle es requerida.");
+        if (string.IsNullOrEmpty(request.ExteriorNumber)) return BadRequest("El número exterior es requerido.");
+        if (string.IsNullOrEmpty(request.Neighborhood)) return BadRequest("La colonia es requerida.");
+        if (string.IsNullOrEmpty(request.City)) return BadRequest("La ciudad es requerida.");
+        if (string.IsNullOrEmpty(request.State)) return BadRequest("El estado es requerido.");
+        if (string.IsNullOrEmpty(request.Country)) return BadRequest("El país es requerido.");
+        if (string.IsNullOrEmpty(request.Zipcode)) return BadRequest("El código postal es requerido.");
+        if (!request.IsMain.HasValue) return BadRequest("El rol de la dirección es requerido.");
+        
+        AppUser? doctor = await userManager.Users
             .Include(x => x.DoctorClinics)
             .ThenInclude(x => x.Clinic)
             .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
 
         if (doctor == null) return BadRequest("Error al obtener el doctor.");
 
-        if (request.IsMain)
+        if (request.IsMain.Value)
             foreach (var item in doctor.DoctorClinics)
                 item.IsMain = false;
 
-        var (latitude, longitude) =
-            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
+        Address clinic = mapper.Map<ClinicCreateDto, Address>(request);
 
-        var clinic = mapper.Map<Address>(request);
+        var (latitude, longitude) =
+            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(clinic));
 
         clinic.Longitude = longitude;
         clinic.Latitude = latitude;
 
-        doctor.DoctorClinics.Add(new DoctorClinic(clinic, request.IsMain));
+        doctor.DoctorClinics.Add(new DoctorClinic(clinic, request.IsMain.Value));
 
-        var updateResult = await userManager.UpdateAsync(doctor);
+        IdentityResult updateResult = await userManager.UpdateAsync(doctor);
 
         if (!updateResult.Succeeded) return BadRequest($"Error al agregar la clínica de {doctor.FirstName}.");
 
-        return await uow.ClinicRepository.GetDtoByIdAsync(clinic.Id);
+        ClinicDto? itemToReturn = await uow.ClinicRepository.GetDtoByIdAsync(clinic.Id);
+
+        return itemToReturn;
     }
 
-    [HttpPut]
-    public async Task<ActionResult<ClinicDto?>> UpdateClinicAsync([FromBody] ClinicUpdateDto request)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<ClinicDto?>> UpdateAsync([FromForm] ClinicUpdateDto request, [FromRoute] int id)
     {
-        var doctor = await userManager.Users
+        if (string.IsNullOrEmpty(request.Name)) return BadRequest("El nombre es requerido.");
+        if (string.IsNullOrEmpty(request.Street)) return BadRequest("La calle es requerida.");
+        if (string.IsNullOrEmpty(request.ExteriorNumber)) return BadRequest("El número exterior es requerido.");
+        if (string.IsNullOrEmpty(request.Neighborhood)) return BadRequest("La colonia es requerida.");
+        if (string.IsNullOrEmpty(request.City)) return BadRequest("La ciudad es requerida.");
+        if (string.IsNullOrEmpty(request.State)) return BadRequest("El estado es requerido.");
+        if (string.IsNullOrEmpty(request.Country)) return BadRequest("El país es requerido.");
+        if (string.IsNullOrEmpty(request.Zipcode)) return BadRequest("El código postal es requerido.");
+        if (!request.IsMain.HasValue) return BadRequest("El rol de la dirección es requerido.");
+
+        if (!await uow.AddressRepository.ExistsByIdAsync(id)) return NotFound("La dirección no fue encontrada.");
+        
+        AppUser? doctor = await userManager.Users
             .Include(x => x.DoctorClinics)
             .ThenInclude(x => x.Clinic)
             .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
 
         if (doctor == null) return BadRequest("Error al obtener el doctor.");
 
-        if (request.IsMain)
+        if (!await uow.ClinicRepository.ExistsByIdAndDoctorIdAsync(id, doctor.Id)) return BadRequest("La clínica no pertenece al doctor.");
+
+        if (request.IsMain.Value)
             foreach (var item in doctor.DoctorClinics)
                 item.IsMain = false;
 
-        var (latitude, longitude) =
-            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
+        Address? clinic = await uow.AddressRepository.GetByIdAsync(id);
 
-        var clinic = mapper.Map<Address>(request);
+        if (clinic == null) return BadRequest("Error al obtener la clínica.");
 
-        request.Longitude = longitude;
-        request.Latitude = latitude;
+        if (
+            request.Street != clinic.Street ||
+            request.ExteriorNumber != clinic.ExteriorNumber ||
+            request.Neighborhood != clinic.Neighborhood ||
+            request.City != clinic.City ||
+            request.State != clinic.State ||
+            request.Country != clinic.Country ||
+            request.Zipcode != clinic.Zipcode
+        ) {
+            var (latitude, longitude) =
+                await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(clinic));
 
-        doctor.DoctorClinics.Add(new DoctorClinic(clinic, request.IsMain));
+            clinic.Longitude = longitude;
+            clinic.Latitude = latitude;
 
-        var updateResult = await userManager.UpdateAsync(doctor);
+            Log.Information("Coordinates updated for {clinicName}.", clinic.Name);
+        }
 
-        if (!updateResult.Succeeded) return BadRequest($"Error al agregar la clínica de {doctor.FirstName}.");
+        mapper.Map(request, clinic);
 
-        return await uow.ClinicRepository.GetDtoByIdAsync(clinic.Id);
+        clinic.DoctorClinic.IsMain = request.IsMain.Value;
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest($"Error al actualizar la clínica de {doctor.FirstName}.");
+        }
+
+        ClinicDto? itemToReturn = await uow.ClinicRepository.GetDtoByIdAsync(clinic.Id);
+
+        return itemToReturn;
     }
 
     [AllowAnonymous]

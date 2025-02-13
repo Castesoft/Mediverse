@@ -16,7 +16,8 @@ import { FormInputSignals } from 'src/app/_models/forms/formComponentInterfaces'
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
-import { ClinicFormComponent, ClinicsService } from 'src/app/clinics/clinics.config';
+import { ClinicsService } from 'src/app/clinics/clinics.config';
+import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
 import { EventsService } from 'src/app/events/events.config';
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientFormComponent, PatientsService } from 'src/app/patients/patients.config';

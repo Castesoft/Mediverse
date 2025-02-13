@@ -8,9 +8,10 @@ import { EventParams } from 'src/app/_models/events/eventParams';
 import { CalendarView } from 'src/app/_models/events/eventTypes';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { ClinicsService } from 'src/app/clinics/clinics.config';
 
 @Component({
-  // host: { class: 'card card-flush' },
+  host: { class: '' },
   selector: 'div[homeClinicDetailRoute]',
   // template: `
   //   <div clinicDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
@@ -22,6 +23,8 @@ export class HomeClinicDetailRouteComponent
   extends BaseRouteDetail<Clinic>
 
 {
+  readonly service = inject(ClinicsService);
+
   compact = inject(CompactTableService);
 
   tab = signal<ClinicTabs>('general');
