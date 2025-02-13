@@ -6,10 +6,20 @@ import { EventRoles } from "src/app/_models/events/eventTypes";
 
 export class EventParams extends EntityParams<Event> {
   role: EventRoles | null = null;
-  
+
+  // PatientId retrieves all events where the patient is the patientId
   patientId: number | null = null;
-  serviceId: number | null = null;
+
+  // NurseId retrieves all events where the nurse is the nurseId
   nurseId: number | null = null;
+
+  // DoctorId retrieves all events where the doctor is the doctorId
+  doctorId: number | null = null;
+
+  // UserId retrieves all events where the userId is either the patient, nurse, or doctor
+  userId: number | null = null;
+
+  serviceId: number | null = null;
   clinicId: number | null = null;
 
   patients: SelectOption[] = [];

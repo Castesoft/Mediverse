@@ -9,9 +9,10 @@
   <div class="d-flex flex-column align-middle justify-content-center">
     <a
       [routerLink]="[routerLink]"
-      class="text-gray-800 text-hover-primary mb-1"
-    >{{ user().fullName }}</a
+      class="text-gray-800 text-hover-primary mb-0"
     >
-    <span>{{ user().email }}</span>
+      {{ user().fullName }}
+    </a>
+    <span class="nowrap text-gray-600 fs-7">{{ user().email }}</span>
   </div>
 </div>

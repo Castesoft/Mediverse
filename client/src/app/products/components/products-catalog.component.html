@@ -1,8 +1,10 @@
 <div catalogLayout
      [service]="service"
      [(form)]="form"
+     [(hideAddButton)]="hideAddButton"
      [(mode)]="mode"
      [(key)]="key"
+     [(useCard)]="useCard"
      [(view)]="view"
      [(isCompact)]="isCompact"
      [(filterConfig)]="filterConfig"
@@ -12,10 +14,27 @@
   <ng-template #entityFilterForm>
     <div controlsRow3 [grid]="filterConfig().orientation == 'horizontal' ? 5 : 1">
       <div controlsWrapper3 [(control)]="form().controls.search" [showBottomMargin]="false"></div>
+      <div controlsWrapper3 [(control)]="form().controls.sku" [showBottomMargin]="false"></div>
+      <div controlsWrapper3 [(control)]="form().controls.barcode" [showBottomMargin]="false"></div>
+      <div controlsWrapper3 [(control)]="form().controls.lotNumber" [showBottomMargin]="false"></div>
+      <div controlsWrapper3 [(control)]="form().controls.manufacturer" [showBottomMargin]="false"></div>
+      <div controlsWrapper3 [(control)]="form().controls.price" [showBottomMargin]="false"></div>
+      <div controlsWrapper3 [(control)]="form().controls.category" [showBottomMargin]="false"></div>
     </div>
   </ng-template>
   <ng-template #entityTable let-list="list">
-    <table productsTable
+    @if (tableMode() == ProductTableDisplayMode.Table) {
+      <table productsTable
+             [(mode)]="mode"
+             [(isCompact)]="isCompact"
+             [data]="list"
+             [(key)]="key"
+             [(view)]="view"
+             [(item)]="item"
+             [(params)]="params">
+      </table>
+    } @else if (tableMode() == ProductTableDisplayMode.Grid) {
+      <div productsGrid
            [(mode)]="mode"
            [(isCompact)]="isCompact"
            [data]="list"
@@ -23,6 +42,7 @@
            [(view)]="view"
            [(item)]="item"
            [(params)]="params">
-    </table>
+      </div>
+    }
   </ng-template>
 </div>

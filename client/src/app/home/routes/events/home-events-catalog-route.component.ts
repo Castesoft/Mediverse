@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, signal } from "@angular/core";
+import { Component, effect, inject, OnDestroy, signal, WritableSignal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/baseRouteCatalog";
 import Event from "src/app/_models/events/event";
@@ -11,33 +11,62 @@ import { EventsService } from "src/app/events/events.config";
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientsService } from 'src/app/patients/patients.config';
 import { ServicesService } from 'src/app/services/services.config';
+import { PaymentParams } from "src/app/_models/payments/paymentParams";
+import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { AccountService } from "src/app/_services/account.service";
+import { Account } from "src/app/_models/account/account";
 
 @Component({
   selector: 'div[homeEventsCatalogRoute]',
-  templateUrl: './home-events-catalog-route.component.html',
+  template: `
+    <div breadcrumbs></div>
+    <div post>
+      <div eventsCatalog
+           [(item)]="item"
+           [(isCompact)]="compact.isCompact"
+           [(key)]="key" [(mode)]="mode"
+           [(params)]="params"
+           [(view)]="view"
+           [(calendarView)]="calendarView"
+           [(filtersCollapsed)]="filtersCollapsed"
+      ></div>
+    </div>
+  `,
   standalone: false,
 })
-export class HomeEventsCatalogRouteComponent
-  extends BaseRouteCatalog<Event, EventParams, EventFiltersForm, EventsService>
-  implements OnDestroy {
-  route = inject(ActivatedRoute);
-  padding = inject(PaddingService);
+export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, EventParams, EventFiltersForm, EventsService> implements OnDestroy {
+  private accountService: AccountService = inject(AccountService);
 
-  services = inject(ServicesService);
-  clinics = inject(ClinicsService);
-  nurses = inject(NursesService);
-  patients = inject(PatientsService);
+  route: ActivatedRoute = inject(ActivatedRoute);
+  padding: PaddingService = inject(PaddingService);
 
-  calendarView = signal<CalendarView>('calendar');
-  filtersCollapsed = signal(false);
+  patients: PatientsService = inject(PatientsService);
+  services: ServicesService = inject(ServicesService);
+  clinics: ClinicsService = inject(ClinicsService);
+  nurses: NursesService = inject(NursesService);
 
-  form = new EventFiltersForm();
+  account: Account | null = null;
 
-  fromWrapper = signal(false);
+  calendarView: WritableSignal<CalendarView> = signal<CalendarView>('calendar');
+  filtersCollapsed: WritableSignal<boolean> = signal(false);
+
+  form: EventFiltersForm = new EventFiltersForm();
+
+  fromWrapper: WritableSignal<boolean> = signal(false);
 
   constructor() {
     super(EventsService, 'events');
     this.padding.withPadding.set(false);
+
+    effect(() => {
+      if (this.accountService.current()) {
+        this.account = this.accountService.current();
+        this.params.set(new EventParams(this.key(), {
+          fromSection: SiteSection.HOME,
+          userId: this.account?.id
+        }));
+      }
+    });
   }
 
   ngOnDestroy(): void {

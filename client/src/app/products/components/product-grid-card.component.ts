@@ -1,18 +1,19 @@
-import { Component, input, InputSignal } from "@angular/core";
+import { Component, InputSignal, model } from '@angular/core';
+import { Product } from "src/app/_models/products/product";
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
+import { CurrencyPipe } from "@angular/common";
 
 @Component({
-  host: { class: 'align-middle border-none' },
-  templateUrl: "./symbol-cell.component.html",
-  selector: "[symbolCell]",
-  standalone: true,
+  selector: 'div[productGridCard]',
+  templateUrl: './product-grid-card.component.html',
+  styleUrl: './product-grid-card.component.scss',
+  imports: [ CurrencyPipe ],
 })
-export class SymbolCellComponent {
-  photoUrl: InputSignal<string | null> = input.required();
+export class ProductGridCardComponent {
+  protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
+  protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
 
-  shape: InputSignal<PhotoShape> = input(PhotoShape.CIRCLE as PhotoShape);
-  size: InputSignal<PhotoSize> = input(PhotoSize.SMALL as PhotoSize);
-  showOnline: InputSignal<boolean> = input(false);
+  product: InputSignal<Product> = model.required();
 
   onImageError(event: Event) {
     const imgElement = event.target as HTMLImageElement;

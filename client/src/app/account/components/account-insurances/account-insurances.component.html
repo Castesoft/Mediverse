@@ -2,10 +2,10 @@
   <div class="card mb-5 mb-xl-10">
     <div class="card-header">
       <div class="card-title">
-        <h3>Mis Seguros</h3>
+        <h2>Mis Seguros</h2>
       </div>
     </div>
-    <div class="card-body">
+    <div class="card-body pt-0">
       <div class="row gx-9 gy-6">
         @for (insurance of account()?.medicalInsuranceCompanies; let idx = $index; track idx) {
           <div insuranceCompanyItem [(item)]="account()!.medicalInsuranceCompanies[idx]"

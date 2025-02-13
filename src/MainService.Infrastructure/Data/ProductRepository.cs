@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AngleSharp.Text;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.Extensions;
@@ -137,6 +138,7 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
             .Include(x => x.WarehouseProducts)
             .AsQueryable();
 
+        // Section filtering
         if (!string.IsNullOrEmpty(param.FromSection))
         {
             if (param.FromSection == SiteSection.Admin)
@@ -149,7 +151,6 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
             else
             {
                 query = query.Where(x => x.IsVisible);
-
                 if (param.DoctorId.HasValue)
                     query = query.Where(x => x.DoctorProduct.DoctorId == userId || x.DoctorProduct == null);
             }
@@ -157,27 +158,64 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         else
         {
             query = query.Where(x => x.IsVisible);
-
             if (param.DoctorId.HasValue)
                 query = query.Where(x => x.DoctorProduct.DoctorId == userId || x.DoctorProduct == null);
         }
 
+        // Apply explicit filters regardless of the search term
+
+        // IsInternal filter: if provided, check its value.
+        if (param.IsInternal.HasValue)
+        {
+            // Assuming true means "internal only" (DoctorProduct == null),
+            // and false means "non-internal" (DoctorProduct != null)
+            query = param.IsInternal.Value
+                ? query.Where(x => x.DoctorProduct == null)
+                : query.Where(x => x.DoctorProduct != null);
+        }
+
+        if (!string.IsNullOrEmpty(param.Barcode))
+        {
+            var barcodeTerm = param.Barcode.ToLower();
+            query = query.Where(x => x.Barcode != null && x.Barcode.ToLower().Contains(barcodeTerm));
+        }
+
+        if (!string.IsNullOrEmpty(param.Sku))
+        {
+            var skuTerm = param.Sku.ToLower();
+            query = query.Where(x => x.SKU != null && x.SKU.ToLower().Contains(skuTerm));
+        }
+
+        if (param.Price.HasValue)
+        {
+            query = query.Where(x => x.Price == param.Price);
+        }
+
+        if (!string.IsNullOrEmpty(param.LotNumber))
+        {
+            var lotNumberTerm = param.LotNumber.ToLower();
+            query = query.Where(x => x.LotNumber != null && x.LotNumber.ToLower().Contains(lotNumberTerm));
+        }
+
+        // Now, apply the search term as an additional filter (ANDed with the above)
         if (!string.IsNullOrEmpty(param.Search))
         {
             var term = param.Search.ToLower();
-            query = query.Where(
-                x =>
-                    (!string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term)) ||
-                    (!string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)) ||
-                    (!string.IsNullOrEmpty(x.Unit) && x.Unit.ToLower().Contains(term)) ||
-                    (!string.IsNullOrEmpty(x.Manufacturer) && x.Manufacturer.ToLower().Contains(term)) ||
-                    (!string.IsNullOrEmpty(x.LotNumber) && x.LotNumber.ToLower().Contains(term)) ||
-                    (x.Price.HasValue && x.Price.Value.ToString().ToLower().Contains(term)) ||
-                    (x.Discount.HasValue && x.Discount.Value.ToString().ToLower().Contains(term)) ||
-                    (x.Dosage.HasValue && x.Dosage.Value.ToString().ToLower().Contains(term))
+            query = query.Where(x =>
+                (!string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term)) ||
+                (!string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)) ||
+                (!string.IsNullOrEmpty(x.Unit) && x.Unit.ToLower().Contains(term)) ||
+                (!string.IsNullOrEmpty(x.Manufacturer) && x.Manufacturer.ToLower().Contains(term)) ||
+                (!string.IsNullOrEmpty(x.LotNumber) && x.LotNumber.ToLower().Contains(term)) ||
+                (x.Price.HasValue && x.Price.Value.ToString().ToLower().Contains(term)) ||
+                (x.Discount.HasValue && x.Discount.Value.ToString().ToLower().Contains(term)) ||
+                (x.Dosage.HasValue && x.Dosage.Value.ToString().ToLower().Contains(term)) ||
+                (!string.IsNullOrEmpty(x.SKU) && x.SKU.ToLower().Contains(term)) ||
+                (x.Barcode != null && x.Barcode.ToLower().Contains(term))
             );
         }
 
+        // Sorting logic
         if (!string.IsNullOrEmpty(param.Sort))
         {
             query = param.Sort.ToLower() switch
@@ -221,7 +259,9 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         }
 
         return await PagedList<ProductDto>.CreateAsync(
-            query.AsNoTracking().ProjectTo<ProductDto>(mapper.ConfigurationProvider), param.PageNumber, param.PageSize);
+            query.AsNoTracking().ProjectTo<ProductDto>(mapper.ConfigurationProvider),
+            param.PageNumber,
+            param.PageSize);
     }
 
 

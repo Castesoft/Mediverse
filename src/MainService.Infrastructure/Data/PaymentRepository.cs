@@ -44,6 +44,11 @@ public class PaymentRepository(DataContext context, IMapper mapper) : IPaymentRe
             query = query.Where(x => x.Event.DoctorEvent.DoctorId == param.DoctorId);
         }
 
+        if (param.UserId.HasValue)
+        {
+            query = query.Where(x => x.Event.PatientEvent.PatientId == param.UserId);
+        }
+
         if (param.EventId.HasValue)
         {
             query = query.Where(x => x.EventId == param.EventId);

@@ -1,29 +1,40 @@
-import { Component, inject } from '@angular/core';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterModule, ActivatedRoute, Data } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { Account } from "src/app/_models/account/account";
 import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { AccountService } from 'src/app/_services/account.service';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { AddPaymentMethodComponent } from './add-payment-method/add-payment-method.component';
+import {
+  PaymentMethodDisplayCardComponent
+} from "src/app/account/components/account-billing/components/payment-method-display-card.component";
+import {
+  BillingAddressDisplayCardComponent
+} from "src/app/account/components/account-billing/components/billing-address-display-card.component";
 
 @Component({
   selector: 'app-account-billing',
-  standalone: true,
-  imports: [TemplateModule, RouterModule],
   templateUrl: './account-billing.component.html',
-  styleUrl: './account-billing.component.scss'
+  styleUrl: './account-billing.component.scss',
+  standalone: true,
+  imports: [
+    TemplateModule,
+    RouterModule,
+    PaymentMethodDisplayCardComponent,
+    BillingAddressDisplayCardComponent
+  ],
 })
-export class AccountBillingComponent {
-  private bsModalService = inject(BsModalService);
-  accountService = inject(AccountService);
-  route = inject(ActivatedRoute);
+export class AccountBillingComponent implements OnInit {
+  private bsModalService: BsModalService = inject(BsModalService);
+  accountService: AccountService = inject(AccountService);
+  route: ActivatedRoute = inject(ActivatedRoute);
   account: Account | null = null;
   billingDetails: BillingDetails | null = null;
 
   ngOnInit(): void {
     this.route.data.subscribe({
-      next: data => {
+      next: (data: Data) => {
         this.account = data['item'];
       }
     })
@@ -32,10 +43,8 @@ export class AccountBillingComponent {
   }
 
   openAddPaymentMethodModal() {
-    const addPaymentMethodModalRef = this.bsModalService.show(AddPaymentMethodComponent, {
-      initialState: {
-        title: 'Añadir método de pago',
-      },
+    this.bsModalService.show(AddPaymentMethodComponent, {
+      initialState: { title: 'Añadir método de pago', },
     });
   }
 

@@ -1,0 +1,43 @@
+<div
+  class="card border-gray-200 h-xl-100 flex-row flex-stack flex-wrap p-6"
+>
+  <div class="d-flex flex-column">
+    <div class="d-flex align-items-center fs-4 fw-bold mb-2">
+      Dirección {{ index() + 1 }}
+      @if (address().isBilling) {
+        <span class="badge badge-light-success fs-7 ms-2">Facturación</span>
+      }
+    </div>
+    <div class="fs-6 fw-semibold text-gray-600">
+      {{ address().street }} {{ address().exteriorNumber }}, {{ address().neighborhood }}
+      <br/>
+      {{ address().zipcode }} {{ address().city }}
+      <br/>
+      {{ address().state }}, {{ address().country ?? 'México' }}
+    </div>
+  </div>
+  <div class="d-flex align-items-center">
+    <button
+      class="btn btn-sm btn-light btn-active-light-primary me-3"
+      data-kt-billing-action="address-delete"
+      [disabled]="address().isBilling"
+      (click)="onAddressDeleted.emit(address().id!)"
+    >
+      <span class="indicator-label">Eliminar</span>
+      <span class="indicator-progress"
+      >Please wait...
+        <span
+          class="spinner-border spinner-border-sm align-middle ms-2"
+        ></span
+        ></span>
+    </button>
+    <button
+      class="btn btn-sm btn-light btn-active-light-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#kt_modal_new_address"
+      (click)="onAddressEditClicked.emit(address())"
+    >
+      Editar
+    </button>
+  </div>
+</div>

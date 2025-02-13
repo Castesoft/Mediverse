@@ -39,12 +39,22 @@
       }
 
       <td timePeriodCell [from]="item.dateFrom" [to]="item.dateTo" [showDate]="true" [allDay]="item.allDay"></td>
+
       <td userCell [user]="item.patient" [role]="'Patient'"></td>
+
       @if (showDoctorColumn()) {
         <td userCell [user]="item.doctor" [role]="'Doctor'"></td>
       }
-      <td>{{ item.service.name }}</td>
-      <td>{{ item.clinic?.name }}</td>
+
+      <td
+        class="nowrap"
+        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;"
+        [title]="item.service.name || ''"
+      >
+        {{ item.service.name }}
+      </td>
+
+      <td addressTableCell [address]="item.clinic || null"></td>
 
       @for (cell of row().getItems([ 'evolution', 'nextSteps', 'nursesCount', 'createdAt', ]); let idx = $index; track idx) {
         <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact"

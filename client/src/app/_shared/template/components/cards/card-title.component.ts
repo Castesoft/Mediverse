@@ -1,14 +1,11 @@
-import { Component, input } from "@angular/core";
-
-
-// card title
+import { Component, input, InputSignal } from "@angular/core";
 
 @Component({
   host: { class: 'card-title m-0', },
   selector: 'div[cardTitle]',
-  template: `{{title()}}`,
+  template: `<h3>{{ title() }}</h3>`,
   standalone: true,
 })
 export class CardTitleComponent {
-  title = input.required<string>();
+  title: InputSignal<string> = input.required<string>();
 }

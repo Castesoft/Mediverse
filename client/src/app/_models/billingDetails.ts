@@ -1,9 +1,10 @@
 import { Entity } from "src/app/_models/base/entity";
 import { FormInfo } from "src/app/_models/forms/formTypes";
+import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 
 export class BillingDetails {
   userAddresses: UserAddress[] = [];
-  userPaymentMethods: UserPaymentMethod[] = [];
+  userPaymentMethods: PaymentMethod[] = [];
 
   constructor(init?: Partial<BillingDetails>) {
     Object.assign(this, init);
@@ -39,28 +40,13 @@ export class ZipcodeAddressOption {
   }
 }
 
-export class UserPaymentMethod {
-  isMain: boolean | null = false;
-  displayName: string | null = null;
-  last4: string | null = null;
-  brand: string | null = null;
-  country: string | null = null;
-  expirationMonth: number | null = null;
-  expirationYear: number | null = null;
-  stripePaymentMethodId: string | null = null;
-
-  constructor(init?: Partial<UserPaymentMethod>) {
-    Object.assign(this, init);
-  }
-}
-
-export const userPaymentMethodInfo: FormInfo<UserPaymentMethod> = {
+export const userPaymentMethodInfo: FormInfo<PaymentMethod> = {
   brand: { label: 'Marca', type: 'text', },
   country: { label: 'País', type: 'text', },
   displayName: { label: 'Nombre', type: 'text', },
   expirationMonth: { label: 'Mes de expiración', type: 'number', },
   expirationYear: { label: 'Año de expiración', type: 'number', },
-  isMain: { label: 'Principal', type: 'checkbox', },
+  isDefault: { label: 'Principal', type: 'checkbox', },
   last4: { label: 'Últimos 4 dígitos', type: 'text', },
   stripePaymentMethodId: { label: 'ID de método de pago de Stripe', type: 'text', },
-} as FormInfo<UserPaymentMethod>;
+} as FormInfo<PaymentMethod>;

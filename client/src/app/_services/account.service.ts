@@ -18,7 +18,8 @@ import {
   UserMedicalInsuranceCompany
 } from 'src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany';
 import { SnackbarService } from 'src/app/_services/snackbar.service';
-import { BillingDetails, UserAddress, UserPaymentMethod } from 'src/app/_models/billingDetails';
+import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
+import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 
 
 @Injectable({
@@ -187,13 +188,13 @@ export class AccountService {
   }
 
   addPaymentMethod(value: any) {
-    return this.http.post<UserPaymentMethod>(`${this.baseUrl}payment-method`, value).pipe(
+    return this.http.post<PaymentMethod>(`${this.baseUrl}payment-method`, value).pipe(
       map(newPaymentMehod => {
         this.snackbarService.success('Método de pago añadido correctamente');
-        if (newPaymentMehod.isMain) {
+        if (newPaymentMehod.isDefault) {
           const paymentMethods = this.billingDetails()?.userPaymentMethods || [];
-          paymentMethods.forEach(pm => pm.isMain = false);
-          paymentMethods.push(newPaymentMehod as UserPaymentMethod);
+          paymentMethods.forEach(pm => pm.isDefault = false);
+          paymentMethods.push(newPaymentMehod as PaymentMethod);
           this.billingDetails.set({
             userAddresses: this.billingDetails()?.userAddresses || [],
             userPaymentMethods: paymentMethods
@@ -201,7 +202,7 @@ export class AccountService {
         } else {
           this.billingDetails.set({
             userAddresses: this.billingDetails()?.userAddresses || [],
-            userPaymentMethods: [ ...this.billingDetails()?.userPaymentMethods || [], newPaymentMehod as UserPaymentMethod ]
+            userPaymentMethods: [ ...this.billingDetails()?.userPaymentMethods || [], newPaymentMehod as PaymentMethod ]
           });
         }
       }),
@@ -229,10 +230,10 @@ export class AccountService {
       tap(() => {
         this.snackbarService.success('Método de pago principal actualizado correctamente');
         const paymentMethods = this.billingDetails()?.userPaymentMethods || [];
-        paymentMethods.forEach(pm => pm.isMain = pm.stripePaymentMethodId === id);
+        paymentMethods.forEach(pm => pm.isDefault = pm.stripePaymentMethodId === id);
         this.billingDetails.set({
           userAddresses: this.billingDetails()?.userAddresses || [],
-          userPaymentMethods: paymentMethods.sort((a, b) => a.isMain ? -1 : 1)
+          userPaymentMethods: paymentMethods.sort((a, b) => a.isDefault ? -1 : 1)
         });
       })
     );
