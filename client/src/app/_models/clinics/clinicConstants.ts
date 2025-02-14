@@ -1,11 +1,11 @@
 import { addressFormInfo } from 'src/app/_models/addresses/addressConstants';
-import { Column, columnCreatedAt, columnName } from "src/app/_models/base/column";
-import { baseInfo } from "src/app/_models/base/entity";
+import { Column, columnName } from "src/app/_models/base/column";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import Clinic from "src/app/_models/clinics/clinic";
 import ClinicParams from "src/app/_models/clinics/clinicParams";
 import { FormInfo } from "src/app/_models/forms/formTypes";
+import { ColumnOptions } from 'src/app/_models/forms/options/columnOptions';
 import {
   PartialCellsOf,
   tableCellCreatedAt,
@@ -27,6 +27,7 @@ export const clinicDictionary: NamingSubject = new NamingSubject(
 );
 
 export const clinicColumns: Column[] = [
+  new Column('image', 'Imagen', { options: new ColumnOptions({ justify: 'start', }) }),
   columnName,
   new Column('address', 'Dirección'),
   new Column('zipcode', 'Código postal'),

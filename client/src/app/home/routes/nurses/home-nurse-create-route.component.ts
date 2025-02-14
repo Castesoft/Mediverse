@@ -4,10 +4,13 @@ import Nurse from 'src/app/_models/nurses/nurse';
 import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
-  host: { class: 'card card-flush' },
+  host: { class: '' },
   selector: 'div[homeNurseCreateRoute]',
   template: `
-    <div nurseDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div breadcrumbs></div>
+    <div post>
+      <div nurseForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    </div>
   `,
   // templateUrl: './home-nurse-detail-route.component.html',
   standalone: false,

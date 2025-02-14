@@ -1,10 +1,8 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   inject,
   ModelSignal,
   model,
-  effect,
   Injectable,
   OnInit,
   OnDestroy,
@@ -12,20 +10,17 @@ import {
   OutputEmitterRef
 } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { RouterModule } from '@angular/router';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import BaseDetail from 'src/app/_models/base/components/extensions/baseDetail';
-import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
 import CatalogDialog from 'src/app/_models/base/components/types/catalogDialog';
 import DetailDialog from 'src/app/_models/base/components/types/detailDialog';
 import { View, CatalogMode } from 'src/app/_models/base/types';
-import { DetailInputSignals, FormInputSignals } from 'src/app/_models/forms/formComponentInterfaces';
+import { DetailInputSignals } from 'src/app/_models/forms/formComponentInterfaces';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import Nurse from 'src/app/_models/nurses/nurse';
 import { nurseDictionary, nurseColumns } from 'src/app/_models/nurses/nurseConstants';
 import { NurseFiltersForm } from 'src/app/_models/nurses/nurseFiltersForm';
-import { NurseForm } from 'src/app/_models/nurses/nurseForm';
 import { NurseParams } from 'src/app/_models/nurses/nurseParams';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
@@ -33,6 +28,7 @@ import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 import { ServiceHelper } from 'src/app/_utils/serviceHelper/serviceHelper';
 import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog.component';
 import { Subject } from "rxjs";
+import { NurseFormComponent } from 'src/app/nurses/nurse-form.component';
 
 @Component({
   selector: 'nurses-catalog-modal',
@@ -96,37 +92,6 @@ export class NursesCatalogModalComponent implements OnInit, OnDestroy {
     this.nurses.multipleSelected$(this.data.key).subscribe({
       next: (selectedNurses: Nurse[]): number => this.selectedNurseCount = selectedNurses.length
     })
-  }
-}
-
-@Component({
-  selector: "[nurseForm]",
-  templateUrl: './nurse-form.component.html',
-  standalone: true,
-  imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, ]
-})
-export class NurseFormComponent
-  extends BaseForm<Nurse, NurseParams, NurseFiltersForm, NurseForm, NursesService>
-  implements FormInputSignals<Nurse> {
-  item: ModelSignal<Nurse | null> = model.required();
-  use: ModelSignal<FormUse> = model.required();
-  view: ModelSignal<View> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(NursesService, NurseForm);
-
-    effect(() => {
-      this.form
-        .setUse(this.use())
-        .setValidation(this.validation.active());
-
-      const value = this.item();
-
-      if (value !== null) {
-        this.form.patchValue(value);
-      }
-    });
   }
 }
 
