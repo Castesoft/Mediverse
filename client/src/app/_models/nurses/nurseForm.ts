@@ -6,4 +6,9 @@ export class NurseForm extends FormGroup2<Nurse> {
   constructor() {
     super(Nurse, new Nurse(), nurseFormInfo);
   }
+
+  get payload(): any {
+    return this.value;
+  }
+
 }

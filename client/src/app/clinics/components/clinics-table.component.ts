@@ -18,6 +18,8 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
 import {
   AddressTableCellComponent
 } from "src/app/_shared/template/components/tables/cells/address-table-cell.component";
+import { SymbolCellComponent } from 'src/app/_shared/template/components/tables/cells/symbol-cell.component';
+import { PhotoShape } from 'src/app/_models/photos/photoTypes';
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -34,6 +36,7 @@ import {
     CommonModule,
     TableMenuComponent,
     AddressTableCellComponent,
+    SymbolCellComponent,
   ],
 })
 export class ClinicsTableComponent extends BaseTable<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService> implements OnDestroy, TableInputSignals<Clinic, ClinicParams> {
@@ -44,6 +47,8 @@ export class ClinicsTableComponent extends BaseTable<Clinic, ClinicParams, Clini
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<ClinicParams> = model.required();
   data: ModelSignal<Clinic[]> = model.required();
+
+  protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
 
   constructor() {
     super(ClinicsService, Clinic, { tableCells: clinicCells, });

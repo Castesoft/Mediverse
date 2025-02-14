@@ -6,6 +6,7 @@ import {
   UserMedicalInsuranceCompany
 } from "src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
 import { MedicalRecord } from "src/app/_models/medicalRecords/medicalRecord";
+import { Photo } from 'src/app/_models/forms/example/_models/photo';
 
 
 export class User extends Entity {
@@ -21,9 +22,12 @@ export class User extends Entity {
   hasAccount: boolean = false;
   age: number | null = null;
   sex: SelectOption | null = null;
-  photoUrl: string | null = null;
   dateOfBirth: Date | null = null;
   recommendedBy: string | null = null;
+
+  photos: Photo[] = [];
+
+  photoUrl: string | null = null;
 
   taxId: string | null = null;
 

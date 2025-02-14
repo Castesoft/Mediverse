@@ -29,6 +29,7 @@ import { HomeNursesCatalogRouteComponent } from 'src/app/home/routes/nurses/home
 import { HomeNurseDetailRouteComponent } from 'src/app/home/routes/nurses/home-nurse-detail-route.component';
 import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog.component';
 import { NurseDetailComponent } from 'src/app/nurses/nurses.config';
+import { NurseFormComponent } from '../nurses/nurse-form.component';
 import { HomePatientCreateRouteComponent } from 'src/app/home/routes/patients/home-patient-create-route.component';
 import { HomeEventEditRouteComponent } from 'src/app/home/routes/events/home-event-edit-route.component';
 import { HomePatientEditRouteComponent } from 'src/app/home/routes/patients/home-patient-edit-route.component';
@@ -144,6 +145,7 @@ import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
     ProductFormComponent,
     PatientFormComponent,
     ClinicFormComponent,
+    NurseFormComponent,
   ],
   exports: [ HomeComponent ],
 })
