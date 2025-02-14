@@ -1,108 +1,112 @@
 <div card id="account_settings_connected_accounts" (mouseenter)="selectSection('account_settings_connected_accounts')">
-    <div cardHeader>
-      <div cardTitle [title]="'Cuentas conectadas'"></div>
-    </div>
-    <div cardBody>
-      <div class="py-2">
-        <div class="d-flex flex-stack">
-          <div class="d-flex align-items-center">
-            <img
-              src="media\icons\duotune\communication\com002.svg"
-              class="w-30px me-6"
-              alt=""
-            />
-            <div class="d-flex flex-column">
-              <a
-                class="fs-5 text-gray-900 text-hover-primary fw-bold"
-                >Correo/Contraseña</a
-              >
-            </div>
-          </div>
-          <div class="d-flex justify-content-end">
-            @if (accountService.current()?.linkedEmail) {
-              <button type="button" class="btn btn-light btn-active-light-primary me-2" [disabled]="true">Vinculada</button>
-            } @else {
-              <button type="button" class="btn btn-light btn-active-light-primary me-2" (click)="toggleSetPasswordForm()">Vincular</button>
-            }
+  <div cardHeader>
+    <div cardTitle [title]="'Cuentas conectadas'"></div>
+  </div>
+  <div class="card-body border-top">
+    <div class="py-2">
+      <div class="d-flex flex-stack">
+        <div class="d-flex align-items-center">
+          <img
+            src="media\icons\duotune\communication\com002.svg"
+            class="w-30px me-6"
+            alt=""
+          />
+          <div class="d-flex flex-column">
+            <a
+              class="fs-5 text-gray-900 text-hover-primary fw-bold"
+            >Correo/Contraseña</a
+            >
           </div>
         </div>
-        <div class="flex-row-fluid d-none mt-3" [class.d-none]="hideSetPasswordForm">
-          <form
-            class="form fv-plugins-bootstrap5 fv-plugins-framework"
-            novalidate="novalidate"
-            [formGroup]="setPasswordForm"
-            (ngSubmit)="linkEmail()"
-          >
-            <div class="row mb-6">
-              <div class="col-lg-6">
-                <div
-                  class="fv-row fv-plugins-icon-container"
-                  inputControl
-                  formControlName="password"
-                  type="password"
-                  [label]="'Contraseña'"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                  [errors]="{
+        <div class="d-flex justify-content-end">
+          @if (accountService.current()?.linkedEmail) {
+            <button type="button" class="btn btn-light btn-active-light-primary me-2" [disabled]="true">Vinculada
+            </button>
+          } @else {
+            <button type="button" class="btn btn-light btn-active-light-primary me-2" (click)="toggleSetPasswordForm()">
+              Vincular
+            </button>
+          }
+        </div>
+      </div>
+      <div class="flex-row-fluid d-none mt-3" [class.d-none]="hideSetPasswordForm">
+        <form
+          class="form fv-plugins-bootstrap5 fv-plugins-framework"
+          novalidate="novalidate"
+          [formGroup]="setPasswordForm"
+          (ngSubmit)="linkEmail()"
+        >
+          <div class="row mb-6">
+            <div class="col-lg-6">
+              <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="password"
+                type="password"
+                [label]="'Contraseña'"
+                [placeholder]="''"
+                [submitted]="submitted"
+                [errors]="{
                       required: 'La contraseña es requerida.'
                   }"
-                ></div>
-              </div>
-              <div class="col-lg-6">
-                <div
-                  class="fv-row fv-plugins-icon-container"
-                  inputControl
-                  formControlName="confirmPassword"
-                  type="password"
-                  [label]="'Confirmar Contraseña'"
-                  [placeholder]="''"
-                  [submitted]="submitted"
-                  [errors]="{
+              ></div>
+            </div>
+            <div class="col-lg-6">
+              <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="confirmPassword"
+                type="password"
+                [label]="'Confirmar Contraseña'"
+                [placeholder]="''"
+                [submitted]="submitted"
+                [errors]="{
                       required: 'Confirma la contraseña.'
                   }"
-                ></div>
-              </div>
+              ></div>
             </div>
-            <div class="d-flex">
-              <button
-                type="submit"
-                class="btn btn-primary me-2 px-6"
-              >
-                Guardar Contraseña
-              </button>
-              <button
-                type="button"
-                class="btn btn-color-gray-500 btn-active-light-primary px-6"
-                (click)="toggleSetPasswordForm()"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
+          </div>
+          <div class="d-flex">
+            <button
+              type="submit"
+              class="btn btn-primary me-2 px-6"
+            >
+              Guardar Contraseña
+            </button>
+            <button
+              type="button"
+              class="btn btn-color-gray-500 btn-active-light-primary px-6"
+              (click)="toggleSetPasswordForm()"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="separator separator-dashed my-5"></div>
+      <div class="d-flex flex-stack">
+        <div class="d-flex align-items-center">
+          <img
+            src="media/svg/brand-logos/google-icon.svg"
+            class="w-30px me-6"
+            alt=""
+          />
+          <div class="d-flex flex-column">
+            <a
+              class="fs-5 text-gray-900 text-hover-primary fw-bold"
+            >Google</a
+            >
+          </div>
         </div>
-        <div class="separator separator-dashed my-5"></div>
-        <div class="d-flex flex-stack">
-          <div class="d-flex align-items-center">
-            <img
-              src="media/svg/brand-logos/google-icon.svg"
-              class="w-30px me-6"
-              alt=""
-            />
-            <div class="d-flex flex-column">
-              <a
-                class="fs-5 text-gray-900 text-hover-primary fw-bold"
-                >Google</a
-              >
-            </div>
-          </div>
-          <div class="d-flex justify-content-end">
-            @if (accountService.current()?.linkedGoogle) {
-              <button type="button" class="btn btn-light btn-active-light-primary me-2" [disabled]="true">Vinculada</button>
-            } @else {
-              <div id="google-btn-link"></div>
-            }
-          </div>
+        <div class="d-flex justify-content-end">
+          @if (accountService.current()?.linkedGoogle) {
+            <button type="button" class="btn btn-light btn-active-light-primary me-2" [disabled]="true">Vinculada
+            </button>
+          } @else {
+            <div id="google-btn-link"></div>
+          }
         </div>
       </div>
     </div>
   </div>
+</div>

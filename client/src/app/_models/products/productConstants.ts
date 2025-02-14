@@ -44,6 +44,12 @@ export const productFormInfo: FormInfo<Product> = {
 
 export const productFiltersFormInfo: FormInfo<ProductParams> = {
   ...baseFilterFormInfo,
+  sku: { label: 'SKU', type: 'text' },
+  barcode: { label: 'Código de barras', type: 'text' },
+  manufacturer: { label: 'Fabricante', type: 'multiselect' },
+  price: { label: 'Precio', type: 'number' },
+  category: { label: 'Categoría', type: 'multiselect' },
+  lotNumber: {label: 'Número de lote', type: 'text'},
 } as FormInfo<ProductParams>;
 
 export const productDictionary: NamingSubject = new NamingSubject(

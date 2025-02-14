@@ -10,14 +10,18 @@ import { ControlsRow3Component } from "src/app/_forms2/builder/controls-row-3.co
 import { ControlsWrapper3Component } from "src/app/_forms2/builder/controls-wrapper-3.component";
 import { FormsModule } from "@angular/forms";
 import { FilterConfiguration } from "../../_models/base/filter-types";
+import { ProductTableDisplayMode } from "src/app/_models/products/productTableDisplayMode";
+import { ProductsGridComponent } from "src/app/products/components/products-grid.component";
 
 @Component({
   selector: '[productsCatalog]',
   templateUrl: './products-catalog.component.html',
-  imports: [ ProductsTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule ],
+  imports: [ ProductsTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule, ProductsGridComponent ],
   standalone: true,
 })
 export class ProductsCatalogComponent {
+  protected readonly ProductTableDisplayMode: typeof ProductTableDisplayMode = ProductTableDisplayMode;
+
   item: ModelSignal<Product | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -25,7 +29,10 @@ export class ProductsCatalogComponent {
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<ProductParams> = model.required();
   filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration());
+  tableMode: ModelSignal<ProductTableDisplayMode> = model(ProductTableDisplayMode.Table as ProductTableDisplayMode);
+  hideAddButton: ModelSignal<boolean> = model(false);
+  useCard: ModelSignal<boolean> = model(true);
 
   service: ProductsService = inject(ProductsService);
-  form = model(new ProductFiltersForm());
+  form: ModelSignal<ProductFiltersForm> = model(new ProductFiltersForm());
 }

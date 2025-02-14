@@ -27,7 +27,6 @@ import { authGuard } from 'src/app/_guards/auth.guard';
 import {
   UseOfCookiesModalComponent
 } from 'src/app/auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
-import { Account } from "src/app/_models/account/account";
 
 @Component({
   selector: 'app-root',
@@ -149,7 +148,7 @@ export const appConfig: ApplicationConfig = {
           },
           {
             path: 'cuenta',
-            loadChildren: () => import('./account/account.component').then(m => m.AccountModule)
+            loadChildren: () => import('./account/account.module').then(m => m.AccountModule)
           },
           {
             path: 'inicio',

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ModelSignal, model, OnDestroy, effect, input } from "@angular/core";
+import { Component, ModelSignal, model, OnDestroy, effect, input, InputSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -18,6 +18,10 @@ import { UserTableCellComponent } from "src/app/users/components/user-table-cell
 import { TimePeriodCellComponent } from "src/app/_shared/template/components/tables/cells/time-period-cell.component";
 import { Column } from "src/app/_models/base/column";
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
+import {
+  AddressTableCellComponent
+} from "src/app/_shared/template/components/tables/cells/address-table-cell.component";
+import { PopoverDirective } from "ngx-bootstrap/popover";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -35,12 +39,11 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     UserTableCellComponent,
     TimePeriodCellComponent,
     TableMenuComponent,
+    AddressTableCellComponent,
+    PopoverDirective,
   ],
 })
-export class EventsTableComponent
-  extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
-  implements OnDestroy, TableInputSignals<Event, EventParams>
-{
+export class EventsTableComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements OnDestroy, TableInputSignals<Event, EventParams> {
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -49,8 +52,8 @@ export class EventsTableComponent
   params: ModelSignal<EventParams> = model.required();
   data: ModelSignal<Event[]> = model.required();
 
-  showHeaders = input<boolean>(true);
-  showDoctorColumn = input<boolean>(false);
+  showHeaders: InputSignal<boolean> = input<boolean>(true);
+  showDoctorColumn: InputSignal<boolean> = input<boolean>(false);
 
   columns: Column[] = [];
 
@@ -65,7 +68,7 @@ export class EventsTableComponent
       if (this.showDoctorColumn()) {
         this.service.columns = this.columns;
       } else {
-        this.service.columns = this.columns.filter(column => column.name !== 'doctor');
+        this.service.columns = this.columns.filter((column: Column) => column.name !== 'doctor');
       }
     })
   }

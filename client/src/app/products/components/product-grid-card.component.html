@@ -1,0 +1,48 @@
+<div class="card product-card h-100">
+  <img
+    class="card-img-top square-img"
+    (error)="onImageError($event)"
+    [src]="product().photoUrl || 'media/misc/not-found.png'"
+    alt="Product image"/>
+
+  <div class="card-body px-6 pb-4 pt-6">
+    <div class="d-flex justify-content-between">
+      <h5 class="card-title m-0" [title]="product().name">
+        {{ product().name }}
+      </h5>
+      <div>
+        <small class="dosage text-muted">
+          {{ product().dosage }}
+        </small>
+        <span class="unit text-muted">
+          {{ product().unit }}
+        </span>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between">
+      <small class="manufacturer text-muted">
+        {{ product().manufacturer }}
+      </small>
+
+      <small class="sku text-muted">
+        {{ product().sku }}
+      </small>
+    </div>
+
+    <p class="card-text text-truncate" [title]="product().description">
+      {{ product().description }}
+    </p>
+
+
+    <div class="product-details mt-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="price fw-bold text-primary fs-4">
+          {{ product().price | currency }}
+        </span>
+        <a href="" class="btn btn-sm explore-btn-secondary">
+          Ver Producto
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

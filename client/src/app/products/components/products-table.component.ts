@@ -36,10 +36,9 @@ import { FormUse } from 'src/app/_models/forms/formTypes';
     SymbolCellComponent,
   ],
 })
-export class ProductsTableComponent
-  extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService>
-  implements OnDestroy, TableInputSignals<Product, ProductParams>
-{
+export class ProductsTableComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements OnDestroy, TableInputSignals<Product, ProductParams> {
+  protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
+
   item: ModelSignal<Product | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -64,11 +63,9 @@ export class ProductsTableComponent
     formData.append('isEnabled', item.isEnabled.toString());
     formData.append('isVisible', item.isVisible.toString());
 
-    const productId = item.id;
+    if (item.id === null) throw new Error('Product ID is null');
 
-    if (productId === null) throw new Error('Product ID is null');
-
-    this.service.update({} as any, this.view(), { use: FormUse.EDIT, value: formData, id: productId, }).subscribe({
+    this.service.update({} as any, this.view(), { use: FormUse.EDIT, value: formData, id: item.id, }).subscribe({
       error: (error) => {
         this.toastr.error(error.message);
       }
@@ -84,6 +81,4 @@ export class ProductsTableComponent
     item.isVisible = checked;
     this.updateProduct(item);
   }
-
-  protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
 }

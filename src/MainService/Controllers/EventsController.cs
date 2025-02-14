@@ -30,9 +30,7 @@ public class EventsController(
     [HttpGet]
     public async Task<ActionResult<PagedList<EventDto>>> GetPagedListAsync([FromQuery] EventParams param)
     {
-        param.DoctorId = User.GetUserId();
-
-        if (param.IsCalendarView.HasValue && param.IsCalendarView.Value == true)
+        if (param.IsCalendarView.HasValue && param.IsCalendarView.Value)
         {
             var list = await uow.EventRepository.GetAllDtoAsync(param);
             return Ok(list);
@@ -40,21 +38,15 @@ public class EventsController(
 
         var pagedList = await uow.EventRepository.GetPagedListAsync(param);
 
-        if (pagedList == null) return NotFound($"{SubjectArticle} {Subject} no fue encontrada.");
-
-        Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
-            pagedList.TotalCount, pagedList.TotalPages));
+        Response.AddPaginationHeader(new PaginationHeader(
+            pagedList.CurrentPage,
+            pagedList.PageSize,
+            pagedList.TotalCount,
+            pagedList.TotalPages
+        ));
 
         return pagedList;
     }
-
-    // [AllowAnonymous]
-    // [HttpGet("all")]
-    // public async Task<ActionResult<List<EventDto>>> GetAllAsync([FromQuery] EventParams param)
-    // {
-    //
-    //     return data;
-    // }
 
     [HttpGet("doctor-fields")]
     public async Task<ActionResult<EventDoctorFieldsDto>> GetDoctorFieldsAsync()
