@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Account } from "src/app/_models/account/account";
 import { AccountService } from "src/app/_services/account.service";
@@ -9,10 +9,10 @@ import { AccountService } from "src/app/_services/account.service";
   selector: 'div[mainAside]',
   templateUrl: './main-aside.component.html',
   standalone: true,
-  imports: [RouterModule,],
+  imports: [ RouterModule, ],
 })
 export class MainAsideComponent implements OnInit {
-  accountService = inject(AccountService);
+  accountService: AccountService = inject(AccountService);
 
   account: Account | null = null;
   label?: string;

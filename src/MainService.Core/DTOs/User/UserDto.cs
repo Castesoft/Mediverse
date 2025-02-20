@@ -1,5 +1,6 @@
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.MedicalRecord;
+using MainService.Core.DTOs.Payment;
 
 namespace MainService.Core.DTOs.User;
 public class UserDto : BaseUserDto

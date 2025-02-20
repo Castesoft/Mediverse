@@ -1,25 +1,34 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Stripe, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, loadStripe } from '@stripe/stripe-js';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import {
+  loadStripe,
+  PaymentMethodResult,
+  Stripe,
+  StripeCardCvcElement,
+  StripeCardExpiryElement,
+  StripeCardNumberElement
+} from '@stripe/stripe-js';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 import { environment } from 'src/environments/environment';
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   selector: 'app-add-payment-method',
   standalone: true,
-  imports: [ModalWrapperModule, InputControlComponent, ReactiveFormsModule],
+  imports: [ ModalWrapperModule, InputControlComponent, ReactiveFormsModule, FaIconComponent ],
   templateUrl: './add-payment-method.component.html',
   styleUrl: './add-payment-method.component.scss'
 })
 export class AddPaymentMethodComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private accountService = inject(AccountService);
-  private bsModalService = inject(BsModalService);
+  private fb: FormBuilder = inject(FormBuilder);
+  private accountService: AccountService = inject(AccountService);
 
-  bsModalRef = inject(BsModalRef);
+  bsModalRef: BsModalRef = inject(BsModalRef);
+  icons: IconsService = inject(IconsService);
   title?: string;
 
   @ViewChild('cardNumber') cardNumberElement!: ElementRef;
@@ -31,16 +40,16 @@ export class AddPaymentMethodComponent implements OnInit {
   cardCvc?: StripeCardCvcElement;
   cardErrors: any;
 
-  submitted = false;
+  submitted: boolean = false;
   paymentMethodForm = this.fb.group({
-    DisplayName             : [ '', [Validators.required] ],
-    StripePaymentMethodId   : [ '' ],
-    Last4                   : [ '' ],
-    ExpirationMonth         : [ 0 ],
-    ExpirationYear          : [ 0 ],
-    Brand                   : [ '' ],
-    Country                 : [ '' ],
-    IsMain                  : [ false ]
+    DisplayName: [ '', [ Validators.required ] ],
+    StripePaymentMethodId: [ '' ],
+    Last4: [ '' ],
+    ExpirationMonth: [ 0 ],
+    ExpirationYear: [ 0 ],
+    Brand: [ '' ],
+    Country: [ '' ],
+    IsMain: [ false ]
   });
 
   ngOnInit() {
@@ -88,14 +97,16 @@ export class AddPaymentMethodComponent implements OnInit {
       return;
     }
 
-    const paymentMethod = await this.stripe?.createPaymentMethod({
+    const paymentMethod: PaymentMethodResult = await this.stripe?.createPaymentMethod({
       type: 'card',
       card: this.cardNumber!
     });
+
     if (paymentMethod.error) {
       this.cardErrors = paymentMethod.error.message;
       return;
     }
+
     this.paymentMethodForm.get('StripePaymentMethodId')?.setValue(paymentMethod!.paymentMethod!.id);
     this.paymentMethodForm.get('Last4')?.setValue(paymentMethod!.paymentMethod!.card!.last4);
     this.paymentMethodForm.get('ExpirationMonth')?.setValue(paymentMethod!.paymentMethod!.card!.exp_month);
@@ -104,7 +115,7 @@ export class AddPaymentMethodComponent implements OnInit {
     this.paymentMethodForm.get('Country')?.setValue(paymentMethod!.paymentMethod!.card!.country);
 
     this.accountService.addPaymentMethod(this.paymentMethodForm.value).subscribe({
-      next: _ => {
+      next: (_) => {
         this.bsModalRef.hide();
         this.submitted = false
       }

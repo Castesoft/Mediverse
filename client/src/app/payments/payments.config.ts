@@ -13,33 +13,35 @@ import { PaymentParams } from "src/app/_models/payments/paymentParams";
 import { PaymentFormComponent } from "src/app/payments/payment-form.component";
 import { PaymentFiltersForm } from "src/app/_models/payments/paymentFiltersForm";
 import { paymentColumns, paymentDictionary } from "src/app/_models/payments/paymentConstants";
+import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'payments-catalog-modal',
   template: `
-      @defer {
-          <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-          <mat-dialog-content>
-              <div
-                      paymentsCatalog
-                      [(mode)]="data.mode"
-                      [(key)]="data.key"
-                      [(view)]="data.view"
-                      [(isCompact)]="data.isCompact"
-                      [(item)]="data.item"
-                      [(params)]="data.params"
-              ></div>
-          </mat-dialog-content>
-          <mat-dialog-actions>
-              <button mat-button mat-dialog-close>Cerrar</button>
-          </mat-dialog-actions>
-      }
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          paymentsCatalog
+          [(mode)]="data.mode"
+          [(key)]="data.key"
+          [(view)]="data.view"
+          [(isCompact)]="data.isCompact"
+          [(item)]="data.item"
+          [(params)]="data.params"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
   `,
   standalone: true,
   imports: [ PaymentsCatalogComponent, MaterialModule, CdkModule, ],
 })
 export class PaymentsCatalogModalComponent {
-  data = inject<CatalogDialog<Payment, PaymentParams>>(MAT_DIALOG_DATA);
+  data: CatalogDialog<Payment, PaymentParams> = inject<CatalogDialog<Payment, PaymentParams>>(MAT_DIALOG_DATA);
 }
 
 @Injectable({
@@ -48,6 +50,15 @@ export class PaymentsCatalogModalComponent {
 export class PaymentsService extends ServiceHelper<Payment, PaymentParams, PaymentFiltersForm> {
   constructor() {
     super(PaymentParams, 'payments', paymentDictionary, paymentColumns);
+  }
+
+  /**
+   * Retrieves the available payment methods for a given user.
+   * @param userId - The identifier for the user.
+   * @returns An Observable of an array of PaymentMethod.
+   */
+  getMethodsForUser(userId: number): Observable<PaymentMethod[]> {
+    return this.http.get<PaymentMethod[]>(`${this.baseUrl}methods/${userId}`);
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
@@ -74,25 +85,25 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
 @Component({
   selector: 'payments-detail-modal',
   template: `
-      @defer {
-          <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-          <mat-dialog-content>
-              <div
-                      paymentForm
-                      [(use)]="data.use"
-                      [(view)]="data.view"
-                      [(key)]="data.key"
-                      [(item)]="data.item"
-              ></div>
-          </mat-dialog-content>
-          <mat-dialog-actions>
-              <button mat-button mat-dialog-close>Cerrar</button>
-          </mat-dialog-actions>
-      }
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          paymentForm
+          [(use)]="data.use"
+          [(view)]="data.view"
+          [(key)]="data.key"
+          [(item)]="data.item"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
   `,
   standalone: true,
   imports: [ ModalWrapperModule, MaterialModule, CdkModule, PaymentFormComponent, ],
 })
 export class PaymentDetailModalComponent {
-  data = inject<DetailDialog<Payment>>(MAT_DIALOG_DATA);
+  data: DetailDialog<Payment> = inject<DetailDialog<Payment>>(MAT_DIALOG_DATA);
 }

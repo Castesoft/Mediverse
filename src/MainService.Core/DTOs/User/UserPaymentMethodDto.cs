@@ -2,6 +2,7 @@ namespace MainService.Core.DTOs.User;
 
 public class UserPaymentMethodDto
 {
+    public int Id { get; set; }
     public bool IsDefault { get; set; }
     public string? CardholderName { get; set; }
     public string? Funding { get; set; }

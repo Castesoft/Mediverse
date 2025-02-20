@@ -83,6 +83,7 @@ app.MapFallbackToController("Index", "Fallback");
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var context = services.GetRequiredService<DataContext>();
+var stripeService = services.GetRequiredService<IStripeService>();
 var permissionManager = services.GetRequiredService<IPermissionManager>();
 var userManager = services.GetRequiredService<UserManager<AppUser>>();
 var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
@@ -92,7 +93,7 @@ try
     Log.Information("Database migration applied.");
 
     await Seed.SeedRolesAndPermissionsAsync(roleManager, permissionManager);
-    await Seed.SeedAsync(userManager, context, 30, 100);
+    await Seed.SeedAsync(userManager, context, stripeService, 30, 100);
 }
 catch (Exception ex)
 {

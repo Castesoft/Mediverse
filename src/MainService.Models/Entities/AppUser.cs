@@ -34,15 +34,15 @@ namespace MainService.Models.Entities
         public string? StripeCustomerId { get; set; }
         public string? RecommendedBy { get; set; }
 
-    // Base account properties
-    public List<UserAddress> UserAddresses { get; set; } = [];
-    public UserPhoto UserPhoto { get; set; } = null!;
-    public DoctorBannerPhoto DoctorBannerPhoto { get; set; } = null!;
-    public List<AppUserRole> UserRoles { get; set; } = [];
-    public List<AppUserPermission> UserPermissions { get; set; } = [];
-    public List<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
-    public List<UserReview> UserReviews { get; set; } = [];
-    public UserMedicalRecord UserMedicalRecord { get; set; } = null!;
+        // Base account properties
+        public List<UserAddress> UserAddresses { get; set; } = [];
+        public UserPhoto UserPhoto { get; set; } = null!;
+        public DoctorBannerPhoto DoctorBannerPhoto { get; set; } = null!;
+        public List<AppUserRole> UserRoles { get; set; } = [];
+        public List<AppUserPermission> UserPermissions { get; set; } = [];
+        public List<UserMedicalInsuranceCompany> UserMedicalInsuranceCompanies { get; set; } = [];
+        public List<UserReview> UserReviews { get; set; } = [];
+        public UserMedicalRecord UserMedicalRecord { get; set; } = null!;
 
         // User Billing Information Properties
         // Replaced the join entity collection with a direct one-to-many relationship.

@@ -1,13 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, ModelSignal, model, OnDestroy, effect, input, InputSignal } from "@angular/core";
+import { Component, effect, inject, input, InputSignal, model, ModelSignal, OnDestroy } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
-import { View, CatalogMode } from "src/app/_models/base/types";
+import { CatalogMode, View } from "src/app/_models/base/types";
 import Event from "src/app/_models/events/event";
-import { eventCells } from "src/app/_models/events/eventConstants";
+import { eventCells, EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
@@ -21,7 +21,8 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
 import {
   AddressTableCellComponent
 } from "src/app/_shared/template/components/tables/cells/address-table-cell.component";
-import { PopoverDirective } from "ngx-bootstrap/popover";
+import { PaymentModalComponent } from "src/app/home/dashboard/payments/payment-modal.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -40,10 +41,11 @@ import { PopoverDirective } from "ngx-bootstrap/popover";
     TimePeriodCellComponent,
     TableMenuComponent,
     AddressTableCellComponent,
-    PopoverDirective,
   ],
 })
 export class EventsTableComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements OnDestroy, TableInputSignals<Event, EventParams> {
+  private matDialog: MatDialog = inject(MatDialog);
+
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -53,25 +55,37 @@ export class EventsTableComponent extends BaseTable<Event, EventParams, EventFil
   data: ModelSignal<Event[]> = model.required();
 
   showHeaders: InputSignal<boolean> = input<boolean>(true);
-  showDoctorColumn: InputSignal<boolean> = input<boolean>(false);
+  displayRole: InputSignal<EventsTableDisplayRole> = input(EventsTableDisplayRole.PATIENT as EventsTableDisplayRole);
 
   columns: Column[] = [];
 
   constructor() {
-    super(EventsService, Event, { tableCells: eventCells, });
+    super(EventsService, Event, { tableCells: eventCells });
 
     effect((): void => {
       if (this.columns.length === 0) {
-        this.columns = this.service.columns;
+        this.columns = [ ...this.service.columns ];
       }
 
-      if (this.showDoctorColumn()) {
-        this.service.columns = this.columns;
+      if (this.displayRole() === 'doctor') {
+        this.service.columns = this.columns.filter((column: Column) => column.name !== 'patient');
       } else {
         this.service.columns = this.columns.filter((column: Column) => column.name !== 'doctor');
       }
-    })
+    });
   }
+
+  openPaymentModal(event: Event): void {
+    const dialogRef = this.matDialog.open(PaymentModalComponent, {
+      width: '500px',
+
+      data: { eventId: event.id, patientId: event.patient.id }
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      console.log(result)
+    });
+  }
+
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

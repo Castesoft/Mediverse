@@ -6,7 +6,8 @@
   ModelSignal,
   OnInit,
   signal,
-  ViewChild, WritableSignal
+  ViewChild,
+  WritableSignal
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from "@angular/common";
@@ -17,14 +18,14 @@ import { QuillModule } from 'ngx-quill';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
 import { DashboardModule } from "src/app/home/dashboard/dashboard.module";
-import { BootstrapModule } from "src/app/_shared/bootstrap.module";
+import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 
 import Event from "src/app/_models/events/event";
 import { EventParams } from 'src/app/_models/events/eventParams';
 import { EventFiltersForm } from 'src/app/_models/events/eventFiltersForm';
-import { EventUpperTabs, EventLowerTabs } from 'src/app/_models/events/eventTypes';
+import { EventLowerTabs, EventUpperTabs } from 'src/app/_models/events/eventTypes';
 import { CatalogMode, View } from 'src/app/_models/base/types';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { BadRequest } from 'src/app/_models/forms/badRequest';
@@ -61,6 +62,12 @@ import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.comp
 import { Payment } from "src/app/_models/payments/payment";
 import { PaymentParams } from "src/app/_models/payments/paymentParams";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
+import { Patient } from "src/app/_models/patients/patient";
+import { RedirectWarningData } from "src/app/_shared/components/redirect-warning-modal/redirectWarningData";
+import {
+  RedirectWarningModalComponent
+} from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
 
 @Component({
   selector: 'div[eventWindow]',
@@ -86,13 +93,14 @@ import { SiteSection } from "src/app/_models/sections/sectionTypes";
     PaymentsCatalogComponent,
   ]
 })
-export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFiltersForm, EventsService> implements OnInit, DetailInputSignals<Event>, OnInit {
+export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFiltersForm, EventsService> implements OnInit, DetailInputSignals<Event> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Event | null> = model.required();
   key: ModelSignal<string | null> = model.required();
   title: ModelSignal<string | null> = model.required();
 
+  private readonly paymentNavigation: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly router: Router = inject(Router);
   readonly compact: CompactTableService = inject(CompactTableService);
@@ -152,7 +160,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
     effect((): void => {
       this.summaryMode = this.view() === 'modal';
-    })
+    });
 
     effect((): void => {
       const event: Event | null = this.item();
@@ -164,7 +172,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
         this.updatePrescriptionParams(event.id);
         this.updatePaymentParams(event.id);
       }
-    })
+    });
 
     effect((): void => {
       this.router.navigate([], {
@@ -195,8 +203,8 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
     this.nurses.multipleSelected$(this.nurseCuid).subscribe((selectedNurses) => {
       this.item.update((pastValue): Event | null => {
         return pastValue ? { ...pastValue, nurses: selectedNurses } : null;
-      })
-    })
+      });
+    });
   }
 
   private setInitialTabsFromParams(): void {
@@ -231,7 +239,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
     if (event.doctor) prescriptionDefaultValues.doctor = event.doctor;
     if (event.nurses) this.nurses.setMultipleSelected(this.nurseCuid, event.nurses);
 
-    this.prescriptionItem.update(_ => prescriptionDefaultValues);
+    this.prescriptionItem.update(() => prescriptionDefaultValues);
   }
 
   onSubmitEvolution(): void {
@@ -240,7 +248,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       throw new Error('Event or Event ID is null.');
     }
 
-    const content = this.evolutionForm.controls.content.value;
+    const content: string | null = this.evolutionForm.controls.content.value;
     if (content === null) return;
 
     this.service.updateEvolution(event.id, content).subscribe({
@@ -259,7 +267,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       throw new Error('Event or Event ID is null.');
     }
 
-    const content = this.nextStepForm.controls.content.value;
+    const content: string | null = this.nextStepForm.controls.content.value;
     if (content === null) return;
 
     this.service.updateNextSteps(event.id, content).subscribe({
@@ -271,6 +279,34 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       }
     });
   }
+
+  /**
+   * Opens a redirect warning modal before navigating to the checkout.
+   * If the user confirms, it navigates to the checkout page,
+   * passing the current URL as the cancelUrl so the user can go back.
+   */
+  navigateToCheckout(): void {
+    const event: Event | null = this.item();
+    const patient: Patient | undefined = event?.patient;
+    if (!event?.id || !patient?.id) {
+      console.error('Missing event or patient details for checkout.');
+      return;
+    }
+
+    const dialogData: RedirectWarningData = {
+      message: 'Se te redirigirá a la ventana de pago. ¿Deseas continuar?'
+    };
+
+    this.matDialog.open(RedirectWarningModalComponent, { data: dialogData })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.paymentNavigation.navigateToCheckout(event.id!, patient.id!, this.router.url)
+            .catch((err: any) => console.error('Navigation error:', err));
+        }
+      });
+  }
+
 
   onAddNurse(): void {
     this.matDialog.open<NursesCatalogModalComponent, CatalogDialog<Nurse, NurseParams>>(NursesCatalogModalComponent, {
@@ -287,7 +323,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       hasBackdrop: true,
       panelClass: [ "window" ],
     });
-  };
+  }
 
   deselectNurse(nurse: Nurse): void {
     if (this.item() && this.item()!.nurses) {

@@ -13,6 +13,7 @@ import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { UserDetailComponent } from "src/app/users/components/user-detail.component";
 import { UsersCatalogComponent } from "src/app/users/components/users-catalog.component";
+import { ClinicalHistoryVerification } from "src/app/_models/clinicalHistoryVerification";
 
 @Component({
   selector: 'users-catalog-modal',
@@ -36,10 +37,10 @@ import { UsersCatalogComponent } from "src/app/users/components/users-catalog.co
     }
   `,
   standalone: true,
-  imports: [UsersCatalogComponent, MaterialModule, CdkModule,],
+  imports: [ UsersCatalogComponent, MaterialModule, CdkModule, ],
 })
 export class UsersCatalogModalComponent {
-  data = inject<CatalogDialog<User, UserParams>>(MAT_DIALOG_DATA);
+  data: CatalogDialog<User, UserParams> = inject<CatalogDialog<User, UserParams>>(MAT_DIALOG_DATA);
 }
 
 @Component({
@@ -63,10 +64,10 @@ export class UsersCatalogModalComponent {
     }
   `,
   standalone: true,
-  imports: [UserDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+  imports: [ UserDetailComponent, ModalWrapperModule, MaterialModule, CdkModule, ],
 })
 export class UserDetailModalComponent {
-  data = inject<DetailDialog<User>>(MAT_DIALOG_DATA);
+  data: DetailDialog<User> = inject<DetailDialog<User>>(MAT_DIALOG_DATA);
 }
 
 
@@ -76,6 +77,10 @@ export class UserDetailModalComponent {
 export class UsersService extends ServiceHelper<User, UserParams, UserFiltersForm> {
   constructor() {
     super(UserParams, 'users', userDictionary, userColumns);
+  }
+
+  getClinicalHistoryConsentStatus(doctorId: number, patientId: number) {
+    return this.http.get<ClinicalHistoryVerification>(`${this.baseUrl}clinical-history-verification/patient/${patientId}/doctor/${doctorId}`);
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {

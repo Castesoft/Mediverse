@@ -12,6 +12,12 @@ namespace MainService.Models.Entities
         public string? City { get; set; }
         public string? State { get; set; }
         public string? Country { get; set; }
+
+        /// <summary>
+        /// ISO 3166-1 alpha-2 country code
+        /// </summary>
+        public string? CountryCode { get; set; }
+
         public string? Zipcode { get; set; }
         public string? Notes { get; set; }
         public string? CrossStreet1 { get; set; }
@@ -33,7 +39,8 @@ namespace MainService.Models.Entities
         public double GetLatitude() => Latitude ?? 0;
         public double GetLongitude() => Longitude ?? 0;
 
-        public string? GetPhotoUrl() {
+        public string? GetPhotoUrl()
+        {
             if (ClinicLogo != null &&
                 ClinicLogo.Photo != null &&
                 ClinicLogo.Photo.Url != null &&

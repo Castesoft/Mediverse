@@ -11,9 +11,9 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
   selector: '[userDropdown]',
   templateUrl: './user-dropdown.component.html',
   standalone: true,
-  imports: [BootstrapModule, RouterModule, ProfilePictureComponent],
+  imports: [ BootstrapModule, RouterModule, ProfilePictureComponent ],
 })
 export class UserDropdownComponent {
-  service = inject(AccountService);
-  theme = inject(ThemeService);
+  service: AccountService = inject(AccountService);
+  theme: ThemeService = inject(ThemeService);
 }

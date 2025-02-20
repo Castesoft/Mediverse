@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Clinical History Access</h2>
+<mat-dialog-content>
+  <p>Do you want to {{ data.currentConsent ? 'revoke' : 'grant' }} access to your clinical history for this doctor?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button class="btn btn-primary" (click)="onConfirm()">
+    {{ data.currentConsent ? 'Revoke' : 'Grant' }} Access
+  </button>
+</mat-dialog-actions>

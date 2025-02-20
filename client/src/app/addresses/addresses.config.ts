@@ -60,6 +60,10 @@ export class AddressesService extends ServiceHelper<Address, AddressParams, Form
     super(AddressParams, 'addresses', addressDictionary, addressColumns);
   }
 
+  getOptionsByUserId(userId: number) {
+    return this.http.get<Address[]>(`${this.baseUrl}options/user/${userId}`)
+  }
+
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       AddressesCatalogModalComponent,
@@ -150,23 +154,23 @@ export class AddressDetailComponent
 @Component({
   selector: 'address-detail-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      addressDetail
-      [(use)]="data.use"
-      [(view)]="data.view"
-      [(key)]="data.key"
-      [(item)]="data.item"
-      [(title)]="data.title"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          addressDetail
+          [(use)]="data.use"
+          [(view)]="data.view"
+          [(key)]="data.key"
+          [(item)]="data.item"
+          [(title)]="data.title"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
   imports: [AddressDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
 })

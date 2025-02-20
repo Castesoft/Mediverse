@@ -1,7 +1,9 @@
 @use '@angular/material' as mat;
 @use 'public/styles/m3-theme';
 
-mat.$theme-ignore-duplication-warnings: true;
+mat.$theme-ignore-duplication-warnings: true
+
+;
 
 @include mat.core();
 @include mat.strong-focus-indicators();
@@ -24,15 +26,14 @@ mat.$theme-ignore-duplication-warnings: true;
   ));
 
 
-
   @include mat.expansion-overrides((
     container-background-color: transparent,
   ));
 
-//   @include mat.sidenav-overrides((
-//     container-background-color: orange,
-//     container-text-color: red,
-//   ));
+  //   @include mat.sidenav-overrides((
+  //     container-background-color: orange,
+  //     container-text-color: red,
+  //   ));
 }
 
 html {
@@ -52,7 +53,10 @@ html {
 }
 
 /* You can add global styles to this file, and also import other style files */
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+}
+
 // body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 * {
   -webkit-font-smoothing: antialiased;
@@ -97,17 +101,17 @@ html {
   box-shadow: none !important;
 }
 
-.menu-item{
-  border: 0!important;
+.menu-item {
+  border: 0 !important;
 }
 
 .mat-expansion-panel-body {
-  padding-right: 0!important;
-  padding-left: 0!important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
 }
 
 .cdk-overlay-container {
-  z-index: 1000000000!important;
+  z-index: 1000000000 !important;
 }
 
 .custom-snackbar {
@@ -115,6 +119,7 @@ html {
     margin-bottom: 20px !important;
     background-color: var(--bs-success) !important;
   }
+
   .mat-mdc-snack-bar-label {
     color: white !important;
     font-size: 1.1rem !important;
@@ -131,6 +136,7 @@ html {
     margin-bottom: 20px !important;
     background-color: var(--bs-danger) !important;
   }
+
   .mat-mdc-snack-bar-label {
     color: white !important;
     font-size: 1.1rem !important;
@@ -163,39 +169,39 @@ html {
 }
 
 .form-control.is-invalid {
-  padding-right: 0.75rem!important;
+  padding-right: 0.75rem !important;
 }
 
 .form-control.is-valid {
-  padding-right: 0.75rem!important;
+  padding-right: 0.75rem !important;
 }
 
 .was-validated .form-control:valid,
 .form-control.is-valid {
-  background-image: none!important;
+  background-image: none !important;
 }
 
 .was-validated .form-select:valid:not([multiple]):not([size]),
 .was-validated .form-select:valid:not([multiple])[size="1"],
 .form-select.is-valid:not([multiple]):not([size]),
 .form-select.is-valid:not([multiple])[size="1"] {
-  background-image: none!important;
+  background-image: none !important;
 }
 
 .was-validated .form-control:invalid,
 .form-control.is-invalid {
-  background-image: none!important;
+  background-image: none !important;
 }
 
 .was-validated .form-select:invalid:not([multiple]):not([size]),
 .was-validated .form-select:invalid:not([multiple])[size="1"],
 .form-select.is-invalid:not([multiple]):not([size]),
 .form-select.is-invalid:not([multiple])[size="1"] {
-  background-image: none!important;
+  background-image: none !important;
 }
 
 .was-validated .choices.invalid .choices__inner {
-  background-image: none!important;
+  background-image: none !important;
 }
 
 .json {
@@ -204,7 +210,11 @@ html {
 }
 
 [mat-dialog-title] {
-  cursor: move!important;
+  cursor: move !important;
+}
+
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-shape: 0.475rem;
 }
 
 .mat-mdc-dialog-surface {
@@ -216,9 +226,9 @@ html {
 }
 
 mat-form-field.hide-bottom {
-.mat-mdc-form-field-subscript-wrapper {
-  display: none!important;
-}
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
 }
 
 .mat-mdc-list-item-unscoped-content {
@@ -234,8 +244,8 @@ mat-form-field.hide-bottom {
   --bs-gutter-x: 1.5rem;
   --bs-gutter-y: 0;
   width: 100%;
-  padding-right: calc(var(--bs-gutter-x)* 0.5);
-  padding-left: calc(var(--bs-gutter-x)* 0.5);
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
 }

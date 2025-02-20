@@ -7,11 +7,11 @@ import { dateRanges } from "src/app/_utils/util";
 })
 export class DatepickerService {
   config: Partial<BsDatepickerConfig> = {
-      isAnimated: true,
-      adaptivePosition: true,
-      ranges: dateRanges,
-      maxDate: new Date(),
-      dateInputFormat: 'MMMM Do YYYY',
-      containerClass: 'theme-dark-blue',
+    isAnimated: true,
+    adaptivePosition: true,
+    ranges: dateRanges,
+    maxDate: new Date(),
+    dateInputFormat: 'MMMM Do YYYY',
+    containerClass: 'theme-dark-blue',
   };
 }

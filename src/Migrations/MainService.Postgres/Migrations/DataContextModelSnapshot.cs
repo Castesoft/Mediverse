@@ -36,6 +36,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("text");
 
+                    b.Property<string>("CountryCode")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -870,10 +873,13 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("ConsentGrantedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("HasPatientInformationAccess")
+                    b.Property<bool>("HasClinicalHistoryAccess")
                         .HasColumnType("boolean");
 
                     b.HasKey("DoctorId", "PatientId");

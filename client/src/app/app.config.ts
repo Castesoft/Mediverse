@@ -1,6 +1,4 @@
 import { ScrolltopComponent } from "./_shared/template/components/scrolltop.component";
-
-declare var google: any;
 import localeEsMX from '@angular/common/locales/es-MX';
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -18,7 +16,7 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AccountService } from 'src/app/_services/account.service';
-import { SocialLoginModule, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, SocialLoginModule } from '@abacritt/angularx-social-login';
 import { environment } from 'src/environments/environment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { QuillModule } from 'ngx-quill';
@@ -27,6 +25,8 @@ import { authGuard } from 'src/app/_guards/auth.guard';
 import {
   UseOfCookiesModalComponent
 } from 'src/app/auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
+
+declare var google: any;
 
 @Component({
   selector: 'app-root',
@@ -154,6 +154,10 @@ export const appConfig: ApplicationConfig = {
             path: 'inicio',
             loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
           },
+          {
+            path: 'pagos',
+            loadChildren: () => import('./payments/payments.module').then(m => m.PaymentsModule)
+          }
         ]
       },
     ]),
@@ -167,7 +171,7 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     importProvidersFrom(
       MaterialModule,
-      BootstrapModule,
+    BootstrapModule,
       QuillModule.forRoot(),
       FlatpickrModule.forRoot(),
       ServiceWorkerModule.register('ngsw-worker.js', {

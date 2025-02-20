@@ -1,9 +1,11 @@
 using AutoMapper;
+using MainService.Core.DTOs.Payment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MainService.Core.Helpers.Pagination;
 using MainService.Models.Entities;
 using MainService.Core.DTOs.User;
+using MainService.Core.Extensions;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
@@ -13,8 +15,10 @@ namespace MainService.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PaymentsController(IUnitOfWork uow, IMapper mapper) : BaseApiController
+    public class PaymentsController(IUnitOfWork uow, IMapper mapper, IStripeService stripeService) : BaseApiController
     {
+        private const int CommissionInCents = 5 * 100;
+
         [HttpGet]
         public async Task<ActionResult<PagedList<PaymentDto>>> GetPagedListAsync([FromQuery] PaymentParams param)
         {
@@ -37,6 +41,81 @@ namespace MainService.Controllers
 
             return mapper.Map<PaymentDto>(payment);
         }
+
+        [HttpGet("methods/{id:int}")]
+        public async Task<ActionResult<List<UserPaymentMethodDto>>> GetPaymentMethodsByUserById(int id)
+        {
+            if (id != User.GetUserId())
+                return Unauthorized("You are not authorized to access this user's payment methods.");
+
+            var user = await uow.UserRepository.GetByIdAsync(id);
+            if (user == null) return BadRequest("User not found.");
+
+            return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
+        }
+
+        [HttpPost("create-payment-intent/event/{eventId:int}")]
+        public async Task<ActionResult<CreatePaymentIntentResponseDto>> CreatePaymentIntent(int eventId,
+            [FromBody] CreatePaymentIntentRequestDto request)
+        {
+            var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
+            if (eventItem == null)
+                return NotFound($"Event with ID {eventId} not found.");
+
+            var paymentMethod = await uow.PaymentMethodRepository.GetByIdAsync(request.PaymentMethodId);
+            if (paymentMethod == null)
+                return BadRequest("Payment method not found.");
+
+            var patientStripeCustomerId = paymentMethod.User.StripeCustomerId;
+            if (string.IsNullOrEmpty(patientStripeCustomerId))
+                return BadRequest("Patient does not have a Stripe customer account.");
+
+            var doctor = await uow.UserRepository.GetByIdAsync(eventItem.DoctorEvent.DoctorId);
+            if (doctor == null)
+                return BadRequest("Doctor not found for event.");
+
+            var doctorStripeAccountId = doctor.StripeConnectAccountId;
+            if (string.IsNullOrEmpty(doctorStripeAccountId))
+            {
+                var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctor);
+                if (account == null || string.IsNullOrEmpty(account.Id))
+                    return BadRequest("Doctor does not have a Stripe Connect account and creation failed.");
+
+                doctor.StripeConnectAccountId = account.Id;
+                uow.UserRepository.Update(doctor);
+                await uow.Complete();
+                doctorStripeAccountId = account.Id;
+
+                if (!string.IsNullOrEmpty(accountLinkUrl))
+                {
+                    return BadRequest(
+                        $"Doctor account not fully onboarded. Please complete onboarding here: {accountLinkUrl}");
+                }
+            }
+
+            var serviceEntity = await uow.ServiceRepository.GetByIdAsync(eventItem.EventService.ServiceId);
+            if (serviceEntity == null)
+                return BadRequest("Service not found for event.");
+
+            var amountInCents = serviceEntity.Price * 100;
+
+            var paymentIntent = await stripeService.CreatePaymentIntentAsync(
+                patientStripeCustomerId,
+                paymentMethod.StripePaymentMethodId!,
+                doctorStripeAccountId,
+                amountInCents,
+                CommissionInCents
+            );
+
+            if (paymentIntent == null)
+                return BadRequest("PaymentIntent creation failed.");
+
+            return Ok(new CreatePaymentIntentResponseDto
+            {
+                ClientSecret = paymentIntent.ClientSecret
+            });
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<PaymentDto>> CreateAsync([FromBody] PaymentDto paymentDto)

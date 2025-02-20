@@ -32,6 +32,7 @@ public interface IUnitOfWork
     IRoleRepository RoleRepository { get; }
     IWarehouseRepository WarehouseRepository { get; }
     IPaymentRepository PaymentRepository { get; }
+    IPaymentMethodRepository PaymentMethodRepository { get; }
     ISubscriptionRepository SubscriptionRepository { get; }
     ISubscriptionHistoryRepository SubscriptionHistoryRepository { get; }
     ISubscriptionPlanRepository SubscriptionPlanRepository { get; }

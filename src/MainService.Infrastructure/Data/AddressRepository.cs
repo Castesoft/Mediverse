@@ -18,6 +18,16 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
 {
     public void Add(Address item) => context.Addresses.Remove(item);
     public void Delete(Address item) => context.Addresses.Remove(item);
+
+    public async Task<List<AddressDto>> GetDtosByUserId(int id)
+    {
+        return await context.Addresses
+            .Include(x => x.UserAddress)
+            .Where(x => x.UserAddress.UserId == id)
+            .ProjectTo<AddressDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
     public async Task<List<Address>> GetAllAsync() => await context.Addresses.ToListAsync();
 
     public async Task<List<AddressDto>> GetAllDtoAsync(AddressParams param) =>

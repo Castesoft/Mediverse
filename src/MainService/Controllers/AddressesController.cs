@@ -34,6 +34,12 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service) : B
         return data;
     }
 
+    [HttpGet("options/user/{id:int}")]
+    public async Task<ActionResult<List<AddressDto>>> GetOptionsByUserId(int id)
+    {
+        return await uow.AddressRepository.GetDtosByUserId(id);
+    }
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<AddressDto?>> GetByIdAsync([FromRoute]int id)
     {

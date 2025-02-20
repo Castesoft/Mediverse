@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using MainService.Core.DTOs.Nurses;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;

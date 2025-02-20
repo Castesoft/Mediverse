@@ -28,6 +28,7 @@ import {
 } from "../../_models/base/filter-types";
 import BaseCatalog from 'src/app/_models/base/components/extensions/baseCatalog';
 import CatalogInputSignals from 'src/app/_models/base/components/interfaces/catalogInputSignals';
+import { EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
 
 @Component({
   selector: '[eventsCatalog]',
@@ -49,8 +50,7 @@ import CatalogInputSignals from 'src/app/_models/base/components/interfaces/cata
 })
 export class EventsCatalogComponent
   extends BaseCatalog<Event, EventParams, EventFiltersForm, EventsService>
-  implements CatalogInputSignals<Event, EventParams>
-{
+  implements CatalogInputSignals<Event, EventParams> {
   private readonly clinics: ClinicsService = inject(ClinicsService);
   private readonly patients: PatientsService = inject(PatientsService);
   private readonly services: ServicesService = inject(ServicesService);
@@ -67,6 +67,7 @@ export class EventsCatalogComponent
     DrawerMode.SIDE,
     FilterPosition.START
   ));
+  displayRole: ModelSignal<EventsTableDisplayRole> = model(EventsTableDisplayRole.PATIENT as EventsTableDisplayRole);
 
   calendarView: ModelSignal<CalendarView> = model.required<CalendarView>();
   filtersCollapsed: ModelSignal<boolean> = model.required<boolean>();

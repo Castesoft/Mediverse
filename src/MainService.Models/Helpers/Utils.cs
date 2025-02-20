@@ -33,6 +33,26 @@ public static class Utils
                 },
             }
         };
+    
+    
+    /// <summary>
+    /// Helper method that maps a Stripe PaymentIntent status string to your PaymentStatus enum.
+    /// </summary>
+    public static PaymentStatus MapStripeStatusToPaymentStatus(string stripeStatus)
+    {
+        return stripeStatus.ToLower() switch
+        {
+            "requires_payment_method" => PaymentStatus.RequiresPaymentMethod,
+            "requires_confirmation" => PaymentStatus.RequiresConfirmation,
+            "requires_action" => PaymentStatus.RequiresAction,
+            "processing" => PaymentStatus.Processing,
+            "requires_capture" => PaymentStatus.RequiresCapture,
+            "succeeded" => PaymentStatus.Succeeded,
+            "canceled" => PaymentStatus.Canceled,
+            "refunded" => PaymentStatus.Refunded,
+            _ => PaymentStatus.Processing
+        };
+    }
 
 
     // from the number of paymentMethodTypes that come in as a parameter to 1, select randomly one and create a DoctorPaymentMethodType

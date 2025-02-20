@@ -14,6 +14,7 @@ void Add(Address item);
     Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId);
     Task<AddressDto?> GetDtoByIdAsync(int id);
     Task<Address?> GetByIdAsNoTrackingAsync(int id);
+    Task<List<AddressDto>> GetDtosByUserId(int id);
     Task<List<Address>> GetAllAsync();
     Task<List<AddressDto>> GetAllDtoAsync(AddressParams param);
     Task<List<OptionDto>> GetOptionsAsync(AddressParams param);

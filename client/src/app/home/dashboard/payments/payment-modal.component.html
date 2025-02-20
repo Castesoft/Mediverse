@@ -1,0 +1,53 @@
+<mat-dialog-content>
+  <h1 class="mb-0">Paga por tu Cita</h1>
+
+  @if (dev.isDev()) {
+    <table class="table table-bordered mt-4 bg-body">
+      <tbody>
+      <tr>
+        <th scope="row">EventId</th>
+        <td>{{ data.eventId }}</td>
+      </tr>
+      <tr>
+        <th scope="row">PatientId</th>
+        <td>{{ data.patientId }}</td>
+      </tr>
+      <tr>
+        <th scope="row">PaymentMethod Id</th>
+        <td>{{ selectedPaymentMethod?.id }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Stripe PaymentMethod</th>
+        <td>{{ selectedPaymentMethod?.stripePaymentMethodId }}</td>
+      </tr>
+      </tbody>
+    </table>
+  }
+
+  <div
+    paymentMethodSelector
+    class="mt-4"
+    [paymentMethods]="paymentMethods"
+    (selectedPaymentMethod)="selectPaymentMethod($event)"
+  ></div>
+
+  <div class="d-flex justify-content-end mt-4">
+    <h2 class="m-0">Total: {{ event?.service?.price | currency }}</h2>
+  </div>
+
+  @if ((event?.paymentStatus || 'unpaid') !== 'paid') {
+    <div class="d-flex justify-content-end my-4">
+      <button (click)="pay()" class="btn btn-primary">Pagar Ahora</button>
+    </div>
+  } @else {
+    <div class="d-flex justify-content-end my-4">
+      <span>Payment already made</span>
+    </div>
+  }
+
+  @if (message) {
+    <div class="message">
+      {{ message }}
+    </div>
+  }
+</mat-dialog-content>

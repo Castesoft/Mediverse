@@ -1,7 +1,7 @@
 export class PopoverProps {
   title?: string;
   text?: string;
-  placement: 'top'|'right'|'auto'|'left'|'bottom' = 'auto';
+  placement: 'top' | 'right' | 'auto' | 'left' | 'bottom' = 'auto';
   triggers: PopoverTriggers = 'mouseenter:mouseleave';
 
   constructor(text: string) {
@@ -12,4 +12,4 @@ export class PopoverProps {
   }
 }
 
-export type PopoverTriggers = 'mouseenter:mouseleave'|'dblclick'|'keypress:focusout'|'focus';
+export type PopoverTriggers = 'mouseenter:mouseleave' | 'dblclick' | 'keypress:focusout' | 'focus';

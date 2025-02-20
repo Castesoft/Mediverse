@@ -1,17 +1,17 @@
 using System.Security.Claims;
-using MainService.Core.DTOs;
 using MainService.Core.DTOs.MedicalRecord;
 using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
-using MainService.Core.Helpers.Params;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.Interfaces.Data;
+
 public interface IUserRepository
 {
     void Add(AppUser item);
     void Delete(AppUser item);
+    void Update(AppUser item);
     Task<AppUser?> GetByIdAsync(int id);
     Task<UserDto?> GetDtoByIdAsync(int id);
     Task<List<UserSummaryDto>> GetSummaryDtosAsync(UserParams param, ClaimsPrincipal user);
@@ -35,4 +35,9 @@ public interface IUserRepository
     Task<bool> RequireAnticipatedCardPaymentsByIdAsync(int id);
     Task<int?> GetMainAddressIdAsync(int userId);
     Task<List<OptionDto>> GetPatientOptionsForDoctorAsync(UserParams param);
+
+    /// <summary>
+    /// Returns the clinical history verification information for a given patient-doctor pair.
+    /// </summary>
+    Task<ClinicalHistoryVerificationDto?> GetClinicalHistoryVerificationAsync(int doctorId, int patientId);
 }

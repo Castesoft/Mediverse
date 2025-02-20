@@ -1,0 +1,28 @@
+<div class="address-selector">
+  <div class="d-flex flex-column gap-4">
+    @for (address of addresses(); track address) {
+      <div class="address-card-wrapper">
+        <div (click)="onCardClick(address)">
+          <div
+            addressDisplayCard
+            [address]="address"
+            [selected]="isSelected(address)"
+            [selectionMode]="true">
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (confirmOnSelect() && pendingAddress) {
+    <div class="d-flex flex-grow-1 justify-content-between mt-4">
+      <button type="button" class="btn btn-active-light-primary btn-color-primary" (click)="openAddressCreateModal()">
+        <i class="ki-duotone ki-plus fs-2 p-0"></i>
+        Agregar Dirección
+      </button>
+      <button type="button" class="btn btn-primary" (click)="confirmSelection()">
+        Confirmar Selección
+      </button>
+    </div>
+  }
+</div>

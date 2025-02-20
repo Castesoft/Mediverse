@@ -15,10 +15,10 @@ export class ModalContentComponent {
 }
 
 @Component({
-  host: {class: 'modal-header border-200 p-4',},
+  host: {class: 'modal-header border-200 p-8',},
   selector: 'div[modalHeader]',
   template: `
-    <h4 class="modal-title text-1000 fs-2 lh-sm">{{ title() }}</h4>
+    <h2 class="modal-title text-1000 fs-2 lh-sm">{{ title() }}</h2>
     <button class="btn p-1 text-900" type="button" aria-label="Close" (click)="modal.hide()">
       <fa-icon [icon]="icons.faTimes" class="fs--1"></fa-icon>
     </button>

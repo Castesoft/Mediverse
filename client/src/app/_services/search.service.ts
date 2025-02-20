@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable, inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { createId } from '@paralleldrive/cuid2';
 import { Observable, tap } from "rxjs";
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
@@ -12,7 +12,7 @@ import { Search } from "src/app/_models/search/search";
 import { SearchTabs } from 'src/app/_models/search/searchTypes';
 import { getSearchHttpParams, getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
 import { UtilsService } from "src/app/_services/utils.service";
-import { PaginatedResult, getPaginatedResult } from "src/app/_utils/serviceHelper/pagination/paginatedResult";
+import { getPaginatedResult, PaginatedResult } from "src/app/_utils/serviceHelper/pagination/paginatedResult";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
 import { environment } from "src/environments/environment";
 
@@ -55,7 +55,7 @@ export class SearchService {
 
     this.search.set(search);
     if (doctor) {
-      this.selected.set(new DoctorResult({...doctor}));
+      this.selected.set(new DoctorResult({ ...doctor }));
     } else {
       this.selected.set(null);
     }
@@ -193,11 +193,13 @@ export class SearchService {
 
   setMarkerToMap(doctor: DoctorResult, marker: google.maps.marker.AdvancedMarkerElement) {
     const map = this.markersMap();
-    map.set(doctor, [marker]);
+    map.set(doctor, [ marker ]);
     this.markersMap.set(map);
   }
 
-  getSearchResults(options: {ignoreCache: boolean} = {ignoreCache: false}): Observable<PaginatedResult<SearchResults>> {
+  getSearchResults(options: {
+    ignoreCache: boolean
+  } = { ignoreCache: false }): Observable<PaginatedResult<SearchResults>> {
     this.loading.set(true);
 
     const payloadParams: HttpParams = getSearchHttpParams(this.search());
@@ -210,7 +212,10 @@ export class SearchService {
         if (results.result) {
           this.results.set(results.result);
           this.cache.set(Object.values(this.search()).join('-'), results.result);
-          if (results.result.doctors.length === 0) this.search.set(new Search(this.search().key, { ...this.search(), pageNumber: 1 }));
+          if (results.result.doctors.length === 0) this.search.set(new Search(this.search().key, {
+            ...this.search(),
+            pageNumber: 1
+          }));
           if (results.result.doctors.length === 0) {
             this.search.set(new Search(this.search().key, { ...this.search(), pageNumber: 1 }));
           } else {

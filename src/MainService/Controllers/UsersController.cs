@@ -45,6 +45,42 @@ public class UsersController(IUnitOfWork uow, IUsersService service, UserManager
         return data;
     }
 
+    /// <summary>
+    /// Verifies whether the patient (patientId) has granted the doctor (doctorId) access to their clinical history.
+    /// Returns a DTO containing the verification result.
+    /// </summary>
+    [HttpGet("clinical-history-verification/patient/{patientId:int}/doctor/{doctorId:int}")]
+    public async Task<ActionResult<ClinicalHistoryVerificationDto>> GetClinicalHistoryVerificationAsync(
+        [FromRoute] int patientId, [FromRoute] int doctorId)
+    {
+        var verificationDto = await service.VerifyClinicalHistoryAccessAsync(doctorId, patientId);
+
+        if (verificationDto == null)
+        {
+            return NotFound(
+                $"No clinical history sharing record found for patient ID {patientId} and doctor ID {doctorId}.");
+        }
+
+        return Ok(verificationDto);
+    }
+    
+    /// <summary>
+    /// Updates the clinical history consent status for the specified patient and doctor.
+    /// </summary>
+    [HttpPut("clinical-history-consent/patient/{patientId:int}/doctor/{doctorId:int}")]
+    public async Task<ActionResult<ClinicalHistoryVerificationDto>> UpdateClinicalHistoryConsentAsync(
+        [FromRoute] int patientId,
+        [FromRoute] int doctorId,
+        [FromBody] ClinicalHistoryVerificationDto dto)
+    {
+        var updatedDto = await service.UpdateClinicalHistoryConsentAsync(doctorId, patientId, dto.HasAccess);
+        if (updatedDto == null)
+        {
+            return NotFound($"No clinical history sharing record found for patient ID {patientId} and doctor ID {doctorId}.");
+        }
+        return Ok(updatedDto);
+    }
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<UserDto?>> GetByIdAsync([FromRoute] int id)
     {

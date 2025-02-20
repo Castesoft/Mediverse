@@ -12,6 +12,9 @@ import {
 import {
   BillingAddressDisplayCardComponent
 } from "src/app/account/components/account-billing/components/billing-address-display-card.component";
+import {
+  AddressCreateCardComponent
+} from "src/app/addresses/components/address-create-card/address-create-card.component";
 
 @Component({
   selector: 'app-account-billing',
@@ -22,7 +25,8 @@ import {
     TemplateModule,
     RouterModule,
     PaymentMethodDisplayCardComponent,
-    BillingAddressDisplayCardComponent
+    BillingAddressDisplayCardComponent,
+    AddressCreateCardComponent
   ],
 })
 export class AccountBillingComponent implements OnInit {
@@ -61,13 +65,6 @@ export class AccountBillingComponent implements OnInit {
     this.accountService.setMainPaymentMethod(id).subscribe();
   }
 
-  openAddAddressModal() {
-    // this.bsModalService.show(AddressDetailModalComponent, {
-    //   initialState: {
-    //     title: 'Añadir dirección',
-    //   },
-    // });
-  }
 
   deleteAddress(id: number) {
     if (!id) return;

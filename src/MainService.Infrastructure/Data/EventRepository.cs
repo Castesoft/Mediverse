@@ -108,8 +108,8 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
     public async Task<Event?> GetByIdAsync(int id) =>
         await context.Events
             .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
-            .Include(x => x.DoctorEvent)
-            .ThenInclude(x => x.Doctor)
+            .Include(x => x.DoctorEvent).ThenInclude(x => x.Doctor)
+            .Include(x => x.EventService).ThenInclude(x => x.Service)
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<EventDto?> GetDtoByIdAsync(int id) =>

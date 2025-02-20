@@ -23,6 +23,7 @@ export class CompactTableService {
   }
 
   get = (): boolean => this.isCompact();
+
   set(value: boolean) {
     this.setLocalStorage(value);
     this.isCompact.set(value);

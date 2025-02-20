@@ -1,4 +1,4 @@
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
 
 export class PasswordResetForm {
@@ -17,7 +17,7 @@ export class PasswordResetForm {
 
   setValidators(mode: boolean) {
     if (mode) {
-      this.formGroup.controls['email'].setValidators([Validators.required, Validators.email]);
+      this.formGroup.controls['email'].setValidators([ Validators.required, Validators.email ]);
     } else {
       this.formGroup.controls['email'].clearValidators();
       this.formGroup.controls['email'].clearAsyncValidators();
@@ -26,7 +26,7 @@ export class PasswordResetForm {
     this.formGroup.updateValueAndValidity();
   }
 
-  patchWithSample = () => this.formGroup.patchValue({email: getRandomEmail()});
+  patchWithSample = () => this.formGroup.patchValue({ email: getRandomEmail() });
 
 }
 

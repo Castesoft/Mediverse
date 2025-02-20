@@ -1,66 +1,77 @@
-<div modalContent>
+<div class="card">
   @if (title) {
-  <div modalHeader [title]="title"></div>
+    <div class="card-header">
+      <div class="card-title">
+        <h3>{{ title }}</h3>
+      </div>
+      <button class="btn p-1 text-900" type="button" aria-label="Close" (click)="bsModalRef.hide()">
+        <fa-icon [icon]="icons.faTimes" class="fs--1"></fa-icon>
+      </button>
+    </div>
   }
-  <div modalBody>
+
+  <div class="card-body pt-0">
     <form [formGroup]="paymentMethodForm" (ngSubmit)="onSubmit()">
-        <div
-            class="fv-row mb-5 fv-plugins-icon-container"
-            inputControl
-            formControlName="DisplayName"
-            [label]="'Nombre en la tarjeta'"
-            [type]="'text'"
-            [placeholder]="''"
-            [submitted]="submitted"
-            [errors]="{
+      <div
+        class="fv-row mb-4 fv-plugins-icon-container"
+        inputControl
+        formControlName="DisplayName"
+        [label]="'Nombre en la tarjeta'"
+        [type]="'text'"
+        [placeholder]="''"
+        [submitted]="submitted"
+        [errors]="{
                 required: 'El nombre es requerido.'
             }"
-        ></div>
-    
-        <div class="row mb-3">
-            <div class="col-6">
-                <label class="fw-semibold fs-6 mb-2 required">Número de tarjeta</label>
-                <div class="form-control form-control-solid" #cardNumber></div>
-            </div>
-            <div class="col-3">
-                <label class="fw-semibold fs-6 mb-2 required">Expiración</label>
-                <div class="form-control form-control-solid" #cardExpiry></div>
-            </div>
-            <div class="col-3">
-                <label class="fw-semibold fs-6 mb-2 required">CVC</label>
-                <div class="form-control form-control-solid" #cardCvc></div>
-            </div>
-            <span class="text-danger">{{cardErrors}}</span>
-        </div>
+      ></div>
 
-        <div class="d-flex flex-stack mt-5">
-            <div class="me-5">
-                <label class="fs-6 fw-semibold form-label">¿Guardar como método de pago principal?</label>
-                <div class="fs-7 fw-semibold text-muted">Esta tarjeta se guardará como su método de pago principal</div>
-            </div>
-            <label class="form-check form-switch form-check-custom form-check-solid">
-                <input class="form-check-input" type="checkbox" formControlName="IsMain"  />
-            </label>
+      <div class="row g-8">
+        <div class="col-6">
+          <label class="fw-semibold fs-6 required">Número de tarjeta</label>
+          <div class="form-control" #cardNumber></div>
         </div>
-
-        <div class="text-center pt-15">
-            <button 
-                type="reset" id="kt_modal_new_card_cancel" class="btn btn-light me-3" 
-                (click)="bsModalRef.hide()" [disabled]="submitted">
-                Cancelar
-            </button>
-            <button 
-                type="submit" id="kt_modal_new_card_submit" class="btn btn-primary" 
-                style="width: 96px;" [disabled]="submitted"
-            >
-                @if (!submitted) {
-                    <span class="indicator-label">Guardar</span>
-                } @else {
-                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                }
-            </button>
+        <div class="col-3">
+          <label class="fw-semibold fs-6 required">Expiración</label>
+          <div class="form-control" #cardExpiry></div>
         </div>
+        <div class="col-3">
+          <label class="fw-semibold fs-6 required">CVC</label>
+          <div class="form-control" #cardCvc></div>
+        </div>
+        @if (cardErrors) {
+          <span class="text-danger">{{ cardErrors }}</span>
+        }
+      </div>
 
+      <div class="d-flex flex-stack mt-8">
+        <div class="me-4">
+          <label class="fs-6 fw-semibold form-label">¿Guardar como método de pago principal?</label>
+        </div>
+        <label class="form-check form-switch form-check-custom form-check-solid">
+          <input class="form-check-input" type="checkbox" formControlName="IsMain"/>
+        </label>
+      </div>
+
+      <div class="d-flex flex-grow-1 justify-content-between mt-8">
+        <button
+          type="reset"
+          class="btn btn-light me-3"
+          (click)="bsModalRef.hide()"
+          [disabled]="submitted"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit" class="btn btn-primary"
+          [disabled]="submitted"
+        >
+          @if (!submitted) {
+            <span class="indicator-label">Guardar</span>
+          } @else {
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+          }
+        </button>
+      </div>
     </form>
   </div>
 </div>

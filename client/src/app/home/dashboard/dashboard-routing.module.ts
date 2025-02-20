@@ -6,7 +6,7 @@ import { AppointmentsComponent } from 'src/app/home/dashboard/appointments/appoi
 import { LogisticsComponent } from 'src/app/home/dashboard/logistics.component';
 import { MultipurposeComponent } from 'src/app/home/dashboard/multipurpose.component';
 import { OverviewComponent } from 'src/app/home/dashboard/overview.component';
-import { PaymentsComponent } from 'src/app/home/dashboard/payments/payments.component';
+import { PaymentsComponent } from 'src/app/home/dashboard/payments/payment-modal.component';
 import { ProjectsComponent } from 'src/app/home/dashboard/projects.component';
 import { StoreAnalyticsComponent } from 'src/app/home/dashboard/store-analytics.component';
 

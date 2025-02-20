@@ -55,6 +55,7 @@
           <table eventsTable
                  [(mode)]="mode"
                  [(isCompact)]="isCompact"
+                 [displayRole]="displayRole()"
                  [data]="list"
                  [(key)]="key"
                  [(view)]="view"
@@ -80,8 +81,7 @@
       }
     } @loading {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }
-    @placeholder(minimum 1000ms) {
+    } @placeholder (minimum 1000ms) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
   </ng-template>

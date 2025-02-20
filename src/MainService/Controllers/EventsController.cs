@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MainService.Core.DTOs.Events;
+using MainService.Core.DTOs.Payment;
+using MainService.Core.DTOs.User;
+using MainService.Models.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
@@ -175,7 +178,8 @@ public class EventsController(
                 return BadRequest(
                     $"Compañía de seguro médico de ID {request.MedicalInsuranceCompany.Id.Value} no fue encontrada para el doctor actual.");
 
-            eventToCreate.EventMedicalInsuranceCompany = new(request.MedicalInsuranceCompany.Id.Value);
+            eventToCreate.EventMedicalInsuranceCompany =
+                new EventMedicalInsuranceCompany(request.MedicalInsuranceCompany.Id.Value);
         }
 
         if (!request.DateFrom.HasValue)
@@ -223,7 +227,7 @@ public class EventsController(
 
             if (string.IsNullOrEmpty(doctorAsNoTracking.StripeConnectAccountId))
             {
-                var account = await stripeService.CreateExpressAccountAsync(doctorAsNoTracking);
+                var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctorAsNoTracking);
                 if (!await usersService.UpdateStripeConnectAccountId(doctorAsNoTracking.Id, account.Id))
                     return BadRequest("Error al actualizar la cuenta de Stripe del doctor.");
             }
@@ -259,10 +263,10 @@ public class EventsController(
         eventToCreate.DateTo = request.DateTo.Value;
         eventToCreate.DateFrom = eventToCreate.DateFrom.Value.Add(TimeSpan.Parse(request.TimeFrom));
         eventToCreate.DateTo = eventToCreate.DateTo.Value.Add(TimeSpan.Parse(request.TimeTo));
-        eventToCreate.PatientEvent = new(userId);
-        eventToCreate.DoctorEvent = new(request.Doctor.Id.Value);
-        eventToCreate.EventService = new(request.Service.Id.Value);
-        eventToCreate.EventClinic = new(request.Clinic.Id.Value);
+        eventToCreate.PatientEvent = new PatientEvent(userId);
+        eventToCreate.DoctorEvent = new DoctorEvent(request.Doctor.Id.Value);
+        eventToCreate.EventService = new EventService(request.Service.Id.Value);
+        eventToCreate.EventClinic = new EventClinic(request.Clinic.Id.Value);
 
         uow.EventRepository.Add(eventToCreate);
 
@@ -271,6 +275,69 @@ public class EventsController(
         var itemDto = await uow.EventRepository.GetDtoByIdAsync(eventToCreate.Id);
 
         return itemDto;
+    }
+
+    [HttpPost("{id:int}/pay")]
+    public async Task<ActionResult> PayForEventAsync([FromRoute] int id, [FromBody] PaymentRequestDto request)
+    {
+        var eventItem = await uow.EventRepository.GetByIdAsync(id);
+        if (eventItem == null)
+            return NotFound($"Event with ID {id} not found.");
+
+        var paymentMethod = await uow.PaymentMethodRepository.GetByIdAsync(request.PaymentMethodId);
+        if (paymentMethod == null)
+            return BadRequest("Payment method not found.");
+
+        var patientStripeCustomerId = paymentMethod.User.StripeCustomerId; // adjust if stored elsewhere
+        if (string.IsNullOrEmpty(patientStripeCustomerId))
+            return BadRequest("Patient does not have a Stripe customer account.");
+
+        var doctorStripeAccountId = eventItem.DoctorEvent.Doctor.StripeConnectAccountId;
+        if (string.IsNullOrEmpty(doctorStripeAccountId))
+            return BadRequest("Doctor does not have a Stripe Connect account.");
+
+        var serviceEntity = await uow.ServiceRepository.GetByIdAsync(eventItem.EventService.ServiceId);
+        if (serviceEntity == null)
+            return BadRequest("Service not found for event.");
+
+        var amountInCents = serviceEntity.Price * 100;
+        
+        if (paymentMethod.StripePaymentMethodId == null)
+            return BadRequest("The selected PaymentMethod does not have a Stripe PaymentMethodId.");
+
+        var paymentIntent = await stripeService.CreatePaymentIntentAsync(
+            patientStripeCustomerId,
+            paymentMethod.StripePaymentMethodId,
+            doctorStripeAccountId,
+            amountInCents,
+            CommissionInCents 
+        );
+
+        if (paymentIntent == null)
+            return BadRequest("Error processing payment.");
+
+        var status = Utils.MapStripeStatusToPaymentStatus(paymentIntent.Status);
+
+        var payment = new Payment
+        {
+            Amount = serviceEntity.Price,
+            Currency = "MXN",
+            Date = DateTime.UtcNow,
+            PaymentStatus = status,
+            StripePaymentIntent = paymentIntent.Id,
+            EventId = eventItem.Id,
+            PaymentMethodId = paymentMethod.Id
+            // TODO - Add related stripe payment identifiers
+            // StripePaymentId = paymentIntent.Charges.Data.FirstOrDefault()?.Id,
+        };
+
+        eventItem.Payments.Add(payment);
+        uow.PaymentRepository.Add(payment);
+
+        if (!await uow.Complete())
+            return BadRequest("Error saving payment details.");
+
+        return Ok(new { PaymentIntentId = paymentIntent.Id, Status = paymentIntent.Status });
     }
 
     [HttpPost]
@@ -335,7 +402,7 @@ public class EventsController(
 
                 if (string.IsNullOrEmpty(doctor.StripeConnectAccountId))
                 {
-                    var account = await stripeService.CreateExpressAccountAsync(doctor);
+                    var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctor);
                     doctor.StripeConnectAccountId = account.Id;
                 }
 
@@ -364,14 +431,14 @@ public class EventsController(
             if (!patientExists)
             {
                 doctor.Patients.Add(new DoctorPatient(doctorId, user.Id)
-                    { HasPatientInformationAccess = request.HasPatientInformationAccess.Value });
+                    { HasClinicalHistoryAccess = request.HasPatientInformationAccess.Value });
             }
             else
             {
                 var doctorPatient = doctor.Patients.FirstOrDefault(p => p.PatientId == user.Id);
                 if (doctorPatient != null)
                 {
-                    doctorPatient.HasPatientInformationAccess = request.HasPatientInformationAccess.Value;
+                    doctorPatient.HasClinicalHistoryAccess = request.HasPatientInformationAccess.Value;
                 }
             }
         }
@@ -398,20 +465,21 @@ public class EventsController(
         Models.Entities.Event item = new(request.AllDay.Value, request.DateFrom.Value, request.DateTo.Value)
         {
             NurseEvents = request.Nurses.Select(x => new NurseEvent(x.Id!.Value)).ToList(),
-            EventService = new(request.Service.Id.Value),
-            PatientEvent = new(request.Patient.Id.Value),
-            EventClinic = new(request.Clinic.Id.Value),
-            DoctorEvent = new(doctorId),
+            EventService = new EventService(request.Service.Id.Value),
+            PatientEvent = new PatientEvent(request.Patient.Id.Value),
+            EventClinic = new EventClinic(request.Clinic.Id.Value),
+            DoctorEvent = new DoctorEvent(doctorId),
         };
 
         if (request.PaymentMethodTypeId.HasValue)
         {
-            item.EventPaymentMethodType = new(request.PaymentMethodTypeId.Value);
+            item.EventPaymentMethodType = new EventPaymentMethodType(request.PaymentMethodTypeId.Value);
         }
 
         if (request.MedicalInsuranceCompanyId.HasValue)
         {
-            item.EventMedicalInsuranceCompany = new(request.MedicalInsuranceCompanyId.Value);
+            item.EventMedicalInsuranceCompany =
+                new EventMedicalInsuranceCompany(request.MedicalInsuranceCompanyId.Value);
         }
 
         uow.EventRepository.Add(item);

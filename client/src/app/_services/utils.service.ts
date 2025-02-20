@@ -35,7 +35,7 @@ export class UtilsService {
       // 'light',
     ];
 
-    const asciiSum = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const asciiSum = [ ...name ].reduce((sum, char) => sum + char.charCodeAt(0), 0);
 
     const classIndex = asciiSum % bootstrapClasses.length;
 

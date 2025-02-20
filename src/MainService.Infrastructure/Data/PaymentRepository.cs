@@ -1,5 +1,6 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using MainService.Core.DTOs.Payment;
 using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -90,6 +91,11 @@ public class PaymentRepository(DataContext context, IMapper mapper) : IPaymentRe
             param.PageNumber,
             param.PageSize
         );
+    }
+
+    public async Task<Payment?> GetByStripePaymentIntentAsync(string stripePaymentIntent)
+    {
+        return await context.Payments.FirstOrDefaultAsync(p => p.StripePaymentIntent == stripePaymentIntent);
     }
 
     public void Delete(Payment payment)

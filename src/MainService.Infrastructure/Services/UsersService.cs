@@ -52,7 +52,7 @@ public class UsersService(
         itemToReturn.Token = await tokenService.CreateToken(user);
 
         itemToReturn.SharedDoctors = user.Doctors
-            .Where(d => d.HasPatientInformationAccess)
+            .Where(d => d.HasClinicalHistoryAccess)
             .Select(mapper.Map<DoctorDto>)
             .ToList();
 
@@ -192,6 +192,59 @@ public class UsersService(
             .ThenInclude(x => x.MedicalLicense)
             .ThenInclude(x => x.MedicalLicenseSpecialty)
             .ThenInclude(x => x.Specialty);
+
+    public async Task<ClinicalHistoryVerificationDto?> VerifyClinicalHistoryAccessAsync(int doctorId, int patientId)
+    {
+        if (!await uow.UserRepository.ExistsByIdAsync(doctorId) || !await uow.UserRepository.ExistsByIdAsync(patientId))
+        {
+            return null;
+        }
+
+        return await uow.UserRepository.GetClinicalHistoryVerificationAsync(doctorId, patientId);
+    }
+
+    public async Task<ClinicalHistoryVerificationDto?> UpdateClinicalHistoryConsentAsync(int doctorId, int patientId,
+        bool consent)
+    {
+        if (!await uow.UserRepository.ExistsByIdAsync(doctorId) ||
+            !await uow.UserRepository.ExistsByIdAsync(patientId))
+        {
+            return null;
+        }
+
+        var dpRecord = await context.DoctorPatients
+            .FirstOrDefaultAsync(dp => dp.DoctorId == doctorId && dp.PatientId == patientId);
+
+        if (dpRecord == null)
+        {
+            if (consent)
+            {
+                dpRecord = new DoctorPatient(doctorId, patientId)
+                {
+                    HasClinicalHistoryAccess = true,
+                    ConsentGrantedAt = DateTime.UtcNow
+                };
+                context.DoctorPatients.Add(dpRecord);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            dpRecord.HasClinicalHistoryAccess = consent;
+            dpRecord.ConsentGrantedAt = consent ? DateTime.UtcNow : null;
+        }
+
+        await context.SaveChangesAsync();
+
+        return new ClinicalHistoryVerificationDto
+        {
+            HasAccess = dpRecord.HasClinicalHistoryAccess,
+            ConsentGrantedAt = dpRecord.ConsentGrantedAt
+        };
+    }
 
     public async Task<bool> AddPatientToDoctorAsync(int doctorId, int patientId)
     {

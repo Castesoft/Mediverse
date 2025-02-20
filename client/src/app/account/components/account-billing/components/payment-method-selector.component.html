@@ -1,0 +1,27 @@
+<div class="payment-method-selector">
+  <div class="d-flex flex-column gap-4">
+    @for (paymentMethod of paymentMethods(); track paymentMethod) {
+      <div class="payment-method-card-wrapper" (click)="onCardClick(paymentMethod)">
+        <div
+          paymentMethodDisplayCard
+          [paymentMethod]="paymentMethod"
+          [selected]="isSelected(paymentMethod)"
+          [selectionMode]="true">
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (confirmOnSelect() && pendingPaymentMethod) {
+    <div class="d-flex flex-grow-1 justify-content-between mt-4">
+      <button type="button" class="btn btn-active-light-primary btn-color-primary"
+              (click)="openPaymentMethodCreateModal()">
+        <i class="ki-duotone ki-plus fs-2 p-0"></i>
+        Agregar Método de Pago
+      </button>
+      <button type="button" class="btn btn-primary" (click)="confirmSelection()">
+        Confirmar Selección
+      </button>
+    </div>
+  }
+</div>

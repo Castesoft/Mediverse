@@ -69,7 +69,6 @@
             </div>
             <div class="separator mb-3 opacity-75"></div>
             <div class="card-body">
-
               @switch (upperTab) {
                 @case ('evolucion') {
 
@@ -213,98 +212,106 @@
       </div>
       <div class="separator mb-3 opacity-75"></div>
       <div class="card-body">
-        @if (lowerTab === 'general') {
-          <div class="row mb-6">
-            <div class="col-6">
-              <h5 class="text-gray-500 mb-3">Clínica</h5>
-              <div>
-                @if (item()!.clinic) {
-                  {{ item()!.clinic?.name }}
-                  <br>
-                  {{ item()!.clinic?.street }} {{ item()!.clinic?.exteriorNumber }}, {{ item()!.clinic?.neighborhood }}
-                } @else {
-                  Sin clínica asignada
-                }
+        @switch (lowerTab) {
+          @case ("general") {
+            <div class="row mb-6">
+              <div class="col-6">
+                <h5 class="text-gray-500 mb-3">Clínica</h5>
+                <div>
+                  @if (item()!.clinic) {
+                    {{ item()!.clinic?.name }}
+                    <br>
+                    {{ item()!.clinic?.street }} {{ item()!.clinic?.exteriorNumber }}, {{ item()!.clinic?.neighborhood }}
+                  } @else {
+                    Sin clínica asignada
+                  }
+                </div>
+              </div>
+              <div class="col-6">
+                <h5 class="text-gray-500 mb-3">Aseguradora</h5>
+                <div>
+                  @if (item()!.medicalInsuranceCompany) {
+                    {{ item()!.medicalInsuranceCompany?.name }}
+                  } @else {
+                    Sin aseguradora
+                  }
+                </div>
               </div>
             </div>
-            <div class="col-6">
-              <h5 class="text-gray-500 mb-3">Aseguradora</h5>
-              <div>
-                @if (item()!.medicalInsuranceCompany) {
-                  {{ item()!.medicalInsuranceCompany?.name }}
-                } @else {
-                  Sin aseguradora
-                }
-              </div>
-            </div>
-          </div>
 
-          <h5 class="text-gray-500 mb-3">Servicios solicitados</h5>
-          @if (item()!!.service) {
-            <div eventServicesSummary [item]="item()!!.service!"></div>
+            <h5 class="text-gray-500 mb-3">Servicios solicitados</h5>
+            @if (item()!!.service) {
+              <div eventServicesSummary [item]="item()!!.service!"></div>
+            }
+            <div class="row mt-2">
+              <div class="col">
+                <p class="fs-5 fw-bold mb-0">IVA (16%)</p>
+              </div>
+              <div class="col text-end fw-bolder">
+                {{ tax | currency : "MXN" }}
+              </div>
+            </div>
+            <div class="separator m-3 opacity-75"></div>
+            <div class="row mt-4">
+              <div class="col">
+                <p class="fs-5 fw-bold mb-3">Total</p>
+              </div>
+              <div class="col text-end fw-bolder">
+                {{ total | currency : "MXN" }}
+              </div>
+            </div>
           }
-          <div class="row mt-2">
-            <div class="col">
-              <p class="fs-5 fw-bold mb-0">IVA (16%)</p>
+          @case ("pagos") {
+            <div class="d-flex flex-column align-items-end">
+              <h2 class="mb-3">Total: {{ total | currency:'MXN' }}</h2>
+              <button class="btn btn-primary" (click)="navigateToCheckout()">Pagar Ahora</button>
             </div>
-            <div class="col text-end fw-bolder">
-              {{ tax | currency : "MXN" }}
-            </div>
-          </div>
-          <div class="separator m-3 opacity-75"></div>
-          <div class="row mt-4">
-            <div class="col">
-              <p class="fs-5 fw-bold mb-3">Total</p>
-            </div>
-            <div class="col text-end fw-bolder">
-              {{ total | currency : "MXN" }}
-            </div>
-          </div>
-        } @else if (lowerTab === 'pagos') {
-          <div paymentsCatalog
-               [item]="paymentItem"
-               [view]="paymentView"
-               [key]="paymentKey"
-               [useCard]="paymentUseCard"
-               [isCompact]="paymentIsCompact"
-               [embedded]="paymentEmbedded"
-               [mode]="paymentMode"
-               [params]="paymentParams"
-          ></div>
-        } @else if (lowerTab === 'especialistas') {
-          @if (item()!!.nurses && item()!!.nurses!.length > 0) {
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-              @for (nurse of item()!!.nurses; track nurse.id) {
-                <div nurseDisplayCard [nurse]="nurse" class="col" (onDelete)="deselectNurse(nurse)"></div>
-              }
-            </div>
-            <div class="d-flex justify-content-end mt-6">
-              <button type="button" class="btn btn-primary btn-sm" (click)="onAddNurse()">
-                <i class="ki-duotone ki-pencil fs-4 text-white">
+            <div paymentsCatalog
+                 [item]="paymentItem"
+                 [view]="paymentView"
+                 [key]="paymentKey"
+                 [useCard]="paymentUseCard"
+                 [isCompact]="paymentIsCompact"
+                 [embedded]="paymentEmbedded"
+                 [mode]="paymentMode"
+                 [params]="paymentParams"
+            ></div>
+          }
+          @case ("general") {
+            @if (item()!!.nurses && item()!!.nurses!.length > 0) {
+              <div class="row row-cols-1 row-cols-md-2 g-4">
+                @for (nurse of item()!!.nurses; track nurse.id) {
+                  <div nurseDisplayCard [nurse]="nurse" class="col" (onDelete)="deselectNurse(nurse)"></div>
+                }
+              </div>
+              <div class="d-flex justify-content-end mt-6">
+                <button type="button" class="btn btn-primary btn-sm" (click)="onAddNurse()">
+                  <i class="ki-duotone ki-pencil fs-4 text-white">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i>
+                  <span>Editar</span>
+                </button>
+              </div>
+            } @else {
+              <div class="text-center py-5">
+                <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
                   <span class="path1"></span>
                   <span class="path2"></span>
                 </i>
-                <span>Editar</span>
-              </button>
-            </div>
-          } @else {
-            <div class="text-center py-5">
-              <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-              <p class="fs-5 text-muted">No hay especialistas asignados a esta cita.</p>
-              @if (!summaryMode) {
-                <button class="btn btn-primary mt-3" (click)="onAddNurse()">
-                  <i class="ki-duotone ki-plus-square fs-2 me-2 text-white">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                    <span class="path3"></span>
-                  </i>
-                  Agregar especialista
-                </button>
-              }
-            </div>
+                <p class="fs-5 text-muted">No hay especialistas asignados a esta cita.</p>
+                @if (!summaryMode) {
+                  <button class="btn btn-primary mt-3" (click)="onAddNurse()">
+                    <i class="ki-duotone ki-plus-square fs-2 me-2 text-white">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                    </i>
+                    Agregar especialista
+                  </button>
+                }
+              </div>
+            }
           }
         }
       </div>

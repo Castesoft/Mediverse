@@ -49,63 +49,103 @@ namespace MainService.Infrastructure.Services
             return customer.Id;
         }
 
-        public async Task<Account> CreateExpressAccountAsync(Models.Entities.AppUser user)
+        public async Task<(Account account, string? accountLinkUrl)> CreateExpressAccountAsync(
+            Models.Entities.AppUser user)
         {
             StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
 
+            if (string.IsNullOrEmpty(user.Email))
+                throw new ArgumentException("User email is required for account creation.");
+
+            if (string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName))
+                throw new ArgumentException("User first and last name are required for account creation.");
+
+            if (!user.DateOfBirth.HasValue)
+                throw new ArgumentException("User date of birth is required for account creation.");
+
+            var address = user.UserAddresses.FirstOrDefault()?.Address;
+            if (address == null)
+                throw new ArgumentException("A valid user address is required for account creation.");
+
+            if (string.IsNullOrEmpty(address.CountryCode) || address.CountryCode.Length != 2)
+                throw new ArgumentException("A valid 2-letter country code is required in the user address.");
+
             var accountService = new AccountService();
 
-            AccountCreateOptions options = new()
+            var options = new AccountCreateOptions
             {
                 Type = AccountType.Express,
-                Country = "MX",
+                Country = address.CountryCode,
                 Email = user.Email,
-                // Capabilities = new AccountCapabilitiesOptions
-                // {
-                //     CardPayments = new AccountCapabilitiesCardPaymentsOptions
-                //     {
-                //         Requested = true,
-                //     },
-                //     Transfers = new AccountCapabilitiesTransfersOptions
-                //     {
-                //         Requested = true,
-                //     },
-                // },
-                // BusinessType = "individual",
-                // Individual = new AccountIndividualOptions
-                // {
-                //     Email = user.Email,
-                //     FirstName = user.FirstName,
-                //     LastName = user.LastName,
-                //     Dob = new DobOptions
-                //     {
-                //         Day = user.DateOfBirth.Day,
-                //         Month = user.DateOfBirth.Month,
-                //         Year = user.DateOfBirth.Year,
-                //     },
-                //     Address = new AddressOptions
-                //     {
-                //         City = user.UserAddresses.FirstOrDefault()?.Address.City,
-                //         Country = user.UserAddresses.FirstOrDefault()?.Address.Country,
-                //         Line1 = user.UserAddresses.FirstOrDefault()?.Address.Street,
-                //         PostalCode = user.UserAddresses.FirstOrDefault()?.Address.Zipcode,
-                //         State = user.UserAddresses.FirstOrDefault()?.Address.State,
-                //     },
-                //     Phone = user.PhoneNumber,
-
-                // },
-                // ExternalAccount = new AccountExternalAccountOptions
-                // {
-                //     Object = "bank_account",
-                //     Country = "MX",
-                //     Currency = "mxn",
-                //     AccountNumber = "000123456789",
-                //     RoutingNumber = "110000000",
-                // },
+                BusinessType = "individual",
+                Capabilities = new AccountCapabilitiesOptions
+                {
+                    CardPayments = new AccountCapabilitiesCardPaymentsOptions { Requested = true },
+                    Transfers = new AccountCapabilitiesTransfersOptions { Requested = true },
+                },
+                Individual = new AccountIndividualOptions
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Dob = new DobOptions
+                    {
+                        Day = user.DateOfBirth.Value.Day,
+                        Month = user.DateOfBirth.Value.Month,
+                        Year = user.DateOfBirth.Value.Year,
+                    },
+                    Address = new AddressOptions
+                    {
+                        City = address.City,
+                        Country = address.CountryCode,
+                        Line1 = address.Street,
+                        PostalCode = address.Zipcode,
+                        State = address.State,
+                    },
+                    Phone = user.PhoneNumber,
+                },
+                BusinessProfile = new AccountBusinessProfileOptions
+                {
+                    ProductDescription = "Medical consultation services",
+                }
             };
 
-            return await accountService.CreateAsync(options);
+            Account account;
+            try
+            {
+                account = await accountService.CreateAsync(options);
+            }
+            catch (StripeException ex)
+            {
+                throw new Exception("Error creating Stripe Express account: " + ex.Message, ex);
+            }
+
+            string? accountLinkUrl = null;
+            if (account.Capabilities.Transfers != "active")
+            {
+                var accountLinkService = new AccountLinkService();
+                var accountLinkOptions = new AccountLinkCreateOptions
+                {
+                    Account = account.Id,
+                    RefreshUrl = config["StripeSettings:RefreshUrl"],
+                    ReturnUrl = config["StripeSettings:ReturnUrl"],
+                    Type = "account_onboarding",
+                };
+
+                try
+                {
+                    var accountLink = await accountLinkService.CreateAsync(accountLinkOptions);
+                    accountLinkUrl = accountLink.Url;
+                }
+                catch (StripeException ex)
+                {
+                    throw new Exception("Error creating account link for onboarding: " + ex.Message, ex);
+                }
+            }
+
+            return (account, accountLinkUrl);
         }
+
 
         public async Task<PaymentIntent?> CreatePaymentIntentAsync(string customerId, string paymentMethodId,
             string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents)

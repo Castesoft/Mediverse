@@ -8,14 +8,13 @@ import { CalendarView } from "src/app/_models/events/eventTypes";
 import { AccountService } from "src/app/_services/account.service";
 import { Account } from "src/app/_models/account/account";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
 
 @Component({
   selector: 'app-account-events',
   templateUrl: './account-events.component.html',
   styleUrl: './account-events.component.scss',
-  imports: [
-    EventsCatalogComponent
-  ],
+  imports: [ EventsCatalogComponent, ],
 })
 export class AccountEventsComponent {
   private accountService: AccountService = inject(AccountService);
@@ -29,6 +28,7 @@ export class AccountEventsComponent {
   eventMode: CatalogMode = 'view';
   eventCalendarView: CalendarView = 'table';
   eventFiltersCollapsed: boolean = true;
+  eventDisplayRole: EventsTableDisplayRole = EventsTableDisplayRole.DOCTOR;
   eventParams: EventParams = new EventParams(this.eventKey, {
     userId: null
   });

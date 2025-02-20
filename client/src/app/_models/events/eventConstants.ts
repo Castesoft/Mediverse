@@ -114,3 +114,8 @@ export const eventFormSteps: Record<number, EventFormSteps> = {
   3: 'especialistas',
   4: 'clinica',
 };
+
+export class EventsTableDisplayRole {
+  static readonly DOCTOR = 'doctor';
+  static readonly PATIENT = 'patient';
+}

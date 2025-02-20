@@ -21,6 +21,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 {
     public void Add(AppUser item) => context.Users.Remove(item);
     public void Delete(AppUser item) => context.Users.Remove(item);
+    public void Update(AppUser item) => context.Users.Update(item);
 
     public async Task<List<AppUser>> GetAllAsync()
     {
@@ -46,8 +47,8 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
     public async Task<AppUser?> GetByIdAsync(int id) =>
         await context.Users
-            .Include(x => x.Patients)
-            .ThenInclude(x => x.Patient)
+            .Include(x => x.Patients).ThenInclude(x => x.Patient)
+            .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<UserDto?> GetDtoByIdAsync(int id) =>
@@ -341,11 +342,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             {
                 context.CompanionRelativeTypes.Remove(relativeType);
             }
+
             context.MedicalRecordCompanions.Remove(companion);
         }
 
         context.UserMedicalRecords.Remove(userMedicalRecord);
-    
+
         try
         {
             return await context.SaveChangesAsync() > 0;
@@ -421,6 +423,24 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .Include(x => x.Patients)
             .Include(x => x.DoctorSpecialty).ThenInclude(x => x.Specialty)
             .Include(x => x.Doctors);
+
+    public async Task<ClinicalHistoryVerificationDto?> GetClinicalHistoryVerificationAsync(int doctorId, int patientId)
+    {
+        var dpRecord = await context.DoctorPatients
+            .AsNoTracking()
+            .FirstOrDefaultAsync(dp => dp.DoctorId == doctorId && dp.PatientId == patientId);
+
+        if (dpRecord == null)
+        {
+            return null;
+        }
+
+        return new ClinicalHistoryVerificationDto
+        {
+            HasAccess = dpRecord.HasClinicalHistoryAccess,
+            ConsentGrantedAt = dpRecord.ConsentGrantedAt
+        };
+    }
 
     public async Task<int?> GetMainAddressIdAsync(int userId) =>
         await context.UserAddresses

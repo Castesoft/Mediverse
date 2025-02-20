@@ -1,7 +1,8 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Addresses } from 'src/app/_models/types';
-import { Address, AddressesService } from 'src/app/addresses/addresses.config';
+import { Address } from 'src/app/_models/addresses/address';
+import { Addresses } from "src/app/_models/addresses/addressTypes";
+import { AddressesService } from "src/app/addresses/addresses.config";
 
 @Component({
   host: { class: 'd-flex align-items-center' },
@@ -15,7 +16,7 @@ import { Address, AddressesService } from 'src/app/addresses/addresses.config';
           <img [src]="address().photoUrl" alt="Emma Smith" class="w-100" />
           } @else {
           <div class="symbol-label fs-3 bg-light-danger text-danger">
-            {{ address().name[0] }}
+            {{ address()?.name[0] }}
           </div>
           }
         </div>

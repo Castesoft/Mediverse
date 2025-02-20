@@ -1,0 +1,101 @@
+<div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+  <div class="d-flex w-100 justify-content-between w-100 mb-4 align-items-end">
+    <div class="d-flex justify-content-center align-items-center">
+      <button type="button" class="btn btn-outline-secondary btn-icon d-flex" (click)="onCancel()">
+        <i class="ki-duotone ki-black-left fs-1 p-0 text-body"></i>
+      </button>
+      <a [routerLink]="['/']">
+        <img alt="Logo" class="max-h-50px logo-default theme-light-show" src="media/logos/logo-default.svg"/>
+        <img alt="Logo" class="max-h-50px logo-default theme-dark-show" src="media/logos/logo-default-dark.svg"/>
+      </a>
+    </div>
+
+    <div class="d-flex flex-grow-1 justify-content-end align-items-center">
+      <small class="text-muted">
+        <img
+          src="media/stripe/powered-by-stripe-black.svg"
+          alt="Stripe"
+          style="height: 30px; vertical-align: middle;"
+        />
+      </small>
+    </div>
+  </div>
+
+  <div class="row w-100 g-0">
+    <div class="col-md-6 pe-3">
+      <form>
+        <div checkoutAddressEntryCard></div>
+        <div checkoutPaymentMethodEntryCard class="mt-6"></div>
+      </form>
+    </div>
+
+    <div class="col-md-6 ps-3">
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="card-title">
+            <h3>Resumen de Pedido</h3>
+          </div>
+        </div>
+        <div class="card-body border-top border-gray-200">
+          @if (event) {
+            <div class="details rounded mb-4">
+              <h6 class="mb-2">Detalles del Evento</h6>
+              <p class="text-muted mb-0">
+                <strong>Servicio:</strong> {{ event.service.name }}
+              </p>
+              <p class="text-muted mb-0">
+                <strong>Precio:</strong> {{ event.service.price | currency:'MXN' }}
+              </p>
+            </div>
+          }
+          <div class="payment-breakdown border-top pt-3">
+            <div class="d-flex justify-content-between">
+              <div>
+                <p class="text-muted">IVA (16%):</p>
+                <p class="text-muted">Subtotal:</p>
+                <p class="fw-bold">Total:</p>
+              </div>
+              <div class="text-end">
+                <p class="">{{ tax | currency:'MXN' }}</p>
+                <p class="">{{ subtotal | currency:'MXN' }}</p>
+                <p class="fw-bold">{{ total | currency:'MXN' }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mt-6">
+            <button type="button" class="btn btn-primary w-100" (click)="onProceedPayment()">Completar Pago</button>
+          </div>
+
+          <div class="row mt-3 g-3">
+            <div class="col-9">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Ingrese código promocional"
+                aria-label="Código promocional"
+              />
+            </div>
+            <div class="col-3">
+              <button type="button" class="btn btn-secondary w-100">Aplicar</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Detailed Terms and Conditions Disclaimer -->
+      <div class="text-center text-muted mt-3 px-10">
+        <small>
+          Al hacer clic en "Completar Pago", usted acepta nuestros
+          <a href="/terminos" class="text-decoration-none text-primary" style="transition: color 0.2s;">Términos y
+            Condiciones</a>,
+          la <a href="/privacidad" class="text-decoration-none text-primary" style="transition: color 0.2s;">Política de
+          Privacidad</a>
+          y las <a href="/normas" class="text-decoration-none text-primary" style="transition: color 0.2s;">Normas de
+          Uso</a>
+          de esta plataforma.
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

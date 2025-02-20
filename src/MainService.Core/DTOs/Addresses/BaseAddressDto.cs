@@ -10,6 +10,7 @@ public class BaseAddressDto
     public string? City { get; set; }
     public string? State { get; set; }
     public string? Country { get; set; }
+    public string? CountryCode { get; set; }
     public string? Zipcode { get; set; }
     public DateTime CreatedAt { get; set; }
 }

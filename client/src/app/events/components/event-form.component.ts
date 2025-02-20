@@ -1,6 +1,16 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, model, ModelSignal, signal, Signal, viewChild } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  model,
+  ModelSignal,
+  signal,
+  Signal,
+  viewChild,
+  WritableSignal
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
@@ -45,12 +55,12 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
 
-  patients = inject(PatientsService);
-  clinics = inject(ClinicsService);
-  services = inject(ServicesService);
-  nurses = inject(NursesService);
+  patients: PatientsService = inject(PatientsService);
+  clinics: ClinicsService = inject(ClinicsService);
+  services: ServicesService = inject(ServicesService);
+  nurses: NursesService = inject(NursesService);
 
-  readonly fromWrapper = signal<boolean>(false);
+  readonly fromWrapper: WritableSignal<boolean> = signal<boolean>(false);
 
   patientUse: FormUse = FormUse.CREATE;
   serviceUse: FormUse = FormUse.CREATE;
@@ -68,15 +78,15 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
   serviceAccordion: Signal<CdkAccordionItem> = viewChild.required<CdkAccordionItem>('serviceAccordion');
   clinicAccordion: Signal<CdkAccordionItem> = viewChild.required<CdkAccordionItem>('clinicAccordion');
 
-  patientItem = null;
-  serviceItem = null;
-  clinicItem = null;
+  patientItem: null = null;
+  serviceItem: null = null;
+  clinicItem: null = null;
 
-  patientPanelOpen = false;
-  servicePanelOpen = false;
-  clinicPanelOpen = false;
+  patientPanelOpen: boolean = false;
+  servicePanelOpen: boolean = false;
+  clinicPanelOpen: boolean = false;
 
-  selectedIndex = 0;
+  selectedIndex: number = 0;
 
   constructor() {
     super(EventsService, EventForm);

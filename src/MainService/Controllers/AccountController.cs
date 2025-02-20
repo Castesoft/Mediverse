@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
 using System.Text.Json;
 using MainService.Core.DTOs.MedicalRecord;
+using MainService.Core.DTOs.Payment;
 using MainService.Models.Entities.Aggregate;
 using Serilog;
 

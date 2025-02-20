@@ -40,11 +40,14 @@
 
       <td timePeriodCell [from]="item.dateFrom" [to]="item.dateTo" [showDate]="true" [allDay]="item.allDay"></td>
 
-      <td userCell [user]="item.patient" [role]="'Patient'"></td>
-
-      @if (showDoctorColumn()) {
-        <td userCell [user]="item.doctor" [role]="'Doctor'"></td>
-      }
+      <td
+        userCell
+        [user]="displayRole() === 'doctor' ? item.doctor : item.patient"
+        [role]="displayRole() === 'doctor' ? 'Doctor' : 'Patient'"
+        [shouldAskForClinicalHistoryShare]="true"
+        [patientId]="item.patient.id"
+      >
+      </td>
 
       <td
         class="nowrap"
@@ -60,6 +63,14 @@
         <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact"
             [value]="item[cell.item.key]"></td>
       }
+
+      <td>
+        @if ((item.paymentStatus?.code || 'unpaid') !== 'paid') {
+          <button mat-raised-button color="accent" (click)="openPaymentModal(item)">Pagar</button>
+        } @else {
+          <span>Pagado</span>
+        }
+      </td>
 
       <td
         tableMenuCell

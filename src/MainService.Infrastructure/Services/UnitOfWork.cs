@@ -42,8 +42,12 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public IWarehouseRepository WarehouseRepository => new WarehouseRepository(context, mapper);
     public IPaymentRepository PaymentRepository => new PaymentRepository(context, mapper);
     public ISubscriptionRepository SubscriptionRepository => new SubscriptionRepository(context, mapper);
-    public ISubscriptionHistoryRepository SubscriptionHistoryRepository => new SubscriptionHistoryRepository(context, mapper);
+
+    public ISubscriptionHistoryRepository SubscriptionHistoryRepository =>
+        new SubscriptionHistoryRepository(context, mapper);
+
     public ISubscriptionPlanRepository SubscriptionPlanRepository => new SubscriptionPlanRepository(context);
+    public IPaymentMethodRepository PaymentMethodRepository => new PaymentMethodRepository(context, mapper);
 
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;
     public void DetachEntity<T>(T entity) where T : class => context.Entry(entity).State = EntityState.Detached;
