@@ -164,6 +164,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
     effect((): void => {
       const event: Event | null = this.item();
+      console.log(event);
       if (event) {
         this.evolutionForm.controls.content.patchValue(event.evolution);
         this.nextStepForm.controls.content.patchValue(event.nextSteps);

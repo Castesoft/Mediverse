@@ -6,7 +6,7 @@ import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult
   selector: 'div[doctorGeneralTab]',
   templateUrl: './doctor-general-tab.component.html',
   standalone: true,
-  imports: [CommonModule,],
+  imports: [ CommonModule, ],
 })
 export class DoctorGeneralTabComponent {
   doctor = model.required<DoctorResult | null>();

@@ -1818,6 +1818,40 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("MedicalRecordSubstances");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActionUrl")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.NurseEvent", b =>
                 {
                     b.Property<int>("NurseId")
@@ -3129,6 +3163,30 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("UserMedicalRecords");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.UserNotification", b =>
+                {
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("AppUserId", "NotificationId");
+
+                    b.HasIndex("NotificationId");
+
+                    b.ToTable("UserNotifications");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
@@ -4797,6 +4855,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.UserNotification", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "AppUser")
+                        .WithMany("UserNotifications")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.Notification", "Notification")
+                        .WithMany("UserNotifications")
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Notification");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.UserPhoto", b =>
                 {
                     b.HasOne("MainService.Models.Entities.Photo", "Photo")
@@ -5048,6 +5125,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("UserMedicalRecord")
                         .IsRequired();
 
+                    b.Navigation("UserNotifications");
+
                     b.Navigation("UserPermissions");
 
                     b.Navigation("UserPhoto")
@@ -5204,6 +5283,11 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("UserMedicalRecord")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Notification", b =>
+                {
+                    b.Navigation("UserNotifications");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>

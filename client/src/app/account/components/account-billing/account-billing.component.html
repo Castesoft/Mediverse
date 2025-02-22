@@ -67,7 +67,7 @@
       role="tabpanel"
     >
       <div class="row gx-9 gy-6">
-        @for (paymentMethod of accountService.billingDetails()?.userPaymentMethods; track $index) {
+        @for (paymentMethod of billingDetails?.userPaymentMethods; track $index) {
           <div paymentMethodDisplayCard
                class="col-xl-6"
                [paymentMethod]="paymentMethod"
@@ -112,7 +112,7 @@
   </div>
   <div class="card-body pt-0">
     <div class="row gx-9 gy-6">
-      @for (address of accountService.billingDetails()?.userAddresses; track $index) {
+      @for (address of billingDetails?.userAddresses; track $index) {
         <div billingAddressDisplayCard
              class="col-xl-6"
              [address]="address"
@@ -122,7 +122,7 @@
         ></div>
       }
       <div class="col-xl-6">
-        <div addressCreateCard></div>
+        <div addressCreateCard class="h-100" (onAddressCreated)="handleBillingDetailsModification()"></div>
       </div>
     </div>
     <div class="mt-10">

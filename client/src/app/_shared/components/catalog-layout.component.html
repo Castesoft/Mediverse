@@ -1,14 +1,20 @@
 <div [ngClass]="{'card': useCard(), 'card-flush': useCard()}">
   @if (title()) {
-    <div class="card-header">
-      <div class="card-title">
-        <h2>{{ title() }}</h2>
+    <div [class.card-header]="useCard()">
+      <div [class.card-title]="useCard()">
+        <h2 class="m-0">{{ title() }}</h2>
       </div>
     </div>
   }
 
   @if (!embedded()) {
-    <div class="card-header align-items-center py-5 gap-2 gap-md-5" [class.d-flex]="!embedded()">
+    <div
+      class="align-items-center gap-2 gap-md-5"
+      [class.d-flex]="!embedded()"
+      [ngClass]="{
+        'card-header py-5 pb-0': useCard(),
+      }"
+    >
       <form [id]="form().id" (ngSubmit)="onSubmit()">
         <div class="card-title">
           <div class="d-flex align-items-center position-relative my-1">

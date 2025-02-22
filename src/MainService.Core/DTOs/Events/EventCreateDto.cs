@@ -1,69 +1,69 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MainService.Models.Entities.Aggregate;
 
-namespace MainService.Core.DTOs.Events
+namespace MainService.Core.DTOs.Events;
+
+public class EventCreateDto
 {
-    public class EventCreateDto
-    {
-        [Required(ErrorMessage = "El paciente es requerido.")]
-        public OptionDto? Patient { get; set; }
+    [Required(ErrorMessage = "El paciente es requerido.")]
+    [Range(1, int.MaxValue, ErrorMessage = "El ID del paciente debe ser un valor positivo.")]
+    public int PatientId { get; set; }
 
-        [MaxLength(100, ErrorMessage = "Las enfermeras no pueden exceder de 100 caracteres.")]
-        public List<OptionDto> Nurses { get; set; } = [];
+    public List<int> NurseIds { get; set; } = [];
 
-        [Required(ErrorMessage = "El servicio es requerido.")]
-        public OptionDto? Service { get; set; }
+    [Required(ErrorMessage = "El servicio es requerido.")]
+    [Range(1, int.MaxValue, ErrorMessage = "El ID del servicio debe ser un valor positivo.")]
+    public int ServiceId { get; set; }
 
-        [Required(ErrorMessage = "La clínica es requerida.")]
-        public OptionDto? Clinic { get; set; }
+    [Required(ErrorMessage = "La clínica es requerida.")]
+    [Range(1, int.MaxValue, ErrorMessage = "El ID de la clínica debe ser un valor positivo.")]
+    public int ClinicId { get; set; }
 
-        [Required(ErrorMessage = "La duración es requerido.")] 
-        public bool? AllDay { get; set; }
+    [Required(ErrorMessage = "La duración es requerida.")]
+    public bool AllDay { get; set; }
 
-        [Required(ErrorMessage = "La fecha de inicio es requerida.")]
-        public DateTime? DateFrom { get; set; }
+    [Required(ErrorMessage = "La fecha de inicio es requerida.")]
+    public DateTime DateFrom { get; set; }
 
-        [Required(ErrorMessage = "La fecha de fin es requerida.")]
-        public DateTime? DateTo { get; set; }
-        public int? PaymentMethodTypeId { get; set; }
-        public int? MedicalInsuranceCompanyId { get; set; }
-        public string? StripePaymentMethodId { get; set; }
-        public bool? HasPatientInformationAccess { get; set; }
-    }
+    [Required(ErrorMessage = "La fecha de fin es requerida.")]
+    public DateTime DateTo { get; set; }
 
-    
+    public int? DoctorId { get; set; }
 
-    public class PatientCreateEventDto
-    {
-        [Required(ErrorMessage = "El servicio es requerido.")]
-        public OptionDto? Service { get; set; }
+    public int? PaymentMethodTypeId { get; set; }
+    public int? MedicalInsuranceCompanyId { get; set; }
+    public string? StripePaymentMethodId { get; set; }
+    public bool? HasPatientInformationAccess { get; set; }
+}
 
-        [Required(ErrorMessage = "La clínica es requerida.")]
-        public OptionDto? Clinic { get; set; }
+public class PatientCreateEventDto
+{
+    [Required(ErrorMessage = "El servicio es requerido.")]
+    public OptionDto? Service { get; set; }
 
-        [Required(ErrorMessage = "La fecha de inicio es requerida.")]
-        public DateTime? DateFrom { get; set; }
+    [Required(ErrorMessage = "La clínica es requerida.")]
+    public OptionDto? Clinic { get; set; }
 
-        [Required(ErrorMessage = "La fecha de fin es requerida.")]
-        public DateTime? DateTo { get; set; }
+    [Required(ErrorMessage = "La fecha de inicio es requerida.")]
+    public DateTime? DateFrom { get; set; }
 
-        [Required(ErrorMessage = "La hora de inicio es requerida.")]
-        public string? TimeFrom { get; set; }
+    [Required(ErrorMessage = "La fecha de fin es requerida.")]
+    public DateTime? DateTo { get; set; }
 
-        [Required(ErrorMessage = "La hora de fin es requerida.")]
-        public string? TimeTo { get; set; }
+    [Required(ErrorMessage = "La hora de inicio es requerida.")]
+    public string? TimeFrom { get; set; }
 
-        [Required(ErrorMessage = "El doctor es requerido.")]
-        public OptionDto? Doctor { get; set; }
+    [Required(ErrorMessage = "La hora de fin es requerida.")]
+    public string? TimeTo { get; set; }
 
-        [Required(ErrorMessage = "El método de pago es requerido.")]
-        public OptionDto? PaymentMethodType { get; set; }
+    [Required(ErrorMessage = "El doctor es requerido.")]
+    public OptionDto? Doctor { get; set; }
 
-        
-        public OptionDto? MedicalInsuranceCompany { get; set; }
-        public string? StripePaymentMethodId { get; set; }
-        public bool? HasPatientInformationAccess { get; set; }
-    }
+    [Required(ErrorMessage = "El método de pago es requerido.")]
+    public OptionDto? PaymentMethodType { get; set; }
 
-    
+
+    public OptionDto? MedicalInsuranceCompany { get; set; }
+    public string? StripePaymentMethodId { get; set; }
+    public bool? HasPatientInformationAccess { get; set; }
 }

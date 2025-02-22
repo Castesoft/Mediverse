@@ -4,12 +4,9 @@ using MainService.Core.Interfaces.Services;
 using MainService.Models.Entities;
 
 namespace MainService.Infrastructure.Services;
-    public class CodeService : ICodeService
-{
-    public CodeService()
-    {
-    }
 
+public class CodeService : ICodeService
+{
     public string GenerateEmailCode()
     {
         var random = new Random();
@@ -32,11 +29,11 @@ namespace MainService.Infrastructure.Services;
 
         using var hmac = new HMACSHA512(user.EmailVerificationCodeSalt);
 
-        byte[] computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(code));
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(code));
 
         if (user.EmailVerificationCodeHash == null) return false;
 
-        for (int i = 0; i < computedHash.Length; i++)
+        for (var i = 0; i < computedHash.Length; i++)
         {
             if (computedHash[i] != user.EmailVerificationCodeHash[i]) return false;
         }
@@ -56,7 +53,7 @@ namespace MainService.Infrastructure.Services;
 
         if (user.PhoneNumberVerificationCodeHash == null) return false;
 
-        for (int i = 0; i < computedHash.Length; i++)
+        for (var i = 0; i < computedHash.Length; i++)
         {
             if (computedHash[i] != user.PhoneNumberVerificationCodeHash[i]) return false;
         }

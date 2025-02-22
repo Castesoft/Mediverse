@@ -7,7 +7,8 @@ import {
   InputSignal,
   model,
   ModelSignal,
-  OnDestroy, OnInit,
+  OnDestroy,
+  OnInit,
   signal,
   TemplateRef,
   WritableSignal
@@ -28,13 +29,13 @@ import { Pagination } from 'src/app/_utils/serviceHelper/pagination/pagination';
 import { CatalogMode, View } from 'src/app/_models/base/types';
 import { TableWrapperComponent } from "src/app/_shared/template/components/tables/table-wrapper.component";
 import { TablePagerComponent } from "src/app/_shared/template/components/tables/table-pager.component";
-import { TemplateControlSearchComponent } from "src/app/_forms2/controls/template/template-control-search.component";
 import { FormsModule } from "@angular/forms";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { CollapseDirective } from "ngx-bootstrap/collapse";
 import { FilterConfiguration, FilterOrientation } from "../../_models/base/filter-types";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { DuotoneMagnifierComponent } from "src/app/_shared/template/components/icons/duotone-magnifier.component";
+import { CalendarView } from "src/app/_models/events/eventTypes";
 
 @Component({
   selector: 'div[catalogLayout]',

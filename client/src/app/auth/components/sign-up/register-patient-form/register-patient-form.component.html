@@ -1,56 +1,113 @@
-
 <div class="mb-10 text-center">
   <h1 class="text-dark mb-3">
-  Crear una cuenta
+    Crear una cuenta
   </h1>
-
-  <div class="text-gray-400 fw-semibold fs-4">
-      ¿Ya tienes una cuenta?
-
-      <a routerLink="/auth/sign-in" class="link-primary fw-bold">
-          Inicia sesión aquí
-      </a>
-  </div>
 </div>
 
 <!-- <button type="button" class="btn btn-light-primary fw-bold w-100 mb-10">
   <img alt="Logo" src="media/svg/brand-logos/google-icon.svg" class="h-20px me-3">
   Iniciar sesión con Google
 </button> -->
-<div class="mb-10 w-100 d-flex justify-content-center">
-  <div id="google-btn-signup"></div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="row mb-5 gy-6">
+      <div
+        templateControlText
+        class="col-xl-6"
+        [(control)]="form().controls.firstName"
+        [(fromWrapper)]="fromWrapper"
+        [showBottomMargin]="false"
+      ></div>
+
+      <div
+        templateControlText
+        class="col-xl-6"
+        [(control)]="form().controls.lastName"
+        [(fromWrapper)]="fromWrapper"
+        [showBottomMargin]="false"
+      ></div>
+      <div
+        templateControlCheckRadio
+        class="col-xl-6"
+        [(control)]="form().controls.sex"
+        [(fromWrapper)]="fromWrapper"
+        [showBottomMargin]="false"
+      ></div>
+
+      <div
+        templateControlDate
+        class="col-xl-6"
+        [(control)]="form().controls.dateOfBirth"
+        [(fromWrapper)]="fromWrapper"
+        [showBottomMargin]="false"
+      ></div>
+
+      <div templateControlText
+           class="col-xl-12"
+           [(control)]="form().controls.email"
+           [(fromWrapper)]="fromWrapper"
+           [showBottomMargin]="false"
+      ></div>
+
+      <div templateControlText
+           class="col-xl-12"
+           [(control)]="form().controls.password"
+           [(fromWrapper)]="fromWrapper"
+           [showBottomMargin]="false"
+      ></div>
+
+      <div templateControlText
+           class="col-xl-12 mb-3"
+           [(control)]="form().controls.confirmPassword"
+           [(fromWrapper)]="fromWrapper"
+           [showBottomMargin]="false"
+      ></div>
+
+      <div templateControlCheckbox
+           class="col-xl-12 my-3"
+           [(control)]="form().controls.agreeTerms"
+           [(fromWrapper)]="fromWrapper"
+           [showBottomMargin]="false">
+        Estoy de acuerdo con los
+        <a
+          (click)="openTermsAndConditionsModal()"
+          class="ms-1 link-primary"
+          style="cursor: pointer;"
+        >
+          Términos y condiciones
+        </a>.
+      </div>
+    </div>
+
+
+    <button
+      [disabled]="!form().controls.agreeTerms.getRawValue()"
+      type="submit"
+      class="btn btn-primary w-100"
+    >
+      Crear cuenta
+    </button>
+  </div>
 </div>
 
-<div class="d-flex align-items-center mb-10">
-  <div class="border-bottom border-gray-300 mw-50 w-100"></div>
-  <span class="fw-semibold text-gray-400 fs-7 mx-2">O</span>
-  <div class="border-bottom border-gray-300 mw-50 w-100"></div>
-</div>
 
-<div class="row mb-5">
-  <div class="col-xl-6">
-      <div templateControlText [(control)]="form().controls.firstName" [(fromWrapper)]="fromWrapper"></div>
-  </div>
+<!-- TODO - Add Google Sign Up Button -->
 
-  <div class="col-xl-6">
-      <div templateControlText [(control)]="form().controls.lastName" [(fromWrapper)]="fromWrapper"></div>
-    </div>
-  <div class="col-xl-6">
-      <div templateControlCheckRadio [(control)]="form().controls.sex" [(fromWrapper)]="fromWrapper"></div>
-  </div>
+<!--<div class="d-flex align-items-center mb-10">-->
+<!--  <div class="border-bottom border-gray-400 mw-50 w-100"></div>-->
+<!--  <span class="fw-semibold text-gray-400 fs-7 mx-2">O</span>-->
+<!--  <div class="border-bottom border-gray-400 mw-50 w-100"></div>-->
+<!--</div>-->
 
-  <div class="col-xl-6">
-      <div templateControlDate [(control)]="form().controls.dateOfBirth" [(fromWrapper)]="fromWrapper"></div>
-    </div>
-  </div>
+<!--<div class="mb-10 w-100 d-flex justify-content-center">-->
+<!--  <div id="google-btn-signup" class="w-100" style="max-width: none"></div>-->
+<!--</div>-->
 
+<div class="text-gray-600 fw-normal fs-5 w-100 d-flex justify-content-center mt-5">
+  ¿Ya tienes una cuenta?
 
-<div templateControlText [(control)]="form().controls.email" [(fromWrapper)]="fromWrapper"></div>
-
-<div templateControlText [(control)]="form().controls.password" [(fromWrapper)]="fromWrapper"></div>
-
-<div templateControlText [(control)]="form().controls.confirmPassword" [(fromWrapper)]="fromWrapper"></div>
-
-<div templateControlCheckbox [(control)]="form().controls.agreeTerms" [(fromWrapper)]="fromWrapper">
-Estoy de acuerdo con los <a (click)="openTermsAndConditionsModal()" class="ms-1 link-primary" style="cursor: pointer;">Términos y condiciones</a>.
+  <a routerLink="/auth/sign-in" class="link-primary fw-semibold ms-2">
+    Inicia sesión aquí
+  </a>
 </div>

@@ -14,20 +14,21 @@ import { TooltipDirective } from "ngx-bootstrap/tooltip";
   standalone: true,
   imports: [ CommonModule, ProfilePictureComponent, TooltipDirective ],
   templateUrl: './event-summary.component.html',
-  styleUrls: ['./event-summary.component.scss']
+  styleUrls: [ './event-summary.component.scss' ]
 })
 export class EventSummaryComponent {
-  router = inject(Router);
-  service = inject(EventsService);
+  protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
+  protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
 
-  orientation = model.required<'vertical' | 'horizontal'>();
-  summaryMode = model.required<boolean>();
+  readonly router: Router = inject(Router);
+  readonly service: EventsService = inject(EventsService);
+
+  orientation:ModelSignal<'vertical' | 'horizontal'> = model.required();
+  summaryMode: ModelSignal<boolean> = model.required();
 
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Event | null> = model.required();
   key: ModelSignal<string | null> = model.required();
   title: ModelSignal<string | null> = model.required();
-  protected readonly PhotoShape = PhotoShape;
-  protected readonly PhotoSize = PhotoSize;
 }

@@ -19,29 +19,34 @@
               }
             }
             <div class="ms-4">
-              <div>
-                <span class="text-gray-800 fs-4">
+              <div class="d-flex align-items-center">
+                <span class="text-gray-800 fs-5">
                   {{ paymentMethod().brand }}
                 </span>
-                <span class="fs-4 fw-bold">
+                <span class="fs-5 fw-bold ms-2">
                   •••• {{ paymentMethod().last4 }}
                 </span>
               </div>
-              <div class="fs-6 fw-semibold text-gray-500">
-                Expira el {{ paymentMethod().expirationMonth }}/{{ paymentMethod().expirationYear }}
+              <span class="fs-7 fw-semibold m-0">
+                {{ paymentMethod().displayName }}
+              </span>
+              <div class="d-flex align-items-center">
+                <div class="fs-7 fw-semibold text-gray-500">
+                  Expira el {{ paymentMethod().expirationMonth }}/{{ paymentMethod().expirationYear }}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       @if (paymentMethod().isDefault && !selectionMode()) {
-        <span class="badge badge-light-success fs-7 ms-2">Principal</span>
+        <span class="badge badge-light-primary fs-7 ms-2">Principal</span>
       }
     </div>
 
     @if (paymentMethod().isDefault && selectionMode()) {
       <div>
-        <span class="badge badge-light-success fs-7 ms-2">
+        <span class="badge badge-light-primary fs-7 ms-2">
           Principal
         </span>
       </div>
@@ -49,7 +54,7 @@
   </div>
 } @else {
   <div
-    class="payment-method-card card h-xl-100 flex-row flex-stack flex-wrap p-6"
+    class="payment-method-card card h-xl-100 p-6"
     [class.selected]="selected()"
     [class.border-gray-200]="!selected()"
   >
@@ -65,15 +70,11 @@
               (change)="onRadioChange()"/>
           </div>
         }
+
         <div class="flex-grow-1">
           <div class="d-flex flex-column">
-            @if (!selectionMode()) {
-              <div class="d-flex align-items-center fs-4 fw-bold mb-4">
-                {{ paymentMethod().displayName }}
-              </div>
-            }
-
             <div class="d-flex align-items-center">
+
               @switch (paymentMethod().brand?.toLowerCase()) {
                 @case ('visa') {
                   <div cardIcon [brand]="CardBrand.VISA" [size]="CardIconSize.Large"></div>
@@ -84,61 +85,69 @@
                 @case ('american express') {
                   <div cardIcon [brand]="CardBrand.AMEX" [size]="CardIconSize.Large"></div>
                 }
+                @case ('amex') {
+                  <div cardIcon [brand]="CardBrand.AMEX" [size]="CardIconSize.Large"></div>
+                }
                 @default {
                   <i class="ki-duotone ki-credit-card fs-2x"></i>
                 }
               }
-              <div class="ms-4">
-                <div>
-                  <span class="text-gray-800 fs-4">
-                    {{ paymentMethod().brand }}
-                  </span>
-                  <span class="fs-4 fw-bold">
-                    •••• {{ paymentMethod().last4 }}
-                  </span>
+              <div class="ms-4 w-100">
+                <div class="d-flex align-items-center flex-grow-1 justify-content-between">
+                  <div>
+                    <span class="text-gray-800 fs-5">
+                      {{ paymentMethod().brand }}
+                    </span>
+                    <span class="fs-5 fw-bold">
+                      •••• {{ paymentMethod().last4 }}
+                    </span>
+                  </div>
+                  @if (paymentMethod().isDefault && !selectionMode()) {
+                    <span class="badge badge-light-primary fs-7 ms-0">Principal</span>
+                  }
                 </div>
-                <div class="fs-6 fw-semibold text-gray-500">
-                  Expira el {{ paymentMethod().expirationMonth }}/{{ paymentMethod().expirationYear }}
+                <div class="d-flex w-100 justify-content-between align-items-end">
+                  <div class="d-flex flex-column">
+                    <div class="fs-7 fw-semibold">
+                      {{ paymentMethod().displayName }}
+                    </div>
+                    <div class="fs-7 fw-semibold text-gray-500">
+                      Expira el {{ paymentMethod().expirationMonth }}/{{ paymentMethod().expirationYear }}
+                    </div>
+                  </div>
+                  @if (!selectionMode()) {
+                    <div class="d-flex align-items-center pt-2 pb-0">
+                      <button
+                        class="btn btn-sm btn-light btn-active-light-primary py-2 me-3"
+                        [disabled]="paymentMethod().isDefault"
+                        (click)="onPaymentMethodDelete.emit(paymentMethod().stripePaymentMethodId!)"
+                      >
+                        <span class="indicator-label">Eliminar</span>
+                      </button>
+                      <button
+                        class="btn btn-sm btn-light btn-active-light-primary py-2 nowrap"
+                        [disabled]="paymentMethod().isDefault"
+                        (click)="onMainPaymentMethodSelect.emit(paymentMethod().stripePaymentMethodId!)"
+                      >
+                        <span class="indicator-label">Hacer principal</span>
+                      </button>
+                    </div>
+                  }
                 </div>
               </div>
             </div>
           </div>
         </div>
-        @if (paymentMethod().isDefault && !selectionMode()) {
-          <span class="badge badge-light-success fs-7 ms-2">Principal</span>
-        }
       </div>
 
       @if (paymentMethod().isDefault && selectionMode()) {
         <div>
-          <span class="badge badge-light-success fs-7 ms-2">
+          <span class="badge badge-light-primary fs-7 ms-2">
             Principal
           </span>
         </div>
       }
     </div>
-
-
-    @if (!selectionMode()) {
-      <div class="d-flex align-items-center py-2">
-        <button
-          class="btn btn-sm btn-light btn-active-light-primary me-3"
-          data-kt-billing-action="card-delete"
-          [disabled]="paymentMethod().isDefault"
-          (click)="onPaymentMethodDelete.emit(paymentMethod().stripePaymentMethodId!)"
-        >
-          <span class="indicator-label">Eliminar</span>
-        </button>
-        <button
-          class="btn btn-sm btn-light btn-active-light-primary me-3"
-          data-kt-billing-action="card-default"
-          [disabled]="paymentMethod().isDefault"
-          (click)="onMainPaymentMethodSelect.emit(paymentMethod().stripePaymentMethodId!)"
-        >
-          <span class="indicator-label">Hacer principal</span>
-        </button>
-      </div>
-    }
   </div>
 
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, AfterViewInit, inject, input, effect } from "@angular/core";
-import { RouterModule, Router, ActivatedRoute } from "@angular/router";
+import { AfterViewInit, Component, effect, inject, input, InputSignal, OnInit } from "@angular/core";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { AccountService } from "src/app/_services/account.service";
 import { UtilsService } from "src/app/_services/utils.service";
@@ -13,17 +13,21 @@ declare var google: any;
 @Component({
   selector: '[signInBasicForm]',
   templateUrl: './sign-in-basic-form.component.html',
-  standalone: true,
-  imports: [ RouterModule, Forms2Module, CommonModule, MaterialModule, ],
+  imports: [
+    RouterModule,
+    Forms2Module,
+    CommonModule,
+    MaterialModule,
+  ],
 })
 export class SignInBasicFormComponent implements OnInit, AfterViewInit {
-  accountService = inject(AccountService);
-  private router = inject(Router);
-  route = inject(ActivatedRoute);
-  utils = inject(UtilsService);
-  validation = inject(ValidationService);
+  private router: Router = inject(Router);
+  accountService: AccountService = inject(AccountService);
+  route: ActivatedRoute = inject(ActivatedRoute);
+  utils: UtilsService = inject(UtilsService);
+  validation: ValidationService = inject(ValidationService);
 
-  form = new LoginForm();
+  form: LoginForm = new LoginForm();
 
   emailFromQuery: string = '';
   returnUrl: string = '/admin';
@@ -32,7 +36,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   redirectUrl: string | null = "/cuenta";
   requiresTwoFactor: boolean = false;
 
-  noRedirect = input<boolean>(false);
+  noRedirect: InputSignal<boolean> = input(false);
 
   constructor() {
     effect((): LoginForm => this.form.setValidation(this.validation.active()));

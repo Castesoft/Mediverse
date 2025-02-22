@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { RouterModule, ActivatedRoute, Data } from '@angular/router';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Data, RouterModule } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { Account } from "src/app/_models/account/account";
 import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
@@ -15,6 +15,8 @@ import {
 import {
   AddressCreateCardComponent
 } from "src/app/addresses/components/address-create-card/address-create-card.component";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: 'app-account-billing',
@@ -29,8 +31,9 @@ import {
     AddressCreateCardComponent
   ],
 })
-export class AccountBillingComponent implements OnInit {
+export class AccountBillingComponent implements OnInit, OnDestroy {
   private bsModalService: BsModalService = inject(BsModalService);
+  destroy$: Subject<void> = new Subject<void>();
   accountService: AccountService = inject(AccountService);
   route: ActivatedRoute = inject(ActivatedRoute);
   account: Account | null = null;
@@ -44,18 +47,32 @@ export class AccountBillingComponent implements OnInit {
     })
 
     this.accountService.getBillingDetails();
+    this.subscribeToBillingDetails();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private subscribeToBillingDetails() {
+    this.accountService.billingDetails$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (billingDetails: BillingDetails | null) => {
+        this.billingDetails = billingDetails;
+      }
+    });
   }
 
   openAddPaymentMethodModal() {
     this.bsModalService.show(AddPaymentMethodComponent, {
       initialState: { title: 'Añadir método de pago', },
+      class: 'modal-dialog-centered'
     });
   }
 
   deletePaymentMethod(id: string) {
     if (!id) return;
     if (!confirm('¿Estás seguro de que deseas eliminar este método de pago?')) return;
-
     this.accountService.deletePaymentMethod(id).subscribe();
   }
 
@@ -69,8 +86,11 @@ export class AccountBillingComponent implements OnInit {
   deleteAddress(id: number) {
     if (!id) return;
     if (!confirm('¿Estás seguro de que deseas eliminar esta dirección?')) return;
-
     this.accountService.deleteAddress(id).subscribe();
+  }
+
+  handleBillingDetailsModification() {
+    this.accountService.getBillingDetails();
   }
 
   openEditAddressModal(address: UserAddress) {

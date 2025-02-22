@@ -1,11 +1,11 @@
 @let pagination = service.pagination();
 
 @if (!service.loading()) {
-  <div class="container">
-    <h1 class="text-gray-800 fw-bold my-3 text-center">
+  <div class="px-6">
+    <h1 class="text-gray-800 fw-bold my-6 text-center">
       <a routerLink="/">DocHub</a>
     </h1>
-    <div class="py-3" searchForm [compact]="true"></div>
+    <div class="pt-0 pb-3" searchForm [compact]="true"></div>
 
     <!-- <div style="max-height: 100px; overflow: auto; min-height: 100px;" class="border border-2 rounded-3 border-gray-700">
       <strong>Search: </strong><code>
@@ -23,30 +23,42 @@
       </code>
     </div> -->
 
-    <div searchResultCounter></div>
+    <h3 class="text-gray-800 fw-bold my-2">
+      Resultados
 
+      @if (service.pagination()) {
+        <span class="fs-6 text-gray-500 fw-semibold ms-1">({{ service.pagination()!.totalCount | number }})</span>
+      }
+    </h3>
   </div>
 
   @if (service.results() && service.results()?.doctors!.length > 0) {
-  <div class="overflow-y-auto" style="flex: 1;">
-    @for (doctor of service.results()?.doctors; let idx = $index; track idx) {
-    <div resultRow [(doctor)]="service.results()!.doctors[idx]"></div>
-    <div class="separator separator-dashed"></div>
-    }
-  </div>
-  <div class="d-flex flex-center pb-6 container">
-    @if (pagination !== null) {
-    <!-- <div tablePager [currentPage]="service.pagination()!.currentPage" [(params)]="params"
-      [itemsPerPage]="service.pagination()!.itemsPerPage" [totalItems]="service.pagination()!.totalItems"
-      (pageChanged)="service.onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true" [isCompact]="false"></div> -->
-    <div tablePager [pagination]="pagination" [(params)]="service.search" (paramsChange)="service.getSearchResults().subscribe()" [hideShowAll]="true" [hideShowing]="true" [isCompact]="false"></div>
-    }
-  </div>
+    <div class="overflow-y-auto" style="flex: 1;">
+      @for (doctor of service.results()?.doctors; let idx = $index; track idx) {
+        <div
+          resultRow
+          [(doctor)]="service.results()!.doctors[idx]">
+        </div>
+        <div class="separator"></div>
+      }
+    </div>
+    <div class="d-flex flex-center pb-6 container">
+      @if (pagination !== null) {
+        <div tablePager
+             [pagination]="pagination"
+             [(params)]="service.search"
+             (paramsChange)="service.getSearchResults().subscribe()"
+             [hideShowAll]="true"
+             [hideShowing]="true"
+             [isCompact]="false">
+        </div>
+      }
+    </div>
   } @else {
-  <div noResultScreen></div>
+    <div noResultScreen></div>
   }
-  } @else {
+} @else {
   <div loadingPlaceholder></div>
-  }
+}
 
 

@@ -13,6 +13,7 @@ using MainService.Core.DTOs.Payment;
 using MainService.Core.DTOs.User;
 using MainService.Models.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace MainService.Controllers;
 
@@ -114,6 +115,13 @@ public class EventsController(
         }
 
         return Ok();
+    }
+
+    [HttpGet("month-partial")]
+    public async Task<ActionResult<List<EventMonthDayCellDto>>> GetMonthViewPartialAsync([FromQuery] EventParams param)
+    {
+        var list = await uow.EventRepository.GetMonthViewPartialAsync(param);
+        return Ok(list);
     }
 
     [HttpPost("search")]
@@ -301,7 +309,7 @@ public class EventsController(
             return BadRequest("Service not found for event.");
 
         var amountInCents = serviceEntity.Price * 100;
-        
+
         if (paymentMethod.StripePaymentMethodId == null)
             return BadRequest("The selected PaymentMethod does not have a Stripe PaymentMethodId.");
 
@@ -310,7 +318,7 @@ public class EventsController(
             paymentMethod.StripePaymentMethodId,
             doctorStripeAccountId,
             amountInCents,
-            CommissionInCents 
+            CommissionInCents
         );
 
         if (paymentIntent == null)
@@ -328,7 +336,7 @@ public class EventsController(
             EventId = eventItem.Id,
             PaymentMethodId = paymentMethod.Id
             // TODO - Add related stripe payment identifiers
-            // StripePaymentId = paymentIntent.Charges.Data.FirstOrDefault()?.Id,
+            // StripePaymentId = paymentIntent.Charges.Data.FirstOrDefault()?.Id,   
         };
 
         eventItem.Payments.Add(payment);
@@ -343,169 +351,158 @@ public class EventsController(
     [HttpPost]
     public async Task<ActionResult<EventDto?>> CreateAsync([FromBody] EventCreateDto request)
     {
-        // TODO: que cuando el rol del usuario de la peticion, cuando este es nurse, obtener el ID del doctor para 
-        // la propiedad de Event de DoctorEvent
+        if (request.DateFrom == default || request.DateTo == default)
+            return BadRequest("Las fechas de inicio y fin son requeridas.");
+        
+        var currentUser = await uow.UserRepository.GetByIdAsync(User.GetUserId());
+        if (currentUser == null)
+            return BadRequest($"Usuario de ID {User.GetUserId()} no fue encontrado.");
 
-        if (!request.AllDay.HasValue) return BadRequest("La duración es requerida.");
-        if (request.Patient == null) return BadRequest("El paciente es requerido.");
-        if (!request.Patient.Id.HasValue) return BadRequest("El paciente es requerido.");
-        if (!request.DateFrom.HasValue) return BadRequest("La fecha de inicio es requerida.");
-        if (!request.DateTo.HasValue) return BadRequest("La fecha de fin es requerida.");
-        if (request.Service == null) return BadRequest("El servicio es requerido.");
-        if (!request.Service.Id.HasValue) return BadRequest("El servicio es requerido.");
-        if (request.Clinic == null) return BadRequest("La clínica es requerida.");
-        if (!request.Clinic.Id.HasValue) return BadRequest("La clínica es requerida.");
+        var patient = await uow.UserRepository.GetByIdAsync(request.PatientId);
+        if (patient == null)
+            return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado.");
 
-        var user = await uow.UserRepository.GetByIdAsync(User.GetUserId());
+        var serviceEntity = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
+        if (serviceEntity == null)
+            return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
 
-        if (user == null) return BadRequest($"Usuario de ID {User.GetUserId()} no fue encontrado.");
+        var clinicEntity = await uow.AddressRepository.GetByIdAsync(request.ClinicId);
+        if (clinicEntity == null)
+            return BadRequest($"Clínica de ID {request.ClinicId} no fue encontrada.");
 
-        var userRoles = await userManager.GetRolesAsync(user);
-
-        var doctorId = User.GetUserId();
-        AppUser? doctor = null;
-
-        var patient = await uow.UserRepository.GetByIdAsync(request.Patient.Id.Value);
-
-        if (patient == null) return BadRequest($"Paciente de ID {request.Patient.Id.Value} no fue encontrado.");
-
-        var doctorService = await uow.ServiceRepository.GetByIdAsync(request.Service.Id.Value);
-
-        if (doctorService == null)
-            return BadRequest($"Tratamiento de ID {request.Service.Id.Value} no fue encontrado.");
-
+        AppUser? doctor;
+        var userRoles = await userManager.GetRolesAsync(currentUser);
         if (userRoles.Contains("Doctor"))
         {
-            doctorId = user.Id;
-            doctor = user;
-
-            if (!await uow.PatientRepository.ExistsAsync(request.Patient.Id.Value, doctorId))
-                return BadRequest(
-                    $"Paciente de ID {request.Patient.Id.Value} no fue encontrado o no existe para el doctor actual.");
+            doctor = currentUser;
+        }
+        else if (request.DoctorId.HasValue && request.DoctorId.Value > 0)
+        {
+            doctor = await uow.UserRepository.GetByIdAsync(request.DoctorId.Value);
+            if (doctor == null)
+                return BadRequest($"Doctor de ID {request.DoctorId.Value} no fue encontrado.");
         }
         else
         {
-            doctor = await uow.UserRepository.GetByIdAsync(doctorId);
-            if (doctor == null) return BadRequest($"Doctor de ID {doctorId} no fue encontrado.");
+            return BadRequest("El doctor es requerido para la creación de la cita.");
+        }
 
-            var isAvailable =
-                await service.IsDoctorAvailableAsync(doctorId, request.DateFrom.Value, request.DateTo.Value);
-            if (!isAvailable) return BadRequest("El doctor no está disponible en el horario seleccionado.");
+        var isAvailable = await service.IsDoctorAvailableAsync(doctor.Id, request.DateFrom, request.DateTo);
+        if (!isAvailable)
+            return BadRequest("El doctor no está disponible en el horario seleccionado.");
 
-            if (!request.PaymentMethodTypeId.HasValue) return BadRequest("El método de pago es requerido.");
-
-            if ((request.PaymentMethodTypeId.Value == 1 || request.PaymentMethodTypeId.Value == 2) &&
-                doctor.RequireAnticipatedCardPayments.HasValue && doctor.RequireAnticipatedCardPayments.Value)
+        if (userRoles.Contains("Doctor"))
+        {
+            // TODO - Pago idk
+            // if (!request.PaymentMethodTypeId.HasValue)
+            //     return BadRequest("El método de pago es requerido.");
+            //
+            // if ((request.PaymentMethodTypeId.Value == 1 || request.PaymentMethodTypeId.Value == 2) &&
+            //     doctor.RequireAnticipatedCardPayments == true)
+            // {
+            //     if (string.IsNullOrEmpty(request.StripePaymentMethodId))
+            //         return BadRequest("StripePaymentMethodId es requerido para el pago anticipado.");
+            //
+            //     if (string.IsNullOrEmpty(doctor.StripeConnectAccountId))
+            //     {
+            //         var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctor);
+            //         doctor.StripeConnectAccountId = account.Id;
+            //     }
+            //
+            //     if (!string.IsNullOrEmpty(patient.StripeCustomerId))
+            //     {
+            //         var amountInCents = serviceEntity.Price * 100;
+            //         var paymentIntent = await stripeService.CreatePaymentIntentAsync(
+            //             patient.StripeCustomerId,
+            //             request.StripePaymentMethodId,
+            //             doctor.StripeConnectAccountId,
+            //             amountInCents,
+            //             CommissionInCents
+            //         );
+            //
+            //         if (paymentIntent == null)
+            //             return BadRequest("Error al procesar el pago.");
+            //         if (paymentIntent.Status != "succeeded")
+            //             return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
+            //     }
+            // }
+        }
+        else
+        {
+            var doctorPatient = doctor.Patients.FirstOrDefault(p => p.PatientId == patient.Id);
+            if (doctorPatient == null)
             {
-                if (string.IsNullOrEmpty(request.StripePaymentMethodId))
-                    return BadRequest("StripePaymentMethodId es requerido para el pago anticipado.");
+                if (!request.HasPatientInformationAccess.HasValue)
+                    return BadRequest("El acceso a la información del paciente es requerido.");
 
-                if (string.IsNullOrEmpty(doctor.StripeConnectAccountId))
+                doctor.Patients.Add(new DoctorPatient(doctor.Id, patient.Id)
                 {
-                    var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctor);
-                    doctor.StripeConnectAccountId = account.Id;
-                }
-
-                if (!string.IsNullOrEmpty(patient.StripeCustomerId))
-                {
-                    var amountInCents = doctorService.Price * 100;
-
-                    var paymentIntent = await stripeService.CreatePaymentIntentAsync(
-                        patient.StripeCustomerId,
-                        request.StripePaymentMethodId,
-                        doctor.StripeConnectAccountId,
-                        amountInCents,
-                        CommissionInCents
-                    );
-
-                    if (paymentIntent == null) return BadRequest("Error al procesar el pago.");
-                    if (paymentIntent.Status != "succeeded")
-                        return BadRequest("Error al procesar el pago. Intente con otro método de pago.");
-                }
+                    HasClinicalHistoryAccess = request.HasPatientInformationAccess.Value
+                });
             }
-
-            var patientExists = await uow.PatientRepository.ExistsAsync(user.Id, doctorId);
-            Console.WriteLine($"PatientExists: {patientExists}");
-            if (!request.HasPatientInformationAccess.HasValue)
-                return BadRequest("Es requerido el acceso a la información del paciente.");
-            if (!patientExists)
+            else if (request.HasPatientInformationAccess.HasValue)
             {
-                doctor.Patients.Add(new DoctorPatient(doctorId, user.Id)
-                    { HasClinicalHistoryAccess = request.HasPatientInformationAccess.Value });
-            }
-            else
-            {
-                var doctorPatient = doctor.Patients.FirstOrDefault(p => p.PatientId == user.Id);
-                if (doctorPatient != null)
-                {
-                    doctorPatient.HasClinicalHistoryAccess = request.HasPatientInformationAccess.Value;
-                }
+                doctorPatient.HasClinicalHistoryAccess = request.HasPatientInformationAccess.Value;
             }
         }
 
-        if (!await uow.UserRepository.DoctorExistsAsync(doctorId, doctorId))
-            return BadRequest($"Doctor de ID {doctorId} no fue encontrado o no existe para el doctor actual.");
-
-        if (!await uow.AddressRepository.ExistsByIdAndDoctorIdAsync(request.Clinic.Id.Value, doctorId))
-            return BadRequest(
-                $"Clinica de ID {request.Patient.Id.Value} no fue encontrado o no existe para el doctor actual.");
-
-        if (!await uow.ServiceRepository.ExistsByIdAndDoctorIdAsync(request.Service.Id.Value, doctorId))
-            return BadRequest(
-                $"Tratamiento de ID {request.Service} no fue encontrado o no existe para el doctor actual.");
-
-        foreach (var nurseId in request.Nurses)
+        var nurseEvents = new List<NurseEvent>();
+        if (request.NurseIds != null && request.NurseIds.Any())
         {
-            if (!nurseId.Id.HasValue) return BadRequest("Enfermera es requerida.");
+            foreach (var nurseId in request.NurseIds)
+            {
+                if (nurseId <= 0)
+                    return BadRequest("El ID de la enfermera debe ser un valor positivo.");
 
-            if (!await uow.UserRepository.NurseExistsAsync(nurseId.Id.Value, doctorId))
-                return BadRequest($"Especialista de ID {nurseId} no fue encontrado o no existe para el doctor actual.");
+                var nurseEntity = await uow.UserRepository.GetByIdAsync(nurseId);
+                if (nurseEntity == null)
+                    return BadRequest($"Enfermera de ID {nurseId} no fue encontrada.");
+
+                nurseEvents.Add(new NurseEvent(nurseEntity.Id));
+            }
         }
 
-        Models.Entities.Event item = new(request.AllDay.Value, request.DateFrom.Value, request.DateTo.Value)
+        var newEvent = new Event
         {
-            NurseEvents = request.Nurses.Select(x => new NurseEvent(x.Id!.Value)).ToList(),
-            EventService = new EventService(request.Service.Id.Value),
-            PatientEvent = new PatientEvent(request.Patient.Id.Value),
-            EventClinic = new EventClinic(request.Clinic.Id.Value),
-            DoctorEvent = new DoctorEvent(doctorId),
+            AllDay = request.AllDay,
+            DateFrom = request.DateFrom,
+            DateTo = request.DateTo,
+            EventService = new EventService(request.ServiceId),
+            PatientEvent = new PatientEvent(patient.Id),
+            EventClinic = new EventClinic(request.ClinicId),
+            DoctorEvent = new DoctorEvent(doctor)
         };
 
         if (request.PaymentMethodTypeId.HasValue)
-        {
-            item.EventPaymentMethodType = new EventPaymentMethodType(request.PaymentMethodTypeId.Value);
-        }
+            newEvent.EventPaymentMethodType = new EventPaymentMethodType(request.PaymentMethodTypeId.Value);
 
         if (request.MedicalInsuranceCompanyId.HasValue)
-        {
-            item.EventMedicalInsuranceCompany =
+            newEvent.EventMedicalInsuranceCompany =
                 new EventMedicalInsuranceCompany(request.MedicalInsuranceCompanyId.Value);
-        }
 
-        uow.EventRepository.Add(item);
+        uow.EventRepository.Add(newEvent);
 
-        if (!await uow.Complete()) return BadRequest($"Error al crear {Subject}.");
+        if (!await uow.Complete())
+            return BadRequest("Error al crear el evento.");
 
-        var formattedDate = request.DateFrom.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-        var emailSubject = $"DocHub: Confirmación de tu cita!";
-
-        if (string.IsNullOrEmpty(doctorService.Name)) return BadRequest("El nombre del servicio es requerido.");
-
-        var htmlMessage = emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName,
-            formattedDate, request.DateFrom.Value.TimeOfDay + " - " + request.DateTo.Value.TimeOfDay,
-            doctorService.Name);
-
-        var patientEmail = patient.Email;
-
-        if (!string.IsNullOrEmpty(patientEmail))
-        {
-            await emailService.SendMail(patientEmail, emailSubject, htmlMessage);
-        }
-
-
-        return await uow.EventRepository.GetDtoByIdAsync(item.Id);
+        return await uow.EventRepository.GetDtoByIdAsync(newEvent.Id);
     }
 
+// var formattedDate = request.DateFrom.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+    // var emailSubject = $"DocHub: Confirmación de tu cita!";
+    //
+    // if (string.IsNullOrEmpty(doctorService.Name)) ret    urn BadRequest("El nombre del servicio es requerido.");
+    //
+    // var htmlMessage = emailService.CreateAppointmentConfirmationEmail(doctor.FirstName + " " + doctor.LastName,
+    //     formattedDate, request.DateFrom.Value.TimeOfDay + " - " + request.DateTo.Value.TimeOfDay,
+    //     doctorService.Name);
+    //
+    // var patientEmail = patient.Email;
+    //
+    // if (!string.IsNullOrEmpty(patientEmail))
+    // {
+    //     await emailService.SendMail(patientEmail, emailSubject, htmlMessage);
+    // }
     [HttpPut("{id}")]
     public async Task<ActionResult<EventDto?>> UpdateAsync([FromRoute] int id, [FromBody] EventUpdateDto request)
     {

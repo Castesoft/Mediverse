@@ -4,6 +4,9 @@
   <div class="d-flex flex-column">
     <div class="d-flex align-items-center fs-4 fw-bold mb-2">
       Dirección {{ index() + 1 }}
+      @if (address().isMain) {
+        <span class="badge badge-light-primary fs-7 ms-2">Principal</span>
+      }
       @if (address().isBilling) {
         <span class="badge badge-light-success fs-7 ms-2">Facturación</span>
       }

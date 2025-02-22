@@ -2,18 +2,47 @@
   <div class="card-body px-0">
     <full-calendar #fullcalendar [options]="calendarOptions" [deepChangeDetection]="true">
       <ng-template #eventContent let-arg>
-        <div class="d-flex flex-grow-1 flex-column px-1 {{ arg.event.extendedProps.bgColor }}">
-          <div class="fw-bold text-white">
-            @if (accountService.hasRole([ 'Doctor' ])) {
-              {{ arg.event.extendedProps.patient }}
-            } @else {
-              {{ arg.event.extendedProps.doctor }}
-            }
+        @if (arg.event.extendedProps.isExtensionIndicator) {
+          <!-- EXTENSION INDICATOR -->
+          <div class="d-flex flex-row w-100 fs-8 px-1">
+            + {{ arg.event.extendedProps.additionalAmount }} citas más
           </div>
-          <div class="text-white">
-            {{ formatTimeRange(arg.event.start, arg.event.end) }}
-          </div>
-        </div>
+        } @else {
+          @if (arg.event.extendedProps.isAllDay) {
+            <!-- ALL-DAY EVENT -->
+            <div
+              class="p-1 text-white w-100"
+              [ngClass]="arg.event.classNames"
+              style="border-radius: 4px;"
+              [style.background-color]="arg.event.extendedProps.bulletColor"
+            >
+              <div class="fw-semibold fs-8">
+                {{ arg.event.title || 'All-Day Event' }}
+              </div>
+            </div>
+          } @else {
+            <!-- TIMED EVENT -->
+            <div class="d-flex flex-row w-100 " [ngClass]="arg.event.classNames">
+              <div
+                class="d-flex align-items-center fw-normal fs-8 text-body justify-content-between w-100 px-1 timed-event-container rounded">
+                <div class="d-flex align-items-center">
+                  <span class="circle-bullet me-1"
+                        [style.background-color]="arg.event.extendedProps.bulletColor">
+                  </span>
+                  <span class="fw-semibold me-1">
+                    @if (accountService.hasRole([ 'Doctor' ])) {
+                      {{ arg.event.extendedProps.patient }}
+                    } @else {
+                      {{ arg.event.extendedProps.doctor }}
+                    }
+                  </span>
+                </div>
+
+                {{ arg.event.start | date: 'HH:mma' }}
+              </div>
+            </div>
+          }
+        }
       </ng-template>
     </full-calendar>
   </div>

@@ -135,7 +135,7 @@ export const appConfig: ApplicationConfig = {
       {
         path: 'auth',
         canActivate: [ anonymousGuard ],
-        loadChildren: () => import('./auth/auth.config').then(m => m.AuthModule)
+        loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
       },
       {
         path: '',
@@ -171,7 +171,7 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     importProvidersFrom(
       MaterialModule,
-    BootstrapModule,
+      BootstrapModule,
       QuillModule.forRoot(),
       FlatpickrModule.forRoot(),
       ServiceWorkerModule.register('ngsw-worker.js', {

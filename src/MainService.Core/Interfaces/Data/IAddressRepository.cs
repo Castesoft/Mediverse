@@ -6,9 +6,10 @@ using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.Interfaces.Data;
+
 public interface IAddressRepository
 {
-void Add(Address item);
+    void Add(Address item);
     void Delete(Address item);
     Task<Address?> GetByIdAsync(int id);
     Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId);
@@ -20,6 +21,7 @@ void Add(Address item);
     Task<List<OptionDto>> GetOptionsAsync(AddressParams param);
     Task<PagedList<AddressDto>> GetPagedListAsync(AddressParams param, ClaimsPrincipal user);
     Task<List<ZipcodeAddressOption>> GetZipcodeAddressOptionsAsync(string zipcode);
+    Task<AddressDto?> CreateForUserByIdAsync(AppUser user, AddressCreateDto request);
     Task<bool> ExistsByIdAsync(int id);
     Task<bool> DoctorHasAddressAsync(int doctorId, int addressId);
     Task<List<OptionDto>> GetClinicOptionsForDoctorAsync(AddressParams param);

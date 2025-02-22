@@ -7,26 +7,27 @@
 
         <form [id]="formId()" (ngSubmit)="onSubmit()">
           <div class="w-lg-700px p-10 p-lg-15 mx-auto">
-            @if(patientRegisterForm().error !== null) {
+            @if (patientRegisterForm().error !== null) {
               <div errorsAlert3 [(error)]="patientRegisterForm().error!"></div>
             }
 
             @if (currentStep() === 1) {
-            <app-accout-type-selector [(accountType)]="accountType"></app-accout-type-selector>
-            } @else if (currentStep() < formSteps.length) { @if (accountType()==='patient' ) {
-              <app-register-patient-form [(form)]="patientRegisterForm"></app-register-patient-form>
+              <app-accout-type-selector [(accountType)]="accountType"></app-accout-type-selector>
+            } @else if (currentStep() < formSteps.length) {
+              @if (accountType() === 'patient') {
+                <app-register-patient-form [(form)]="patientRegisterForm"></app-register-patient-form>
               } @else if (accountType() === 'doctor') {
-              <app-register-doctor-form #registerDoctor [(currentStep)]="currentStep"
-                [formGroup]="doctorForm"></app-register-doctor-form>
+                <app-register-doctor-form #registerDoctor [(currentStep)]="currentStep"
+                                          [formGroup]="doctorForm"></app-register-doctor-form>
               }
-              } @else {
-              <app-account-completed></app-account-completed>
-              }
+            } @else {
+              <app-account-completed [name]="firstName"></app-account-completed>
+            }
 
-              <div formActions [totalSteps]="formSteps.length" [(currentStep)]="currentStep"
-                [(isSubmittingApi)]="isSubmittingApi" (onNextStep)="onNextStep()" (onPreviousStep)="onPreviousStep()"
-                (onSubmit)="onSubmit()" [(accountType)]="accountType" [(patientRegisterForm)]="patientRegisterForm">
-              </div>
+            <div formActions [totalSteps]="formSteps.length" [(currentStep)]="currentStep"
+                 [(isSubmittingApi)]="isSubmittingApi" (onNextStep)="onNextStep()" (onPreviousStep)="onPreviousStep()"
+                 (onSubmit)="onSubmit()" [(accountType)]="accountType" [(patientRegisterForm)]="patientRegisterForm">
+            </div>
 
           </div>
         </form>

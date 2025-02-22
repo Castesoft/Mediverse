@@ -159,9 +159,6 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.ExteriorNumber, opt => opt.MapFrom(src => src.Address.ExteriorNumber))
             .ForMember(dest => dest.InteriorNumber, opt => opt.MapFrom(src => src.Address.InteriorNumber));
 
-        // Registration mappings.
-        CreateMap<RegisterDto, AppUser>()
-            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Gender));
         CreateMap<DoctorRegisterDto, AppUser>()
             .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Gender))
             .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone));
@@ -172,7 +169,9 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
         // Account details update.
-        CreateMap<AccountDetailsUpdateDto, AppUser>();
+        CreateMap<AccountDetailsUpdateDto, AppUser>()
+            .ForMember(dest => dest.PhoneNumber,
+                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PhoneNumber) ? src.PhoneNumber : null));
 
         // Map AppRole and AppPermission.
         CreateMap<AppRole, RoleDto>();
@@ -261,7 +260,7 @@ public class UserMappingProfile : Profile
                 opt => opt.MapFrom(src =>
                     src.UserMedicalLicenses.FirstOrDefault().MedicalLicense.MedicalLicenseSpecialty.Specialty
                         .Name))
-        ;
+            ;
 
         CreateMap<WorkSchedule, WorkScheduleDto>();
         CreateMap<WorkScheduleSettings, WorkScheduleSettingsDto>();
@@ -275,16 +274,18 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserAddress.Address.Id))
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.UserAddress.IsMain))
             .ForMember(dest => dest.IsBilling, opt => opt.MapFrom(src => src.UserAddress.IsBilling))
-        ;
+            ;
 
         CreateMap<UserMedicalLicense, UserMedicalLicenseDto>()
-            .ForMember(dest => dest.SpecialtyId, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId))
-            .ForMember(dest => dest.SpecialtyName, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
-            .ForMember(dest => dest.Document, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseDocument.Document))
+            .ForMember(dest => dest.SpecialtyId,
+                opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId))
+            .ForMember(dest => dest.SpecialtyName,
+                opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
+            .ForMember(dest => dest.Document,
+                opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseDocument.Document))
             .ForMember(dest => dest.SpecialtyLicense, opt => opt.MapFrom(src => src.MedicalLicense.SpecialtyLicense))
             .ForMember(dest => dest.LicenseNumber, opt => opt.MapFrom(src => src.MedicalLicense.LicenseNumber))
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMain))
-        ;
-
+            ;
     }
 }

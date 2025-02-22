@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.DTOs.User;
+
 public class RegisterDto
 {
+    // Existing properties
     [Required(ErrorMessage = "El nombre es requerido.")]
     [StringLength(500, ErrorMessage = "Los nombres no deben exceder 500 caractéres.")]
     public string? FirstName { get; set; }
@@ -12,15 +15,14 @@ public class RegisterDto
     public string? LastName { get; set; }
 
     [Required(ErrorMessage = "El sexo es requerido.")]
-    public string? Gender { get; set; }
-    public string? OtherGender { get; set; }
+    public OptionDto? Sex { get; set; }
 
     [Required(ErrorMessage = "El email es requerido.")]
     [EmailAddress(ErrorMessage = "Email inválido.")]
     public string? Email { get; set; }
 
     [Required(ErrorMessage = "La fecha de nacimiento es requerida.")]
-    public DateOnly? DateOfBirth { get; set; }
+    public DateTime? DateOfBirth { get; set; }
 
     [Required(ErrorMessage = "La contraseña es requerida.")]
     public string? Password { get; set; }

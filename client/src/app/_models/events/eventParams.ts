@@ -22,6 +22,11 @@ export class EventParams extends EntityParams<Event> {
   serviceId: number | null = null;
   clinicId: number | null = null;
 
+  month: number | null = null;
+  year: number | null = null;
+
+  isCalendarView: boolean = false;
+
   patients: SelectOption[] = [];
   services: SelectOption[] = [];
   nurses: SelectOption[] = [];

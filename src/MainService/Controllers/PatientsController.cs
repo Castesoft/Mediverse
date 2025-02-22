@@ -14,9 +14,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Controllers;
+
 [Authorize]
 public class PatientsController(
-    IUnitOfWork uow, 
+    IUnitOfWork uow,
     UserManager<AppUser> userManager,
     IMapper mapper,
     IUsersService service
@@ -27,23 +28,29 @@ public class PatientsController(
     {
         param.DoctorId = User.GetUserId();
         param.UserId = User.GetUserId();
-        
-        PagedList<PatientDto> pagedList = await uow.PatientRepository.GetPagedListAsync(param);
+
+        var pagedList = await uow.PatientRepository.GetPagedListAsync(param);
 
         foreach (var item in pagedList)
         {
-            item.DoctorEvents = item.DoctorEvents.Where(e => e.Doctor != null && e.Doctor.Id == User.GetUserId()).ToList();
+            item.DoctorEvents = item.DoctorEvents.Where(e => e.Doctor != null && e.Doctor.Id == User.GetUserId())
+                .ToList();
             item.DoctorPayments = item.DoctorPayments.Where(p => p.DoctorId == User.GetUserId()).ToList();
         }
 
-        Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
-            pagedList.TotalCount, pagedList.TotalPages));
+        Response.AddPaginationHeader(new PaginationHeader(
+            pagedList.CurrentPage,
+            pagedList.PageSize,
+            pagedList.TotalCount,
+            pagedList.TotalPages
+        ));
 
         return pagedList;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PatientDto>> GetDtoByIdAsync([FromRoute] int id) {
+    public async Task<ActionResult<PatientDto>> GetDtoByIdAsync([FromRoute] int id)
+    {
         PatientDto? patient = await uow.PatientRepository.GetDtoByIdAsync(id);
 
         if (patient == null) return NotFound($"Paciente con ID {id} no fue encontrado.");
@@ -52,10 +59,11 @@ public class PatientsController(
     }
 
     [HttpGet("options")]
-    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] PatientParams param) {
+    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] PatientParams param)
+    {
         param.DoctorId = User.GetUserId();
         param.UserId = User.GetUserId();
-        
+
         return await uow.PatientRepository.GetOptionsAsync(param);
     }
 
@@ -64,22 +72,23 @@ public class PatientsController(
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("Email es requerido.");
         if (!DateTime.TryParse(request.DateOfBirth, out DateTime dob))
-        return BadRequest("Formato de fecha de nacimiento inválido");
-        
+            return BadRequest("Formato de fecha de nacimiento inválido");
+
         string? email = User.GetEmail();
 
         if (string.IsNullOrEmpty(email)) return BadRequest("Email del doctor es requerido.");
-        
+
         if (await service.EmailExistsAsync(request.Email))
         {
             AppUser? patient = await userManager.Users
-                .Include(x => x.Doctors)
-                .SingleOrDefaultAsync(x => x.Email == request.Email)
-            ;
+                    .Include(x => x.Doctors)
+                    .SingleOrDefaultAsync(x => x.Email == request.Email)
+                ;
 
             if (patient == null) return NotFound($"Paciente con email {request.Email} no fue encontrado.");
 
-            if (string.IsNullOrEmpty(patient.Email)) return BadRequest($"Email del paciente con ID {patient.Id} es requerido.");
+            if (string.IsNullOrEmpty(patient.Email))
+                return BadRequest($"Email del paciente con ID {patient.Id} es requerido.");
 
             if (patient.Email == email) return BadRequest($"No puedes agregar tu propio email como paciente.");
 
@@ -110,9 +119,10 @@ public class PatientsController(
 
             var updateResult = await userManager.UpdateAsync(patient);
 
-            if (!updateResult.Succeeded) return BadRequest($"Error al agregar paciente a la lista de pacientes del doctor.");
-
+            if (!updateResult.Succeeded)
+                return BadRequest($"Error al agregar paciente a la lista de pacientes del doctor.");
         }
+
         var patientToReturn = await uow.UserRepository.GetDtoByEmailAsync(request.Email);
 
         return Ok(patientToReturn);

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject, input, effect, signal } from "@angular/core";
+import { Component, effect, inject, input, InputSignal, OnInit, signal, WritableSignal } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { debounceTime, distinctUntilChanged } from "rxjs";
@@ -19,23 +19,22 @@ import { Forms2Module } from "src/app/_forms2/forms-2.module";
   styleUrls: [ './search-form.component.scss' ]
 })
 export class SearchFormComponent implements OnInit {
-  private router = inject(Router);
-  service = inject(SearchService);
-  specialtiesService = inject(SpecialtiesService);
+  private router: Router = inject(Router);
+  service: SearchService = inject(SearchService);
+  specialtiesService: SpecialtiesService = inject(SpecialtiesService);
 
-  compact = input(false);
+  compact: InputSignal<boolean> = input(false);
+  fromWrapper: WritableSignal<boolean> = signal<boolean>(false);
 
-  fromWrapper = signal<boolean>(false);
-
-  haveSelected = false;
+  haveSelected: boolean = false;
   private autocompleteService!: google.maps.places.AutocompleteService;
 
-  form = new SearchForm();
+  form: SearchForm = new SearchForm();
 
   constructor() {
     effect(() => {
       this.specialtiesService.getOptions().subscribe({
-        next: _ => {
+        next: (_) => {
           this.form.controls.specialty.selectOptions = this.specialtiesService.options();
         }
       })
@@ -81,7 +80,7 @@ export class SearchFormComponent implements OnInit {
         } else {
           this.form.controls.location.selectOptions = [];
         }
-      });
+      }).then(() => {});
   }
 
   onSubmit(): void {

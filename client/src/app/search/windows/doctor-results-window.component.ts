@@ -7,7 +7,6 @@ import { LoadingPlaceholderComponent } from "src/app/search/components/loading-p
 import { NoResultScreenComponent } from "src/app/search/components/no-result-screen.component";
 import { ResultRowComponent } from "src/app/search/components/result-row.component";
 import { SearchFormComponent } from "src/app/search/components/search-form.component";
-import { SearchResultCounterComponent } from "src/app/search/components/search-result-counter.component";
 
 @Component({
   host: { class: 'd-flex flex-column position-relative', },
@@ -15,14 +14,16 @@ import { SearchResultCounterComponent } from "src/app/search/components/search-r
   templateUrl: './doctor-results-window.component.html',
   styleUrl: './doctor-results-window.component.scss',
   standalone: true,
-  imports: [ CommonModule, ResultRowComponent, SearchFormComponent, NoResultScreenComponent, LoadingPlaceholderComponent, TablesModule,
-    SearchResultCounterComponent, RouterModule,
-   ],
+  imports: [
+    CommonModule,
+    ResultRowComponent,
+    SearchFormComponent,
+    NoResultScreenComponent,
+    LoadingPlaceholderComponent,
+    TablesModule,
+    RouterModule,
+  ],
 })
 export class DoctorResultsWindowComponent {
-  service = inject(SearchService);
-
-  constructor() {
-    
-  }
+  service: SearchService = inject(SearchService);
 }

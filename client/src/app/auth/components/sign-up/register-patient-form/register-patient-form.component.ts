@@ -1,5 +1,5 @@
 declare var google: any;
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, ModelSignal, OnInit, signal, WritableSignal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -11,27 +11,30 @@ import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 
 @Component({
   selector: 'app-register-patient-form',
-  standalone: true,
-  imports: [ RouterLink, ReactiveFormsModule, Forms2Module, ],
   templateUrl: './register-patient-form.component.html',
+  styleUrls: [ './register-patient-form.component.scss' ],
+  imports: [ RouterLink, ReactiveFormsModule, Forms2Module, ],
 })
-export class RegisterPatientFormComponent {
-  form = model.required<PatientRegisterForm>();
+export class RegisterPatientFormComponent implements OnInit {
+  form: ModelSignal<PatientRegisterForm> = model.required<PatientRegisterForm>();
+  fromWrapper: WritableSignal<boolean> = signal(false);
 
-  fromWrapper = signal(false);
-
-  private bsModalService = inject(BsModalService);
+  private bsModalService: BsModalService = inject(BsModalService);
 
   ngOnInit() {
-    google.accounts.id.renderButton(document.getElementById('google-btn-signup'), {
-      theme: 'outline',
-      size: 'large',
-      text: 'signup_with',
-      locale: 'es',
-      width: document.getElementById('google-btn-signup')!.offsetWidth.toFixed(0).toString() > '400' ? document.getElementById('google-btn-signup')!.offsetWidth.toFixed(0).toString() : '400',
-      height: '80'
-    });
+    const btnContainer: HTMLElement | null = document.getElementById('google-btn-signup');
+    if (btnContainer) {
+      google.accounts.id.renderButton(btnContainer, {
+        theme: 'outline',
+        size: 'large',
+        text: 'signup_with',
+        locale: 'es',
+        width: 700,  // Fixed width set to 700px
+        height: 200
+      });
+    }
   }
+
 
   openTermsAndConditionsModal() {
     this.bsModalService.show(TermsAndConditionsModalComponent);

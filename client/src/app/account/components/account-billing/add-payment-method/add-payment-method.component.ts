@@ -13,15 +13,17 @@ import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 import { environment } from 'src/environments/environment';
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   selector: 'app-add-payment-method',
-  standalone: true,
-  imports: [ ModalWrapperModule, InputControlComponent, ReactiveFormsModule, FaIconComponent ],
   templateUrl: './add-payment-method.component.html',
-  styleUrl: './add-payment-method.component.scss'
+  styleUrl: './add-payment-method.component.scss',
+  imports: [
+    ModalWrapperModule,
+    InputControlComponent,
+    ReactiveFormsModule
+  ],
 })
 export class AddPaymentMethodComponent implements OnInit {
   private fb: FormBuilder = inject(FormBuilder);
@@ -34,6 +36,7 @@ export class AddPaymentMethodComponent implements OnInit {
   @ViewChild('cardNumber') cardNumberElement!: ElementRef;
   @ViewChild('cardExpiry') cardExpiryElement!: ElementRef;
   @ViewChild('cardCvc') cardCvcElement!: ElementRef;
+
   stripe: Stripe | null = null;
   cardNumber?: StripeCardNumberElement;
   cardExpiry?: StripeCardExpiryElement;
@@ -106,6 +109,8 @@ export class AddPaymentMethodComponent implements OnInit {
       this.cardErrors = paymentMethod.error.message;
       return;
     }
+
+    console.log('paymentMethod: ', paymentMethod);
 
     this.paymentMethodForm.get('StripePaymentMethodId')?.setValue(paymentMethod!.paymentMethod!.id);
     this.paymentMethodForm.get('Last4')?.setValue(paymentMethod!.paymentMethod!.card!.last4);

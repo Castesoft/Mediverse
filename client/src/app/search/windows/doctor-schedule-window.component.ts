@@ -1,9 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject, model, effect, signal } from "@angular/core";
+import { Component, effect, inject, model, OnInit, signal } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { Router, ActivatedRoute, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { take } from "rxjs";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { AvailableDay } from "src/app/_models/availableDay";
 import { AvailableTime } from 'src/app/_models/availableTime';
@@ -16,7 +15,6 @@ import { AccountService } from "src/app/_services/account.service";
 import { DevService } from 'src/app/_services/dev.service';
 import { SearchService } from "src/app/_services/search.service";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { AddPaymentMethodComponent } from "src/app/account/components/account-billing/add-payment-method/add-payment-method.component";
 import { SignInBasicFormComponent } from "src/app/auth/components/sign-in-basic-form.component";
 import { EventsService } from "src/app/events/events.config";
 import { StepperIconComponent } from "src/app/search/utils/stepper-icon.component";
@@ -24,7 +22,7 @@ import { StepperIconComponent } from "src/app/search/utils/stepper-icon.componen
 @Component({
   selector: 'div[doctorScheduleWindow]',
   standalone: true,
-  imports: [MaterialModule, ReactiveFormsModule, SignInBasicFormComponent, CommonModule,
+  imports: [ MaterialModule, ReactiveFormsModule, SignInBasicFormComponent, CommonModule,
     StepperIconComponent, Forms2Module, RouterModule,
   ],
   templateUrl: './doctor-schedule-window.component.html',
@@ -70,7 +68,7 @@ export class DoctorScheduleWindowComponent implements OnInit {
       if (this.accountService.current()) {
 
         this.form
-        .setDoctorResult(this.service.selected())
+          .setDoctorResult(this.service.selected())
           .patchDoctor()
           .patchClinics()
           .patchServices()
@@ -101,33 +99,6 @@ export class DoctorScheduleWindowComponent implements OnInit {
       queryParamsHandling: 'merge'
     });
 
-  }
-
-  onChangePaymentMethod(event: any) {
-    if (event.target.value === 'new') {
-      const paymentMethodsLength = this.accountService.billingDetails()!.userPaymentMethods.length;
-      this.bsModalService.show(AddPaymentMethodComponent, {
-        initialState: {
-          title: 'Añadir método de pago',
-        },
-      });
-
-      this.bsModalService.onHide.pipe(take(1)).subscribe({
-        next: _ => {
-          const paymentMethodsLengthAfter = this.accountService.billingDetails()!.userPaymentMethods.length;
-          if (paymentMethodsLengthAfter > paymentMethodsLength) {
-            const lastPaymentMethod = this.accountService.billingDetails()!.userPaymentMethods[paymentMethodsLengthAfter - 1];
-            this.form.patchValue({
-              stripePaymentMethodId: lastPaymentMethod.stripePaymentMethodId,
-            })
-          } else {
-            this.form.patchValue({
-              stripePaymentMethodId: '',
-            });
-          }
-        }
-      });
-    }
   }
 
   onSubmit() {

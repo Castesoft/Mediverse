@@ -11,10 +11,10 @@
       {{ user().fullName }}
     </a>
     <span class="nowrap text-gray-600 fs-7">{{ user().email }}</span>
-    @if (shouldAskForClinicalHistoryShare()) {
-      <button class="badge" (click)="openConsentModal()">
-        {{ consentStatus ? 'Access Granted' : 'Grant Access' }}
-      </button>
-    }
+<!--    @if (shouldAskForClinicalHistoryShare()) {-->
+<!--      <button class="badge" (click)="openConsentModal()">-->
+<!--        {{ consentStatus ? 'Access Granted' : 'Grant Access' }}-->
+<!--      </button>-->
+<!--    }-->
   </div>
 </div>

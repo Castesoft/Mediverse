@@ -247,7 +247,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
       tap(response => {
         this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} creado correctamente`, 'Cerrar', { duration: 3000 });
         if (view === 'page') {
-          this.router.navigate([this.dictionary.catalogRoute, response.id]);
+          this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
         }
         this.data.next([ ...this.data.value, response ]);
       })
@@ -263,7 +263,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
         console.log('response', response);
 
         if (view === 'page') {
-          this.router.navigate([this.dictionary.catalogRoute, response.id]);
+          this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
         }
         this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`, 'Cerrar', { duration: 3000 });
 

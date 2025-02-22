@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, model, ModelSignal, OnDestroy, signal } from "@angular/core";
+import { Component, effect, inject, model, ModelSignal, signal, WritableSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -20,15 +20,12 @@ import { NursesService } from "src/app/nurses/nurses.config";
 import { PatientsService } from "src/app/patients/patients.config";
 import { ServicesService } from "src/app/services/services.config";
 import { ClinicsService } from "src/app/clinics/clinics.config";
-import {
-  FilterConfiguration,
-  FilterOrientation,
-  FilterPosition,
-  DrawerMode
-} from "../../_models/base/filter-types";
+import { DrawerMode, FilterConfiguration, FilterOrientation, FilterPosition } from "src/app/_models/base/filter-types";
 import BaseCatalog from 'src/app/_models/base/components/extensions/baseCatalog';
 import CatalogInputSignals from 'src/app/_models/base/components/interfaces/catalogInputSignals';
 import { EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
+import { EventMonthDayCell } from "src/app/_models/event-month-day-cell/eventMonthDayCell";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: '[eventsCatalog]',
@@ -48,9 +45,7 @@ import { EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
     GenericCatalogComponent,
   ],
 })
-export class EventsCatalogComponent
-  extends BaseCatalog<Event, EventParams, EventFiltersForm, EventsService>
-  implements CatalogInputSignals<Event, EventParams> {
+export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, EventFiltersForm, EventsService> implements CatalogInputSignals<Event, EventParams> {
   private readonly clinics: ClinicsService = inject(ClinicsService);
   private readonly patients: PatientsService = inject(PatientsService);
   private readonly services: ServicesService = inject(ServicesService);
@@ -62,17 +57,23 @@ export class EventsCatalogComponent
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<EventParams> = model.required();
+  useCard: ModelSignal<boolean> = model(true);
+  embedded: ModelSignal<boolean> = model(false);
+
   filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration(
     FilterOrientation.VERTICAL,
     DrawerMode.SIDE,
     FilterPosition.START
   ));
+
   displayRole: ModelSignal<EventsTableDisplayRole> = model(EventsTableDisplayRole.PATIENT as EventsTableDisplayRole);
 
   calendarView: ModelSignal<CalendarView> = model.required<CalendarView>();
   filtersCollapsed: ModelSignal<boolean> = model.required<boolean>();
 
-  filtersForm = signal(new EventFiltersForm());
+  filtersForm: WritableSignal<EventFiltersForm> = signal(new EventFiltersForm());
+
+  calendarList: EventMonthDayCell[] = [];
 
   constructor() {
     super(EventsService, EventFiltersForm);
@@ -88,8 +89,20 @@ export class EventsCatalogComponent
         .setClinicOptions(this.clinics.options())
         .setPatientOptions(this.patients.options())
         .setServiceOptions(this.services.options())
-        .setNurseOptions(this.nurses.options())
-      ;
+        .setNurseOptions(this.nurses.options());
+
+      if (this.calendarView() === 'calendar') {
+        this.service.getMonthViewPartial(this.key(), this.params()).subscribe();
+      }
+    });
+
+    this.subscribeToEventMonthDayCell();
+  }
+
+  private subscribeToEventMonthDayCell(): void {
+    this.service.eventMonthDayCells$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((eventMonthDayCells: EventMonthDayCell[]) => {
+      console.log('eventMonthDayCells', eventMonthDayCells);
+      this.calendarList = eventMonthDayCells;
     });
   }
 }

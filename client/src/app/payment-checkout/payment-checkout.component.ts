@@ -5,7 +5,7 @@ import {
   RedirectWarningModalComponent
 } from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
 import { RedirectWarningData } from "src/app/_shared/components/redirect-warning-modal/redirectWarningData";
-import { CurrencyPipe, DatePipe } from "@angular/common";
+import { CurrencyPipe } from "@angular/common";
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { EventsService } from "src/app/events/events.config";
 import Event from "src/app/_models/events/event";
@@ -19,23 +19,24 @@ import {
 import {
   CheckoutPaymentMethodEntryCardComponent
 } from "src/app/payment-checkout/components/checkout-payment-method-entry-card/checkout-payment-method-entry-card.component";
-import {
-  AddressDisplayCardComponent
-} from "src/app/addresses/components/address-display-card/address-display-card.component";
-import { AddressSelectorComponent } from "src/app/addresses/components/address-selector/address-selector.component";
-import { UserDropdownComponent } from "src/app/_shared/template/components/user-dropdown.component";
-import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: 'app-payment-checkout',
   templateUrl: './payment-checkout.component.html',
   styleUrls: [ './payment-checkout.component.scss' ],
-  imports: [ CurrencyPipe, CheckoutAddressEntryCardComponent, CheckoutPaymentMethodEntryCardComponent, RouterLink, AddressDisplayCardComponent, AddressSelectorComponent, UserDropdownComponent, BsDropdownDirective, DatePipe ],
+  imports: [
+    CurrencyPipe,
+    CheckoutAddressEntryCardComponent,
+    CheckoutPaymentMethodEntryCardComponent,
+    RouterLink
+  ]
 })
 export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly eventsService: EventsService = inject(EventsService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly toastr: ToastrService = inject(ToastrService);
   private readonly matDialog: MatDialog = inject(MatDialog);
   private readonly router: Router = inject(Router);
 
@@ -128,6 +129,10 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
           // TODO - Insert payment processing logic here (e.g. invoking StripePaymentGatewayService)
         }
       });
+  }
+
+  onApplyPromoCode(): void {
+    this.toastr.error('El código promocional no es válido');
   }
 
   onCancel(): void {

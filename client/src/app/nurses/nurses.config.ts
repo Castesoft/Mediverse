@@ -1,11 +1,11 @@
 import {
   Component,
   inject,
-  ModelSignal,
-  model,
   Injectable,
-  OnInit,
+  model,
+  ModelSignal,
   OnDestroy,
+  OnInit,
   output,
   OutputEmitterRef
 } from '@angular/core';
@@ -15,11 +15,11 @@ import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import BaseDetail from 'src/app/_models/base/components/extensions/baseDetail';
 import CatalogDialog from 'src/app/_models/base/components/types/catalogDialog';
 import DetailDialog from 'src/app/_models/base/components/types/detailDialog';
-import { View, CatalogMode } from 'src/app/_models/base/types';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import { DetailInputSignals } from 'src/app/_models/forms/formComponentInterfaces';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import Nurse from 'src/app/_models/nurses/nurse';
-import { nurseDictionary, nurseColumns } from 'src/app/_models/nurses/nurseConstants';
+import { nurseColumns, nurseDictionary } from 'src/app/_models/nurses/nurseConstants';
 import { NurseFiltersForm } from 'src/app/_models/nurses/nurseFiltersForm';
 import { NurseParams } from 'src/app/_models/nurses/nurseParams';
 import { CdkModule } from 'src/app/_shared/cdk.module';
@@ -34,37 +34,42 @@ import { NurseFormComponent } from 'src/app/nurses/nurse-form.component';
   selector: 'nurses-catalog-modal',
   template: `
     @defer {
-      @if (data.title) {
-        <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle
-            class="fw-semibold">{{ data.title }}</h2>
-      }
-      <mat-dialog-content>
-        <div
-          nursesCatalog
-          [(mode)]="data.mode"
-          [(key)]="data.key"
-          [(view)]="data.view"
-          [(isCompact)]="data.isCompact"
-          [(item)]="data.item"
-          [(params)]="data.params"
-        ></div>
-      </mat-dialog-content>
-      <mat-dialog-actions>
-        <div class="d-flex justify-content-end">
-          @if (selectedNurseCount > 0) {
-            <button class="btn btn-secondary btn-sm me-2" mat-dialog-close>Cancelar</button>
-            <button class="btn btn-primary btn-sm" mat-dialog-close>Seleccionar {{ selectedNurseCount }}
-              @if (selectedNurseCount > 1) {
-                especialistas
-              } @else {
-                especialista
-              }
-            </button>
-          } @else {
-            <button class="btn btn-secondary btn-sm" mat-dialog-close>Cerrar</button>
-          }
+      <div class="card">
+        @if (data.title) {
+          <div class="card-header">
+            <div class="card-title">
+              <h3>{{ data.title }}</h3>
+            </div>
+          </div>
+        }
+        <div class="card-body pt-0">
+          <div
+            nursesCatalog
+            [embedded]="true"
+            [(mode)]="data.mode"
+            [(key)]="data.key"
+            [(view)]="data.view"
+            [(isCompact)]="data.isCompact"
+            [(item)]="data.item"
+            [(params)]="data.params"
+          ></div>
+
+          <div class="d-flex w-100 justify-content-end mt-6">
+            @if (selectedNurseCount > 0) {
+              <button class="btn btn-secondary btn-sm me-2" mat-dialog-close>Cancelar</button>
+              <button class="btn btn-primary btn-sm" mat-dialog-close>Seleccionar {{ selectedNurseCount }}
+                @if (selectedNurseCount > 1) {
+                  especialistas
+                } @else {
+                  especialista
+                }
+              </button>
+            } @else {
+              <button class="btn btn-secondary btn-sm" mat-dialog-close>Cerrar</button>
+            }
+          </div>
         </div>
-      </mat-dialog-actions>
+      </div>
     }
   `,
   standalone: true,

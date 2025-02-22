@@ -35,6 +35,18 @@ export const eventFormInfo: FormInfo<Event> = {
     materialOptions: new MaterialOptions({ appearance: 'fill', }),
     dateOptions: new DateOptions({ hideToggleButton: true, })
   },
+  timeFrom: {
+    label: 'Hora de inicio',
+    showLabel: false,
+    materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    dateOptions: new DateOptions({ hideToggleButton: true, })
+  },
+  timeTo: {
+    label: 'Hora de fin',
+    showLabel: false,
+    materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    dateOptions: new DateOptions({ hideToggleButton: true, })
+  },
   evolution: { label: 'Evolución', type: 'textarea', },
   nextSteps: { label: 'Próximos pasos', type: 'textarea', },
   doctor: doctorFormInfo,
@@ -118,4 +130,17 @@ export const eventFormSteps: Record<number, EventFormSteps> = {
 export class EventsTableDisplayRole {
   static readonly DOCTOR = 'doctor';
   static readonly PATIENT = 'patient';
+}
+
+export interface EventFormPayload {
+  patientId: number;
+  nurseIds: number[];
+  serviceId: number;
+  clinicId: number;
+  allDay: boolean;
+  dateFrom: Date;
+  dateTo: Date;
+  doctorId?: number;
+  paymentMethodTypeId?: number;
+  medicalInsuranceCompanyId?: number;
 }

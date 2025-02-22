@@ -9,7 +9,7 @@
       {{pagination().totalItems | number}}
     </p> -->
     @if (!isLastPage && !hideShowAll()) {
-      @if (pagination().totalItems <= 50) {
+      @if (pagination().totalCount <= 50) {
         <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadMore()">
           Mostrar todos
           <fa-icon [icon]="icons.faAngleRight" class="ms-1"/>

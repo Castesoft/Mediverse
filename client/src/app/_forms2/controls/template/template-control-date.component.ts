@@ -49,6 +49,9 @@ export class TemplateControlDateComponent {
   maxDate: InputSignal<Date | null | undefined> = input();
   readonly datePipe: DatePipe = inject(DatePipe);
 
+  // Show bottom margins (mb-10)
+  showBottomMargin: InputSignal<boolean> = input(true);
+
   tooltipText: WritableSignal<string | null> = signal(null);
 
   root: Signal<FormGroup2<any>> = computed(() => {
@@ -67,6 +70,10 @@ export class TemplateControlDateComponent {
         this.class += ' w-100';
       } else {
         this.class += ' col-auto px-0';
+      }
+
+      if (this.showBottomMargin()) {
+        this.class += ` mb-10`;
       }
 
       if (this.control().isReadonly) {

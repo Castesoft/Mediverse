@@ -1,28 +1,21 @@
 import { CommonModule } from "@angular/common";
-import { Component, HostListener, inject, model } from "@angular/core";
+import { Component, HostListener, inject, model, ModelSignal } from "@angular/core";
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchService } from "src/app/_services/search.service";
 import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
 
-/*
-
-<div [class.hovered]="hoveredMarkerDoctor === doctor" (click)="showDoctorDetails(doctor)"
-  (mouseenter)="onDoctorHover(doctor)" (mouseleave)="onDoctorLeave(doctor)">
-
-*/
-
 @Component({
-  host: { class: 'd-flex flex-column p-6 doctor-search-result', },
   selector: 'div[resultRow]',
   templateUrl: './result-row.component.html',
-  standalone: true,
-  imports: [CommonModule, ProfilePictureComponent,],
+  styleUrl: './result-row.component.scss',
+  imports: [ CommonModule, ProfilePictureComponent, ],
 })
 export class ResultRowComponent {
-  service = inject(SearchService);
+  protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
 
-  doctor = model.required<DoctorResult>();
+  service: SearchService = inject(SearchService);
+  doctor: ModelSignal<DoctorResult> = model.required<DoctorResult>();
 
   @HostListener('click')
   onClick() {
@@ -36,6 +29,4 @@ export class ResultRowComponent {
   @HostListener('mouseleave') onMouseLeave() {
     this.service.onLeave(this.doctor());
   }
-
-  protected readonly PhotoSize = PhotoSize;
 }

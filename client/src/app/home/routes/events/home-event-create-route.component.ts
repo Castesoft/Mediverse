@@ -4,18 +4,22 @@ import Event from 'src/app/_models/events/event';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homeEventCreateRoute]',
   template: `
-    <div eventDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+    <div breadcrumbs></div>
+    <div post>
+      <div
+        eventDetail
+        [(use)]="use"
+        [(view)]="view"
+        [(item)]="item"
+        [(key)]="key"
+        [(title)]="title"></div>
+    </div>
   `,
-  // templateUrl: './home-event-detail-route.component.html',
   standalone: false,
 })
-export class HomeEventCreateRouteComponent
-  extends BaseRouteDetail<Event>
-
-{
+export class HomeEventCreateRouteComponent extends BaseRouteDetail<Event> {
   constructor() {
     super('events', FormUse.CREATE);
 

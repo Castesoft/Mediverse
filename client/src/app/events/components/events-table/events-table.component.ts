@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, input, InputSignal, model, ModelSignal, OnDestroy } from "@angular/core";
+import { Component, effect, input, InputSignal, model, ModelSignal, OnDestroy } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -21,8 +21,6 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
 import {
   AddressTableCellComponent
 } from "src/app/_shared/template/components/tables/cells/address-table-cell.component";
-import { PaymentModalComponent } from "src/app/home/dashboard/payments/payment-modal.component";
-import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -44,8 +42,6 @@ import { MatDialog } from "@angular/material/dialog";
   ],
 })
 export class EventsTableComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements OnDestroy, TableInputSignals<Event, EventParams> {
-  private matDialog: MatDialog = inject(MatDialog);
-
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -74,18 +70,6 @@ export class EventsTableComponent extends BaseTable<Event, EventParams, EventFil
       }
     });
   }
-
-  openPaymentModal(event: Event): void {
-    const dialogRef = this.matDialog.open(PaymentModalComponent, {
-      width: '500px',
-
-      data: { eventId: event.id, patientId: event.patient.id }
-    });
-    dialogRef.afterClosed().subscribe((result: any) => {
-      console.log(result)
-    });
-  }
-
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

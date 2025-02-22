@@ -18,6 +18,7 @@ using System.Text.Json;
 using MainService.Core.DTOs.MedicalRecord;
 using MainService.Core.DTOs.Payment;
 using MainService.Models.Entities.Aggregate;
+using MainService.Models.Helpers;
 using Serilog;
 
 namespace MainService.Controllers;
@@ -180,43 +181,50 @@ public class AccountController(
     [HttpPost("register")]
     public async Task<ActionResult<AccountDto?>> RegisterAsync([FromBody] RegisterDto request)
     {
-        if (string.IsNullOrEmpty(request.FirstName)) return BadRequest("No se ha proporcionado un nombre.");
-        if (string.IsNullOrEmpty(request.LastName)) return BadRequest("No se ha proporcionado un apellido.");
-        if (string.IsNullOrEmpty(request.Gender)) return BadRequest("No se ha proporcionado un género.");
-        if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha proporcionado un correo.");
-        if (!request.DateOfBirth.HasValue) return BadRequest("No se ha proporcionado una fecha de nacimiento.");
-        if (string.IsNullOrEmpty(request.Password)) return BadRequest("No se ha proporcionado una contraseña.");
+        if (string.IsNullOrEmpty(request.FirstName))
+            return BadRequest("No se ha proporcionado un nombre.");
+        if (string.IsNullOrEmpty(request.LastName))
+            return BadRequest("No se ha proporcionado un apellido.");
+        if (request.Sex == null)
+            return BadRequest("No se ha proporcionado un género.");
+        if (string.IsNullOrEmpty(request.Email))
+            return BadRequest("No se ha proporcionado un correo.");
+        if (!request.DateOfBirth.HasValue)
+            return BadRequest("No se ha proporcionado una fecha de nacimiento.");
+        if (string.IsNullOrEmpty(request.Password))
+            return BadRequest("No se ha proporcionado una contraseña.");
         if (string.IsNullOrEmpty(request.ConfirmPassword))
             return BadRequest("No se ha proporcionado una contraseña de confirmación.");
-        if (!request.AgreeTerms.HasValue) return BadRequest("No se ha aceptado los términos y condiciones.");
+        if (!request.AgreeTerms.HasValue || !request.AgreeTerms.Value)
+            return BadRequest("Debes aceptar los términos y condiciones.");
 
-        using var hmac = new HMACSHA512();
+        var existingUser = await userManager.FindByEmailAsync(request.Email);
+        if (existingUser != null) return BadRequest("No puede crearse una cuenta con este correo.");
 
-        if ((await userManager.FindByEmailAsync(request.Email)) != null)
-            return BadRequest("No puede crearse una cuenta con este correo.");
+        var user = new AppUser
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Sex = request.Sex?.Code,
+            Email = request.Email,
+            UserName = request.Email,
+            DateOfBirth = request.DateOfBirth.HasValue ? DateOnly.FromDateTime(request.DateOfBirth.Value) : null,
+        };
 
-        AppUser user = new();
+        var createResult = await userManager.CreateAsync(user, request.Password);
+        if (!createResult.Succeeded) return BadRequest(createResult.Errors);
 
-        user = mapper.Map<AppUser>(request);
-
-        user.UserName = request.Email;
-
-        if (request.Gender == "Otro")
-            user.Sex = request.OtherGender;
-
-        var createUser = await userManager.CreateAsync(user, request.Password);
-        if (!createUser.Succeeded) return BadRequest(createUser.Errors);
-
-        var addRole = await userManager.AddToRolesAsync(user, ["Patient"]);
-        if (!addRole.Succeeded) return BadRequest(addRole.Errors);
+        var addRoleResult = await userManager.AddToRoleAsync(user, "Patient");
+        if (!addRoleResult.Succeeded) return BadRequest(addRoleResult.Errors);
 
         var emailVerificationCode = codeService.GenerateEmailCode();
-
+        using var hmac = new HMACSHA512();
         user.EmailVerificationCodeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailVerificationCode));
         user.EmailVerificationCodeSalt = hmac.Key;
         user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
 
-        if (!(await userManager.UpdateAsync(user)).Succeeded)
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
             return BadRequest("No pudo actualizarse la información del usuario.");
 
         var clientUrl = clientSettings.Value.Url;
@@ -224,12 +232,9 @@ public class AccountController(
         var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
         var htmlMessage =
             emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
-
-        var email = user.Email;
-
-        if (!string.IsNullOrEmpty(email))
+        if (!string.IsNullOrEmpty(user.Email))
         {
-            await emailService.SendMail(email, subject, htmlMessage);
+            await emailService.SendMail(user.Email, subject, htmlMessage);
         }
 
         return await usersService.GenerateAccountDtoAsync(user.Id);
@@ -1092,13 +1097,17 @@ public class AccountController(
 
             if (!string.IsNullOrEmpty(email))
             {
-                var customerId = await stripeService.CreateCustomerAsync(email, user.FirstName + " " + user.LastName,
-                    request.StripePaymentMethodId);
+                var name = user.FirstName + " " + user.LastName;
+                var customerId = await stripeService.CreateCustomerAsync(
+                    email,
+                    name,
+                    request.StripePaymentMethodId
+                );
                 user.StripeCustomerId = customerId;
             }
         }
 
-        if (request.IsMain.Value == true)
+        if (request.IsMain.Value)
         {
             var mainPaymentMethod = user.PaymentMethods.SingleOrDefault(x => x.IsDefault);
             if (mainPaymentMethod != null) mainPaymentMethod.IsDefault = false;
@@ -1111,7 +1120,8 @@ public class AccountController(
             Last4 = request.Last4,
             ExpirationMonth = request.ExpirationMonth,
             ExpirationYear = request.ExpirationYear,
-            Brand = request.Brand,
+            IsDefault = request.IsMain.Value,
+            Brand = Utils.GetPrettyCardBrand(request.Brand),
             Country = request.Country
         };
         user.PaymentMethods.Add(paymentMethod);
@@ -1757,6 +1767,7 @@ public class AccountController(
         }
 
         await HandlePhotoUpdate(user, request);
+        await uow.Complete();
     }
 
     private async Task HandleMedicalLicenseUpdate(AppUser user, AccountDetailsUpdateDto request)

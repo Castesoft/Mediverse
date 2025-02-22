@@ -14,7 +14,7 @@ export interface PaymentResponse {
   providedIn: 'root'
 })
 export class StripePaymentGatewayService {
-  private stripePromise: Promise<Stripe | null> = loadStripe('pk_test_51QtYEs4IEJsj7BqEILO6DRXm4coSJjkQVVGqYegPH9jJOFQ526l9Ql8jIU7hi0WBnNvGabLJRT8zCZfbHKAoyPvu00Pdf34G81');
+  private stripePromise: Promise<Stripe | null> = loadStripe(environment.stripe_pk);
   private baseUrl: string = `${environment.apiUrl}payments/`;
   private http: HttpClient = inject(HttpClient);
 

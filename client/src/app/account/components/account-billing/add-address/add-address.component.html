@@ -1,0 +1,196 @@
+<div class="card">
+  @if (title) {
+    <div class="card-header">
+      <div class="card-title">
+        <h2>{{ title }}</h2>
+      </div>
+    </div>
+  }
+  <div class="card-body pt-0">
+    <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+      <!-- Country Dropdown -->
+      <div class="fv-row mb-6">
+        <label class="form-label required">País</label>
+        <select
+          class="form-select"
+          [ngClass]="{
+            'is-invalid': (f['country'].touched || submitted) && f['country'].invalid,
+            'is-valid': (f['country'].touched || submitted) && f['country'].valid
+          }"
+          formControlName="country"
+        >
+          @for (option of countryOptions; track option) {
+            <option [ngValue]="option" [disabled]="!option.enabled">
+              {{ option.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <!-- State Dropdown -->
+      <div class="fv-row mb-6">
+        <label class="form-label required">Estado</label>
+        <select
+          class="form-select"
+          [ngClass]="{
+            'is-invalid': (f['state'].touched || submitted) && f['state'].invalid,
+            'is-valid': (f['state'].touched || submitted) && f['state'].valid
+          }"
+          formControlName="state"
+        >
+          <option value="">Selecciona un estado</option>
+          @for (option of stateOptions; track option) {
+            <option [ngValue]="option" [disabled]="!option.enabled">
+              {{ option.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <!-- City Dropdown -->
+      <div class="fv-row mb-6">
+        <label class="form-label required">Ciudad</label>
+        <select
+          class="form-select"
+          [ngClass]="{
+            'is-invalid': (f['city'].touched || submitted) && f['city'].invalid,
+            'is-valid': (f['city'].touched || submitted) && f['city'].valid
+          }"
+          formControlName="city"
+        >
+          @if (cityOptions.length === 0) {
+            <option value="">Seleccione una ciudad</option>
+          } @else {
+            @for (option of cityOptions; track option) {
+              <option [ngValue]="option" [disabled]="!option.enabled">
+                {{ option.name }}
+              </option>
+            }
+          }
+        </select>
+      </div>
+
+      <!-- ZIP Code -->
+      <div class="fv-row mb-6">
+        <label for="zipCode" class="label form-label required">Código Postal</label>
+        <input
+          id="zipCode"
+          type="text"
+          formControlName="zipCode"
+          placeholder="Ej. 12345 o 12345-6789"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': (f['zipCode'].touched || submitted) && f['zipCode'].invalid,
+            'is-valid': (f['zipCode'].touched || submitted) && f['zipCode'].valid
+          }"
+        />
+        @if ((f['zipCode'].touched || submitted) && f['zipCode'].errors) {
+          <small class="text-danger">
+            @if (f['zipCode'].errors['required']) {
+              El código postal es obligatorio.
+            }
+          </small>
+          <small class="text-danger">
+            @if (f['zipCode'].errors['pattern']) {
+              Ingresa un código postal válido (ej. 12345 o 12345-6789).
+            }
+          </small>
+        }
+      </div>
+
+      <!-- Street -->
+      <div class="fv-row mb-6">
+        <label for="street" class="label form-label required">Calle</label>
+        <input
+          id="street"
+          type="text"
+          placeholder="Ej. Avenida Reforma"
+          formControlName="street"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': (f['street'].touched || submitted) && f['street'].invalid,
+            'is-valid': (f['street'].touched || submitted) && f['street'].valid
+          }"
+        />
+        @if ((f['street'].touched || submitted) && f['street'].errors) {
+          <small class="text-danger">
+            @if (f['street'].errors['required']) {
+              La calle es obligatoria. Por favor ingresa el nombre de la calle.
+            }
+          </small>
+        }
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <!-- Interior Number -->
+          <div class="fv-row mb-6">
+            <label for="interiorNumber" class="label form-label">Número Int.</label>
+            <input
+              id="interiorNumber"
+              type="text"
+              formControlName="interiorNumber"
+              class="form-control"
+              placeholder="Ej. 4B"
+            />
+          </div>
+        </div>
+
+        <div class="col">
+          <!-- Exterior Number -->
+          <div class="fv-row mb-6">
+            <label for="exteriorNumber" class="label form-label required">Número Ext.</label>
+            <input
+              id="exteriorNumber"
+              type="text"
+              formControlName="exteriorNumber"
+              class="form-control"
+              placeholder="Ej. 123"
+              [ngClass]="{
+                'is-invalid': (f['exteriorNumber'].touched || submitted) && f['exteriorNumber'].invalid,
+                'is-valid': (f['exteriorNumber'].touched || submitted) && f['exteriorNumber'].valid
+              }"
+            />
+            @if ((f['exteriorNumber'].touched || submitted) && f['exteriorNumber'].errors) {
+              <div class="text-danger">
+                El número exterior es requerido.
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-stack">
+        <div class="me-4">
+          <label class="fs-6 fw-semibold form-label">¿Guardar como dirección principal?</label>
+        </div>
+        <label class="form-check form-switch form-check-custom form-check-solid">
+          <input class="form-check-input" type="checkbox" formControlName="isDefault"/>
+        </label>
+      </div>
+
+      <div class="d-flex flex-stack mt-2">
+        <div class="me-4">
+          <label class="fs-6 fw-semibold form-label">¿Guardar como dirección de facturación?</label>
+        </div>
+        <label class="form-check form-switch form-check-custom form-check-solid">
+          <input class="form-check-input" type="checkbox" formControlName="isBilling"/>
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex flex-grow-1 justify-content-between mt-8">
+        <button type="button" class="btn btn-light me-3" (click)="onCancel()" [disabled]="submitted">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+          @if (!submitted) {
+            <span class="indicator-label">Guardar</span>
+          } @else {
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

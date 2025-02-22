@@ -24,6 +24,7 @@ export class NursesCatalogComponent {
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<NurseParams> = model.required();
+  embedded: ModelSignal<boolean> = model(false);
   filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration());
 
   service: NursesService = inject(NursesService);

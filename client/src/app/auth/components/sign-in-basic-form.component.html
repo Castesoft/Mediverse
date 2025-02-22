@@ -1,47 +1,79 @@
-@if(form.error) {
+@if (form.error) {
   <div errorsAlert3 [(error)]="form.error"></div>
 }
 
-<form class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework" [id]="form.id" (ngSubmit)="onSubmit()"
+<form
+  class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
+  (ngSubmit)="onSubmit()"
   [id]="form.id">
+
   <div class="text-center mb-10">
     <h1 class="text-dark mb-3">Iniciar sesión en {{ utils.title }}</h1>
-    @if (!requiresTwoFactor) {
-    <div class="text-gray-400 fw-semibold fs-4">
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+
+
+      @if (!requiresTwoFactor) {
+        <div class="row mb-5 gy-6">
+          <div
+            templateControlText
+            class="col-xl-12"
+            [(control)]="form.controls.email"
+            [fromWrapper]="false"
+            [showBottomMargin]="false"
+          ></div>
+
+          <div
+            templateControlText
+            class="col-xl-12"
+            [(control)]="form.controls.password"
+            [fromWrapper]="false"
+            [showBottomMargin]="false"
+          ></div>
+        </div>
+        <a class="fs-6 link-primary" routerLink="/auth/sign-in/password-reset">¿Olvidaste tu contraseña?</a>
+      } @else {
+        <div
+          templateControlText
+          class="col-xl-12"
+          [(control)]="form.controls.twoFactorCode"
+          [fromWrapper]="false"
+          [showBottomMargin]="false"
+        ></div>
+      }
+
+      <div class="text-center mt-5">
+        <button type="submit" [attr.form]="form.id" class="btn btn-lg btn-primary w-100 mb-5">
+          <span class="indicator-label"> Continuar </span>
+
+          <span class="indicator-progress">
+            Por favor espere...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+          </span>
+        </button>
+
+        @if (!requiresTwoFactor && accountService.current() === null) {
+          <div class="d-flex align-items-center m-0">
+            <div class="border-bottom border-gray-400 mw-50 w-100"></div>
+            <span class="fw-semibold text-gray-400 fs-7 mx-5">O</span>
+            <div class="border-bottom border-gray-400 mw-50 w-100"></div>
+          </div>
+          <div id="google-btn" class="mt-5"></div>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (!requiresTwoFactor) {
+    <div class="text-gray-600 fw-normal fs-5 w-100 d-flex justify-content-center mt-5">
       ¿Eres nuevo aquí?
-      <a routerLink="/auth/sign-up" class="link-primary fw-bold">
+      <a routerLink="/auth/sign-up" class="link-primary fw-semibold ms-2">
         Crear una cuenta
       </a>
     </div>
-    }
-  </div>
-  @if (!requiresTwoFactor) {
-  <div formBuilder3 [cols]="1" [gap]="7" [controls]="[
-      form.controls.email,
-      form.controls.password,
-    ]"></div>
-
-  <a class="fs-6 link-primary" routerLink="/auth/sign-in/password-reset">¿Olvidaste tu contraseña?</a>
-  } @else {
-
-  <div formBuilder3 [cols]="1" [controls]="[
-      form.controls.twoFactorCode,
-    ]"></div>
-
   }
-
-  <div class="text-center mt-5">
-    <button type="submit" [attr.form]="form.id" class="btn btn-lg btn-primary w-100 mb-5">
-      <span class="indicator-label"> Continuar </span>
-
-      <span class="indicator-progress">
-        Por favor espere...
-        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-      </span>
-    </button>
-    @if (!requiresTwoFactor && accountService.current() === null) {
-    <div class="text-center text-muted text-uppercase fw-bold mb-5">o</div>
-    <div id="google-btn"></div>
-    }
-  </div>
 </form>
+
+

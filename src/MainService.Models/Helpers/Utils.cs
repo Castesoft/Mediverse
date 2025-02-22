@@ -1,6 +1,7 @@
 using MainService.Models.Entities;
 
 namespace MainService.Models.Helpers;
+
 public static class Utils
 {
     private static readonly Random random = new();
@@ -13,28 +14,65 @@ public static class Utils
     public static string GenerateRandomLicenseNumber()
     {
         return new string(Enumerable.Repeat("0123456789", 7)
-                                    .Select(s => s[random.Next(s.Length)])
-                                    .ToArray());
+            .Select(s => s[random.Next(s.Length)])
+            .ToArray());
+    }
+
+    public static string ParseCardBrand(string stripeBrand)
+    {
+        if (string.IsNullOrWhiteSpace(stripeBrand))
+            return "generic";
+
+        return stripeBrand.Trim().ToLowerInvariant() switch
+        {
+            "visa" => "visa",
+            "mastercard" => "mastercard",
+            "american express" or "amex" => "amex",
+            _ => "generic"
+        };
+    }
+
+    public static string GetPrettyCardBrand(string stripeBrand)
+    {
+        if (string.IsNullOrWhiteSpace(stripeBrand))
+            return "Unknown";
+
+        return stripeBrand.Trim().ToLowerInvariant() switch
+        {
+            "visa" => "Visa",
+            "mastercard" => "MasterCard",
+            "american express" or "amex" => "American Express",
+            "discover" => "Discover",
+            "diners club" or "diners" => "Diners Club",
+            "jcb" => "JCB",
+            "unionpay" => "UnionPay",
+            _ => "Generic Card"
+        };
     }
 
     public static UserMedicalLicense CreateUserMedicalLicense(List<Specialty> specialties) =>
-        new() {
+        new()
+        {
             IsMain = true,
-            MedicalLicense = new() {
+            MedicalLicense = new()
+            {
                 LicenseNumber = GenerateRandomLicenseNumber(),
                 SpecialtyLicense = GenerateRandomLicenseNumber(),
                 MedicalLicenseSpecialty = new(specialties[random.Next(specialties.Count)].Id),
-                MedicalLicenseDocument = new() {
-                    Document = new() {
-                        Url = "https://res.cloudinary.com/dmjdskgd4/image/upload/v1724262123/Mediverse/C%C3%A9dula%20Profesional%20%28Desarrollo%29/Formato_C%C3%A9dula_Profesional_M%C3%A9dica_falso_r3igrb.pdf",
+                MedicalLicenseDocument = new()
+                {
+                    Document = new()
+                    {
+                        Url =
+                            "https://res.cloudinary.com/dmjdskgd4/image/upload/v1724262123/Mediverse/C%C3%A9dula%20Profesional%20%28Desarrollo%29/Formato_C%C3%A9dula_Profesional_M%C3%A9dica_falso_r3igrb.pdf",
                         Size = 350000,
                         PublicId = "Formato_Cédula_Profesional_Médica_falso_r3igrb"
                     }
                 },
             }
         };
-    
-    
+
+
     /// <summary>
     /// Helper method that maps a Stripe PaymentIntent status string to your PaymentStatus enum.
     /// </summary>
@@ -56,354 +94,453 @@ public static class Utils
 
 
     // from the number of paymentMethodTypes that come in as a parameter to 1, select randomly one and create a DoctorPaymentMethodType
-    public static List<DoctorPaymentMethodType> CreateDoctorPaymentMethodTypes(List<PaymentMethodType> paymentMethodTypes)
+    public static List<DoctorPaymentMethodType> CreateDoctorPaymentMethodTypes(
+        List<PaymentMethodType> paymentMethodTypes)
     {
         int count = random.Next(1, paymentMethodTypes.Count + 1);
-         List<PaymentMethodType> shuffledPaymentMethodTypes = paymentMethodTypes.OrderBy(x => random.Next()).ToList();
+        List<PaymentMethodType> shuffledPaymentMethodTypes = paymentMethodTypes.OrderBy(x => random.Next()).ToList();
 
-         List<PaymentMethodType> selectedPaymentMethodTypes = shuffledPaymentMethodTypes.Take(count).ToList();
+        List<PaymentMethodType> selectedPaymentMethodTypes = shuffledPaymentMethodTypes.Take(count).ToList();
 
-        var doctorPaymentMethodTypes = selectedPaymentMethodTypes.Select(pm => new DoctorPaymentMethodType(pm.Id)).ToList();
+        var doctorPaymentMethodTypes =
+            selectedPaymentMethodTypes.Select(pm => new DoctorPaymentMethodType(pm.Id)).ToList();
 
         return doctorPaymentMethodTypes;
     }
 
     public static List<DoctorWorkSchedule> CreateDoctorWorkSchedules()
     {
-        return [
+        return
+        [
             // Monday to Friday
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(9, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(14, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(15, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Monday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(18, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(9, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(14, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(15, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Tuesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(18, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(9, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(14, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(15, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Wednesday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(18, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(9, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(14, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(15, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Thursday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(18, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(9, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(14, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(15, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(16, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Friday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(17, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(18, 0, 0))
                 }
             },
             // Saturday and Sunday
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Saturday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(9, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Saturday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Saturday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Saturday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Sunday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(9, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Sunday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(10, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Sunday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(11, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0))
                 }
             },
-            new() {
-                WorkSchedule = new() {
+            new()
+            {
+                WorkSchedule = new()
+                {
                     DayOfWeek = (int)DayOfWeek.Sunday,
                     StartTime = TimeOnly.FromTimeSpan(new TimeSpan(12, 0, 0)),
                     EndTime = TimeOnly.FromTimeSpan(new TimeSpan(13, 0, 0))

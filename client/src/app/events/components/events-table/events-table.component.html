@@ -64,14 +64,6 @@
             [value]="item[cell.item.key]"></td>
       }
 
-      <td>
-        @if ((item.paymentStatus?.code || 'unpaid') !== 'paid') {
-          <button mat-raised-button color="accent" (click)="openPaymentModal(item)">Pagar</button>
-        } @else {
-          <span>Pagado</span>
-        }
-      </td>
-
       <td
         tableMenuCell
         [item]="item"

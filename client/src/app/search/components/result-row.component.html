@@ -1,22 +1,36 @@
-<div class="d-flex gap-3">
-  <div userProfilePicture [fullName]="doctor()!.fullName" [photoUrl]="doctor()!.photoUrl" [showOnline]="true"
-       [size]="PhotoSize.SMALL"></div>
-  <div class="d-flex flex-column justify-content-center">
-    <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{ doctor().firstName }} {{ doctor().lastName }}</a>
-    <div class="fw-semibold text-gray-500">
-      @for (specialty of doctor().specialties; track $index) {
-        {{ specialty.name }}@if ($index < doctor().specialties.length - 1) {
-          ,
+<div class="d-flex flex-column p-6 doctor-search-result bg-hover-secondary">
+  <div class="d-flex gap-3">
+    <div userProfilePicture
+         [fullName]="doctor()!.fullName"
+         [photoUrl]="doctor()!.photoUrl"
+         [showOnline]="true"
+         [size]="PhotoSize.SMALL"></div>
+    <div class="d-flex flex-column justify-content-center">
+      <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">
+        {{ doctor().firstName }} {{ doctor().lastName }}
+      </a>
+      <div class="fw-semibold text-gray-500">
+        @for (specialty of doctor().specialties; track $index) {
+          {{ specialty.name }}@if ($index < doctor().specialties.length - 1) {
+            ,
+          }
         }
-      } </div>
+      </div>
+    </div>
   </div>
-</div>
-@for (address of doctor().addresses; track $index) {
-  <div class="fw-semibold text-gray-500 pt-3">
-    <i class="ki-duotone ki-geolocation fs-4 text-primary">
+
+  <div class="d-flex align-items-start pt-3">
+    <i class="ki-duotone ki-geolocation fs-4 text-primary me-1 p-0" style="margin-top: 1px;">
       <span class="path1"></span>
       <span class="path2"></span>
     </i>
-    {{ address.street }}, {{ address.city }}, {{ address.state }}
+    <span class="fw-semibold text-gray-600">
+      {{ doctor().addresses[0].street }}, {{ doctor().addresses[0].city }}
+      , {{ doctor().addresses[0].state }}@if (doctor().addresses.length > 1) {
+      <span class="text-gray-500">, +{{ doctor().addresses.length - 1 }} más</span>
+    }
+    </span>
+
+
   </div>
-}
+</div>

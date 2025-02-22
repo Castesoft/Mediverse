@@ -1,24 +1,13 @@
 <div class="card card-flush h-lg-100" [style]="isMobile() ? { width: '100%' } : { width: '420px' }">
-  <div class="card-header pt-7">
+  <div class="card-header">
     <div class="card-title">
-      <i class="ki-duotone ki-badge fs-1 me-2">
-        <span class="path1"></span>
-        <span class="path2"></span>
-        <span class="path3"></span>
-        <span class="path4"></span>
-        <span class="path5"></span>
-      </i>
-      <h2>Detalles del Especialista</h2>
+      <h2 class="m-0">Detalles del Especialista</h2>
     </div>
-    <div class="card-toolbar gap-3">
-      <i class="ki-duotone ki-cross fs-2" (click)="onClickClose()" style="cursor: pointer;">
-        <span class="path1"></span>
-        <span class="path2"></span>
-        <span class="path3"></span>
-      </i>
-    </div>
+    <button class="btn p-1 text-900" type="button" aria-label="Close" (click)="onClickClose()">
+      <fa-icon [icon]="icons.faTimes" class="fs--1"></fa-icon>
+    </button>
   </div>
-  <div class="card-body pt-5 d-flex flex-column overflow-y-scroll">
+  <div class="card-body border-top border-gray-200 d-flex flex-column overflow-y-scroll">
     <div class="d-flex gap-3 align-items-center" style="overflow-x: clip;">
       <div userProfilePicture [size]="PhotoSize.MEDIUM" [fullName]="service.selected()!.fullName"
            [photoUrl]="service.selected()!.photoUrl"></div>

@@ -1,8 +1,15 @@
-import { Component, effect, inject, signal, ViewChild } from '@angular/core';
+import { Component, effect, inject, signal, ViewChild, WritableSignal } from '@angular/core';
 import { AsideStepperComponent } from './aside-stepper/aside-stepper.component';
 import { BottomLinksComponent } from '../bottom-links.component';
 import { FormActionsComponent } from './form-actions/form-actions.component';
-import { AbstractControlOptions, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControlOptions,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { AccoutTypeSelectorComponent } from "./accout-type-selector/accout-type-selector.component";
 import { RegisterPatientFormComponent } from "./register-patient-form/register-patient-form.component";
 import { RegisterDoctorFormComponent } from './register-doctor-form/register-doctor-form.component';
@@ -14,29 +21,43 @@ import { ValidationService } from 'src/app/_services/validation.service';
 import { createId } from '@paralleldrive/cuid2';
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
+import { PaymentMethodResult } from "@stripe/stripe-js";
+import { Account } from "src/app/_models/account/account";
 
 @Component({
   selector: 'app-sign-up',
-  standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, AsideStepperComponent, FormActionsComponent, BottomLinksComponent, AccoutTypeSelectorComponent,
-    RegisterPatientFormComponent, RegisterDoctorFormComponent, AccountCompletedComponent, Forms2Module,],
   templateUrl: './sign-up.component.html',
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    AsideStepperComponent,
+    FormActionsComponent,
+    BottomLinksComponent,
+    AccoutTypeSelectorComponent,
+    RegisterPatientFormComponent,
+    RegisterDoctorFormComponent,
+    AccountCompletedComponent,
+    Forms2Module,
+  ],
 })
 export class SignUpComponent {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private validation = inject(ValidationService);
-  private accountService = inject(AccountService);
-  fb = inject(FormBuilder);
+  private readonly validationService: ValidationService = inject(ValidationService);
+  private readonly accountService: AccountService = inject(AccountService);
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly router: Router = inject(Router);
+
+  readonly fb: FormBuilder = inject(FormBuilder);
   @ViewChild('registerDoctor') registerDoctor!: RegisterDoctorFormComponent;
 
-  currentStep = signal<number>(1);
-  accountType = signal<'patient' | 'doctor'>('patient');
-  formId = signal<string>(createId());
-  isSubmittingApi = signal<boolean>(false);
+  accountType: WritableSignal<'patient' | 'doctor'> = signal('patient');
+  isSubmittingApi: WritableSignal<boolean> = signal(false);
+  formId: WritableSignal<string> = signal(createId());
+  currentStep: WritableSignal<number> = signal(1);
+
+  firstName?: string;
 
   constructor() {
-    const type = this.route.snapshot.queryParams['type'];
+    const type: string = this.route.snapshot.queryParams['type'];
 
     if (type === 'doctor') {
       this.accountType.set('doctor');
@@ -45,7 +66,7 @@ export class SignUpComponent {
       this.formId.set(this.patientRegisterForm().id);
     }
 
-    const step = this.route.snapshot.queryParams['step'];
+    const step: number | undefined = this.route.snapshot.queryParams['step'];
 
     if (step) {
       this.currentStep.set(+step);
@@ -53,17 +74,20 @@ export class SignUpComponent {
 
     effect(() => {
       const patientFormCopy = this.patientRegisterForm();
-      patientFormCopy.validation = this.validation.active();
+      patientFormCopy.validation = this.validationService.active();
       this.patientRegisterForm.set(patientFormCopy);
 
       if (this.accountType() === 'doctor') {
-        this.router.navigate([], { queryParams: { type: 'doctor' }, queryParamsHandling: 'merge' });
+        this.router.navigate([], { queryParams: { type: 'doctor' }, queryParamsHandling: 'merge' }).then(() => {});
       } else if (this.accountType() === 'patient') {
-        this.router.navigate([], { queryParams: { type: 'patient' }, queryParamsHandling: 'merge' });
+        this.router.navigate([], { queryParams: { type: 'patient' }, queryParamsHandling: 'merge' }).then(() => {});
         this.formId.set(this.patientRegisterForm().id);
       }
 
-      this.router.navigate([], { queryParams: { step: this.currentStep() }, queryParamsHandling: 'merge' });
+      this.router.navigate([], {
+        queryParams: { step: this.currentStep() },
+        queryParamsHandling: 'merge'
+      }).then(() => {});
 
     });
   }
@@ -90,48 +114,47 @@ export class SignUpComponent {
 
   doctorForm: FormGroup = this.fb.group({
     accountSettingsForm: this.fb.group({
-      FirstName             : [ '', [Validators.required, Validators.minLength(3)] ],
-      LastName              : [ '', [Validators.required, Validators.minLength(3)] ],
-      Gender                : [ 'Masculino', [Validators.required] ],
-      Email                 : [ '', [Validators.required, Validators.pattern(this.accountService.emailPattern)] ],
-      Phone                 : [ '', [Validators.required, Validators.pattern(this.accountService.phonePattern)] ],
-      Password              : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
-      ConfirmPassword       : [ '', [Validators.required] ],
-      AgreeTerms            : [false, [this.accountService.termsAndConditionsValidator] ]
-    },{
-      validators: [this.accountService.equalFields('Password','ConfirmPassword')]
+      FirstName: [ '', [ Validators.required, Validators.minLength(3) ] ],
+      LastName: [ '', [ Validators.required, Validators.minLength(3) ] ],
+      Gender: [ 'Masculino', [ Validators.required ] ],
+      Email: [ '', [ Validators.required, Validators.pattern(this.accountService.emailPattern) ] ],
+      Phone: [ '', [ Validators.required, Validators.pattern(this.accountService.phonePattern) ] ],
+      Password: [ '', [ Validators.required, Validators.pattern(this.accountService.passwordPattern) ] ],
+      ConfirmPassword: [ '', [ Validators.required ] ],
+      AgreeTerms: [ false, [ this.accountService.termsAndConditionsValidator ] ]
+    }, {
+      validators: [ this.accountService.equalFields('Password', 'ConfirmPassword') ]
     } as AbstractControlOptions),
     accountDetailsForm: this.fb.group({
-      State                           : [ '', [Validators.required] ],
-      City                            : [ '', [Validators.required] ],
-      Street                         : [ '', [Validators.required] ],
-      Zipcode                         : [ '', [Validators.required] ],
-      Neighborhood                    : [ '', [Validators.required] ],
-      ExteriorNumber                  : [ '', [Validators.required] ],
-      InteriorNumber                  : [ '' ],
-      SpecialtyId                     : [ '', [Validators.required] ],
-      // services                        : [ '', [Validators.required] ],
-      certification                   : [ '', [Validators.required] ],
-      file                            : [ '' ],
-      AcceptedPaymentMethods          : [ '', [Validators.required] ],
-      RequireAnticipatedCardPayments  : [ false ],
+      State: [ '', [ Validators.required ] ],
+      City: [ '', [ Validators.required ] ],
+      Street: [ '', [ Validators.required ] ],
+      Zipcode: [ '', [ Validators.required ] ],
+      Neighborhood: [ '', [ Validators.required ] ],
+      ExteriorNumber: [ '', [ Validators.required ] ],
+      InteriorNumber: [ '' ],
+      SpecialtyId: [ '', [ Validators.required ] ],
+      certification: [ '', [ Validators.required ] ],
+      file: [ '' ],
+      AcceptedPaymentMethods: [ '', [ Validators.required ] ],
+      RequireAnticipatedCardPayments: [ false ],
     }),
     billingDetailsForm: this.fb.group({
-      SameAddress             : [ true, [Validators.required] ],
-      BillingState            : [ '' ],
-      BillingCity             : [ '' ],
-      BillingAddress          : [ '' ],
-      BillingZipcode          : [ '' ],
-      BillingNeighborhood     : [ '' ],
-      BillingExteriorNumber   : [ '' ],
-      BillingInteriorNumber   : [ '' ],
-      DisplayName             : [ '', [Validators.required] ],
-      StripePaymentMethodId   : [ '' ],
-      Last4                   : [ '' ],
-      ExpirationMonth         : [ '' ],
-      ExpirationYear          : [ '' ],
-      Brand                   : [ '' ],
-      Country                 : [ '' ],
+      SameAddress: [ true, [ Validators.required ] ],
+      BillingState: [ '' ],
+      BillingCity: [ '' ],
+      BillingAddress: [ '' ],
+      BillingZipcode: [ '' ],
+      BillingNeighborhood: [ '' ],
+      BillingExteriorNumber: [ '' ],
+      BillingInteriorNumber: [ '' ],
+      DisplayName: [ '', [ Validators.required ] ],
+      StripePaymentMethodId: [ '' ],
+      Last4: [ '' ],
+      ExpirationMonth: [ '' ],
+      ExpirationYear: [ '' ],
+      Brand: [ '' ],
+      Country: [ '' ],
     })
   });
 
@@ -148,17 +171,13 @@ export class SignUpComponent {
   onNextStep() {
     if (this.accountType() === 'doctor') {
       if (this.currentStep() === 2) {
-        // this.submitted = true;
         if (!this.doctorForm.get('accountSettingsForm')?.valid) {
           return;
         }
-        // this.submitted = false;
       } else if (this.currentStep() === 3) {
-        // this.submitted = true;
         if (!this.doctorForm.get('accountDetailsForm')?.valid) {
           return;
         }
-        // this.submitted = false;
       }
     }
 
@@ -166,89 +185,82 @@ export class SignUpComponent {
   }
 
   onPreviousStep() {
-    // this.submitted = false;
     this.currentStep.set(this.currentStep() - 1);
   }
 
   submitPatientRegisterForm() {
     this.patientRegisterForm().submitted = true;
     this.isSubmittingApi.set(true);
-    if (this.patientRegisterForm().submittable) {
-      this.accountService.register(this.patientRegisterForm().value).subscribe({
-        next: _ => {
-          this.currentStep.set(this.currentStep() + 1);
-          this.isSubmittingApi.set(false);
-        },
-        error: (error: BadRequest) => {
-          this.patientRegisterForm().error = error;
-          this.isSubmittingApi.set(false);
-        }
-      });
-    }
+
+    this.accountService.register(this.patientRegisterForm().getRawValue()).subscribe({
+      next: (account: Account) => {
+        this.firstName = account.firstName || undefined;
+        this.currentStep.set(this.currentStep() + 1);
+        this.isSubmittingApi.set(false);
+      },
+      error: (error: BadRequest) => {
+        this.patientRegisterForm().error = error;
+        this.isSubmittingApi.set(false);
+      }
+    });
   }
 
-  submitDoctorRegisterForm() {
+  async submitDoctorRegisterForm() {
+    if (!this.doctorForm.valid || !this.registerDoctor.billingDetails.stripe || !this.registerDoctor.billingDetails.cardNumber) {
+      return;
+    }
 
+    this.isSubmittingApi.set(true);
+
+    const paymentMethod: PaymentMethodResult = await this.registerDoctor.billingDetails.stripe?.createPaymentMethod({
+      type: 'card',
+      card: this.registerDoctor.billingDetails.cardNumber!
+    });
+
+    this.doctorForm.get('billingDetailsForm.StripePaymentMethodId')?.setValue(paymentMethod?.paymentMethod?.id);
+    this.doctorForm.get('billingDetailsForm.Last4')?.setValue(paymentMethod?.paymentMethod?.card?.last4);
+    this.doctorForm.get('billingDetailsForm.ExpirationMonth')?.setValue(paymentMethod?.paymentMethod?.card?.exp_month);
+    this.doctorForm.get('billingDetailsForm.ExpirationYear')?.setValue(paymentMethod?.paymentMethod?.card?.exp_year);
+    this.doctorForm.get('billingDetailsForm.Brand')?.setValue(paymentMethod?.paymentMethod?.card?.brand);
+    this.doctorForm.get('billingDetailsForm.Country')?.setValue(paymentMethod?.paymentMethod?.card?.country);
+
+    if (this.doctorForm.get('billingDetailsForm.SameAddress')?.value) {
+      this.doctorForm.get('billingDetailsForm.BillingState')?.setValue(this.doctorForm.get('accountDetailsForm.State')?.value);
+      this.doctorForm.get('billingDetailsForm.BillingCity')?.setValue(this.doctorForm.get('accountDetailsForm.City')?.value);
+      this.doctorForm.get('billingDetailsForm.BillingAddress')?.setValue(this.doctorForm.get('accountDetailsForm.Street')?.value);
+      this.doctorForm.get('billingDetailsForm.BillingZipcode')?.setValue(this.doctorForm.get('accountDetailsForm.Zipcode')?.value);
+      this.doctorForm.get('billingDetailsForm.BillingNeighborhood')?.setValue(this.doctorForm.get('accountDetailsForm.Neighborhood')?.value);
+      this.doctorForm.get('billingDetailsForm.BillingExteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.ExteriorNumber')?.value);
+      this.doctorForm.get('billingDetailsForm.BillingInteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.InteriorNumber')?.value);
+    }
+
+    const jsonData: string = JSON.stringify({
+      ...this.doctorForm.value.accountSettingsForm,
+      ...this.doctorForm.value.accountDetailsForm,
+      ...this.doctorForm.value.billingDetailsForm
+    });
+
+    const formData = new FormData();
+
+    formData.append('json', jsonData);
+    formData.append('file', this.doctorForm.get('accountDetailsForm.file')?.value);
+
+    this.accountService.registerDoctor(formData).subscribe({
+      next: (_) => {
+        this.currentStep.set(this.currentStep() + 1);
+        this.isSubmittingApi.set(false);
+      },
+    });
   }
 
   async onSubmit() {
     switch (this.accountType()) {
       case 'doctor':
-        this.submitDoctorRegisterForm();
+        await this.submitDoctorRegisterForm();
         break;
       case 'patient':
         this.submitPatientRegisterForm();
         break;
-      default:
-        break;
-    }
-
-    console.log('submit');
-
-    // this.submitted = true;
-    if (this.accountType() === 'doctor') {
-      if (!this.doctorForm.valid || !this.registerDoctor.billingDetails.stripe || !this.registerDoctor.billingDetails.cardNumber) {
-        return;
-      }
-      this.isSubmittingApi.set(true);
-
-      const paymentMethod = await this.registerDoctor.billingDetails.stripe?.createPaymentMethod({
-        type: 'card',
-        card: this.registerDoctor.billingDetails.cardNumber!
-      });
-      this.doctorForm.get('billingDetailsForm.StripePaymentMethodId')?.setValue(paymentMethod?.paymentMethod?.id);
-      this.doctorForm.get('billingDetailsForm.Last4')?.setValue(paymentMethod?.paymentMethod?.card?.last4);
-      this.doctorForm.get('billingDetailsForm.ExpirationMonth')?.setValue(paymentMethod?.paymentMethod?.card?.exp_month);
-      this.doctorForm.get('billingDetailsForm.ExpirationYear')?.setValue(paymentMethod?.paymentMethod?.card?.exp_year);
-      this.doctorForm.get('billingDetailsForm.Brand')?.setValue(paymentMethod?.paymentMethod?.card?.brand);
-      this.doctorForm.get('billingDetailsForm.Country')?.setValue(paymentMethod?.paymentMethod?.card?.country);
-      if (this.doctorForm.get('billingDetailsForm.SameAddress')?.value) {
-        this.doctorForm.get('billingDetailsForm.BillingState')?.setValue(this.doctorForm.get('accountDetailsForm.State')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingCity')?.setValue(this.doctorForm.get('accountDetailsForm.City')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingAddress')?.setValue(this.doctorForm.get('accountDetailsForm.Street')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingZipcode')?.setValue(this.doctorForm.get('accountDetailsForm.Zipcode')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingNeighborhood')?.setValue(this.doctorForm.get('accountDetailsForm.Neighborhood')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingExteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.ExteriorNumber')?.value);
-        this.doctorForm.get('billingDetailsForm.BillingInteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.InteriorNumber')?.value);
-      }
-
-      const jsonData = JSON.stringify({
-        ...this.doctorForm.value.accountSettingsForm,
-        ...this.doctorForm.value.accountDetailsForm,
-        ...this.doctorForm.value.billingDetailsForm
-      });
-
-      const formData = new FormData();
-
-      formData.append('json', jsonData);
-      formData.append('file', this.doctorForm.get('accountDetailsForm.file')?.value);
-
-      this.accountService.registerDoctor(formData).subscribe({
-        next: _ => {
-          this.currentStep.set(this.currentStep() + 1);
-          this.isSubmittingApi.set(false);
-        },
-      });
     }
   }
 }

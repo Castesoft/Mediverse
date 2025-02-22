@@ -17,7 +17,7 @@ import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
 import { View } from 'src/app/_models/base/types';
 import Event from 'src/app/_models/events/event';
-import { eventFormSteps } from 'src/app/_models/events/eventConstants';
+import { EventFormPayload, eventFormSteps } from 'src/app/_models/events/eventConstants';
 import { EventFiltersForm } from 'src/app/_models/events/eventFiltersForm';
 import { EventForm } from 'src/app/_models/events/eventForm';
 import { EventParams } from 'src/app/_models/events/eventParams';
@@ -32,6 +32,7 @@ import { EventsService } from 'src/app/events/events.config';
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientFormComponent, PatientsService } from 'src/app/patients/patients.config';
 import { ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
+import { AccountService } from "src/app/_services/account.service";
 
 @Component({
   selector: "[eventForm]",
@@ -50,6 +51,8 @@ import { ServiceFormComponent, ServicesService } from 'src/app/services/services
   ]
 })
 export class EventFormComponent extends BaseForm<Event, EventParams, EventFiltersForm, EventForm, EventsService> implements FormInputSignals<Event> {
+  private readonly accountService: AccountService = inject(AccountService);
+
   item: ModelSignal<Event | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
@@ -134,6 +137,10 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
         .setServiceOptions(this.services.options())
         .setNurseOptions(this.nurses.options());
 
+      if (this.accountService.current()) {
+        this.form.controls.doctor.patchValue(this.accountService.current() as any);
+      }
+
       if (this.item() !== null) this.form.patchValue(this.item()! as any);
     });
   }
@@ -160,5 +167,79 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
     } else {
       this.clinicAccordion()?.open();
     }
+  }
+
+  customSubmit(): void {
+    const patientId: number | null = this.form.controls.patient.getRawValue().id;
+    if (patientId === null) {
+      console.error('Patient is required');
+      return;
+    }
+
+    const nurseIds: number[] = this.form.controls.nurses.getRawValue().map((nurse: any) => nurse.id);
+
+    const serviceId: number | null = this.form.controls.service.getRawValue().id;
+    if (serviceId === null) {
+      console.error('Service is required');
+      return;
+    }
+
+    const clinicId: number | null = this.form.controls.clinic?.controls?.select.getRawValue()?.id || null;
+    if (clinicId === null) {
+      console.error('Clinic is required');
+      return;
+    }
+
+    const dateFrom: Date | null = new Date(this.form.controls.dateFrom.getRawValue() as any);
+    const dateTo: Date | null = new Date(this.form.controls.dateTo.getRawValue() as any);
+
+    if (dateFrom === null || dateTo === null) {
+      console.error('Date is required');
+      return;
+    }
+
+    const fromHours: number = new Date(this.form.controls.timeFrom.getRawValue() as any).getHours();
+    const fromMinutes: number = new Date(this.form.controls.timeFrom.getRawValue() as any).getMinutes();
+
+
+    const toHours: number = new Date(this.form.controls.timeTo.getRawValue() as any).getHours();
+    const toMinutes: number = new Date(this.form.controls.timeTo.getRawValue() as any).getMinutes();
+
+    const combinedDateFrom = new Date(
+      dateFrom.getFullYear(),
+      dateFrom.getMonth(),
+      dateFrom.getDate(),
+      fromHours,
+      fromMinutes,
+    );
+
+    const combinedDateTo = new Date(
+      dateTo.getFullYear(),
+      dateTo.getMonth(),
+      dateTo.getDate(),
+      toHours,
+      toMinutes,
+    );
+
+    const payload: EventFormPayload = {
+      patientId: patientId,
+      nurseIds: nurseIds,
+      serviceId: serviceId,
+      clinicId: clinicId,
+      allDay: false,
+      dateFrom: combinedDateFrom,
+      dateTo: combinedDateTo,
+    }
+
+    this.service.createRaw(payload).subscribe({
+      next: (event: Event): void => {
+        this.matSnackBar.open('Evento creado', 'Cerrar', { duration: 5000 });
+        this.router.navigate([ '/events', event.id ]).then(() => {});
+      },
+      error: (error: any): void => {
+        console.error('Error creating event', error);
+        this.matSnackBar.open('Error creando evento', 'Cerrar', { duration: 5000 });
+      }
+    })
   }
 }

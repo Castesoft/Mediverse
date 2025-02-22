@@ -6,9 +6,11 @@ using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
+using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using DateTime = System.DateTime;
 
 namespace MainService.Infrastructure.Data;
 
@@ -102,18 +104,18 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
 
     public async Task<Event?> GetByIdAsNoTrackingAsync(int id) =>
         await context.Events
+            .Includes()
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Event?> GetByIdAsync(int id) =>
         await context.Events
-            .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
-            .Include(x => x.DoctorEvent).ThenInclude(x => x.Doctor)
-            .Include(x => x.EventService).ThenInclude(x => x.Service)
+            .Includes()
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<EventDto?> GetDtoByIdAsync(int id) =>
         await context.Events
+            .Includes()
             .AsNoTracking()
             .ProjectTo<EventDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
@@ -121,16 +123,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
     public async Task<PagedList<EventDto>> GetPagedListAsync(EventParams param)
     {
         var query = context.Events
-            .Include(x => x.EventService)
-            .Include(x => x.EventClinic)
-            .Include(x => x.DoctorEvent)
-            .Include(x => x.PatientEvent)
-            .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
-            .Include(x => x.NurseEvents)
-            .Include(x => x.EventPrescriptions).ThenInclude(x => x.Prescription)
-            .Include(x => x.EventPaymentMethodType)
-            .Include(x => x.EventMedicalInsuranceCompany)
-            .Include(x => x.Payments)
+            .Includes()
             .AsQueryable();
 
         if (param.DoctorId.HasValue)
@@ -158,14 +151,13 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             query = query.Where(x =>
                 x.PatientEvent.PatientId == param.UserId ||
                 x.DoctorEvent.DoctorId == param.UserId ||
-                x.NurseEvents.Any(y => y.NurseId == param.UserId
-                ));
+                x.NurseEvents.Any(y => y.NurseId == param.UserId)
+            );
         }
 
         if (!string.IsNullOrEmpty(param.Patients))
         {
             var patients = param.GetPatients();
-
             if (patients.Count != 0)
             {
                 query = query.Where(x => x.PatientEvent != null && patients.Contains(x.PatientEvent.PatientId));
@@ -175,7 +167,6 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         if (!string.IsNullOrEmpty(param.Services))
         {
             var services = param.GetServices();
-
             if (services.Count != 0)
             {
                 query = query.Where(x => services.Contains(x.EventService.ServiceId));
@@ -185,7 +176,6 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         if (!string.IsNullOrEmpty(param.Nurses))
         {
             var nurses = param.GetNurses();
-
             if (nurses.Count != 0)
             {
                 query = query.Where(x => x.NurseEvents.Any(y => nurses.Contains(y.NurseId)));
@@ -199,19 +189,75 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         );
     }
 
+    public async Task<List<EventMonthDayCellDto>> GetMonthViewPartialAsync(EventParams param)
+    {
+        var year = param.Year ?? DateTime.UtcNow.Year;
+        var month = param.Month ?? DateTime.UtcNow.Month;
+        var maxEvents = param.MaxEventsPerDay ?? 3;
+
+        var startOfMonth = new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var startOfNextMonth = startOfMonth.AddMonths(1);
+
+        var query = context.Events
+            .Includes()
+            .AsNoTracking()
+            .Where(e => e.DateFrom >= startOfMonth && e.DateFrom < startOfNextMonth);
+
+        if (param.DoctorId.HasValue)
+        {
+            query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId);
+        }
+
+        if (param.PatientId.HasValue)
+        {
+            query = query.Where(x => x.PatientEvent.PatientId == param.PatientId);
+        }
+
+        var allMonthEvents = await query
+            .ProjectTo<EventSummaryDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        var groupedByDay = allMonthEvents
+            .Where(x => x.DateFrom.HasValue)
+            .GroupBy(e => e.DateFrom.Value.ToUniversalTime().Date)
+            .Select(g => new EventMonthDayCellDto
+            {
+                Date = g.Key,
+                TotalCount = g.Count(),
+                Events = g
+                    .OrderBy(ev => ev.DateFrom)
+                    .Take(maxEvents)
+                    .ToList()
+            })
+            .ToList();
+
+        var daysInMonth = new List<EventMonthDayCellDto>();
+        for (var date = startOfMonth; date < startOfNextMonth; date = date.AddDays(1))
+        {
+            var existing = groupedByDay.FirstOrDefault(x => x.Date == date.Date);
+            if (existing != null)
+            {
+                daysInMonth.Add(existing);
+            }
+            else
+            {
+                daysInMonth.Add(new EventMonthDayCellDto
+                {
+                    Date = date,
+                    Events = [],
+                    TotalCount = 0
+                });
+            }
+        }
+
+        return daysInMonth;
+    }
+
+
     public async Task<List<EventDto>> GetAllDtoAsync(EventParams param)
     {
         var query = context.Events
-            .Include(x => x.EventService)
-            .Include(x => x.EventClinic)
-            .Include(x => x.DoctorEvent)
-            .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
-            .Include(x => x.NurseEvents)
-            .Include(x => x.EventPrescriptions)
-            .ThenInclude(x => x.Prescription)
-            .Include(x => x.EventPaymentMethodType)
-            .Include(x => x.EventMedicalInsuranceCompany)
-            .Include(x => x.Payments)
+            .Includes()
             .AsQueryable();
 
         if (param.DoctorId.HasValue)

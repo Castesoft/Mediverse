@@ -11,7 +11,6 @@ import { EventsService } from "src/app/events/events.config";
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientsService } from 'src/app/patients/patients.config';
 import { ServicesService } from 'src/app/services/services.config';
-import { PaymentParams } from "src/app/_models/payments/paymentParams";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
 import { AccountService } from "src/app/_services/account.service";
 import { Account } from "src/app/_models/account/account";
@@ -24,7 +23,8 @@ import { Account } from "src/app/_models/account/account";
       <div eventsCatalog
            [(item)]="item"
            [(isCompact)]="compact.isCompact"
-           [(key)]="key" [(mode)]="mode"
+           [(key)]="key"
+           [(mode)]="mode"
            [(params)]="params"
            [(view)]="view"
            [(calendarView)]="calendarView"
@@ -56,14 +56,17 @@ export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, Eve
 
   constructor() {
     super(EventsService, 'events');
-    this.padding.withPadding.set(false);
+    this.padding.withPadding.set(true);
 
     effect(() => {
       if (this.accountService.current()) {
         this.account = this.accountService.current();
         this.params.set(new EventParams(this.key(), {
+          isCalendarView: this.calendarView() == 'calendar',
           fromSection: SiteSection.HOME,
-          userId: this.account?.id
+          doctorId: this.account?.id,
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear()
         }));
       }
     });

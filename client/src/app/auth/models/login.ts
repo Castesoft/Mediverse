@@ -24,8 +24,8 @@ export const loginInfo: FormInfo<Login> = {
     },
   },
   password: {
-    type: 'text',
-    label: 'Password',
+    type: 'password',
+    label: 'Contraseña',
     validators: [ Validators.required, Validators.minLength(8), Validators.maxLength(30) ],
     validationErrors: {
       'required': 'La contraseña es requerida',

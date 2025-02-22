@@ -1,4 +1,4 @@
-import { Component, input, output, effect, inject, model } from '@angular/core';
+import { Component, effect, inject, input, model, output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { AvailableTime } from 'src/app/_models/availableTime';
@@ -10,17 +10,20 @@ import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-ta
 import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   selector: 'div[doctorDetailWindow]',
   standalone: true,
-  imports: [ProfilePictureComponent, ProfilePictureComponent, DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent],
+  imports: [ ProfilePictureComponent, ProfilePictureComponent, DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent, FaIconComponent ],
   templateUrl: './doctor-detail-window.component.html',
   styleUrl: './doctor-detail-window.component.scss'
 })
 export class DoctorDetailWindowComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  readonly icons: IconsService = inject(IconsService);
   service = inject(SearchService);
 
   startingTab = input<string>();
@@ -39,7 +42,7 @@ export class DoctorDetailWindowComponent {
 
       let selected = this.service.selected();
       if (selected !== null && this.service.search().dayNumber !== null && this.service.search().scheduleOption !== null) {
-        selected = new DoctorResult({...selected});
+        selected = new DoctorResult({ ...selected });
         const variable = selected.getAvailableDayByDayNumber(this.service.search().dayNumber!);
         this.selectedSchedule.set(variable);
 
@@ -89,7 +92,7 @@ export class DoctorDetailWindowComponent {
 
   navigateToDoctorProfile() {
     if (this.service.selected()) {
-      this.router.navigate(['/doctor', this.service.selected()!.id]);
+      this.router.navigate([ '/doctor', this.service.selected()!.id ]);
     }
   }
 

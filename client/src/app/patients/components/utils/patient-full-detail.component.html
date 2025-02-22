@@ -1,4 +1,4 @@
-@if(item()!==null) {
+@if (item() !== null) {
   <div class="row">
     <div class="col-3">
       <div class="card mb-5 mb-xl-8">
@@ -6,12 +6,12 @@
           <div class="d-flex flex-center flex-column mb-5">
             <div class="symbol symbol-100px symbol-circle mb-7">
               <div userProfilePicture
-                [photoUrl]="item()!.photoUrl"
-                [fullName]="item()!.fullName"
-                [size]="PhotoSize.LARGE"
+                   [photoUrl]="item()!.photoUrl"
+                   [fullName]="item()!.fullName"
+                   [size]="PhotoSize.LARGE"
               ></div>
             </div>
-            <a [routerLink]="['']" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">{{item()!.fullName}}</a>
+            <a [routerLink]="['']" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">{{ item()!.fullName }}</a>
             <div class="fs-5 fw-semibold text-muted mb-6">Paciente</div>
             <div class="d-flex flex-wrap flex-center">
               <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="fw-semibold text-muted">Citas</div>
               </div>
-              <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
+              <div class="border border-gray-300 border-dashed rounded py-3 px-3">
                 <div class="fs-4 fw-bold text-gray-700">
                   <span class="w-50px">{{ getPendingPayments() | currency }}</span>
                   <!-- <i class="ki-duotone ki-arrow-up fs-3 text-success">
@@ -46,19 +46,21 @@
               </div>
             </div>
           </div>
-          <div class="separator separator-dashed my-3"></div>
+          <div class="separator separator-dashed my-7"></div>
           <div id="kt_customer_view_details" class="collapse show">
-            <div class="py-5 fs-6">
-              <div class="fw-bold mt-5">Correo</div>
+            <div class="fs-7">
+              <div class="fw-bold">Correo</div>
               <div class="text-gray-600">
                 <a href="#" class="text-gray-600 text-hover-primary">{{ item()!.email }}</a>
               </div>
               <div class="fw-bold mt-5">Fecha de nacimiento</div>
-              <div class="text-gray-600">{{item()!.dateOfBirth | date: "mediumDate": "": "es-MX"}}</div>
+              <div class="text-gray-600">{{ item()!.dateOfBirth | date: "mediumDate": "": "es-MX" }}</div>
               <div class="fw-bold mt-5">Edad</div>
-              <div class="text-gray-600">{{item()!.age | number}}</div>
-              @if(item()!.taxId){<div class="fw-bold mt-5">RFC</div>
-              <div class="text-gray-600">{{item()!.taxId}}</div>}
+              <div class="text-gray-600">{{ item()!.age | number }}</div>
+              @if (item()!.taxId) {
+                <div class="fw-bold mt-5">RFC</div>
+                <div class="text-gray-600">{{ item()!.taxId }}</div>
+              }
             </div>
           </div>
         </div>
@@ -72,21 +74,26 @@
           </h3>
           <div class="card-toolbar m-0">
             <ul
-            class="nav nav-stretch nav-line-tabs border-transparent"
-            role="tablist"
+              class="nav nav-stretch nav-line-tabs border-transparent"
+              role="tablist"
             >
-            <li class="nav-item" role="presentation">
-                <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeTab === 'events'" (click)="onSelectTab('events')">Citas</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;" [class.active]="activeTab === 'payments'" (click)="onSelectTab('payments')">Pagos</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;" [class.active]="activeTab === 'clinical-history'" (click)="onSelectTab('clinical-history')">Expediente clínico</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;" [class.active]="activeTab === 'insurances'" (click)="onSelectTab('insurances')">Seguros</a>
-            </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;"
+                   [class.active]="activeTab === 'events'" (click)="onSelectTab('events')">Citas</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;" [class.active]="activeTab === 'payments'"
+                   (click)="onSelectTab('payments')">Pagos</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link fs-5 fw-semibold me-3" style="cursor: pointer;"
+                   [class.active]="activeTab === 'clinical-history'" (click)="onSelectTab('clinical-history')">Expediente
+                  clínico</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link fs-5 fw-semibold" style="cursor: pointer;"
+                   [class.active]="activeTab === 'insurances'" (click)="onSelectTab('insurances')">Seguros</a>
+              </li>
             </ul>
           </div>
         </div>
@@ -100,6 +107,8 @@
                 [(view)]="eventView"
                 [(isCompact)]="eventIsCompact"
                 [(params)]="eventParams"
+                [(useCard)]="eventUseCard"
+                [(embedded)]="eventEmbedded"
                 [(key)]="key"
                 [(mode)]="eventMode"
                 [(calendarView)]="eventCalendarView"
@@ -142,9 +151,11 @@
                       <div class="card h-100 insurance-card">
                         <div class="card-body p-4">
                           <div class="d-flex align-items-center mb-3">
-                            <img [src]="insurance.medicalInsuranceCompany!.options!.photoUrl" class="rounded-circle h-30px me-2" alt="{{ insurance.medicalInsuranceCompany?.name }}">
+                            <img [src]="insurance.medicalInsuranceCompany!.options!.photoUrl"
+                                 class="rounded-circle h-30px me-2" alt="{{ insurance.medicalInsuranceCompany?.name }}">
                             <div>
-                              <h5 class="card-title fs-6 fw-bold mb-0">{{ insurance.medicalInsuranceCompany?.name }}</h5>
+                              <h5
+                                class="card-title fs-6 fw-bold mb-0">{{ insurance.medicalInsuranceCompany?.name }}</h5>
                             </div>
                           </div>
                           <div class="d-flex align-items-center">
@@ -183,6 +194,6 @@
           }
         </div>
       </div>
-  </div>
+    </div>
   </div>
 }

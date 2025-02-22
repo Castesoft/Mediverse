@@ -7,28 +7,20 @@
       >
         <div class="col-6 p-0" [ngClass]="{'col-12': orientation() === 'vertical'}">
           <h3 class="card-title">
-            <span class="card-label fw-bolder text-gray-900 fs-2">
+            <span class="card-label fw-bold text-gray-900 fs-3">
               {{ item()!.dateFrom | date : "mediumDate" }}, {{ item()!.dateFrom | date : "shortTime" }}
             </span>
           </h3>
         </div>
-        @if (summaryMode()) {
-          <div class="col-6 p-0 d-flex justify-content-end">
-            <a
-              class="btn btn-light-primary py-2"
-              (click)="service.clickLink(item()!, key(), use(), 'page')"
-            >
-              Ir a la cita
-            </a>
-          </div>
-        }
       </div>
     </div>
     <div class="card-body">
       <div class="d-flex flex-column align-items-center">
         <div class="symbol symbol-150px mb-5 mb-xl-10">
           <span class="symbol-label bg-light-danger">
-            <div userProfilePicture [fullName]="item()!.patient.fullName" [photoUrl]="item()!.patient.photoUrl"
+            <div userProfilePicture
+                 [fullName]="item()!.patient.fullName"
+                 [photoUrl]="item()!.patient.photoUrl"
                  [shape]="PhotoShape.SQUARE"
                  [size]="PhotoSize.LARGE"
             ></div>

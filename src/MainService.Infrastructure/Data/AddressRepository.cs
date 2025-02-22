@@ -193,6 +193,56 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
             })
             .ToListAsync();
 
+    public async Task<AddressDto?> CreateForUserByIdAsync(AppUser user, AddressCreateDto request)
+    {
+        var addressToCreate = new Address
+        {
+            Name = request.Name,
+            Description = null,
+            Street = request.Street,
+            InteriorNumber = request.InteriorNumber,
+            ExteriorNumber = request.ExteriorNumber,
+            CountryCode = "MX",
+            Zipcode = request.ZipCode,
+            Notes = request.Notes,
+            CrossStreet1 = null,
+            CrossStreet2 = null,
+        };
+
+        if (request.City != null) addressToCreate.City = request.City.Name;
+        if (request.State != null) addressToCreate.State = request.State.Name;
+        if (request.Country != null) addressToCreate.Country = request.Country.Name;
+
+        if (request.IsDefault == true)
+        {
+            var existingMainAddresses = await context.UserAddresses
+                .Where(ua => ua.UserId == user.Id && ua.IsMain)
+                .ToListAsync();
+
+            foreach (var ua in existingMainAddresses)
+            {
+                ua.IsMain = false;
+            }
+        }
+
+        var userAddressToCreate = new UserAddress
+        {
+            User = user,
+            Address = addressToCreate,
+            IsMain = request.IsDefault ?? false,
+            IsBilling = request.IsBilling ?? false,
+        };
+
+        context.UserAddresses.Add(userAddressToCreate);
+        await context.SaveChangesAsync();
+
+        return await context.Addresses
+            .Where(x => x.Id == addressToCreate.Id)
+            .ProjectTo<AddressDto>(mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
+    }
+
+
     public async Task<bool> ExistsByIdAsync(int id) => await context.Addresses.AnyAsync(x => x.Id == id);
 
     public async Task<bool> DoctorHasAddressAsync(int doctorId, int addressId) =>

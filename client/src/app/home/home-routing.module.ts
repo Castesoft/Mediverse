@@ -104,6 +104,7 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           path: 'citas/nuevo',
           component: HomeEventCreateRouteComponent,
           title: titleDetailResolver(EventsService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Citas', 'Nueva Cita' ], title: 'Nueva Cita' }
         },
         {
           path: 'citas/:id',

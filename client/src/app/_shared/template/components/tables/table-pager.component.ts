@@ -47,7 +47,7 @@ export class TablePagerComponent {
 
   get totalPages(): number {
     return Math.ceil(
-      (this.pagination().totalItems || 0) /
+      (this.pagination().totalCount || 0) /
       (this.pagination().itemsPerPage || 1)
     );
   }

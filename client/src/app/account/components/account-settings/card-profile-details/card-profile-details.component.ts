@@ -1,13 +1,11 @@
 import { LayoutModule } from "@angular/cdk/layout";
-import { Component, inject, output, effect, OutputEmitterRef, OnInit } from "@angular/core";
-import { Validators } from "@angular/forms";
+import { Component, effect, inject, OnInit, output, OutputEmitterRef } from "@angular/core";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { Account } from "src/app/_models/account/account";
 import { AccountForm } from "src/app/_models/account/accountForm";
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
-import { Specialty } from "src/app/_models/specialties/specialty";
 import { AccountService } from "src/app/_services/account.service";
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 import { ImageThumbnailSelectorComponent } from "src/app/_shared/components/image-thumbnail-selector.component";
@@ -19,8 +17,6 @@ import { confirmActionModal } from "src/app/_models/base/types";
 import { ConfirmService } from "src/app/_services/confirm/confirm.service";
 import { SpecialtiesService } from "src/app/specialties/specialties.config";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { ControlCheckListComponent } from "src/app/_forms/control-check-list.component";
-import { JsonPipe } from "@angular/common";
 
 @Component({
   selector: 'app-card-profile-details',
@@ -158,7 +154,7 @@ export class CardProfileDetailsComponent implements OnInit {
     formData.append('licenseNumber', data.licenseNumber);
     formData.append('specialtyLicense', data.specialtyLicense);
     formData.append('specialty', JSON.stringify(data.specialty));
-    formData.append('requireAnticipatedCardPayments', data.requireAnticipatedCardPayments.toString());
+    formData.append('requireAnticipatedCardPayments', data.requireAnticipatedCardPayments?.toString() || false);
 
     this.accountService.updateAccountDetails(formData).subscribe({
       next: (_: Account) => {
