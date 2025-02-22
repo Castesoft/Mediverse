@@ -61,10 +61,11 @@ export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, Eve
     effect(() => {
       if (this.accountService.current()) {
         this.account = this.accountService.current();
+        console.log(this.account);
         this.params.set(new EventParams(this.key(), {
           isCalendarView: this.calendarView() == 'calendar',
           fromSection: SiteSection.HOME,
-          doctorId: this.account?.id,
+          userId: this.account?.id,
           month: new Date().getMonth() + 1,
           year: new Date().getFullYear()
         }));

@@ -1,4 +1,4 @@
-import { Component, computed, effect, HostBinding, inject, model, output } from "@angular/core";
+import { Component, computed, effect, HostBinding, inject, model, OnInit, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ValidationService } from "src/app/_services/validation.service";
@@ -14,9 +14,9 @@ import { MaterialModule } from "src/app/_shared/material.module";
   selector: "div[controlMultiselect3]",
   templateUrl: "./control-multiselect-3.component.html",
   standalone: true,
-  imports: [ReactiveFormsModule, Forms2HelperModule, CommonModule, FormsModule, CdkModule, MaterialModule,]
+  imports: [ ReactiveFormsModule, Forms2HelperModule, CommonModule, FormsModule, CdkModule, MaterialModule, ]
 })
-export class ControlMultiselect3Component {
+export class ControlMultiselect3Component implements OnInit {
   validation = inject(ValidationService);
 
   control = model.required<FormControl2<SelectOption[] | null>>();
@@ -37,10 +37,7 @@ export class ControlMultiselect3Component {
 
   constructor() {
     effect(() => {
-      console.log('controlMultiselect3', this.control());
-
-
-      if (this.fromWrapper() === true) {
+      if (this.fromWrapper()) {
         this.class += ' w-100';
       } else {
         this.class += ' col-auto px-0';

@@ -4,6 +4,7 @@ using MainService.Core.DTOs.Patients;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
+using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
@@ -31,6 +32,8 @@ public class PatientRepository(DataContext context, IMapper mapper) : IPatientRe
 
     public async Task<PatientDto?> GetDtoByIdAsync(int id) =>
         await context.Users
+            .Include(x => x.UserPhoto).ThenInclude(x => x.Photo)
+            .IncludeMedicalRecordProperties()
             .AsNoTracking()
             .ProjectTo<PatientDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
@@ -165,14 +168,13 @@ public class PatientRepository(DataContext context, IMapper mapper) : IPatientRe
     public async Task<List<OptionDto>> GetOptionsAsync(PatientParams param)
     {
         var query = context.Users
-                .Include(x => x.Patients)
-                .Include(x => x.Doctors)
-                .Include(x => x.UserRoles).ThenInclude(x => x.Role)
-                .Include(x => x.DoctorNurses)
-                .Include(x => x.UserAddresses)
-                .ThenInclude(x => x.Address)
-                .AsQueryable()
-            ;
+            .Include(x => x.Patients)
+            .Include(x => x.Doctors)
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Include(x => x.DoctorNurses)
+            .Include(x => x.UserAddresses)
+            .ThenInclude(x => x.Address)
+            .AsQueryable();
 
         if (param.UserId.HasValue)
         {
@@ -185,9 +187,8 @@ public class PatientRepository(DataContext context, IMapper mapper) : IPatientRe
         }
 
         return await query
-                .AsNoTracking()
-                .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
-                .ToListAsync()
-            ;
+            .AsNoTracking()
+            .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
     }
 }

@@ -199,10 +199,13 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.HasAccount, opt => opt.MapFrom(src => src.Doctors.Count > 0))
             .ForMember(dest => dest.Age,
                 opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
+            .ForMember(dest => dest.MedicalRecord, opt => opt.MapFrom(src => src.UserMedicalRecord.MedicalRecord))
             .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
             .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count))
             .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count))
             .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count));
+
+        CreateMap<DoctorPatient, DoctorDto>();
 
         // Map AppUser to UserDto.
         CreateMap<AppUser, UserDto>()

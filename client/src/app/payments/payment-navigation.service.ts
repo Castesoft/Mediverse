@@ -27,4 +27,15 @@ export class PaymentNavigationService {
       queryParams
     });
   }
+
+  navigateToCheckoutSuccess(paymentId: number, redirectUrl?: string): Promise<boolean> {
+    const url = `/pagos/cita/exito`;
+    const queryParams: any = { paymentId };
+    if (redirectUrl) {
+      queryParams.redirectUrl = redirectUrl;
+    }
+    return this.router.navigate([ url ], {
+      queryParams
+    });
+  }
 }

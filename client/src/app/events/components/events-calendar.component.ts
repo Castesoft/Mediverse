@@ -158,6 +158,8 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
           const startDate = new Date(evt.dateFrom as any);
           const endDate = new Date(evt.dateTo as any);
 
+          console.log('event', evt);
+
           return {
             id: evt.id,
             start: startDate,
@@ -167,6 +169,7 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
             extendedProps: {
               bulletColor,
               patient: `${evt.patient?.firstName || ''} ${evt.patient?.lastName || ''}`,
+              doctor: `${evt.doctor?.firstName || ''} ${evt.doctor?.lastName || ''}`,
             }
           };
         });
@@ -236,9 +239,12 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
   }
 
   handleEventClick(arg: EventClickArg) {
-    const eventToSend: Event | null = this.service.getByIdFromData(+arg.event.id);
-    if (!eventToSend) throw new Error('Event not found');
-    this.service.clickLink(eventToSend, this.key(), FormUse.DETAIL, 'modal');
+    this.service.getById(+arg.event.id).subscribe({
+      next: (event: Event | null) => {
+        if (!event) throw new Error('Event not found');
+        this.service.clickLink(event, this.key(), FormUse.DETAIL, 'modal');
+      }
+    });
   }
 
   handleEventDragStop(arg: EventDragStopArg) {

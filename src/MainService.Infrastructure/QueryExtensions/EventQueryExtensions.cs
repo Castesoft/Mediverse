@@ -13,7 +13,8 @@ public static class EventQueryExtensions
         return query
             .Include(x => x.EventService).ThenInclude(x => x.Service)
             .Include(x => x.EventClinic)
-            .Include(x => x.DoctorEvent).ThenInclude(x => x.Doctor)
+            .Include(x => x.DoctorEvent).ThenInclude(x => x.Doctor).ThenInclude(x => x.UserPhoto)
+            .ThenInclude(x => x.Photo)
             .Include(x => x.PatientEvent)
             .Include(x => x.PatientEvent.Patient.UserPhoto.Photo)
             .Include(x => x.NurseEvents)

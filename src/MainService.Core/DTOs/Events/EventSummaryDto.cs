@@ -15,4 +15,5 @@ public class EventSummaryDto
     public DateTime? DateTo { get; set; }
     public DateTime? DateFrom { get; set; }
     public UserSummaryDto? Patient { get; set; }
+    public UserSummaryDto? Doctor { get; set; }
 }

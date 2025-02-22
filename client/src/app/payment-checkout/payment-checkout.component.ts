@@ -20,6 +20,8 @@ import {
   CheckoutPaymentMethodEntryCardComponent
 } from "src/app/payment-checkout/components/checkout-payment-method-entry-card/checkout-payment-method-entry-card.component";
 import { ToastrService } from "ngx-toastr";
+import { StripePaymentGatewayService } from "src/app/_services/stripe-payment-gateway.service";
+import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
 
 @Component({
   selector: 'app-payment-checkout',
@@ -33,6 +35,8 @@ import { ToastrService } from "ngx-toastr";
   ]
 })
 export class PaymentCheckoutComponent implements OnInit, OnDestroy {
+  private readonly paymentGatewayService: StripePaymentGatewayService = inject(StripePaymentGatewayService);
+  private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly eventsService: EventsService = inject(EventsService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
@@ -117,18 +121,27 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   }
 
   onProceedPayment(): void {
-    const dialogData: RedirectWarningData = {
-      message: 'Se te redirigirá a la ventana de pago. ¿Deseas continuar?'
-    };
+    const eventId: number | null = this.event?.id || null;
+    const selectedPaymentMethodId: number | null = this.selectedPaymentMethod?.id || null;
 
-    this.matDialog.open(RedirectWarningModalComponent, { data: dialogData })
-      .afterClosed()
-      .subscribe((confirmed: boolean) => {
-        if (confirmed) {
-          console.log('Proceeding with payment...');
-          // TODO - Insert payment processing logic here (e.g. invoking StripePaymentGatewayService)
+    if (!eventId || !selectedPaymentMethodId) {
+      this.toastr.error('No se ha seleccionado un método de pago o no se ha encontrado el evento');
+      return;
+    }
+
+    this.paymentGatewayService.createPaymentIntentForEvent(eventId, selectedPaymentMethodId).subscribe({
+      next: (res) => {
+        if (!res.paymentId) {
+          console.error('Payment ID not found in response');
+          return;
         }
-      });
+
+        this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl).catch((err: any) => console.error('Navigation error:', err));
+      }, error: (err) => {
+        console.error('Error creating payment intent:', err);
+        this.toastr.error('Error al procesar el pago');
+      }
+    })
   }
 
   onApplyPromoCode(): void {

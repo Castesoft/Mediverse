@@ -48,11 +48,10 @@ public class PatientsController(
         return pagedList;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<PatientDto>> GetDtoByIdAsync([FromRoute] int id)
     {
-        PatientDto? patient = await uow.PatientRepository.GetDtoByIdAsync(id);
-
+        var patient = await uow.PatientRepository.GetDtoByIdAsync(id);
         if (patient == null) return NotFound($"Paciente con ID {id} no fue encontrado.");
 
         return patient;

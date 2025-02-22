@@ -212,6 +212,15 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         {
             query = query.Where(x => x.PatientEvent.PatientId == param.PatientId);
         }
+        
+        if (param.UserId.HasValue)
+        {
+            query = query.Where(x =>
+                x.PatientEvent.PatientId == param.UserId ||
+                x.DoctorEvent.DoctorId == param.UserId ||
+                x.NurseEvents.Any(y => y.NurseId == param.UserId)
+            );
+        }
 
         var allMonthEvents = await query
             .ProjectTo<EventSummaryDto>(mapper.ConfigurationProvider)

@@ -1,11 +1,19 @@
 @if (displayOnly()) {
   <!-- Skeleton mode: just display address values without the card wrapper or actions -->
   <div class="address-display-skeleton">
-    @if (address().name) {
-      <div class="fs-4 fw-bold mb-2">
-        {{ address().name }}
+    @if (address().name || address().isMain) {
+      <div class="d-flex align-items-center fs-4 fw-bold mb-2">
+        @if (address().name) {
+          <div class="fs-4 fw-bold mb-2">
+            {{ address().name }}
+          </div>
+        }
+        @if (address().isMain) {
+          <span class="badge badge-light-primary fs-7 ms-2">Principal</span>
+        }
       </div>
     }
+
     <div class="fs-6 fw-semibold text-gray-600">
       {{ address().street }} {{ address().exteriorNumber }}, {{ address().neighborhood }}
       <br/>
@@ -30,9 +38,16 @@
         </div>
       }
       <div class="d-flex flex-column">
-        @if (address().name) {
+        @if (address().name || address().isMain) {
           <div class="d-flex align-items-center fs-4 fw-bold mb-2">
-            {{ address().name }}
+            @if (address().name) {
+              <div class="fs-4 fw-bold mb-2">
+                {{ address().name }}
+              </div>
+            }
+            @if (address().isMain) {
+              <span class="badge badge-light-primary fs-7 ms-2">Principal</span>
+            }
           </div>
         }
         <div class="fs-6 fw-semibold text-gray-600">

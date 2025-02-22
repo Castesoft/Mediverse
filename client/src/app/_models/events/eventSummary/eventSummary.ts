@@ -7,6 +7,7 @@ export class EventSummary extends Entity {
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
   patient: UserSummary = new UserSummary();
+  doctor?: UserSummary;
 
   constructor(init?: Partial<EventSummary>) {
     super();

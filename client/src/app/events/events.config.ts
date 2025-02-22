@@ -25,6 +25,7 @@ import { EventsCatalogComponent } from "src/app/events/components/events-catalog
 import { EventMonthDayCell } from "src/app/_models/event-month-day-cell/eventMonthDayCell";
 import { HttpParams } from "@angular/common/http";
 import { transform, transformToHttpParams } from "src/app/_models/base/paramUtils";
+import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
 
 @Component({
   selector: 'events-catalog-modal',
@@ -66,7 +67,6 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
   private eventMonthDayCellsSubject: BehaviorSubject<EventMonthDayCell[]> = new BehaviorSubject<EventMonthDayCell[]>([]);
   public eventMonthDayCells$: Observable<EventMonthDayCell[]> = this.eventMonthDayCellsSubject.asObservable();
 
-
   constructor() {
     super(EventParams, 'events', eventDictionary, eventColumns, EventDetailModalComponent);
   }
@@ -96,6 +96,10 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
     return this.http.post<Event>(`${this.baseUrl}`, model);
   }
 
+  getSummaryByIdFromCalendarData(id: number): EventSummary | null {
+    return this.eventMonthDayCellsSubject.value.flatMap((cell) => cell.events).find((event) => event?.id === id) || null;
+  }
+
   /**
    * Loads partial month data: each day cell has up to N events, plus a total count.
    */
@@ -103,8 +107,6 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
     if (key === null) throw new Error("Key cannot be null");
 
     const payload: HttpParams = transformToHttpParams(transform(params));
-
-    console.log('params', params);
 
     return this.http.get<EventMonthDayCell[]>(`${this.baseUrl}month-partial`, { params: payload }).pipe(
       tap((response) => {

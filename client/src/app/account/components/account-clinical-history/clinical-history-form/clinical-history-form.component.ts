@@ -1,8 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, model, effect, OnInit, ModelSignal } from "@angular/core";
+import { Component, effect, inject, model, ModelSignal, OnInit } from "@angular/core";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { BadRequest } from 'src/app/_models/forms/badRequest';
-import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { MedicalRecord } from "src/app/_models/medicalRecords/medicalRecord";
 import { MedicalRecordForm } from "src/app/_models/medicalRecords/medicalRecordForm";
 import { AccountService } from "src/app/_services/account.service";
@@ -15,21 +14,19 @@ import { MaritalStatusesService } from "src/app/maritalStatuses/maritalStatuses.
 import { OccupationsService } from "src/app/occupations/occupations.config";
 import { RelativeTypesService } from "src/app/relativeTypes/relativeTypes.config";
 import { SubstancesService } from "src/app/substances/substances.config";
-
-import { NavMenuComponent } from "src/app/account/components/account-settings/nav-menu/nav-menu.component";
 import {
   ClinicalHistoryNavMenuComponent
 } from "src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-nav-menu.component";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: 'div[clinicalHistoryForm]',
-  standalone: true,
+  templateUrl: './clinical-history-form.component.html',
   imports: [
     CommonModule,
     Forms2Module,
     ClinicalHistoryNavMenuComponent
   ],
-  templateUrl: './clinical-history-form.component.html'
 })
 export class ClinicalHistoryFormComponent implements OnInit {
   snackbarService: SnackbarService = inject(SnackbarService);
@@ -47,6 +44,8 @@ export class ClinicalHistoryFormComponent implements OnInit {
   currentSection: string = 'patientIdentification';
 
   medicalRecord: ModelSignal<MedicalRecord> = model.required();
+  use: ModelSignal<FormUse> = model(FormUse.EDIT as FormUse);
+  showNav: ModelSignal<boolean> = model(true);
   form: MedicalRecordForm = new MedicalRecordForm();
 
   constructor() {
@@ -86,6 +85,10 @@ export class ClinicalHistoryFormComponent implements OnInit {
       });
 
       this.form.patch(this.medicalRecord());
+
+      if (this.use() === FormUse.DETAIL) {
+        this.form.disable();
+      }
     });
   }
 
@@ -140,4 +143,6 @@ export class ClinicalHistoryFormComponent implements OnInit {
       }
     });
   }
+
+  protected readonly FormUse = FormUse;
 }

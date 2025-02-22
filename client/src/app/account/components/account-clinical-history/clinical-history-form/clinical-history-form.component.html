@@ -1,10 +1,12 @@
 <div class="d-flex flex-column flex-lg-row">
-  <app-clinical-history-nav-menu
-    [currentSection]="currentSection"
-    (onSelectSection)="selectSection($event)">
-  </app-clinical-history-nav-menu>
+  @if (showNav()) {
+    <app-clinical-history-nav-menu
+      [currentSection]="currentSection"
+      (onSelectSection)="selectSection($event)">
+    </app-clinical-history-nav-menu>
+  }
 
-  <div class="flex-md-row-fluid ms-lg-12">
+  <div class="flex-md-row-fluid" [class.ms-lg-12]="showNav()">
     @if (form.error) {
       <div errorsAlert3 [(error)]="form.error"></div>
     }
@@ -154,12 +156,15 @@
            (mouseenter)="selectSection('clinical_history_family_structure')">
         <div class="card-header">
           <h3 class="card-title">Estructura Familiar</h3>
-          <div class="card-toolbar">
-            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMember()">
-              <i class="ki-duotone ki-plus"> </i>
-              Agregar Familiar
-            </button>
-          </div>
+
+          @if (use() !== FormUse.DETAIL) {
+            <div class="card-toolbar">
+              <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMember()">
+                <i class="ki-duotone ki-plus"> </i>
+                Agregar Familiar
+              </button>
+            </div>
+          }
         </div>
         <div class="card-body border-top">
           <div class="table-responsive">
@@ -185,19 +190,21 @@
                       <div controlsWrapper3 [(control)]="group.controls.age" style="max-width: 80px;"
                            [showBottomMargin]="false"></div>
                     </td>
-                    <td>
-                      <button type="button" class="btn btn-light-danger btn-sm"
-                              [disabled]="form.controls.familyMembers.controls.length === 1"
-                              (click)="form.removeFamilyMember(idx)">
-                        <i class="ki-duotone ki-trash fs-4">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                          <span class="path3"></span>
-                          <span class="path4"></span>
-                          <span class="path5"></span>
-                        </i>
-                      </button>
-                    </td>
+                    @if (use() !== FormUse.DETAIL) {
+                      <td>
+                        <button type="button" class="btn btn-light-danger btn-sm"
+                                [disabled]="form.controls.familyMembers.controls.length === 1"
+                                (click)="form.removeFamilyMember(idx)">
+                          <i class="ki-duotone ki-trash fs-4">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                            <span class="path4"></span>
+                            <span class="path5"></span>
+                          </i>
+                        </button>
+                      </td>
+                    }
                   </tr>
                 }
               </tbody>
@@ -213,12 +220,14 @@
           <h3 class="card-title">
             Antecedentes personales
           </h3>
-          <div class="card-toolbar">
-            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalMedicalHistory()">
-              <i class="ki-duotone ki-plus"> </i>
-              Agregar Antecedente
-            </button>
-          </div>
+          @if (use() !== FormUse.DETAIL) {
+            <div class="card-toolbar">
+              <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalMedicalHistory()">
+                <i class="ki-duotone ki-plus"> </i>
+                Agregar Antecedente
+              </button>
+            </div>
+          }
         </div>
         <div class="card-body border-top">
           <div class="table-responsive">
@@ -239,18 +248,20 @@
                     <td>
                       <div controlsWrapper3 [(control)]="group.controls.description" [showBottomMargin]="false"></div>
                     </td>
-                    <td>
-                      <button type="button" class="btn btn-light-danger btn-sm"
-                              (click)="form.removePersonalMedicalHistory(idx)">
-                        <i class="ki-duotone ki-trash fs-4">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                          <span class="path3"></span>
-                          <span class="path4"></span>
-                          <span class="path5"></span>
-                        </i>
-                      </button>
-                    </td>
+                    @if (use() !== FormUse.DETAIL) {
+                      <td>
+                        <button type="button" class="btn btn-light-danger btn-sm"
+                                (click)="form.removePersonalMedicalHistory(idx)">
+                          <i class="ki-duotone ki-trash fs-4">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                            <span class="path4"></span>
+                            <span class="path5"></span>
+                          </i>
+                        </button>
+                      </td>
+                    }
                   </tr>
                 }
               </tbody>
@@ -266,12 +277,14 @@
           <h3 class="card-title">
             Consumo de Sustancias
           </h3>
-          <div class="card-toolbar">
-            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalDrugHistory()">
-              <i class="ki-duotone ki-plus"> </i>
-              Agregar Sustancia
-            </button>
-          </div>
+          @if (use() !== FormUse.DETAIL) {
+            <div class="card-toolbar">
+              <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addPersonalDrugHistory()">
+                <i class="ki-duotone ki-plus"> </i>
+                Agregar Sustancia
+              </button>
+            </div>
+          }
         </div>
         <div class="card-body border-top">
           <div class="table-responsive">
@@ -308,18 +321,21 @@
                       <div class="h-100 d-flex align-items-center" controlsWrapper3
                            [(control)]="drugHistory.controls.isCurrent" [showBottomMargin]="false"></div>
                     </td>
-                    <td>
-                      <button type="button" class="btn btn-light-danger btn-sm"
-                              (click)="form.removePersonalDrugHistory(idx)">
-                        <i class="ki-duotone ki-trash fs-4">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                          <span class="path3"></span>
-                          <span class="path4"></span>
-                          <span class="path5"></span>
-                        </i>
-                      </button>
-                    </td>
+
+                    @if (use() !== FormUse.DETAIL) {
+                      <td>
+                        <button type="button" class="btn btn-light-danger btn-sm"
+                                (click)="form.removePersonalDrugHistory(idx)">
+                          <i class="ki-duotone ki-trash fs-4">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                            <span class="path4"></span>
+                            <span class="path5"></span>
+                          </i>
+                        </button>
+                      </td>
+                    }
                   </tr>
                 }
               </tbody>
@@ -335,12 +351,14 @@
           <h3 class="card-title">
             Antecedentes familiares
           </h3>
-          <div class="card-toolbar">
-            <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMedicalHistory()">
-              <i class="ki-duotone ki-plus"> </i>
-              Agregar Antecedente
-            </button>
-          </div>
+          @if (use() !== FormUse.DETAIL) {
+            <div class="card-toolbar">
+              <button type="button" class="btn btn-light-primary btn-sm" (click)="form.addFamilyMedicalHistory()">
+                <i class="ki-duotone ki-plus"> </i>
+                Agregar Antecedente
+              </button>
+            </div>
+          }
         </div>
         <div class="card-body border-top">
           <div class="table-responsive">
@@ -366,20 +384,22 @@
                     <td>
                       <div controlsWrapper3 [(control)]="medicalHistory.controls.description"></div>
                     </td>
-                    <td>
-                      <div class="d-flex align-items-center justify-content-center">
-                        <button type="button" class="btn btn-light-danger btn-sm"
-                                (click)="form.removeFamilyMedicalHistory(idx)">
-                          <i class="ki-duotone ki-trash fs-4">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                            <span class="path3"></span>
-                            <span class="path4"></span>
-                            <span class="path5"></span>
-                          </i>
-                        </button>
-                      </div>
-                    </td>
+                    @if (use() !== FormUse.DETAIL) {
+                      <td>
+                        <div class="d-flex align-items-center justify-content-center">
+                          <button type="button" class="btn btn-light-danger btn-sm"
+                                  (click)="form.removeFamilyMedicalHistory(idx)">
+                            <i class="ki-duotone ki-trash fs-4">
+                              <span class="path1"></span>
+                              <span class="path2"></span>
+                              <span class="path3"></span>
+                              <span class="path4"></span>
+                              <span class="path5"></span>
+                            </i>
+                          </button>
+                        </div>
+                      </td>
+                    }
                   </tr>
                 }
               </tbody>

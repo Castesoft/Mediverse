@@ -101,7 +101,6 @@ export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, Even
 
   private subscribeToEventMonthDayCell(): void {
     this.service.eventMonthDayCells$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((eventMonthDayCells: EventMonthDayCell[]) => {
-      console.log('eventMonthDayCells', eventMonthDayCells);
       this.calendarList = eventMonthDayCells;
     });
   }

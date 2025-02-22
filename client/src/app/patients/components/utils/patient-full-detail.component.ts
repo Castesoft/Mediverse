@@ -19,11 +19,16 @@ import { createId } from "@paralleldrive/cuid2";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 import { CalendarView } from "src/app/_models/events/eventTypes";
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
+import { Account } from "src/app/_models/account/account";
+import { AccountService } from "src/app/_services/account.service";
+import { ClinicalHistoryVerification } from "src/app/_models/clinicalHistoryVerification";
+import { ClinicalHistoryConsentService } from "src/app/_services/clinical-history-consent.service";
 
 
 @Component({
   selector: 'div[patientFullDetail]',
   templateUrl: './patient-full-detail.component.html',
+  styleUrls: ['./patient-full-detail.component.scss'],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -37,6 +42,9 @@ import { PhotoSize } from "src/app/_models/photos/photoTypes";
 export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParams, PatientFiltersForm, PatientsService> implements DetailInputSignals<Patient> {
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
 
+  private readonly consentService: ClinicalHistoryConsentService = inject(ClinicalHistoryConsentService);
+  private readonly accountsService: AccountService = inject(AccountService);
+
   router: Router = inject(Router);
 
   use: ModelSignal<FormUse> = model.required();
@@ -46,6 +54,9 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
   title: ModelSignal<string | null> = model.required();
 
   activeTab: string = 'events';
+
+  currentAccount: Account | null = null;
+  consentStatus: boolean = false;
 
   eventItem: WritableSignal<null> = signal(null);
   eventView: WritableSignal<View> = signal('inline' as View);
@@ -63,8 +74,26 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
     effect(() => {
       this.eventParams.set(new EventParams(this.key(), { patientId: this.item()!.id }));
       console.log('PatientFullDetailComponent', this.item(), this.eventParams());
-    });
 
+      this.currentAccount = this.accountsService.current();
+      this.fetchConsentStatus();
+    });
+  }
+
+  private fetchConsentStatus(): void {
+    const doctorId: number | null = this.currentAccount?.id || null;
+    const patientId: number | null = this.item()?.id || null;
+
+    if (!doctorId || !patientId) {
+      console.error('fetchConsentStatus: userId or patientId is null');
+      return;
+    }
+
+    this.consentService.getConsentStatus(doctorId, patientId)
+      .subscribe((status: ClinicalHistoryVerification) => {
+        console.log('status in fetchConsentStatus', status);
+        this.consentStatus = status.hasAccess;
+      });
   }
 
   onSelectTab = (tab: string) => this.activeTab = tab;
@@ -72,8 +101,9 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
   getEarnings = () => this.item()!.doctorPayments?.map(p => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
 
   getPendingPayments = () => {
-    const total = this.item()!.doctorEvents?.map(e => e.service?.price!).reduce((a, b) => a + b, 0) ?? 0;
-    const paid = this.item()!.doctorPayments?.map(p => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
+    const total: number = this.item()!.doctorEvents?.map(e => e.service?.price!).reduce((a, b) => a + b, 0) ?? 0;
+    const paid: number = this.item()!.doctorPayments?.map(p => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
     return total - paid;
   };
+  protected readonly FormUse = FormUse;
 }

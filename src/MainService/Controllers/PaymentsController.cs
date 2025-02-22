@@ -110,9 +110,29 @@ namespace MainService.Controllers
             if (paymentIntent == null)
                 return BadRequest("PaymentIntent creation failed.");
 
+            var payment = new Payment
+            {
+                Amount = amountInCents,
+                Currency = "mxn",
+                Date = DateTime.Now.ToUniversalTime(),
+                PaymentStatus = PaymentStatus.Succeeded,
+                StripePaymentIntent = paymentIntent.Id,
+                StripePaymentId = paymentIntent.LatestChargeId,
+                StripeInvoiceId = paymentIntent.InvoiceId,
+                Event = eventItem,
+                PaymentMethod = paymentMethod
+            };
+
+            eventItem.Payments.Add(payment);
+            eventItem.PaymentStatus = PaymentStatus.Succeeded;
+
+            if (!await uow.Complete())
+                return BadRequest("Payment creation failed.");
+
             return Ok(new CreatePaymentIntentResponseDto
             {
-                ClientSecret = paymentIntent.ClientSecret
+                ClientSecret = paymentIntent.ClientSecret,
+                PaymentId = payment.Id
             });
         }
 

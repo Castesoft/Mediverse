@@ -9,6 +9,7 @@ using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
+using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
@@ -361,7 +362,9 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
     public async Task<MedicalRecordDto?> GetMedicalRecordDtoAsync(int userId)
     {
-        var user = await IncludesForMedicalRecord(context.Users).AsQueryable()
+        var user = await context.Users
+            .IncludeMedicalRecordProperties()
+            .IncludeMedicalInsuranceProperties()
             .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null || user.UserMedicalRecord == null) return null;
@@ -376,28 +379,6 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         await context.Reviews.AddAsync(review);
         return await context.SaveChangesAsync() > 0;
     }
-
-    private static IQueryable<AppUser> IncludesForMedicalRecord(IQueryable<AppUser> query) =>
-        query
-            .AsSplitQuery()
-            .Include(x => x.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyMembers)
-            .ThenInclude(x => x.FamilyMember.MedicalRecordFamilyMemberRelativeType.RelativeType)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordPersonalDiseases)
-            .ThenInclude(mrdp => mrdp.Disease)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordSubstances)
-            .ThenInclude(mrs => mrs.Substance)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordSubstances)
-            .ThenInclude(mrs => mrs.ConsumptionLevel)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordFamilyDiseases)
-            .ThenInclude(mrfd => mrfd.Disease)
-            .Include(u =>
-                u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionRelativeType.RelativeType)
-            .Include(u =>
-                u.UserMedicalRecord.MedicalRecord.MedicalRecordCompanion.Companion.CompanionOccupation.Occupation)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordEducationLevel.EducationLevel)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordOccupation.Occupation)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordColorBlindness.ColorBlindness)
-            .Include(u => u.UserMedicalRecord.MedicalRecord.MedicalRecordMaritalStatus.MaritalStatus);
 
     public async Task<bool> ExistsByIdAsync(int id) => await context.Users.AnyAsync(x => x.Id == id);
 

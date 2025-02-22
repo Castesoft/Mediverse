@@ -15,7 +15,7 @@ export default class Event extends Entity {
   dateTo: Date | null = null;
   timeFrom: Date | null = null;
   timeTo: Date | null = null;
-  paymentStatus: SelectOption | null = null;
+  paymentStatus: string | null = null;
   paymentMethodType: SelectOption | null = null;
   medicalInsuranceCompany: SelectOption | null = null;
   evolution: string | null = null;

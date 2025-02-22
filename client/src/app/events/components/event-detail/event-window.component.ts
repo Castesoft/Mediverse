@@ -58,7 +58,6 @@ import { NurseParams } from "src/app/_models/nurses/nurseParams";
 import { createId } from "@paralleldrive/cuid2";
 import { MatDialog } from "@angular/material/dialog";
 import { NurseDisplayCardComponent } from "src/app/nurses/components/nurse-display-card.component";
-import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
 import { Payment } from "src/app/_models/payments/payment";
 import { PaymentParams } from "src/app/_models/payments/paymentParams";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
@@ -68,6 +67,15 @@ import { RedirectWarningData } from "src/app/_shared/components/redirect-warning
 import {
   RedirectWarningModalComponent
 } from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
+import { AccountService } from "src/app/_services/account.service";
+import {
+  ClinicalHistoryConsentModalComponent,
+  ClinicalHistoryConsentModalData
+} from "src/app/clinical-history/clinical-history-consent-modal.component";
+import { ClinicalHistoryVerification } from "src/app/_models/clinicalHistoryVerification";
+import { ClinicalHistoryConsentService } from "src/app/_services/clinical-history-consent.service";
+import { ToastrService } from "ngx-toastr";
+import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
 
 @Component({
   selector: 'div[eventWindow]',
@@ -100,10 +108,15 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   key: ModelSignal<string | null> = model.required();
   title: ModelSignal<string | null> = model.required();
 
+  private readonly consentService: ClinicalHistoryConsentService = inject(ClinicalHistoryConsentService);
   private readonly paymentNavigation: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly toastr: ToastrService = inject(ToastrService);
+  private readonly dialog: MatDialog = inject(MatDialog);
   private readonly router: Router = inject(Router);
+
   readonly compact: CompactTableService = inject(CompactTableService);
+  readonly accountsService: AccountService = inject(AccountService);
   readonly nurses: NursesService = inject(NursesService);
   readonly icons: IconsService = inject(IconsService);
   readonly matDialog: MatDialog = inject(MatDialog);
@@ -119,6 +132,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
   isEvolutionEditing: boolean = false;
   isNextStepsEditing: boolean = false;
+  consentStatus: boolean = false;
 
   // Prescriptions signals
   prescriptionCuid: string = createId();
@@ -155,6 +169,8 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   evolutionForm: EvolutionForm = new EvolutionForm();
   nextStepForm: NextStepForm = new NextStepForm();
 
+  userRole: 'patient' | 'doctor' = 'patient';
+
   constructor() {
     super(EventsService);
 
@@ -164,14 +180,23 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
     effect((): void => {
       const event: Event | null = this.item();
-      console.log(event);
+      this.userRole = this.accountsService.hasRole([ 'Doctor' ]) ? 'doctor' : 'patient';
+
       if (event) {
         this.evolutionForm.controls.content.patchValue(event.evolution);
         this.nextStepForm.controls.content.patchValue(event.nextSteps);
-        this.isNextStepsEditing = event.nextSteps == null;
-        this.isEvolutionEditing = event.evolution == null;
+
+        if (this.userRole === 'doctor') {
+          this.isNextStepsEditing = event.nextSteps == null;
+          this.isEvolutionEditing = event.evolution == null;
+        } else {
+          this.isNextStepsEditing = false;
+          this.isEvolutionEditing = false;
+        }
+
         this.updatePrescriptionParams(event.id);
         this.updatePaymentParams(event.id);
+        this.fetchConsentStatus();
       }
     });
 
@@ -190,6 +215,21 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
     this.setInitialTabsFromParams();
     this.handleDefaultEventAssignment();
     this.subscribeToSelectedNurses();
+  }
+
+  private fetchConsentStatus(): void {
+    const userId: number | null = this.item()?.doctor?.id || null;
+    const patientId: number | null = this.item()?.patient?.id || null;
+
+    if (!userId || !patientId) {
+      console.error('User or patient ID is null.');
+      return;
+    }
+
+    this.consentService.getConsentStatus(userId, patientId)
+      .subscribe((status: ClinicalHistoryVerification) => {
+        this.consentStatus = status.hasAccess;
+      });
   }
 
   private updatePrescriptionParams(eventId: number | null): void {
@@ -323,6 +363,37 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       disableClose: true,
       hasBackdrop: true,
       panelClass: [ "window" ],
+    });
+  }
+
+  onShareMedicalHistory(): void {
+    const patientId: number | null = this.item()?.patient?.id || null;
+    const doctorId: number | null = this.item()?.doctor?.id || null;
+
+    if (!patientId || !doctorId) {
+      console.error('Patient or doctor ID is null.');
+      return
+    }
+
+    const dialogData: ClinicalHistoryConsentModalData = {
+      doctorId: doctorId,
+      patientId: patientId,
+      currentConsent: this.consentStatus
+    };
+
+    this.dialog.open(ClinicalHistoryConsentModalComponent, {
+      data: dialogData,
+      width: '400px',
+      autoFocus: false
+    }).afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.consentService.updateConsentStatus(doctorId, patientId, !this.consentStatus)
+          .subscribe((updatedStatus: ClinicalHistoryVerification) => {
+            console.log('Updated consent status:', updatedStatus);
+            this.consentStatus = updatedStatus.hasAccess;
+            this.toastr.success('Historial clínico compartido exitosamente.');
+          });
+      }
     });
   }
 

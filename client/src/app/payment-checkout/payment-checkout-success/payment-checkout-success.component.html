@@ -1,0 +1,32 @@
+<div class="d-flex align-items-center justify-content-center flex-column w-100 h-100 ">
+  <div class="card rounded-5 notice bg-light-success border-success border-dashed">
+    <div class="card-body align-items-center justify-content-center text-center">
+      <div class="mb-4">
+        <i class="ki-duotone ki-check-circle fs-5x text-success">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </div>
+      <div class="fs-1 fw-semibold text-success">
+        ¡Pago Exitoso!
+      </div>
+      <p class="mt-4 fs-5 text-gray-800 mb-0">
+        Tu cita ha sido confirmada. Serás redirigido<br/> automáticamente en <span id="countdown">{{ countdown }}</span>
+        segundos.
+      </p>
+      @if (payment) {
+        <div class="text-center text-gray-800 mt-3">
+          <small>
+            ID de Transacción: <span class="fw-bold">{{ payment.stripePaymentIntent }}</span>
+          </small>
+        </div>
+      }
+    </div>
+  </div>
+  <div class="text-center text-muted mt-3 px-10">
+    <small>
+      Si no eres redirigido, <a href="#" class="text-decoration-none text-primary" style="transition: color 0.2s;">haz
+      clic aquí</a>.
+    </small>
+  </div>
+</div>

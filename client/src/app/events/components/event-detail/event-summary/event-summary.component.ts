@@ -1,4 +1,4 @@
-import { Component, inject, model, ModelSignal } from '@angular/core';
+import { Component, effect, inject, model, ModelSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import Event from "src/app/_models/events/event";
@@ -8,6 +8,7 @@ import { View } from 'src/app/_models/base/types';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 import { TooltipDirective } from "ngx-bootstrap/tooltip";
+import { User } from "src/app/_models/users/user";
 
 @Component({
   selector: 'div[eventSummary]',
@@ -16,14 +17,17 @@ import { TooltipDirective } from "ngx-bootstrap/tooltip";
   templateUrl: './event-summary.component.html',
   styleUrls: [ './event-summary.component.scss' ]
 })
-export class EventSummaryComponent {
+export class EventSummaryComponent<T extends User> {
   protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
 
   readonly router: Router = inject(Router);
   readonly service: EventsService = inject(EventsService);
 
-  orientation:ModelSignal<'vertical' | 'horizontal'> = model.required();
+  userExtendItem: T | null = null;
+
+  orientation: ModelSignal<'vertical' | 'horizontal'> = model.required();
+  roleToShow: ModelSignal<'patient' | 'doctor'> = model.required();
   summaryMode: ModelSignal<boolean> = model.required();
 
   use: ModelSignal<FormUse> = model.required();
@@ -31,4 +35,20 @@ export class EventSummaryComponent {
   item: ModelSignal<Event | null> = model.required();
   key: ModelSignal<string | null> = model.required();
   title: ModelSignal<string | null> = model.required();
+
+  constructor() {
+    effect(() => {
+      if (this.item()) {
+        if (this.roleToShow().toLowerCase() === 'patient') {
+          this.userExtendItem = this.castUser<T>(this.item()!.patient);
+        } else if (this.roleToShow().toLowerCase() === 'doctor') {
+          this.userExtendItem = this.castUser<T>(this.item()!.doctor);
+        }
+      }
+    })
+  }
+
+  castUser<T extends User>(user: User): T {
+    return user as T;
+  }
 }

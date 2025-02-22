@@ -64,6 +64,7 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit, OnDestro
         this.paymentMethods = methods;
         const defaultMethod: PaymentMethod | undefined = methods.find((m: PaymentMethod) => m.isDefault);
         this.selectedPaymentMethod = defaultMethod ? defaultMethod : (methods[0] ?? null);
+        this.paymentCheckoutService.setSelectedPaymentMethod(this.selectedPaymentMethod);
       },
       error: (err) => {
         console.error('Error fetching payment methods:', err);

@@ -109,6 +109,7 @@ public class OrderEventMappingProfile : Profile
         // Map Event to EventSummaryDto.
         CreateMap<Event, EventSummaryDto>()
             .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.PatientEvent.Patient))
+            .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorEvent.Doctor))
             .ForMember(dest => dest.DateFrom, opt => opt.MapFrom(src => src.DateFrom))
             .ForMember(dest => dest.DateTo, opt => opt.MapFrom(src => src.DateTo));
 
