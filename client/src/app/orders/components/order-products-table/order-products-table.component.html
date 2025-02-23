@@ -1,0 +1,101 @@
+<div class="table-responsive">
+  <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
+    <thead>
+    <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+      <th class="min-w-100px">Producto</th>
+      <th class="min-w-100px">Lote</th>
+      <th class="min-w-70px text-end">Cantidad</th>
+      <th class="min-w-100px text-end">P. Unitario</th>
+      <th class="min-w-100px text-end">Total</th>
+    </tr>
+    </thead>
+    <tbody class="fw-semibold text-gray-600">
+      @for (product of order().items; track product) {
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div symbolCell
+                   [photoUrl]="product.photoUrl"
+                   [shape]="PhotoShape.SQUARE"
+                   [size]="PhotoSize.SMALL">
+              </div>
+              <div class="ms-5">
+                <div class="fw-bold text-gray-600 text-hover-primary">
+                  {{ product.name }}
+                </div>
+                <div class="text-muted"><small>{{ product.dosage }} {{ product.unit }}</small></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="badge badge-light-secondary">{{ product.lotNumber }}</div>
+          </td>
+          <td class="text-end">{{ product.quantity }}</td>
+
+          <td class="text-end">
+            <div class="d-flex align-items-center justify-content-end">
+              <span class="fw-bold me-1">$</span>
+              <span>{{ product.price | number:'1.2-2' }}</span>
+            </div>
+          </td>
+
+          <td class="text-end">
+            <div class="d-flex align-items-center justify-content-end">
+              <span class="fw-bold me-1">$</span>
+              <span>{{ (product.quantity || 0) * (product.price || 0) | number:'1.2-2' }}</span>
+            </div>
+          </td>
+        </tr>
+
+      }
+
+    <tr>
+      <td colspan="4" class="text-end">Subtotal</td>
+      <td class="text-end">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="fw-bold">$</div>
+          <div>{{ order().subtotal | number:'1.2-2' }}</div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="text-end">IVA (16%)</td>
+      <td class="text-end">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="fw-bold">$</div>
+          <div>{{ order().tax | number:'1.2-2' }}</div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="text-end">Envío</td>
+      <td class="text-end">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="fw-bold">$</div>
+          <div>0.00</div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="fs-3 text-dark text-end">Total</td>
+      <td class="text-dark fs-3 fw-bolder text-end">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="fw-bold">$</div>
+          <div>{{ order().total | number:'1.2-2' }}</div>
+        </div>
+      </td>
+    </tr>
+      @if (showPayButton()) {
+        <tr>
+          <td colspan="4">
+          </td>
+          <td colspan="1">
+            <div class="d-flex flex-grow-1 justify-content-end">
+              <button type="button" class="btn btn-primary px-10 w-100" (click)="onPayClicked()">Pagar</button>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

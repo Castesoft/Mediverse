@@ -22,4 +22,7 @@ public class OrderDto : BaseEntity
     public List<OrderItemDto> Items { get; set; } = [];
     public OptionDto? Status { get; set; }
     public OptionDto? DeliveryStatus { get; set; }
+    public UserPaymentMethodDto? PaymentMethod { get; set; }
+    public string? PaymentStatus { get; set; }
+    public int? PaymentCount { get; set; }
 }

@@ -22,11 +22,8 @@ namespace MainService.Infrastructure.Services
                 throw new Exception("OrderStatus or DeliveryStatus not found");
             }
 
-            Order order = new()
+            var order = new Order
             {
-                PatientOrder = new PatientOrder(customerId),
-                DoctorOrder = new DoctorOrder(doctorId),
-
                 Total = 0,
                 Subtotal = 0,
                 Discount = 0,
@@ -35,6 +32,8 @@ namespace MainService.Infrastructure.Services
                 AmountDue = 0,
                 PrescriptionOrder = null!,
                 OrderItems = [],
+                PatientOrder = new PatientOrder(customerId),
+                DoctorOrder = new DoctorOrder(doctorId),
                 OrderOrderStatus = new OrderOrderStatus(orderStatus.Id),
                 OrderDeliveryStatus = new OrderDeliveryStatus(deliveryStatus.Id),
             };
@@ -44,7 +43,8 @@ namespace MainService.Infrastructure.Services
                 .Select(x => x.AddressId)
                 .SingleOrDefaultAsync();
 
-            if (addressId.HasValue) {
+            if (addressId.HasValue)
+            {
                 order.OrderDeliveryAddress = new OrderDeliveryAddress(addressId.Value);
             }
 
@@ -61,6 +61,25 @@ namespace MainService.Infrastructure.Services
 
             order.Tax = order.Subtotal * (decimal)0.16;
             order.Total = order.Subtotal + order.Tax;
+            order.AmountDue = order.Total;
+            
+            order.OrderHistories.Add(new OrderHistory
+            {
+                UserId = doctorId,
+                ChangeType = OrderChangeType.Created,
+                Property = OrderProperty.OrderStatus,
+                OldValue = null,
+                NewValue = null
+            });
+            
+            order.OrderHistories.Add(new OrderHistory
+            {
+                UserId = doctorId,
+                ChangeType = OrderChangeType.PrescriptionLinked,
+                Property = OrderProperty.Items,
+                OldValue = null,
+                NewValue = null
+            });
 
             return order;
         }
@@ -104,7 +123,6 @@ namespace MainService.Infrastructure.Services
                 OldValue = order.OrderDeliveryStatus.DeliveryStatus.Code,
                 NewValue = deliveryStatus.Code,
             });
-
             order.OrderDeliveryStatus = new OrderDeliveryStatus(deliveryStatus);
         }
 
@@ -116,6 +134,7 @@ namespace MainService.Infrastructure.Services
             if (status == null) throw new NotFoundException("OrderStatus not found");
 
             var user = await context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+            
             order.OrderHistories.Add(new OrderHistory
             {
                 CreatedAt = DateTime.UtcNow,
@@ -126,7 +145,6 @@ namespace MainService.Infrastructure.Services
                 OldValue = order.OrderOrderStatus.OrderStatus.Code,
                 NewValue = status.Code,
             });
-            
             order.OrderOrderStatus = new OrderOrderStatus(status);
         }
     }

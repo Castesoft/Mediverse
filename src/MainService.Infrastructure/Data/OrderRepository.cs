@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Orders;
-using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
@@ -25,6 +23,11 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
         await context.Orders
             .Include(x => x.OrderDeliveryStatus).ThenInclude(x => x.DeliveryStatus)
             .Include(x => x.OrderOrderStatus).ThenInclude(x => x.OrderStatus)
+            .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
+            .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
+            .Include(x => x.OrderItems).ThenInclude(x => x.Product)
+            .Include(x => x.OrderDeliveryAddress).ThenInclude(x => x.DeliveryAddress)
+            .Include(x => x.OrderPickupAddress).ThenInclude(x => x.PickupAddress)
             .Where(x => x.Id == id).FirstOrDefaultAsync();
 
     public async Task<bool> ExistsByIdAsync(int id) => await context.Orders.AnyAsync(x => x.Id == id);
@@ -38,6 +41,8 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.OrderDeliveryAddress.DeliveryAddress)
             .Include(x => x.OrderPickupAddress.PickupAddress)
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
+            .Include(x => x.OrderItems).ThenInclude(x => x.Product).ThenInclude(x => x.ProductPhotos)
+            .ThenInclude(x => x.Photo)
             .AsNoTracking()
             .ProjectTo<OrderDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
@@ -90,19 +95,43 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             if (param.FromSection == SiteSection.Admin)
             {
                 Log.Information(Roles.Admin.ToString());
-                if (!param.DoctorRole.Contains(Roles.Admin.ToString()))
+                if (!param.RequestingUserRole.Contains(Roles.Admin.ToString()))
                     throw new UnauthorizedAccessException("Access denied. Admin role required.");
             }
             else
             {
-                if (param.DoctorId.HasValue)
-                    query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
+                if (!param.PatientId.HasValue && !param.DoctorId.HasValue)
+                {
+                    query = query.Where(x =>
+                        x.PatientOrder.PatientId == param.RequestingUserId ||
+                        x.DoctorOrder.DoctorId == param.RequestingUserId);
+                }
+                else
+                {
+                    if (param.PatientId.HasValue)
+                        query = query.Where(x => x.PatientOrder.PatientId == param.PatientId.Value);
+
+                    if (param.DoctorId.HasValue)
+                        query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
+                }
             }
         }
         else
         {
-            if (param.DoctorId.HasValue)
-                query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
+            if (!param.PatientId.HasValue && !param.DoctorId.HasValue)
+            {
+                query = query.Where(x =>
+                    x.PatientOrder.PatientId == param.RequestingUserId ||
+                    x.DoctorOrder.DoctorId == param.RequestingUserId);
+            }
+            else
+            {
+                if (param.PatientId.HasValue)
+                    query = query.Where(x => x.PatientOrder.PatientId == param.PatientId.Value);
+
+                if (param.DoctorId.HasValue)
+                    query = query.Where(x => x.DoctorOrder.DoctorId == param.DoctorId.Value);
+            }
         }
 
 

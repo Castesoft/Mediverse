@@ -1,0 +1,28 @@
+<div class="card">
+  <div class="card-body pt-0">
+    <div class="card-title">
+      <h4 class="mb-5 mt-10">Subscripción Activa</h4>
+    </div>
+    <div class="d-flex flex-grow-1 justify-content-between">
+      <div class="d-flex flex-column">
+        <p class="m-0 fs-8 fw-bold text-gray-800">
+          Fecha Activa
+        </p>
+        {{ fechaActiva | date: 'dd/MM/yyyy' }}
+      </div>
+      <div class="d-flex flex-column">
+        <p class="m-0 fs-8 fw-bold text-gray-800">
+          Fecha de Inicio
+        </p>
+        {{ fechaInicio | date: 'dd/MM/yyyy' }}
+      </div>
+      <div class="d-flex flex-column">
+        <p class="m-0 fs-8 fw-bold text-gray-800">
+          Siguiente Fecha de Facturación
+        </p>
+        {{ siguienteFechaFacturacion | date: 'dd/MM/yyyy' }}
+      </div>
+    </div>
+  </div>
+</div>
+

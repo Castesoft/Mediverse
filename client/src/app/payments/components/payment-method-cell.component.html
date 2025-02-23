@@ -1,5 +1,5 @@
 <div class="payment-method-cell" [tooltip]="tooltipText">
-  <div class="d-flex align-items-center">
+  <div class="d-flex align-items-center" [ngClass]="'justify-content-' + justify()">
     @if (paymentMethod().funding === 'cash') {
       <i class="ki-duotone ki-cash fs-2x"></i>
       <span>Efectivo</span>

@@ -25,6 +25,9 @@ import { SubscriptionHistoryParams } from "src/app/_models/subscriptionHistories
 import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
 import { Payment } from "src/app/_models/payments/payment";
 import { PaymentParams } from "src/app/_models/payments/paymentParams";
+import {
+  ActiveSubscriptionCardComponent
+} from "src/app/subscriptions/components/active-subscription-card/active-subscription-card.component";
 
 @Component({
   selector: "[doctorForm]",
@@ -41,6 +44,7 @@ import { PaymentParams } from "src/app/_models/payments/paymentParams";
     ClinicsCatalogComponent,
     SubscriptionHistoryHistoriesCatalogComponent,
     PaymentsCatalogComponent,
+    ActiveSubscriptionCardComponent,
   ]
 })
 export class DoctorFormComponent {
@@ -89,7 +93,7 @@ export class DoctorFormComponent {
   form: FormGroup2<Doctor> = new FormGroup2(Doctor, new Doctor, doctorFormInfo);
   isCollapsed: boolean = false;
 
-  activeTab: string = 'payments';
+  activeTab: string = 'clinics';
   onSelectTab: (tab: string) => string = (tab: string) => this.activeTab = tab;
 
   constructor() {

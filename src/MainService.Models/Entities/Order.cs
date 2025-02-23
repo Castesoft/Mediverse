@@ -24,4 +24,10 @@ public class Order : BaseEntity
 
     public OrderOrderStatus OrderOrderStatus { get; set; } = null!;
     public OrderDeliveryStatus OrderDeliveryStatus { get; set; } = null!;
+
+    // =================================
+    // Payment Properties
+    // =================================
+    public List<Payment> Payments { get; set; } = [];
+    public PaymentStatus PaymentStatus { get; set; }
 }

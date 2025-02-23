@@ -2,19 +2,24 @@ namespace MainService.Models.Entities;
 
 public class PatientOrder
 {
-    public PatientOrder() {}
+    public PatientOrder()
+    {
+    }
+
     public PatientOrder(int patientId) => PatientId = patientId;
+
     public PatientOrder(int patientId, int orderId)
     {
         PatientId = patientId;
         OrderId = orderId;
     }
+
     public PatientOrder(AppUser patient, Order order)
     {
         Patient = patient;
         Order = order;
     }
-    
+
     public int PatientId { get; set; }
     public int OrderId { get; set; }
     public AppUser Patient { get; set; } = null!;

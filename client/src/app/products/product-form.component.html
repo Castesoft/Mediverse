@@ -17,6 +17,7 @@
             </div>
             <div class="card-body pt-0">
               <div
+                class="d-flex flex-grow-1 justify-content-center"
                 imageThumbnailSelector
                 [maxFiles]="10"
                 [maxFileSizeMB]="5"
@@ -53,8 +54,10 @@
                 <div controlsWrapper3 [control]="form.controls.isVisible"></div>
                 @if (siteSection() == SiteSection.ADMIN) {
                   <div controlsWrapper3 [control]="form.controls.isInternal"></div>
-                  <div class="text-muted fs-7">
-                    Marcado como interno, será mostrado como producto de Mediverse.
+                  <div class="text-muted">
+                    <small>
+                      Marcado como interno, será mostrado como producto de Mediverse.
+                    </small>
                   </div>
                 }
               </div>

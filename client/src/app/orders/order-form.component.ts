@@ -22,18 +22,29 @@ import { firstValueFrom, Observable } from "rxjs";
 import { ConfirmService } from "src/app/_services/confirm/confirm.service";
 import {
   orderDeliveryStatuses,
-  orderStatuses, parseOrderHistoryChangeType,
+  orderStatuses,
+  parseOrderHistoryChangeType,
   parseOrderHistoryProperty
 } from "src/app/orders/orders-util";
 import { OrderHistory } from "src/app/_models/orders/orderHistory";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { OrderAddressCardComponent } from "src/app/orders/components/order-address-card.component";
+import { PaymentMethodCellComponent } from "src/app/payments/components/payment-method-cell.component";
+import {
+  OrderProductsTableComponent
+} from "src/app/orders/components/order-products-table/order-products-table.component";
+import { Patient } from "src/app/_models/patients/patient";
+import { RedirectWarningData } from "src/app/_shared/components/redirect-warning-modal/redirectWarningData";
+import {
+  RedirectWarningModalComponent
+} from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
+import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "[orderForm]",
   templateUrl: './order-form.component.html',
   styleUrl: './order-form.component.scss',
-  standalone: true,
   imports: [
     CommonModule,
     RouterModule,
@@ -43,7 +54,9 @@ import { OrderAddressCardComponent } from "src/app/orders/components/order-addre
     PhoneNumberPipe,
     OrdersDeliveryStatusBadgeComponent,
     OrdersStatusBadgeComponent,
-    OrderAddressCardComponent
+    OrderAddressCardComponent,
+    PaymentMethodCellComponent,
+    OrderProductsTableComponent
   ]
 })
 export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFiltersForm, OrderForm, OrdersService> implements FormInputSignals<Order> {
@@ -51,7 +64,9 @@ export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFilter
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
   protected readonly FormUse: typeof FormUse = FormUse;
 
+  private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly confirmService: ConfirmService = inject(ConfirmService);
+  private readonly matDialog: MatDialog = inject(MatDialog);
 
   item: ModelSignal<Order | null> = model.required();
   use: ModelSignal<FormUse> = model.required();
@@ -117,7 +132,11 @@ export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFilter
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Order> = isNew
       ? this.service.create(this.form, this.view(), { use: this.use(), value: this.form.getRawValue(), })
-      : this.service.update(this.form, this.view(), { use: this.use(), value: this.form.getRawValue(), id: this.form.controls.id.value ?? undefined, });
+      : this.service.update(this.form, this.view(), {
+        use: this.use(),
+        value: this.form.getRawValue(),
+        id: this.form.controls.id.value ?? undefined,
+      });
 
     observable.subscribe({
       next: (order) => {
@@ -130,5 +149,32 @@ export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFilter
         this.toastr.error(`Error ${isNew ? 'creando' : 'actualizando'} la orden`);
       }
     });
+  }
+
+  /**
+   * Opens a redirect warning modal before navigating to the checkout.
+   * If the user confirms, it navigates to the checkout page,
+   * passing the current URL as the cancelUrl so the user can go back.
+   */
+  navigateToCheckout(): void {
+    const order: Order | null = this.item();
+    const patient: Patient | undefined = order?.patient;
+    if (!order?.id || !patient?.id) {
+      console.error('Missing order or patient details for checkout.');
+      return;
+    }
+
+    const dialogData: RedirectWarningData = {
+      message: 'Se te redirigirá a la ventana de pago. ¿Deseas continuar?'
+    };
+
+    this.matDialog.open(RedirectWarningModalComponent, { data: dialogData })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.paymentNavigationService.navigateToCheckout(order.id!, patient.id!, 'receta', this.router.url)
+            .catch((err: any) => console.error('Navigation error:', err));
+        }
+      });
   }
 }

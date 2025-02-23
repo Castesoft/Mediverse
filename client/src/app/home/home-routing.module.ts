@@ -176,18 +176,21 @@ import { FormUse } from "src/app/_models/forms/formTypes";
         },
         {
           path: 'pedidos/nuevo',
+          data: { breadcrumb: [ 'Pedidos', 'Nuevo Pedido' ], title: 'Nuevo Pedido' },
           component: HomeOrderCreateRouteComponent,
           title: titleDetailResolver(OrdersService, FormUse.CREATE),
         },
         {
           path: 'pedidos/:id',
           component: HomeOrderDetailRouteComponent,
+          data: { breadcrumb: [ 'Pedidos', 'Ver Pedido' ], title: 'Ver Detalle de Pedido' },
           resolve: { item: createItemResolver(OrdersService), },
           title: titleDetailResolver(OrdersService, FormUse.DETAIL),
         },
         {
           path: 'pedidos/:id/editar',
           component: HomeOrderEditRouteComponent,
+          data: { breadcrumb: [ 'Pedidos', 'Editar' ], title: 'Editar Pedido' },
           resolve: { item: createItemResolver(OrdersService), },
           title: titleDetailResolver(OrdersService, FormUse.EDIT),
         },
@@ -202,18 +205,21 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           path: 'recetas/nuevo',
           component: HomePrescriptionCreateRouteComponent,
           resolve: { item: () => null, },
+          data: { breadcrumb: [ 'Recetas', 'Nueva Receta' ], title: 'Nueva Receta' },
           title: titleDetailResolver(PrescriptionsService, FormUse.CREATE),
         },
         {
           path: 'recetas/:id',
           component: HomePrescriptionDetailRouteComponent,
           resolve: { item: createItemResolver(PrescriptionsService), },
+          data: { breadcrumb: [ 'Recetas', 'Ver Receta' ], title: 'Ver Detalle de Receta' },
           title: titleDetailResolver(PrescriptionsService, FormUse.DETAIL),
         },
         {
           path: 'recetas/:id/editar',
           component: HomePrescriptionEditRouteComponent,
           resolve: { item: createItemResolver(PrescriptionsService), },
+          data: { breadcrumb: [ 'Recetas', 'Editar' ], title: 'Editar Receta' },
           title: titleDetailResolver(PrescriptionsService, FormUse.EDIT),
         },
         // Clinicas

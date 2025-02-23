@@ -6,19 +6,25 @@ border-width-1px {
   border-width: 1px;
 }
 
+$prescription-padding: 30px;
+$prescription-horizontal-margin: 0px auto;
+$prescription-max-width: 1000px;
+
+.prescription-container {
+  margin: $prescription-horizontal-margin;
+}
+
 .prescription-pad {
-  background-color: #ffffff;
-  background-image:
-    linear-gradient(90deg, rgba(200,200,200,.07) 1px, transparent 1px),
-    linear-gradient(rgba(200,200,200,.07) 1px, transparent 1px);
+  background-image: linear-gradient(90deg, rgba(200, 200, 200, .07) 1px, transparent 1px),
+  linear-gradient(rgba(200, 200, 200, .07) 1px, transparent 1px);
   background-size: 25px 25px;
   border: 1px solid #d4d4d4;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
-  padding: 30px;
-  max-width: 1000px;
-  margin: 20px auto;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
   font-family: 'Courier New', monospace;
   position: relative;
+  padding: $prescription-padding;
+  max-width: $prescription-max-width;
+  @extend .prescription-container;
 }
 
 .prescription-pad::before {
@@ -28,7 +34,7 @@ border-width-1px {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
   z-index: 0;
 }
 
@@ -39,7 +45,7 @@ border-width-1px {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, transparent 48%, rgba(0,0,0,0.05) 50%, transparent 52%);
+  background: linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.05) 50%, transparent 52%);
   background-size: 10px 10px;
   z-index: 1;
   pointer-events: none;
@@ -58,6 +64,7 @@ border-width-1px {
 
   .logo {
     flex: 1;
+
     img {
       max-width: 150px;
       height: auto;
@@ -65,9 +72,6 @@ border-width-1px {
   }
 
   .doctor-info {
-    flex: 2;
-    text-align: right;
-
     h1 {
       margin: 0;
       font-size: 24px;
@@ -133,7 +137,8 @@ border-width-1px {
 
     .doctor-signature-line {
       width: 300px;
-      margin: 0 0 0 auto;
+      min-height: 44px;
+      margin: 44px 0 0 auto;
     }
 
     .doctor-signature-info {
@@ -151,10 +156,8 @@ border-width-1px {
 }
 
 .form-actions {
-  margin-top: 20px;
-  text-align: right;
-
-  button {
-    margin-left: 10px;
-  }
+  @extend .prescription-container;
+  display: flex;
+  justify-content: end;
+  min-width: $prescription-max-width;
 }

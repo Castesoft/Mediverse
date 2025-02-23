@@ -3,10 +3,11 @@ import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { CardIconComponent } from "src/app/_shared/components/payment-methods/card-icon/card-icon.component";
 import { CardBrand } from "src/app/_shared/components/payment-methods/card-icon/cardBrand";
 import { TooltipDirective } from "ngx-bootstrap/tooltip";
+import { NgClass } from "@angular/common";
 
 @Component({
   selector: 'div[paymentMethodCell]',
-  imports: [ CardIconComponent, TooltipDirective ],
+  imports: [ CardIconComponent, TooltipDirective, NgClass ],
   templateUrl: './payment-method-cell.component.html',
   styleUrl: './payment-method-cell.component.scss'
 })
@@ -14,6 +15,7 @@ export class PaymentMethodCellComponent {
   protected readonly CardBrand: typeof CardBrand = CardBrand;
 
   paymentMethod: InputSignal<Partial<PaymentMethod> | PaymentMethod> = input.required();
+  justify: InputSignal<'start' | 'center' | 'end'> = input('start' as any);
 
   tooltipText: string = '';
 

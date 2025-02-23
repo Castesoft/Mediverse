@@ -18,8 +18,7 @@ public class AddressMappingProfile : Profile
                 opt => opt.MapFrom(src => src.DoctorClinic != null ? src.DoctorClinic.IsMain : false))
             .ForMember(dest => dest.NursesCount, opt => opt.MapFrom(src => src.ClinicNurses.Count))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom<ClinicLogoUrlResolver>())
-            .ForMember(dest => dest.Photos, opt => opt.MapFrom(src => src.ClinicPhotos.Select(x => x.Photo)))
-        ;
+            .ForMember(dest => dest.Photos, opt => opt.MapFrom(src => src.ClinicPhotos.Select(x => x.Photo)));
 
         CreateMap<Address, DoctorClinicDto>()
             .ForMember(dest => dest.IsMain,
@@ -54,7 +53,6 @@ public class AddressMappingProfile : Profile
             .ForMember(dest => dest.Longitude, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.Notes, opt => opt.Ignore())
-            
             .ForMember(dest => dest.ClinicLogo, opt => opt.Ignore())
             .ForMember(dest => dest.DoctorClinic, opt => opt.Ignore())
             .ForMember(dest => dest.ClinicNurses, opt => opt.Ignore())
@@ -62,7 +60,6 @@ public class AddressMappingProfile : Profile
             .ForMember(dest => dest.OrderPickupAddresses, opt => opt.Ignore())
             .ForMember(dest => dest.UserAddress, opt => opt.Ignore())
             .ForMember(dest => dest.PrescriptionClinics, opt => opt.Ignore())
-
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
@@ -72,8 +69,7 @@ public class AddressMappingProfile : Profile
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
             .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
-            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode))
-        ;
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode));
 
         CreateMap<ClinicUpdateDto, Address>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -81,7 +77,6 @@ public class AddressMappingProfile : Profile
             .ForMember(dest => dest.Longitude, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.Notes, opt => opt.Ignore())
-            
             .ForMember(dest => dest.ClinicLogo, opt => opt.Ignore())
             .ForMember(dest => dest.DoctorClinic, opt => opt.Ignore())
             .ForMember(dest => dest.ClinicNurses, opt => opt.Ignore())
@@ -89,7 +84,6 @@ public class AddressMappingProfile : Profile
             .ForMember(dest => dest.OrderPickupAddresses, opt => opt.Ignore())
             .ForMember(dest => dest.UserAddress, opt => opt.Ignore())
             .ForMember(dest => dest.PrescriptionClinics, opt => opt.Ignore())
-
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
@@ -99,7 +93,6 @@ public class AddressMappingProfile : Profile
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
             .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
             .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
-            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode))
-        ;
+            .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.Zipcode));
     }
 }

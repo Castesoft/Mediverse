@@ -11,14 +11,12 @@ public class PrescriptionProductConfiguration : IEntityTypeConfiguration<Prescri
         builder.HasOne(x => x.Prescription)
             .WithMany(x => x.PrescriptionItems)
             .HasForeignKey(x => x.PrescriptionId)
-            .OnDelete(DeleteBehavior.Cascade)
-        ;
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Product)
             .WithMany(x => x.PrescriptionProducts)
             .HasForeignKey(x => x.ProductId)
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull)
-        ;
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

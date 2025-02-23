@@ -268,8 +268,8 @@ public class ProductsController(
             Unit = request.Unit,
             Dosage = request.Dosage,
             Manufacturer = request.Manufacturer,
-            SKU = request.SKU,
-            Barcode = request.Barcode,
+            SKU = request.SKU ?? Guid.NewGuid().ToString(),
+            Barcode = request.Barcode ?? Guid.NewGuid().ToString(),
             Category = request.Category,
             CostPrice = request.CostPrice
         };

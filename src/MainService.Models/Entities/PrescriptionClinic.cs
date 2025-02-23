@@ -2,7 +2,10 @@ namespace MainService.Models.Entities
 {
     public class PrescriptionClinic
     {
-        public PrescriptionClinic() { }
+        public PrescriptionClinic()
+        {
+        }
+
         public PrescriptionClinic(int clinicId) => ClinicId = clinicId;
 
         public int ClinicId { get; set; }

@@ -3,29 +3,42 @@
     @if (control().showLabel) {
       <label controlLabel3 [(control)]="control"></label>
     }
-
     <input type="text"
            [formControl]="$any(control())"
            [placeholder]="control().placeholder != null && control().placeholder"
            [id]="control().id"
            [matAutocomplete]="auto"
            class="form-control " [class.ps-12]="useIcon()">
-    <mat-autocomplete [displayWith]="displayFn" [autoActiveFirstOption]="true" #auto="matAutocomplete">
+    <mat-autocomplete [displayWith]="displayFn" [autoActiveFirstOption]="true" #auto="matAutocomplete" class="bg-body">
       @for (item of filteredOptions | async; let idx = $index; track idx; ) {
-        <mat-option [value]="item" [id]="item.id.toString()"
-                    (onSelectionChange)="onSelectionChange.emit($event.source.value)">
-          @if (item.options && item.options.photoUrl) {
-            <img alt="" class="example-option-img" [src]="item.options.photoUrl" height="25">
-          }
-          <span>
-            {{ item.name }}
-          </span>
-          @if (item.options && item.options.description) {
-            <small>{{ item.options.description }}</small>
-          }
-          @if (item.options && item.options.price !== null) {
-            <small>{{ item.options.price | currency }}</small>
-          }
+        <mat-option
+          [value]="item"
+          [id]="item.id.toString()"
+          class="bg-body w-100 full-width-option"
+          (onSelectionChange)="onSelectionChange.emit($event.source.value)">
+          <div class="d-flex w-100">
+            @if (item.options && item.options.photoUrl) {
+              <img alt="" class="example-option-img rounded me-2" [src]="item.options.photoUrl" height="28">
+            }
+            <div class="d-flex flex-column w-100 justify-content-center">
+              <div class="d-flex flex-row justify-content-between align-items-center">
+                <span class="fw-semibold">
+                  {{ item.name }}
+                </span>
+                @if (item.options && item.options.price !== null) {
+                  <small>
+                    {{ item.options.price | currency }}
+                  </small>
+                }
+              </div>
+              @if (item.options && item.options.description) {
+                <small [title]="item.options.description"
+                       class="text-truncate nowrap text-gray-600">
+                  {{ item.options.description }}
+                </small>
+              }
+            </div>
+          </div>
         </mat-option>
       }
     </mat-autocomplete>
@@ -38,22 +51,34 @@
 
   <input type="text" [formControl]="$any(control())" [id]="control().id" [matAutocomplete]="auto"
          class="form-control " [class.ps-12]="useIcon()">
-  <mat-autocomplete [displayWith]="displayFn" [autoActiveFirstOption]="true" #auto="matAutocomplete">
+  <mat-autocomplete [displayWith]="displayFn" [autoActiveFirstOption]="true" #auto="matAutocomplete" class="bg-body">
     @for (item of filteredOptions | async; let idx = $index; track idx; ) {
-      <mat-option [value]="item" [id]="item.id.toString()"
-                  (onSelectionChange)="onSelectionChange.emit($event.source.value)">
-        @if (item.options && item.options.photoUrl) {
-          <img alt="" class="example-option-img" [src]="item.options.photoUrl" height="25">
-        }
-        <span>
-          {{ item.name }}
-        </span>
-        @if (item.options && item.options.description) {
-          <small>{{ item.options.description }}</small>
-        }
-        @if (item.options && item.options.price !== null) {
-          <small>{{ item.options.price | currency }}</small>
-        }
+      <mat-option
+        [value]="item"
+        [id]="item.id.toString()"
+        class="bg-body w-100 full-width-option"
+        (onSelectionChange)="onSelectionChange.emit($event.source.value)">
+        <div class="d-flex w-100">
+          @if (item.options && item.options.photoUrl) {
+            <img alt="" class="example-option-img rounded me-2" [src]="item.options.photoUrl" height="28">
+          }
+          <div class="d-flex flex-column w-100 justify-content-center">
+            <div class="d-flex flex-row justify-content-between align-items-center">
+              {{ item.name }}
+              @if (item.options && item.options.price !== null) {
+                <small>
+                  {{ item.options.price | currency }}
+                </small>
+              }
+            </div>
+            @if (item.options && item.options.description) {
+              <small [title]="item.options.description"
+                     class="text-truncate nowrap text-gray-600">
+                {{ item.options.description }}
+              </small>
+            }
+          </div>
+        </div>
       </mat-option>
     }
   </mat-autocomplete>

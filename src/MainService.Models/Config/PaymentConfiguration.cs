@@ -31,5 +31,10 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .WithMany(e => e.Payments)
             .HasForeignKey(p => p.EventId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.Order)
+            .WithMany(o => o.Payments)
+            .HasForeignKey(p => p.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

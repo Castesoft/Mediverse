@@ -30,7 +30,8 @@
                  [showBottomMargin]="showBottomMargin()"></div>
           }
           @case ('date') {
-            <div templateControlDate [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div templateControlDate [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="false"></div>
           }
           @case ('email') {
             <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>

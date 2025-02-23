@@ -18,6 +18,8 @@ public class Payment : BaseEntity
 
     public int? EventId { get; set; }
     public Event? Event { get; set; }
+    public int? OrderId { get; set; }
+    public Order? Order { get; set; }
     public int? PaymentMethodId { get; set; }
     public PaymentMethod? PaymentMethod { get; set; }
 }

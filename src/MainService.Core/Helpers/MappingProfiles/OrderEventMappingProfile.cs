@@ -21,6 +21,9 @@ public class OrderEventMappingProfile : Profile
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorOrder.Doctor))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.OrderOrderStatus.OrderStatus))
+            .ForMember(dest => dest.PaymentCount, opt => opt.MapFrom(src => src.Payments.Count))
+            .ForMember(dest => dest.PaymentMethod,
+                opt => opt.MapFrom(src => src.Payments.Count != 0 ? src.Payments[0].PaymentMethod : null))
             .ForMember(dest => dest.DeliveryStatus,
                 opt => opt.MapFrom(src => src.OrderDeliveryStatus.DeliveryStatus));
 
@@ -36,7 +39,8 @@ public class OrderEventMappingProfile : Profile
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
             .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Product.Discount))
             .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Product.Manufacturer))
-            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Product.LotNumber));
+            .ForMember(dest => dest.LotNumber, opt => opt.MapFrom(src => src.Product.LotNumber))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Product.GetPhotoUrl()));
 
         // Map OrderItem to PrescriptionItemDto.
         CreateMap<OrderProduct, PrescriptionItemDto>()
@@ -67,7 +71,7 @@ public class OrderEventMappingProfile : Profile
             .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.DoctorPrescription.Doctor))
             .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.EventPrescription.Event))
             .ForMember(dest => dest.Clinic, opt => opt.MapFrom(src => src.PrescriptionClinic.Clinic))
-            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems.Select(x => x.Product)))
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PrescriptionItems))
             .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.GetPhotoUrl()))
             .ForMember(dest => dest.OrderId,
                 opt => opt.MapFrom(src => src.PrescriptionOrder != null ? src.PrescriptionOrder.Order.Id : 0));

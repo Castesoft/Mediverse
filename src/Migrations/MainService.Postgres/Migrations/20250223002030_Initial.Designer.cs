@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250222013231_Initial")]
+    [Migration("20250223002030_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1936,6 +1936,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer");
+
                     b.Property<decimal?>("Subtotal")
                         .HasColumnType("numeric");
 
@@ -2227,6 +2230,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("PaymentMethodId")
                         .HasColumnType("integer");
 
@@ -2252,6 +2258,8 @@ namespace MainService.Postgres.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -4568,7 +4576,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Patient")
                         .WithMany("PatientPrescriptions")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
@@ -4589,11 +4597,18 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("MainService.Models.Entities.Order", "Order")
+                        .WithMany("Payments")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentMethodId");
 
                     b.Navigation("Event");
+
+                    b.Navigation("Order");
 
                     b.Navigation("PaymentMethod");
                 });
@@ -4620,7 +4635,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
                         .WithOne("PrescriptionClinic")
                         .HasForeignKey("MainService.Models.Entities.PrescriptionClinic", "PrescriptionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Clinic");
@@ -4633,7 +4648,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.Order", "Order")
                         .WithOne("PrescriptionOrder")
                         .HasForeignKey("MainService.Models.Entities.PrescriptionOrder", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
@@ -4658,7 +4673,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.Product", "Product")
                         .WithMany("PrescriptionProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Prescription");
 
@@ -5323,6 +5338,8 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("PatientOrder")
                         .IsRequired();
+
+                    b.Navigation("Payments");
 
                     b.Navigation("PrescriptionOrder")
                         .IsRequired();

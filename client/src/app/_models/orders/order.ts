@@ -4,6 +4,7 @@ import { SelectOption } from 'src/app/_models/base/selectOption';
 import { Doctor } from "src/app/_models/doctors/doctor";
 import { Patient } from "src/app/_models/patients/patient";
 import { Address } from "src/app/_models/addresses/address";
+import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 
 
 export class Order extends Entity {
@@ -20,6 +21,7 @@ export class Order extends Entity {
   items: Product[] = [];
   status: SelectOption | null = null;
   deliveryStatus: SelectOption | null = null;
+  paymentMethod: PaymentMethod | null = null;
 
   constructor(init?: Partial<Order>) {
     super();

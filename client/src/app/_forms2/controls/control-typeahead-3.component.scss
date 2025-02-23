@@ -1,0 +1,12 @@
+.full-width-option {
+  width: 100%;
+}
+
+.full-width-option .d-flex {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  margin-right: 0 !important;
+  min-width: 100% !important;
+}

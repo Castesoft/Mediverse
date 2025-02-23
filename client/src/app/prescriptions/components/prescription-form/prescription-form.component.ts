@@ -1,17 +1,22 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  inject,
-  ViewChild,
+  effect,
   HostBinding,
+  inject,
+  input,
+  InputSignal,
   model,
   ModelSignal,
+  OnDestroy,
+  OnInit,
   signal,
-  effect, OnDestroy, OnInit, input, InputSignal, WritableSignal,
+  ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { TabsetComponent, TabDirective } from 'ngx-bootstrap/tabs';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
@@ -33,6 +38,9 @@ import { PatientsService } from 'src/app/patients/patients.config';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProductsService } from 'src/app/products/products.config';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
+import { Patient } from "src/app/_models/patients/patient";
+import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
+import { PhotoSize } from "src/app/_models/photos/photoTypes";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -47,21 +55,21 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
     FormsModule,
     ReactiveFormsModule,
     ProfilePictureComponent,
+    SymbolCellComponent,
   ],
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss',
 })
-export class PrescriptionFormComponent
-  extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService>
-  implements OnInit, OnDestroy, FormInputSignals<Prescription>
-{
-  readonly accountService = inject(AccountService);
+export class PrescriptionFormComponent extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService> implements OnInit, OnDestroy, FormInputSignals<Prescription> {
+  protected readonly PhotoSize:typeof PhotoSize = PhotoSize;
 
-  private productsService = inject(ProductsService);
-  private patientsService = inject(PatientsService);
-  private clinicsService = inject(ClinicsService);
+  readonly accountService: AccountService = inject(AccountService);
 
-  private ngUnsubscribe = new Subject<void>();
+  private readonly productsService: ProductsService = inject(ProductsService);
+  private readonly patientsService: PatientsService = inject(PatientsService);
+  private readonly clinicsService: ClinicsService = inject(ClinicsService);
+
+  private readonly ngUnsubscribe: Subject<void> = new Subject<void>();
 
   @ViewChild('memberTabs', { static: false }) memberTabs?: TabsetComponent;
 
@@ -88,9 +96,7 @@ export class PrescriptionFormComponent
     this.clinicsService.getOptions().subscribe();
 
     effect(() => {
-
       console.log('prescriptionItem', this.item());
-
 
       this.form
         .setUse(this.use())
@@ -98,32 +104,25 @@ export class PrescriptionFormComponent
         .setProductOptions(this.productsService.options())
         .setPatientOptions(this.patientsService.options())
         .setClinicOptions(this.clinicsService.options());
-      ;
 
-      if (this.use() === 'create') {
+      if (this.use() === FormUse.CREATE) {
 
       } else {
-        const item = this.item();
-
+        const item: Prescription | null = this.item();
         if (item !== null) {
           console.log('item', item);
-
-          // this.form.customPatch(item);
-          this.form.patchValue(item);
+          this.form.patchValue(item, { emitEvent: false });
         }
       }
 
-      if (this.fromEventWindow() === true) {
-        if (this.use() === 'create') {
-          const item = this.item();
-
+      if (this.fromEventWindow()) {
+        if (this.use() === FormUse.CREATE) {
+          const item: Prescription | null = this.item();
           if (item !== null) {
-            // this.form.customPatch(item);
-            this.form.patchValue(item);
+            this.form.patchValue(item, { emitEvent: false });
           }
         }
       }
-
     });
 
     this.subscribeToFormValueChanges();
@@ -131,8 +130,8 @@ export class PrescriptionFormComponent
 
   private subscribeToFormValueChanges(): void {
     this.form.controls.patient.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async (patient): Promise<void> => {
-      if (patient && patient.id) {
-        const patientFull = await firstValueFrom(this.patientsService.getById(patient.id));
+      if (patient && patient.id && this.form.controls?.patient?.value?.id !== patient.id) {
+        const patientFull: Patient = await firstValueFrom(this.patientsService.getById(patient.id));
         this.form.controls.patient.patchValue(patientFull as any, { emitEvent: false });
       }
     });
@@ -145,7 +144,7 @@ export class PrescriptionFormComponent
 
     const account: Account | null = this.accountService.current();
     if (account) {
-      this.form.controls.doctor.patchValue(new Doctor({...account} as any));
+      this.form.controls.doctor.patchValue(new Doctor({ ...account } as any));
     }
   }
 
@@ -184,4 +183,6 @@ export class PrescriptionFormComponent
       queryParamsHandling: 'merge',
     }).then(() => {});
   };
+
+  protected readonly FormUse = FormUse;
 }

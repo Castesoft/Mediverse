@@ -17,6 +17,6 @@ public class PrescriptionOrderConfiguration : IEntityTypeConfiguration<Prescript
         builder.HasOne(x => x.Order)
             .WithOne(x => x.PrescriptionOrder)
             .HasForeignKey<PrescriptionOrder>(x => x.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

@@ -13,6 +13,7 @@ import { MaterialModule } from "src/app/_shared/material.module";
 @Component({
   selector: "[controlTypeahead3]",
   templateUrl: "./control-typeahead-3.component.html",
+  styleUrls: [ "./control-typeahead-3.component.scss" ],
   standalone: true,
   imports: [
     ReactiveFormsModule,

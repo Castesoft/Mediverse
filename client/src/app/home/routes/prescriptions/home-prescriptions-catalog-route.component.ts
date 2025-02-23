@@ -7,7 +7,19 @@ import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config
 
 @Component({
   selector: 'div[homePrescriptionsCatalogRoute]',
-  templateUrl: './home-prescriptions-catalog-route.component.html',
+  template: `
+    <div breadcrumbs></div>
+    <div post>
+      <div prescriptionsCatalog
+           [(item)]="item"
+           [(isCompact)]="compact.isCompact"
+           [(key)]="key"
+           [(mode)]="mode"
+           [(params)]="params"
+           [(view)]="view"
+      ></div>
+    </div>
+  `,
   standalone: false,
 })
 export class HomePrescriptionsCatalogRouteComponent extends BaseRouteCatalog<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> {

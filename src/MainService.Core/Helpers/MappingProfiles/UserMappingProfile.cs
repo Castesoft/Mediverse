@@ -205,6 +205,17 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count))
             .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count));
 
+        CreateMap<AppUser, BaseUserDto>()
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom<PhotoUrlResolver>())
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
+            .ForMember(dest => dest.Age,
+                opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0))
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex));
+
         CreateMap<DoctorPatient, DoctorDto>();
 
         // Map AppUser to UserDto.

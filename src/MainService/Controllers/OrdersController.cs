@@ -20,13 +20,17 @@ public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : B
     [HttpGet]
     public async Task<ActionResult<PagedList<OrderDto>>> GetPagedListAsync([FromQuery] OrderParams param)
     {
-        param.DoctorId = User.GetUserId();
-        param.DoctorRole = User.GetRoles();
+        param.RequestingUserId = User.GetUserId();
+        param.RequestingUserRole = User.GetRoles();
 
         var pagedList = await uow.OrderRepository.GetPagedListAsync(param);
 
-        Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
-            pagedList.TotalCount, pagedList.TotalPages));
+        Response.AddPaginationHeader(new PaginationHeader(
+            pagedList.CurrentPage,
+            pagedList.PageSize,
+            pagedList.TotalCount,
+            pagedList.TotalPages
+        ));
 
         return pagedList;
     }
@@ -48,7 +52,7 @@ public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : B
     {
         var userId = User.GetUserId();
         if (userId == 0) return Unauthorized();
-        
+
         try
         {
             var result = await ordersService.UpdateAsync(request, id, userId);
@@ -68,7 +72,7 @@ public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : B
             return StatusCode(500, ex.Message);
         }
     }
-    
+
     [HttpGet("{id:int}/history")]
     public async Task<ActionResult<List<OrderHistoryDto>>?> GetHistoryAsync([FromRoute] int id)
     {

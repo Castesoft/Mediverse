@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, Injectable, ModelSignal, model, effect, NgModule } from "@angular/core";
+import { Component, effect, inject, Injectable, model, ModelSignal, NgModule } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -14,7 +14,7 @@ import { DetailInputSignals } from "src/app/_models/forms/formComponentInterface
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
-import { prescriptionDictionary, prescriptionColumns } from "src/app/_models/prescriptions/prescriptionConstants";
+import { prescriptionColumns, prescriptionDictionary } from "src/app/_models/prescriptions/prescriptionConstants";
 import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescriptionFiltersForm";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
@@ -23,32 +23,36 @@ import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
 import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
-import { PrescriptionFormComponent } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
-import { PrescriptionsCatalogComponent } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
+import {
+  PrescriptionFormComponent
+} from "src/app/prescriptions/components/prescription-form/prescription-form.component";
+import {
+  PrescriptionsCatalogComponent
+} from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
 
 @Component({
   selector: 'prescriptions-catalog-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      prescriptionsCatalog
-      [(mode)]="data.mode"
-      [(key)]="data.key"
-      [(view)]="data.view"
-      [(isCompact)]="data.isCompact"
-      [(item)]="data.item"
-      [(params)]="data.params"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          prescriptionsCatalog
+          [(mode)]="data.mode"
+          [(key)]="data.key"
+          [(view)]="data.view"
+          [(isCompact)]="data.isCompact"
+          [(item)]="data.item"
+          [(params)]="data.params"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [PrescriptionsCatalogComponent, MaterialModule, CdkModule,],
+  imports: [ PrescriptionsCatalogComponent, MaterialModule, CdkModule, ],
 })
 export class PrescriptionsCatalogModalComponent {
   data = inject<CatalogDialog<Prescription, PrescriptionParams>>(MAT_DIALOG_DATA);
@@ -81,24 +85,22 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
       panelClass: [ "window" ]
     });
   };
-
 }
 
 @Component({
   selector: 'div[prescriptionDetail]',
   template: `
-  <div container3 [type]="'inline'">
-    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
-  </div>
-  <div prescriptionForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    <div container3 [type]="'inline'">
+      <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
+    </div>
+    <div prescriptionForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
   standalone: true,
-  imports: [PrescriptionFormComponent, ControlsModule, Forms2Module,],
+  imports: [ PrescriptionFormComponent, ControlsModule, Forms2Module, ],
 })
 export class PrescriptionDetailComponent
   extends BaseDetail<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
-  implements DetailInputSignals<Prescription>
-{
+  implements DetailInputSignals<Prescription> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Prescription | null> = model.required();
@@ -114,25 +116,25 @@ export class PrescriptionDetailComponent
 @Component({
   selector: 'prescription-detail-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      prescriptionDetail
-      [(use)]="data.use"
-      [(view)]="data.view"
-      [(key)]="data.key"
-      [(item)]="data.item"
-      [(title)]="data.title"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          prescriptionDetail
+          [(use)]="data.use"
+          [(view)]="data.view"
+          [(key)]="data.key"
+          [(item)]="data.item"
+          [(title)]="data.title"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [PrescriptionDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+  imports: [ PrescriptionDetailComponent, ModalWrapperModule, MaterialModule, CdkModule, ],
 })
 export class PrescriptionDetailModalComponent {
   data = inject<DetailDialog<Prescription>>(MAT_DIALOG_DATA);
@@ -143,7 +145,7 @@ export class PrescriptionDetailModalComponent {
   selector: 'prescriptions-route',
   standalone: false,
   template: `
-  <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
   `,
 })
 export class PrescriptionsComponent {}
@@ -151,18 +153,18 @@ export class PrescriptionsComponent {}
 @Component({
   selector: 'prescriptions-catalog-route',
   template: `
-  <div
-    prescriptionsCatalog
-    [(mode)]="mode"
-    [(key)]="key"
-    [(view)]="view"
-    [(isCompact)]="compact.isCompact"
-    [(item)]="item"
-    [(params)]="params"
-  ></div>
+    <div
+      prescriptionsCatalog
+      [(mode)]="mode"
+      [(key)]="key"
+      [(view)]="view"
+      [(isCompact)]="compact.isCompact"
+      [(item)]="item"
+      [(params)]="params"
+    ></div>
   `,
   standalone: true,
-  imports: [RouterModule, PrescriptionsCatalogComponent, BreadcrumbsModule, ],
+  imports: [ RouterModule, PrescriptionsCatalogComponent, BreadcrumbsModule, ],
 })
 export class CatalogComponent extends BaseRouteCatalog<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> {
   constructor() {
@@ -180,7 +182,7 @@ export class CatalogComponent extends BaseRouteCatalog<Prescription, Prescriptio
     <div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
   `,
   standalone: true,
-  imports: [RouterModule, PrescriptionDetailComponent, BreadcrumbsModule,],
+  imports: [ RouterModule, PrescriptionDetailComponent, BreadcrumbsModule, ],
 })
 export class DetailComponent extends BaseRouteDetail<Prescription> {
   constructor() {
@@ -217,7 +219,7 @@ export class DetailComponent extends BaseRouteDetail<Prescription> {
     <div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
   `,
   standalone: true,
-  imports: [PrescriptionDetailComponent, RouterModule, BreadcrumbsModule,],
+  imports: [ PrescriptionDetailComponent, RouterModule, BreadcrumbsModule, ],
 })
 export class EditComponent extends BaseRouteDetail<Prescription> {
   constructor() {
@@ -251,9 +253,9 @@ export class EditComponent extends BaseRouteDetail<Prescription> {
   selector: 'prescription-new-route',
   template: `
     <div prescriptionDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-`,
+  `,
   standalone: true,
-  imports: [PrescriptionDetailComponent, RouterModule, BreadcrumbsModule,],
+  imports: [ PrescriptionDetailComponent, RouterModule, BreadcrumbsModule, ],
 })
 export class NewComponent extends BaseRouteDetail<Prescription> {
   constructor() {
@@ -272,7 +274,7 @@ export class NewComponent extends BaseRouteDetail<Prescription> {
 }
 
 @NgModule({
-  imports: [RouterModule.forChild([
+  imports: [ RouterModule.forChild([
     {
       path: '', title: 'Ganaderías', data: { breadcrumb: 'Ganaderías', },
       component: PrescriptionsComponent, runGuardsAndResolvers: 'always',
@@ -291,10 +293,10 @@ export class NewComponent extends BaseRouteDetail<Prescription> {
         },
       ],
     },
-  ])],
-  exports: [RouterModule]
+  ]) ],
+  exports: [ RouterModule ]
 })
-export class PrescriptionsRoutingModule { }
+export class PrescriptionsRoutingModule {}
 
 @NgModule({
   declarations: [
@@ -302,4 +304,4 @@ export class PrescriptionsRoutingModule { }
   ],
   imports: [ CommonModule, PrescriptionsRoutingModule, ]
 })
-export class PrescriptionsModule { }
+export class PrescriptionsModule {}

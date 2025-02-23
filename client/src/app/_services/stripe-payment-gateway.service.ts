@@ -54,4 +54,10 @@ export class StripePaymentGatewayService {
       `${this.baseUrl}create-payment-intent/event/${eventId}`, { paymentMethodId }
     );
   }
+
+  createPaymentIntentForOrder(orderId: number, paymentMethodId: number): Observable<CreatePaymentIntentResponse> {
+    return this.http.post<CreatePaymentIntentResponse>(
+      `${this.baseUrl}create-payment-intent/order/${orderId}`, { paymentMethodId }
+    );
+  }
 }

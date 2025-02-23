@@ -2,20 +2,27 @@ namespace MainService.Models.Entities;
 
 public class PrescriptionOrder
 {
-    public PrescriptionOrder() {}
+    public PrescriptionOrder()
+    {
+    }
+
     public PrescriptionOrder(Order order) => Order = order;
     public PrescriptionOrder(int prescriptionId) => PrescriptionId = prescriptionId;
+    public PrescriptionOrder(Prescription prescription) => Prescription = prescription;
+
     public PrescriptionOrder(int prescriptionId, int orderId)
     {
         PrescriptionId = prescriptionId;
         OrderId = orderId;
     }
+
     public PrescriptionOrder(Prescription prescription, Order order)
     {
         Prescription = prescription;
         Order = order;
     }
-    
+
+
     public int PrescriptionId { get; set; }
     public int OrderId { get; set; }
     public Prescription Prescription { get; set; } = null!;

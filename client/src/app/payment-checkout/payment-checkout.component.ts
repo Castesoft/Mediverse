@@ -22,6 +22,11 @@ import {
 import { ToastrService } from "ngx-toastr";
 import { StripePaymentGatewayService } from "src/app/_services/stripe-payment-gateway.service";
 import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
+import { Order } from "src/app/_models/orders/order";
+import { OrdersService } from "src/app/orders/orders.config";
+import {
+  OrderProductsTableComponent
+} from "src/app/orders/components/order-products-table/order-products-table.component";
 
 @Component({
   selector: 'app-payment-checkout',
@@ -31,7 +36,8 @@ import { PaymentNavigationService } from "src/app/payments/payment-navigation.se
     CurrencyPipe,
     CheckoutAddressEntryCardComponent,
     CheckoutPaymentMethodEntryCardComponent,
-    RouterLink
+    RouterLink,
+    OrderProductsTableComponent
   ]
 })
 export class PaymentCheckoutComponent implements OnInit, OnDestroy {
@@ -39,6 +45,7 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly eventsService: EventsService = inject(EventsService);
+  private readonly ordersService: OrdersService = inject(OrdersService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly toastr: ToastrService = inject(ToastrService);
   private readonly matDialog: MatDialog = inject(MatDialog);
@@ -47,7 +54,7 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject<void>();
 
   id!: string;
-  type!: string;
+  type!: 'cita' | 'receta' | 'medicamentos';
   title: string = '';
   cancelUrl: string = '';
 
@@ -59,6 +66,7 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   selectedAddress: Address | null = null;
 
   event: Event | null = null;
+  order: Order | null = null;
 
   ngOnInit(): void {
     const url: string = this.router.url;
@@ -66,18 +74,19 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
       this.type = 'cita';
       this.title = 'Pago de Cita';
       this.id = this.route.snapshot.paramMap.get('id') || '';
+      this.getEventDetails(+this.id);
     } else if (url.includes('/receta/')) {
       this.type = 'receta';
       this.title = 'Pago de Receta';
       this.id = this.route.snapshot.paramMap.get('id') || '';
+      this.getOrderDetails(+this.id);
     } else if (url.includes('/medicamentos/')) {
       this.type = 'medicamentos';
       this.title = 'Pago de Medicamentos';
       this.id = this.route.snapshot.paramMap.get('orderId') || '';
     }
-    this.cancelUrl = this.route.snapshot.queryParamMap.get('cancelUrl') || '';
 
-    this.getEventDetails(+this.id);
+    this.cancelUrl = this.route.snapshot.queryParamMap.get('cancelUrl') || '';
 
     this.subscribeToSelectedAddress();
     this.subscribeToSelectedPaymentMethod();
@@ -120,7 +129,38 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  private getOrderDetails(orderId: number) {
+    this.ordersService.getById(orderId).subscribe({
+      next: (order) => {
+        this.order = order;
+        if (order.total) {
+          this.subtotal = order.total;
+          this.tax = order.total * 0.16;
+          this.total = order.total + this.tax;
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching order details:', err);
+      }
+    });
+  }
+
   onProceedPayment(): void {
+    switch (this.type) {
+      case 'cita':
+        this.payEvent();
+        break;
+      case 'receta':
+        this.payOrder();
+        break;
+      default:
+        this.toastr.error('No se ha encontrado el tipo de pago');
+
+    }
+
+  }
+
+  private payEvent(): void {
     const eventId: number | null = this.event?.id || null;
     const selectedPaymentMethodId: number | null = this.selectedPaymentMethod?.id || null;
 
@@ -136,7 +176,33 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
           return;
         }
 
-        this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl).catch((err: any) => console.error('Navigation error:', err));
+        this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl)
+          .catch((err: any) => console.error('Navigation error:', err));
+      }, error: (err) => {
+        console.error('Error creating payment intent:', err);
+        this.toastr.error('Error al procesar el pago');
+      }
+    })
+  }
+
+  private payOrder(): void {
+    const orderId: number | null = this.order?.id || null;
+    const selectedPaymentMethodId: number | null = this.selectedPaymentMethod?.id || null;
+
+    if (!orderId || !selectedPaymentMethodId) {
+      this.toastr.error('No se ha seleccionado un método de pago o no se ha encontrado la orden');
+      return;
+    }
+
+    this.paymentGatewayService.createPaymentIntentForOrder(orderId, selectedPaymentMethodId).subscribe({
+      next: (res) => {
+        if (!res.paymentId) {
+          console.error('Payment ID not found in response');
+          return;
+        }
+
+        this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl)
+          .catch((err: any) => console.error('Navigation error:', err));
       }, error: (err) => {
         console.error('Error creating payment intent:', err);
         this.toastr.error('Error al procesar el pago');

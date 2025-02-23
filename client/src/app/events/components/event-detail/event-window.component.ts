@@ -342,7 +342,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       .afterClosed()
       .subscribe((confirmed: boolean) => {
         if (confirmed) {
-          this.paymentNavigation.navigateToCheckout(event.id!, patient.id!, this.router.url)
+          this.paymentNavigation.navigateToCheckout(event.id!, patient.id!, 'cita', this.router.url)
             .catch((err: any) => console.error('Navigation error:', err));
         }
       });

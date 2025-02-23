@@ -37,31 +37,41 @@
           </div>
         </div>
         <div class="card-body border-top border-gray-200">
-          @if (event) {
-            <div class="details rounded mb-4">
-              <h6 class="mb-2">Detalles del Evento</h6>
-              <p class="text-muted mb-0">
-                <strong>Servicio:</strong> {{ event.service.name }}
-              </p>
-              <p class="text-muted mb-0">
-                <strong>Precio:</strong> {{ event.service.price | currency:'MXN' }}
-              </p>
-            </div>
+          @switch (type) {
+            @case ('cita') {
+              @if (event) {
+                <div class="details rounded mb-4">
+                  <h6 class="mb-2">Detalles del Evento</h6>
+                  <p class="text-muted mb-0">
+                    <strong>Servicio:</strong> {{ event.service.name }}
+                  </p>
+                  <p class="text-muted mb-0">
+                    <strong>Precio:</strong> {{ event.service.price | currency:'MXN' }}
+                  </p>
+                </div>
+              }
+              <div class="payment-breakdown border-top pt-3">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <p class="text-muted">IVA (16%):</p>
+                    <p class="text-muted">Subtotal:</p>
+                    <p class="fw-bold">Total:</p>
+                  </div>
+                  <div class="text-end">
+                    <p class="">{{ tax | currency:'MXN' }}</p>
+                    <p class="">{{ subtotal | currency:'MXN' }}</p>
+                    <p class="fw-bold">{{ total | currency:'MXN' }}</p>
+                  </div>
+                </div>
+              </div>
+            }
+            @case ('receta') {
+              @if (order) {
+                <div orderProductsTable [order]="order" [showPayButton]="false"></div>
+              }
+            }
           }
-          <div class="payment-breakdown border-top pt-3">
-            <div class="d-flex justify-content-between">
-              <div>
-                <p class="text-muted">IVA (16%):</p>
-                <p class="text-muted">Subtotal:</p>
-                <p class="fw-bold">Total:</p>
-              </div>
-              <div class="text-end">
-                <p class="">{{ tax | currency:'MXN' }}</p>
-                <p class="">{{ subtotal | currency:'MXN' }}</p>
-                <p class="fw-bold">{{ total | currency:'MXN' }}</p>
-              </div>
-            </div>
-          </div>
+
           <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-primary w-100" (click)="onProceedPayment()">Completar Pago</button>
           </div>

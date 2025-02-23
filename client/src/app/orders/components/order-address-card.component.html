@@ -1,6 +1,6 @@
 <div class="card h-100">
   <div class="card-header border-bottom-0 pb-0">
-    <div class="card-title d-flex justify-content-between align-items-center">
+    <div class="card-title d-flex justify-content-between align-items-center w-100 me-0">
       <h2 class="fw-bold mb-0 fs-4 text-gray-800">
         {{ title() }}
         @if (address()?.isMain) {
@@ -10,12 +10,14 @@
 
       @if (address()) {
         <button
-          class="btn btn-sm btn-light-primary"
+          class="btn btn-sm btn-light-primary px-2 ms-4"
           type="button"
           (click)="openInMaps()"
         >
-          <i class="ki-outline ki-map fs-4 me-2"></i>
-          Ver en mapa
+          <i class="ki-outline ki-map fs-4 pe-1"></i>
+          <span class="mt-1">
+            Ver en mapa
+          </span>
         </button>
       }
     </div>

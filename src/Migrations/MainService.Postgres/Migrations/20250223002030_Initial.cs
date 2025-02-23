@@ -495,6 +495,7 @@ namespace MainService.Postgres.Migrations
                     Tax = table.Column<decimal>(type: "numeric", nullable: true),
                     AmountPaid = table.Column<decimal>(type: "numeric", nullable: true),
                     AmountDue = table.Column<decimal>(type: "numeric", nullable: true),
+                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -2153,8 +2154,7 @@ namespace MainService.Postgres.Migrations
                         name: "FK_PatientPrescription_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_PatientPrescription_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
@@ -2182,7 +2182,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_PrescriptionClinic_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
                         principalTable: "Prescriptions",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -2199,8 +2200,7 @@ namespace MainService.Postgres.Migrations
                         name: "FK_PrescriptionOrder_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_PrescriptionOrder_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
@@ -2299,8 +2299,7 @@ namespace MainService.Postgres.Migrations
                         name: "FK_PrescriptionItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -2860,6 +2859,7 @@ namespace MainService.Postgres.Migrations
                     StripePaymentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     StripeInvoiceId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     EventId = table.Column<int>(type: "integer", nullable: true),
+                    OrderId = table.Column<int>(type: "integer", nullable: true),
                     PaymentMethodId = table.Column<int>(type: "integer", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
@@ -2873,6 +2873,12 @@ namespace MainService.Postgres.Migrations
                         name: "FK_Payments_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Payments_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -3423,6 +3429,11 @@ namespace MainService.Postgres.Migrations
                 name: "IX_Payments_EventId",
                 table: "Payments",
                 column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_OrderId",
+                table: "Payments",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_PaymentMethodId",

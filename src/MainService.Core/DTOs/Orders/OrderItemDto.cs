@@ -4,6 +4,7 @@ public class OrderItemDto
 {
     public int? ItemId { get; set; }
     public int? Quantity { get; set; }
+    public string? PhotoUrl { get; set; }
     public string? Dosage { get; set; }
     public string? Instructions { get; set; }
     public string? Notes { get; set; }

@@ -54,8 +54,104 @@ namespace MainService.Controllers
             return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
         }
 
+        [HttpPost("create-payment-intent/order/{orderId:int}")]
+        public async Task<ActionResult<CreatePaymentIntentResponseDto>> CreateOrderPaymentIntent(int orderId,
+            [FromBody] CreatePaymentIntentRequestDto request)
+        {
+            var requestingUserId = User.GetUserId();
+
+            var order = await uow.OrderRepository.GetByIdAsync(orderId);
+            if (order == null)
+                return NotFound($"Order with ID {orderId} not found.");
+
+            var paymentMethod = await uow.PaymentMethodRepository.GetByIdAsync(request.PaymentMethodId);
+            if (paymentMethod == null)
+                return BadRequest("Payment method not found.");
+
+            var patientStripeCustomerId = paymentMethod.User.StripeCustomerId;
+            if (string.IsNullOrEmpty(patientStripeCustomerId))
+                return BadRequest("Patient does not have a Stripe customer account.");
+
+            var doctor = await uow.UserRepository.GetByIdAsync(order.DoctorOrder.DoctorId);
+            if (doctor == null)
+                return BadRequest("Doctor not found for order.");
+
+            var doctorStripeAccountId = doctor.StripeConnectAccountId;
+            if (string.IsNullOrEmpty(doctorStripeAccountId))
+            {
+                var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctor);
+                if (account == null || string.IsNullOrEmpty(account.Id))
+                    return BadRequest("Doctor does not have a Stripe Connect account and creation failed.");
+
+                doctor.StripeConnectAccountId = account.Id;
+                uow.UserRepository.Update(doctor);
+                await uow.Complete();
+                doctorStripeAccountId = account.Id;
+
+                if (!string.IsNullOrEmpty(accountLinkUrl))
+                {
+                    return BadRequest(
+                        $"Doctor account not fully onboarded. Please complete onboarding here: {accountLinkUrl}");
+                }
+            }
+
+            var amountInCents = order.Total * 100;
+
+            if (!amountInCents.HasValue) return BadRequest("Order total could not be calculated.");
+
+            var paymentIntent = await stripeService.CreatePaymentIntentAsync(
+                patientStripeCustomerId,
+                paymentMethod.StripePaymentMethodId!,
+                doctorStripeAccountId,
+                amountInCents.Value,
+                CommissionInCents
+            );
+
+            if (paymentIntent == null)
+                return BadRequest("PaymentIntent creation failed.");
+
+            var payment = new Payment
+            {
+                Amount = amountInCents.Value,
+                Currency = "mxn",
+                Date = DateTime.Now.ToUniversalTime(),
+                PaymentStatus = PaymentStatus.Succeeded,
+                StripePaymentIntent = paymentIntent.Id,
+                StripePaymentId = paymentIntent.LatestChargeId,
+                StripeInvoiceId = paymentIntent.InvoiceId,
+                Order = order,
+                PaymentMethod = paymentMethod
+            };
+
+            order.Payments.Add(payment);
+
+            order.OrderHistories.Add(new OrderHistory
+            {
+                UserId = requestingUserId,
+                ChangeType = OrderChangeType.PaymentProcessed,
+                Property = OrderProperty.PaymentStatus,
+                OldValue = order.PaymentStatus.ToString(),
+                NewValue = PaymentStatus.Succeeded.ToString(),
+            });
+
+            var amountInMxn = amountInCents.Value / 100m;
+            
+            order.PaymentStatus = PaymentStatus.Succeeded;
+            order.AmountPaid += amountInMxn;
+            order.AmountDue -= amountInMxn;
+
+            if (!await uow.Complete())
+                return BadRequest("Payment creation failed.");
+
+            return Ok(new CreatePaymentIntentResponseDto
+            {
+                ClientSecret = paymentIntent.ClientSecret,
+                PaymentId = payment.Id
+            });
+        }
+
         [HttpPost("create-payment-intent/event/{eventId:int}")]
-        public async Task<ActionResult<CreatePaymentIntentResponseDto>> CreatePaymentIntent(int eventId,
+        public async Task<ActionResult<CreatePaymentIntentResponseDto>> CreateEventPaymentIntent(int eventId,
             [FromBody] CreatePaymentIntentRequestDto request)
         {
             var eventItem = await uow.EventRepository.GetByIdAsync(eventId);

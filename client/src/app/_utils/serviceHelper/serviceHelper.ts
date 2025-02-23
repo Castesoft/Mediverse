@@ -241,6 +241,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
    * Creates a new entity on the server and updates local data/redirects if needed.
    */
   create(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
+    console.log(form.value);
     return this.http.post<T>(
       _options?.id ? `${this.baseUrl}${_options.id}` : this.baseUrl,
       _options?.value ?? form.value).pipe(
