@@ -11,14 +11,15 @@
             <div class="card-header">
               <div class="card-title">
                 <h2>
-                  Miniatura
+                  Foto de Perfil
                 </h2>
               </div>
             </div>
             <div class="card-body pt-0">
               <div
+                class="d-flex justify-content-center align-items-center"
                 imageThumbnailSelector
-                [maxFiles]="10"
+                [maxFiles]="1"
                 [maxFileSizeMB]="5"
                 [editable]="use() !== FormUse.DETAIL"
                 [thumbnailSize]="PhotoSize.LARGE"
@@ -29,29 +30,6 @@
                   Suba imágenes del producto. Formatos aceptados: *.png, *.jpg, *.jpeg.
                 </div>
               }
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title w-100 me-0">
-                <div class="d-flex flex-grow justify-content-between w-full align-items-center w-100">
-                  <h2>Estado</h2>
-                  @if (form.controls.isEnabled.value && form.controls.isVisible.value) {
-                    <div class="rounded-circle bg-success w-15px h-15px"></div>
-                  } @else {
-                    <div class="rounded-circle bg-warning w-15px h-15px"></div>
-                  }
-                </div>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <div class="d-flex flex-column gap-2">
-                <div controlsWrapper3 [control]="form.controls.isEnabled"></div>
-                <div controlsWrapper3 [control]="form.controls.isVisible"></div>
-              </div>
             </div>
           </div>
         </div>
@@ -70,27 +48,33 @@
             </div>
             <div class="card-body pt-0">
               <form [id]="form.id" (ngSubmit)="onSubmit()">
-
+                <div class="row g-6">
+                  <div controlsWrapper3
+                       class="col-6"
+                       [control]="form.controls.firstName"
+                       [showBottomMargin]="false"></div>
+                  <div controlsWrapper3
+                       class="col-6"
+                       [control]="form.controls.lastName"
+                       [showBottomMargin]="false"></div>
+                  <div controlsWrapper3
+                       class="col-6"
+                       [control]="form.controls.dateOfBirth"
+                       [showBottomMargin]="false"></div>
+                  <div controlsWrapper3
+                       class="col-6"
+                       [control]="form.controls.sex"
+                       [showBottomMargin]="false"></div>
+                  <div controlsWrapper3
+                       class="col-6"
+                       [control]="form.controls.email"
+                       [showBottomMargin]="false"></div>
+                  <div controlsWrapper3
+                       class="col-6"
+                       [control]="form.controls.phoneNumber"
+                       [showBottomMargin]="false"></div>
+                </div>
               </form>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>Imágenes</h2>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <div imageSelector
-                   [maxFiles]="10"
-                   [maxFileSizeMB]="5"
-                   [editable]="use() !== FormUse.DETAIL"
-                   [thumbnailSize]="PhotoSize.LARGE"
-                   [thumbnailShape]="PhotoShape.SQUARE"
-              ></div>
             </div>
           </div>
         </div>

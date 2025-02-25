@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { AsideStepperComponent } from './aside-stepper/aside-stepper.component';
 import { BottomLinksComponent } from '../bottom-links.component';
 import { FormActionsComponent } from './form-actions/form-actions.component';
@@ -23,6 +23,11 @@ import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { PaymentMethodResult } from "@stripe/stripe-js";
 import { Account } from "src/app/_models/account/account";
+import {
+  authFormSteps,
+  authFormStepsDoctor,
+  authFormStepsPatient
+} from "src/app/auth/components/sign-up/register-patient-form/sign-up-steps";
 
 @Component({
   selector: 'app-sign-up',
@@ -40,7 +45,7 @@ import { Account } from "src/app/_models/account/account";
     Forms2Module,
   ],
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit {
   private readonly validationService: ValidationService = inject(ValidationService);
   private readonly accountService: AccountService = inject(AccountService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
@@ -57,60 +62,49 @@ export class SignUpComponent {
   firstName?: string;
 
   constructor() {
-    const type: string = this.route.snapshot.queryParams['type'];
+    effect(() => {
+      const newParams: any = {
+        type: this.accountType(),
+        step: this.currentStep(),
+      };
 
-    if (type === 'doctor') {
-      this.accountType.set('doctor');
-    } else if (type === 'patient') {
-      this.accountType.set('patient');
-      this.formId.set(this.patientRegisterForm().id);
-    }
-
-    const step: number | undefined = this.route.snapshot.queryParams['step'];
-
-    if (step) {
-      this.currentStep.set(+step);
-    }
+      this.router.navigate([], {
+        queryParams: newParams,
+        queryParamsHandling: 'merge',
+      }).then(() => {});
+    });
 
     effect(() => {
-      const patientFormCopy = this.patientRegisterForm();
+      const patientFormCopy: PatientRegisterForm = this.patientRegisterForm();
       patientFormCopy.validation = this.validationService.active();
       this.patientRegisterForm.set(patientFormCopy);
 
-      if (this.accountType() === 'doctor') {
-        this.router.navigate([], { queryParams: { type: 'doctor' }, queryParamsHandling: 'merge' }).then(() => {});
-      } else if (this.accountType() === 'patient') {
-        this.router.navigate([], { queryParams: { type: 'patient' }, queryParamsHandling: 'merge' }).then(() => {});
+      if (this.accountType() === 'patient') {
         this.formId.set(this.patientRegisterForm().id);
       }
-
-      this.router.navigate([], {
-        queryParams: { step: this.currentStep() },
-        queryParamsHandling: 'merge'
-      }).then(() => {});
-
     });
   }
 
-  steps = [
-    { number: 1, title: 'Tipo de cuenta', subtitle: 'Selecciona tu tipo de cuenta' }
-  ];
+  ngOnInit(): void {
+    const type: string = this.route.snapshot.queryParams['type'];
+    switch (type) {
+      case 'doctor':
+        this.accountType.set('doctor');
+        break;
+      case 'patient':
+        this.accountType.set('patient');
+        this.formId.set(this.patientRegisterForm().id);
+        break;
+    }
 
-  stepsPatient = [
-    { number: 1, title: 'Tipo de cuenta', subtitle: 'Selecciona tu tipo de cuenta' },
-    { number: 2, title: 'Ajustes de Cuenta', subtitle: 'Configure su cuenta' },
-    { number: 3, title: 'Completada', subtitle: 'Su cuenta ha sido creada' },
-  ];
+    const step: number | undefined = this.route.snapshot.queryParams['step'];
+    if (step) {
+      this.currentStep.set(+step);
+    }
+  }
 
-  stepsDoctor = [
-    { number: 1, title: 'Tipo de cuenta', subtitle: 'Selecciona tu tipo de cuenta' },
-    { number: 2, title: 'Ajustes de Cuenta', subtitle: 'Configure su cuenta' },
-    { number: 3, title: 'Detalles de Cuenta', subtitle: 'Ingrese los detalles de cuenta' },
-    { number: 4, title: 'Facturación', subtitle: 'Datos de facturación' },
-    { number: 5, title: 'Completada', subtitle: 'Su cuenta ha sido creada' },
-  ]
 
-  patientRegisterForm = signal(new PatientRegisterForm());
+  patientRegisterForm: WritableSignal<PatientRegisterForm> = signal(new PatientRegisterForm());
 
   doctorForm: FormGroup = this.fb.group({
     accountSettingsForm: this.fb.group({
@@ -159,13 +153,9 @@ export class SignUpComponent {
   });
 
   get formSteps() {
-    if (this.currentStep() === 1) return this.steps;
-    if (this.accountType() === 'patient') return this.stepsPatient;
-    return this.stepsDoctor;
-  }
-
-  selectAccountType(type: string) {
-    this.accountType.set(type as "patient" | "doctor");
+    if (this.currentStep() === 1) return authFormSteps;
+    if (this.accountType() === 'patient') return authFormStepsPatient;
+    return authFormStepsDoctor;
   }
 
   onNextStep() {
@@ -234,15 +224,38 @@ export class SignUpComponent {
       this.doctorForm.get('billingDetailsForm.BillingInteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.InteriorNumber')?.value);
     }
 
-    const jsonData: string = JSON.stringify({
-      ...this.doctorForm.value.accountSettingsForm,
-      ...this.doctorForm.value.accountDetailsForm,
-      ...this.doctorForm.value.billingDetailsForm
-    });
+    console.log('doctorForm: ', this.doctorForm.getRawValue());
+    console.log('accountSettingsForm: ', this.doctorForm.get('accountSettingsForm')?.getRawValue());
+    console.log('accountDetailsForm: ', this.doctorForm.get('accountDetailsForm')?.getRawValue());
+    console.log('billingDetailsForm: ', this.doctorForm.get('billingDetailsForm')?.getRawValue());
+
+    const accountSettingsFormData: any = this.doctorForm.get('accountSettingsForm')?.getRawValue();
+    const accountDetailsFormData: any = this.doctorForm.get('accountDetailsForm')?.getRawValue();
+    const billingDetailsFormData: any = this.doctorForm.get('billingDetailsForm')?.getRawValue();
 
     const formData = new FormData();
 
-    formData.append('json', jsonData);
+    Object.keys(accountSettingsFormData).forEach((key: string) => {
+      const value: any = accountSettingsFormData[key as keyof typeof accountSettingsFormData];
+      if (value !== null && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    Object.keys(accountDetailsFormData).forEach((key: string) => {
+      const value: any = accountDetailsFormData[key as keyof typeof accountDetailsFormData];
+      if (value !== null && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    Object.keys(billingDetailsFormData).forEach((key: string) => {
+      const value: any = billingDetailsFormData[key as keyof typeof billingDetailsFormData];
+      if (value !== null && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+
     formData.append('file', this.doctorForm.get('accountDetailsForm.file')?.value);
 
     this.accountService.registerDoctor(formData).subscribe({
@@ -254,6 +267,8 @@ export class SignUpComponent {
   }
 
   async onSubmit() {
+    console.log('Submitting form in sign-up.component.ts');
+
     switch (this.accountType()) {
       case 'doctor':
         await this.submitDoctorRegisterForm();

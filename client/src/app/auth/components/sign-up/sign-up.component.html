@@ -17,16 +17,24 @@
               @if (accountType() === 'patient') {
                 <app-register-patient-form [(form)]="patientRegisterForm"></app-register-patient-form>
               } @else if (accountType() === 'doctor') {
-                <app-register-doctor-form #registerDoctor [(currentStep)]="currentStep"
+                <app-register-doctor-form #registerDoctor
+                                          (onSubmit)="onSubmit()"
+                                          [(currentStep)]="currentStep"
                                           [formGroup]="doctorForm"></app-register-doctor-form>
               }
             } @else {
               <app-account-completed [name]="firstName"></app-account-completed>
             }
 
-            <div formActions [totalSteps]="formSteps.length" [(currentStep)]="currentStep"
-                 [(isSubmittingApi)]="isSubmittingApi" (onNextStep)="onNextStep()" (onPreviousStep)="onPreviousStep()"
-                 (onSubmit)="onSubmit()" [(accountType)]="accountType" [(patientRegisterForm)]="patientRegisterForm">
+            <div formActions
+                 [totalSteps]="formSteps.length"
+                 [(currentStep)]="currentStep"
+                 [(isSubmittingApi)]="isSubmittingApi"
+                 (onNextStep)="onNextStep()"
+                 (onPreviousStep)="onPreviousStep()"
+                 (onSubmit)="onSubmit()"
+                 [(accountType)]="accountType"
+                 [(patientRegisterForm)]="patientRegisterForm">
             </div>
 
           </div>

@@ -9,6 +9,7 @@ public interface IPaymentMethodRepository
     void Delete(PaymentMethod item);
     Task<PaymentMethod?> GetByIdAsync(int id);
     Task<List<UserPaymentMethodDto>> GetAllByUserIdAsync(int userId);
+    Task<List<UserPaymentMethodDto>> GetAllDtosAsync();
     Task<PaymentMethod?> GetByIdAsNoTrackingAsync(int id);
     Task<List<PaymentMethod>> GetAllAsync();
 }

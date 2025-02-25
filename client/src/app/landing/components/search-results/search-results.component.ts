@@ -24,7 +24,7 @@ import { AvailableTime } from 'src/app/_models/availableTime';
   selector: 'div[searchResults]',
   host: { class: 'h-100 d-flex mobile-view', },
   standalone: true,
-  imports: [SearchFormComponent, CommonModule, RouterModule, BsDropdownModule,
+  imports: [ SearchFormComponent, CommonModule, RouterModule, BsDropdownModule,
     SearchAuthComponent, DoctorDetailWindowComponent, DoctorScheduleWindowComponent, DoctorResultsWindowComponent,
   ],
   providers: [ BsDropdownDirective, ],
@@ -50,7 +50,7 @@ export class SearchResultsComponent implements OnInit {
 
   map?: google.maps.Map;
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [ '$event' ])
   onResize(event: any) {
     this.isMobile.set(event.target.innerWidth <= 768);
   }
@@ -83,10 +83,6 @@ export class SearchResultsComponent implements OnInit {
 
     effect(() => {
       this.setMarkersAndPosition();
-
-      console.log('searchResults', this.service.search());
-
-
     });
   }
 
@@ -124,26 +120,23 @@ export class SearchResultsComponent implements OnInit {
     const results: SearchResults | null = this.service.results();
     const selected: DoctorResult | null = this.service.selected();
     if (results) {
+      const currentZoom: number = this.map?.getZoom() || 12;
       if (results.latitude !== null && results.longitude !== null) {
         this.map?.setCenter({ lat: results.latitude, lng: results.longitude });
-        this.map?.setZoom(12);
+        this.map?.setZoom(currentZoom);
       } else {
-        this.map?.setCenter({ lat: 22.5799, lng: -103.1648 });
-        this.map?.setZoom(6);
+        this.map?.setZoom(currentZoom);
       }
+
       if (results.doctors.length > 0) {
         if (selected && this.didSchedule()) {
           this.service.close();
           this.startingTab = 'schedule';
-          setTimeout(() => {
-            this.service.open(selected);
-          }, 10);
-          setTimeout(() => {
-            this.startingTab = 'general';
-          }, 100);
+          setTimeout(() => { this.service.open(selected); }, 10);
+          setTimeout(() => { this.startingTab = 'general'; }, 100);
         }
         for (const doctor of results.doctors) {
-          this.showMarker(doctor);
+          this.showMarker(doctor).then(() => {});
         }
       }
     }
@@ -151,13 +144,9 @@ export class SearchResultsComponent implements OnInit {
     if (this.service.selected() !== null) {
       const params: Params = getSearchRouteQueryParams(this.service.search());
 
-      // console.log('params', params, 'search', this.service.search());
-
       if (this.service.search().result.availableDays.length > 0) {
         let dayNumber = params['dayNumber'];
         let scheduleOption = params['scheduleOption'];
-
-        // console.log('dayNumber', dayNumber, 'scheduleOption', scheduleOption);
 
 
         if (dayNumber && scheduleOption) {
@@ -167,23 +156,16 @@ export class SearchResultsComponent implements OnInit {
           if (this.service.search().result.availableDays.some(d => d.dayNumber === dayNumber)) {
             const day = this.service.search().result.availableDays.find(d => d.dayNumber === dayNumber);
 
-            // console.log('day', day, 'scheduleOption', scheduleOption);
             if (day) {
               if (day.availableTimes.length > scheduleOption) {
                 this.selectedSchedule.set(day);
-
                 this.selectedTime.set(day.availableTimes[scheduleOption]);
               }
             }
           }
         }
-
       }
-
-      // console.log('selectedSchedule', this.selectedSchedule());
-      // console.log('selectedTime', this.selectedTime());
     }
-
   }
 
   onSearchChange(event: Search) {
@@ -206,7 +188,7 @@ export class SearchResultsComponent implements OnInit {
 
   async showMarker(doctor: DoctorResult) {
     if (this.map) {
-      const {AdvancedMarkerElement} = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
 
       for (const address of doctor.addresses) {
         const marker = new AdvancedMarkerElement({
@@ -231,7 +213,7 @@ export class SearchResultsComponent implements OnInit {
           this.service.hoveredMarker.set(null);
         });
 
-        this.service.markers.set([...this.service.markers(), marker]);
+        this.service.markers.set([ ...this.service.markers(), marker ]);
         const doctorMarkers = this.service.markersMap().get(doctor);
         if (doctorMarkers) {
           doctorMarkers.push(marker);
@@ -241,12 +223,6 @@ export class SearchResultsComponent implements OnInit {
       }
     }
   }
-
-  // centerMapOnDoctor(doctor: DoctorResult) {
-  //   const address = doctor.addresses[0];
-  //   this.map?.setCenter({ lat: address.latitude!, lng: address.longitude! });
-  //   this.map?.setZoom(12);
-  // }
 
   onEventCreated() {
     this.didSchedule.set(true);

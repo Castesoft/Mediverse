@@ -1,32 +1,34 @@
 <p class="fw-semibold  mb-3"
-       [class.required]="!validation.isOptional(control) || isReadonly">
+   [class.required]="!validation.isOptional(control) || isReadonly">
   {{ label }}
 </p>
 
-<div class="row">
-  @for(option of options; let idx = $index; track idx) {
-    <div class="form-check col-4 mb-3">
-      <input
-        [id]="controlName + '-' + idx"
-        type="checkbox"
-        [checked]="isOptionSelected(option)"
-        class="form-check-input"
-        (change)="onCheckboxChange(option, $event)"
-        (click)="preventChanges($event)"
-      >
-      <label class="form-check-label" [for]="controlName + '-' + idx">
-        {{getOptionName(option)}}
-      </label>
-    </div>
-  }
+<div class="container-fluid px-3">
+  <div class="row">
+    @for (option of options; let idx = $index; track idx) {
+      <div class="form-check col-4 mb-3">
+        <input
+          [id]="controlName + '-' + idx"
+          type="checkbox"
+          [checked]="isOptionSelected(option)"
+          class="form-check-input"
+          (change)="onCheckboxChange(option, $event)"
+          (click)="preventChanges($event)"
+        >
+        <label class="form-check-label" [for]="controlName + '-' + idx">
+          {{ getOptionName(option) }}
+        </label>
+      </div>
+    }
+  </div>
 </div>
 
 @if (control.errors) {
   <div invalidFeedback [errors]="errors" [control]="control" [submitted]="submitted"></div>
 }
 
-@if(formText) {
+@if (formText) {
   <div [id]="controlName+'helpBlock'" class="form-text">
-    {{formText}}
+    {{ formText }}
   </div>
 }

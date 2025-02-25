@@ -1,44 +1,45 @@
-@if(doctor() !== null) {
-<div class="tab-pane fade show active" id="kt_contact_view_activity" role="tabpanel">
-  <div class="overflow-y-auto" style="flex: 1;">
-    @if (doctor()!.reviews.length === 0) {
-    <div class="text-center py-10">
-      <i class="ki-duotone ki-message-text-2 fs-3x text-muted mb-5">
-        <span class="path1"></span>
-        <span class="path2"></span>
-        <span class="path3"></span>
-      </i>
-      <h3 class="fs-2 fw-bold text-gray-800 mb-1">No hay reseñas aún</h3>
-      <div class="fs-6 text-muted">Este doctor aún no tiene reseñas.</div>
-    </div>
-    } @else {
-    @for (review of doctor()!.reviews; track $index) {
-    <div class="d-flex flex-column py-6 doctor-search-result">
-      <div class="d-flex gap-3">
-        <div userProfilePicture [fullName]="review.account.fullName" [photoUrl]="review.account.photoUrl" [size]="PhotoSize.SMALL"></div>
-        <div class="d-flex flex-column justify-content-center">
-          <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{review.account.username}}</a>
-          <div class="d-flex align-items-center">
-            <div class="me-2">
-              @for (star of convertToStars(review.rating!); track $index) {
-              <i class="ki-duotone ki-star fs-4" [class.text-gray-500]="star === 0" [class.text-warning]="star === 1">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-              }
-            </div>
-            <span class="text-muted fs-6">{{review.createdAt | date:'d MMM yyyy':'':'es-MX'}}</span>
-          </div>
+@if (doctor() !== null) {
+  <div class="tab-pane w-100 h-100 fade show active" id="kt_contact_view_activity" role="tabpanel">
+    <div class="overflow-y-auto w-100 h-100" style="flex: 1;">
+      @if (doctor()!.reviews.length === 0) {
+        <div class="d-flex flex-column align-items-center justify-content-center py-10 w-100 h-100">
+          <i class="ki-duotone ki-message-text-2 fs-3x text-muted mb-5">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+          <h3 class="fs-2 fw-bold text-gray-800 mb-1">No hay reseñas aún</h3>
+          <div class="fs-6 text-muted">Este doctor aún no tiene reseñas.</div>
         </div>
-      </div>
-      <div class="fw-semibold text-gray-500 pt-3">
-        {{review.comment}}
-      </div>
+      } @else {
+        @for (review of doctor()!.reviews; track $index) {
+          <div class="d-flex flex-column py-6 doctor-search-result">
+            <div class="d-flex gap-3">
+              <div userProfilePicture [fullName]="review.account.fullName" [photoUrl]="review.account.photoUrl"
+                   [size]="PhotoSize.SMALL"></div>
+              <div class="d-flex flex-column justify-content-center">
+                <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">{{ review.account.username }}</a>
+                <div class="d-flex align-items-center">
+                  <div class="me-2">
+                    @for (star of convertToStars(review.rating!); track $index) {
+                      <i class="ki-duotone ki-star fs-4" [class.text-gray-500]="star === 0"
+                         [class.text-warning]="star === 1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                      </i>
+                    }
+                  </div>
+                  <span class="text-muted fs-6">{{ review.createdAt | date:'d MMM yyyy':'':'es-MX' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="fw-semibold text-gray-500 pt-3">
+              {{ review.comment }}
+            </div>
+          </div>
+          <div class="separator separator-dashed"></div>
+        }
+      }
     </div>
-    <div class="separator separator-dashed"></div>
-    }
-    }
   </div>
-</div>
-
 }

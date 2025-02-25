@@ -34,7 +34,8 @@
                  [showBottomMargin]="false"></div>
           }
           @case ('email') {
-            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"
+                 [showBottomMargin]="showBottomMargin()"></div>
           }
           @case ('tel') {
             <div templateControlText [(control)]="control" [(fromWrapper)]="fromWrapper"

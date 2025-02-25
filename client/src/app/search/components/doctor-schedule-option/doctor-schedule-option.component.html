@@ -1,0 +1,35 @@
+<div class="d-flex flex-stack position-relative my-6">
+  <div
+    class="position-absolute h-100 w-4px rounded top-0 start-0"
+    [class.bg-success]="availableTime().available"
+    [class.bg-danger]="!availableTime().available"></div>
+  <div class="fw-semibold ms-5 text-gray-600">
+    <div class="fs-5">
+      {{ availableTime().start }}
+      <small class="text-gray-500 text-uppercase">
+        {{ +availableTime().start!.split(':')[0] < 12 ? 'AM' : 'PM' }}
+      </small>
+      - {{ availableTime().end }}
+      <small class="text-gray-500 text-uppercase">
+        {{ +availableTime().end!.split(':')[0] < 12 ? 'AM' : 'PM' }}
+      </small>
+    </div>
+    <a
+      class="fs-5 fw-bold text-gray-800 text-hover-primary mb-2">
+      {{ availableTime().available ? 'Disponible' : 'Ocupado' }}
+    </a>
+  </div>
+  <button class="btn btn-bg-light btn-sm"
+          [disabled]="!availableTime().available"
+          [ngClass]="{
+            'btn-primary': availableTime() === selectedTime(),
+            'btn-active-color-primary': availableTime() !== selectedTime()
+          }"
+          (click)="onSchedule()">
+    @if (availableTime().available) {
+      Agendar
+    } @else {
+      No Disponible
+    }
+  </button>
+</div>

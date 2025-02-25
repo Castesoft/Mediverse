@@ -70,60 +70,61 @@ public class PatientsController(
     public async Task<ActionResult<UserDto>> CreateAsync([FromBody] PatientCreateDto request)
     {
         if (string.IsNullOrEmpty(request.Email)) return BadRequest("Email es requerido.");
-        if (!DateTime.TryParse(request.DateOfBirth, out DateTime dob))
+        if (request.Sex == null) return BadRequest("Sexo es requerido.");
+        if (!DateTime.TryParse(request.DateOfBirth, out var dateOfBirth))
             return BadRequest("Formato de fecha de nacimiento inválido");
 
-        string? email = User.GetEmail();
+        var requestingDoctorEmail = User.GetEmail();
+        if (string.IsNullOrEmpty(requestingDoctorEmail)) return BadRequest("Email del doctor es requerido.");
 
-        if (string.IsNullOrEmpty(email)) return BadRequest("Email del doctor es requerido.");
+        var patient = await userManager.Users
+            .Include(x => x.Doctors)
+            .SingleOrDefaultAsync(x => x.Email == request.Email);
 
-        if (await service.EmailExistsAsync(request.Email))
+        if (patient != null)
         {
-            AppUser? patient = await userManager.Users
-                    .Include(x => x.Doctors)
-                    .SingleOrDefaultAsync(x => x.Email == request.Email)
-                ;
-
-            if (patient == null) return NotFound($"Paciente con email {request.Email} no fue encontrado.");
-
             if (string.IsNullOrEmpty(patient.Email))
                 return BadRequest($"Email del paciente con ID {patient.Id} es requerido.");
-
-            if (patient.Email == email) return BadRequest($"No puedes agregar tu propio email como paciente.");
-
+            if (patient.Email == requestingDoctorEmail)
+                return BadRequest("No puedes agregar tu propio email como paciente.");
             if (patient.Doctors.Any(x => x.DoctorId == User.GetUserId()))
                 return BadRequest($"El paciente con email {request.Email} ya está registrado.");
 
-            patient.Doctors.Add(new(User.GetUserId()));
+            patient.Doctors.Add(new DoctorPatient(User.GetUserId()));
 
             var updateResult = await userManager.UpdateAsync(patient);
-
-            if (!updateResult.Succeeded) return BadRequest($"Error al agregar paciente con email {request.Email}.");
+            if (!updateResult.Succeeded)
+                return BadRequest($"Error al agregar paciente con email {request.Email}.");
         }
         else
         {
-            AppUser patient = mapper.Map<PatientCreateDto, AppUser>(request);
-
-            patient.DateOfBirth = new DateOnly(dob.Year, dob.Month, dob.Day);
+            patient = new AppUser
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                DateOfBirth = new DateOnly(dateOfBirth.Year, dateOfBirth.Month, dateOfBirth.Day),
+                Email = request.Email,
+                UserName = request.Email,
+                Sex = request.Sex.Code,
+                PhoneNumber = request.PhoneNumber,
+                RecommendedBy = request.RecommendedBy
+            };
 
             var createResult = await userManager.CreateAsync(patient, "Pa$$w0rd");
-
-            if (!createResult.Succeeded) return BadRequest($"Error al crear paciente con email {request.Email}.");
+            if (!createResult.Succeeded)
+                return BadRequest($"Error al crear paciente con email {request.Email}.");
 
             var roleResult = await userManager.AddToRoleAsync(patient, "Patient");
+            if (!roleResult.Succeeded)
+                return BadRequest($"Error al agregar paciente con email {request.Email}.");
 
-            if (!roleResult.Succeeded) return BadRequest($"Error al agregar paciente con email {request.Email}.");
-
-            patient.Doctors.Add(new(User.GetUserId()));
+            patient.Doctors.Add(new DoctorPatient(User.GetUserId()));
 
             var updateResult = await userManager.UpdateAsync(patient);
-
             if (!updateResult.Succeeded)
-                return BadRequest($"Error al agregar paciente a la lista de pacientes del doctor.");
+                return BadRequest("Error al agregar paciente a la lista de pacientes del doctor.");
         }
 
-        var patientToReturn = await uow.UserRepository.GetDtoByEmailAsync(request.Email);
-
-        return Ok(patientToReturn);
+        return Ok(await uow.UserRepository.GetDtoByEmailAsync(request.Email));
     }
 }

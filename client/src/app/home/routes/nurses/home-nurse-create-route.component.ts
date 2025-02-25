@@ -2,36 +2,38 @@ import { Component, effect } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import Nurse from 'src/app/_models/nurses/nurse';
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { Navigation } from "@angular/router";
 
 @Component({
-  host: { class: '' },
   selector: 'div[homeNurseCreateRoute]',
   template: `
     <div breadcrumbs></div>
     <div post>
-      <div nurseForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+      <div nurseForm
+           [(item)]="item"
+           [(key)]="key"
+           [(use)]="use"
+           [(view)]="view"></div>
     </div>
   `,
-  // templateUrl: './home-nurse-detail-route.component.html',
   standalone: false,
 })
 export class HomeNurseCreateRouteComponent
-  extends BaseRouteDetail<Nurse>
-
-{
+  extends BaseRouteDetail<Nurse> {
   constructor() {
     super('nurses', FormUse.CREATE);
 
     this.key.set(`${this.router.url}#nurse-create`);
 
     effect(() => {
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation !== null) {
-        const key = navigation?.extras?.state?.['key'];
-        if (key) {
-          this.key.set(key);
-        }
-      }
+      this.setKey();
     });
+  }
+
+  private setKey(): void {
+    const navigation: Navigation | null = this.router.getCurrentNavigation();
+    if (navigation !== null) {
+      this.key.set(navigation?.extras?.state?.['key'] || null);
+    }
   }
 }

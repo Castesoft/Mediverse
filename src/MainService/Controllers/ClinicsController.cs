@@ -27,7 +27,7 @@ public class ClinicsController(
     IMapper mapper,
     IGoogleService googleService,
     ICloudinaryService cloudinaryService
-    ) : BaseApiController
+) : BaseApiController
 {
     private const string Subject = "clínica";
     private const string SubjectArticle = "La";
@@ -47,8 +47,12 @@ public class ClinicsController(
 
         var pagedList = await uow.ClinicRepository.GetPagedListAsync(param);
 
-        Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
-            pagedList.TotalCount, pagedList.TotalPages));
+        Response.AddPaginationHeader(new PaginationHeader(
+            pagedList.CurrentPage,
+            pagedList.PageSize,
+            pagedList.TotalCount,
+            pagedList.TotalPages
+        ));
 
         return pagedList;
     }
@@ -126,7 +130,7 @@ public class ClinicsController(
         if (string.IsNullOrEmpty(request.Country)) return BadRequest("El país es requerido.");
         if (string.IsNullOrEmpty(request.Zipcode)) return BadRequest("El código postal es requerido.");
         if (!request.IsMain.HasValue) return BadRequest("El rol de la dirección es requerido.");
-        
+
         AppUser? doctor = await userManager.Users
             .Include(x => x.DoctorClinics)
             .ThenInclude(x => x.Clinic)
@@ -161,7 +165,7 @@ public class ClinicsController(
                 ImageUploadResult uploadResult = await cloudinaryService.UploadAsync(file, uploadParams);
 
                 if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
-                
+
                 clinic.ClinicPhotos.Add(new ClinicPhoto(new Photo
                 {
                     Url = uploadResult.SecureUrl,
@@ -170,11 +174,10 @@ public class ClinicsController(
                 }));
             }
 
-            if (clinic.ClinicPhotos.Count() != 0)
+            if (clinic.ClinicPhotos.Count != 0)
             {
-                int mainImageIndex = request.MainImageIndex.Value;
-
-                if (mainImageIndex >= 0 && mainImageIndex < clinic.ClinicPhotos.Count())
+                var mainImageIndex = request.MainImageIndex.Value;
+                if (mainImageIndex >= 0 && mainImageIndex < clinic.ClinicPhotos.Count)
                 {
                     foreach (var (photo, index) in clinic.ClinicPhotos.Select((p, i) => (p, i)))
                     {
@@ -186,23 +189,26 @@ public class ClinicsController(
                     clinic.ClinicPhotos.First().IsMain = true;
                 }
 
-                ClinicPhoto? mainPhoto = clinic.ClinicPhotos.FirstOrDefault(p => p.IsMain);
+                var mainPhoto = clinic.ClinicPhotos.FirstOrDefault(p => p.IsMain);
 
                 Log.Information(mainPhoto != null
                         ? "Main photo confirmed at index {Index}"
                         : "WARNING: No main photo set!",
                     clinic.ClinicPhotos.ToList().IndexOf(mainPhoto!));
+
+                if (mainPhoto != null)
+                {
+                    clinic.ClinicLogo = new ClinicLogo(mainPhoto.Photo);
+                }
             }
         }
+
         doctor.DoctorClinics.Add(new DoctorClinic(clinic, request.IsMain.Value));
 
-        IdentityResult updateResult = await userManager.UpdateAsync(doctor);
-
+        var updateResult = await userManager.UpdateAsync(doctor);
         if (!updateResult.Succeeded) return BadRequest($"Error al agregar la clínica de {doctor.FirstName}.");
 
-        ClinicDto? itemToReturn = await uow.ClinicRepository.GetDtoByIdAsync(clinic.Id);
-
-        return itemToReturn;
+        return await uow.ClinicRepository.GetDtoByIdAsync(clinic.Id);
     }
 
     [HttpPut("{id:int}")]
@@ -219,7 +225,7 @@ public class ClinicsController(
         if (!request.IsMain.HasValue) return BadRequest("El rol de la dirección es requerido.");
 
         if (!await uow.AddressRepository.ExistsByIdAsync(id)) return NotFound("La dirección no fue encontrada.");
-        
+
         AppUser? doctor = await userManager.Users
             .Include(x => x.DoctorClinics)
             .ThenInclude(x => x.Clinic)
@@ -227,7 +233,8 @@ public class ClinicsController(
 
         if (doctor == null) return BadRequest("Error al obtener el doctor.");
 
-        if (!await uow.ClinicRepository.ExistsByIdAndDoctorIdAsync(id, doctor.Id)) return BadRequest("La clínica no pertenece al doctor.");
+        if (!await uow.ClinicRepository.ExistsByIdAndDoctorIdAsync(id, doctor.Id))
+            return BadRequest("La clínica no pertenece al doctor.");
 
         if (request.IsMain.Value)
             foreach (var item in doctor.DoctorClinics)
@@ -245,7 +252,8 @@ public class ClinicsController(
             request.State != clinic.State ||
             request.Country != clinic.Country ||
             request.Zipcode != clinic.Zipcode
-        ) {
+        )
+        {
             var (latitude, longitude) =
                 await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(clinic));
 
@@ -259,7 +267,8 @@ public class ClinicsController(
 
         clinic.DoctorClinic.IsMain = request.IsMain.Value;
 
-        if (uow.HasChanges()) {
+        if (uow.HasChanges())
+        {
             if (!await uow.Complete()) return BadRequest($"Error al actualizar la clínica de {doctor.FirstName}.");
         }
 

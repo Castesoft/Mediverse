@@ -16,11 +16,6 @@ export class AvailableDay {
 
   findIndex(time: AvailableTime | null): number | null {
     if (time === null) return null;
-
-    const index = this.availableTimes.indexOf(time);
-
-    console.log('index', index);
-
     return this.availableTimes.indexOf(time);
   }
 }

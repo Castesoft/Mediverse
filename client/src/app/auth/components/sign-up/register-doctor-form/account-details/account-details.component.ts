@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ControlCheckListComponent } from 'src/app/_forms/control-check-list.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
@@ -6,24 +6,36 @@ import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 import { Specialty } from 'src/app/_models/specialties/specialty';
-import { AccountService } from 'src/app/_services/account.service';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { AddressesService } from 'src/app/addresses/addresses.config';
+import { SpecialtiesService } from "src/app/specialties/specialties.config";
+import { PaymentsService } from "src/app/payments/payments.config";
+import { ControlCheckComponent } from "src/app/_forms/control-check.component";
+import { JsonPipe } from "@angular/common";
 
 @Component({
   selector: 'app-account-details',
-  standalone: true,
-  imports: [ReactiveFormsModule, InputControlComponent, ControlSelectComponent, ControlCheckListComponent],
   templateUrl: './account-details.component.html',
+  imports: [
+    ReactiveFormsModule,
+    InputControlComponent,
+    ControlSelectComponent,
+    ControlCheckListComponent,
+    ControlCheckComponent,
+    JsonPipe
+  ],
 })
-export class AccountDetailsComponent {
-  public controlContainer = inject(ControlContainer);
-  private utilsService = inject(UtilsService);
-  private accountService = inject(AccountService);
-  private addressesService = inject(AddressesService);
+export class AccountDetailsComponent implements OnInit {
+  controlContainer: ControlContainer = inject(ControlContainer);
+
+  private utilsService: UtilsService = inject(UtilsService);
+  private paymentsService: PaymentsService = inject(PaymentsService);
+  private addressesService: AddressesService = inject(AddressesService);
+  private specialtiesService: SpecialtiesService = inject(SpecialtiesService);
 
   myForm!: FormGroup;
   states: string[] = this.utilsService.states;
+
   get citiesList() {
     const selectedState = this.myForm.get('State')?.value;
     if (!selectedState) return [];
@@ -36,11 +48,22 @@ export class AccountDetailsComponent {
 
   ngOnInit() {
     this.myForm = <FormGroup>this.controlContainer.control;
+    this.setSpecialtyOptions();
+    this.setPaymentMethodOptions();
+  }
 
-    this.accountService.getFormFields().subscribe({
-      next: (response) => {
-        this.specialties = response.specialties;
-        this.paymentMethodTypes = response.paymentMethodTypes;
+  private setSpecialtyOptions() {
+    this.specialtiesService.getAll().subscribe({
+      next: (response: Specialty[]) => {
+        this.specialties = response;
+      }
+    })
+  }
+
+  private setPaymentMethodOptions() {
+    this.paymentsService.getAllMethods().subscribe({
+      next: (response: PaymentMethodType[]) => {
+        this.paymentMethodTypes = response;
       }
     })
   }
@@ -91,13 +114,5 @@ export class AccountDetailsComponent {
     if (this.myForm.get('AcceptedPaymentMethods') === null) return false;
     const paymentMethods = this.myForm.get('AcceptedPaymentMethods')!.value as string;
     return paymentMethods.split(',').includes('1') || paymentMethods.split(',').includes('2');
-  }
-
-  setValueAnticipatedCardPayments(e: any) {
-    if (e.target.checked) {
-      this.myForm.get('RequireAnticipatedCardPayments')?.setValue(true);
-    } else {
-      this.myForm.get('RequireAnticipatedCardPayments')?.setValue(false);
-    }
   }
 }

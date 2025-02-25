@@ -241,72 +241,15 @@ public class AccountController(
     }
 
     [HttpPost("register-doctor")]
-    public async Task<ActionResult<AccountDto?>> RegisterDoctorAsync([FromForm] IFormFile file, [FromForm] string json)
+    public async Task<ActionResult<AccountDto?>> RegisterDoctorAsync([FromForm] IFormFile file,
+        [FromForm] DoctorRegisterDto request)
     {
-        if (file == null || file.Length == 0) return BadRequest("No se ha enviado una prueba de especialidad.");
-
-        var request = JsonSerializer.Deserialize<DoctorRegisterDto>(json);
-
-        if (request == null) return BadRequest("Error al registrar al doctor.");
-
-        if (string.IsNullOrEmpty(request.Email)) return BadRequest("No se ha proporcionado un correo.");
-        if (string.IsNullOrEmpty(request.FirstName)) return BadRequest("No se ha proporcionado un nombre.");
-        if (string.IsNullOrEmpty(request.LastName)) return BadRequest("No se ha proporcionado un apellido.");
-        if (string.IsNullOrEmpty(request.Gender)) return BadRequest("No se ha proporcionado un género.");
-        if (!request.DateOfBirth.HasValue) return BadRequest("No se ha proporcionado una fecha de nacimiento.");
-        if (string.IsNullOrEmpty(request.Password)) return BadRequest("No se ha proporcionado una contraseña.");
-        if (string.IsNullOrEmpty(request.ConfirmPassword))
-            return BadRequest("No se ha proporcionado una contraseña de confirmación.");
-        if (!request.AgreeTerms.HasValue) return BadRequest("No se ha aceptado los términos y condiciones.");
-        if (string.IsNullOrEmpty(request.Phone)) return BadRequest("No se ha proporcionado un número de teléfono.");
-        if (string.IsNullOrEmpty(request.State)) return BadRequest("No se ha proporcionado un estado.");
-        if (string.IsNullOrEmpty(request.City)) return BadRequest("No se ha proporcionado una ciudad.");
-        if (string.IsNullOrEmpty(request.Street)) return BadRequest("No se ha proporcionado una calle.");
-        if (string.IsNullOrEmpty(request.Zipcode)) return BadRequest("No se ha proporcionado un código postal.");
-        if (string.IsNullOrEmpty(request.Neighborhood)) return BadRequest("No se ha proporcionado una colonia.");
-        if (string.IsNullOrEmpty(request.ExteriorNumber))
-            return BadRequest("No se ha proporcionado un número exterior.");
-        if (string.IsNullOrEmpty(request.SpecialtyId)) return BadRequest("No se ha proporcionado una especialidad.");
-        if (string.IsNullOrEmpty(request.AcceptedPaymentMethods))
-            return BadRequest("No se han proporcionado métodos de pago aceptados.");
-        if (!request.RequireAnticipatedCardPayments.HasValue)
-            return BadRequest("No se ha especificado si se requieren pagos anticipados con tarjeta.");
-        if (!request.SameAddress.HasValue)
-            return BadRequest("No se ha especificado si la dirección de facturación es la misma que la principal.");
-        if (string.IsNullOrEmpty(request.BillingState))
-            return BadRequest("No se ha proporcionado un estado de facturación.");
-        if (string.IsNullOrEmpty(request.BillingCity))
-            return BadRequest("No se ha proporcionado una ciudad de facturación.");
-        if (string.IsNullOrEmpty(request.BillingAddress))
-            return BadRequest("No se ha proporcionado una dirección de facturación.");
-        if (string.IsNullOrEmpty(request.BillingZipcode))
-            return BadRequest("No se ha proporcionado un código postal de facturación.");
-        if (string.IsNullOrEmpty(request.BillingNeighborhood))
-            return BadRequest("No se ha proporcionado una colonia de facturación.");
-        if (string.IsNullOrEmpty(request.BillingExteriorNumber))
-            return BadRequest("No se ha proporcionado un número exterior de facturación.");
-        if (string.IsNullOrEmpty(request.DisplayName))
-            return BadRequest("No se ha proporcionado un nombre de visualización.");
-        if (string.IsNullOrEmpty(request.StripePaymentMethodId))
-            return BadRequest("No se ha proporcionado un id de método de pago de Stripe.");
-        if (string.IsNullOrEmpty(request.Last4))
-            return BadRequest("No se ha proporcionado los últimos 4 dígitos de la tarjeta.");
-        if (!request.ExpirationMonth.HasValue)
-            return BadRequest("No se ha proporcionado el mes de expiración de la tarjeta.");
-        if (!request.ExpirationYear.HasValue)
-            return BadRequest("No se ha proporcionado el año de expiración de la tarjeta.");
-        if (string.IsNullOrEmpty(request.Brand)) return BadRequest("No se ha proporcionado la marca de la tarjeta.");
-        if (string.IsNullOrEmpty(request.Country)) return BadRequest("No se ha proporcionado el país de la tarjeta.");
-
         using var hmac = new HMACSHA512();
 
         if ((await userManager.FindByEmailAsync(request.Email)) != null)
             return BadRequest("No puede crearse una cuenta con este correo.");
 
-        AppUser user = new();
-
-        user = mapper.Map<AppUser>(request);
-
+        var user = mapper.Map<AppUser>(request);
         user.UserName = request.Email;
 
         if (request.Gender == "Otro")
@@ -318,7 +261,6 @@ public class AccountController(
         var addRole = await userManager.AddToRolesAsync(user, ["Patient", "Doctor"]);
         if (!addRole.Succeeded) return BadRequest(addRole.Errors);
 
-        // Create doctor properties
         var mainAddress = new UserAddress
         {
             UserId = user.Id,
@@ -331,10 +273,11 @@ public class AccountController(
                 Neighborhood = request.Neighborhood,
                 ExteriorNumber = request.ExteriorNumber,
                 InteriorNumber = request.InteriorNumber,
+                CountryCode = "MX",
                 Country = "México"
             },
             IsMain = true,
-            IsBilling = request.SameAddress.Value ? true : false
+            IsBilling = request.SameAddress
         };
 
         var (latitude, longitude) =
@@ -345,7 +288,7 @@ public class AccountController(
         user.UserAddresses.Add(mainAddress);
         user.DoctorClinics.Add(new DoctorClinic { Clinic = mainAddress.Address, IsMain = true });
 
-        if (!request.SameAddress.Value)
+        if (!request.SameAddress)
         {
             var billingAddress = new UserAddress
             {
@@ -359,6 +302,7 @@ public class AccountController(
                     Neighborhood = request.BillingNeighborhood,
                     ExteriorNumber = request.BillingExteriorNumber,
                     InteriorNumber = request.BillingInteriorNumber,
+                    CountryCode = "MX",
                     Country = "México"
                 },
                 IsMain = false,

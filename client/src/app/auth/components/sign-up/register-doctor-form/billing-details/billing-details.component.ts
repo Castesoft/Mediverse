@@ -1,6 +1,12 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, output, OutputEmitterRef, ViewChild } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { StripeCardNumberElement, Stripe, StripeCardExpiryElement, StripeCardCvcElement, loadStripe } from '@stripe/stripe-js';
+import {
+  loadStripe,
+  Stripe,
+  StripeCardCvcElement,
+  StripeCardExpiryElement,
+  StripeCardNumberElement
+} from '@stripe/stripe-js';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
@@ -8,16 +14,24 @@ import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { AddressesService } from 'src/app/addresses/addresses.config';
 import { environment } from 'src/environments/environment';
+
 @Component({
   selector: 'app-billing-details',
-  standalone: true,
-  imports: [ReactiveFormsModule, InputControlComponent, ControlCheckComponent, ControlSelectComponent],
   templateUrl: './billing-details.component.html',
+  imports: [
+    ReactiveFormsModule,
+    InputControlComponent,
+    ControlCheckComponent,
+    ControlSelectComponent
+  ],
 })
 export class BillingDetailsComponent implements OnInit {
   public controlContainer = inject(ControlContainer);
   private utilsService = inject(UtilsService);
   private addressesService = inject(AddressesService);
+
+  onSubmit: OutputEmitterRef<void> = output();
+
   @ViewChild('cardNumber') cardNumberElement!: ElementRef;
   @ViewChild('cardExpiry') cardExpiryElement!: ElementRef;
   @ViewChild('cardCvc') cardCvcElement!: ElementRef;
@@ -30,6 +44,7 @@ export class BillingDetailsComponent implements OnInit {
   myForm!: FormGroup;
 
   states: string[] = this.utilsService.states;
+
   get citiesList() {
     const selectedState = this.myForm.get('BillingState')?.value;
     if (!selectedState) return [];
@@ -118,7 +133,7 @@ export class BillingDetailsComponent implements OnInit {
   }
 
   private updateBillingValidators(sameaddress: boolean): void {
-    const billingControls = ['BillingState', 'BillingCity', 'BillingAddress', 'BillingZipcode'];
+    const billingControls = [ 'BillingState', 'BillingCity', 'BillingAddress', 'BillingZipcode' ];
 
     if (sameaddress) {
       billingControls.forEach(control => {

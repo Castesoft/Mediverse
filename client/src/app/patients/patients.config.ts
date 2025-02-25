@@ -93,6 +93,8 @@ export class PatientFormComponent
       if (this.item() !== null) this.form.patchValue(this.item()! as any);
     });
   }
+
+  protected readonly FormUse = FormUse;
 }
 
 @Component({

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from '@angular/core';
+import { Component, model, ModelSignal, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
 import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
-import { View, CatalogMode } from 'src/app/_models/base/types';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import Nurse from 'src/app/_models/nurses/nurse';
 import { nurseCells } from 'src/app/_models/nurses/nurseConstants';
 import { NurseFiltersForm } from 'src/app/_models/nurses/nurseFiltersForm';
@@ -15,6 +15,7 @@ import { MaterialModule } from 'src/app/_shared/material.module';
 import { TablesModule } from 'src/app/_shared/template/components/tables/tables.module';
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
+import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -30,12 +31,10 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     MaterialModule,
     CommonModule,
     TableMenuComponent,
+    UserTableCellComponent,
   ],
 })
-export class NursesTableComponent
-  extends BaseTable<Nurse, NurseParams, NurseFiltersForm, NursesService>
-  implements OnInit, OnDestroy, TableInputSignals<Nurse, NurseParams>
-{
+export class NursesTableComponent extends BaseTable<Nurse, NurseParams, NurseFiltersForm, NursesService> implements OnDestroy, TableInputSignals<Nurse, NurseParams> {
   item: ModelSignal<Nurse | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -46,11 +45,7 @@ export class NursesTableComponent
 
   constructor() {
     super(NursesService, Nurse, { tableCells: nurseCells, });
-
-    effect(() => {});
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

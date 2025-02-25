@@ -1,15 +1,13 @@
-import { Component, model } from '@angular/core';
+import { Component, model, ModelSignal } from '@angular/core';
 
 @Component({
   selector: 'app-accout-type-selector',
-  standalone: true,
-  imports: [],
   templateUrl: './accout-type-selector.component.html',
 })
 export class AccoutTypeSelectorComponent {
-  accountType = model.required<'patient' | 'doctor'>();
+  accountType: ModelSignal<'patient' | 'doctor'> = model.required();
 
   selectAccountType(type: string) {
-    this.accountType.update(oldValue => type as 'patient' | 'doctor');
+    this.accountType.update(_ => type as 'patient' | 'doctor');
   }
 }

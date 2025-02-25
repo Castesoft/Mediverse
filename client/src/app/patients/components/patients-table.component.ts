@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
+import { Component, model, ModelSignal, OnDestroy } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
-import { View, CatalogMode } from "src/app/_models/base/types";
+import { CatalogMode, View } from "src/app/_models/base/types";
 import { Patient } from "src/app/_models/patients/patient";
 import { patientCells } from "src/app/_models/patients/patientConstants";
 import { PatientFiltersForm } from "src/app/_models/patients/patientFiltersForm";
@@ -34,9 +34,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     TableMenuComponent,
   ],
 })
-export class PatientsTableComponent
-  extends BaseTable<Patient, PatientParams, PatientFiltersForm, PatientsService>
-  implements OnInit, OnDestroy, TableInputSignals<Patient, PatientParams> {
+export class PatientsTableComponent extends BaseTable<Patient, PatientParams, PatientFiltersForm, PatientsService> implements OnDestroy, TableInputSignals<Patient, PatientParams> {
   item: ModelSignal<Patient | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -47,11 +45,7 @@ export class PatientsTableComponent
 
   constructor() {
     super(PatientsService, Patient, { tableCells: patientCells, });
-
-    effect(() => {});
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

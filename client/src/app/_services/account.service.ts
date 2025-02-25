@@ -159,10 +159,6 @@ export class AccountService {
     return false;
   }
 
-  getFormFields() {
-    return this.http.get<any>(`${this.baseUrl}register-doctor-fields`);
-  }
-
   register(value: any) {
     return this.http.post<Account>(`${this.baseUrl}register`, value).pipe(
       map(response => {

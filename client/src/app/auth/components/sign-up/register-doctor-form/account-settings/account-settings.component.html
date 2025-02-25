@@ -1,53 +1,46 @@
-<form
-    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
-    novalidate="novalidate"
-    id="kt_sign_up_form"
-    [formGroup]="myForm">
-    <div class="mb-10 text-center">
-        <h1 class="text-dark mb-3">
-            Ajustes de Cuenta
-        </h1>
+<div class="mb-10 text-center">
+  <h1 class="text-dark mb-3">
+    Ajustes de Cuenta
+  </h1>
+</div>
 
-        <div class="text-gray-400 fw-semibold fs-4">
-            ¿Ya tienes una cuenta?
-
-            <a routerLink="/auth/sign-in" class="link-primary fw-bold">
-                Inicia sesión aquí
-            </a>
-        </div>
-    </div>
-
-    <div class="row mb-5">
+<div class="card">
+  <div class="card-body">
+    <form
+      class="form w-100"
+      novalidate="novalidate"
+      [formGroup]="myForm">
+      <div class="row mb-5">
         <div class="col-xl-6">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="FirstName"
-                [label]="'Nombre(s)'"
-                [type]="'text'"
-                [placeholder]="''"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="FirstName"
+            [label]="'Nombre(s)'"
+            [type]="'text'"
+            [placeholder]="''"
+            [errors]="{
                     required: 'El nombre es requerido.'
                 }"
-            ></div>
+          ></div>
         </div>
 
         <div class="col-xl-6">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="LastName"
-                [label]="'Apellidos'"
-                [type]="'text'"
-                [placeholder]="''"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="LastName"
+            [label]="'Apellidos'"
+            [type]="'text'"
+            [placeholder]="''"
+            [errors]="{
                     required: 'Los apellidos son requeridos.'
                 }"
-            ></div>
+          ></div>
         </div>
-    </div>
+      </div>
 
-    <div
+      <div
         class="fv-row mb-5 fv-plugins-icon-container"
         inputControl
         formControlName="Email"
@@ -58,9 +51,9 @@
             required: 'El correo electrónico es requerido.',
             pattern: 'El correo electrónico no es válido.'
         }"
-    ></div>
+      ></div>
 
-    <div
+      <div
         class="fv-row mb-5 fv-plugins-icon-container"
         inputControl
         formControlName="Phone"
@@ -71,11 +64,11 @@
             required: 'El teléfono es requerido.',
             pattern: 'El teléfono no es válido.'
         }"
-    ></div>
+      ></div>
 
-    <div class="mb-1">
+      <div class="mb-1">
         <div class="position-relative mb-5">
-            <div
+          <div
             class="fv-row mb-5 fv-plugins-icon-container"
             inputControl
             formControlName="Password"
@@ -86,26 +79,15 @@
                 required: 'La contraseña es requerida.',
                 pattern: 'La contraseña debe contener una mayúscula, una minuscula, un número y un símbolo.'
             }"
-            ></div>
+          ></div>
 
-            <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
-            data-kt-password-meter-control="visibility">
+          <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
+                data-kt-password-meter-control="visibility">
             <i class="ki-duotone ki-eye-slash fs-2"></i> <i class="ki-duotone ki-eye fs-2 d-none"></i> </span>
         </div>
+      </div>
 
-        <!-- <div class="d-flex align-items-center mb-3" data-kt-password-meter-control="highlight">
-            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
-            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
-            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
-            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px"></div>
-        </div> -->
-        <!-- <div class="text-muted">
-        Use 8 or more characters with a mix of letters, numbers &amp; symbols.
-        </div>
-        <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div> -->
-    </div>
-
-    <div
+      <div
         class="fv-row mb-5 fv-plugins-icon-container"
         inputControl
         formControlName="ConfirmPassword"
@@ -115,13 +97,26 @@
         [errors]="{
             required: 'La confirmación de contraseña es requerida.',
         }"
-    ></div>
+      ></div>
 
-    <div class="fv-row fv-plugins-icon-container">
-        <div controlCheck formControlName="AgreeTerms">
-            <span class="form-check-label fw-semibold text-gray-700 fs-6">
-                Estoy de acuerdo con los <a (click)="openTermsAndConditionsModal()" class="ms-1 link-primary" style="cursor: pointer;">Términos y condiciones</a>.
-            </span>
-        </div>
-    </div>
-</form>
+      <div controlCheck formControlName="AgreeTerms">
+        <span class="form-check-label fw-semibold text-gray-700 fs-6">
+          Estoy de acuerdo con los
+          <a (click)="openTermsAndConditionsModal()" class="link-primary"
+             style="cursor: pointer;">
+            Términos y condiciones
+          </a>
+          .
+        </span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="text-gray-600 fw-normal fs-5 w-100 d-flex justify-content-center mt-5">
+  ¿Ya tienes una cuenta?
+
+  <a routerLink="/auth/sign-in" class="link-primary fw-semibold ms-2">
+    Inicia sesión aquí
+  </a>
+</div>

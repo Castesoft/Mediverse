@@ -34,21 +34,20 @@ public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepo
             .Include(x => x.ClinicNurses).ThenInclude(x => x.Nurse)
             .AsNoTracking()
             .ProjectTo<ClinicDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync(x => x.Id == id)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<PagedList<ClinicDto>> GetPagedListAsync(ClinicParams param)
     {
         var query = context.Addresses
             .Include(x => x.DoctorClinic.Doctor)
-            .Include(x => x.ClinicLogo.Photo)
+            .Include(x => x.ClinicLogo).ThenInclude(x => x.Photo)
             .Include(x => x.ClinicPhotos).ThenInclude(x => x.Photo)
             .Include(x => x.ClinicNurses).ThenInclude(x => x.Nurse)
             .AsQueryable();
 
         Log.Information("DoctorId: {DoctorId}", param.DoctorId);
         Log.Information("SiteSection: {SiteSection}", param.FromSection);
-        
+
         if (param.DoctorId.HasValue)
         {
             query = query.Where(x => x.DoctorClinic.DoctorId == param.DoctorId);
@@ -132,7 +131,9 @@ public class ClinicRepository(DataContext context, IMapper mapper) : IClinicRepo
 
         return await PagedList<ClinicDto>.CreateAsync(
             query.ProjectTo<ClinicDto>(mapper.ConfigurationProvider),
-            param.PageNumber, param.PageSize);
+            param.PageNumber,
+            param.PageSize
+        );
     }
 
     public async Task<bool> DoctorHasAddressAsync(int doctorId, int addressId) =>

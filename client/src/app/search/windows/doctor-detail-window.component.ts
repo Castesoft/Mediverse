@@ -36,14 +36,10 @@ export class DoctorDetailWindowComponent {
   constructor() {
 
     effect(() => {
-
-      console.log('selected', this.service.selected());
-
-
       let selected = this.service.selected();
       if (selected !== null && this.service.search().dayNumber !== null && this.service.search().scheduleOption !== null) {
         selected = new DoctorResult({ ...selected });
-        const variable = selected.getAvailableDayByDayNumber(this.service.search().dayNumber!);
+        const variable: AvailableDay | null = selected.getAvailableDayByDayNumber(this.service.search().dayNumber!);
         this.selectedSchedule.set(variable);
 
         if (this.selectedSchedule() !== null) {
@@ -54,10 +50,6 @@ export class DoctorDetailWindowComponent {
       } else {
         // this.scheduleWindowOpen.set(false);
       }
-
-
-      // console.log('is open', this.scheduleWindowOpen());
-
     });
   }
 

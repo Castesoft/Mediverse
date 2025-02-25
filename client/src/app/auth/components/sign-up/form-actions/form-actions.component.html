@@ -6,8 +6,11 @@
   }
 
   @if (currentStep() > 1 && currentStep() < totalSteps()) {
-    <button type="button" [disabled]="isSubmittingApi()" class="btn btn-lg btn-light-primary me-4"
-            (click)="previousStep()">
+    <button
+      type="button"
+      class="btn btn-lg btn-light-primary me-4"
+      [disabled]="isSubmittingApi()"
+      (click)="previousStep()">
       <i class="ki-duotone ki-arrow-left fs-4 me-1">
         <span class="path1"></span>
         <span class="path2"></span>
@@ -21,26 +24,6 @@
 </div>
 
 <div>
-  @if (currentStep() < totalSteps() - 1) {
-    <button
-      type="submit"
-      [disabled]="isSubmittingApi()"
-      class="btn btn-lg btn-primary"
-      style="width: 120px;"
-      [attr.form]="formId()">
-      @if (!isSubmittingApi()) {
-        <span class="indicator-label">
-          Enviar
-          <i class="ki-duotone ki-arrow-right fs-4 ms-2">
-            <span class="path1"></span>
-            <span class="path2"></span>
-          </i>
-        </span>
-      } @else {
-        <span class="spinner-border spinner-border-sm align-middle"></span>
-      }
-    </button>
-  }
   @if (currentStep() < totalSteps() - 1 || totalSteps() === 1) {
     <button type="button" class="btn btn-lg btn-primary" (click)="nextStep()">
       Continuar

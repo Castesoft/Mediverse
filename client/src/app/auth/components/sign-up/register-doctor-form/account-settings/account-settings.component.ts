@@ -4,18 +4,19 @@ import { RouterLink } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
-import { TermsAndConditionsModalComponent } from '../../../terms-and-conditions-modal/terms-and-conditions-modal.component';
+import {
+  TermsAndConditionsModalComponent
+} from 'src/app/auth/components/terms-and-conditions-modal/terms-and-conditions-modal.component';
 
 @Component({
   selector: 'app-account-settings',
-  standalone: true,
-  imports: [ReactiveFormsModule, InputControlComponent, ControlCheckComponent, RouterLink],
   templateUrl: './account-settings.component.html',
-  styleUrl: './account-settings.component.scss'
+  styleUrl: './account-settings.component.scss',
+  imports: [ ReactiveFormsModule, InputControlComponent, ControlCheckComponent, RouterLink ],
 })
 export class AccountSettingsComponent {
-  private bsModalService = inject(BsModalService);
-  public controlContainer = inject(ControlContainer);
+  private bsModalService: BsModalService = inject(BsModalService);
+  public controlContainer: ControlContainer = inject(ControlContainer);
 
   myForm!: FormGroup;
 

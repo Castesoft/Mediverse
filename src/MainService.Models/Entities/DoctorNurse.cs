@@ -1,13 +1,11 @@
 namespace MainService.Models.Entities;
+
 public class DoctorNurse
 {
-    public int DoctorId { get; set; }
-    public AppUser Doctor { get; set; } = null!;
-    public int NurseId { get; set; }
-    public AppUser Nurse { get; set; } = null!;
-    
-    public DoctorNurse() {}
-    
+    public DoctorNurse()
+    {
+    }
+
     public DoctorNurse(AppUser doctor, AppUser nurse)
     {
         Doctor = doctor;
@@ -19,4 +17,14 @@ public class DoctorNurse
         DoctorId = doctorId;
         NurseId = nurseId;
     }
+
+    public DoctorNurse(int nurseId)
+    {
+        NurseId = nurseId;
+    }
+
+    public int DoctorId { get; set; }
+    public AppUser Doctor { get; set; } = null!;
+    public int NurseId { get; set; }
+    public AppUser Nurse { get; set; } = null!;
 }

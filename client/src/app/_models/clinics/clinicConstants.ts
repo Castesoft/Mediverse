@@ -8,14 +8,14 @@ import { FormInfo } from "src/app/_models/forms/formTypes";
 import { ColumnOptions } from 'src/app/_models/forms/options/columnOptions';
 import {
   PartialCellsOf,
+  tableCellCode,
   tableCellCreatedAt,
   tableCellDescription,
   tableCellEnabled,
-  tableCellName,
-  tableCellCode,
-  tableCellVisible,
   tableCellId,
-  TableCellItem
+  TableCellItem,
+  tableCellName,
+  tableCellVisible
 } from "src/app/_models/tables/tableCellItem";
 
 export const clinicDictionary: NamingSubject = new NamingSubject(
@@ -36,16 +36,17 @@ export const clinicColumns: Column[] = [
 export const clinicFormInfo: FormInfo<Clinic> = {
   ...addressFormInfo,
 
-  name: { ...addressFormInfo.name, solid: true, },
-  street: { ...addressFormInfo.street, solid: true, },
-  exteriorNumber: { ...addressFormInfo.exteriorNumber, solid: true, },
-  interiorNumber: { ...addressFormInfo.interiorNumber, solid: true, },
-  neighborhood: { ...addressFormInfo.neighborhood, solid: true, },
-  city: { ...addressFormInfo.city, solid: true, },
-  state: { ...addressFormInfo.state, solid: true, },
-  zipcode: { ...addressFormInfo.zipcode, solid: true, },
-  country: { ...addressFormInfo.country, solid: true, },
-
+  name: { ...addressFormInfo.name, },
+  street: { ...addressFormInfo.street, },
+  exteriorNumber: { ...addressFormInfo.exteriorNumber, },
+  interiorNumber: { ...addressFormInfo.interiorNumber, },
+  neighborhood: { ...addressFormInfo.neighborhood, },
+  city: { ...addressFormInfo.city, },
+  state: { ...addressFormInfo.state, },
+  zipcode: { ...addressFormInfo.zipcode, },
+  country: { ...addressFormInfo.country, },
+  description: { ...addressFormInfo.description, },
+  isMain: { ...addressFormInfo.isMain, },
 
 } as FormInfo<Clinic>;
 

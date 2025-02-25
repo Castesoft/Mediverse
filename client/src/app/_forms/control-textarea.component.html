@@ -4,7 +4,6 @@
     {{ label }}
   </label>
 }
-<!-- [class.form-control-solid]="style() === 'solid'" -->
 <textarea
   class="form-control"
   [id]="id ? id : controlName"
@@ -21,8 +20,12 @@
   [attr.aria-describedby]="formText() ? controlName+'helpBlock' : null"
   [attr.aria-label]="label + ' input'"
   [rows]="rows"
-  >
+>
 </textarea>
 
-@if(control.errors) {<div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>}
-@if(formText()) {<div helpBlock [controlName]="controlName" [formText]="formText()"></div>}
+@if (control.errors) {
+  <div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
+}
+@if (formText()) {
+  <div helpBlock [controlName]="controlName" [formText]="formText()"></div>
+}

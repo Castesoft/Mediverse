@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, Injectable, ModelSignal, model, effect } from "@angular/core";
+import { Component, effect, inject, Injectable, model, ModelSignal } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -9,11 +9,11 @@ import BaseForm from "src/app/_models/base/components/extensions/baseForm";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { FormInputSignals, DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { DetailInputSignals, FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Service } from "src/app/_models/services/service";
-import { serviceDictionary, serviceColumns } from "src/app/_models/services/serviceConstants";
+import { serviceColumns, serviceDictionary } from "src/app/_models/services/serviceConstants";
 import { ServiceFiltersForm } from "src/app/_models/services/serviceFiltersForm";
 import { ServiceForm } from "src/app/_models/services/serviceForm";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
@@ -26,26 +26,26 @@ import { ServicesCatalogComponent } from "src/app/services/components/services-c
 @Component({
   selector: 'services-catalog-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      servicesCatalog
-      [(mode)]="data.mode"
-      [(key)]="data.key"
-      [(view)]="data.view"
-      [(isCompact)]="data.isCompact"
-      [(item)]="data.item"
-      [(params)]="data.params"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          servicesCatalog
+          [(mode)]="data.mode"
+          [(key)]="data.key"
+          [(view)]="data.view"
+          [(isCompact)]="data.isCompact"
+          [(item)]="data.item"
+          [(params)]="data.params"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [ServicesCatalogComponent, MaterialModule, CdkModule,],
+  imports: [ ServicesCatalogComponent, MaterialModule, CdkModule, ],
 })
 export class ServicesCatalogModalComponent {
   data = inject<CatalogDialog<Service, ServiceParams>>(MAT_DIALOG_DATA);
@@ -85,7 +85,7 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, FormG
   selector: "[serviceForm]",
   templateUrl: './service-form.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, ControlsModule, Forms2Module,]
+  imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, ]
 })
 export class ServiceFormComponent
   extends BaseForm<
@@ -113,23 +113,21 @@ export class ServiceFormComponent
       }
     });
   }
+
+  protected readonly FormUse = FormUse;
 }
 
 @Component({
   selector: 'div[serviceDetail]',
   template: `
-  <div container3 [type]="'inline'">
-    <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
-  </div>
-  <div serviceForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    <div serviceForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
   `,
   standalone: true,
-  imports: [ServiceFormComponent, ControlsModule, Forms2Module,],
+  imports: [ ServiceFormComponent, ControlsModule, Forms2Module, ],
 })
 export class ServiceDetailComponent
   extends BaseDetail<Service, ServiceParams, ServiceFiltersForm, ServicesService>
-  implements DetailInputSignals<Service>
-{
+  implements DetailInputSignals<Service> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Service | null> = model.required();
@@ -145,25 +143,25 @@ export class ServiceDetailComponent
 @Component({
   selector: 'service-detail-modal',
   template: `
-  @defer {
-    <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
-    <mat-dialog-content>
-    <div
-      serviceDetail
-      [(use)]="data.use"
-      [(view)]="data.view"
-      [(key)]="data.key"
-      [(item)]="data.item"
-      [(title)]="data.title"
-    ></div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
-  </mat-dialog-actions>
-}
-`,
+    @defer {
+      <h2 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{ data.title }}</h2>
+      <mat-dialog-content>
+        <div
+          serviceDetail
+          [(use)]="data.use"
+          [(view)]="data.view"
+          [(key)]="data.key"
+          [(item)]="data.item"
+          [(title)]="data.title"
+        ></div>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Cerrar</button>
+      </mat-dialog-actions>
+    }
+  `,
   standalone: true,
-  imports: [ServiceDetailComponent, ModalWrapperModule, MaterialModule, CdkModule,],
+  imports: [ ServiceDetailComponent, ModalWrapperModule, MaterialModule, CdkModule, ],
 })
 export class ServiceDetailModalComponent {
   data = inject<DetailDialog<Service>>(MAT_DIALOG_DATA);

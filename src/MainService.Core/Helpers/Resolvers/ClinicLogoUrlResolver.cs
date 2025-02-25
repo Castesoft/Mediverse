@@ -11,7 +11,22 @@ public class ClinicLogoUrlResolver : IValueResolver<Address, object, string?>
     public string? Resolve(Address source, object destination, string destMember, ResolutionContext context)
     {
         if (source == null)
+        {
+            Console.WriteLine("ClinicLogoUrlResolver: source is null");
             return null;
+        }
+        
+        if (source.ClinicLogo == null)
+        {
+            Console.WriteLine("ClinicLogoUrlResolver: source.ClinicLogo is null");
+            return null;
+        }
+        
+        if (source.ClinicLogo.Photo == null)
+        {
+            Console.WriteLine("ClinicLogoUrlResolver: source.ClinicLogo.Photo is null");
+            return null;
+        }
 
         if (source.ClinicLogo != null &&
             source.ClinicLogo.Photo != null &&

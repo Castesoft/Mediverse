@@ -1,168 +1,168 @@
-<form
-    class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
-    novalidate="novalidate"
-    id="kt_sign_up_form"
-    [formGroup]="myForm">
-    <div class="mb-10 text-center">
-        <h1 class="text-dark mb-3">
-            Detalles de Cuenta
-        </h1>
-    </div>
+<div class="mb-10 text-center">
+  <h1 class="text-dark mb-3">
+    Ajustes de Cuenta
+  </h1>
+</div>
 
-    <div class="row mb-5">
+<div class="card">
+  <div class="card-body">
+    <form
+      class="form w-100"
+      novalidate="novalidate"
+      [formGroup]="myForm">
+      <div class="row mb-5">
         <div class="col-xl-4">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="Zipcode"
-                [label]="'Código postal'"
-                [type]="'tel'"
-                [placeholder]="''"
-                (input)="enterZipcode($event)"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="Zipcode"
+            [label]="'Código postal'"
+            [type]="'tel'"
+            [placeholder]="''"
+            (input)="enterZipcode($event)"
+            [errors]="{
                     required: 'El código postal es requerido.'
                 }"
-            ></div>
+          ></div>
         </div>
 
         <div class="col-xl-8">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                controlSelect
-                formControlName="Neighborhood"
-                [label]="'Colonia'"
-                [options]="neighborhoods"
-                [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
-                (change)="onNeighborhoodChange($event)"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            controlSelect
+            formControlName="Neighborhood"
+            [label]="'Colonia'"
+            [options]="neighborhoods"
+            [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
+            (change)="onNeighborhoodChange($event)"
+            [errors]="{
                     required: 'La colonia es requerida.'
                 }"
-            ></div>
+          ></div>
         </div>
-    </div>
+      </div>
 
-    <div class="row mb-5">
+      <div class="row mb-5">
         <div class="col-xl-6">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="City"
-                [label]="'Ciudad'"
-                [placeholder]="''"
-                [isReadonly]="true"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="City"
+            [label]="'Ciudad'"
+            [placeholder]="''"
+            [isReadonly]="true"
+            [errors]="{
                     required: 'La ciudad es requerida.'
                 }"
-            ></div>
+          ></div>
         </div>
 
         <div class="col-xl-6">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="State"
-                [label]="'Estado'"
-                [placeholder]="''"
-                [isReadonly]="true"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="State"
+            [label]="'Estado'"
+            [placeholder]="''"
+            [isReadonly]="true"
+            [errors]="{
                     required: 'El estado es requerido.'
                 }"
-            ></div>
+          ></div>
         </div>
-    </div>
+      </div>
 
-    <div class="row mb-5">
+      <div class="row mb-5">
         <div class="col-xl-6">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="Street"
-                [label]="'Calle'"
-                [type]="'text'"
-                [placeholder]="''"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="Street"
+            [label]="'Calle'"
+            [type]="'text'"
+            [placeholder]="''"
+            [errors]="{
                     required: 'La calle es requerida.'
                 }"
-            ></div>
+          ></div>
         </div>
         <div class="col-xl-3">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="ExteriorNumber"
-                [label]="'No. ext.'"
-                [type]="'tel'"
-                [placeholder]="''"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="ExteriorNumber"
+            [label]="'No. ext.'"
+            [type]="'tel'"
+            [placeholder]="''"
+            [errors]="{
                     required: 'El número exterior es requerido.'
                 }"
-            ></div>
+          ></div>
         </div>
         <div class="col-xl-3">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="InteriorNumber"
-                [label]="'No. int.'"
-                [type]="'tel'"
-                [placeholder]="''"
-            ></div>
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="InteriorNumber"
+            [label]="'No. int.'"
+            [type]="'tel'"
+            [placeholder]="''"
+          ></div>
         </div>
-    </div>
+      </div>
 
-    <div class="row mb-5">
+      <div class="row mb-5">
         <div class="col-xl-6">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                controlSelect
-                formControlName="SpecialtyId"
-                [label]="'Especialidad'"
-                [placeholder]="''"
-                [options]="specialties"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            controlSelect
+            formControlName="SpecialtyId"
+            [label]="'Especialidad'"
+            [placeholder]="''"
+            [options]="specialties"
+            [errors]="{
                     required: 'La especialdiad es requerida.'
                 }"
-            ></div>
+          ></div>
         </div>
 
         <div class="col-xl-6">
-            <div
-                class="fv-row fv-plugins-icon-container"
-                inputControl
-                formControlName="certification"
-                [label]="'Cédula/Certificación'"
-                [type]="'file'"
-                [placeholder]="''"
-                [errors]="{
+          <div
+            class="fv-row fv-plugins-icon-container"
+            inputControl
+            formControlName="certification"
+            [label]="'Cédula/Certificación'"
+            [type]="'file'"
+            [placeholder]="''"
+            [errors]="{
                     required: 'La cédula o certificación es requerida.'
                 }"
-                (onChange)="onFileChange($event)"
-            ></div>
-            @if (this.myForm.get('file')?.value) {
-                <div class="mt-2">Archivo seleccionado: {{this.myForm.get('file')?.value.name}}</div>
-            }
+            (onChange)="onFileChange($event)"
+          ></div>
+          @if (this.myForm.get('file')?.value) {
+            <div class="mt-2">Archivo seleccionado: {{ this.myForm.get('file')?.value.name }}</div>
+          }
         </div>
-    </div>
+      </div>
 
-    <div
-        class="fv-row mb-5 fv-plugins-icon-container"
+      <div
         controlCheckList
+        class="mb-5 fv-plugins-icon-container"
         formControlName="AcceptedPaymentMethods"
         [label]="'Métodos de Pago Aceptados'"
         [options]="$any(paymentMethodTypes)"
         [errors]="{
             required: 'Selecciona al menos un método de pago.'
         }"
-    ></div>
-    @if (showRequireAnticipatedCardPaymentsField()) {
-        <div class="d-flex flex-stack mt-5 align-items-center">
-          <div class="me-5">
-              <div class="fs-6 fw-semibold">Requerir pago anticipado para citas con tarjeta de crédito/débito</div>
-          </div>
-          <label class="form-check form-switch form-check-custom form-check-solid">
-              <input class="form-check-input" type="checkbox" [checked]="myForm.get('RequireAnticipatedCardPayments')!.value" (change)="setValueAnticipatedCardPayments($event)" />
-          </label>
+      ></div>
+
+      @if (showRequireAnticipatedCardPaymentsField()) {
+        <div controlCheck formControlName="RequireAnticipatedCardPayments">
+          <span class="form-check-label fw-semibold text-gray-700 fs-6">
+            Requerir pago anticipado para citas con tarjeta de crédito/débito
+          </span>
         </div>
       }
-
-</form>
+    </form>
+  </div>
+</div>

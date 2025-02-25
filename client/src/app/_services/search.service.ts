@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { inject, Injectable, signal } from "@angular/core";
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { inject, Injectable, signal, WritableSignal } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { createId } from '@paralleldrive/cuid2';
 import { Observable, tap } from "rxjs";
@@ -15,45 +14,42 @@ import { UtilsService } from "src/app/_services/utils.service";
 import { getPaginatedResult, PaginatedResult } from "src/app/_utils/serviceHelper/pagination/paginatedResult";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
 import { environment } from "src/environments/environment";
+import AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
-  private http = inject(HttpClient);
-  private utilsService = inject(UtilsService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private matSnackBar = inject(MatSnackBar);
+  private readonly utilsService: UtilsService = inject(UtilsService);
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly http: HttpClient = inject(HttpClient);
+  private readonly router: Router = inject(Router);
 
-  constructor() {
+  private readonly baseUrl: string = `${environment.apiUrl}search/`;
 
-  }
+  search: WritableSignal<Search> = signal(new Search(createId()));
+  results: WritableSignal<SearchResults | null> = signal(null);
+  selected: WritableSignal<DoctorResult | null> = signal(null);
+  pagination: WritableSignal<Pagination | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  quantity: WritableSignal<number> = signal(0);
 
-  baseUrl = `${environment.apiUrl}search/`;
-  results = signal<SearchResults | null>(null);
-  selected = signal<DoctorResult | null>(null);
-  search = signal<Search>(new Search(createId()));
-  pagination = signal<Pagination | null>(null);
-  cache = new Map();
-  quantity = signal<number>(0);
-  loading = signal(false);
+  data: WritableSignal<DoctorResult[]> = signal<DoctorResult[]>([]);
 
-  data = signal<DoctorResult[]>([]);
-
-  markers = signal<google.maps.marker.AdvancedMarkerElement[]>([]);
-  hoveredMarker = signal<DoctorResult | null>(null);
-  markersMap = signal<Map<DoctorResult, google.maps.marker.AdvancedMarkerElement[]>>(new Map<DoctorResult, google.maps.marker.AdvancedMarkerElement[]>());
+  markers: WritableSignal<AdvancedMarkerElement[]> = signal([]);
+  hoveredMarker: WritableSignal<DoctorResult | null> = signal(null);
+  markersMap: WritableSignal<Map<DoctorResult, AdvancedMarkerElement[]>> = signal(new Map<DoctorResult, AdvancedMarkerElement[]>());
 
   setSelected(doctor: DoctorResult | null) {
     const search = new Search(this.search().key, { ...this.search() });
     if (doctor) {
-      search.result = new DoctorResult({ id: doctor.id, fullName: doctor.fullName });
+      search.result = new DoctorResult({ ...doctor });
     } else {
       search.result = new DoctorResult({ id: null, fullName: null });
     }
 
     this.search.set(search);
+
     if (doctor) {
       this.selected.set(new DoctorResult({ ...doctor }));
     } else {
@@ -64,7 +60,7 @@ export class SearchService {
       relativeTo: this.route,
       queryParams: getSearchRouteQueryParams(this.search()),
       queryParamsHandling: 'replace'
-    });
+    }).then(() => {});
   }
 
   setSearchWithParamMap(paramMap: ParamMap) {
@@ -76,7 +72,7 @@ export class SearchService {
       relativeTo: this.route,
       queryParams: getSearchRouteQueryParams(this.search()),
       queryParamsHandling: 'merge'
-    });
+    }).then(() => {});
 
     this.getSearchResults().subscribe({
       next: results => {
@@ -143,8 +139,6 @@ export class SearchService {
     this.markersMap.set(map);
     this.transformMarkerIcons(doctor);
 
-    // this.showMobileSearch.set(false);
-
     return new Observable(observer => {
       observer.next({
         latitude: doctor.addresses[0].latitude!,
@@ -170,8 +164,9 @@ export class SearchService {
 
     if (doctorMarkers) {
       doctorMarkers.forEach((maker) => {
-        const range = document.createRange();
-        const fragment = range.createContextualFragment(doctor.photoUrl ? `
+        const range: Range = document.createRange();
+
+        maker.content = range.createContextualFragment(doctor.photoUrl ? `
           <div class="symbol symbol-circle symbol-60px min-w-60px doctor-map-marker" style="cursor: pointer;">
             <img src="${doctor.photoUrl}" alt="${doctor.firstName}" style="width: 60px;height: 60px;border-radius: 50%;overflow: hidden;">
           </div>
@@ -182,7 +177,7 @@ export class SearchService {
             </div>
           </div>
         `);
-        maker.content = fragment;
+
         maker.zIndex = doctor === this.selected() ? 101 : 100;
       });
 
@@ -191,7 +186,7 @@ export class SearchService {
     }
   }
 
-  setMarkerToMap(doctor: DoctorResult, marker: google.maps.marker.AdvancedMarkerElement) {
+  setMarkerToMap(doctor: DoctorResult, marker: AdvancedMarkerElement) {
     const map = this.markersMap();
     map.set(doctor, [ marker ]);
     this.markersMap.set(map);
@@ -211,7 +206,6 @@ export class SearchService {
 
         if (results.result) {
           this.results.set(results.result);
-          this.cache.set(Object.values(this.search()).join('-'), results.result);
           if (results.result.doctors.length === 0) this.search.set(new Search(this.search().key, {
             ...this.search(),
             pageNumber: 1
@@ -269,12 +263,10 @@ export class SearchService {
 
   createEvent(model: DoctorScheduleFormPayload): Observable<Event> {
     return this.http.post<Event>(`${environment.apiUrl}events/search`, model).pipe(
-      tap(response => {
-        this.matSnackBar.open('Evento creado', 'Cerrar', { duration: 5000 });
+      tap((response: Event) => {
+        console.log('response', response);
 
-        // update search
-        this.search.update(oldValues => {
-
+        this.search.update((oldValues: Search) => {
           const newInstance = Object.setPrototypeOf(oldValues, Search.prototype) as Search;
           newInstance.result = Object.setPrototypeOf(oldValues.result, DoctorResult.prototype) as DoctorResult;
 
@@ -282,7 +274,6 @@ export class SearchService {
           console.log('newInstance', newInstance);
 
           newInstance.eventId = response.id;
-
           newInstance.result.updateAvailableDayAndTime(oldValues.dayNumber, oldValues.scheduleOption);
 
           return newInstance;
@@ -292,9 +283,7 @@ export class SearchService {
           relativeTo: this.route,
           queryParams: getSearchRouteQueryParams(this.search()),
           queryParamsHandling: 'merge'
-        });
-
-        // update results
+        }).then(() => {});
       })
     );
   }

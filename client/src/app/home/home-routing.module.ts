@@ -78,6 +78,7 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           path: 'pacientes/nuevo',
           component: HomePatientCreateRouteComponent,
           title: titleDetailResolver(PatientsService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Pacientes', 'Nuevo Paciente' ], title: 'Nuevo Paciente' },
         },
         {
           path: 'pacientes/:id',
@@ -95,10 +96,10 @@ import { FormUse } from "src/app/_models/forms/formTypes";
         },
         // Citas
         {
-          data: { breadcrumb: 'Citas', title: 'Citas' },
           path: 'citas',
           component: HomeEventsCatalogRouteComponent,
           title: titleCatalogResolver(EventsService),
+          data: { breadcrumb: 'Citas', title: 'Citas' },
         },
         {
           path: 'citas/nuevo',
@@ -118,48 +119,54 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           component: HomeEventEditRouteComponent,
           resolve: { item: createItemResolver(EventsService), },
           title: titleDetailResolver(EventsService, FormUse.EDIT),
+          data: { breadcrumb: [ 'Citas', 'Editar' ], title: 'Editar Cita' }
         },
         // Servicios
         {
-          data: { breadcrumb: 'Servicios', title: 'Servicios' },
           path: 'servicios',
           component: HomeServicesCatalogRouteComponent,
           title: titleCatalogResolver(ServicesService),
+          data: { breadcrumb: 'Servicios', title: 'Servicios' },
         },
         {
           path: 'servicios/nuevo',
           component: HomeServiceCreateRouteComponent,
           title: titleDetailResolver(ServicesService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Servicios', 'Nuevo Servicio' ], title: 'Nuevo Servicio' },
         },
         {
           path: 'servicios/:id',
           component: HomeServiceDetailRouteComponent,
           resolve: { item: createItemResolver(ServicesService), },
           title: titleDetailResolver(ServicesService, FormUse.DETAIL),
+          data: { breadcrumb: [ 'Servicios', 'Ver Servicio' ], title: 'Ver Detalle de Servicio' },
         },
         {
           path: 'servicios/:id/editar',
           component: HomeServiceEditRouteComponent,
           resolve: { item: createItemResolver(ServicesService), },
           title: titleDetailResolver(ServicesService, FormUse.EDIT),
+          data: { breadcrumb: [ 'Servicios', 'Editar' ], title: 'Editar Servicio' },
         },
         // Productos
         {
-          data: { breadcrumb: 'Productos', title: 'Productos' },
           path: 'productos',
           component: HomeProductsCatalogRouteComponent,
           title: titleCatalogResolver(ProductsService),
+          data: { breadcrumb: 'Productos', title: 'Productos' },
         },
         {
           path: 'productos/nuevo',
           component: HomeProductCreateRouteComponent,
           title: titleDetailResolver(ProductsService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Productos', 'Nuevo Producto' ], title: 'Nuevo Producto' },
         },
         {
           path: 'productos/:id',
           component: HomeProductDetailRouteComponent,
           resolve: { item: createItemResolver(ProductsService), },
           title: titleDetailResolver(ProductsService, FormUse.DETAIL),
+          data: { breadcrumb: [ 'Productos', 'Ver Producto' ], title: 'Ver Detalle de Producto' },
         },
         {
           path: 'productos/:id/editar',
@@ -169,113 +176,119 @@ import { FormUse } from "src/app/_models/forms/formTypes";
         },
         // Pedidos
         {
-          data: { breadcrumb: 'Pedidos', title: 'Pedidos' },
           path: 'pedidos',
           component: HomeOrdersCatalogRouteComponent,
           title: titleCatalogResolver(OrdersService),
+          data: { breadcrumb: 'Pedidos', title: 'Pedidos' },
         },
         {
           path: 'pedidos/nuevo',
-          data: { breadcrumb: [ 'Pedidos', 'Nuevo Pedido' ], title: 'Nuevo Pedido' },
           component: HomeOrderCreateRouteComponent,
           title: titleDetailResolver(OrdersService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Pedidos', 'Nuevo Pedido' ], title: 'Nuevo Pedido' },
         },
         {
           path: 'pedidos/:id',
           component: HomeOrderDetailRouteComponent,
-          data: { breadcrumb: [ 'Pedidos', 'Ver Pedido' ], title: 'Ver Detalle de Pedido' },
           resolve: { item: createItemResolver(OrdersService), },
           title: titleDetailResolver(OrdersService, FormUse.DETAIL),
+          data: { breadcrumb: [ 'Pedidos', 'Ver Pedido' ], title: 'Ver Detalle de Pedido' },
         },
         {
           path: 'pedidos/:id/editar',
           component: HomeOrderEditRouteComponent,
-          data: { breadcrumb: [ 'Pedidos', 'Editar' ], title: 'Editar Pedido' },
           resolve: { item: createItemResolver(OrdersService), },
           title: titleDetailResolver(OrdersService, FormUse.EDIT),
+          data: { breadcrumb: [ 'Pedidos', 'Editar' ], title: 'Editar Pedido' },
         },
         // Recetas
         {
-          data: { breadcrumb: 'Recetas', title: 'Recetas' },
           path: 'recetas',
           component: HomePrescriptionsCatalogRouteComponent,
           title: titleCatalogResolver(PrescriptionsService),
+          data: { breadcrumb: 'Recetas', title: 'Recetas' },
         },
         {
           path: 'recetas/nuevo',
           component: HomePrescriptionCreateRouteComponent,
           resolve: { item: () => null, },
-          data: { breadcrumb: [ 'Recetas', 'Nueva Receta' ], title: 'Nueva Receta' },
           title: titleDetailResolver(PrescriptionsService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Recetas', 'Nueva Receta' ], title: 'Nueva Receta' },
         },
         {
           path: 'recetas/:id',
           component: HomePrescriptionDetailRouteComponent,
           resolve: { item: createItemResolver(PrescriptionsService), },
-          data: { breadcrumb: [ 'Recetas', 'Ver Receta' ], title: 'Ver Detalle de Receta' },
           title: titleDetailResolver(PrescriptionsService, FormUse.DETAIL),
+          data: { breadcrumb: [ 'Recetas', 'Ver Receta' ], title: 'Ver Detalle de Receta' },
         },
         {
           path: 'recetas/:id/editar',
           component: HomePrescriptionEditRouteComponent,
           resolve: { item: createItemResolver(PrescriptionsService), },
-          data: { breadcrumb: [ 'Recetas', 'Editar' ], title: 'Editar Receta' },
           title: titleDetailResolver(PrescriptionsService, FormUse.EDIT),
+          data: { breadcrumb: [ 'Recetas', 'Editar' ], title: 'Editar Receta' },
         },
         // Clinicas
         {
-          data: { breadcrumb: 'Clinicas', title: 'Clinicas' },
           path: 'clinicas',
           component: HomeClinicsCatalogRouteComponent,
           title: titleCatalogResolver(ClinicsService),
+          data: { breadcrumb: 'Clinicas', title: 'Clinicas' },
         },
         {
           path: 'clinicas/nuevo',
           component: HomeClinicCreateRouteComponent,
           title: titleDetailResolver(ClinicsService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Clinicas', 'Nueva Clinica' ], title: 'Nueva Clinica' },
         },
         {
           path: 'clinicas/:id',
           component: HomeClinicDetailRouteComponent,
           resolve: { item: createItemResolver(ClinicsService), },
           title: titleDetailResolver(ClinicsService, FormUse.DETAIL),
+          data: { breadcrumb: [ 'Clinicas', 'Ver Clinica' ], title: 'Ver Detalle de Clinica' },
         },
         {
           path: 'clinicas/:id/editar',
           component: HomeClinicEditRouteComponent,
           resolve: { item: createItemResolver(ClinicsService), },
           title: titleDetailResolver(ClinicsService, FormUse.EDIT),
+          data: { breadcrumb: [ 'Clinicas', 'Editar' ], title: 'Editar Clinica' },
         },
         // Especialistas
         {
-          data: { breadcrumb: 'Especialistas', title: 'Especialistas' },
           path: 'especialistas',
           component: HomeNursesCatalogRouteComponent,
           title: titleCatalogResolver(NursesService),
+          data: { breadcrumb: 'Especialistas', title: 'Especialistas' },
         },
         {
           path: 'especialistas/nuevo',
           component: HomeNurseCreateRouteComponent,
           title: titleDetailResolver(NursesService, FormUse.CREATE),
+          data: { breadcrumb: [ 'Especialistas', 'Nuevo Especialista' ], title: 'Nuevo Especialista' },
         },
         {
           path: 'especialistas/:id',
           component: HomeNurseDetailRouteComponent,
           resolve: { item: createItemResolver(NursesService), },
           title: titleDetailResolver(NursesService, FormUse.DETAIL),
+          data: { breadcrumb: [ 'Especialistas', 'Ver Especialista' ], title: 'Ver Detalle de Especialista' },
         },
         {
           path: 'especialistas/:id/editar',
           component: HomeNurseEditRouteComponent,
           resolve: { item: createItemResolver(NursesService), },
           title: titleDetailResolver(NursesService, FormUse.EDIT),
+          data: { breadcrumb: [ 'Especialistas', 'Editar' ], title: 'Editar Especialista' },
         },
         // Farmacia
         {
-          data: { breadcrumb: 'Farmacia', title: 'Farmacia' },
           path: "farmacia",
           component: HomePharmacyCatalogRouteComponent,
-          title: titleCatalogResolver(PharmaciesService)
+          title: titleCatalogResolver(PharmaciesService),
+          data: { breadcrumb: 'Farmacia', title: 'Farmacia' },
         },
       ],
     },

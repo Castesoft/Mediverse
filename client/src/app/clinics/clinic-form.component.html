@@ -17,6 +17,7 @@
             </div>
             <div class="card-body pt-0">
               <div
+                class="d-flex justify-content-center align-items-center"
                 imageThumbnailSelector
                 [maxFiles]="10"
                 [maxFileSizeMB]="5"
@@ -70,49 +71,15 @@
             </div>
             <div class="card-body pt-0">
               <form [id]="form.id" (ngSubmit)="onSubmit()">
-
-                <div templateControlCheckbox [(control)]="form.controls.isMain" [(fromWrapper)]="fromWrapper"></div>
-
-                <div templateControlText [(control)]="form.controls.name" [(fromWrapper)]="fromWrapper"></div>
-
-                <div templateControlTextarea [(control)]="form.controls.description" [(fromWrapper)]="fromWrapper"></div>
-
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>
-                  Dirección
-                </h2>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <form [id]="form.id" (ngSubmit)="onSubmit()">
-
-                <div templateControlText [(control)]="form.controls.street" [(fromWrapper)]="fromWrapper"></div>
-
-                <div controlsRow3 [grid]="3">
-                  <div templateControlText [(control)]="form.controls.zipcode" [(fromWrapper)]="fromWrapper"></div>
-                  <div templateControlText [(control)]="form.controls.exteriorNumber" [(fromWrapper)]="fromWrapper"></div>
-                  <div templateControlText [(control)]="form.controls.interiorNumber" [(fromWrapper)]="fromWrapper"></div>
-                </div>
-
-                <div templateControlText [(control)]="form.controls.neighborhood" [(fromWrapper)]="fromWrapper"></div>
-
-                <div controlsRow3 [grid]="2">
-                  <div templateControlText [(control)]="form.controls.city" [(fromWrapper)]="fromWrapper"></div>
-                  <div templateControlText [(control)]="form.controls.state" [(fromWrapper)]="fromWrapper"></div>
-                </div>
-
-                <div controlsRow3 [grid]="3">
-                  <div templateControlText [(control)]="form.controls.country" [(fromWrapper)]="fromWrapper"></div>
-                </div>
-
+                <div templateControlText
+                     [(control)]="form.controls.name"
+                     [(fromWrapper)]="fromWrapper"></div>
+                <div templateControlTextarea
+                     [(control)]="form.controls.description"
+                     [(fromWrapper)]="fromWrapper"></div>
+                <div templateControlCheckbox
+                     [(control)]="form.controls.isMain"
+                     [(fromWrapper)]="fromWrapper"></div>
               </form>
             </div>
           </div>
@@ -133,6 +100,56 @@
                    [thumbnailSize]="PhotoSize.LARGE"
                    [thumbnailShape]="PhotoShape.SQUARE"
               ></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <h2>
+                  Dirección
+                </h2>
+              </div>
+            </div>
+            <div class="card-body pt-0">
+              <form [id]="form.id" (ngSubmit)="onSubmit()">
+                <div templateControlText
+                     [(control)]="form.controls.street"
+                     [(fromWrapper)]="fromWrapper"></div>
+
+                <div controlsRow3 [grid]="3">
+                  <div templateControlText
+                       [(control)]="form.controls.zipcode"
+                       [(fromWrapper)]="fromWrapper"></div>
+                  <div templateControlText
+                       [(control)]="form.controls.exteriorNumber"
+                       [(fromWrapper)]="fromWrapper"></div>
+                  <div templateControlText
+                       [(control)]="form.controls.interiorNumber"
+                       [(fromWrapper)]="fromWrapper"></div>
+                </div>
+
+                <div templateControlText
+                     [(control)]="form.controls.neighborhood"
+                     [(fromWrapper)]="fromWrapper"></div>
+
+                <div controlsRow3 [grid]="2">
+                  <div templateControlText
+                       [(control)]="form.controls.city"
+                       [(fromWrapper)]="fromWrapper"></div>
+                  <div templateControlText
+                       [(control)]="form.controls.state"
+                       [(fromWrapper)]="fromWrapper"></div>
+                </div>
+
+                <div controlsRow3 [grid]="3">
+                  <div templateControlText
+                       [(control)]="form.controls.country"
+                       [(fromWrapper)]="fromWrapper"></div>
+                </div>
+              </form>
             </div>
           </div>
         </div>

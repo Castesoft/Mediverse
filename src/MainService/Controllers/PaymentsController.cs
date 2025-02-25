@@ -54,6 +54,13 @@ namespace MainService.Controllers
             return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
         }
 
+        [AllowAnonymous]
+        [HttpGet("method-types/all")]
+        public async Task<ActionResult<List<PaymentMethodTypeDto>>> GetAllPaymentMethodTypes()
+        {
+            return await uow.PaymentMethodTypeRepository.GetAllDtosAsync();
+        }
+
         [HttpPost("create-payment-intent/order/{orderId:int}")]
         public async Task<ActionResult<CreatePaymentIntentResponseDto>> CreateOrderPaymentIntent(int orderId,
             [FromBody] CreatePaymentIntentRequestDto request)
@@ -135,7 +142,7 @@ namespace MainService.Controllers
             });
 
             var amountInMxn = amountInCents.Value / 100m;
-            
+
             order.PaymentStatus = PaymentStatus.Succeeded;
             order.AmountPaid += amountInMxn;
             order.AmountDue -= amountInMxn;

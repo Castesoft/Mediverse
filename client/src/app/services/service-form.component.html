@@ -1,16 +1,50 @@
-<form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
-    @if (form.error !== null) {
-      <div errorsAlert3 [(error)]="form.error"></div>
-    }
+<div class="card">
+  <div class="card-body">
+    <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+      @if (form.error !== null) {
+        <div errorsAlert3 [(error)]="form.error"></div>
+      }
 
-  <div formBuilder3 [cols]="2" [controls]="[
-    form.controls.name,
-    form.controls.description,
-    form.controls.price,
-    form.controls.discount,
+      <div formBuilder3 [cols]="2" [controls]="[
+        form.controls.name,
+        form.controls.description,
+        form.controls.price,
+        form.controls.discount,
+      ]"></div>
+    </form>
+  </div>
+</div>
 
-  ]"></div>
+@if (use() !== FormUse.DETAIL) {
+  <div class="col-12 mt-5">
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-light me-5 text-muted">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-primary" (click)="onSubmit(view, use)">
+        <span class="indicator-label">
+          Crear servicio
+        </span>
+        <span class="indicator-progress">
+          Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+}
 
-  <button type="submit" [attr.form]="form.id" class="btn btn-primary">Enviar</button>
 
-</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

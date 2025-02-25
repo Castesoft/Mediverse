@@ -17,7 +17,6 @@ export const sexOptions: SelectOption[] = [
 
 export const patientFormInfo: FormInfo<Patient> = {
   ...baseInfo,
-
   firstName: {
     label: 'Nombre(s)',
     type: 'text',

@@ -1,5 +1,5 @@
 <label
-  class="form-check form-check-custom form-check-solid"
+  class="form-check form-check-custom"
   [for]="id? id : controlName"
 >
   <input
@@ -28,6 +28,7 @@
 @if (control.errors) {
   <div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
 }
+
 @if (formText()) {
   <div helpBlock [controlName]="controlName" [formText]="formText()"></div>
 }

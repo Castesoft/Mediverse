@@ -36,8 +36,9 @@
         </td>
       }
 
+      <td userCell [user]="item" [role]="'Patient'"></td>
+
       @for (cell of row().getItems([
-        'fullName',
         'email',
         'phoneNumber',
         'age',
@@ -46,8 +47,7 @@
         'taxId',
         'eventsCount',
         'createdAt',
-      ]);
-        let idx = $index; track idx) {
+      ]); let idx = $index; track idx) {
         <td tableCell2 [item]="cells()[cell.item.key]!" [(isCompact)]="isCompact" [value]="item[cell.item.key]"></td>
       }
 

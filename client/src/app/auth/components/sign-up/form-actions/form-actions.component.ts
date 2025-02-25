@@ -1,4 +1,15 @@
-import { Component, effect, inject, input, model, output, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  output,
+  OutputEmitterRef,
+  signal
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
@@ -6,37 +17,38 @@ import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientReg
 @Component({
   host: { class: 'd-flex flex-stack pt-15' },
   selector: 'div[formActions]',
-  standalone: true,
-  imports: [],
   templateUrl: './form-actions.component.html',
 })
 export class FormActionsComponent {
-  router = inject(Router);
+  router: Router = inject(Router);
 
-  totalSteps = input.required<number>();
-  currentStep = model.required<number>();
-  isSubmittingApi = model.required<boolean>();
-  onNextStep = output();
-  onPreviousStep = output();
-  onSubmit = output();
+  totalSteps: InputSignal<number> = input.required<number>();
+  currentStep: ModelSignal<number> = model.required<number>();
+  isSubmittingApi: ModelSignal<boolean> = model.required<boolean>();
 
-  patientRegisterForm = model.required<PatientRegisterForm>();
-  accountType = model.required<'patient' | 'doctor'>();
+  onNextStep: OutputEmitterRef<void> = output();
+  onPreviousStep: OutputEmitterRef<void> = output();
+  onSubmit: OutputEmitterRef<void> = output();
+
+  patientRegisterForm: ModelSignal<PatientRegisterForm> = model.required();
+  accountType: ModelSignal<'patient' | 'doctor'> = model.required();
 
   formId = signal<string>(createId());
 
   constructor() {
     effect(() => {
-      if (this.accountType() === 'doctor') {
-
-      } else if (this.accountType() === 'patient') {
-        this.formId.set(this.patientRegisterForm().id);
+      switch (this.accountType()) {
+        case 'doctor':
+          break;
+        case 'patient':
+          this.formId.set(this.patientRegisterForm().id);
+          break;
       }
     });
   }
 
   navigateToLogin() {
-    this.router.navigateByUrl('/auth/sign-in');
+    this.router.navigateByUrl('/auth/sign-in').then(() => {});
   }
 
   nextStep() {

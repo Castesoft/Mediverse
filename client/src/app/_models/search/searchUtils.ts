@@ -3,7 +3,7 @@ import { Params } from '@angular/router';
 import { Search } from 'src/app/_models/search/search';
 
 export function getSearchHttpParams(search: Search): HttpParams {
-  let params = new HttpParams();
+  let params: HttpParams = new HttpParams();
 
   if (search.specialty?.id) params = params.append('specialtyId', search.specialty.id.toString());
   if (search.specialty?.name) params = params.append('specialty', search.specialty.name);

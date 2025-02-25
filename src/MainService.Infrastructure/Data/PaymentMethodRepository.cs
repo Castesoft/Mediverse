@@ -23,6 +23,14 @@ public class PaymentMethodRepository(DataContext context, IMapper mapper) : IPay
             .Select(x => mapper.Map<UserPaymentMethodDto>(x))
             .ToListAsync();
 
+    public Task<List<UserPaymentMethodDto>> GetAllDtosAsync()
+    {
+        return context.PaymentMethods
+            .Includes()
+            .Select(x => mapper.Map<UserPaymentMethodDto>(x))
+            .ToListAsync();
+    }
+
     public async Task<PaymentMethod?> GetByIdAsNoTrackingAsync(int id) =>
         await context.PaymentMethods
             .Includes()

@@ -61,6 +61,10 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
     return this.http.get<PaymentMethod[]>(`${this.baseUrl}methods/${userId}`);
   }
 
+  getAllMethods(): Observable<PaymentMethod[]> {
+    return this.http.get<PaymentMethod[]>(`${this.baseUrl}method-types/all`);
+  }
+
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
     this.matDialog.open<
       PaymentsCatalogModalComponent,

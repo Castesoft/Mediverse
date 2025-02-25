@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ModelSignal, model, effect, inject, InputSignal, input, signal } from '@angular/core';
+import { Component, effect, inject, input, InputSignal, model, ModelSignal, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
 import { ControlsModule } from 'src/app/_forms/controls.module';
@@ -18,7 +18,6 @@ import { PhotoShape, PhotoSize } from 'src/app/_models/photos/photoTypes';
 import { SiteSection } from 'src/app/_models/sections/sectionTypes';
 import { ConfirmService } from 'src/app/_services/confirm/confirm.service';
 import { ImageHandlerService } from 'src/app/_services/image-handler.service';
-import { ImageSelectorComponent } from 'src/app/_shared/components/image-selector.component';
 import { ImageThumbnailSelectorComponent } from 'src/app/_shared/components/image-thumbnail-selector.component';
 import { NursesService } from 'src/app/nurses/nurses.config';
 
@@ -32,14 +31,12 @@ import { NursesService } from 'src/app/nurses/nurses.config';
     RouterModule,
     ControlsModule,
     Forms2Module,
-    ImageSelectorComponent,
     ImageThumbnailSelectorComponent,
   ],
 })
 export class NurseFormComponent
   extends BaseForm<Nurse, NurseParams, NurseFiltersForm, NurseForm, NursesService>
-  implements FormInputSignals<Nurse>
-{
+  implements FormInputSignals<Nurse> {
   protected readonly SiteSection: typeof SiteSection = SiteSection;
   protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
@@ -74,7 +71,7 @@ export class NurseFormComponent
     });
   }
 
-ngOnInit(): void {
+  ngOnInit(): void {
     this.initializeImages();
   }
 
@@ -113,10 +110,17 @@ ngOnInit(): void {
       }
     });
 
+    formData.set('dateOfBirth', this.form.controls.dateOfBirth.value?.toISOString() || '');
+    formData.set('sex', this.form.controls.sex.getRawValue()?.name || '');
+
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Nurse> = isNew
       ? this.service.create(this.form, this.view(), { use: this.use(), value: formData, })
-      : this.service.update(this.form, this.view(), { use: this.use(), value: formData, id: this.form.controls.id.value ?? undefined, });
+      : this.service.update(this.form, this.view(), {
+        use: this.use(),
+        value: formData,
+        id: this.form.controls.id.value ?? undefined,
+      });
 
     observable.subscribe({
       next: (nurse) => {
