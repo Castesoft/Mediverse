@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap/dropdown';
+import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 import { SidebarService } from 'src/app/_services/sidebar.service';
 import { HeaderSearchComponent } from 'src/app/_shared/template/components/headers/header-search.component';
 import { ThemeDropdownComponent } from 'src/app/_shared/template/components/theme-dropdown.component';
@@ -17,5 +18,6 @@ import { UserDropdownComponent } from 'src/app/_shared/template/components/user-
   providers: [BsDropdownDirective,],
 })
 export class HeaderComponent {
-  sidebar = inject(SidebarService);
+  readonly sidebar = inject(SidebarService);
+  readonly query: MobileQueryService = inject(MobileQueryService);
 }

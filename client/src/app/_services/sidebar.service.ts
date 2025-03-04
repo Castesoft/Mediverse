@@ -1,50 +1,50 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SidebarService {
-  opened: boolean = true;
+  opened = signal<boolean>(true);
 
-  label: string = 'Expansión de menú lateral';
-  subject: string = 'is-sidebar-expanded';
-  inputId: string = `${this.subject}Switch`;
-  sliderHelp: string = `${this.subject}Help`;
-  helpText: string = 'Expansión de menú lateral';
+  label = 'Expansión de menú lateral';
+  subject = 'is-sidebar-expanded';
+  inputId = `${this.subject}Switch`;
+  sliderHelp = `${this.subject}Help`;
+  helpText = 'Expansión de menú lateral';
 
   constructor() {
     this.init();
   }
 
-  init(): void {
-    const mode: boolean = this.getLocalStorage();
+  init() {
+    const mode = this.getLocalStorage();
     this.setLocalStorage(mode);
-    this.opened = mode;
+    this.opened.set(mode);
   }
 
-  set(value: boolean): void {
+  set(value: boolean) {
     this.setLocalStorage(value);
-    this.opened = value;
+    this.opened.set(value);
   }
 
-  toggle(): void {
-    this.set(!this.opened);
+  toggle() {
+    this.set(!this.opened());
   }
 
-  private existsInLocalStorage(): boolean {
-    const mode: string | null = localStorage.getItem(this.subject);
+  private existsInLocalStorage() {
+    const mode = localStorage.getItem(this.subject);
     return mode !== null;
   }
 
-  private getLocalStorage(): boolean {
+  private getLocalStorage() {
     if (this.existsInLocalStorage()) {
-      const mode: string | null = localStorage.getItem(this.subject);
+      const mode = localStorage.getItem(this.subject);
       return mode === 'true';
     }
     return false;
   }
 
-  private setLocalStorage(value: boolean): void {
+  private setLocalStorage(value: boolean) {
     localStorage.setItem(this.subject, value.toString());
   }
 }
