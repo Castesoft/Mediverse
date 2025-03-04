@@ -2,11 +2,8 @@ import { Component, inject, HostBinding } from "@angular/core";
 import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 import { SidebarService } from 'src/app/_services/sidebar.service';
 
-
-// wrapper
-
 @Component({
-  host: { class: 'wrapper d-flex flex-column flex-row-fluid', id: 'kt_wrapper' },
+  host: { class: 'wrapper d-flex flex-column flex-row-fluid h-100', id: 'kt_wrapper' },
   selector: 'div[wrapper]',
   template: `<ng-content></ng-content>`,
   standalone: true,
@@ -34,7 +31,5 @@ export class WrapperComponent {
     }
 
     return '';
-
-    // return this.sidebar.opened() === true ? 'padding-left: 0px; ' : 'padding-left: 40px;';
   }
 }
