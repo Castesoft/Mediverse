@@ -18,6 +18,7 @@ import {
   ClinicalHistoryNavMenuComponent
 } from "src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-nav-menu.component";
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 
 @Component({
   selector: 'div[clinicalHistoryForm]',
@@ -29,17 +30,18 @@ import { FormUse } from "src/app/_models/forms/formTypes";
   ],
 })
 export class ClinicalHistoryFormComponent implements OnInit {
-  snackbarService: SnackbarService = inject(SnackbarService);
-  accountService: AccountService = inject(AccountService);
+  readonly snackbarService: SnackbarService = inject(SnackbarService);
+  readonly accountService: AccountService = inject(AccountService);
+  readonly query: MobileQueryService = inject(MobileQueryService);
 
-  diseases: DiseasesService = inject(DiseasesService);
-  substances: SubstancesService = inject(SubstancesService);
-  occupations: OccupationsService = inject(OccupationsService);
-  relativeTypes: RelativeTypesService = inject(RelativeTypesService);
-  maritalStatuses: MaritalStatusesService = inject(MaritalStatusesService);
-  educationLevels: EducationLevelsService = inject(EducationLevelsService);
-  colorBlindnesses: ColorBlindnessesService = inject(ColorBlindnessesService);
-  consumptionLevels: ConsumptionLevelsService = inject(ConsumptionLevelsService);
+  private readonly diseases: DiseasesService = inject(DiseasesService);
+  private readonly substances: SubstancesService = inject(SubstancesService);
+  private readonly occupations: OccupationsService = inject(OccupationsService);
+  private readonly relativeTypes: RelativeTypesService = inject(RelativeTypesService);
+  private readonly maritalStatuses: MaritalStatusesService = inject(MaritalStatusesService);
+  private readonly educationLevels: EducationLevelsService = inject(EducationLevelsService);
+  private readonly colorBlindnesses: ColorBlindnessesService = inject(ColorBlindnessesService);
+  private readonly consumptionLevels: ConsumptionLevelsService = inject(ConsumptionLevelsService);
 
   currentSection: string = 'patientIdentification';
 

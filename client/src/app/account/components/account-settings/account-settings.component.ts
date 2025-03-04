@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Account } from 'src/app/_models/account/account';
 import { AccountService } from 'src/app/_services/account.service';
+import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
 import {
   CardConnectedAccountsComponent
@@ -41,7 +42,9 @@ import { NavMenuComponent } from 'src/app/account/components/account-settings/na
   styleUrl: './account-settings.component.scss'
 })
 export class AccountSettingsComponent {
-  accountService: AccountService = inject(AccountService);
+  readonly accountService: AccountService = inject(AccountService);
+  readonly query: MobileQueryService = inject(MobileQueryService);
+
   account: Account | null = null;
   currentSection: string = 'account_settings_overview';
 
