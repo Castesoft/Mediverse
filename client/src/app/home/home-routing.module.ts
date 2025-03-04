@@ -55,6 +55,7 @@ import { HomeNurseEditRouteComponent } from 'src/app/home/routes/nurses/home-nur
 import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharmacy-catalog-route.component";
 import { PharmaciesService } from "../pharmacies/pharmacies.config";
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { doctorGuard } from "src/app/_guards/doctor.guard";
 
 
 @NgModule({
@@ -73,66 +74,80 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           component: HomePatientsCatalogRouteComponent,
           title: titleCatalogResolver(PatientsService),
           data: { breadcrumb: 'Pacientes', title: 'Pacientes' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'pacientes/nuevo',
           component: HomePatientCreateRouteComponent,
           title: titleDetailResolver(PatientsService, FormUse.CREATE),
           data: { breadcrumb: [ 'Pacientes', 'Nuevo Paciente' ], title: 'Nuevo Paciente' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'pacientes/:id',
           component: HomePatientDetailRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
           title: titleDetailResolver(PatientsService, FormUse.DETAIL, 'fullName'),
-          data: { breadcrumb: [ 'Pacientes', 'Ver Paciente' ], title: 'Ver Detalle de Paciente' }
+          data: { breadcrumb: [ 'Pacientes', 'Ver Paciente' ], title: 'Ver Detalle de Paciente' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'pacientes/:id/editar',
           component: HomePatientEditRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
           title: titleDetailResolver(PatientsService, FormUse.EDIT, 'fullName'),
-          data: { breadcrumb: [ 'Pacientes', 'Editar' ], title: 'Editar Paciente', },
+          data: { breadcrumb: [ 'Pacientes', 'Editar' ], title: 'Editar Paciente', }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         // Citas
         {
           path: 'citas',
           component: HomeEventsCatalogRouteComponent,
           title: titleCatalogResolver(EventsService),
-          data: { breadcrumb: 'Citas', title: 'Citas' },
+          data: { breadcrumb: 'Citas', title: 'Citas' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'citas/nuevo',
           component: HomeEventCreateRouteComponent,
           title: titleDetailResolver(EventsService, FormUse.CREATE),
-          data: { breadcrumb: [ 'Citas', 'Nueva Cita' ], title: 'Nueva Cita' }
+          data: { breadcrumb: [ 'Citas', 'Nueva Cita' ], title: 'Nueva Cita' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'citas/:id',
           component: HomeEventDetailRouteComponent,
           resolve: { item: createItemResolver(EventsService), },
           title: titleDetailResolver(EventsService, FormUse.DETAIL),
-          data: { breadcrumb: [ 'Citas', 'Ver Cita' ], title: 'Ver Detalle de Cita' }
+          data: { breadcrumb: [ 'Citas', 'Ver Cita' ], title: 'Ver Detalle de Cita' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'citas/:id/editar',
           component: HomeEventEditRouteComponent,
           resolve: { item: createItemResolver(EventsService), },
           title: titleDetailResolver(EventsService, FormUse.EDIT),
-          data: { breadcrumb: [ 'Citas', 'Editar' ], title: 'Editar Cita' }
+          data: { breadcrumb: [ 'Citas', 'Editar' ], title: 'Editar Cita' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         // Servicios
         {
           path: 'servicios',
           component: HomeServicesCatalogRouteComponent,
           title: titleCatalogResolver(ServicesService),
-          data: { breadcrumb: 'Servicios', title: 'Servicios' },
+          data: { breadcrumb: 'Servicios', title: 'Servicios' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'servicios/nuevo',
           component: HomeServiceCreateRouteComponent,
           title: titleDetailResolver(ServicesService, FormUse.CREATE),
           data: { breadcrumb: [ 'Servicios', 'Nuevo Servicio' ], title: 'Nuevo Servicio' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'servicios/:id',
@@ -140,26 +155,32 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           resolve: { item: createItemResolver(ServicesService), },
           title: titleDetailResolver(ServicesService, FormUse.DETAIL),
           data: { breadcrumb: [ 'Servicios', 'Ver Servicio' ], title: 'Ver Detalle de Servicio' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'servicios/:id/editar',
           component: HomeServiceEditRouteComponent,
           resolve: { item: createItemResolver(ServicesService), },
           title: titleDetailResolver(ServicesService, FormUse.EDIT),
-          data: { breadcrumb: [ 'Servicios', 'Editar' ], title: 'Editar Servicio' },
+          data: { breadcrumb: [ 'Servicios', 'Editar' ], title: 'Editar Servicio' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         // Productos
         {
           path: 'productos',
           component: HomeProductsCatalogRouteComponent,
           title: titleCatalogResolver(ProductsService),
-          data: { breadcrumb: 'Productos', title: 'Productos' },
+          data: { breadcrumb: 'Productos', title: 'Productos' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'productos/nuevo',
           component: HomeProductCreateRouteComponent,
           title: titleDetailResolver(ProductsService, FormUse.CREATE),
           data: { breadcrumb: [ 'Productos', 'Nuevo Producto' ], title: 'Nuevo Producto' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'productos/:id',
@@ -167,12 +188,15 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           resolve: { item: createItemResolver(ProductsService), },
           title: titleDetailResolver(ProductsService, FormUse.DETAIL),
           data: { breadcrumb: [ 'Productos', 'Ver Producto' ], title: 'Ver Detalle de Producto' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'productos/:id/editar',
           component: HomeProductEditRouteComponent,
           resolve: { item: createItemResolver(ProductsService), },
-          title: titleDetailResolver(ProductsService, FormUse.EDIT),
+          title: titleDetailResolver(ProductsService, FormUse.EDIT), runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         // Pedidos
         {
@@ -185,7 +209,8 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           path: 'pedidos/nuevo',
           component: HomeOrderCreateRouteComponent,
           title: titleDetailResolver(OrdersService, FormUse.CREATE),
-          data: { breadcrumb: [ 'Pedidos', 'Nuevo Pedido' ], title: 'Nuevo Pedido' },
+          data: { breadcrumb: [ 'Pedidos', 'Nuevo Pedido' ], title: 'Nuevo Pedido' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'pedidos/:id',
@@ -193,27 +218,32 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           resolve: { item: createItemResolver(OrdersService), },
           title: titleDetailResolver(OrdersService, FormUse.DETAIL),
           data: { breadcrumb: [ 'Pedidos', 'Ver Pedido' ], title: 'Ver Detalle de Pedido' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'pedidos/:id/editar',
           component: HomeOrderEditRouteComponent,
           resolve: { item: createItemResolver(OrdersService), },
           title: titleDetailResolver(OrdersService, FormUse.EDIT),
-          data: { breadcrumb: [ 'Pedidos', 'Editar' ], title: 'Editar Pedido' },
+          data: { breadcrumb: [ 'Pedidos', 'Editar' ], title: 'Editar Pedido' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         // Recetas
         {
           path: 'recetas',
           component: HomePrescriptionsCatalogRouteComponent,
           title: titleCatalogResolver(PrescriptionsService),
-          data: { breadcrumb: 'Recetas', title: 'Recetas' },
+          data: { breadcrumb: 'Recetas', title: 'Recetas' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'recetas/nuevo',
           component: HomePrescriptionCreateRouteComponent,
           resolve: { item: () => null, },
           title: titleDetailResolver(PrescriptionsService, FormUse.CREATE),
-          data: { breadcrumb: [ 'Recetas', 'Nueva Receta' ], title: 'Nueva Receta' },
+          data: { breadcrumb: [ 'Recetas', 'Nueva Receta' ], title: 'Nueva Receta' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'recetas/:id',
@@ -221,26 +251,32 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           resolve: { item: createItemResolver(PrescriptionsService), },
           title: titleDetailResolver(PrescriptionsService, FormUse.DETAIL),
           data: { breadcrumb: [ 'Recetas', 'Ver Receta' ], title: 'Ver Detalle de Receta' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'recetas/:id/editar',
           component: HomePrescriptionEditRouteComponent,
           resolve: { item: createItemResolver(PrescriptionsService), },
           title: titleDetailResolver(PrescriptionsService, FormUse.EDIT),
-          data: { breadcrumb: [ 'Recetas', 'Editar' ], title: 'Editar Receta' },
+          data: { breadcrumb: [ 'Recetas', 'Editar' ], title: 'Editar Receta' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         // Clinicas
         {
           path: 'clinicas',
           component: HomeClinicsCatalogRouteComponent,
           title: titleCatalogResolver(ClinicsService),
-          data: { breadcrumb: 'Clinicas', title: 'Clinicas' },
+          data: { breadcrumb: 'Clinicas', title: 'Clinicas' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'clinicas/nuevo',
           component: HomeClinicCreateRouteComponent,
           title: titleDetailResolver(ClinicsService, FormUse.CREATE),
           data: { breadcrumb: [ 'Clinicas', 'Nueva Clinica' ], title: 'Nueva Clinica' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'clinicas/:id',
@@ -248,26 +284,32 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           resolve: { item: createItemResolver(ClinicsService), },
           title: titleDetailResolver(ClinicsService, FormUse.DETAIL),
           data: { breadcrumb: [ 'Clinicas', 'Ver Clinica' ], title: 'Ver Detalle de Clinica' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'clinicas/:id/editar',
           component: HomeClinicEditRouteComponent,
           resolve: { item: createItemResolver(ClinicsService), },
           title: titleDetailResolver(ClinicsService, FormUse.EDIT),
-          data: { breadcrumb: [ 'Clinicas', 'Editar' ], title: 'Editar Clinica' },
+          data: { breadcrumb: [ 'Clinicas', 'Editar' ], title: 'Editar Clinica' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         // Especialistas
         {
           path: 'especialistas',
           component: HomeNursesCatalogRouteComponent,
           title: titleCatalogResolver(NursesService),
-          data: { breadcrumb: 'Especialistas', title: 'Especialistas' },
+          data: { breadcrumb: 'Especialistas', title: 'Especialistas' }, runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'especialistas/nuevo',
           component: HomeNurseCreateRouteComponent,
           title: titleDetailResolver(NursesService, FormUse.CREATE),
           data: { breadcrumb: [ 'Especialistas', 'Nuevo Especialista' ], title: 'Nuevo Especialista' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'especialistas/:id',
@@ -275,6 +317,8 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           resolve: { item: createItemResolver(NursesService), },
           title: titleDetailResolver(NursesService, FormUse.DETAIL),
           data: { breadcrumb: [ 'Especialistas', 'Ver Especialista' ], title: 'Ver Detalle de Especialista' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
         {
           path: 'especialistas/:id/editar',
@@ -282,7 +326,10 @@ import { FormUse } from "src/app/_models/forms/formTypes";
           resolve: { item: createItemResolver(NursesService), },
           title: titleDetailResolver(NursesService, FormUse.EDIT),
           data: { breadcrumb: [ 'Especialistas', 'Editar' ], title: 'Editar Especialista' },
+          runGuardsAndResolvers: 'always',
+          canActivate: [ doctorGuard ]
         },
+        // hasta aqui
         // Farmacia
         {
           path: "farmacia",

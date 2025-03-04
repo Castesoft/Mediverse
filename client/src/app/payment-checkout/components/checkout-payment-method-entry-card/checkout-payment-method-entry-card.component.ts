@@ -34,8 +34,10 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit, OnDestro
 
   displayCollapsed: boolean = false;
   selectorCollapsed: boolean = true;
+  isLoading: boolean = false;
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.getUserPaymentMethods();
     this.subscribeToSelectedPaymentMethod();
   }
@@ -54,6 +56,8 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit, OnDestro
   }
 
   private getUserPaymentMethods() {
+    this.isLoading = true;
+
     if (!this.accountsService.current()) {
       console.error("User not authenticated");
       return;
@@ -67,7 +71,11 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit, OnDestro
         this.paymentCheckoutService.setSelectedPaymentMethod(this.selectedPaymentMethod);
       },
       error: (err) => {
+        this.isLoading = false;
         console.error('Error fetching payment methods:', err);
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }

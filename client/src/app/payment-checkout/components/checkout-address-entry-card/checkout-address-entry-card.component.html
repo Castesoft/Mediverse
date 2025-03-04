@@ -1,7 +1,9 @@
 <div class="card">
   <div class="card-header">
     <div class="card-title">
-      <h3>Dirección de Entrega</h3>
+      <h3>
+        {{ title() }}
+      </h3>
     </div>
     <div class="d-flex flex-column align-items-center justify-content-center">
       @if (selectedAddress) {
@@ -12,27 +14,37 @@
     </div>
   </div>
 
-  <div [collapse]="displayCollapsed" [isAnimated]="true" (collapsed)="onDisplayHidden()">
-    <div class="card-body border-top border-gray-200">
-      @if (selectedAddress) {
-        <div addressDisplayCard
-             [address]="selectedAddress"
-             [selected]="true"
-             [displayOnly]="true"
-             [selectionMode]="false">
+  @if (isLoading) {
+    <div class="card-body border-top">
+      <div class="d-flex justify-content-center py-3">
+        <div class="spinner-border text-gray-400" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
-      }
-    </div>
-  </div>
-
-  <div [collapse]="selectorCollapsed" [isAnimated]="true" (collapsed)="onSelectorHidden()">
-    <div class="card-body pt-0">
-      <div addressSelector
-           [addresses]="addresses"
-           [confirmOnSelect]="true"
-           [showAddressCreateCard]="true"
-           (selectedAddress)="onAddressSelected($event)">
       </div>
     </div>
-  </div>
+  } @else {
+    <div [collapse]="displayCollapsed" [isAnimated]="true" (collapsed)="onDisplayHidden()">
+      <div class="card-body border-top border-gray-200">
+        @if (selectedAddress) {
+          <div addressDisplayCard
+               [address]="selectedAddress"
+               [selected]="true"
+               [displayOnly]="true"
+               [selectionMode]="false">
+          </div>
+        }
+      </div>
+    </div>
+
+    <div [collapse]="selectorCollapsed" [isAnimated]="true" (collapsed)="onSelectorHidden()">
+      <div class="card-body pt-0">
+        <div addressSelector
+             [addresses]="addresses"
+             [confirmOnSelect]="true"
+             [showAddressCreateCard]="true"
+             (selectedAddress)="onAddressSelected($event)">
+        </div>
+      </div>
+    </div>
+  }
 </div>

@@ -7,9 +7,13 @@ namespace MainService.Core.Interfaces.Data;
 
 public interface ISubscriptionRepository
 {
-    void Add(Subscription subscription);
-    Task<Subscription?> GetByIdAsync(int id);
-    Task<List<Subscription>> GetSubscriptionsByUserIdAsync(int userId);
+    void Add(UserSubscription userSubscription);
+    Task<UserSubscription?> GetByIdAsync(int id);
+    Task<SubscriptionDto?> GetDtoByIdAsync(int id);
+    Task<UserSubscription?> GetByStripeSubscriptionIdAsync(string stripeSubscriptionId);
+    Task<UserSubscription?> GetActiveSubscriptionForUserAsync(int userId);
+
+    Task<List<UserSubscription>> GetSubscriptionsByUserIdAsync(int userId);
     Task<PagedList<SubscriptionDto>> GetPagedListAsync(SubscriptionParams param);
-    void Delete(Subscription subscription);
+    void Delete(UserSubscription userSubscription);
 }

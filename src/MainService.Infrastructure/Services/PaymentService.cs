@@ -1,6 +1,5 @@
 using AutoMapper;
 using MainService.Core.DTOs.Payment;
-using MainService.Core.DTOs.User;
 using MainService.Core.Interfaces.Services;
 using MainService.Models.Entities;
 

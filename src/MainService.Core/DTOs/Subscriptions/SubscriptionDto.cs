@@ -4,12 +4,14 @@ public class SubscriptionDto
 {
     public int Id { get; set; }
     public int UserId { get; set; }
-    public int SubscriptionPlanId { get; set; }
-    public string SubscriptionPlanName { get; set; } = string.Empty;
-    public DateTime SubscriptionStartDate { get; set; }
-    public DateTime? SubscriptionEndDate { get; set; }
+    public int PlanId { get; set; }
+    public decimal Price { get; set; }
+    public string PlanName { get; set; } = string.Empty;
+    public DateTime StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
     public string Status { get; set; } = string.Empty;
     public DateTime? NextBillingDate { get; set; }
+    public string? StripePlanId { get; set; }
     public string? StripeSubscriptionId { get; set; }
     public string? StripeCustomerId { get; set; }
 }

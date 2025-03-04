@@ -20,7 +20,7 @@ public class SubscriptionHistoryRepository(DataContext context, IMapper mapper) 
     public async Task<List<SubscriptionHistory>> GetHistoryBySubscriptionIdAsync(int subscriptionId)
     {
         return await context.SubscriptionHistories
-            .Where(h => h.SubscriptionId == subscriptionId)
+            .Where(h => h.UserSubscriptionId == subscriptionId)
             .OrderByDescending(h => h.ChangedAt)
             .ToListAsync();
     }
@@ -28,12 +28,12 @@ public class SubscriptionHistoryRepository(DataContext context, IMapper mapper) 
     public async Task<PagedList<SubscriptionHistoryDto>> GetPagedListAsync(SubscriptionHistoryParams param)
     {
         var query = context.SubscriptionHistories
-            .Include(x => x.Subscription).ThenInclude(x => x.User)
+            .Include(x => x.UserSubscription).ThenInclude(x => x.User)
             .AsQueryable();
 
         if (param.DoctorId.HasValue)
         {
-            query = query.Where(x => x.Subscription.UserId == param.DoctorId);
+            query = query.Where(x => x.UserSubscription.UserId == param.DoctorId);
         }
 
         if (!string.IsNullOrEmpty(param.Search))

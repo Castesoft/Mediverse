@@ -301,11 +301,11 @@ public static class Seed
             // Next billing date is based on the plan’s billing frequency.
             var nextBillingDate = startDate.AddMonths(chosenPlan.BillingFrequencyInMonths);
 
-            var subscription = new Subscription
+            var subscription = new UserSubscription
             {
                 UserId = user.Id,
                 SubscriptionPlanId = chosenPlan.Id,
-                SubscriptionStartDate = startDate,
+                StartDate = startDate,
                 NextBillingDate = nextBillingDate,
                 Status = SubscriptionStatus.Active,
                 StripeSubscriptionId = "sub_demo_" + user.Id,
@@ -340,7 +340,7 @@ public static class Seed
 
                 var history = new SubscriptionHistory
                 {
-                    Subscription = subscription,
+                    UserSubscription = subscription,
                     ChangedAt = historyTime,
                     OldStatus = previousStatus,
                     NewStatus = newStatus,

@@ -2629,8 +2629,8 @@ namespace MainService.Postgres.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     SubscriptionPlanId = table.Column<int>(type: "integer", nullable: false),
-                    SubscriptionStartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    SubscriptionEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
                     NextBillingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StripeSubscriptionId = table.Column<string>(type: "text", nullable: true),
@@ -2889,12 +2889,51 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SubscriptionCancellations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CancellationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TooExpensive = table.Column<bool>(type: "boolean", nullable: false),
+                    NotEnoughUse = table.Column<bool>(type: "boolean", nullable: false),
+                    FoundAlternative = table.Column<bool>(type: "boolean", nullable: false),
+                    MissingFeatures = table.Column<bool>(type: "boolean", nullable: false),
+                    TechnicalProblems = table.Column<bool>(type: "boolean", nullable: false),
+                    PoorSupport = table.Column<bool>(type: "boolean", nullable: false),
+                    OtherReason = table.Column<bool>(type: "boolean", nullable: false),
+                    Feedback = table.Column<string>(type: "character varying(1500)", maxLength: 1500, nullable: true),
+                    UserSubscriptionId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubscriptionCancellations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubscriptionCancellations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SubscriptionCancellations_Subscriptions_UserSubscriptionId",
+                        column: x => x.UserSubscriptionId,
+                        principalTable: "Subscriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SubscriptionHistories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SubscriptionId = table.Column<int>(type: "integer", nullable: false),
+                    UserSubscriptionId = table.Column<int>(type: "integer", nullable: false),
                     ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     OldStatus = table.Column<string>(type: "text", nullable: false),
                     NewStatus = table.Column<string>(type: "text", nullable: false),
@@ -2914,8 +2953,8 @@ namespace MainService.Postgres.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_SubscriptionHistories_Subscriptions_SubscriptionId",
-                        column: x => x.SubscriptionId,
+                        name: "FK_SubscriptionHistories_Subscriptions_UserSubscriptionId",
+                        column: x => x.UserSubscriptionId,
                         principalTable: "Subscriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -3503,14 +3542,24 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionCancellations_UserId",
+                table: "SubscriptionCancellations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionCancellations_UserSubscriptionId",
+                table: "SubscriptionCancellations",
+                column: "UserSubscriptionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubscriptionHistories_AppUserId",
                 table: "SubscriptionHistories",
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubscriptionHistories_SubscriptionId",
+                name: "IX_SubscriptionHistories_UserSubscriptionId",
                 table: "SubscriptionHistories",
-                column: "SubscriptionId");
+                column: "UserSubscriptionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subscriptions_SubscriptionPlanId",
@@ -3807,6 +3856,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "StateCity");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionCancellations");
 
             migrationBuilder.DropTable(
                 name: "SubscriptionHistories");

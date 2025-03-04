@@ -4,10 +4,10 @@ import { SignUpComponent } from "src/app/auth/components/sign-up/sign-up.compone
 
 @NgModule({
   imports: [ RouterModule.forChild([
-    { path: '', component: SignUpComponent },
-    // { path: 'multi-steps', component: MultiStepsComponent },
-    // { path: 'free-trial', component: FreeTrialComponent },
-    // { path: 'coming-soon', component: ComingSoonComponent },
+    {
+      path: '',
+      component: SignUpComponent
+    },
   ]) ],
   exports: [ RouterModule ],
 })

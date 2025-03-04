@@ -1,0 +1,10 @@
+.subscription-cancel-modal-card-body {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .subscription-cancel-modal-card-body {
+    max-height: 50vh;
+  }
+}

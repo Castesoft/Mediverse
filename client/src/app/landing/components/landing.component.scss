@@ -1,0 +1,390 @@
+// ---------------------------------------
+// Variables
+// ---------------------------------------
+$primary: #284092;
+$secondary: #85C5ED;
+$secondary-75: rgba(133, 197, 237, 0.75);
+$secondary-mild: #DCEEFA;
+$secondary-mild-75: rgba(220, 238, 250, 0.75);
+$tertiary: #F5F5F7;
+$quaternary: #D1FDB5;
+$quaternary-mild: #F3FEEB;
+$quinary: #01524F;
+$moss: #307704;
+$senary: #F66C51;
+$septenary: #FEEFEC;
+
+$navbar-height: 85px;
+$hero-section-height: 720px;
+
+// ---------------------------------------
+// Fonts
+// ---------------------------------------
+.podkova {
+  font-family: 'Podkova', serif;
+  line-height: 0.9;
+}
+
+.albert-sans {
+  font-family: 'Albert Sans', sans-serif;
+  line-height: 0.9;
+}
+
+// ---------------------------------------
+// Hero Section
+// ---------------------------------------
+.hero-section {
+  width: 100vw;
+  height: $hero-section-height;
+  background-color: $secondary;
+  overflow: hidden;
+}
+
+.hero-section-title-container {
+  right: 0;
+  top: 153px;
+  width: 50vw;
+  position: absolute;
+  text-align: center;
+}
+
+// ---------------------------------------
+// Headings
+// ---------------------------------------
+h1,
+h3,
+h4,
+h5 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 70px !important;
+}
+
+h3 {
+  font-size: 3.5rem !important;
+}
+
+h4 {
+  font-size: 28px !important;
+}
+
+h5 {
+  font-size: 2rem !important;
+}
+
+// ---------------------------------------
+// Button & Utilities
+// ---------------------------------------
+.btn {
+  font-size: 16px !important;
+  padding: 8px 16px !important;
+
+  &-pill {
+    border-radius: 50px;
+  }
+}
+
+// ---------------------------------------
+// Cards
+// ---------------------------------------
+.landing-card-container {
+  height: 387px;
+  max-width: 362.75px;
+  border-radius: 12px !important;
+}
+
+.landing-card-image-header {
+  height: 150px;
+}
+
+.landing-card-body {
+  height: 237px;
+  font-size: 18px !important;
+}
+
+.landing-card-title {
+  font-size: 24px !important;
+}
+
+.landing-card-bg-moss {
+  background-image: url("../../../../public/media/landing/cards/card-bg-1.svg");
+}
+
+.landing-card-bg-primary {
+  background-image: url("../../../../public/media/landing/cards/card-bg-2.svg");
+}
+
+.landing-card-bg-senary {
+  background-image: url("../../../../public/media/landing/cards/card-bg-3.svg");
+}
+
+.landing-card-bg-primary-alt {
+  background-image: url("../../../../public/media/landing/cards/card-bg-4.svg");
+}
+
+.testimony-card {
+  height: 288px;
+  width: 602.25px;
+  border-radius: 16px;
+}
+
+.testimony-card-body {
+  max-width: 431px;
+  line-height: 1;
+}
+
+.testimony-card-name {
+  font-size: 20px;
+}
+
+.testimony-container-title {
+  padding: 0 15%;
+}
+
+// ---------------------------------------
+// Generate color & background classes
+// ---------------------------------------
+$colors: (
+  primary: $primary,
+  secondary: $secondary,
+  'secondary-mild': $secondary-mild,
+  tertiary: $tertiary,
+  quaternary: $quaternary,
+  'quaternary-mild': $quaternary-mild,
+  quinary: $quinary,
+  senary: $senary,
+  septenary: $septenary,
+  moss: $moss
+);
+
+@mixin text-color($name) {
+  .text-#{$name} {
+    color: map-get($colors, $name) !important;
+  }
+}
+
+@mixin bg-color($name) {
+  .bg-#{$name} {
+    background-color: map-get($colors, $name) !important;
+  }
+}
+
+@mixin btn-color($name) {
+  .btn-#{$name} {
+    background-color: map-get($colors, $name) !important;
+    border-color: map-get($colors, $name) !important;
+  }
+}
+
+@each $name, $value in $colors {
+  @include text-color($name);
+  @include bg-color($name);
+  @include btn-color($name);
+}
+
+// ---------------------------------------
+// Navbar
+// ---------------------------------------
+.navbar {
+  background-color: $secondary;
+
+  .nav-link {
+    font-size: 16px !important;
+    color: $primary;
+    font-weight: 500;
+    padding-left: 1.9rem;
+    padding-right: 1.9rem;
+
+    .active {
+      color: $secondary !important;
+    }
+  }
+
+  .navbar-brand-text {
+    font-size: 2.5rem;
+  }
+}
+
+// ---------------------------------------
+// Landing containers
+// ---------------------------------------
+.landing-container {
+  height: 650px;
+}
+
+.landing-person-container {
+  height: 500px;
+}
+
+.landing-reduced-container {
+  height: 292px;
+}
+
+.landing-card-row-container {
+  width: 1520px;
+}
+
+.landing-cards-section {
+  height: 689px;
+}
+
+.testimony-container {
+  padding: 84.25px 0;
+}
+
+// ---------------------------------------
+// Carousel
+// ---------------------------------------
+:host ::ng-deep .p-carousel {
+  position: relative;
+}
+
+:host ::ng-deep .p-carousel-prev-button,
+:host ::ng-deep .p-carousel-next-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+$carousel-btn-height: 73px;
+
+/* Position left and right buttons */
+:host ::ng-deep .p-carousel-prev-button {
+  height: $carousel-btn-height;
+  width: $carousel-btn-height;
+  border-radius: $carousel-btn-height;
+  background-color: $secondary-mild-75;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 28px;
+}
+
+:host ::ng-deep .p-carousel-next-button {
+  height: $carousel-btn-height;
+  width: $carousel-btn-height;
+  border-radius: $carousel-btn-height;
+  background-color: $secondary-mild-75;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 28px;
+}
+
+:host ::ng-deep .p-icon {
+  width: 30px;
+  height: 30px;
+  color: $primary;
+}
+
+
+// ---------------------------------------
+// Background images
+// ---------------------------------------
+.patient-03-container {
+  overflow: hidden;
+  position: absolute;
+  background-image: url("../../../../public/media/landing/dh_main_01.svg");
+  background-size: 100% auto;
+  height: 672px;
+  width: 1818.92px;
+  top: 48px;
+  left: 0;
+}
+
+.bg-white-st {
+  background-image: url("../../../../public/media/landing/doodles/white-st.svg");
+  background-size: 100% auto;
+  height: 421px;
+  width: 100vw;
+}
+
+.bg-doctor-1 {
+  background-image: url("../../../../public/media/landing/dh_doctor_01.svg");
+}
+
+.bg-man-1 {
+  background-image: url("../../../../public/media/landing/dh_man_01.svg");
+  background-position: -20px 0;
+  background-clip: padding-box;
+  padding-left: 20px;
+}
+
+.bg-businessman-1 {
+  background-image: url("../../../../public/media/landing/dh_businessman_01.svg");
+}
+
+.img-stethoscope {
+  overflow: hidden;
+  transform: scaleX(-1);
+  width: 898.4px;
+  height: 582.23px;
+  position: absolute;
+  top: -82.23px;
+  right: 0;
+  object-fit: cover;
+  object-position: top left;
+}
+
+// ---------------------------------------
+// Footer
+// ---------------------------------------
+.footer-container {
+  height: 324px;
+  padding: 80px 64px 40px 64px;
+  background-color: $secondary-mild;
+
+  .disclaimer {
+    border-top: 1px solid $primary;
+    padding-top: 16px;
+    font-size: 14px !important;
+
+    a {
+      color: $primary;
+
+      &:hover {
+        color: $quinary;
+      }
+    }
+  }
+}
+
+// ---------------------------------------
+// Contact
+// ---------------------------------------
+
+.contact-container {
+  height: calc(100vh - 85px);
+  overflow: hidden;
+}
+
+.contact-content-container {
+  width: 100%;
+  padding: 0 12.5%;
+}
+
+.contact-form-info-text {
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.contact-form-container {
+  width: 636px;
+  height: 100%;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  z-index: 2;
+  position: relative;
+}
+
+.contact-dh-patient-image {
+  aspect-ratio: 1428 / 720;
+  transform: scaleX(-1);
+  height: 100%;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}

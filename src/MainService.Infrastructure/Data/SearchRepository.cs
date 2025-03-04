@@ -1,6 +1,5 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MainService.Core.DTOs.Google;
 using MainService.Core.DTOs.Search;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;

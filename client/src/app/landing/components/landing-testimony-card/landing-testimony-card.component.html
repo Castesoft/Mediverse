@@ -1,0 +1,13 @@
+<div class="testimony-card m-10 shadow" [ngClass]="bgColor">
+  <div class="d-flex flex-column align-items-center justify-content-center h-100">
+    <div class="mb-8">
+      <img [src]="imgSrc" alt="">
+    </div>
+    <div class="podkova fw-bolder text-center landing-card-title testimony-card-body text-primary mb-8">
+      "{{ body() }}"
+    </div>
+    <div class="albert-sans  testimony-card-name fw-bolder text-primary">
+      {{ name() }}
+    </div>
+  </div>
+</div>

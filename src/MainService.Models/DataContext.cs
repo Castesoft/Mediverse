@@ -87,11 +87,12 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<OrderStatus> OrderStatuses { get; set; }
     public DbSet<Warehouse> Warehouses { get; set; }
     public DbSet<WarehouseProduct> WarehouseProducts { get; set; }
-    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<UserSubscription> Subscriptions { get; set; }
     public DbSet<SubscriptionHistory> SubscriptionHistories { get; set; }
     public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
     public DbSet<UserNotification> UserNotifications { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<SubscriptionCancellation> SubscriptionCancellations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

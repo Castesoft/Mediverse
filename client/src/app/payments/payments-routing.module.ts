@@ -27,6 +27,11 @@ const routes: Routes = [
     component: PaymentCheckoutComponent,
     data: { title: 'Pago de Medicamentos' }
   },
+  {
+    path: 'suscripcion',
+    component: PaymentCheckoutComponent,
+    data: { title: 'Pago de Suscripción' }
+  }
 ];
 
 @NgModule({

@@ -1,6 +1,6 @@
 namespace MainService.Models.Entities;
 
-public class Subscription : BaseEntity
+public class UserSubscription : BaseEntity
 {
     public int UserId { get; set; }
     public AppUser User { get; set; } = null!;
@@ -8,8 +8,8 @@ public class Subscription : BaseEntity
     public int SubscriptionPlanId { get; set; }
     public SubscriptionPlan SubscriptionPlan { get; set; } = null!;
 
-    public DateTime SubscriptionStartDate { get; set; }
-    public DateTime? SubscriptionEndDate { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
     public SubscriptionStatus Status { get; set; }
     public DateTime? NextBillingDate { get; set; }
 
@@ -17,4 +17,5 @@ public class Subscription : BaseEntity
     public string? StripeCustomerId { get; set; }
 
     public List<SubscriptionHistory> SubscriptionHistories { get; set; } = [];
+    public List<SubscriptionCancellation> SubscriptionCancellations { get; set; } = [];
 }

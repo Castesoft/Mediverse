@@ -11,7 +11,6 @@ import { AddressesService } from 'src/app/addresses/addresses.config';
 import { SpecialtiesService } from "src/app/specialties/specialties.config";
 import { PaymentsService } from "src/app/payments/payments.config";
 import { ControlCheckComponent } from "src/app/_forms/control-check.component";
-import { JsonPipe } from "@angular/common";
 
 @Component({
   selector: 'app-account-details',
@@ -21,8 +20,7 @@ import { JsonPipe } from "@angular/common";
     InputControlComponent,
     ControlSelectComponent,
     ControlCheckListComponent,
-    ControlCheckComponent,
-    JsonPipe
+    ControlCheckComponent
   ],
 })
 export class AccountDetailsComponent implements OnInit {

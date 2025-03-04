@@ -1,93 +1,91 @@
 @if (subscription()) {
-  <div class="card subscription-card">
-    <!-- Card Header -->
+  <div class="card">
     <div class="card-header">
-      <h3 class="card-title mb-0">Subscription Information</h3>
-    </div>
-
-    <!-- Card Body -->
-    <div class="card-body">
-      <!-- Subscription Plan -->
-      <div class="info-row">
-        <span class="info-label">Plan:</span>
-        <span class="info-value">{{ subscription()?.subscriptionPlanName }}</span>
-      </div>
-
-      <!-- Subscription Start Date -->
-      <div class="info-row">
-        <span class="info-label">Start Date:</span>
-        <span class="info-value">{{ subscription()?.subscriptionStartDate | date: 'mediumDate' }}</span>
-      </div>
-
-      <!-- Subscription End Date (optional) -->
-      @if (subscription()!.subscriptionEndDate) {
-        <div class="info-row">
-          <span class="info-label">End Date:</span>
-          <span class="info-value">{{ subscription()?.subscriptionEndDate | date: 'mediumDate' }}</span>
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="card-title">
+          <div symbolCell
+               class="me-3"
+               [photoUrl]="'media/svg/brand-logos/google-icon.svg'"
+               [size]="PhotoSize.EXTRA_SMALL"></div>
+          <h3>
+            DocHub Pro
+          </h3>
         </div>
-      }
+        <div class="d-flex align-items-center">
+          <div class="btn-group" dropdown>
+            <button
+              dropdownToggle
+              type="button"
+              class="btn btn-outline btn-outline-secondary btn-active-light-secondary dropdown-toggle border-gray-300"
+              id="button-basic"
 
-      <!-- Subscription Status -->
-      <div class="info-row">
-        <span class="info-label">Status:</span>
-        <span class="info-value">
-          {{ getTranslatedStatus(subscription()!.status.toString()) }}
-        </span>
-      </div>
-
-      <!-- Next Billing Date (optional) -->
-      @if (subscription()!.nextBillingDate) {
-        <div class="info-row">
-          <span class="info-label">Next Billing Date:</span>
-          <span class="info-value">{{ subscription()?.nextBillingDate | date: 'mediumDate' }}</span>
-        </div>
-      }
-
-      <!-- Stripe Subscription and Customer IDs (optional) -->
-      @if (subscription()!.stripeSubscriptionId) {
-        <div class="info-row">
-          <span class="info-label">Stripe Subscription ID:</span>
-          <span class="info-value">{{ subscription()?.stripeSubscriptionId }}</span>
-        </div>
-      }
-
-      @if (subscription()!.stripeCustomerId) {
-        <div class="info-row">
-          <span class="info-label">Stripe Customer ID:</span>
-          <span class="info-value">{{ subscription()?.stripeCustomerId }}</span>
-        </div>
-      }
-
-      <!-- Subscription History (if available) -->
-      @if (subscription()!.subscriptionHistories && subscription()!.subscriptionHistories!.length > 0) {
-        <div class="mt-4">
-          <h5 class="mb-3">Subscription History</h5>
-          <ul class="list-group">
-            @for (history of subscription()?.subscriptionHistories; track history) {
-              <li class="list-group-item history-item">
-                <div class="history-date">
-                  <strong>Date:</strong> {{ history.changedAt | date: 'medium' }}
-                </div>
-                <div class="history-status">
-                  <strong>Changed:</strong>
-                  <span class="old-status">{{ getTranslatedStatus(history.oldStatus) }}</span>
-                  <i class="bi bi-arrow-right mx-1" aria-hidden="true"></i>
-                  <span class="new-status">{{ getTranslatedStatus(history.newStatus) }}</span>
-                </div>
-                @if (history.note) {
-                  <div class="history-note">
-                    <strong>Note:</strong> {{ history.note }}
-                  </div>
-                }
+              aria-controls="dropdown-basic">
+              Administrar suscripción
+              <span class="caret"></span>
+            </button>
+            <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+                role="menu" aria-labelledby="button-basic">
+              <li role="menuitem">
+                <button
+                  class="btn btn-color-danger dropdown-item text-center"
+                  (click)="openCancelSubscriptionModal()">
+                  Cancelar suscripción
+                </button>
               </li>
-            }
-          </ul>
+            </ul>
+          </div>
         </div>
-      }
+      </div>
     </div>
-  </div>
-} @else {
-  <div class="alert alert-info" role="alert">
-    No subscription information available.
+    <div class="card-body border-top">
+      <div class="d-flex w-100 justify-content-between">
+        <div class="d-flex flex-column p-3">
+          <div class="fw-bold">
+            <p class="mb-1">
+              Suscripción Activa
+            </p>
+          </div>
+          <div>
+            DocHub Pro
+          </div>
+        </div>
+
+        <div class="d-flex flex-column p-3">
+          <div class="fw-bold">
+            <p class="mb-1">
+              Pago Mensual
+            </p>
+          </div>
+          <div>
+            {{ subscription()!.price | currency: 'MXN' }}
+          </div>
+        </div>
+
+        <div class="d-flex flex-column p-3">
+          <div class="fw-bold">
+            <p class="mb-1">
+              Siguiente Pago
+            </p>
+          </div>
+          <div>
+            {{ subscription()!.nextBillingDate | date: 'dd/MM/yyyy' }}
+          </div>
+        </div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div class="card-footer py-5">
+      <small class="text-muted d-flex align-items-center">
+        <i class="ki-duotone ki-information-5 me-2 pb-0" style="margin-bottom: 1px;">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+        Puedes cancelar tu suscripción en cualquier momento, y seguirás disfrutando de DocHub Pro hasta la fecha de
+        vencimiento.
+      </small>
+    </div>
   </div>
 }
+

@@ -1,7 +1,6 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.DTOs.Payment;
-using MainService.Core.DTOs.User;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;

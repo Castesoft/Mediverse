@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from "src/environments/environment";
 import { CreatePaymentIntentResponse } from "src/app/_models/payments/createPaymentIntentResponse";
 import { loadStripe, PaymentIntentResult, Stripe } from "@stripe/stripe-js";
+import { SubscriptionResponse } from "src/app/_models/payments/subscriptionResponse";
 
 export interface PaymentResponse {
   paymentIntentId: string;
@@ -13,9 +14,10 @@ export interface PaymentResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class StripePaymentGatewayService {
+export class StripeGatewayService {
   private stripePromise: Promise<Stripe | null> = loadStripe(environment.stripe_pk);
-  private baseUrl: string = `${environment.apiUrl}payments/`;
+  private subscriptionsBaseUrl: string = `${environment.apiUrl}subscriptions/`;
+  private paymentsBaseUrl: string = `${environment.apiUrl}payments/`;
   private http: HttpClient = inject(HttpClient);
 
   /**
@@ -51,13 +53,30 @@ export class StripePaymentGatewayService {
    */
   createPaymentIntentForEvent(eventId: number, paymentMethodId: number): Observable<CreatePaymentIntentResponse> {
     return this.http.post<CreatePaymentIntentResponse>(
-      `${this.baseUrl}create-payment-intent/event/${eventId}`, { paymentMethodId }
+      `${this.paymentsBaseUrl}create-payment-intent/event/${eventId}`, { paymentMethodId }
     );
   }
 
   createPaymentIntentForOrder(orderId: number, paymentMethodId: number): Observable<CreatePaymentIntentResponse> {
     return this.http.post<CreatePaymentIntentResponse>(
-      `${this.baseUrl}create-payment-intent/order/${orderId}`, { paymentMethodId }
+      `${this.paymentsBaseUrl}create-payment-intent/order/${orderId}`, { paymentMethodId }
     );
+  }
+
+  /**
+   * Creates a subscription for the current user.
+   * @param paymentMethodId - The internal payment method ID to use.
+   * @param billingAddressId - The ID of the billing address to use.
+   * @returns An Observable emitting a SubscriptionResponse.
+   */
+  createSubscription(paymentMethodId: number, billingAddressId: number): Observable<SubscriptionResponse> {
+    // Assumes your backend endpoint for subscriptions is at `${environment.apiUrl}subscriptions`
+    return this.http.post<SubscriptionResponse>(
+      `${this.subscriptionsBaseUrl}`, { paymentMethodId, billingAddressId }
+    );
+  }
+
+  cancelSubscription(subscriptionId: number, feedbackModel: any): Observable<void> {
+    return this.http.request<void>('delete', `${this.subscriptionsBaseUrl}${subscriptionId}`, { body: feedbackModel });
   }
 }

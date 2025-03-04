@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250223002030_Initial")]
+    [Migration("20250303231747_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -2882,7 +2882,7 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("SubSpecialties");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Subscription", b =>
+            modelBuilder.Entity("MainService.Models.Entities.SubscriptionCancellation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -2890,36 +2890,42 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CancellationDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<string>("Feedback")
+                        .HasMaxLength(1500)
+                        .HasColumnType("character varying(1500)");
+
+                    b.Property<bool>("FoundAlternative")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("MissingFeatures")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("NextBillingDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("NotEnoughUse")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<bool>("OtherReason")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("StripeCustomerId")
-                        .HasColumnType("text");
+                    b.Property<bool>("PoorSupport")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("StripeSubscriptionId")
-                        .HasColumnType("text");
+                    b.Property<bool>("TechnicalProblems")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("SubscriptionEndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("SubscriptionPlanId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("SubscriptionStartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("TooExpensive")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -2927,13 +2933,16 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.Property<int>("UserSubscriptionId")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("SubscriptionPlanId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Subscriptions");
+                    b.HasIndex("UserSubscriptionId");
+
+                    b.ToTable("SubscriptionCancellations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.SubscriptionHistory", b =>
@@ -2970,17 +2979,17 @@ namespace MainService.Postgres.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("SubscriptionId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserSubscriptionId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("SubscriptionId");
+                    b.HasIndex("UserSubscriptionId");
 
                     b.ToTable("SubscriptionHistories");
                 });
@@ -3233,6 +3242,60 @@ namespace MainService.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("UserReviews");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.UserSubscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("NextBillingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("SubscriptionPlanId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionPlanId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserTaxRegime", b =>
@@ -4756,23 +4819,23 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Specialty");
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Subscription", b =>
+            modelBuilder.Entity("MainService.Models.Entities.SubscriptionCancellation", b =>
                 {
-                    b.HasOne("MainService.Models.Entities.SubscriptionPlan", "SubscriptionPlan")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("SubscriptionPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
-                        .WithMany("Subscriptions")
+                        .WithMany("SubscriptionCancellations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SubscriptionPlan");
+                    b.HasOne("MainService.Models.Entities.UserSubscription", "UserSubscription")
+                        .WithMany("SubscriptionCancellations")
+                        .HasForeignKey("UserSubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
+
+                    b.Navigation("UserSubscription");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.SubscriptionHistory", b =>
@@ -4781,13 +4844,13 @@ namespace MainService.Postgres.Migrations
                         .WithMany("SubscriptionHistories")
                         .HasForeignKey("AppUserId");
 
-                    b.HasOne("MainService.Models.Entities.Subscription", "Subscription")
+                    b.HasOne("MainService.Models.Entities.UserSubscription", "UserSubscription")
                         .WithMany("SubscriptionHistories")
-                        .HasForeignKey("SubscriptionId")
+                        .HasForeignKey("UserSubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Subscription");
+                    b.Navigation("UserSubscription");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.UserAddress", b =>
@@ -4926,6 +4989,25 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
 
                     b.Navigation("Review");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.UserSubscription", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.SubscriptionPlan", "SubscriptionPlan")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("SubscriptionPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SubscriptionPlan");
 
                     b.Navigation("User");
                 });
@@ -5129,6 +5211,8 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Patients");
 
                     b.Navigation("PaymentMethods");
+
+                    b.Navigation("SubscriptionCancellations");
 
                     b.Navigation("SubscriptionHistories");
 
@@ -5473,11 +5557,6 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MainService.Models.Entities.Subscription", b =>
-                {
-                    b.Navigation("SubscriptionHistories");
-                });
-
             modelBuilder.Entity("MainService.Models.Entities.SubscriptionPlan", b =>
                 {
                     b.Navigation("Subscriptions");
@@ -5492,6 +5571,13 @@ namespace MainService.Postgres.Migrations
                 {
                     b.Navigation("UserTaxRegime")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.UserSubscription", b =>
+                {
+                    b.Navigation("SubscriptionCancellations");
+
+                    b.Navigation("SubscriptionHistories");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>

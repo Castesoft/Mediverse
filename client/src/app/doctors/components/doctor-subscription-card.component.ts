@@ -1,19 +1,40 @@
-import { Component, InputSignal, input } from '@angular/core';
+import { Component, inject, input, InputSignal } from '@angular/core';
 import { Subscription } from 'src/app/_models/subscriptions/subscription';
-import { getTranslatedSubscriptionStatus } from 'src/app/_models/subscriptions/subscriptionConstants';
-import { DatePipe } from "@angular/common";
+import { BsDropdownDirective, BsDropdownMenuDirective, BsDropdownToggleDirective } from "ngx-bootstrap/dropdown";
+import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
+import { PhotoSize } from "src/app/_models/photos/photoTypes";
+import { CurrencyPipe, DatePipe } from "@angular/common";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  SubscriptionCancelModalComponent
+} from "src/app/subscriptions/components/subscription-cancel-modal/subscription-cancel-modal.component";
 
 @Component({
   selector: 'div[doctorSubscriptionCard]',
-  standalone: true,
   templateUrl: './doctor-subscription-card.component.html',
   styleUrls: [ './doctor-subscription-card.component.scss' ],
-  imports: [ DatePipe ]
+  imports: [
+    BsDropdownDirective,
+    BsDropdownToggleDirective,
+    SymbolCellComponent,
+    BsDropdownMenuDirective,
+    CurrencyPipe,
+    DatePipe
+  ]
 })
 export class DoctorSubscriptionCardComponent {
+  protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
+
+  private matDialog: MatDialog = inject(MatDialog);
+
   subscription: InputSignal<Subscription | null> = input.required();
 
-  getTranslatedStatus(status: string): string {
-    return getTranslatedSubscriptionStatus(status);
+  openCancelSubscriptionModal() {
+    this.matDialog.open(SubscriptionCancelModalComponent,
+      {
+        data: {
+          subscription: this.subscription()
+        }
+      });
   }
 }

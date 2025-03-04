@@ -4,15 +4,17 @@ import { SubscriptionStatus } from "src/app/_models/subscriptions/subscriptionCo
 
 export class Subscription extends Entity {
   userId!: number;
-  subscriptionPlanId!: number;
-  subscriptionPlanName!: string;
-  subscriptionStartDate!: Date;
-  subscriptionEndDate?: Date;
+  planId!: number;
+  price!: number;
+  planName!: string;
+  startDate!: Date;
+  endDate?: Date;
   status!: SubscriptionStatus;
   nextBillingDate?: Date;
   stripeSubscriptionId?: string;
   stripeCustomerId?: string;
-  subscriptionHistories?: SubscriptionHistory[];
+  stripePlanId?: string;
+  histories?: SubscriptionHistory[];
 
   constructor(init?: Partial<Subscription>) {
     super();

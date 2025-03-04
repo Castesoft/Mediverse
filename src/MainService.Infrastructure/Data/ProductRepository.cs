@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using AngleSharp.Text;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Core.Extensions;
@@ -12,7 +11,6 @@ using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Helpers.Enums;
-using Serilog;
 
 namespace MainService.Infrastructure.Data;
 

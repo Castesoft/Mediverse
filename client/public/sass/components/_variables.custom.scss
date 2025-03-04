@@ -6,40 +6,44 @@
 
 // Theme colors
 // Primary
+// Original primary: #00A3FF
+// Brand guidelines primary: #284092
 $primary:       									#00A3FF;
-$primary-active:    								#008BD9;
-$primary-light:    								    #F1FAFF;
-$primary-light-dark:							    #212E48;
-$primary-inverse:  									#FFFFFF;
+$primary-active:    							#008BD9;
+$primary-light:    								#F1FAFF;
+$primary-light-dark:							#212E48;
+$primary-inverse:  								#FFFFFF;
 
 // Success
 $success:       									#50CD89;
-$success-active:    								#47BE7D;
-$success-light:    									#E8FFF3;
-$success-light-dark:    							#1C3238;
-$success-inverse:  									#FFFFFF;
+$success-active:    							#47BE7D;
+$success-light:    								#E8FFF3;
+$success-light-dark:    					#1C3238;
+$success-inverse:  								#FFFFFF;
 
 // Info
 $info:       									    #7239EA;
 $info-active:    									#5014D0;
 $info-light:    									#F8F5FF;
-$info-light-dark:    								#2F264F;
+$info-light-dark:    							#2F264F;
 $info-inverse:  									#FFFFFF;
 
 // Danger
-$danger:       									    #F1416C;
-$danger-active:    									#D9214E;
-$danger-light:    									#FFF5F8;
-$danger-light-dark:    								#3A2434;
-$danger-inverse:  									#FFFFFF;
+$danger:       									  #F1416C;
+$danger-active:    								#D9214E;
+$danger-light:    								#FFF5F8;
+$danger-light-dark:    						#3A2434;
+$danger-inverse:  								#FFFFFF;
 
 // Warning
 $warning:       									#FFC700;
-$warning-active:    								#F1BC00;
-$warning-light:    									#FFF8DD;
-$warning-light-dark:    							#392F28;
-$warning-inverse:  									#FFFFFF;
+$warning-active:    							#F1BC00;
+$warning-light:    								#FFF8DD;
+$warning-light-dark:    					#392F28;
+$warning-inverse:  								#FFFFFF;
+
+$input-font-size: 								1rem;
 
 // Card Box Shadow
-$card-box-shadow:                                   0px 0px 20px 0px rgba(76,87,125,0.02);
-$card-box-shadow-dark:                              none;
+$card-box-shadow:                 0px 0px 20px 0px rgba(76,87,125,0.02);
+$card-box-shadow-dark:            none;

@@ -1,15 +1,20 @@
 <div style="position: fixed">
   <div class="aside-logo flex-column-auto px-10 pt-9 pb-5">
     <a [routerLink]="['/']">
-      <img alt="Logo" class="max-h-50px logo-default theme-light-show" src="media/logos/logo-default.svg"/>
-      <img alt="Logo" class="max-h-50px logo-default theme-dark-show" src="media/logos/logo-default-dark.svg"/>
-      <img alt="Logo" class="max-h-50px logo-minimize" src="media/logos/logo-minimize.svg"/>
+      <!--      TODO - Handle different usage cases-->
+      <!--      <img alt="Logo" class="max-h-50px logo-default theme-light-show" src="media/logos/logo-default.svg"/>-->
+      <!--      <img alt="Logo" class="max-h-50px logo-default theme-dark-show" src="media/logos/logo-default-dark.svg"/>-->
+      <!--      <img alt="Logo" class="max-h-50px logo-minimize" src="media/logos/logo-minimize.svg"/>-->
+      <img class="d-inline-block align-text-top max-h-50" src="media/logos/logo-compact.svg" alt="Logo" height="40" style="margin-left: -10px"/>
+      <img class="d-inline-block align-text-top" src="media/logos/text/logo-text-blue.svg" alt="Logo" height="40"
+           style="margin-left: -10px;"/>
     </a>
   </div>
   <div class="aside-menu flex-column-fluid ps-3 pe-1">
     <div
       class="menu menu-sub-indention menu-column menu-rounded menu-title-gray-600 menu-icon-gray-500 menu-active-bg menu-state-primary menu-arrow-gray-500 fw-semibold fs-6 my-5 mt-lg-2 mb-lg-0"
       id="kt_aside_menu">
+      @if (accountService.hasRole(['Doctor'])) {
       <div class="hover-scroll-y" id="kt_aside_menu_wrapper">
         <div [routerLink]="['/inicio/search']" class="menu-item" routerLinkActive="active">
           <a [routerLink]="['/inicio/search']" class="menu-link">
@@ -140,7 +145,8 @@
           </a>
         </div>
       </div>
-      <div class="menu-item pt-5">
+      }
+      <div class="menu-item" [class.pt-5]="accountService.hasRole(['Doctor'])">
         <div class="menu-content">
           <span class="fw-bold text-muted text-uppercase fs-7">Finanzas</span>
         </div>

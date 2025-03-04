@@ -1,78 +1,230 @@
-<div class="hero-section d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #0aa0f3, #0056b3); min-height: 100vh;">
+<app-landing-navbar></app-landing-navbar>
+<div class="hero-section d-flex align-items-center justify-content-center flex-column position-relative">
+  <div class="patient-03-container"></div>
+  <div class="hero-section-title-container z-index-2 text-start">
+    <h1 class="podkova fw-bold text-tertiary mb-10">
+      Un respiro para<br/> tu salud, todo en<br/> un solo lugar<span class="text-primary">.</span>
+    </h1>
+    <h4 class="albert-sans text-primary m-0 fw-bolder">
+      Encuentra lo que necesitas para cuidar de ti.
+    </h4>
+  </div>
+</div>
+
+<div class="landing-container bg-primary">
   <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 text-center mb-5">
-        <h1 class="display-4 fw-bold text-white mb-4">Encuentra al mejor especialista para tu salud</h1>
-        <p class="lead text-white-50 mb-5">Accede a los mejores doctores y especialistas en un solo clic. Tu salud es nuestra prioridad.</p>
+    <div class="d-flex flex-column text-center justify-content-center align-items-center py-20">
+      <h1 class="podkova text-tertiary mb-10">
+        Somos la plataforma que<br/>
+        conecta y simplifica<span class="text-secondary">.</span>
+      </h1>
+      <h4 class="albert-sans text-secondary">
+        En Dochub, transformamos el cuidado de la saluda con tecnología que<br/>
+        unifica todo en un solo lugar. Desde gestionar recetas hasta facilitar<br/>
+        reembolsos, hacemos que la salud sea tan simple como un clic.
+      </h4>
+    </div>
+  </div>
+  <div class="bg-white-st"></div>
+</div>
+
+<div class="landing-reduced-container bg-septenary">
+  <div class="container h-100">
+    <div class="d-flex flex-column text-center justify-content-center align-items-center py-20 h-100">
+      <h1 class="podkova text-senary m-0">
+        Beneficios claros para cada<br/>
+        actor en el ecosistema.
+      </h1>
+    </div>
+  </div>
+</div>
+
+<div class="landing-person-container bg-senary">
+  <div class="d-flex h-100 w-100 align-items-center justify-content-center">
+    <div class="d-flex w-50 justify-content-end">
+      <div class="text-start">
+        <h1 class="text-tertiary podkova mb-6">Médicos</h1>
+        <h5 class="albert-sans m-0 text-tertiary fw-normal pe-20">
+          Facilitamos su gestión de citas y acceso a la<br/>
+          información del paciente, permitiéndoles<br/>
+          enfocarse en lo que importa: la salud.
+        </h5>
       </div>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card shadow-lg">
-          <div class="card-body p-5">
-            <div searchForm [compact]="false"></div>
-          </div>
-        </div>
+    <div class="w-50 h-100 bg-doctor-1"></div>
+  </div>
+</div>
+
+<div class="landing-person-container bg-secondary-mild">
+  <div class="d-flex h-100 w-100 align-items-center justify-content-center">
+    <div class="w-50 h-100 bg-man-1"></div>
+    <div class="d-flex w-50 justify-content-start">
+      <div class="text-start">
+        <h1 class="text-primary podkova mb-6">Pacientes</h1>
+        <h5 class="albert-sans m-0 text-primary fw-normal pe-20">
+          Simplificamos sus trámites, citas y accesos a<br/>
+          historial médico, brindando tranquilidad y<br/>
+          control.
+        </h5>
       </div>
     </div>
   </div>
 </div>
 
-<div class="py-12 bg-light">
-  <div class="container">
-    <div class="row justify-content-center mb-8">
-      <div class="col-lg-8 text-center">
-        <h2 class="fs-1 fw-bolder text-dark mb-4">¿Por qué elegir DocHub?</h2>
-        <p class="fs-5 text-muted">Descubre las ventajas de usar nuestra plataforma para tu atención médica.</p>
+<div class="landing-person-container bg-quaternary-mild">
+  <div class="d-flex h-100 w-100 align-items-center justify-content-center">
+    <div class="d-flex w-50 justify-content-end">
+      <div class="text-start">
+        <h1 class="text-moss podkova mb-6">Aseguradoras</h1>
+        <h5 class="albert-sans m-0 text-moss fw-normal pe-20">
+          Conexión directa y segura con los datos<br/>
+          necesarios, mejorando la eficiencia y la<br/>
+          satisfacción del cliente.
+        </h5>
       </div>
     </div>
-    <div class="row g-5">
-      <div class="col-md-4">
-        <div class="card h-100 hover-elevate-up">
-          <div class="card-body p-5 text-center">
-            <i class="ki-duotone ki-shield-tick fs-3x text-primary mb-4"></i>
-            <h3 class="card-title fs-2 fw-bolder">Profesionales Verificados</h3>
-            <p class="card-text text-muted">Todos nuestros especialistas están rigurosamente verificados.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 hover-elevate-up">
-          <div class="card-body p-5 text-center">
-            <i class="ki-duotone ki-calendar-tick fs-3x text-primary mb-4"></i>
-            <h3 class="card-title fs-2 fw-bolder">Citas Flexibles</h3>
-            <p class="card-text text-muted">Agenda citas que se adapten a tu horario fácilmente.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 hover-elevate-up">
-          <div class="card-body p-5 text-center">
-            <i class="ki-duotone ki-chart-line-star fs-3x text-primary mb-4"></i>
-            <h3 class="card-title fs-2 fw-bolder">Atención de Calidad</h3>
-            <p class="card-text text-muted">Garantizamos la mejor atención médica para tu bienestar.</p>
-          </div>
-        </div>
-      </div>
+    <div class="w-50 h-100 bg-businessman-1"></div>
+  </div>
+</div>
+
+<div
+  class="landing-cards-section podkova d-flex w-100 justify-content-center flex-column align-items-center bg-tertiary">
+  <h1 class="text-primary mb-16 fw-bolder">
+    Descubre como Dochub simplifica la salud<span class="text-secondary">:</span>
+  </h1>
+  <div class="landing-card-row-container d-flex justify-content-center">
+    <div class="d-flex gap-6">
+      <div landingCard
+           [colorClass]="'moss'"
+           [title]="'Centralizacón de la Información.'"
+           [text]="'DocHub centraliza la información de los pacientes en una sola plataforma accesible tanto para doctores como para aseguradoras.'"></div>
+      <div landingCard
+           [colorClass]="'primary'"
+           [title]="'Farmacia Virtual.'"
+           [text]="'Dochub permite a los Doctores emitir una receta virtual, la cual puede suministrar desde su consultorio o hacer el pedido directo a la dirección del paciente.'"></div>
+      <div landingCard
+           [colorClass]="'senary'"
+           [title]="'Database Médica.'"
+           [text]="'Al centralizar la información del paciente, con el paso del tiempo se genera un historial clínico homologado, para futuras consultas.'"></div>
+      <div landingCard
+           [colorClass]="'primary'"
+           [altBackground]="true"
+           [title]="'Solicitud de Reembolsos Automática.'"
+           [text]="'Al finalizar la consulta médica, DocHub pre valora la posibilidad de un reembolso.'"></div>
     </div>
   </div>
 </div>
 
-<div class="py-12">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-lg-6 mb-5 mb-lg-0">
-        <h2 class="fs-1 fw-bolder text-dark mb-4">Únete a DocHub hoy</h2>
-        <p class="fs-5 text-muted mb-5">Regístrate ahora y accede a todos nuestros servicios. Tu salud está a un clic de distancia.</p>
-        <a routerLink="/auth/sign-up" class="btn btn-primary btn-lg">Crear una cuenta</a>
-      </div>
-      <div class="col-lg-6">
-        <div class="card shadow">
-          <div class="card-body p-6">
-            <div signInBasicForm></div>
-          </div>
-        </div>
-      </div>
+<div class="landing-person-container bg-primary position-relative">
+  <div class="container d-flex h-100 w-100 align-items-center justify-content-start">
+    <div class="text-start">
+      <h1 class="text-tertiary podkova mb-6 fw-bolder">
+        ¡Bienvenido a<br/>
+        la revolución<br/>
+        de la salud!
+      </h1>
     </div>
+    <img [src]="'media/landing/dh_sticker_01.png'" alt="Illustration" class="h-50 ms-20"/>
+  </div>
+  <img [src]="'media/landing/dh_stethoscope_01.png'" alt="Illustration" class="img-stethoscope"/>
+</div>
+
+<div class="testimony-container bg-secondary justify-content-center align-items-center">
+  <div class="d-flex w-100 testimony-container-title">
+    <h1 class="podkova text-white mb-10">
+      La salud, contada por nuestros usuarios<span class="text-primary">:</span>
+    </h1>
+  </div>
+  <div>
+    <p-carousel
+      [value]="slides"
+      [numVisible]="3"
+      [numScroll]="3"
+      [circular]="true"
+      [responsiveOptions]="responsiveOptions"
+      [prevButtonProps]="carouselButtonProps"
+      autoplayInterval="3000"
+
+    >
+      <ng-template let-slide #item>
+        <div landingTestimonyCard
+             [body]="slide.body"
+             [name]="slide.name"
+             [index]="slide.index"></div>
+      </ng-template>
+    </p-carousel>
   </div>
 </div>
+
+<!--<div class="py-12 bg-light">-->
+<!--  <div class="container">-->
+<!--    <div class="row justify-content-center mb-8">-->
+<!--      <div class="col-lg-8 text-center">-->
+<!--        <h2 class="fs-1 fw-bolder text-dark mb-4">¿Por qué elegir DocHub?</h2>-->
+<!--        <p class="fs-5 text-muted">Descubre las ventajas de usar nuestra plataforma para tu atención médica.</p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="row g-5">-->
+<!--      <div class="col-md-4">-->
+<!--        <div class="card h-100 hover-elevate-up">-->
+<!--          <div class="card-body p-5 text-center">-->
+<!--            <i class="ki-duotone ki-shield-tick fs-3x text-primary mb-4"></i>-->
+<!--            <h3 class="card-title fs-2 fw-bolder">Profesionales Verificados</h3>-->
+<!--            <p class="card-text text-muted">Todos nuestros especialistas están rigurosamente verificados.</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="col-md-4">-->
+<!--        <div class="card h-100 hover-elevate-up">-->
+<!--          <div class="card-body p-5 text-center">-->
+<!--            <i class="ki-duotone ki-calendar-tick fs-3x text-primary mb-4"></i>-->
+<!--            <h3 class="card-title fs-2 fw-bolder">Citas Flexibles</h3>-->
+<!--            <p class="card-text text-muted">Agenda citas que se adapten a tu horario fácilmente.</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="col-md-4">-->
+<!--        <div class="card h-100 hover-elevate-up">-->
+<!--          <div class="card-body p-5 text-center">-->
+<!--            <i class="ki-duotone ki-chart-line-star fs-3x text-primary mb-4"></i>-->
+<!--            <h3 class="card-title fs-2 fw-bolder">Atención de Calidad</h3>-->
+<!--            <p class="card-text text-muted">Garantizamos la mejor atención médica para tu bienestar.</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="row justify-content-center">-->
+<!--  <div class="col-lg-8">-->
+<!--    <div class="card shadow-lg">-->
+<!--      <div class="card-body p-5">-->
+<!--        <div searchForm [compact]="false"></div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="py-12">-->
+<!--  <div class="container">-->
+<!--    <div class="row align-items-center">-->
+<!--      <div class="col-lg-6 mb-5 mb-lg-0">-->
+<!--        <h2 class="fs-1 fw-bolder text-dark mb-4">Únete a DocHub hoy</h2>-->
+<!--        <p class="fs-5 text-muted mb-5">Regístrate ahora y accede a todos nuestros servicios. Tu salud está a un clic de-->
+<!--          distancia.</p>-->
+<!--        <a routerLink="/auth/sign-up" class="btn btn-primary btn-lg">Crear una cuenta</a>-->
+<!--      </div>-->
+<!--      <div class="col-lg-6">-->
+<!--        <div class="card shadow">-->
+<!--          <div class="card-body p-6">-->
+<!--            <div signInBasicForm></div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+<app-landing-footer></app-landing-footer>

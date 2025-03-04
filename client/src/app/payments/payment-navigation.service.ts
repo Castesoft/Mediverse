@@ -46,4 +46,15 @@ export class PaymentNavigationService {
       queryParams
     });
   }
+
+  navigateToSubscriptionFlow(redirectUrl?: string): Promise<boolean> {
+    const url = `/pagos/suscripcion`;
+    const queryParams: any = {};
+    if (redirectUrl) {
+      queryParams.redirectUrl = redirectUrl;
+    }
+    return this.router.navigate([ url ], {
+      queryParams
+    });
+  }
 }

@@ -17,6 +17,7 @@ using MainService.Core.Extensions;
 using System.Text.Json;
 using MainService.Core.DTOs.MedicalRecord;
 using MainService.Core.DTOs.Payment;
+using MainService.Core.DTOs.Subscriptions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Helpers;
 using Serilog;
@@ -145,6 +146,15 @@ public class AccountController(
         var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
         return itemToReturn;
+    }
+
+    [Authorize]
+    [HttpGet("active-subscription")]
+    public async Task<SubscriptionDto?> GetActiveSubscriptionAsync()
+    {
+        var userId = User.GetUserId();
+        var activeSubscription = await uow.SubscriptionRepository.GetActiveSubscriptionForUserAsync(userId);
+        return mapper.Map<SubscriptionDto>(activeSubscription);
     }
 
     [Authorize]

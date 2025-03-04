@@ -30,6 +30,29 @@ namespace MainService.Infrastructure.Services
             return true;
         }
 
+        public async Task<string> CreateStripeSubscriptionAsync(string stripeCustomerId, string priceId)
+        {
+            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+
+            var options = new SubscriptionCreateOptions
+            {
+                Customer = stripeCustomerId,
+                Items = [new SubscriptionItemOptions { Price = priceId }],
+                Expand = ["latest_invoice.payment_intent"]
+            };
+
+            var service = new SubscriptionService();
+            try
+            {
+                var stripeSubscription = await service.CreateAsync(options);
+                return stripeSubscription.Id;
+            }
+            catch (StripeException ex)
+            {
+                throw new Exception("Error creating Stripe subscription: " + ex.Message, ex);
+            }
+        }
+
         public async Task<string> CreateCustomerAsync(string email, string name, string paymentMethodId)
         {
             StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];

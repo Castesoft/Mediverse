@@ -3,7 +3,6 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MainService.Models;
 using MainService.Core.Interfaces.Data;
-using MainService.Core.DTOs;
 using MainService.Core.DTOs.MedicalRecord;
 using MainService.Models.Entities;
 using MainService.Core.Helpers.Pagination;

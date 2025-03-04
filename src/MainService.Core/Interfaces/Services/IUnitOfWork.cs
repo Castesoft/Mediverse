@@ -36,6 +36,7 @@ public interface IUnitOfWork
     ISubscriptionRepository SubscriptionRepository { get; }
     ISubscriptionHistoryRepository SubscriptionHistoryRepository { get; }
     ISubscriptionPlanRepository SubscriptionPlanRepository { get; }
+    ISubscriptionCancellationRepository SubscriptionCancellationRepository { get; }
     Task<bool> Complete();
     
     bool HasChanges();

@@ -1,13 +1,10 @@
 using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MainService.Core.DTOs;
 using MainService.Core.DTOs.MedicalRecord;
-using MainService.Core.DTOs.Patients;
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
-using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;

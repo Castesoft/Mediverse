@@ -4,6 +4,7 @@ using MainService.Core.DTOs.Subscriptions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
+using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -12,26 +13,51 @@ namespace MainService.Infrastructure.Data
 {
     public class SubscriptionRepository(DataContext context, IMapper mapper) : ISubscriptionRepository
     {
-        public void Add(Subscription subscription)
+        public void Add(UserSubscription userSubscription)
         {
-            context.Subscriptions.Add(subscription);
+            context.Subscriptions.Add(userSubscription);
         }
 
-        public async Task<Subscription?> GetByIdAsync(int id)
+        public async Task<UserSubscription?> GetByIdAsync(int id)
         {
             return await context.Subscriptions
-                .Include(s => s.SubscriptionPlan)
-                .Include(s => s.SubscriptionHistories)
+                .Includes()
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task<List<Subscription>> GetSubscriptionsByUserIdAsync(int userId)
+        public Task<SubscriptionDto?> GetDtoByIdAsync(int id)
+        {
+            return context.Subscriptions
+                .Includes()
+                .AsNoTracking()
+                .ProjectTo<SubscriptionDto>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(s => s.Id == id);
+        }
+
+        public async Task<UserSubscription?> GetByStripeSubscriptionIdAsync(string stripeSubscriptionId)
+        {
+            return await context.Subscriptions
+                .Includes()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.StripeSubscriptionId == stripeSubscriptionId);
+        }
+
+        public async Task<UserSubscription?> GetActiveSubscriptionForUserAsync(int userId)
+        {
+            return await context.Subscriptions
+                .Includes()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s =>
+                    s.UserId == userId &&
+                    (s.Status == SubscriptionStatus.Active || s.Status == SubscriptionStatus.Pending));
+        }
+
+        public async Task<List<UserSubscription>> GetSubscriptionsByUserIdAsync(int userId)
         {
             return await context.Subscriptions
                 .Where(s => s.UserId == userId)
-                .Include(s => s.SubscriptionPlan)
-                .Include(s => s.SubscriptionHistories)
+                .Includes()
                 .ToListAsync();
         }
 
@@ -85,9 +111,9 @@ namespace MainService.Infrastructure.Data
             );
         }
 
-        public void Delete(Subscription subscription)
+        public void Delete(UserSubscription userSubscription)
         {
-            context.Subscriptions.Remove(subscription);
+            context.Subscriptions.Remove(userSubscription);
         }
     }
 }

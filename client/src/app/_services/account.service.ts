@@ -1,5 +1,5 @@
 import { BehaviorSubject, catchError, map, Observable, of, tap } from "rxjs";
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { Role } from "src/app/_models/types";
@@ -20,51 +20,68 @@ import {
 import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
+import { Subscription } from "src/app/_models/subscriptions/subscription";
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  private snackbarService = inject(SnackbarService);
-  private snackBar = inject(MatSnackBar);
-  private matDialog = inject(MatDialog);
+  private snackbarService: SnackbarService = inject(SnackbarService);
+  private snackBar: MatSnackBar = inject(MatSnackBar);
+  private matDialog: MatDialog = inject(MatDialog);
+  private http: HttpClient = inject(HttpClient);
+  private router: Router = inject(Router);
 
-  baseUrl = `${environment.apiUrl}account/`;
+  baseUrl: string = `${environment.apiUrl}account/`;
 
-  current = signal<Account | null>(null);
+  current: WritableSignal<Account | null> = signal<Account | null>(null);
 
-  private billingDetailsSubject = new BehaviorSubject<BillingDetails | null>(null);
+  private billingDetailsSubject: BehaviorSubject<BillingDetails | null> = new BehaviorSubject<BillingDetails | null>(null);
   billingDetails$: Observable<BillingDetails | null> = this.billingDetailsSubject.asObservable();
 
+  private activeSubscriptionSubject: BehaviorSubject<Subscription | null> = new BehaviorSubject<Subscription | null>(null);
+  activeSubscription$: Observable<Subscription | null> = this.activeSubscriptionSubject.asObservable();
 
-  userPaymentHistory = signal<Payment[]>([]);
-  roles = computed(() => {
-    const user = this.current();
+  userPaymentHistory: WritableSignal<Payment[]> = signal<Payment[]>([]);
+  roles: Signal<any[]> = computed(() => {
+    const user: Account | null = this.current();
     if (user && user.token) {
-      const role = JSON.parse(atob(user.token.split('.')[1])).role;
+      const role: any = JSON.parse(atob(user.token.split('.')[1])).role;
       return Array.isArray(role) ? role : [ role ];
     }
     return [];
   });
+
   passwordPattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[*@$¡!%*¿?&.,_-]).{8,}$/;
   emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   phonePattern: string = '^[0-9]+$';
 
   login(value: any) {
     return this.http.post<Account>(`${this.baseUrl}login`, value).pipe(
-      map(response => {
-        if (response) {
-          if (!response.requiresTwoFactor) {
-            this.setCurrentUser(response);
-            this.snackbarService.success(`Bienvenido ${response.firstName}!`);
-          }
+      map((response: Account) => {
+        if (!response.requiresTwoFactor) {
+          this.setCurrentUser(response);
         }
+
         return response;
       })
     );
+  }
+
+  updateActiveSubscriptionStatus(): Observable<Subscription | null> {
+    return this.http.get<Subscription | null>(`${this.baseUrl}active-subscription`).pipe(
+      tap((subscription: Subscription | null) => this.activeSubscriptionSubject.next(subscription)),
+      catchError((err: any) => {
+        console.error("Error retrieving active subscription", err);
+        this.activeSubscriptionSubject.next(null);
+        return of(null);
+      })
+    );
+  }
+
+  refreshActiveSubscriptionStatus(): void {
+    this.updateActiveSubscriptionStatus().subscribe();
   }
 
   setCurrentUser(user: Account) {
@@ -76,6 +93,7 @@ export class AccountService {
     //     this.current.set(response);
     //   }
     // });
+    this.refreshActiveSubscriptionStatus();
   }
 
   getCurrent(): Observable<Account> {

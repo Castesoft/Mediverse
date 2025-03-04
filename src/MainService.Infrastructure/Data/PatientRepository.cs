@@ -6,7 +6,6 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
 using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
-using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
 using Microsoft.EntityFrameworkCore;
 

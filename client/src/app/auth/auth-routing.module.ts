@@ -10,8 +10,16 @@ import { SignUpModule } from "src/app/auth/sign-up.module";
       redirectTo: 'sign-in',
       pathMatch: 'full'
     },
-    { path: 'sign-in', loadChildren: () => SignInModule, title: 'Iniciar sesión en DocHub', },
-    { path: 'sign-up', loadChildren: () => SignUpModule, title: 'Registrarse en DocHub', },
+    {
+      path: 'sign-in',
+      loadChildren: () => SignInModule,
+      title: 'Iniciar sesión en DocHub',
+    },
+    {
+      path: 'sign-up',
+      loadChildren: () => SignUpModule,
+      title: 'Registrarse en DocHub',
+    },
   ]) ],
   exports: [ RouterModule ]
 })

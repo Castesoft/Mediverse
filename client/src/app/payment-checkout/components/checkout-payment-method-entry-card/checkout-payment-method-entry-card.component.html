@@ -12,27 +12,37 @@
     </div>
   </div>
 
-  <div [collapse]="displayCollapsed" [isAnimated]="true" (collapsed)="onDisplayHidden()">
-    <div class="card-body border-top border-gray-200">
-      @if (selectedPaymentMethod) {
-        <div paymentMethodDisplayCard
-             [paymentMethod]="selectedPaymentMethod"
-             [selected]="true"
-             [displayOnly]="true"
-             [selectionMode]="false">
+  @if (isLoading) {
+    <div class="card-body border-top">
+      <div class="d-flex justify-content-center py-3">
+        <div class="spinner-border text-gray-400" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
-      }
-    </div>
-  </div>
-
-  <div [collapse]="selectorCollapsed" [isAnimated]="true" (collapsed)="onSelectorHidden()">
-    <div class="card-body pt-0">
-      <div paymentMethodSelector
-           [paymentMethods]="paymentMethods"
-           [confirmOnSelect]="true"
-           [showPaymentMethodCreateCard]="true"
-           (selectedPaymentMethod)="onPaymentMethodSelected($event)">
       </div>
     </div>
-  </div>
+  } @else {
+    <div [collapse]="displayCollapsed" [isAnimated]="true" (collapsed)="onDisplayHidden()">
+      <div class="card-body border-top border-gray-200">
+        @if (selectedPaymentMethod) {
+          <div paymentMethodDisplayCard
+               [paymentMethod]="selectedPaymentMethod"
+               [selected]="true"
+               [displayOnly]="true"
+               [selectionMode]="false">
+          </div>
+        }
+      </div>
+    </div>
+
+    <div [collapse]="selectorCollapsed" [isAnimated]="true" (collapsed)="onSelectorHidden()">
+      <div class="card-body pt-0">
+        <div paymentMethodSelector
+             [paymentMethods]="paymentMethods"
+             [confirmOnSelect]="true"
+             [showPaymentMethodCreateCard]="true"
+             (selectedPaymentMethod)="onPaymentMethodSelected($event)">
+        </div>
+      </div>
+    </div>
+  }
 </div>

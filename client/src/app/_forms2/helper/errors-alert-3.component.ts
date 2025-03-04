@@ -1,25 +1,51 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, model } from '@angular/core';
+import {
+  Component,
+  effect,
+  HostBinding,
+  inject,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  output,
+  OutputEmitterRef
+} from '@angular/core';
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
-  host: { role: 'alert', class: 'alert alert-dismissible bg-light-danger border border-danger border-dashed d-flex flex-column flex-sm-row w-100 p-5 mb-10', },
+  host: { role: 'alert', },
   selector: 'div[errorsAlert3]',
   templateUrl: './errors-alert-3.component.html',
-  // template: `
-  // `,
-  standalone: true,
-  imports: [CommonModule, CdkModule, MaterialModule,],
+  imports: [ CommonModule, CdkModule, MaterialModule, FaIconComponent, ],
 })
 export class ErrorsAlert3Component {
-  error = model.required<BadRequest>();
+  readonly icons: IconsService = inject(IconsService);
+
+  error: ModelSignal<BadRequest> = model.required<BadRequest>();
+  addMargin: InputSignal<boolean> = input(true);
+
+  onClose: OutputEmitterRef<void> = output();
+
+  class: string = 'alert alert-dismissible bg-light-danger border border-danger d-flex flex-row align-items-start justify-content-between w-100 p-5';
+
+  @HostBinding('class') get hostClass() {
+    return this.class;
+  }
 
   constructor() {
     effect(() => {
-      console.log(this.error());
-
-    })
+      if (this.addMargin()) {
+        this.class.replace(' mb-0', '');
+        this.class += ' mb-10';
+      } else {
+        this.class.replace(' mb-10', '');
+        this.class += ' mb-0';
+      }
+    });
   }
 }

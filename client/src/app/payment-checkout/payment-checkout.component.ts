@@ -20,13 +20,19 @@ import {
   CheckoutPaymentMethodEntryCardComponent
 } from "src/app/payment-checkout/components/checkout-payment-method-entry-card/checkout-payment-method-entry-card.component";
 import { ToastrService } from "ngx-toastr";
-import { StripePaymentGatewayService } from "src/app/_services/stripe-payment-gateway.service";
+import { StripeGatewayService } from "src/app/_services/stripe-gateway.service";
 import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
 import { Order } from "src/app/_models/orders/order";
 import { OrdersService } from "src/app/orders/orders.config";
 import {
   OrderProductsTableComponent
 } from "src/app/orders/components/order-products-table/order-products-table.component";
+import {
+  SubscriptionOnboardingComponent
+} from "src/app/payment-checkout/subscription-onboarding/subscription-onboarding.component";
+import {
+  PaymentDisclaimerComponent
+} from "src/app/payment-checkout/components/subscription-terms-and-conditions-disclaimer-notice/payment-disclaimer.component";
 
 @Component({
   selector: 'app-payment-checkout',
@@ -37,11 +43,13 @@ import {
     CheckoutAddressEntryCardComponent,
     CheckoutPaymentMethodEntryCardComponent,
     RouterLink,
-    OrderProductsTableComponent
+    OrderProductsTableComponent,
+    SubscriptionOnboardingComponent,
+    PaymentDisclaimerComponent
   ]
 })
 export class PaymentCheckoutComponent implements OnInit, OnDestroy {
-  private readonly paymentGatewayService: StripePaymentGatewayService = inject(StripePaymentGatewayService);
+  private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly eventsService: EventsService = inject(EventsService);
@@ -54,7 +62,7 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject<void>();
 
   id!: string;
-  type!: 'cita' | 'receta' | 'medicamentos';
+  type!: 'cita' | 'receta' | 'medicamentos' | 'suscripcion';
   title: string = '';
   cancelUrl: string = '';
 
@@ -84,6 +92,9 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
       this.type = 'medicamentos';
       this.title = 'Pago de Medicamentos';
       this.id = this.route.snapshot.paramMap.get('orderId') || '';
+    } else if (url.includes('/suscripcion')) {
+      this.type = 'suscripcion';
+      this.title = 'Pago de Suscripción';
     }
 
     this.cancelUrl = this.route.snapshot.queryParamMap.get('cancelUrl') || '';

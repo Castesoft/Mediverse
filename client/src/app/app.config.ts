@@ -25,6 +25,7 @@ import { authGuard } from 'src/app/_guards/auth.guard';
 import {
   UseOfCookiesModalComponent
 } from 'src/app/auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
+import { providePrimeNG } from "primeng/config";
 
 declare var google: any;
 
@@ -130,7 +131,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter([
       {
         path: '',
-        loadChildren: () => import('./landing/landing.config').then(m => m.LandingModule),
+        loadChildren: () => import('./landing/landing.module').then(m => m.LandingModule),
       },
       {
         path: 'auth',
@@ -161,8 +162,9 @@ export const appConfig: ApplicationConfig = {
         ]
       },
     ]),
-    provideHttpClient(withInterceptors([ errorInterceptor, jwtInterceptor, loadingInterceptor ])),
+    provideHttpClient(withInterceptors([ errorInterceptor(false), jwtInterceptor, loadingInterceptor ])),
     provideAnimations(),
+    providePrimeNG(),
     provideAnimationsAsync(),
     // localeEsMX,
     provideToastr({

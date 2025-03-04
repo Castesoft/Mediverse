@@ -1,55 +1,65 @@
-<i class="ki-duotone ki-message-text-2 fs-2hx text-danger me-4 mb-5 mb-sm-0"><span class="path1"></span><span
-    class="path2"></span><span class="path3"></span></i>
-<div class="d-flex flex-column pe-0 pe-sm-10">
-  <h5 class="mb-1">
-    @switch(error().error.status) {
-    @case (400) {
-    Errores:
-    }
-    @case(401) {
-    Error de Autenticación
-    }
-    @case(404) {
-    No Encontrado
-    }
-    @case(500) {
-    Error Interno de Servidor
-    }
-    @default {
-    Error
-    }
-    }
-  </h5>
-  <span>
-    @switch(error().error.status) {
-    @case (400) {
-    @if(error().type === 'ValidationError') {
-    <ul>
-      @for(error of error().validationErrors; let idx = $index; track idx) {
-      <li>{{error}}</li>
+<div class="d-flex flex-row justify-content-start align-items-center">
+  <i class="ki-duotone ki-message-text-2 fs-2hx text-danger me-4 mb-5 mb-sm-0">
+    <span class="path1"></span>
+    <span class="path2"></span>
+    <span class="path3"></span>
+  </i>
+
+
+  <div class="d-flex flex-column pe-0 pe-sm-10">
+    <h5 class="mb-1 text-danger">
+      @switch (error().error.status) {
+        @case (400) {
+          Errores:
+        }
+        @case (401) {
+          Error de Autenticación
+        }
+        @case (404) {
+          No Encontrado
+        }
+        @case (500) {
+          Error Interno de Servidor
+        }
+        @default {
+          Error
+        }
       }
-    </ul>
-    }@else if(error().type === 'BadRequest') {
-    {{error().message}}
-    }
-    }
-    @case(401) {
-    {{ error().message }}
-    }
-    @case(404) {
-    {{ error().message }}
-    }
-    @case(500) {
-    <h5 class="text-danger">Error: {{ error().error.message }}</h5>
-    <code class="mt-5">
+    </h5>
+    <span class="text-danger">
+      @switch (error().error.status) {
+        @case (400) {
+          @if (error().type === 'ValidationError') {
+            <ul>
+              @for (error of error().validationErrors; let idx = $index; track idx) {
+                <li>{{ error }}</li>
+              }
+            </ul>
+          } @else if (error().type === 'BadRequest') {
+            {{ error().message }}
+          }
+        }
+        @case (401) {
+          {{ error().message }}
+        }
+        @case (404) {
+          {{ error().message }}
+        }
+        @case (500) {
+          <h5 class="text-danger">Error: {{ error().error.message }}</h5>
+          <code class="mt-5">
             {{ error().error.error.details }}
           </code>
-    }
-    @default {
-    {{ error().error.message }}
-    }
-    }
-  </span>
+        }
+        @default {
+          {{ error().error.message }}
+        }
+      }
+    </span>
+  </div>
+
 </div>
-<button type="button" class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto">
-  <i class="ki-duotone ki-cross fs-1 text-danger"><span class="path1"></span><span class="path2"></span></i> </button>
+
+<button class="btn p-1 text-danger d-flex" type="button" aria-label="Close" (click)="onClose.emit()" style="margin-top: -0.475rem;">
+  <fa-icon [icon]="icons.faTimes" class="fs--1"></fa-icon>
+</button>

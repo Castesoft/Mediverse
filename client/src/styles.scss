@@ -1,12 +1,21 @@
 @use '@angular/material' as mat;
 @use 'public/styles/m3-theme';
 
+$brand-blue: #284092;
+
+:root {
+  @include mat.progress-bar-overrides((
+    active-indicator-color: #00A3FF,
+  ));
+}
+
 mat.$theme-ignore-duplication-warnings: true
 
 ;
 
 @include mat.core();
 @include mat.strong-focus-indicators();
+
 
 :root {
   @include mat.button-overrides((
@@ -151,7 +160,7 @@ html {
 .doctor-map-marker {
   transform: translateY(-10px);
   padding: 4px;
-  background-color: #00A3FF;
+  background-color: #284092;
 }
 
 .doctor-map-marker:after {
@@ -164,7 +173,7 @@ html {
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-top: 10px solid #00A3FF;
+  border-top: 10px so #284092;
   z-index: 0;
 }
 

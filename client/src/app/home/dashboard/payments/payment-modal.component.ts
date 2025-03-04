@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { PaymentMethod } from 'src/app/_models/paymentMethod/paymentMethod';
 import { CreatePaymentIntentResponse } from 'src/app/_models/payments/createPaymentIntentResponse';
-import { StripePaymentGatewayService } from 'src/app/_services/stripe-payment-gateway.service';
+import { StripeGatewayService } from 'src/app/_services/stripe-gateway.service';
 import { PaymentsService } from 'src/app/payments/payments.config';
 import { EventsService } from 'src/app/events/events.config';
 import { CurrencyPipe } from '@angular/common';
@@ -35,7 +35,7 @@ export class PaymentModalComponent implements OnInit {
 
   dev: DevService = inject(DevService);
 
-  private stripePaymentsService: StripePaymentGatewayService = inject(StripePaymentGatewayService);
+  private stripePaymentsService: StripeGatewayService = inject(StripeGatewayService);
   private paymentsService: PaymentsService = inject(PaymentsService);
   private eventsService: EventsService = inject(EventsService);
 

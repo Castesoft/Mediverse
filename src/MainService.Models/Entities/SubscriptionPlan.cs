@@ -20,5 +20,5 @@ public class SubscriptionPlan : BaseEntity
     /// <summary>
     /// Gets or sets the list of subscriptions using this plan.
     /// </summary>
-    public List<Subscription> Subscriptions { get; set; } = [];
+    public List<UserSubscription> Subscriptions { get; set; } = [];
 }

@@ -7,6 +7,7 @@ import { UtilsService } from "src/app/_services/utils.service";
 import { ValidationService } from "src/app/_services/validation.service";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { LoginForm } from "../models/login";
+import { Account } from "src/app/_models/account/account";
 
 declare var google: any;
 
@@ -35,6 +36,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   focusOnPassword: boolean = false;
   redirectUrl: string | null = "/cuenta";
   requiresTwoFactor: boolean = false;
+  isSubmitting: boolean = false;
 
   noRedirect: InputSignal<boolean> = input(false);
 
@@ -73,35 +75,52 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
 
   onSubmit() {
     this.form.submitted = true;
-    if (this.form.valid) {
-      if (!this.requiresTwoFactor) {
-        this.accountService.login(this.form.value).subscribe({
-          next: response => {
-            this.form.submitted = false;
-            if (response.requiresTwoFactor) {
-              this.requiresTwoFactor = true;
-            } else {
-              if (this.noRedirect()) return;
-              if (this.redirectUrl) {
-                this.router.navigate([ this.redirectUrl ]);
-              } else {
-                this.router.navigate([ this.returnUrl ]);
-              }
-            }
-          }
-        })
-      } else {
-        this.accountService.twoFactorLogin(this.form.controls.email.value!, this.form.controls.twoFactorCode.value!).subscribe({
-          next: _ => {
+
+    if (!this.form.valid) return;
+
+    this.isSubmitting = true;
+
+    if (!this.requiresTwoFactor) {
+      this.accountService.login(this.form.value).subscribe({
+        next: (response: Account) => {
+          this.form.submitted = false;
+          if (response.requiresTwoFactor) {
+            this.requiresTwoFactor = true;
+          } else {
             if (this.noRedirect()) return;
             if (this.redirectUrl) {
-              this.router.navigate([ this.redirectUrl ]);
+              this.router.navigate([ this.redirectUrl ]).then(() => {});
             } else {
-              this.router.navigate([ this.returnUrl ]);
+              this.router.navigate([ this.returnUrl ]).then(() => {});
             }
           }
-        });
-      }
+        },
+        error: (err) => {
+          console.error('Login error:', err);
+          this.isSubmitting = false;
+        },
+        complete: () => {
+          this.isSubmitting = false;
+        }
+      });
+    } else {
+      this.accountService.twoFactorLogin(this.form.controls.email.value!, this.form.controls.twoFactorCode.value!).subscribe({
+        next: (_) => {
+          if (this.noRedirect()) return;
+          if (this.redirectUrl) {
+            this.router.navigate([ this.redirectUrl ]).then(() => {});
+          } else {
+            this.router.navigate([ this.returnUrl ]).then(() => {});
+          }
+        },
+        error: (err) => {
+          console.error('Two-factor login error:', err);
+          this.isSubmitting = false;
+        },
+        complete: () => {
+          this.isSubmitting = false;
+        }
+      });
     }
   }
 

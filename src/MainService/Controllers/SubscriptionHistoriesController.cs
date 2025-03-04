@@ -53,7 +53,7 @@ namespace MainService.Controllers
             var history = mapper.Map<SubscriptionHistory>(historyDto);
             uow.SubscriptionHistoryRepository.Add(history);
             await uow.Complete();
-            return CreatedAtAction(nameof(GetHistoryBySubscriptionId), new { subscriptionId = history.SubscriptionId },
+            return CreatedAtAction(nameof(GetHistoryBySubscriptionId), new { subscriptionId = history.UserSubscriptionId },
                 mapper.Map<SubscriptionHistoryDto>(history));
         }
     }

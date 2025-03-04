@@ -45,6 +45,7 @@ import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
   host: { class: 'pb-6' },
   selector: 'div[eventsCalendar]',
   templateUrl: './events-calendar.component.html',
+  styleUrl: './events-calendar.component.scss',
   standalone: true,
   imports: [
     BsDropdownModule,
@@ -60,29 +61,6 @@ import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
     ButtonsModule,
     CommonModule,
   ],
-  styles: [ `
-    .current-event {
-      border: 3px solid var(--bs-primary);
-      box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.3);
-      z-index: 1;
-    }
-
-    .circle-bullet {
-      display: inline-block;
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 50%;
-      margin-bottom: 1px;
-    }
-
-    .timed-event-container {
-      transition: all 0.2s;
-    }
-
-    .timed-event-container:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
-  ` ]
 })
 export class EventsCalendarComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
   implements OnInit, OnDestroy {

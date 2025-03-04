@@ -8,9 +8,14 @@ public class SubscriptionMappingProfile : Profile
 {
     public SubscriptionMappingProfile()
     {
-        CreateMap<Subscription, SubscriptionDto>()
+        CreateMap<UserSubscription, SubscriptionDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ReverseMap()
+            .ForMember(dest => dest.StripePlanId, opt => opt.MapFrom(src => src.SubscriptionPlan.StripePlanId))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.SubscriptionPlan.Price))
+            .ForMember(dest => dest.PlanName, opt => opt.MapFrom(src => src.SubscriptionPlan.Name))
+            .ForMember(dest => dest.PlanId, opt => opt.MapFrom(src => src.SubscriptionPlan.Id));
+
+        CreateMap<SubscriptionDto, UserSubscription>()
             .ForMember(dest => dest.Status, opt => opt.Ignore());
     }
 }

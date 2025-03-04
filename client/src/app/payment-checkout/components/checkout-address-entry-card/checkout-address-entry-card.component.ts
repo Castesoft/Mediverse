@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, input, InputSignal, OnDestroy, OnInit } from '@angular/core';
 import { Address } from "src/app/_models/addresses/address";
 import { AccountService } from "src/app/_services/account.service";
 import { AddressesService } from "src/app/addresses/addresses.config";
@@ -27,8 +27,11 @@ export class CheckoutAddressEntryCardComponent implements OnInit, OnDestroy {
 
   private readonly destroy$: Subject<void> = new Subject<void>();
 
+  title: InputSignal<string> = input('Dirección de Entrega');
+
   addresses: Address[] = [];
   selectedAddress: Address | null = null;
+  isLoading: boolean = false;
 
   displayCollapsed: boolean = false;
   selectorCollapsed: boolean = true;
@@ -52,8 +55,11 @@ export class CheckoutAddressEntryCardComponent implements OnInit, OnDestroy {
   }
 
   private getUserAddresses() {
+    this.isLoading = true;
+
     if (!this.accountsService.current()) {
       console.error("User not authenticated");
+      this.isLoading = false;
       return;
     }
 
@@ -62,9 +68,14 @@ export class CheckoutAddressEntryCardComponent implements OnInit, OnDestroy {
         this.addresses = addresses;
         const defaultAddress: Address | undefined = addresses.find((a: Address) => a.isMain);
         this.selectedAddress = defaultAddress ? defaultAddress : (addresses[0] || null);
+        this.paymentCheckoutService.setSelectedAddress(this.selectedAddress);
       },
       error: (err) => {
+        this.isLoading = false;
         console.error("Error fetching addresses:", err);
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }
