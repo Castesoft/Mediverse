@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AccountService } from 'src/app/_services/account.service';
 import { ThemeService } from 'src/app/_services/theme.service';
+import { UtilsService } from 'src/app/_services/utils.service';
 import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 
@@ -14,6 +15,8 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
   imports: [ BootstrapModule, RouterModule, ProfilePictureComponent ],
 })
 export class UserDropdownComponent {
-  service: AccountService = inject(AccountService);
-  theme: ThemeService = inject(ThemeService);
+  readonly service: AccountService = inject(AccountService);
+  readonly theme: ThemeService = inject(ThemeService);
+  readonly utilsService: UtilsService = inject(UtilsService);
+
 }
