@@ -526,33 +526,17 @@ namespace MainService.Models.Helpers
             new() { Name = "Paypal" }
         ];
 
-        public static readonly List<SubscriptionPlan> SubscriptionPlans = new()
-        {
-            new SubscriptionPlan
+        public static readonly List<SubscriptionPlan> SubscriptionPlans =
+        [
+            new()
             {
-                Name = SubscriptionPlanName.Basic,
-                Description = "Basic plan with limited features.",
-                Price = 100,
+                Price = 199,
                 BillingFrequencyInMonths = 1,
-                StripePlanId = "plan_basic_001"
-            },
-            new SubscriptionPlan
-            {
-                Name = SubscriptionPlanName.Premium,
-                Description = "Premium plan with extra features.",
-                Price = 250,
-                BillingFrequencyInMonths = 1,
-                StripePlanId = "plan_premium_001"
-            },
-            new SubscriptionPlan
-            {
-                Name = SubscriptionPlanName.Enterprise,
-                Description = "Enterprise plan with full features and support.",
-                Price = 500,
-                BillingFrequencyInMonths = 1,
-                StripePlanId = "plan_enterprise_001"
+                StripePlanId = "plan_basic_001",
+                Name = SubscriptionPlanName.Pro,
+                Description = "Pro plan with full features.",
             }
-        };
+        ];
 
         public static IEnumerable<AppRole> GetRolesWithPermissions()
         {

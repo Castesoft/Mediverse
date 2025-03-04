@@ -1,45 +1,48 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SnackbarService } from 'src/app/_services/snackbar.service';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
+import { ToastrService } from "ngx-toastr";
+import { AlertComponent } from "src/app/_forms2/helper/alert.component";
 
 @Component({
   selector: 'app-new-password-form',
-  standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, InputControlComponent],
   templateUrl: './new-password-form.component.html',
-  styleUrl: './new-password-form.component.scss'
+  styleUrl: './new-password-form.component.scss',
+  imports: [ RouterModule, ReactiveFormsModule, InputControlComponent, AlertComponent ],
 })
-export class NewPasswordFormComponent {
-  private fb = inject(FormBuilder);
-  private accountService = inject(AccountService);
-  private snackbarService = inject(SnackbarService)
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+export class NewPasswordFormComponent implements OnInit {
+  private accountService: AccountService = inject(AccountService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private toastr: ToastrService = inject(ToastrService);
+  private fb: FormBuilder = inject(FormBuilder);
+  private router: Router = inject(Router);
 
-  form: FormGroup = this.fb.group({
-    password    : [ '', [Validators.required, Validators.pattern(this.accountService.passwordPattern)] ],
-    confirm     : [ '', [Validators.required] ],
-  },{
-    validators: this.accountService.equalFields('password','confirm')
-  } as AbstractControlOptions);
+  form: FormGroup = this.fb.group(
+    {
+      password: [ '', [ Validators.required, Validators.pattern(this.accountService.passwordPattern) ] ],
+      confirm: [ '', [ Validators.required ] ],
+    },
+    { validators: this.accountService.equalFields('password', 'confirm') } as AbstractControlOptions
+  );
 
   id: string = `newPasswordForm${createId()}`;
-  submitted = false;
-  email = '';
-  resetToken = '';
+  isSubmitting: boolean = false;
+  submitted: boolean = false;
+  resetToken: string = '';
+  errorMessage?: string;
+  email: string = '';
 
   ngOnInit() {
-    this.route.queryParamMap.subscribe(params => {
-      const paramEmail = params.get('email');
-      const paramToken = params.get('resetToken');
+    this.route.queryParamMap.subscribe((params: ParamMap) => {
+      const paramEmail: string | null = params.get('email');
+      const paramToken: string | null = params.get('resetToken');
 
       if (!paramEmail || !paramToken) {
-        this.snackbarService.error(`Operación inválida, intentalo de nuevo`);
-        this.router.navigateByUrl('/auth/sign-in');
+        this.errorMessage = "Operación inválida, intentalo de nuevo";
+        this.router.navigateByUrl('/auth/sign-in').then(() => {});
       }
 
       this.email = paramEmail!;
@@ -49,15 +52,30 @@ export class NewPasswordFormComponent {
 
   onSubmit() {
     this.submitted = true;
+    this.isSubmitting = true;
+    this.errorMessage = undefined;
+
     if (!this.form.valid) {
+      console.error('Error submitting form: invalid form');
+      this.isSubmitting = false;
       return;
     }
 
-    this.accountService.resetPasswordWithToken(this.resetToken, this.form.get('password')?.value, this.email).subscribe(response => {
-      this.snackbarService.success(`Contraseña reestablecida`);
-      this.form.reset();
-      this.submitted = false;
-      this.router.navigateByUrl('/auth/sign-in');
+    const password: string = this.form.get('password')?.value;
+
+    this.accountService.resetPasswordWithToken(this.resetToken, password, this.email).subscribe({
+      next: (_) => {
+        this.submitted = false;
+        this.isSubmitting = false;
+        this.form.reset();
+
+        this.toastr.success(`¡Contraseña reestablecida!`);
+        this.router.navigateByUrl('/auth/sign-in').then(() => {});
+      },
+      error: (error: any) => {
+        this.errorMessage = error.message;
+        this.isSubmitting = false;
+      }
     });
   }
 }

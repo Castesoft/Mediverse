@@ -26,7 +26,7 @@ import { IconsService } from "src/app/_services/icons.service";
 export class ErrorsAlert3Component {
   readonly icons: IconsService = inject(IconsService);
 
-  error: ModelSignal<BadRequest> = model.required<BadRequest>();
+  error: ModelSignal<BadRequest> = model.required();
   addMargin: InputSignal<boolean> = input(true);
 
   onClose: OutputEmitterRef<void> = output();

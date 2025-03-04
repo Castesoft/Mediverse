@@ -17,6 +17,9 @@ import { CurrencyPipe } from "@angular/common";
 import { StripeGatewayService } from "src/app/_services/stripe-gateway.service";
 import { ErrorsAlert3Component } from "src/app/_forms2/helper/errors-alert-3.component";
 import { BadRequest } from "src/app/_models/forms/badRequest";
+import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
+import { SubscriptionResponse } from "src/app/_models/payments/subscriptionResponse";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'div[subscriptionOnboarding]',
@@ -31,8 +34,10 @@ import { BadRequest } from "src/app/_models/forms/badRequest";
   ],
 })
 export class SubscriptionOnboardingComponent implements OnInit, OnDestroy {
-  private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
+  private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
+  private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly destroy$: Subject<void> = new Subject<void>();
 
   step: 1 | 2 = 1;
@@ -45,11 +50,13 @@ export class SubscriptionOnboardingComponent implements OnInit, OnDestroy {
 
   isSubmitting: boolean = false;
   submissionError: BadRequest | null = null;
+  cancelUrl: string = '';
 
   ngOnInit(): void {
     this.step = 1;
     this.subscribeToSelectedAddress();
     this.subscribeToSelectedPaymentMethod();
+    this.cancelUrl = this.route.snapshot.queryParamMap.get('cancelUrl') || '';
   }
 
   ngOnDestroy(): void {
@@ -97,8 +104,9 @@ export class SubscriptionOnboardingComponent implements OnInit, OnDestroy {
     }
 
     this.paymentGatewayService.createSubscription(paymentMethodId, addressId).subscribe({
-      next: (response: any) => {
-        console.log(response);
+      next: (_: SubscriptionResponse) => {
+        this.paymentNavigationService.navigateToCheckoutSuccess(null, this.cancelUrl)
+          .catch((err: any) => console.error('Error navigating to checkout success:', err));
       },
       error: (error: any) => {
         this.isSubmitting = false;

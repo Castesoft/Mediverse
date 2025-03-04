@@ -3,7 +3,6 @@ import { Component, DestroyRef, inject, input, InputSignal, OnInit } from '@angu
 import { Router, RouterModule } from '@angular/router';
 import { Account } from 'src/app/_models/account/account';
 import { AccountService } from 'src/app/_services/account.service';
-import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -15,7 +14,7 @@ import { UtilsService } from 'src/app/_services/utils.service';
   selector: 'div[accountCard]',
   templateUrl: './account-card.component.html',
   standalone: true,
-  imports: [ RouterModule, LayoutModule, ProfilePictureComponent ],
+  imports: [ RouterModule, LayoutModule ],
 })
 export class AccountCardComponent implements OnInit {
   protected readonly PhotoShape: typeof PhotoShape = PhotoShape;

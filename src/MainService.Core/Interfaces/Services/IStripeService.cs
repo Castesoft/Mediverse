@@ -14,5 +14,6 @@ public interface IStripeService
     Task<PaymentIntent?> CreatePaymentIntentAsync(string customerId, string paymentMethodId,
         string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents);
 
-    Task<string> CreateStripeSubscriptionAsync(string stripeCustomerId, string priceId);
+    Task<(string SubscriptionId, DateTime NextBillingDate)> CreateStripeSubscriptionAsync(
+        string stripeCustomerId, string priceId);
 }

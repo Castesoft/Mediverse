@@ -4,17 +4,28 @@
     {{ label }}
   </label>
 }
-<input [type]="type" [formControl]="control" [placeholder]="placeholder" [autocomplete]="autocomplete"
-       [spellcheck]="spellcheck" [attr.role]="role" [id]="id ? id : controlName" [attr.list]="controlName + 'datalist'"
-       [attr.autofocus]="autofocus() ? 'autofocus' : null" [readonly]="isReadonly"
+
+<input [type]="type"
+       [formControl]="control"
+       [placeholder]="placeholder"
+       [autocomplete]="autocomplete"
+       [spellcheck]="spellcheck"
+       [attr.role]="role"
+       [id]="id ? id : controlName"
+       [attr.list]="controlName + 'datalist'"
+       [attr.autofocus]="autofocus() ? 'autofocus' : null"
+       [readonly]="isReadonly"
        class="form-control mb-3 mb-lg-0"
        [ngClass]="{
-      'is-invalid': submitted() && control.invalid,
-      'is-valid': submitted() && control.valid,
-      'border-warning border-2': isPending,
-      }" [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null" [attr.aria-label]="label + ' input'"
+          'is-invalid': (control.dirty || submitted()) && control.invalid,
+          'is-valid': (control.dirty || submitted()) && control.valid,
+          'border-warning border-2': isPending,
+       }"
+       [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"
+       [attr.aria-label]="label + ' input'"
        (change)="handleChange($event)"
 />
+
 @if (datalistOptions) {
   <datalist [id]="controlName + 'datalist'">
     @for (option of datalistOptions; track option) {
@@ -22,6 +33,7 @@
     }
   </datalist>
 }
+
 @if (control.status === "PENDING" && control.dirty) {
   <div class="spinner-border spinner-border-sm text-primary ms-2 inset" role="status">
     <span class="visually-hidden">Loading...</span>
@@ -31,6 +43,7 @@
 @if (control.errors) {
   <div invalidFeedback [errors]="errors()" [control]="control" [submitted]="submitted()"></div>
 }
+
 @if (formText()) {
   <div helpBlock [controlName]="controlName" [formText]="formText()"></div>
 }

@@ -28,6 +28,7 @@ export class SubscriptionCancelModalComponent implements OnInit {
   readonly icons: IconsService = inject(IconsService);
 
   data: { subscription: Subscription } = inject(MAT_DIALOG_DATA);
+  showSuccessfulCancellationCard: boolean = false;
   cancellationForm: FormGroup = new FormGroup({});
   isSubmitting: boolean = false;
 
@@ -76,7 +77,7 @@ export class SubscriptionCancelModalComponent implements OnInit {
       .subscribe({
         next: (result) => {
           console.log(result);
-          this.matDialogRef.close();
+          this.showSuccessfulCancellationCard = true;
         },
         error: ((err: any) => {
           console.error(err);

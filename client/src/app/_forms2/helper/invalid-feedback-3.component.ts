@@ -1,11 +1,10 @@
 import { CommonModule, DatePipe } from "@angular/common";
-import { Component, computed, effect, inject, model, signal } from "@angular/core";
+import { Component, computed, inject, model, ModelSignal, Signal, signal, WritableSignal } from "@angular/core";
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
 import { MaterialModule } from "src/app/_shared/material.module";
 
 @Component({
-  host: { class: '', },
   selector: 'div[invalidFeedback3]',
   template: `
     @if (root().submitted) {
@@ -14,24 +13,16 @@ import { MaterialModule } from "src/app/_shared/material.module";
       }
     }
   `,
-  standalone: true,
   imports: [ CommonModule, MaterialModule, ],
   providers: [ DatePipe ],
 })
 export class InvalidFeedback3Component {
-  datePipe = inject(DatePipe);
+  datePipe: DatePipe = inject(DatePipe);
 
-  root = computed<FormGroup2<any>>(() => {
+  root: Signal<FormGroup2<any>> = computed(() => {
     return this.control().root as FormGroup2<any>;
   });
 
-  control = model.required<FormControl2<any>>();
-
-  messages = signal<string[]>([]);
-
-  constructor() {
-    effect(() => {
-
-    });
-  }
+  control: ModelSignal<FormControl2<any>> = model.required();
+  messages: WritableSignal<string[]> = signal([]);
 }

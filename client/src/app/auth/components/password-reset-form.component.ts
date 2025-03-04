@@ -1,45 +1,63 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { PasswordResetForm } from 'src/app/_models/account';
-import { FormErrorModalService } from 'src/app/_services/form-error-modal.service';
 import { AccountService } from 'src/app/_services/account.service';
-import { SnackbarService } from 'src/app/_services/snackbar.service';
-import { ValidationService } from 'src/app/_services/validation.service';
+import { AlertComponent } from "src/app/_forms2/helper/alert.component";
 
 @Component({
   selector: '[passwordResetForm]',
   templateUrl: './password-reset-form.component.html',
-  standalone: true,
-  imports: [ RouterModule, ReactiveFormsModule, FormsModule, InputControlComponent,  ],
+  imports: [
+    RouterModule,
+    ReactiveFormsModule,
+    FormsModule,
+    InputControlComponent,
+    AlertComponent
+  ],
 })
-export class PasswordResetFormComponent {
-  private validation = inject(ValidationService);
-  private errorModal = inject(FormErrorModalService);
-  private accountService = inject(AccountService);
-  private snackbarService = inject(SnackbarService)
+export class PasswordResetFormComponent implements OnInit {
+  private readonly accountService: AccountService = inject(AccountService);
+
+  form: PasswordResetForm = new PasswordResetForm();
+  isSubmitting: boolean = false;
+
+  showSuccessAlert: boolean = false;
+  successMessage: string = `Si tu correo existe en nuestro sistema, te enviamos instrucciones para restablecer tu contraseña.`;
+
+  showErrorAlert: boolean = false;
+  errorMessage: string = `Ha ocurrido un error al procesar tu solicitud. Por favor, intenta de nuevo.`;
 
 
-  form = new PasswordResetForm();
-
-  constructor() {
-    effect(() => {
-      this.form.setValidators(this.validation.active());
-    });
+  ngOnInit(): void {
+    this.form.setValidators(true);
   }
 
   onSubmit() {
     this.form.submitted = true;
+    this.isSubmitting = true;
+
+    const email: any = this.form.formGroup.get('email')?.value;
+    if (!email) {
+      console.error('Error submitting form: email is required');
+      this.isSubmitting = false;
+      return;
+    }
+
     if (this.form.formGroup.valid) {
-      this.accountService.sendEmailForPasswordReset(this.form.formGroup.get('email')?.value).subscribe(response => {
-        this.snackbarService.success(`Correo de confirmación enviado`);
-        this.form.formGroup.reset();
-        this.form.submitted = false;
+      this.accountService.sendEmailForPasswordReset(email).subscribe({
+        next: (_) => {
+          this.form.formGroup.reset();
+          this.form.submitted = false;
+          this.showSuccessAlert = true;
+          this.isSubmitting = false;
+        },
+        error: (_) => {
+          this.showErrorAlert = true;
+          this.isSubmitting = false;
+        }
       });
-    } else {
-      this.errorModal.show();
     }
   }
-
 }

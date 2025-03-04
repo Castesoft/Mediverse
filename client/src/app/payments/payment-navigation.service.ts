@@ -36,12 +36,18 @@ export class PaymentNavigationService {
     return this.router.navigate([ url ], { queryParams });
   }
 
-  navigateToCheckoutSuccess(paymentId: number, redirectUrl?: string): Promise<boolean> {
+  navigateToCheckoutSuccess(paymentId: number | null, redirectUrl?: string): Promise<boolean> {
     const url = `/pagos/cita/exito`;
-    const queryParams: any = { paymentId };
+    const queryParams: any = {};
+
+    if (paymentId) {
+      queryParams.paymentId = paymentId;
+    }
+
     if (redirectUrl) {
       queryParams.redirectUrl = redirectUrl;
     }
+
     return this.router.navigate([ url ], {
       queryParams
     });

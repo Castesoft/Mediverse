@@ -256,7 +256,7 @@ public class AccountController(
     {
         using var hmac = new HMACSHA512();
 
-        if ((await userManager.FindByEmailAsync(request.Email)) != null)
+        if (await userManager.FindByEmailAsync(request.Email) != null)
             return BadRequest("No puede crearse una cuenta con este correo.");
 
         var user = mapper.Map<AppUser>(request);
@@ -605,7 +605,8 @@ public class AccountController(
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)
         {
-            return NotFound($"El usuario de correo {email} no existe.");
+            Log.Error("User with email {Email} not found", email);
+            return Ok();
         }
 
         var rawToken = await userManager.GeneratePasswordResetTokenAsync(user);

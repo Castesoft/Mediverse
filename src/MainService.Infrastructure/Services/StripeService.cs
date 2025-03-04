@@ -30,7 +30,8 @@ namespace MainService.Infrastructure.Services
             return true;
         }
 
-        public async Task<string> CreateStripeSubscriptionAsync(string stripeCustomerId, string priceId)
+        public async Task<(string SubscriptionId, DateTime NextBillingDate)> CreateStripeSubscriptionAsync(
+            string stripeCustomerId, string priceId)
         {
             StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
 
@@ -45,7 +46,8 @@ namespace MainService.Infrastructure.Services
             try
             {
                 var stripeSubscription = await service.CreateAsync(options);
-                return stripeSubscription.Id;
+                var nextBillingDate = stripeSubscription.CurrentPeriodEnd;
+                return (stripeSubscription.Id, nextBillingDate);
             }
             catch (StripeException ex)
             {

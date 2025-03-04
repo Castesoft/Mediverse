@@ -42,7 +42,7 @@ export class PaymentCheckoutSuccessComponent implements OnInit {
         if (this.redirectUrl) {
           window.location.href = this.redirectUrl;
         } else {
-          this.router.navigate([ '/inicio/cuenta' ]).then(() => {});
+          this.router.navigate([ '/cuenta' ]).then(() => {});
         }
       }
     }, 1000);
