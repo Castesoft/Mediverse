@@ -1,3 +1,6 @@
+@let account = service.current();
+
+@if (account !== null) {
 <div card id="account_settings_overview" (mouseenter)="selectSection('account_settings_overview')">
   <div cardHeader>
     <div cardTitle [title]="'Generales'"></div>
@@ -6,25 +9,36 @@
     <div class="d-flex align-items-start flex-wrap justify-content-between">
       <div class="d-flex flex-wrap">
         <div class="symbol symbol-125px mb-7 me-7 position-relative">
-          <div userProfilePicture
-               [fullName]="accountService.current()!.fullName" [photoUrl]="accountService.current()!.photoUrl"
+          @if(account.photoUrl !== null && account.fullName !== null && account.fullName !== '') {
+            <img [src]="account.photoUrl" [alt]="account.fullName" style="width: 160px; height: 160px; max-width: 160px; max-height: 160px; background-size: cover;">
+          } @else {
+           @if(account.fullName !== null) {
+             <div
+             [class]="'symbol-label fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(account.fullName) + ' text-' + utilsService.getBootstrapClass(account.fullName)"
+           >
+             {{ account.fullName![0] }}
+           </div>
+           }
+          }
+          <!-- <div userProfilePicture
+               [fullName]="service.current()!.fullName" [photoUrl]="service.current()!.photoUrl"
                [shape]="PhotoShape.SQUARE" [size]="PhotoSize.MEDIUM"
-          ></div>
+          ></div> -->
         </div>
         <div class="d-flex flex-column">
-          <div class="fs-2 fw-bold mb-1">{{ accountService.current()?.fullName }}</div>
+          <div class="fs-2 fw-bold mb-1">{{ service.current()?.fullName }}</div>
           <a
             class="text-gray-500 text-hover-primary fs-6 fw-semibold mb-5">
-            {{ accountService.current()?.email }}
+            {{ service.current()?.email }}
           </a>
           <div
             class="badge badge-light-success text-success fw-bold fs-7 me-auto mb-3 px-4 py-3"
           >
-            {{ accountService.current()?.roles?.includes('Doctor') ? 'Doctor' : 'Paciente' }}
+            {{ service.current()?.roles?.includes('Doctor') ? 'Doctor' : 'Paciente' }}
           </div>
         </div>
       </div>
-      @if (accountService.hasRole([ 'Doctor' ])) {
+      @if (service.hasRole([ 'Doctor' ])) {
         <div class="text-gray-600 fs-4 text-end">
           <div class="fw-semibold mb-1 fs-3">
             <span class="fw-bold text-gray-800 me-1">Plan Pro</span>
@@ -42,3 +56,4 @@
 
   </div>
 </div>
+}

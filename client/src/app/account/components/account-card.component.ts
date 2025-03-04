@@ -8,6 +8,7 @@ import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Subscription } from "src/app/_models/subscriptions/subscription";
+import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
   host: { class: '', },
@@ -23,7 +24,8 @@ export class AccountCardComponent implements OnInit {
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly router: Router = inject(Router);
-  readonly accountService: AccountService = inject(AccountService);
+  readonly service: AccountService = inject(AccountService);
+  readonly utilsService: UtilsService = inject(UtilsService);
 
   account: InputSignal<Account> = input.required<Account>();
 
@@ -40,7 +42,7 @@ export class AccountCardComponent implements OnInit {
   }
 
   private subscribeToActiveSubscription() {
-    this.accountService.activeSubscription$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.service.activeSubscription$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (subscription: Subscription | null) => {
         this.activeSubscription = subscription;
       },
@@ -71,11 +73,11 @@ export class AccountCardComponent implements OnInit {
 
     formData.append('file', this.photoFile);
 
-    this.accountService.setDoctorBanner(formData).subscribe({
+    this.service.setDoctorBanner(formData).subscribe({
       next: (_) => {
         this.photoUrl = undefined;
         this.photoFile = undefined;
-        this.currentPhotoUrl = this.accountService.current()!.bannerUrl;
+        this.currentPhotoUrl = this.service.current()!.bannerUrl;
       },
     });
   }

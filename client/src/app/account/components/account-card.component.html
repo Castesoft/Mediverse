@@ -1,7 +1,10 @@
-<div class="card">
+@let account = service.current();
+
+@if (account !== null) {
+  <div class="card">
   <div class="card-body p-0">
     <div class="d-flex flex-column flex-sm-row mb-6">
-      @if (accountService.hasRole([ 'Doctor' ])) {
+      @if (service.hasRole([ 'Doctor' ])) {
         <div (mouseenter)="hoveringBanner= true" (mouseleave)="hoveringBanner=false">
           @if (photoUrl) {
             <img src="{{photoUrl}}"
@@ -47,23 +50,34 @@
       }
       <div class="me-7 mb-3 pt-9 ps-9 position-relative min-h-lg-200px min-w-lg-200px min-h-175px min-w-175px">
         <div class="symbol border border-3">
-          <div userProfilePicture
-               [fullName]="accountService.current()!.fullName"
-               [photoUrl]="accountService.current()!.photoUrl"
+          <!-- <div userProfilePicture
+               [fullName]="service.current()!.fullName"
+               [photoUrl]="service.current()!.photoUrl"
                [shape]="PhotoShape.SQUARE"
                [size]="PhotoSize.LARGE"
                [showOnline]=true
-          ></div>
-        </div>
+          ></div> -->
+          @if(account.photoUrl !== null && account.fullName !== null && account.fullName !== '') {
+            <img [src]="account.photoUrl" [alt]="account.fullName" style="width: 160px; height: 160px; max-width: 160px; max-height: 160px; background-size: cover;">
+          } @else {
+           @if(account.fullName !== null) {
+             <div
+             [class]="'symbol-label fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(account.fullName) + ' text-' + utilsService.getBootstrapClass(account.fullName)"
+           >
+             {{ account.fullName![0] }}
+           </div>
+           }
+          }
+    </div>
       </div>
       <div class="d-flex flex-column position-absolute ps-20 ms-20 pt-12 top-0">
         <div class="d-flex align-items-center mb-4 ps-sm-17 ps-md-12 ps-lg-20 ps-16 ms-9">
           <a
-            [routerLink]="[]" [class.text-white]="accountService.hasRole(['Doctor'])"
-            class="opacity-75-hover fs-1 fw-bolder me-2 flex-shrink-0">{{ account().fullName }}</a>
+            [routerLink]="[]" [class.text-white]="service.hasRole(['Doctor'])"
+            class="opacity-75-hover fs-1 fw-bolder me-2 flex-shrink-0">{{ account.fullName }}</a>
           <a
             [routerLink]="[]">
-            @if (account().isEmailVerified) {
+            @if (account.isEmailVerified) {
               <i class="ki-duotone ki-verify fs-1 text-primary">
                 <span class="path1"></span>
                 <span class="path2"></span>
@@ -71,7 +85,7 @@
             }
           </a>
 
-          @if (accountService.hasRole([ 'Doctor' ])) {
+          @if (service.hasRole([ 'Doctor' ])) {
             @if (activeSubscription === null) {
               <div class="btn btn-sm btn-light-success fw-bold ms-2 fs-8 py-1 px-3"
                    (click)="navigateToSubscriptionCheckoutPage()">
@@ -86,36 +100,36 @@
         </div>
 
         <div class="flex-wrap fw-semibold fs-6 mb-4 ps-sm-17 ps-md-12 ps-lg-20 ps-16 ms-9">
-          @if (accountService.hasRole([ 'Doctor' ])) {
+          @if (service.hasRole([ 'Doctor' ])) {
             <a
               [routerLink]="[]" class="btn btn-flex btn-flush btn-color-white opacity-75-hover me-5 flex-shrink-0">
               <i class="ki-duotone ki-profile-circle fs-6 me-2">
                 <span class="path1"></span>
                 <span class="path2"></span>
                 <span class="path3"></span>
-              </i>{{ account().mainSpecialty }}
+              </i>{{ account.mainSpecialty }}
             </a>
             <a
               [routerLink]="[]" class="btn btn-flex btn-flush btn-color-white opacity-75-hover me-5 flex-shrink-0">
               <i class="ki-duotone ki-geolocation fs-4 me-1">
                 <span class="path1"></span>
                 <span class="path2"></span>
-              </i>{{ account().city }}, {{ account().state }}
+              </i>{{ account.city }}, {{ account.state }}
             </a>
           }
           <a
             [routerLink]="[]" class="btn btn-flex btn-flush opacity-75-hover flex-shrink-0"
-            [class.btn-color-white]="accountService.hasRole(['Doctor'])">
+            [class.btn-color-white]="service.hasRole(['Doctor'])">
             <i class="ki-duotone ki-sms fs-4 me-1">
               <span class="path1"></span>
               <span class="path2"></span>
-            </i>{{ account().email }}
+            </i>{{ account.email }}
           </a>
         </div>
       </div>
       <div
         class="d-flex flex-column flex-xl-row align-items-center justify-content-between mt-sm-20 pt-sm-20 w-100 me-9 px-9 px-sm-0">
-        @if (accountService.hasRole([ 'Doctor' ])) {
+        @if (service.hasRole([ 'Doctor' ])) {
           <div class="d-flex flex-wrap flex-stack pt-6">
             <div class="d-flex flex-column flex-grow-1 pe-8">
               <div class="d-flex flex-wrap">
@@ -217,7 +231,7 @@
           Citas
         </a>
       </li>
-      @if (accountService.hasRole([ "Doctor" ])) {
+      @if (service.hasRole([ "Doctor" ])) {
         <li class="nav-item mt-2">
           <a class="nav-link text-active-primary ms-0 me-10 py-5"
              [routerLink]="['/cuenta/agenda']"
@@ -238,3 +252,4 @@
     </ul>
   </div>
 </div>
+}
