@@ -1,5 +1,5 @@
 <div class="d-flex flex-column flex-lg-row">
-  @if (showNav()) {
+  @if (showNav() && query.isMobile() === false) {
     <app-clinical-history-nav-menu
       [currentSection]="currentSection"
       (onSelectSection)="selectSection($event)">

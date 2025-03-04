@@ -1,5 +1,7 @@
 <div class="d-flex flex-column flex-lg-row">
-  <app-nav-menu [currentSection]="currentSection" (onSelectSection)="selectSection($event)"></app-nav-menu>
+  @if(query.isMobile() === false) {
+    <app-nav-menu [currentSection]="currentSection" (onSelectSection)="selectSection($event)"></app-nav-menu>
+  }
 
   <div class="flex-md-row-fluid ms-lg-12">
 

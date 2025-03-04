@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { Account } from 'src/app/_models/account/account';
 import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
 import { AccountService } from 'src/app/_services/account.service';
+import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 import { SidebarService } from 'src/app/_services/sidebar.service';
 import {
   SatisfactionSurveyModalComponent
@@ -18,6 +19,7 @@ export class AccountComponent implements OnInit {
   private bsModalService = inject(BsModalService);
   accountService = inject(AccountService);
   sidebar = inject(SidebarService);
+  readonly query: MobileQueryService = inject(MobileQueryService);
 
   account: Account | null = null;
   label?: string;

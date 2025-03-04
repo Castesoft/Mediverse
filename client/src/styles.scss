@@ -273,3 +273,15 @@ mat-form-field.hide-bottom {
 .bg-transparent {
   background-color: transparent !important;
 }
+
+mat-sidenav-content.mat-sidenav-content {
+  width: 100%!important;
+}
+
+// mat-sidenav[ng-reflect-opened="false"] {
+//   display: none!important;
+// }
+
+// mat-sidenav[ng-reflect-opened="true"] {
+//   display: flex!important;
+// }

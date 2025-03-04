@@ -8,6 +8,7 @@ import { AccountCardComponent } from 'src/app/account/components/account-card.co
 import { MainAsideComponent } from 'src/app/_shared/template/components/main-aside.component';
 import { AccountComponent } from "src/app/account/account.component";
 import { AccountRoutingModule } from "src/app/account/account-routing.module";
+import { MaterialModule } from 'src/app/_shared/material.module';
 
 @NgModule({
   declarations: [ AccountComponent ],
@@ -19,7 +20,8 @@ import { AccountRoutingModule } from "src/app/account/account-routing.module";
     CdkModule,
     TemplateModule,
     AccountCardComponent,
-    MainAsideComponent
+    MainAsideComponent,
+    MaterialModule,
   ]
 })
 export class AccountModule {}

@@ -1,8 +1,16 @@
 <div root>
-  <div page>
-    @if (!sidebar.opened) {
+  <mat-sidenav-container class="page d-flex flex-row flex-column-fluid" autosize style="background-color: transparent;">
+    <mat-sidenav
+      #snav
+      class="aside aside-default aside-hoverable"
+      [mode]="query.isMobile() ? 'over' : 'side'"
+      [(opened)]="sidebar.opened"
+      style="display: flex!important;"
+      [fixedInViewport]="query.isMobile()"
+    >
       <div mainAside></div>
-    }
+    </mat-sidenav>
+
     <div wrapper>
       <div header></div>
       <div content>
@@ -32,5 +40,5 @@
       </div>
       <div footer></div>
     </div>
-  </div>
+  </mat-sidenav-container>
 </div>

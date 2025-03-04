@@ -10,6 +10,11 @@ import { AccountService } from "src/app/_services/account.service";
   templateUrl: './main-aside.component.html',
   standalone: true,
   imports: [ RouterModule ],
+  styles: `
+  :host {
+    display: flex!important;
+  }
+  `,
 })
 export class MainAsideComponent implements OnInit {
   accountService: AccountService = inject(AccountService);

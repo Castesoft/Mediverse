@@ -2,7 +2,7 @@
   <button mat-icon-button
           class="example-icon"
           aria-label="Toggle navigation"
-          (click)="sidebarService.opened = !sidebarService.opened">
+          (click)="sidebarService.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
   <div>
@@ -19,7 +19,7 @@
 
 <mat-sidenav-container autosize style="width: 100%; background-color: transparent; height: calc(100vh - 64px);">
   <mat-sidenav class="bg-body"
-               [opened]="!sidebarService.opened"
+               [(opened)]="sidebarService.opened"
                [mode]="mode"
                fixedInViewport
                [fixedTopGap]="64"
