@@ -49,7 +49,7 @@
         </div>
       }
       <div class="me-7 mb-3 pt-9 ps-9 position-relative min-h-lg-200px min-w-lg-200px min-h-175px min-w-175px">
-        <div class="symbol border border-3">
+        <div class="symbol symbol-160px min-w-160px border border-3">
           <!-- <div userProfilePicture
                [fullName]="service.current()!.fullName"
                [photoUrl]="service.current()!.photoUrl"
@@ -62,7 +62,8 @@
           } @else {
            @if(account.fullName !== null) {
              <div
-             [class]="'symbol-label fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(account.fullName) + ' text-' + utilsService.getBootstrapClass(account.fullName)"
+             [class]="'symbol-label fs-2x fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(account.fullName) + ' text-' + utilsService.getBootstrapClass(account.fullName)"
+
            >
              {{ account.fullName![0] }}
            </div>
