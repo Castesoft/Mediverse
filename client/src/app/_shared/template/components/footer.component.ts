@@ -8,7 +8,7 @@ import { RouterModule } from "@angular/router";
   template: `
     <div class="container-fluid d-flex flex-column flex-md-row flex-stack">
       <div class="text-gray-900 order-2 order-md-1">
-        <span class="text-muted fw-semibold me-2">2024©</span>
+        <span class="text-muted fw-semibold me-2">2025©</span>
         <a
           [routerLink]="[]"
           target="_blank"
