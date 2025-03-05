@@ -4,6 +4,7 @@ import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult
 import { SearchService } from "src/app/_services/search.service";
 import { ProfilePictureComponent } from "src/app/users/components/profile-picture/profile-picture.component";
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
+import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
   selector: 'div[resultRow]',
@@ -14,8 +15,10 @@ import { PhotoSize } from "src/app/_models/photos/photoTypes";
 export class ResultRowComponent {
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
 
-  service: SearchService = inject(SearchService);
+  readonly service: SearchService = inject(SearchService);
+  readonly utilsService: UtilsService = inject(UtilsService);
   doctor: ModelSignal<DoctorResult> = model.required<DoctorResult>();
+
 
   @HostListener('click')
   onClick() {

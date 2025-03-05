@@ -1,36 +1,49 @@
+@let doctorData = doctor();
+
 <div class="d-flex flex-column p-6 doctor-search-result bg-hover-secondary">
   <div class="d-flex gap-3">
-    <div userProfilePicture
+
+    <div class="symbol symbol-50px min-w-50px symbol-circle">
+      @if(doctorData.photoUrl !== null && doctorData.fullName !== null && doctorData.fullName !== '') {
+      <img [src]="doctorData.photoUrl" [alt]="doctorData.fullName"
+        style="width: 50px; height: 50px; max-width: 50px; max-height: 50px; background-size: cover;">
+      } @else {
+      @if(doctorData.fullName !== null) {
+      <div
+        [class]="'symbol-label fs-2x fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(doctorData.fullName) + ' text-' + utilsService.getBootstrapClass(doctorData.fullName)">
+        {{ doctorData.fullName![0] }}
+      </div>
+      }
+      }
+    </div>
+
+    <!-- <div userProfilePicture
          [fullName]="doctor()!.fullName"
          [photoUrl]="doctor()!.photoUrl"
          [showOnline]="true"
-         [size]="PhotoSize.SMALL"></div>
+         [size]="PhotoSize.SMALL"></div> -->
     <div class="d-flex flex-column justify-content-center">
       <a class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">
         {{ doctor().firstName }} {{ doctor().lastName }}
       </a>
       <div class="fw-semibold text-gray-500">
         @for (specialty of doctor().specialties; track $index) {
-          {{ specialty.name }}@if ($index < doctor().specialties.length - 1) {
-            ,
-          }
-        }
+        {{ specialty.name }}@if ($index < doctor().specialties.length - 1) { , } } </div>
       </div>
     </div>
+
+    <div class="d-flex align-items-start pt-3">
+      <i class="ki-duotone ki-geolocation fs-4 text-primary me-1 p-0" style="margin-top: 1px;">
+        <span class="path1"></span>
+        <span class="path2"></span>
+      </i>
+      <span class="fw-semibold text-gray-600">
+        {{ doctor().addresses[0].street }}, {{ doctor().addresses[0].city }}
+        , {{ doctor().addresses[0].state }}@if (doctor().addresses.length > 1) {
+        <span class="text-gray-500">, +{{ doctor().addresses.length - 1 }} más</span>
+        }
+      </span>
+
+
+    </div>
   </div>
-
-  <div class="d-flex align-items-start pt-3">
-    <i class="ki-duotone ki-geolocation fs-4 text-primary me-1 p-0" style="margin-top: 1px;">
-      <span class="path1"></span>
-      <span class="path2"></span>
-    </i>
-    <span class="fw-semibold text-gray-600">
-      {{ doctor().addresses[0].street }}, {{ doctor().addresses[0].city }}
-      , {{ doctor().addresses[0].state }}@if (doctor().addresses.length > 1) {
-      <span class="text-gray-500">, +{{ doctor().addresses.length - 1 }} más</span>
-    }
-    </span>
-
-
-  </div>
-</div>
