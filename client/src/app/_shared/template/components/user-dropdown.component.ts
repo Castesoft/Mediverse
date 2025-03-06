@@ -10,7 +10,6 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
   host: { class: 'd-flex align-items-center ms-2 ms-lg-3', id: 'userDropdown' },
   selector: '[userDropdown]',
   templateUrl: './user-dropdown.component.html',
-  standalone: true,
   imports: [ BootstrapModule, RouterModule ],
 })
 export class UserDropdownComponent {

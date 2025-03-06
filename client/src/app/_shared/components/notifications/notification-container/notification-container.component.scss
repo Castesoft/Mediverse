@@ -1,0 +1,15 @@
+.notification {
+  transition: background-color 0.3s, border-left-width 0.3s;
+  border-left: 0 solid transparent;
+}
+
+.notification:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.pending-notification {
+  border-left: 4px solid #00A3FF;
+  align-items: center;
+  display: flex;
+}

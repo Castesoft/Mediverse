@@ -6,6 +6,8 @@ namespace MainService.Models.Entities;
 /// </summary>
 public class UserNotification
 {
+    public UserNotification() { }
+    public UserNotification(Notification notification) => Notification = notification;
     /// <summary>
     /// Foreign key to the AppUser.
     /// </summary>

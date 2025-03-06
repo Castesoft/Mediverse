@@ -52,6 +52,7 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public ISubscriptionCancellationRepository SubscriptionCancellationRepository =>
         new SubscriptionCancellationRepository(context);
 
+    public IUserNotificationRepository UserNotificationRepository => new UserNotificationRepository(context);
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;
     public void DetachEntity<T>(T entity) where T : class => context.Entry(entity).State = EntityState.Detached;
     public bool HasChanges() => context.ChangeTracker.HasChanges();

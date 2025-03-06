@@ -2,7 +2,9 @@ using MainService.Core.Interfaces.Services;
 using Serilog;
 using MainService.Infrastructure.Data;
 using MainService.Core.Settings;
+using MainService.Helpers;
 using MainService.Infrastructure.Services;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MainService.Extensions;
 
@@ -25,8 +27,9 @@ public static class ApplicationServicesExtensions
         // services.AddHostedService<CronJobsService>();
 
         // Services
+        services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
         services.AddScoped<ITokenService, TokenService>();
-
+        
         services.AddScoped<IMedicalInsuranceCompaniesService, MedicalInsuranceCompaniesService>();
         services.AddScoped<IMedicalRecordsService, MedicalRecordsService>();
         services.AddScoped<IOrdersService, OrdersService>();
@@ -63,6 +66,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEventsService, EventsService>();
         services.AddScoped<IWarehousesService, WarehousesService>();
         services.AddScoped<IPaymentService, PaymentService>();
+
+        services.AddSignalR();
         
         services.AddSingleton(Log.Logger);
 

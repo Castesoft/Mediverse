@@ -9,18 +9,19 @@ using MainService.Models;
 using MainService.Models.Helpers;
 
 namespace MainService.Extensions;
+
 public static class IdentityServiceExtensions
 {
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddIdentityCore<AppUser>(opt =>
-        {
-            opt.Password.RequireDigit = false;
-            opt.Password.RequiredLength = 6;
-            opt.Password.RequireNonAlphanumeric = false;
-            opt.Password.RequireUppercase = false;
-            opt.Password.RequireLowercase = false;
-        })
+            {
+                opt.Password.RequireDigit = false;
+                opt.Password.RequiredLength = 6;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireLowercase = false;
+            })
             // Sign In
             .AddSignInManager<SignInManager<AppUser>>()
 
@@ -31,7 +32,6 @@ public static class IdentityServiceExtensions
 
             // Entity Framework Stores
             .AddEntityFrameworkStores<DataContext>()
-            
             .AddDefaultTokenProviders();
 
         services.Configure<DataProtectionTokenProviderOptions>(opt =>
@@ -40,11 +40,12 @@ public static class IdentityServiceExtensions
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                string? key = config["TokenSettings:Key"];
+                var key = config["TokenSettings:Key"];
 
-                if (string.IsNullOrEmpty(key)) throw new Exception("Key is missing in appsettings.json");
-                
-                options.TokenValidationParameters = new()
+                if (string.IsNullOrEmpty(key))
+                    throw new Exception("Key is missing in appsettings.json");
+
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
@@ -53,26 +54,43 @@ public static class IdentityServiceExtensions
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/hubs/notifications"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
         services.AddAuthorization(options =>
         {
-            foreach (AppRole role in SeedData.GetRolesWithPermissions()) {
-
-                if (!string.IsNullOrEmpty(role.Name)) {
-                    options.AddPolicy(role.Name, policy => {
+            foreach (var role in SeedData.GetRolesWithPermissions())
+            {
+                if (!string.IsNullOrEmpty(role.Name))
+                {
+                    options.AddPolicy(role.Name, policy =>
+                    {
                         policy.RequireRole(role.Name);
                         foreach (var permission in role.RolePermissions)
                             policy.Requirements.Add(new PermissionRequirement(permission.Permission.Name));
                     });
                 }
-                
             }
         });
 
         return services;
     }
-
 }

@@ -1,5 +1,6 @@
 using MainService.Core.Helpers;
 using MainService.Core.Interfaces.Services;
+using MainService.Infrastructure.SeedingHelpers;
 using MainService.Models;
 using MainService.Models.Entities;
 using MainService.Models.Helpers;
@@ -357,7 +358,8 @@ public static class Seed
     }
 
 
-    public static async Task SeedAsync(UserManager<AppUser> userManager, DataContext context, IStripeService stripeService, int doctorCount = 300,
+    public static async Task SeedAsync(UserManager<AppUser> userManager, DataContext context,
+        IStripeService stripeService, int doctorCount = 300,
         int patientCount = 100)
     {
         await SeedProductsAsync(context);
@@ -475,7 +477,7 @@ public static class Seed
         await userManager.CreateAsync(admin, "Pa$$w0rd");
         await StripeCustomerHelper.EnsureStripeCustomerAsync(admin, stripeService, context);
         await userManager.AddToRolesAsync(admin, ["Admin"]);
-        
+
         await userManager.CreateAsync(doctor, "Pa$$w0rd");
         await StripeCustomerHelper.EnsureStripeCustomerAsync(doctor, stripeService, context);
         await userManager.AddToRolesAsync(doctor, ["Doctor", "Patient"]);
@@ -490,9 +492,9 @@ public static class Seed
             List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Patient").ToList()!;
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
             if (!createUserResult.Succeeded) return;
-            
+
             await StripeCustomerHelper.EnsureStripeCustomerAsync(user, stripeService, context);
-            
+
             foreach (var roleName in roleNames)
             {
                 var roleResult = await userManager.AddToRolesAsync(user, [roleName]);
@@ -519,9 +521,9 @@ public static class Seed
             List<string> roleNames = roles.Select(x => x.Name).Where(x => x == "Doctor").ToList()!;
             var createUserResult = await userManager.CreateAsync(user, "Pa$$w0rd");
             if (!createUserResult.Succeeded) return;
-            
+
             await StripeCustomerHelper.EnsureStripeCustomerAsync(user, stripeService, context);
-            
+
             foreach (var roleName in roleNames)
             {
                 var roleResult = await userManager.AddToRolesAsync(user, [roleName, "Doctor"]);
@@ -719,6 +721,19 @@ public static class Seed
         return await context.DoctorServices.Where(x => x.DoctorId == doctor.Id).ToListAsync();
     }
 
+    private static async Task<List<UserNotification>> SeedDoctorNotificationsAsync(DataContext context, AppUser doctor)
+    {
+        var notifications = NotificationSeeder.GetNotifications(10);
+
+        doctor.UserNotifications.AddRange(notifications.Select(n => new UserNotification(n)));
+
+        await context.SaveChangesAsync();
+
+        return await context.UserNotifications
+            .Where(un => un.AppUserId == doctor.Id)
+            .ToListAsync();
+    }
+
     private static async Task SeedRandomDoctorData(DataContext context, UserManager<AppUser> userManager)
     {
         var doctors = await GetDoctorsAsync(userManager);
@@ -749,6 +764,7 @@ public static class Seed
         var doctorNurses = await SeedDoctorNursesAsync(context, userManager, doctor.Id);
         var doctorProducts = await SeedDoctorProductsAsync(context, doctor);
         var doctorServices = await SeedDoctorServicesAsync(context, doctor);
+        var doctorNotifications = await SeedDoctorNotificationsAsync(context, doctor);
 
         foreach (var patient in doctor.Patients.Select(x => x.Patient))
         {
@@ -1124,7 +1140,8 @@ public static class Seed
 
             var prescription = new Prescription
             {
-                Date = DateTime.SpecifyKind(new DateTime(Random.Next(2019, 2024), Random.Next(1, 12), Random.Next(1, 28)), DateTimeKind.Utc),
+                Date = DateTime.SpecifyKind(
+                    new DateTime(Random.Next(2019, 2024), Random.Next(1, 12), Random.Next(1, 28)), DateTimeKind.Utc),
                 ExchangeAmount = Random.Next(1, 6),
                 Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
                 PatientPrescription = new PatientPrescription { Patient = patient },

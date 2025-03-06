@@ -33,6 +33,7 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/resource": "^6.1.15",
     "@fullcalendar/resource-timeline": "^6.1.15",
+    "@microsoft/signalr": "^8.0.7",
     "@ngx-loading-bar/core": "^7.0.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@primeng/themes": "^19.0.9",

@@ -1,5 +1,4 @@
 import { NgModule } from "@angular/core";
-import { NotificationsDropdownComponent } from './components/notifications-dropdown.component';
 import { QuickLinksDropdownComponent } from './components/quick-links-dropdown.component';
 import { ScrolltopComponent } from './components/scrolltop.component';
 import { ThemeDropdownComponent } from './components/theme-dropdown.component';
@@ -40,7 +39,6 @@ import { TablesModule } from "src/app/_shared/template/components/tables/tables.
     PageComponent,
     FooterComponent,
     AuthAsideComponent,
-    NotificationsDropdownComponent,
     QuickLinksDropdownComponent,
     ScrolltopComponent,
     ThemeDropdownComponent,
@@ -68,11 +66,10 @@ import { TablesModule } from "src/app/_shared/template/components/tables/tables.
     WrapperComponent,
 
     AuthAsideComponent,
-    NotificationsDropdownComponent,
     QuickLinksDropdownComponent,
     ScrolltopComponent,
     ThemeDropdownComponent,
     UserDropdownComponent,
   ],
 })
-export class TemplateModule { }
+export class TemplateModule {}

@@ -1,6 +1,7 @@
 using MainService.Core.Interfaces.Data;
 
 namespace MainService.Core.Interfaces.Services;
+
 public interface IUnitOfWork
 {
     IDiseaseRepository DiseaseRepository { get; }
@@ -37,8 +38,9 @@ public interface IUnitOfWork
     ISubscriptionHistoryRepository SubscriptionHistoryRepository { get; }
     ISubscriptionPlanRepository SubscriptionPlanRepository { get; }
     ISubscriptionCancellationRepository SubscriptionCancellationRepository { get; }
+    IUserNotificationRepository UserNotificationRepository { get; }
     Task<bool> Complete();
-    
+
     bool HasChanges();
     void DetachEntity<T>(T entity) where T : class;
 }

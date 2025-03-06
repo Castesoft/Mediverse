@@ -1,5 +1,6 @@
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
+using MainService.Hubs;
 using MainService.Infrastructure.Data;
 using MainService.Middleware;
 using MainService.Models;
@@ -79,6 +80,7 @@ app.UseStaticFiles();
 
 app.MapControllers();
 app.MapFallbackToController("Index", "Fallback");
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
