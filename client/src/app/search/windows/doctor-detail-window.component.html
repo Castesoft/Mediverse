@@ -1,3 +1,7 @@
+@let selected = service.selected();
+
+@if(selected !== null) {
+
 <div class="card card-flush h-lg-100" [style]="isMobile() ? { width: '100%' } : { width: '420px' }">
   <div class="card-header">
     <div class="card-title">
@@ -9,8 +13,23 @@
   </div>
   <div class="card-body border-top border-gray-200 d-flex flex-column overflow-y-scroll">
     <div class="d-flex gap-3 align-items-center" style="overflow-x: clip;">
-      <div userProfilePicture [size]="PhotoSize.MEDIUM" [fullName]="service.selected()!.fullName"
-           [photoUrl]="service.selected()!.photoUrl"></div>
+
+      <div class="symbol symbol-100px min-w-100px symbol-circle">
+        @if(selected.photoUrl !== null && selected.fullName !== null && selected.fullName !== '') {
+        <img [src]="selected.photoUrl" [alt]="selected.fullName"
+          style="width: 100px; height: 100px; max-width: 100px; max-height: 100px; background-size: cover;">
+        } @else {
+        @if(selected.fullName !== null) {
+        <div
+          [class]="'symbol-label fs-2x fw-semibold text-primary bg-light-' + utilsService.getBootstrapClass(selected.fullName) + ' text-' + utilsService.getBootstrapClass(selected.fullName)">
+          {{ selected.fullName![0] }}
+        </div>
+        }
+        }
+      </div>
+
+      <!-- <div userProfilePicture [size]="PhotoSize.MEDIUM" [fullName]="service.selected()!.fullName"
+           [photoUrl]="service.selected()!.photoUrl"></div> -->
       <div class="d-flex flex-column gap-2">
         <h3 (click)="navigateToDoctorProfile()" style="cursor: pointer;" class="mb-0 text-hover-primary">
           {{ service.selected()?.firstName }} {{ service.selected()?.lastName }}</h3>
@@ -74,3 +93,4 @@
     </div>
   </div>
 </div>
+}

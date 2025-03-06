@@ -3,79 +3,79 @@
 }
 
 @if (useCard()) {
-  <div class="row">
-    <div class="col-3">
-      <div class="row gap-6">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>
-                  Foto de Perfil
-                </h2>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <div
-                class="d-flex justify-content-center align-items-center"
-                imageThumbnailSelector
-                [maxFiles]="1"
-                [maxFileSizeMB]="5"
-                [editable]="use() !== FormUse.DETAIL"
-                [thumbnailSize]="PhotoSize.LARGE"
-                [thumbnailShape]="PhotoShape.SQUARE"
-              ></div>
-              @if (use() !== FormUse.DETAIL) {
-                <div class="text-muted fs-7 text-center mt-6">
-                  Suba imágenes del producto. Formatos aceptados: *.png, *.jpg, *.jpeg.
-                </div>
-              }
-            </div>
+  <div class="form d-flex flex-column flex-lg-row fv-plugins-bootstrap5 fv-plugins-framework">
+    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+      <div class="card card-flush py-4">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>
+              Foto de Perfil
+            </h2>
           </div>
         </div>
+        <div class="card-body pt-0">
+          <div
+            class="d-flex justify-content-center align-items-center"
+            imageThumbnailSelector
+            [maxFiles]="1"
+            [maxFileSizeMB]="5"
+            [editable]="use() !== FormUse.DETAIL"
+            [thumbnailSize]="PhotoSize.LARGE"
+            [thumbnailShape]="PhotoShape.SQUARE"
+          ></div>
+          @if (use() !== FormUse.DETAIL) {
+            <div class="text-muted fs-7 text-center mt-6">
+              Suba imágenes del producto. Formatos aceptados: *.png, *.jpg, *.jpeg.
+            </div>
+          }
+        </div>
       </div>
+
+
+
     </div>
-    <div class="col-9">
-      <div class="row gap-6">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>
-                  General
-                </h2>
+
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+
+      <div class="d-flex flex-column gap-7 gap-lg-10">
+
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>
+                General
+              </h2>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <form [id]="form.id" (ngSubmit)="onSubmit()">
+              <div class="row g-6">
+                <div controlsWrapper3
+                     class="col-6"
+                     [control]="form.controls.firstName"
+                     [showBottomMargin]="false"></div>
+                <div controlsWrapper3
+                     class="col-6"
+                     [control]="form.controls.lastName"
+                     [showBottomMargin]="false"></div>
+                <div controlsWrapper3
+                     class="col-6"
+                     [control]="form.controls.dateOfBirth"
+                     [showBottomMargin]="false"></div>
+                <div controlsWrapper3
+                     class="col-6"
+                     [control]="form.controls.sex"
+                     [showBottomMargin]="false"></div>
+                <div controlsWrapper3
+                     class="col-6"
+                     [control]="form.controls.email"
+                     [showBottomMargin]="false"></div>
+                <div controlsWrapper3
+                     class="col-6"
+                     [control]="form.controls.phoneNumber"
+                     [showBottomMargin]="false"></div>
               </div>
-            </div>
-            <div class="card-body pt-0">
-              <form [id]="form.id" (ngSubmit)="onSubmit()">
-                <div class="row g-6">
-                  <div controlsWrapper3
-                       class="col-6"
-                       [control]="form.controls.firstName"
-                       [showBottomMargin]="false"></div>
-                  <div controlsWrapper3
-                       class="col-6"
-                       [control]="form.controls.lastName"
-                       [showBottomMargin]="false"></div>
-                  <div controlsWrapper3
-                       class="col-6"
-                       [control]="form.controls.dateOfBirth"
-                       [showBottomMargin]="false"></div>
-                  <div controlsWrapper3
-                       class="col-6"
-                       [control]="form.controls.sex"
-                       [showBottomMargin]="false"></div>
-                  <div controlsWrapper3
-                       class="col-6"
-                       [control]="form.controls.email"
-                       [showBottomMargin]="false"></div>
-                  <div controlsWrapper3
-                       class="col-6"
-                       [control]="form.controls.phoneNumber"
-                       [showBottomMargin]="false"></div>
-                </div>
-              </form>
-            </div>
+            </form>
           </div>
         </div>
 
@@ -96,10 +96,13 @@
             </div>
           </div>
         }
-      </div>
-    </div>
-  </div>
 
+      </div>
+
+
+    </div>
+
+  </div>
 } @else {
   <form [id]="form.id" (ngSubmit)="onSubmit()">
     <div formBuilder3 [controls]="[

@@ -3,261 +3,251 @@
 }
 
 @if (useCard()) {
-  <div class="row">
-    <div class="col-3">
-      <div class="row gap-6">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>
-                  Miniatura
-                </h2>
-              </div>
+  <div class="form d-flex flex-column flex-lg-row fv-plugins-bootstrap5 fv-plugins-framework">
+    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+
+      <div class="card card-flush py-4">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>
+              Miniatura
+            </h2>
+          </div>
+        </div>
+        <div class="card-body pt-0">
+          <div
+            class="d-flex flex-grow-1 justify-content-center"
+            imageThumbnailSelector
+            [maxFiles]="10"
+            [maxFileSizeMB]="5"
+            [editable]="use() !== FormUse.DETAIL"
+            [thumbnailSize]="PhotoSize.LARGE"
+            [thumbnailShape]="PhotoShape.SQUARE"
+          ></div>
+          @if (use() !== FormUse.DETAIL) {
+            <div class="text-muted fs-7 text-center mt-6">
+              Suba imágenes del producto. Formatos aceptados: *.png, *.jpg, *.jpeg.
             </div>
-            <div class="card-body pt-0">
-              <div
-                class="d-flex flex-grow-1 justify-content-center"
-                imageThumbnailSelector
-                [maxFiles]="10"
-                [maxFileSizeMB]="5"
-                [editable]="use() !== FormUse.DETAIL"
-                [thumbnailSize]="PhotoSize.LARGE"
-                [thumbnailShape]="PhotoShape.SQUARE"
-              ></div>
-              @if (use() !== FormUse.DETAIL) {
-                <div class="text-muted fs-7 text-center mt-6">
-                  Suba imágenes del producto. Formatos aceptados: *.png, *.jpg, *.jpeg.
-                </div>
+          }
+        </div>
+      </div>
+
+      <div class="card card-flush py-4">
+        <div class="card-header">
+          <div class="card-title w-100 me-0">
+            <div class="d-flex flex-grow justify-content-between w-full align-items-center w-100">
+              <h2>Estado</h2>
+              @if (form.controls.isEnabled.value && form.controls.isVisible.value) {
+                <div class="rounded-circle bg-success w-15px h-15px"></div>
+              } @else {
+                <div class="rounded-circle bg-warning w-15px h-15px"></div>
               }
             </div>
           </div>
         </div>
-
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title w-100 me-0">
-                <div class="d-flex flex-grow justify-content-between w-full align-items-center w-100">
-                  <h2>Estado</h2>
-                  @if (form.controls.isEnabled.value && form.controls.isVisible.value) {
-                    <div class="rounded-circle bg-success w-15px h-15px"></div>
-                  } @else {
-                    <div class="rounded-circle bg-warning w-15px h-15px"></div>
-                  }
-                </div>
+        <div class="card-body pt-0">
+          <div class="d-flex flex-column gap-2">
+            <div controlsWrapper3 [control]="form.controls.isEnabled"></div>
+            <div controlsWrapper3 [control]="form.controls.isVisible"></div>
+            @if (siteSection() == SiteSection.ADMIN) {
+              <div controlsWrapper3 [control]="form.controls.isInternal"></div>
+              <div class="text-muted">
+                <small>
+                  Marcado como interno, será mostrado como producto de Mediverse.
+                </small>
               </div>
-            </div>
-            <div class="card-body pt-0">
-              <div class="d-flex flex-column gap-2">
-                <div controlsWrapper3 [control]="form.controls.isEnabled"></div>
-                <div controlsWrapper3 [control]="form.controls.isVisible"></div>
-                @if (siteSection() == SiteSection.ADMIN) {
-                  <div controlsWrapper3 [control]="form.controls.isInternal"></div>
-                  <div class="text-muted">
-                    <small>
-                      Marcado como interno, será mostrado como producto de Mediverse.
-                    </small>
-                  </div>
-                }
-              </div>
-            </div>
+            }
           </div>
         </div>
       </div>
+
     </div>
-    <div class="col-9">
-      <div class="row gap-6">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>
-                  General
-                </h2>
-              </div>
+
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+
+      <div class="d-flex flex-column gap-7 gap-lg-10">
+
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>
+                General
+              </h2>
             </div>
-            <div class="card-body pt-0">
-              <form [id]="form.id" (ngSubmit)="onSubmit()">
-                <div controlsWrapper3 [control]="form.controls.name"></div>
-                <div controlsWrapper3 [control]="form.controls.description"></div>
-              </form>
+          </div>
+          <div class="card-body pt-0">
+            <form [id]="form.id" (ngSubmit)="onSubmit()">
+              <div controlsWrapper3 [control]="form.controls.name"></div>
+              <div controlsWrapper3 [control]="form.controls.description"></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Imágenes</h2>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <div imageSelector
+                 [maxFiles]="10"
+                 [maxFileSizeMB]="5"
+                 [editable]="use() !== FormUse.DETAIL"
+                 [thumbnailSize]="PhotoSize.LARGE"
+                 [thumbnailShape]="PhotoShape.SQUARE"
+            ></div>
+          </div>
+        </div>
+
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>
+                Adicional
+              </h2>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <form [id]="form.id" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div controlsWrapper3 class="col-6" [control]="form.controls.lotNumber"></div>
+                <div controlsWrapper3 class="col-6" [control]="form.controls.manufacturer"></div>
+                <div controlsWrapper3 class="col-6" [control]="form.controls.dosage"></div>
+                <div controlsWrapper3 class="col-6" [control]="form.controls.unit"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Almacenes</h2>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <div
+              warehouseSelectionTable
+              [use]="use()"
+              [availableWarehouses]="availableWarehouses"
+              [selectedWarehouseIds]="selectedWarehouseIds"
+              (selectionChanged)="onWarehouseSelectionChanged($event)"
+              (save)="saveWarehouseChanges()">
             </div>
           </div>
         </div>
 
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>Imágenes</h2>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <div imageSelector
-                   [maxFiles]="10"
-                   [maxFileSizeMB]="5"
-                   [editable]="use() !== FormUse.DETAIL"
-                   [thumbnailSize]="PhotoSize.LARGE"
-                   [thumbnailShape]="PhotoShape.SQUARE"
-              ></div>
+        <div class="card card-flush py-4">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>
+                Precio
+              </h2>
             </div>
           </div>
-        </div>
+          <div class="card-body pt-0">
+            <form [id]="form.id" (ngSubmit)="onSubmit()">
+              <div controlsWrapper3 [control]="form.controls.price"></div>
 
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>
-                  Adicional
-                </h2>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <form [id]="form.id" (ngSubmit)="onSubmit()">
-                <div class="row">
-                  <div controlsWrapper3 class="col-6" [control]="form.controls.lotNumber"></div>
-                  <div controlsWrapper3 class="col-6" [control]="form.controls.manufacturer"></div>
-                  <div controlsWrapper3 class="col-6" [control]="form.controls.dosage"></div>
-                  <div controlsWrapper3 class="col-6" [control]="form.controls.unit"></div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+              <div class="fv-row mb-10">
+                <label class="fs-6 fw-semibold mb-2">
+                  Tipo de Descuento
+                  <span class="ms-1" tooltip="Selecciona el tipo de descuento que se le aplicará al producto."
+                        data-bs-toggle="tooltip">
+                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6">
+                      <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                    </i>
+                  </span>
+                </label>
 
-        <div class="col-12">
-          <div class="card mt-4">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>Almacenes</h2>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <div
-                warehouseSelectionTable
-                [use]="use()"
-                [availableWarehouses]="availableWarehouses"
-                [selectedWarehouseIds]="selectedWarehouseIds"
-                (selectionChanged)="onWarehouseSelectionChanged($event)"
-                (save)="saveWarehouseChanges()">
-              </div>
-            </div>
-          </div>
-        </div>
+                <div
+                  class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9"
+                  data-kt-buttons="true"
+                  data-kt-buttons-target="[data-kt-button='true']"
+                >
+                  <div class="col">
+                    <label
+                      class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6"
+                      data-kt-button="true"
+                      [class.active]="form.controls.discountType.value === '1'"
+                    >
+                      <span
+                        class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="discount_option"
+                          value="1"
+                          (change)="form.controls.discountType.setValue('1')"
+                          [checked]="form.controls.discountType.value === '1'"
+                        >
+                      </span>
+                      <span class="ms-5">
+                        <span class="fs-4 fw-bold text-gray-800 d-block">Sin Descuento</span>
+                      </span>
+                    </label>
+                  </div>
 
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <h2>
-                  Precio
-                </h2>
-              </div>
-            </div>
-            <div class="card-body pt-0">
-              <form [id]="form.id" (ngSubmit)="onSubmit()">
-                <div controlsWrapper3 [control]="form.controls.price"></div>
+                  <div class="col">
+                    <label
+                      class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6"
+                      data-kt-button="true"
+                      [class.active]="form.controls.discountType.value === '2'"
+                    >
+                      <span
+                        class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="discount_option"
+                          value="2"
+                          (change)="form.controls.discountType.setValue('2')"
+                          [checked]="form.controls.discountType.value === '2'"
+                        >
+                      </span>
+                      <span class="ms-5">
+                        <span class="fs-4 fw-bold text-gray-800 d-block">Porcentaje %</span>
+                      </span>
+                    </label>
+                  </div>
 
-                <div class="fv-row mb-10">
-                  <label class="fs-6 fw-semibold mb-2">
-                    Tipo de Descuento
-                    <span class="ms-1" tooltip="Selecciona el tipo de descuento que se le aplicará al producto."
-                          data-bs-toggle="tooltip">
-                      <i class="ki-duotone ki-information-5 text-gray-500 fs-6">
-                        <span class="path1"></span><span class="path2"></span><span class="path3"></span>
-                      </i>
-                    </span>
-                  </label>
-
-                  <div
-                    class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9"
-                    data-kt-buttons="true"
-                    data-kt-buttons-target="[data-kt-button='true']"
-                  >
-                    <div class="col">
-                      <label
-                        class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6"
-                        data-kt-button="true"
-                        [class.active]="form.controls.discountType.value === '1'"
-                      >
-                        <span
-                          class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            name="discount_option"
-                            value="1"
-                            (change)="form.controls.discountType.setValue('1')"
-                            [checked]="form.controls.discountType.value === '1'"
-                          >
-                        </span>
-                        <span class="ms-5">
-                          <span class="fs-4 fw-bold text-gray-800 d-block">Sin Descuento</span>
-                        </span>
-                      </label>
-                    </div>
-
-                    <div class="col">
-                      <label
-                        class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6"
-                        data-kt-button="true"
-                        [class.active]="form.controls.discountType.value === '2'"
-                      >
-                        <span
-                          class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            name="discount_option"
-                            value="2"
-                            (change)="form.controls.discountType.setValue('2')"
-                            [checked]="form.controls.discountType.value === '2'"
-                          >
-                        </span>
-                        <span class="ms-5">
-                          <span class="fs-4 fw-bold text-gray-800 d-block">Porcentaje %</span>
-                        </span>
-                      </label>
-                    </div>
-
-                    <div class="col">
-                      <label
-                        class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6"
-                        data-kt-button="true"
-                        [class.active]="form.controls.discountType.value === '3'"
-                      >
-                        <span
-                          class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            name="discount_option"
-                            value="3"
-                            (change)="form.controls.discountType.setValue('3')"
-                            [checked]="form.controls.discountType.value === '3'"
-                          >
-                        </span>
-                        <span class="ms-5">
-                          <span class="fs-4 fw-bold text-gray-800 d-block">Precio Fijo</span>
-                        </span>
-                      </label>
-                    </div>
+                  <div class="col">
+                    <label
+                      class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6"
+                      data-kt-button="true"
+                      [class.active]="form.controls.discountType.value === '3'"
+                    >
+                      <span
+                        class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="discount_option"
+                          value="3"
+                          (change)="form.controls.discountType.setValue('3')"
+                          [checked]="form.controls.discountType.value === '3'"
+                        >
+                      </span>
+                      <span class="ms-5">
+                        <span class="fs-4 fw-bold text-gray-800 d-block">Precio Fijo</span>
+                      </span>
+                    </label>
                   </div>
                 </div>
-                @switch (form.controls.discountType.value) {
-                  @case ('2') {
-                    <div controlsWrapper3 [control]="form.controls.discount"></div>
-                  }
-                  @case ('3') {
-                    <div controlsWrapper3 [control]="form.controls.discount"></div>
-                  }
+              </div>
+              @switch (form.controls.discountType.value) {
+                @case ('2') {
+                  <div controlsWrapper3 [control]="form.controls.discount"></div>
                 }
-              </form>
-            </div>
+                @case ('3') {
+                  <div controlsWrapper3 [control]="form.controls.discount"></div>
+                }
+              }
+            </form>
           </div>
         </div>
+
         @if (use() !== FormUse.DETAIL) {
           <div class="col-12">
             <div class="d-flex justify-content-end">
@@ -276,9 +266,10 @@
           </div>
         }
       </div>
-    </div>
-  </div>
 
+    </div>
+
+  </div>
 } @else {
   <form [id]="form.id" (ngSubmit)="onSubmit()">
     <div formBuilder3 [controls]="[

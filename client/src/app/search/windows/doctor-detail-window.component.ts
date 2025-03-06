@@ -12,6 +12,7 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
+import { UtilsService } from 'src/app/_services/utils.service';
 
 @Component({
   selector: 'div[doctorDetailWindow]',
@@ -24,7 +25,8 @@ export class DoctorDetailWindowComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   readonly icons: IconsService = inject(IconsService);
-  service = inject(SearchService);
+  readonly service = inject(SearchService);
+  readonly utilsService = inject(UtilsService);
 
   startingTab = input<string>();
   isMobile = input<boolean>(false);
