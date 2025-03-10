@@ -1,12 +1,12 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Component, effect, inject, signal, Type } from "@angular/core";
+import { Component, effect, inject, ModelSignal, signal, Type, WritableSignal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { Modal } from "src/app/_models/modal";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
-import { View } from "src/app/_models/base/types";
+import { CatalogMode, View } from "src/app/_models/base/types";
 import { Column, columnId } from "src/app/_models/base/column";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { EntityParams } from "src/app/_models/base/entityParams";
@@ -36,10 +36,11 @@ import SubmitOptions from 'src/app/_utils/serviceHelper/types/submitOptions';
  * @template W - The detail dialog type that extends `DetailDialog<T>`.
  */
 export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extends FormGroup2<U>, W extends Component = any> {
-  protected http = inject(HttpClient);
-  protected router = inject(Router);
-  protected confirm = inject(ConfirmService);
-  protected matSnackBar = inject(MatSnackBar);
+  protected readonly http = inject(HttpClient);
+  protected readonly router = inject(Router);
+  protected readonly route = inject(ActivatedRoute);
+  protected readonly confirm = inject(ConfirmService);
+  protected readonly matSnackBar = inject(MatSnackBar);
   readonly dev = inject(DevService);
 
   private readonly selectionService: SelectionService<T> = inject(SelectionService<T>);
@@ -436,5 +437,32 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   protected getFormHeaderText(use: FormUse, item: T | null): string {
     return getFormHeaderText(this.dictionary, use, item === null ? null : item.id);
+  }
+
+  clickRow(item: T, key: ModelSignal<string | null>, view: ModelSignal<View>, mode: ModelSignal<CatalogMode>, isMobile: WritableSignal<boolean>, relativeRoute: ActivatedRoute, options?: { routeUrl?: string; }) {
+    if (isMobile() === true) {
+      if (mode() === 'view') {
+        if (view() === 'page' || view() === 'inline') {
+          if (options?.routeUrl) {
+            this.router.navigate([item.id], { relativeTo: relativeRoute });
+          } else {
+            this.router.navigate([item.id], { relativeTo: relativeRoute });
+          }
+        }
+      }
+
+    } else if (isMobile() === false) {
+      if (mode() === 'view') {
+        if (view() === 'modal') {
+          // this.
+        } else if (view() === 'page') {
+          if (options?.routeUrl) {
+            this.router.navigate([item.id, { relativeTo: relativeRoute }]);
+          } else {
+            this.router.navigate([item.id], { relativeTo: relativeRoute });
+          }
+        }
+      }
+    }
   }
 }

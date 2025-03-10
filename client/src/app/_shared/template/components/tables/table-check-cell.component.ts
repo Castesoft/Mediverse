@@ -6,7 +6,8 @@ import {
   effect,
   ModelSignal,
   InputSignal,
-  OutputEmitterRef, output
+  OutputEmitterRef, output,
+  HostListener
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
@@ -45,5 +46,9 @@ export class TableCheckCellComponent {
   onCheckboxChange(event: Event): void {
     const checkbox = event.target as HTMLInputElement;
     this.checkboxChange.emit(checkbox.checked);
+  }
+
+  @HostListener('click', ['$event']) onClick(event: MouseEvent) {
+    event.stopPropagation();
   }
 }

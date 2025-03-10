@@ -11,7 +11,7 @@
 <tbody templateTableBody>
   @for (item of data(); track item.id; let idx = $index) {
     <tr
-      class="hover-actions-trigger btn-reveal-trigger position-static"
+      class="hover-actions-trigger btn-reveal-trigger position-static" (click)="service.clickRow(item, key, view, mode, query.isMobile, route)" (keydown.enter)="service.clickRow(item, key, view, mode, query.isMobile, route)" [tabIndex]="0"
       [cdkContextMenuTriggerFor]="context_menu"
     >
       <td
@@ -52,7 +52,7 @@
       <td
         class="nowrap"
         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;"
-        [title]="item.service.name || ''"
+        [matTooltip]="item.service.name || ''" [matTooltipShowDelay]="500"
       >
         {{ item.service.name }}
       </td>

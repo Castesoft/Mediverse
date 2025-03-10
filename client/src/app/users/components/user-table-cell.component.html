@@ -1,6 +1,6 @@
 <div class="d-flex align-middle">
   <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-    <a [routerLink]="[routerLink]">
+    <a [routerLink]="[routerLink]" (click)="$event.stopPropagation();">
       <div class="symbol-label">
         <div userProfilePicture [fullName]="user().fullName" [photoUrl]="user().photoUrl"></div>
       </div>
