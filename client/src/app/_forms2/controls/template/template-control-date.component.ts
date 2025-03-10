@@ -7,12 +7,13 @@ import {
   input,
   InputSignal,
   model,
-  ModelSignal, Signal,
-  signal, WritableSignal
+  ModelSignal,
+  Signal,
+  signal,
+  WritableSignal
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule, DatePipe } from "@angular/common";
-import { ValidationService } from "src/app/_services/validation.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { CdkModule } from "src/app/_shared/cdk.module";
@@ -40,7 +41,6 @@ import {
   standalone: true,
 })
 export class TemplateControlDateComponent {
-  readonly validation: ValidationService = inject(ValidationService);
   readonly icons: IconsService = inject(IconsService);
 
   control: ModelSignal<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>> = model.required();

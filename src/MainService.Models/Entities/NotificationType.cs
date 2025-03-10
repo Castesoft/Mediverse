@@ -3,40 +3,45 @@ namespace MainService.Models.Entities;
 /// <summary>
 /// Defines the types of notifications that can be sent.
 /// </summary>
-public enum NotificationType
+public static class NotificationType
 {
     /// <summary>
     /// A general notification that does not fall into a specific category.
     /// </summary>
-    General,
+    public const string General = "general";
+
+    /// <summary>
+    /// A notification that a new appointment has been scheduled.
+    /// </summary>
+    public const string AppointmentScheduled = "appointment-scheduled";
 
     /// <summary>
     /// A reminder for upcoming appointments.
     /// </summary>
-    AppointmentReminder,
+    public const string AppointmentReminder = "appointment-reminder";
 
     /// <summary>
     /// A notification regarding prescription updates or refills.
     /// </summary>
-    PrescriptionUpdate,
+    public const string PrescriptionUpdate = "prescription-update";
 
     /// <summary>
     /// A notification related to billing events.
     /// </summary>
-    BillingAlert,
+    public const string BillingAlert = "billing-alert";
 
     /// <summary>
     /// A system-wide alert or notification.
     /// </summary>
-    SystemAlert,
+    public const string SystemAlert = "system-alert";
 
     /// <summary>
     /// A request for feedback or review.
     /// </summary>
-    FeedbackRequest,
+    public const string FeedbackRequest = "feedback-request";
 
     /// <summary>
     /// A security-related notification, such as account changes or suspicious activity.
     /// </summary>
-    Security
+    public const string Security = "security";
 }

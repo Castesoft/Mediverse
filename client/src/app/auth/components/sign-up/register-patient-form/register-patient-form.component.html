@@ -1,7 +1,14 @@
-<div class="mb-10 text-center">
+<div class="mb-10 text-start">
   <h1 class="text-dark mb-3">
     Crear una cuenta
   </h1>
+  <div class="text-gray-600 fw-normal fs-6 w-100 d-flex justify-content-start mt-0">
+    ¿Ya tienes una cuenta?
+
+    <a routerLink="/auth/sign-in" class="link-primary fw-semibold ms-2">
+      Inicia sesión aquí
+    </a>
+  </div>
 </div>
 
 <!-- <button type="button" class="btn btn-light-primary fw-bold w-100 mb-10">
@@ -9,87 +16,89 @@
   Iniciar sesión con Google
 </button> -->
 
-<div class="card">
-  <div class="card-body">
-    <div class="row mb-5 gy-6">
-      <div
-        templateControlText
-        class="col-xl-6"
-        [(control)]="form().controls.firstName"
-        [(fromWrapper)]="fromWrapper"
-        [showBottomMargin]="false"
-      ></div>
+<div class="row mb-5 gy-6">
+  <div
+    templateControlText
+    class="col-xl-6"
+    [(control)]="form().controls.firstName"
+    [(fromWrapper)]="fromWrapper"
+    [showBottomMargin]="false"
+  >
+  </div>
 
-      <div
-        templateControlText
-        class="col-xl-6"
-        [(control)]="form().controls.lastName"
-        [(fromWrapper)]="fromWrapper"
-        [showBottomMargin]="false"
-      ></div>
-      <div
-        templateControlCheckRadio
-        class="col-xl-6"
-        [(control)]="form().controls.sex"
-        [(fromWrapper)]="fromWrapper"
-        [showBottomMargin]="false"
-      ></div>
+  <div
+    templateControlText
+    class="col-xl-6"
+    [(control)]="form().controls.lastName"
+    [(fromWrapper)]="fromWrapper"
+    [showBottomMargin]="false"
+  ></div>
+  <div
+    templateControlCheckRadio
+    class="col-xl-6"
+    [(control)]="form().controls.sex"
+    [(fromWrapper)]="fromWrapper"
+    [showBottomMargin]="false"
+  ></div>
 
-      <div
-        templateControlDate
-        class="col-xl-6"
-        [(control)]="form().controls.dateOfBirth"
-        [(fromWrapper)]="fromWrapper"
-        [showBottomMargin]="false"
-      ></div>
+  <div
+    templateControlDate
+    class="col-xl-6"
+    [(control)]="form().controls.dateOfBirth"
+    [(fromWrapper)]="fromWrapper"
+    [showBottomMargin]="false"
+  ></div>
 
-      <div templateControlText
-           class="col-xl-12"
-           [(control)]="form().controls.email"
-           [(fromWrapper)]="fromWrapper"
-           [showBottomMargin]="false"
-      ></div>
+  <div templateControlText
+       class="col-xl-12"
+       [(control)]="form().controls.email"
+       [(fromWrapper)]="fromWrapper"
+       [showBottomMargin]="false"
+  ></div>
 
-      <div templateControlText
-           class="col-xl-12"
-           [(control)]="form().controls.password"
-           [(fromWrapper)]="fromWrapper"
-           [showBottomMargin]="false"
-      ></div>
+  <div templateControlText
+       class="col-xl-12"
+       [(control)]="form().controls.password"
+       [(fromWrapper)]="fromWrapper"
+       [showBottomMargin]="false"
+  ></div>
 
-      <div templateControlText
-           class="col-xl-12 mb-3"
-           [(control)]="form().controls.confirmPassword"
-           [(fromWrapper)]="fromWrapper"
-           [showBottomMargin]="false"
-      ></div>
+  <div templateControlText
+       class="col-xl-12 mb-3"
+       [(control)]="form().controls.confirmPassword"
+       [(fromWrapper)]="fromWrapper"
+       [showBottomMargin]="false"
+  ></div>
 
-      <div templateControlCheckbox
-           class="col-xl-12 my-3"
-           [(control)]="form().controls.agreeTerms"
-           [(fromWrapper)]="fromWrapper"
-           [showBottomMargin]="false">
-        Estoy de acuerdo con los
-        <a
-          class="link-primary"
-          style="cursor: pointer;"
-          (click)="openTermsAndConditionsModal()"
-        >
-          Términos y condiciones
-        </a>.
-      </div>
-    </div>
-
-
-    <button
-      [disabled]="!form().controls.agreeTerms.getRawValue()"
-      type="submit"
-      class="btn btn-primary w-100"
+  <div templateControlCheckbox
+       class="col-xl-12 my-3"
+       [(control)]="form().controls.agreeTerms"
+       [(fromWrapper)]="fromWrapper"
+       [showBottomMargin]="false">
+    Estoy de acuerdo con los
+    <a
+      class="link-primary"
+      style="cursor: pointer;"
+      (click)="openTermsAndConditionsModal()"
     >
-      Crear cuenta
-    </button>
+      Términos y condiciones
+    </a>.
   </div>
 </div>
+
+
+<button
+  [disabled]="!form().controls.agreeTerms.getRawValue() || isSubmitting()"
+  type="submit"
+  class="btn btn-primary w-100"
+>
+  @if (!isSubmitting()) {
+    Crear Cuenta
+  } @else {
+    <span class="spinner-border spinner-border-sm me-2"></span>
+    Creando tu cuenta...
+  }
+</button>
 
 
 <!-- TODO - Add Google Sign Up Button -->
@@ -103,11 +112,3 @@
 <!--<div class="mb-10 w-100 d-flex justify-content-center">-->
 <!--  <div id="google-btn-signup" class="w-100" style="max-width: none"></div>-->
 <!--</div>-->
-
-<div class="text-gray-600 fw-normal fs-6 w-100 d-flex justify-content-center mt-5">
-  ¿Ya tienes una cuenta?
-
-  <a routerLink="/auth/sign-in" class="link-primary fw-semibold ms-2">
-    Inicia sesión aquí
-  </a>
-</div>

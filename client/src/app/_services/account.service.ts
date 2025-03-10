@@ -660,10 +660,6 @@ export class AccountService {
     }
   }
 
-  termsAndConditionsValidator(control: AbstractControl): ValidationErrors | null {
-    return control.value === true ? null : { termsAndConditions: true };
-  }
-
   clickInsuranceCompany(item: UserMedicalInsuranceCompany | null = null, use: FormUse = FormUse.DETAIL, view: View) {
 
     if (view === "modal") {

@@ -97,6 +97,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           console.error('Login error:', err);
+          this.form.error = err;
           this.isSubmitting = false;
         },
         complete: () => {

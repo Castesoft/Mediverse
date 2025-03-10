@@ -13,6 +13,7 @@ import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { NotificationsCatalogComponent } from "src/app/notifications/notifications-catalog.component";
 import { NotificationFormComponent } from "src/app/notifications/notification-form.component";
+import { Observable, Subject } from "rxjs";
 
 @Component({
   selector: 'notifications-catalog-modal',
@@ -22,6 +23,7 @@ import { NotificationFormComponent } from "src/app/notifications/notification-fo
       <mat-dialog-content>
         <div
           notificationsCatalog
+          [embedded]="false"
           [(mode)]="data.mode"
           [(key)]="data.key"
           [(view)]="data.view"
@@ -46,6 +48,9 @@ export class NotificationsCatalogModalComponent {
   providedIn: 'root',
 })
 export class NotificationsService extends ServiceHelper<Notification, NotificationParams, FormGroup2<NotificationParams>> {
+  serverUpdate: Subject<void> = new Subject<void>();
+  serverUpdate$: Observable<void> = this.serverUpdate.asObservable();
+
   constructor() {
     super(NotificationParams, 'notifications', notificationDictionary, notificationColumns);
   }
@@ -76,6 +81,18 @@ export class NotificationsService extends ServiceHelper<Notification, Notificati
 
   markAsRead(id: number) {
     return this.http.put(`${this.baseUrl}mark-as-read/${id}`, {});
+  }
+
+  toggleRead(id: number) {
+    return this.http.put(`${this.baseUrl}toggle-read/${id}`, {});
+  }
+
+  toggleFavorite(id: number) {
+    return this.http.put(`${this.baseUrl}toggle-favorite/${id}`, {});
+  }
+
+  toggleImportant(id: number) {
+    return this.http.put(`${this.baseUrl}toggle-important/${id}`, {});
   }
 
   updateProducts(model: any, id: number) {

@@ -33,6 +33,7 @@ export const notificationFiltersFormInfo: FormInfo<NotificationParams> = {
   ...baseFilterFormInfo,
   name: { label: 'Nombre', type: 'text' },
   address: { label: 'Dirección', type: 'select' },
+  status: { label: 'Estado', type: 'select' },
 } as FormInfo<NotificationParams>;
 
 export const notificationCells: PartialCellsOf<Notification> = {

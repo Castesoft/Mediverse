@@ -60,6 +60,7 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
 
     public async Task<Address?> GetByIdAsync(int id) =>
         await context.Addresses
+            .Include(x => x.DoctorClinic)
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId) =>

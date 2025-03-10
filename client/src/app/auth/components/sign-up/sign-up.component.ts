@@ -12,12 +12,10 @@ import {
 } from '@angular/forms';
 import { AccoutTypeSelectorComponent } from "./accout-type-selector/accout-type-selector.component";
 import { RegisterPatientFormComponent } from "./register-patient-form/register-patient-form.component";
-import { RegisterDoctorFormComponent } from './register-doctor-form/register-doctor-form.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { AccountCompletedComponent } from './account-completed/account-completed.component';
 import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ValidationService } from 'src/app/_services/validation.service';
 import { createId } from '@paralleldrive/cuid2';
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
@@ -28,6 +26,15 @@ import {
   authFormStepsDoctor,
   authFormStepsPatient
 } from "src/app/auth/components/sign-up/register-patient-form/sign-up-steps";
+import {
+  AccountDetailsComponent
+} from "src/app/auth/components/sign-up/register-doctor-form/account-details/account-details.component";
+import {
+  AccountSettingsComponent
+} from "src/app/auth/components/sign-up/register-doctor-form/account-settings/account-settings.component";
+import {
+  BillingDetailsComponent
+} from "src/app/auth/components/sign-up/register-doctor-form/billing-details/billing-details.component";
 
 @Component({
   selector: 'app-sign-up',
@@ -40,22 +47,24 @@ import {
     BottomLinksComponent,
     AccoutTypeSelectorComponent,
     RegisterPatientFormComponent,
-    RegisterDoctorFormComponent,
     AccountCompletedComponent,
     Forms2Module,
+    AccountDetailsComponent,
+    AccountSettingsComponent,
+    BillingDetailsComponent,
   ],
 })
 export class SignUpComponent implements OnInit {
-  private readonly validationService: ValidationService = inject(ValidationService);
   private readonly accountService: AccountService = inject(AccountService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly router: Router = inject(Router);
 
   readonly fb: FormBuilder = inject(FormBuilder);
-  @ViewChild('registerDoctor') registerDoctor!: RegisterDoctorFormComponent;
+  @ViewChild(BillingDetailsComponent) billingDetails!: BillingDetailsComponent;
 
   accountType: WritableSignal<'patient' | 'doctor'> = signal('patient');
-  isSubmittingApi: WritableSignal<boolean> = signal(false);
+  submissionErrors: WritableSignal<BadRequest | null> = signal(null);
+  isSubmitting: WritableSignal<boolean> = signal(false);
   formId: WritableSignal<string> = signal(createId());
   currentStep: WritableSignal<number> = signal(1);
 
@@ -75,10 +84,6 @@ export class SignUpComponent implements OnInit {
     });
 
     effect(() => {
-      const patientFormCopy: PatientRegisterForm = this.patientRegisterForm();
-      patientFormCopy.validation = this.validationService.active();
-      this.patientRegisterForm.set(patientFormCopy);
-
       if (this.accountType() === 'patient') {
         this.formId.set(this.patientRegisterForm().id);
       }
@@ -115,7 +120,7 @@ export class SignUpComponent implements OnInit {
       Phone: [ '', [ Validators.required, Validators.pattern(this.accountService.phonePattern) ] ],
       Password: [ '', [ Validators.required, Validators.pattern(this.accountService.passwordPattern) ] ],
       ConfirmPassword: [ '', [ Validators.required ] ],
-      AgreeTerms: [ false, [ this.accountService.termsAndConditionsValidator ] ]
+      AgreeTerms: [ false, [ Validators.requiredTrue ] ]
     }, {
       validators: [ this.accountService.equalFields('Password', 'ConfirmPassword') ]
     } as AbstractControlOptions),
@@ -180,31 +185,33 @@ export class SignUpComponent implements OnInit {
 
   submitPatientRegisterForm() {
     this.patientRegisterForm().submitted = true;
-    this.isSubmittingApi.set(true);
+    this.isSubmitting.set(true);
 
     this.accountService.register(this.patientRegisterForm().getRawValue()).subscribe({
       next: (account: Account) => {
         this.firstName = account.firstName || undefined;
         this.currentStep.set(this.currentStep() + 1);
-        this.isSubmittingApi.set(false);
+        this.isSubmitting.set(false);
       },
       error: (error: BadRequest) => {
         this.patientRegisterForm().error = error;
-        this.isSubmittingApi.set(false);
+        this.isSubmitting.set(false);
       }
     });
   }
 
   async submitDoctorRegisterForm() {
-    if (!this.doctorForm.valid || !this.registerDoctor.billingDetails.stripe || !this.registerDoctor.billingDetails.cardNumber) {
+    this.doctorForm.markAllAsTouched();
+    this.isSubmitting.set(true);
+
+    if (!this.doctorForm.valid || !this.billingDetails.stripe || !this.billingDetails.cardNumber) {
+      this.isSubmitting.set(false);
       return;
     }
 
-    this.isSubmittingApi.set(true);
-
-    const paymentMethod: PaymentMethodResult = await this.registerDoctor.billingDetails.stripe?.createPaymentMethod({
+    const paymentMethod: PaymentMethodResult = await this.billingDetails.stripe.createPaymentMethod({
       type: 'card',
-      card: this.registerDoctor.billingDetails.cardNumber!
+      card: this.billingDetails.cardNumber!
     });
 
     this.doctorForm.get('billingDetailsForm.StripePaymentMethodId')?.setValue(paymentMethod?.paymentMethod?.id);
@@ -261,8 +268,12 @@ export class SignUpComponent implements OnInit {
     this.accountService.registerDoctor(formData).subscribe({
       next: (_) => {
         this.currentStep.set(this.currentStep() + 1);
-        this.isSubmittingApi.set(false);
+        this.isSubmitting.set(false);
       },
+      error: (error: BadRequest) => {
+        this.submissionErrors.set(error);
+        this.isSubmitting.set(false);
+      }
     });
   }
 

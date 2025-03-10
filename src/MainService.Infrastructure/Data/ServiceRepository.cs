@@ -39,7 +39,10 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
             .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Service?> GetByIdAsync(int id) =>
-        await context.Services.SingleOrDefaultAsync(x => x.Id == id);
+        await context.Services
+            .Include(x => x.DoctorService)
+            .ThenInclude(x => x.Doctor)
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task<Service?> GetByNameAsync(string name, ClaimsPrincipal user) =>
         await context.Services

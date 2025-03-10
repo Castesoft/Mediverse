@@ -1,11 +1,24 @@
-import { Component, ElementRef, inject, OnInit, output, OutputEmitterRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  model,
+  ModelSignal,
+  OnInit,
+  output,
+  OutputEmitterRef,
+  ViewChild
+} from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   loadStripe,
   Stripe,
   StripeCardCvcElement,
+  StripeCardCvcElementChangeEvent,
   StripeCardExpiryElement,
-  StripeCardNumberElement
+  StripeCardExpiryElementChangeEvent,
+  StripeCardNumberElement,
+  StripeCardNumberElementChangeEvent
 } from '@stripe/stripe-js';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
@@ -14,6 +27,9 @@ import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { AddressesService } from 'src/app/addresses/addresses.config';
 import { environment } from 'src/environments/environment';
+import { NgClass } from "@angular/common";
+import { BadRequest } from "src/app/_models/forms/badRequest";
+import { ErrorsAlert3Component } from "src/app/_forms2/helper/errors-alert-3.component";
 
 @Component({
   selector: 'app-billing-details',
@@ -22,7 +38,9 @@ import { environment } from 'src/environments/environment';
     ReactiveFormsModule,
     InputControlComponent,
     ControlCheckComponent,
-    ControlSelectComponent
+    ControlSelectComponent,
+    NgClass,
+    ErrorsAlert3Component
   ],
 })
 export class BillingDetailsComponent implements OnInit {
@@ -31,6 +49,8 @@ export class BillingDetailsComponent implements OnInit {
   private addressesService = inject(AddressesService);
 
   onSubmit: OutputEmitterRef<void> = output();
+  isSubmitting: ModelSignal<boolean> = model(false);
+  submissionErrors: ModelSignal<BadRequest | null> = model.required();
 
   @ViewChild('cardNumber') cardNumberElement!: ElementRef;
   @ViewChild('cardExpiry') cardExpiryElement!: ElementRef;
@@ -39,7 +59,9 @@ export class BillingDetailsComponent implements OnInit {
   cardNumber?: StripeCardNumberElement;
   cardExpiry?: StripeCardExpiryElement;
   cardCvc?: StripeCardCvcElement;
-  cardErrors: any;
+  cardNumberErrors: any;
+  cardExpiryErrors: any;
+  cardCvcErrors: any;
 
   myForm!: FormGroup;
 
@@ -60,44 +82,64 @@ export class BillingDetailsComponent implements OnInit {
       this.stripe = stripe;
       const elements = stripe?.elements();
       if (elements) {
+        // Card Number Element
         this.cardNumber = elements.create('cardNumber');
         this.cardNumber.mount(this.cardNumberElement.nativeElement);
         this.cardNumber.on('change', event => {
           if (event.error) {
-            this.cardErrors = event.error.message;
+            console.log('CardNumber error:', event.error);
+            this.cardNumberErrors = event.error;
           } else {
-            this.cardErrors = null;
+            this.cardNumberErrors = null;
           }
         });
 
+        // Card Expiry Element
         this.cardExpiry = elements.create('cardExpiry');
         this.cardExpiry.mount(this.cardExpiryElement.nativeElement);
         this.cardExpiry.on('change', event => {
           if (event.error) {
-            this.cardErrors = event.error.message;
+            console.log('CardExpiry error:', event.error);
+            this.cardExpiryErrors = event.error;
           } else {
-            this.cardErrors = null;
+            this.cardExpiryErrors = null;
           }
         });
 
+        // Card CVC Element
         this.cardCvc = elements.create('cardCvc');
         this.cardCvc.mount(this.cardCvcElement.nativeElement);
         this.cardCvc.on('change', event => {
           if (event.error) {
-            this.cardErrors = event.error.message;
+            console.log('CardCvc error:', event.error);
+            this.cardCvcErrors = event.error;
           } else {
-            this.cardErrors = null;
+            this.cardCvcErrors = null;
           }
         });
       }
     });
 
+    // Update billing validators based on SameAddress control changes
     this.myForm.get('SameAddress')?.valueChanges.subscribe(value => {
       this.updateBillingValidators(value);
     });
 
     // Initial update of validators
     this.updateBillingValidators(this.myForm.get('SameAddress')?.value);
+  }
+
+  private getStripeError(
+    event:
+      StripeCardNumberElementChangeEvent |
+      StripeCardCvcElementChangeEvent |
+      StripeCardExpiryElementChangeEvent
+  ): { [key: string]: string } {
+    const stripeError: { [key: string]: string } = {};
+    if (event.error) {
+      stripeError[event.error.code] = event.error.message;
+    }
+    return stripeError;
   }
 
   enterZipcode(event: any) {
@@ -118,7 +160,7 @@ export class BillingDetailsComponent implements OnInit {
           ...address,
           value: address.neighborhood,
           name: address.neighborhood
-        }
+        };
       });
     });
   }
@@ -134,7 +176,6 @@ export class BillingDetailsComponent implements OnInit {
 
   private updateBillingValidators(sameaddress: boolean): void {
     const billingControls = [ 'BillingState', 'BillingCity', 'BillingAddress', 'BillingZipcode' ];
-
     if (sameaddress) {
       billingControls.forEach(control => {
         this.myForm.get(control)?.clearValidators();
@@ -147,5 +188,4 @@ export class BillingDetailsComponent implements OnInit {
       });
     }
   }
-
 }

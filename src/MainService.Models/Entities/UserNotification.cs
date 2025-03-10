@@ -6,8 +6,12 @@ namespace MainService.Models.Entities;
 /// </summary>
 public class UserNotification
 {
-    public UserNotification() { }
+    public UserNotification()
+    {
+    }
+
     public UserNotification(Notification notification) => Notification = notification;
+
     /// <summary>
     /// Foreign key to the AppUser.
     /// </summary>
@@ -26,6 +30,16 @@ public class UserNotification
     /// Indicates whether the user has read this notification.
     /// </summary>
     public bool IsRead { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether the user has marked this notification as favorite.
+    /// </summary>
+    public bool IsFavorite { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether the notification is important.
+    /// </summary>
+    public bool IsImportant { get; set; } = false;
 
     /// <summary>
     /// Timestamp when the notification was read.

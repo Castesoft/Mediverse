@@ -19,14 +19,49 @@ export function notNullValidator(): ValidatorFn {
 }
 
 export const patientRegisterFormInfo: FormInfo<PatientRegister> = {
-  agreeTerms: { type: 'checkbox', label: 'Acepto los términos y condiciones', validators: [ Validators.required,  ], },
-  firstName: { type: 'text', label: 'Nombre', validators: [ Validators.required, Validators.minLength(3), Validators.maxLength(500), ], },
-  lastName: { type: 'text', label: 'Apellido', validators: [ Validators.required, Validators.minLength(3), Validators.maxLength(500), ], },
-  email: { type: 'email', label: 'Correo electrónico', validators: [ Validators.required, Validators.email, Validators.maxLength(500), ], },
-  password: { type: 'password', label: 'Contraseña', validators: [ Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern(complexPasswordRegex), ], },
-  dateOfBirth: { type: 'date', label: 'Fecha de nacimiento', validators: [ Validators.required, Validators.maxLength(500), ], },
-  sex: { type: 'radio', label: 'Sexo', validators: [ Validators.required, notNullValidator(), ], selectOptions: sexOptions, orientation: 'inline', showCodeSpan: false, },
-  confirmPassword: { type: 'password', label: 'Confirmar contraseña',
+  agreeTerms: { type: 'checkbox', label: 'Acepto los términos y condiciones', validators: [ Validators.required, ], },
+  firstName: {
+    type: 'text',
+    label: 'Nombre',
+    solid: true,
+    validators: [ Validators.required, Validators.minLength(3), Validators.maxLength(500), ],
+  },
+  lastName: {
+    type: 'text',
+    label: 'Apellido',
+    solid: true,
+    validators: [ Validators.required, Validators.minLength(3), Validators.maxLength(500), ],
+  },
+  email: {
+    type: 'email',
+    label: 'Correo electrónico',
+    solid: true,
+    validators: [ Validators.required, Validators.email, Validators.maxLength(500), ],
+  },
+  password: {
+    type: 'password',
+    label: 'Contraseña',
+    solid: true,
+    validators: [ Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern(complexPasswordRegex), ],
+  },
+  dateOfBirth: {
+    type: 'date',
+    label: 'Fecha de nacimiento',
+    solid: true,
+    validators: [ Validators.required, Validators.maxLength(500), ],
+  },
+  sex: {
+    type: 'radio',
+    label: 'Sexo',
+    validators: [ Validators.required, notNullValidator(), ],
+    solid: true,
+    selectOptions: sexOptions,
+    orientation: 'inline',
+    showCodeSpan: false,
+  },
+  confirmPassword: {
+    type: 'password', label: 'Confirmar contraseña',
+    solid: true,
     validators: [ Validators.required, Validators.minLength(8), Validators.maxLength(30), matchValueValidator('password'), ],
   },
 

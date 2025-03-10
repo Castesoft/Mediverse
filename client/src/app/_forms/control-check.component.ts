@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, input, Input, OnInit, Renderer2, Self } from '@angular/core';
+import { Component, ElementRef, inject, input, Input, InputSignal, Renderer2, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HelpBlockComponent } from 'src/app/_forms/helpers/help-block.component';
@@ -11,12 +11,13 @@ import { ValidationService } from 'src/app/_services/validation.service';
   standalone: true,
   imports: [ CommonModule, ReactiveFormsModule, HelpBlockComponent, InvalidFeedbackComponent, ],
 })
-export class ControlCheckComponent implements ControlValueAccessor, OnInit {
-  validation = inject(ValidationService);
+export class ControlCheckComponent implements ControlValueAccessor {
+  readonly validation: ValidationService = inject(ValidationService);
 
-  errors = input<{ [key: string]: string }>({});
-  formText = input<string | null>(null);
-  submitted = input<boolean>(false);
+  errors: InputSignal<{ [key: string]: string }> = input({});
+  formText: InputSignal<string | null> = input(null as string | null);
+  submitted: InputSignal<boolean> = input(false);
+  solid: InputSignal<boolean> = input(false);
 
   @Input() id?: string;
   @Input() label?: string;
@@ -24,14 +25,6 @@ export class ControlCheckComponent implements ControlValueAccessor, OnInit {
 
   constructor(@Self() public ngControl: NgControl, private renderer: Renderer2, private el: ElementRef) {
     this.ngControl.valueAccessor = this;
-  }
-
-  ngOnInit(): void {
-    // if (this.autofocus()) {
-    //   const inputEl = this.el.nativeElement.querySelector('input');
-    //   this.renderer.setAttribute(inputEl, 'autofocus', 'autofocus');
-    //   inputEl.focus();
-    // }
   }
 
   writeValue(obj: any): void { }
@@ -47,5 +40,4 @@ export class ControlCheckComponent implements ControlValueAccessor, OnInit {
   get controlName(): string {
     return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName';
   }
-
 }

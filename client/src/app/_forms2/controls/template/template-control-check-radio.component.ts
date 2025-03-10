@@ -2,13 +2,15 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
-  effect, HostBinding,
+  effect,
+  HostBinding,
   inject,
   input,
   InputSignal,
   model,
   ModelSignal,
-  output, OutputEmitterRef,
+  output,
+  OutputEmitterRef,
   Signal
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,9 +20,9 @@ import {
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormControl2 } from 'src/app/_models/forms/formControl2';
 import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
-import { ValidationService } from 'src/app/_services/validation.service';
 import { OptionalSpan3Component } from "src/app/_forms2/helper/optional-span-3.component";
 import { NewBadge3Component } from "src/app/_forms2/helper/new-badge-3.component";
+import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
   selector: 'div[templateControlCheckRadio]',
@@ -29,7 +31,7 @@ import { NewBadge3Component } from "src/app/_forms2/helper/new-badge-3.component
   imports: [ FormsModule, ReactiveFormsModule, CommonModule, TemplateInvalidFeedbackComponent, OptionalSpan3Component, NewBadge3Component, ],
 })
 export class TemplateControlCheckRadioComponent {
-  readonly validation: ValidationService = inject(ValidationService);
+  readonly validationService: ValidationService = inject(ValidationService);
 
   control: ModelSignal<FormControl2<string | number | boolean | Date | SelectOption | null>> = model.required();
   fromWrapper: ModelSignal<boolean> = model.required();
@@ -49,7 +51,7 @@ export class TemplateControlCheckRadioComponent {
 
   constructor() {
     effect(() => {
-      this.control.set(this.control().setValidation(this.validation.active()));
+      this.control.set(this.control().setValidation(this.root().validation));
 
       if (this.showBottomMargin()) {
         this.class += ` mb-10`;

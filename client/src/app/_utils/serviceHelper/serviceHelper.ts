@@ -104,7 +104,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
     const payload: HttpParams = transformToHttpParams(transform(param));
 
-    console.log('param: ', param);
+    console.log('Loading paged list with params: ', param);
 
     return getPaginatedResponse<T>(this.baseUrl, payload, this.http).pipe(
       tap((response) => {

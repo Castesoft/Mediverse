@@ -1,0 +1,30 @@
+@import 'public/sass/components/variables.scss';
+
+.custom-check-cell {
+  padding-left: 1rem !important;
+}
+
+.notification {
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+.notification.important::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background-color: $danger;
+}
+
+.notification.is-not-read::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background-color: $primary;
+}

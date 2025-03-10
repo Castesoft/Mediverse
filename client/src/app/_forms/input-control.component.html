@@ -16,9 +16,10 @@
        [attr.autofocus]="autofocus() ? 'autofocus' : null"
        [readonly]="isReadonly"
        class="form-control mb-3 mb-lg-0"
+       [class.form-control-solid]="solid()"
        [ngClass]="{
-          'is-invalid': (control.dirty || submitted()) && control.invalid,
-          'is-valid': (control.dirty || submitted()) && control.valid,
+          'is-invalid': (control.touched || control.dirty || submitted()) && control.invalid,
+          'is-valid': (control.touched || control.dirty || submitted()) && control.valid,
           'border-warning border-2': isPending,
        }"
        [attr.aria-describedby]="formText() ? controlName + 'helpBlock' : null"

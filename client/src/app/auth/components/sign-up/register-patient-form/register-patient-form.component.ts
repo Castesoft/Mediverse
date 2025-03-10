@@ -17,6 +17,7 @@ import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 })
 export class RegisterPatientFormComponent implements OnInit {
   form: ModelSignal<PatientRegisterForm> = model.required<PatientRegisterForm>();
+  isSubmitting: ModelSignal<boolean> = model.required();
   fromWrapper: WritableSignal<boolean> = signal(false);
 
   private bsModalService: BsModalService = inject(BsModalService);
@@ -29,12 +30,11 @@ export class RegisterPatientFormComponent implements OnInit {
         size: 'large',
         text: 'signup_with',
         locale: 'es',
-        width: 700,  // Fixed width set to 700px
+        width: 700,
         height: 200
       });
     }
   }
-
 
   openTermsAndConditionsModal() {
     this.bsModalService.show(TermsAndConditionsModalComponent);

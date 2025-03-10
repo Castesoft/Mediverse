@@ -1,47 +1,51 @@
-import { AfterViewInit, Component, ElementRef, inject, input, Input, OnChanges, Renderer2, Self, SimpleChanges } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { NgClass, KeyValuePipe, TitleCasePipe } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  inject,
+  input,
+  Input,
+  InputSignal,
+  OnChanges,
+  Renderer2,
+  Self,
+  SimpleChanges
+} from '@angular/core';
+import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
+import { KeyValuePipe, NgClass, TitleCasePipe } from '@angular/common';
 import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   selector: '[controlSelect]',
   templateUrl: './control-select.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, NgClass, KeyValuePipe, TitleCasePipe]
+  imports: [ ReactiveFormsModule, NgClass, KeyValuePipe, TitleCasePipe ]
 })
-export class ControlSelectComponent implements ControlValueAccessor, AfterViewInit, OnChanges {
-  validation = inject(ValidationService);
+export class ControlSelectComponent implements ControlValueAccessor, OnChanges {
+  readonly validation: ValidationService = inject(ValidationService);
 
-  autofocus = input<boolean>(false);
-  isNew = input<boolean>(false);
+  autofocus: InputSignal<boolean> = input(false);
+  isNew: InputSignal<boolean> = input(false);
+  solid: InputSignal<boolean> = input(false);
 
   @Input() label: string = '';
   @Input() placeholder: string = '';
   @Input() id?: string;
   @Input() formText?: string;
-  @Input() isReadonly= false;
-  @Input() submitted= false;
-  @Input() hideIsOptional= false;
+  @Input() isReadonly: boolean = false;
+  @Input() submitted: boolean = false;
+  @Input() hideIsOptional: boolean = false;
   @Input() errors: { [key: string]: string } = {};
   @Input() options: any[] = [];
-  @Input() showPrice = false;
-  @Input() isAddress = false;
-  @Input() isPaymentMethod = false;
-  @Input() isInsurance = false;
+  @Input() showPrice: boolean = false;
+  @Input() isAddress: boolean = false;
+  @Input() isPaymentMethod: boolean = false;
+  @Input() isInsurance: boolean = false;
 
   get control(): FormControl { return this.ngControl.control as FormControl; }
+
   get controlName(): string { return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName'; }
 
   constructor(@Self() public ngControl: NgControl, private renderer: Renderer2, private el: ElementRef) {
     this.ngControl.valueAccessor = this;
-  }
-
-  ngAfterViewInit(): void {
-    // if (this.autofocus()) {
-    //   const inputEl = this.el.nativeElement.querySelector('select');
-    //   this.renderer.setAttribute(inputEl, 'autofocus', 'autofocus');
-    //   inputEl.focus();
-    // }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -51,6 +55,8 @@ export class ControlSelectComponent implements ControlValueAccessor, AfterViewIn
   }
 
   writeValue(obj: any): void { }
+
   registerOnChange(fn: any): void { }
+
   registerOnTouched(fn: any): void { }
 }

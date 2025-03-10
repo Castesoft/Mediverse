@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -14,9 +14,9 @@ import {
   styleUrl: './account-settings.component.scss',
   imports: [ ReactiveFormsModule, InputControlComponent, ControlCheckComponent, RouterLink ],
 })
-export class AccountSettingsComponent {
-  private bsModalService: BsModalService = inject(BsModalService);
-  public controlContainer: ControlContainer = inject(ControlContainer);
+export class AccountSettingsComponent implements OnInit {
+  private readonly bsModalService: BsModalService = inject(BsModalService);
+  readonly controlContainer: ControlContainer = inject(ControlContainer);
 
   myForm!: FormGroup;
 

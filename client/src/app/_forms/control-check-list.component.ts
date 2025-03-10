@@ -1,5 +1,5 @@
-import { Component, Input, inject, input } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
+import { Component, inject, Input, input, InputSignal } from '@angular/core';
+import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InvalidFeedbackComponent } from './helpers/invalid-feedback.component';
 import { ValidationService } from 'src/app/_services/validation.service';
@@ -7,25 +7,25 @@ import { ValidationService } from 'src/app/_services/validation.service';
 @Component({
   selector: '[controlCheckList]',
   templateUrl: './control-check-list.component.html',
-  standalone: true,
-  imports: [CommonModule, InvalidFeedbackComponent]
+  imports: [ CommonModule, InvalidFeedbackComponent ]
 })
 export class ControlCheckListComponent implements ControlValueAccessor {
-  validation = inject(ValidationService);
+  readonly validation: ValidationService = inject(ValidationService);
 
-  isNew = input<boolean>(false);
+  isNew: InputSignal<boolean> = input(false);
+  solid: InputSignal<boolean> = input(false);
 
   @Input() label: string = '';
-  @Input() options: string[] | {id: number, name: string}[] = [];
+  @Input() options: string[] | { id: number, name: string }[] = [];
   @Input() formText?: string;
-  @Input() isReadonly= false;
-  @Input() submitted= false;
+  @Input() isReadonly: boolean = false;
+  @Input() submitted: boolean = false;
   @Input() errors: { [key: string]: string } = {};
 
   private onChange: (value: string) => void = () => { };
   private onTouched: () => void = () => { };
 
-  getOptionName(option: string | {id: number, name: string}): string {
+  getOptionName(option: string | { id: number, name: string }): string {
     return typeof option === 'object' ? option.name : option;
   }
 
@@ -33,7 +33,7 @@ export class ControlCheckListComponent implements ControlValueAccessor {
     this.ngControl.valueAccessor = this;
   }
 
-  onCheckboxChange(option: string | {id: number, name: string}, event: Event) {
+  onCheckboxChange(option: string | { id: number, name: string }, event: Event) {
     const selectedOptions = (this.control.value || '').split(',').filter((v: string) => !!v);
     const optionValue = typeof option === 'object' ? option.id : option;
 
@@ -65,7 +65,7 @@ export class ControlCheckListComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  isOptionSelected(option: string | {id: number, name: string} | number): boolean {
+  isOptionSelected(option: string | { id: number, name: string } | number): boolean {
     if (typeof option === 'object') {
       return this.isOptionSelected(option.id);
     }

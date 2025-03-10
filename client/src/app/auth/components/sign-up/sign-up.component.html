@@ -17,12 +17,22 @@
               <app-accout-type-selector [(accountType)]="accountType"></app-accout-type-selector>
             } @else if (currentStep() < formSteps.length) {
               @if (accountType() === 'patient') {
-                <app-register-patient-form [(form)]="patientRegisterForm"></app-register-patient-form>
+                <app-register-patient-form [(form)]="patientRegisterForm" [(isSubmitting)]="isSubmitting"></app-register-patient-form>
               } @else if (accountType() === 'doctor') {
-                <app-register-doctor-form #registerDoctor
-                                          (onSubmit)="onSubmit()"
-                                          [(currentStep)]="currentStep"
-                                          [formGroup]="doctorForm"></app-register-doctor-form>
+                @if (currentStep() === 2) {
+                  <app-account-settings
+                    [formGroup]="$any(doctorForm.get('accountSettingsForm'))"></app-account-settings>
+                } @else if (currentStep() === 3) {
+                  <app-account-details #accountDetails
+                                       [formGroup]="$any(doctorForm.get('accountDetailsForm'))"></app-account-details>
+                } @else if (currentStep() === 4) {
+                  <app-billing-details
+                    #billingDetails
+                    [formGroup]="$any(doctorForm.get('billingDetailsForm'))"
+                    [(isSubmitting)]="isSubmitting"
+                    [(submissionErrors)]="submissionErrors"
+                    (onSubmit)="onSubmit()"></app-billing-details>
+                }
               }
             } @else {
               <app-account-completed [name]="firstName"></app-account-completed>
@@ -31,7 +41,7 @@
             <div formActions
                  [totalSteps]="formSteps.length"
                  [(currentStep)]="currentStep"
-                 [(isSubmittingApi)]="isSubmittingApi"
+                 [(isSubmittingApi)]="isSubmitting"
                  (onNextStep)="onNextStep()"
                  (onPreviousStep)="onPreviousStep()"
                  (onSubmit)="onSubmit()"

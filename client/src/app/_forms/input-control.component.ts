@@ -1,6 +1,19 @@
 import { CommonModule } from "@angular/common";
-import { Component, AfterViewInit, OnInit, inject, input, output, Input, Self, Renderer2, ElementRef, effect } from "@angular/core";
-import { ReactiveFormsModule, ControlValueAccessor, FormControl, NgControl } from "@angular/forms";
+import {
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  Input,
+  InputSignal,
+  OnInit,
+  output,
+  OutputEmitterRef,
+  Renderer2,
+  Self
+} from "@angular/core";
+import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from "@angular/forms";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
 import { InputTypes } from "src/app/_models/forms/formTypes";
@@ -12,21 +25,25 @@ import { ValidationService } from "src/app/_services/validation.service";
   selector: 'div[inputControl]',
   templateUrl: './input-control.component.html',
   standalone: true,
-  imports: [ ReactiveFormsModule, CommonModule,
-    InvalidFeedbackComponent, HelpBlockComponent,
-   ],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    InvalidFeedbackComponent,
+    HelpBlockComponent,
+  ],
 })
-export class InputControlComponent implements ControlValueAccessor, AfterViewInit, OnInit {
-  validation = inject(ValidationService);
+export class InputControlComponent implements ControlValueAccessor, OnInit {
+  validation: ValidationService = inject(ValidationService);
 
-  errors = input<{ [key: string]: string }>({});
-  formText = input<string | null>(null);
-  submitted = input<boolean>(false);
-  autofocus = input<boolean>(false);
-  isNew = input<boolean>(false);
-  optional = input<boolean>(false);
+  errors: InputSignal<{ [key: string]: string }> = input({});
+  formText: InputSignal<string | null> = input(null as string | null);
+  submitted: InputSignal<boolean> = input(false);
+  autofocus: InputSignal<boolean> = input(false);
+  isNew: InputSignal<boolean> = input(false);
+  optional: InputSignal<boolean> = input(false);
+  solid: InputSignal<boolean> = input(false);
 
-  onChange = output<any>();
+  onChange: OutputEmitterRef<any> = output<any>();
 
   @Input() id?: string;
   @Input() popoverProps?: PopoverProps;
@@ -34,24 +51,35 @@ export class InputControlComponent implements ControlValueAccessor, AfterViewIni
   @Input({ required: false }) type: InputTypes = 'text';
   @Input() placeholder: string = '';
   @Input() datalistOptions?: any[] | null = null;
-  @Input() isReadonly= false;
-  @Input() hideIsOptional= false;
-  @Input() useInputGroup= false;
+  @Input() isReadonly: boolean = false;
+  @Input() hideIsOptional: boolean = false;
+  @Input() useInputGroup: boolean = false;
   @Input() append: string = '';
   @Input() popoverText?: string;
   @Input() popoverTitle?: string;
-  @Input() isPending?= false;
-  @Input() role = 'presentation';
-  @Input() spellcheck = false;
-  @Input() autocomplete = 'disabled';
+  @Input() isPending: boolean | undefined = false;
+  @Input() role: string = 'presentation';
+  @Input() spellcheck: boolean = false;
+  @Input() autocomplete: string = 'disabled';
 
   writeValue(obj: any): void { }
+
   registerOnChange(fn: any): void { }
+
   registerOnTouched(fn: any): void { }
 
   get control(): FormControl { return this.ngControl.control as FormControl; }
+
   get controlName(): string { return this.ngControl.name ? this.ngControl.name.toString() : 'defaultName'; }
-  get value(): string | undefined { if (!this.control.value) return undefined; return this.control.value.toString(); }
+
+  get controlErrors(): { [key: string]: string } {
+    return this.control.errors || {};
+  }
+
+  get value(): string | undefined {
+    if (!this.control.value) return undefined;
+    return this.control.value.toString();
+  }
 
   constructor(@Self() public ngControl: NgControl, private renderer: Renderer2, private el: ElementRef) {
     this.ngControl.valueAccessor = this;
@@ -68,14 +96,6 @@ export class InputControlComponent implements ControlValueAccessor, AfterViewIni
         if (this.popoverTitle === undefined) this.popoverTitle = this.label;
       }
     }
-  }
-
-  ngAfterViewInit(): void {
-    // if (this.autofocus()) {
-    //   const inputEl = this.el.nativeElement.querySelector('input');
-    //   this.renderer.setAttribute(inputEl, 'autofocus', 'autofocus');
-    //   inputEl.focus();
-    // }
   }
 
   handleChange(event: any) {

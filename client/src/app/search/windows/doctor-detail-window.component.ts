@@ -8,7 +8,6 @@ import { SearchService } from 'src/app/_services/search.service';
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
 import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
-import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
@@ -17,7 +16,7 @@ import { UtilsService } from 'src/app/_services/utils.service';
 @Component({
   selector: 'div[doctorDetailWindow]',
   standalone: true,
-  imports: [ ProfilePictureComponent, ProfilePictureComponent, DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent, FaIconComponent ],
+  imports: [ DoctorGeneralTabComponent, DoctorScheduleTabComponent, DoctorReviewsTabComponent, FaIconComponent ],
   templateUrl: './doctor-detail-window.component.html',
   styleUrl: './doctor-detail-window.component.scss'
 })

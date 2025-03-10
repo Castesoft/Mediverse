@@ -22,6 +22,7 @@ export const loginInfo: FormInfo<Login> = {
       maxlength:
         'El nombre de usuario o el correo no debe tener más de 255 caracteres.'
     },
+    solid: true
   },
   password: {
     type: 'password',
@@ -32,6 +33,7 @@ export const loginInfo: FormInfo<Login> = {
       'minlength': 'La contraseña debe tener al menos 6 caracteres.',
       'maxlength': 'La contraseña no debe tener más de 100 caracteres.'
     },
+    solid: true
   },
   twoFactorCode: {
     type: 'text', label: 'Código',
@@ -42,6 +44,7 @@ export const loginInfo: FormInfo<Login> = {
       maxlength:
         'El código de autenticación no debe tener más de 6 caracteres.'
     },
+    solid: true
   },
 } as FormInfo<Login>;
 

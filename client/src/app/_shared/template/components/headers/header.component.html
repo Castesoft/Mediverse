@@ -25,9 +25,7 @@
     }
   </div>
   <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
-
     <div headerSearch></div>
-
     <div class="d-flex align-items-stretch flex-shrink-0">
       <div class="d-flex align-items-center ms-1 ms-lg-2">
         <div class="btn btn-icon btn-active-light-primary w-30px h-30px w-md-40px h-md-40px"
@@ -40,9 +38,9 @@
           </i>
         </div>
       </div>
-      <div notificationsDropdown dropdown [notifications]="notifications"></div>
+      <div notificationsDropdown dropdown [notifications]="notifications()"></div>
       <div themeDropdown dropdown></div>
-      <div userDropdown dropdown triggers="hover"></div>
+      <div userDropdown dropdown></div>
     </div>
   </div>
 </div>

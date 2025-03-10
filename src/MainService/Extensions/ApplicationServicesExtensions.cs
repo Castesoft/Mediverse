@@ -66,6 +66,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEventsService, EventsService>();
         services.AddScoped<IWarehousesService, WarehousesService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<INotificationsService, NotificationsService>();
 
         services.AddSignalR();
         

@@ -1,17 +1,19 @@
-<div class="d-flex flex-stack py-4 px-8 notification"
-     [class.pending-notification]="!notification().isRead"
-     (mouseenter)="onRead.emit(notification().id!)">
-  <div class="d-flex align-items-center">
-    <div class="mb-0 me-2">
-      <a href="#" class="fs-6 text-gray-800 text-hover-primary fw-bold">
-        {{ notification().title }}
-      </a>
-      <div class="text-gray-500 fs-7">
-        {{ notification().message }}
+<div
+  class="d-flex flex-stack py-4 px-4 notification"
+  [title]="notification().message"
+  [class.pending-notification]="!notification().isRead"
+  (mouseenter)="onRead.emit(notification().id!)">
+  <div class="d-flex flex-column">
+    <div class="d-flex align-items-center justify-content-between">
+      <app-notification-icon class="me-4" [type]="notification().type"></app-notification-icon>
+      <div class="d-flex flex-column">
+        <a href="#" class="fs-6 text-gray-800 text-hover-primary fw-bold">
+          {{ notification().title }}
+        </a>
+        <span class="fs-8">
+          {{ notification().createdAt | relativeTime:7 }}
+        </span>
       </div>
     </div>
   </div>
-  <span class="badge badge-light fs-8">
-    {{ notification().createdAt | date }}
-  </span>
 </div>

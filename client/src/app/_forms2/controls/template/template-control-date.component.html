@@ -1,33 +1,6 @@
-<!--  <div class="d-flex align-items-center gap-2 pe-0 me-0">-->
-<!--    @if (control().showLabel) {-->
-<!--      <label class="form-label"-->
-<!--             [ngClass]="{'required': control().required && validation.active()}">-->
-<!--        {{ control().label }}-->
-<!--      </label>-->
-<!--    }-->
-<!--    <input matInput-->
-<!--           (click)="picker.open()"-->
-<!--           [matDatepicker]="picker"-->
-<!--           [formControl]="$any(control())"-->
-<!--           [matTooltip]="tooltipText()"-->
-<!--           [placeholder]="(control().use !== 'detail' && control().placeholder) ? control().placeholder! : ''"-->
-<!--           [autocomplete]="false"-->
-<!--           [spellcheck]="false"-->
-<!--           [id]="control().id"-->
-<!--           [readonly]="control().isReadonly"-->
-<!--           class="form-control form-control-lg"-->
-<!--           [ngClass]="{-->
-<!--              'is-invalid': (root().submitted) && control().invalid,-->
-<!--              'is-valid': (root().submitted) && control().valid-->
-<!--           }"-->
-<!--           [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"-->
-<!--           [attr.aria-label]="control().label + ' input'" type="text">-->
-<!--    <mat-datepicker #picker></mat-datepicker>-->
-<!--  </div>-->
-
 @if (control().showLabel) {
   <label class="form-label"
-         [ngClass]="{'required': control().required && validation.active()}">
+         [ngClass]="{'required': control().required && root().validation}">
     {{ control().label }}
   </label>
 }
@@ -41,12 +14,15 @@
        [spellcheck]="false"
        [id]="control().id"
        [readonly]="control().isReadonly"
-       class="form-control form-control-lg" [ngClass]="{
-            'is-invalid': (root().submitted) && control().invalid,
-            'is-valid': (root().submitted) && control().valid
-         }"
+       class="form-control form-control-lg"
+       [class.form-control-solid]="control().solid"
+       [ngClass]="{
+          'is-invalid': (control().touched || control().dirty || root().submitted) && control().invalid,
+          'is-valid': (control().touched || control().dirty || root().submitted) && control().valid
+       }"
        [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
        [attr.aria-label]="control().label + ' input'" type="text">
+
 <mat-datepicker #picker></mat-datepicker>
 
 <div templateInvalidFeedback [(control)]="control"></div>

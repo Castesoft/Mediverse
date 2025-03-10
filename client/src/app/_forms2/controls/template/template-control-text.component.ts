@@ -4,11 +4,11 @@ import {
   computed,
   effect,
   HostBinding,
-  inject,
   input,
   InputSignal,
   model,
-  ModelSignal, Signal
+  ModelSignal,
+  Signal
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -18,7 +18,6 @@ import { DateRange } from 'src/app/_models/base/dateRange';
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { FormControl2 } from 'src/app/_models/forms/formControl2';
 import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
-import { ValidationService } from 'src/app/_services/validation.service';
 
 @Component({
   selector: 'div[templateControlText]',
@@ -27,8 +26,6 @@ import { ValidationService } from 'src/app/_services/validation.service';
   imports: [ FormsModule, ReactiveFormsModule, CommonModule, TemplateInvalidFeedbackComponent, ],
 })
 export class TemplateControlTextComponent {
-  validation: ValidationService = inject(ValidationService);
-
   control: ModelSignal<FormControl2<string | number | boolean | Date | DateRange | SelectOption | null>> = model.required();
   fromWrapper: ModelSignal<boolean> = model.required();
 
@@ -45,7 +42,7 @@ export class TemplateControlTextComponent {
 
   constructor() {
     effect(() => {
-      this.control.set(this.control().setValidation(this.validation.active()));
+      this.control.set(this.control().setValidation(this.root().validation));
 
       if (this.fromWrapper()) {
         this.class = `${this.class} w-100`;

@@ -1,5 +1,5 @@
-import { Component, ModelSignal, model, inject } from "@angular/core";
-import { View, CatalogMode,  } from "src/app/_models/base/types";
+import { Component, inject, model, ModelSignal } from "@angular/core";
+import { CatalogMode, View, } from "src/app/_models/base/types";
 import { Notification } from "src/app/_models/notifications/notification";
 import { NotificationParams } from "src/app/_models/notifications/notificationParams";
 import { GenericCatalogComponent } from "src/app/_shared/components/catalog-layout.component";
@@ -14,8 +14,13 @@ import { FilterConfiguration } from "src/app/_models/base/filter-types";
 @Component({
   selector: '[notificationsCatalog]',
   templateUrl: './notifications-catalog.component.html',
-  imports: [ NotificationsTableComponent, FormsModule, ControlsRow3Component, ControlsWrapper3Component, GenericCatalogComponent ],
-  standalone: true,
+  imports: [
+    NotificationsTableComponent,
+    FormsModule,
+    ControlsRow3Component,
+    ControlsWrapper3Component,
+    GenericCatalogComponent
+  ],
 })
 export class NotificationsCatalogComponent {
   item: ModelSignal<Notification | null> = model.required();
@@ -24,6 +29,7 @@ export class NotificationsCatalogComponent {
   isCompact: ModelSignal<boolean> = model.required();
   mode: ModelSignal<CatalogMode> = model.required();
   params: ModelSignal<NotificationParams> = model.required();
+  embedded: ModelSignal<boolean> = model.required();
   filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration());
 
   service: NotificationsService = inject(NotificationsService);

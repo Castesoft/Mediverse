@@ -35,7 +35,6 @@ import { CollapseDirective } from "ngx-bootstrap/collapse";
 import { FilterConfiguration, FilterOrientation } from "../../_models/base/filter-types";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { DuotoneMagnifierComponent } from "src/app/_shared/template/components/icons/duotone-magnifier.component";
-import { CalendarView } from "src/app/_models/events/eventTypes";
 
 @Component({
   selector: 'div[catalogLayout]',

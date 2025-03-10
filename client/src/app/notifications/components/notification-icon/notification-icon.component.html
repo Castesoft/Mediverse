@@ -1,1 +1,105 @@
-<p>notification-icon works!</p>
+<div class="symbol symbol-35px">
+  @switch (type()) {
+    @case (NotificationType.GENERAL) {
+      <span
+        class="symbol-label bg-light-primary"
+        [placement]="'left'"
+        [tooltip]="'Notificación general'">
+        <i class="ki-duotone ki-abstract-28 fs-2 text-primary">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.APPOINTMENT_SCHEDULED) {
+      <span
+        class="symbol-label bg-light-success"
+        [placement]="'left'"
+        [tooltip]="'Recordatorio de cita'">
+        <i class="ki-duotone ki-calendar-add fs-2 text-success">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+          <span class="path4"></span>
+          <span class="path5"></span>
+          <span class="path6"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.APPOINTMENT_REMINDER) {
+      <span
+        class="symbol-label bg-light-primary"
+        [placement]="'left'"
+        [tooltip]="'Recordatorio de cita'">
+        <i class="ki-duotone ki-calendar fs-2 text-primary">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.PRESCRIPTION_UPDATE) {
+      <span
+        class="symbol-label bg-light-info"
+        [placement]="'left'"
+        [tooltip]="'Actualización de receta'">
+        <i class="ki-duotone ki-questionnaire-tablet fs-2 text-info">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.BILLING_ALERT) {
+      <span
+        class="symbol-label bg-light-warning"
+        [placement]="'left'"
+        [tooltip]="'Alerta de facturación'">
+        <i class="ki-duotone ki-bill fs-2 text-warning">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+          <span class="path4"></span>
+          <span class="path5"></span>
+          <span class="path6"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.SYSTEM_ALERT) {
+      <span
+        class="symbol-label bg-light-danger"
+        [placement]="'left'"
+        [tooltip]="'Alerta del sistema'">
+        <i class="ki-duotone ki-information-5 fs-2 text-danger">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.FEEDBACK_REQUEST) {
+      <span
+        class="symbol-label bg-light-warning"
+        [placement]="'left'"
+        [tooltip]="'Solicitud de retroalimentación'">
+        <i class="ki-duotone ki-question-2 fs-2 text-warning">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.SECURITY) {
+      <span
+        class="symbol-label bg-light-dark"
+        [placement]="'left'"
+        [tooltip]="'Alerta de seguridad'">
+        <i class="ki-duotone ki-lock-2 fs-2 text-dark">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+          <span class="path4"></span>
+          <span class="path5"></span>
+        </i>
+      </span>
+    }
+  }
+</div>

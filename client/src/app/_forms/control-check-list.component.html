@@ -6,7 +6,7 @@
 <div class="container-fluid px-3">
   <div class="row">
     @for (option of options; let idx = $index; track idx) {
-      <div class="form-check col-4 mb-3">
+      <div class="form-check col-4 mb-3" [class.form-check-solid]="solid()">
         <input
           [id]="controlName + '-' + idx"
           type="checkbox"

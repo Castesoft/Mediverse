@@ -19,4 +19,5 @@ export class TableMenuCellComponent {
   contextMenu: InputSignal<TemplateRef<any>> = input.required<TemplateRef<any>>();
   item: ModelSignal<Entity> = model.required<Entity>();
   isCompact: ModelSignal<boolean> = model.required<boolean>();
+  ellipsis: ModelSignal<boolean> = model(false);
 }

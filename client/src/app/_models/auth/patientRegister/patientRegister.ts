@@ -15,5 +15,4 @@ export default class PatientRegister extends Entity {
     super();
     Object.assign(this, init);
   }
-
 }

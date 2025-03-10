@@ -1,14 +1,15 @@
 @if (control().showLabel) {
-  <label class="form-label"
-         [ngClass]="{'required': control().required && validation.active()}">{{ control().label }}</label>
+  <label class="form-label" [ngClass]="{'required': control().required && root().validation}">
+    {{ control().label }}
+  </label>
 }
 
 <input
   class="form-control"
   [class.form-control-solid]="control().solid"
   [ngClass]="{
-    'is-invalid': (root().submitted) && control().invalid,
-    'is-valid': (root().submitted) && control().valid
+    'is-invalid': (control().touched || control().dirty || root().submitted) && control().invalid,
+    'is-valid': (control().touched || control().dirty || root().submitted) && control().valid
   }"
   [placeholder]="control().placeholder ?? ''"
   [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"

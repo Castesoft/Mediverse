@@ -1,1 +1,193 @@
-<p>account-notifications works!</p>
+<div class="card">
+  <div class="card-body px-0">
+    <!-- Filter Form Begin -->
+    <form [formGroup]="filterForm">
+      <div class="d-flex px-8 pb-8 justify-content-between align-items-center w-100">
+        <div class="d-flex">
+          <a href="#" class="btn btn-sm btn-icon btn-light btn-active-light-primary" data-bs-toggle="tooltip"
+             data-bs-dismiss="click" data-bs-placement="top" aria-label="Reload" data-bs-original-title="Reload"
+             data-kt-initialized="1">
+            <i class="ki-duotone ki-arrows-circle fs-2"><span class="path1"></span><span class="path2"></span></i> </a>
+          <select
+            class="form-select form-select-solid fs-0 text-1000"
+            formControlName="status"
+            name="status"
+            id="status"
+          >
+            <option value="" selected>
+              Todas
+            </option>
+            <option value="read">
+              Leídas
+            </option>
+            <option value="unread">
+              No leídas
+            </option>
+            <option value="important">
+              Importantes
+            </option>
+            <option value="not-important">
+              No importantes
+            </option>
+            <option value="favorite">
+              Favoritas
+            </option>
+            <option value="not-favorite">
+              No favoritas
+            </option>
+          </select>
+        </div>
+
+        <div class="position-relative">
+          <input type="hidden">
+          <i
+            class="ki-duotone ki-magnifier search-icon fs-2 text-gray-500 position-absolute top-50 translate-middle-y ms-5">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+          <input
+            formControlName="search"
+            type="text"
+            class="search-input form-control form-control-solid ps-13"
+            placeholder="Buscar">
+
+        </div>
+      </div>
+    </form>
+    <!-- Filter Form End -->
+    <div tableWrapper>
+      <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer">
+        <tbody templateTableBody>
+          @for (item of data; track item.id; let idx = $index) {
+            <tr
+              class="hover-actions-trigger btn-reveal-trigger position-static notification bg-hover-light"
+              [cdkContextMenuTriggerFor]="context_menu"
+            >
+              <td
+                tableCheckCell
+                class="notification custom-check-cell"
+                [class.important]="item.isImportant"
+                [class.is-not-read]="!item.isRead"
+                [isCompact]="isCompact"
+                [isChecked]="item.isSelected"
+                (click)="notificationsService.toggleMultipleSelected$(key || '', item)"
+              ></td>
+
+              <td>
+                <button
+                  (click)="toggleRead(item.id!)"
+                  [tooltip]="'Marcar como ' + (item.isRead ? 'no leído' : 'leído')"
+                  placement="right"
+                  class="btn btn-icon btn-color-gray-400 w-35px h-35px"
+                >
+                  @if (item.isRead) {
+                    <i class="ki-duotone ki-directbox-default fs-3">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                      <span class="path4"></span>
+                    </i>
+                  } @else {
+                    <i class="ki-duotone ki-sms fs-3">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                  }
+                </button>
+
+                <button
+                  (click)="toggleFavorite(item.id!)"
+                  [tooltip]="'Marcar como ' + (item.isFavorite ? 'no favorito' : 'favorito')"
+                  placement="right"
+                  class="btn btn-icon btn-color-gray-400 btn-active-color-warning-light w-35px h-35px"
+                >
+                  <i class="ki-duotone ki-star fs-3" [class.text-warning]="item.isFavorite"></i>
+                </button>
+
+                <button
+                  (click)="toggleImportant(item.id!)"
+                  [tooltip]="'Marcar como ' + (item.isImportant ? 'no importante' : 'importante')"
+                  placement="right"
+                  class="btn btn-icon btn-color-gray-400 btn-active-color-danger-light w-35px h-35px"
+                >
+                  <i class="ki-duotone ki-save-2 fs-4 mt-1" [class.text-danger]="item.isImportant">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i>
+                </button>
+              </td>
+
+              <td>
+                <div class="d-flex align-items-center">
+                  <app-notification-icon class="me-4" [type]="item.type"></app-notification-icon>
+
+                  <div class="d-flex flex-column text-body">
+                    <div class="fw-bold">
+                      {{ item.title }}
+                    </div>
+
+                    <div class="fw-normal text-gray-600">
+                      {{ item.message }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="text-end fs-7 fw-semibold">
+                {{ item.createdAt | relativeTime:7 }}
+              </td>
+
+              @if (devService.isDev()) {
+                <td
+                  class="name align-middle white-space-nowrap px-0 py-0"
+                  [ngStyle]="isCompact ? {} : { cursor: 'pointer' }"
+                >
+                  <div class="d-flex align-items-center justify-content-start px-0">
+                    <a
+                      [routerLink]="[notificationsService.dictionary.catalogRoute, item.id]"
+                      [href]="[notificationsService.dictionary.catalogRoute, item.id]"
+                      class="fw-semibold text-primary"
+                    >
+                      #{{ item.id | number }}
+                    </a>
+                  </div>
+                </td>
+              }
+
+              <td
+                tableMenuCell
+                [item]="item"
+                class="pe-5"
+                [ellipsis]="true"
+                [contextMenu]="context_menu"
+                [(isCompact)]="isCompact"
+              ></td>
+              <ng-template #context_menu>
+                <div
+                  cdkMenu
+                  class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4 show"
+                >
+                  <div cdkMenuItem class="menu-item px-3">
+                    Hola esto es notification
+                  </div>
+                  <button cdkMenuItem class="menu-item px-3 btn-">
+                    <a class="menu-link">Descargar</a>
+                  </button>
+                </div>
+              </ng-template>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card-body pt-0">
+    <div tableWrapper>
+      @if (notificationsService.pagination$(key) | async; as _pagination) {
+        <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params">
+        </div>
+      }
+    </div>
+  </div>
+</div>

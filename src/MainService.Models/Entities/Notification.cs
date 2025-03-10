@@ -30,7 +30,7 @@ namespace MainService.Models.Entities
         /// <summary>
         /// The type or category of the notification.
         /// </summary>
-        public NotificationType NotificationType { get; set; } = NotificationType.General;
+        public string NotificationType { get; set; }
 
         /// <summary>
         /// Optional JSON payload for additional, custom data.

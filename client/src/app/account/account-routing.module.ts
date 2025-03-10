@@ -17,6 +17,9 @@ import {
   AccountSubscriptionsComponent
 } from "src/app/account/components/account-subscriptions/account-subscriptions.component";
 import { doctorGuard } from "src/app/_guards/doctor.guard";
+import {
+  AccountNotificationsComponent
+} from "src/app/account/components/account-notifications/account-notifications.component";
 
 export const itemResolver: ResolveFn<Account | null> = () => {
   const service: AccountService = inject(AccountService);
@@ -32,43 +35,43 @@ const routes: Routes = [
       {
         path: '',
         component: AccountOverviewComponent,
-        title: 'Mi Cuenta',
+        title: 'DocHub | Mi Cuenta',
         data: { breadcrumb: 'Mi Cuenta' },
       },
       {
         path: 'expediente',
         component: AccountClinicalHistoryComponent,
-        title: 'Historial Clínico',
+        title: 'DocHub | Historial Clínico',
         data: { breadcrumb: 'Historial Clínico' },
       },
       {
         path: 'configuracion',
         component: AccountSettingsComponent,
-        title: 'Configuración',
+        title: 'DocHub | Configuración',
         data: { breadcrumb: 'Configuración' },
       },
       {
         path: 'facturacion',
         component: AccountBillingComponent,
-        title: 'Facturación',
+        title: 'DocHub | Facturación',
         data: { breadcrumb: 'Facturación' },
       },
       {
         path: 'pagos',
         component: AccountPaymentsComponent,
-        title: 'Pagos',
+        title: 'DocHub | Pagos',
         data: { breadcrumb: 'Pagos' },
       },
       {
         path: 'seguros',
         component: AccountInsurancesComponent,
-        title: 'Seguros',
+        title: 'DocHub | Seguros',
         data: { breadcrumb: 'Seguros' },
       },
       {
         path: 'agenda',
         component: AccountSchedulesComponent,
-        title: 'Horarios',
+        title: 'DocHub | Horarios',
         data: { breadcrumb: 'Horarios' },
         canActivate: [ doctorGuard ],
         runGuardsAndResolvers: 'always'
@@ -76,16 +79,22 @@ const routes: Routes = [
       {
         path: 'citas',
         component: AccountEventsComponent,
-        title: 'Citas',
+        title: 'DocHub | Citas',
         data: { breadcrumb: 'Citas' },
       },
       {
         path: 'suscripcion',
         component: AccountSubscriptionsComponent,
-        title: 'Suscripción',
+        title: 'DocHub | Suscripción',
         data: { breadcrumb: 'Suscripción' },
         canActivate: [ doctorGuard ],
         runGuardsAndResolvers: 'always'
+      },
+      {
+        path: 'notificaciones',
+        component: AccountNotificationsComponent,
+        title: 'DocHub | Notificaciones',
+        data: { breadcrumb: 'Notificaciones' },
       }
     ]
   }

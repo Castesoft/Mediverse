@@ -3,12 +3,17 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { environment } from 'src/environments/environment';
 import { AccountService } from 'src/app/_services/account.service';
+import { ToastrService } from "ngx-toastr";
+import { Notification } from "src/app/_models/notifications/notification";
+import { NotificationsService } from "src/app/notifications/notifications.config";
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationRealtimeService {
+  private readonly notificationsService: NotificationsService = inject(NotificationsService);
   private readonly accountService: AccountService = inject(AccountService);
+  private readonly toastr: ToastrService = inject(ToastrService);
   private readonly baseUrl: string = environment.hubUrl;
 
   private hubConnection: signalR.HubConnection | undefined;
@@ -48,12 +53,18 @@ export class NotificationRealtimeService {
     this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
       console.log('Notification received:', notification);
       this.notificationSubject.next(notification);
+      this.notificationsService.serverUpdate.next();
+      this.toastr.info(notification.message, notification.title, {
+        timeOut: 0,
+        extendedTimeOut: 0,
+        closeButton: true
+      });
       this.playSound();
     });
   }
 
   private playSound(): void {
-    const audio = new Audio('assets/notification.mp3');
+    const audio = new Audio('media/audio/notification-2-202503.mp3');
     audio.play().catch(error => {
       console.error('Error playing sound:', error);
     });

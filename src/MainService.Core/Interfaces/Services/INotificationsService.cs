@@ -4,5 +4,6 @@ namespace MainService.Core.Interfaces.Services;
 
 public interface INotificationsService
 {
-    Task<UserNotification> CreateEventNotificationAsync(Event @event, AppUser user);
+    Task<UserNotification> CreateForPatientEventConfirmation(Event @event, AppUser patient);
+    Task<UserNotification> CreateForDoctorEventConfirmation(Event @event, AppUser doctor);
 }

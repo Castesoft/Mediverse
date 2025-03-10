@@ -6,6 +6,7 @@
 }
 <select
   class="form-select fs-0 text-1000"
+  [class.form-select-solid]="solid()"
   [formControl]="control"
   [id]="id ? id : controlName"
   [attr.autofocus]="autofocus() ? true : null"
@@ -15,37 +16,41 @@
   }"
   [attr.aria-describedby]="formText ? controlName+'helpBlock' : null"
   [attr.aria-label]="label + ' select'"
-  >
+>
   @if (placeholder) {
-    <option value="" disabled selected>{{placeholder}}</option>
+    <option value="" disabled selected>{{ placeholder }}</option>
   }
   @if (isInsurance) {
     <option value="0" selected>Cita sin aseguradora</option>
   }
-  @for(option of options; track $index) {
+  @for (option of options; track $index) {
     @if (isAddress) {
       <option value="{{option.id}}">
-        {{option.street}}, {{option.city}}, {{option.state}}
+        {{ option.street }}, {{ option.city }}, {{ option.state }}
       </option>
     } @else if (isPaymentMethod) {
       <option value="{{option.stripePaymentMethodId}}">
-        @if(option.isMain){(Principal)} {{option.last4}} {{option.expirationMonth}}/{{option.expirationYear}} - {{option.displayName}}
+        @if (option.isMain) {
+          (Principal)
+        } {{ option.last4 }} {{ option.expirationMonth }}/{{ option.expirationYear }} - {{ option.displayName }}
       </option>
     } @else if (option.value && option.name) {
       <option value="{{option.value}}">
-        {{option.name}}
+        {{ option.name }}
       </option>
     } @else if (option.id && option.name) {
       <option value="{{option.id}}">
-        {{option.name}} @if(showPrice && option.price) { - ${{option.price}} }
+        {{ option.name }} @if (showPrice && option.price) {
+        - ${{ option.price }}
+      }
       </option>
     } @else if (option.name) {
       <option value="{{option.name}}">
-        {{option.name | titlecase}}
+        {{ option.name | titlecase }}
       </option>
     } @else {
       <option value="{{option}}">
-        {{option}}
+        {{ option }}
       </option>
     }
   }
@@ -56,16 +61,16 @@
   }
 </select>
 
-@for(error of control.errors | keyvalue; let idx = $index; track idx) {
-  @if(submitted && control.invalid) {
+@for (error of control.errors | keyvalue; let idx = $index; track idx) {
+  @if (submitted && control.invalid) {
     <div class="invalid-feedback">
       {{ errors[error.key] }}
     </div>
   }
 }
 
-@if(formText) {
+@if (formText) {
   <div [id]="controlName+'helpBlock'" class="form-text">
-    {{formText}}
+    {{ formText }}
   </div>
 }

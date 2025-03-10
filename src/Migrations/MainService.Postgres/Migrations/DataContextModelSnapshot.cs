@@ -1836,8 +1836,9 @@ namespace MainService.Postgres.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("NotificationType")
-                        .HasColumnType("integer");
+                    b.Property<string>("NotificationType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Payload")
                         .HasColumnType("text");
@@ -3192,6 +3193,12 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsImportant")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");

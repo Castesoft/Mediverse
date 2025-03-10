@@ -8,7 +8,7 @@ import { ControlErrors } from "src/app/_models/forms/formTypes";
   selector: 'invalid-feedback, div[invalidFeedback]',
   template: `
     @for (error of control().errors | keyvalue; track $index) {
-      @if ((control().dirty || submitted()) && control().invalid) {
+      @if ((control().touched || control().dirty || submitted()) && control().invalid) {
         <div class="invalid-feedback d-block">
           @if (!errors()[error.key]) {
             @switch (error.key) {

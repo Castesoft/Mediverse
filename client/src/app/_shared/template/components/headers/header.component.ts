@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { MobileQueryService } from 'src/app/_services/mobile-query.service';
@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
   readonly sidebar: SidebarService = inject(SidebarService);
 
   account: Account | null = null;
-  notifications: Notification[] = [];
+  notifications: WritableSignal<Notification[]> = signal([]);
 
   constructor() {
     effect(() => {
@@ -54,12 +54,21 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscribeToNotifications();
+    this.subscribeToNotificationServerUpdates();
   }
 
   private subscribeToNotifications(): void {
     this.notificationRealtimeService.getNotification().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (notification) => {
         console.log('Received notification:', notification);
+      }
+    });
+  }
+
+  private subscribeToNotificationServerUpdates(): void {
+    this.notificationsService.serverUpdate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (_) => {
+        this.retrieveUserNotifications();
       }
     });
   }
@@ -72,7 +81,7 @@ export class HeaderComponent implements OnInit {
 
     this.notificationsService.getForUserByUserId(this.account.id!).subscribe({
       next: (notifications) => {
-        this.notifications = notifications;
+        this.notifications.set(notifications);
       }
     });
   }
