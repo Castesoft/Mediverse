@@ -19,27 +19,30 @@ import { DoctorResultsWindowComponent } from 'src/app/search/windows/doctor-resu
 import { Theme, ThemeService } from 'src/app/_services/theme.service';
 import { getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
 import { AvailableTime } from 'src/app/_models/availableTime';
+import { MobileQueryService } from 'src/app/_services/mobile-query.service';
+import { LogoIconComponent } from 'src/app/_shared/components/logo-icon/logo-icon.component';
 
 @Component({
   selector: 'div[searchResults]',
-  host: { class: 'h-100 d-flex mobile-view', },
+  host: { class: 'h-100 d-flex mobile-view w-100', },
   standalone: true,
   imports: [ SearchFormComponent, CommonModule, RouterModule, BsDropdownModule,
     SearchAuthComponent, DoctorDetailWindowComponent, DoctorScheduleWindowComponent, DoctorResultsWindowComponent,
+    LogoIconComponent,
   ],
   providers: [ BsDropdownDirective, ],
   templateUrl: './search-results.component.html',
   styleUrl: './search-results.component.scss'
 })
 export class SearchResultsComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  service = inject(SearchService);
-  accountService = inject(AccountService);
-  theme = inject(ThemeService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  readonly service = inject(SearchService);
+  readonly accountService = inject(AccountService);
+  readonly theme = inject(ThemeService);
+  readonly query = inject(MobileQueryService);
 
   destroyed = new Subject<void>();
-  isMobile = signal(false);
   showMobileSearch = signal(false);
   didSchedule = signal(false);
   scheduleWindowOpen = signal(false);
@@ -49,11 +52,6 @@ export class SearchResultsComponent implements OnInit {
   startingTab = 'general';
 
   map?: google.maps.Map;
-
-  @HostListener('window:resize', [ '$event' ])
-  onResize(event: any) {
-    this.isMobile.set(event.target.innerWidth <= 768);
-  }
 
   mapOptions: google.maps.MapOptions = {
     colorScheme: 'FOLLOW_SYSTEM',
@@ -66,21 +64,6 @@ export class SearchResultsComponent implements OnInit {
   } as google.maps.MapOptions;
 
   constructor() {
-    inject(BreakpointObserver)
-      .observe([
-        Breakpoints.XSmall,
-        Breakpoints.Small,
-        Breakpoints.Medium,
-        Breakpoints.Large,
-        Breakpoints.XLarge,
-      ])
-      .pipe(takeUntil(this.destroyed))
-      .subscribe(result => {
-        if (result.matches) {
-          this.isMobile.set(result.breakpoints[Breakpoints.XSmall] || result.breakpoints[Breakpoints.Small]);
-        }
-      })
-
     effect(() => {
       this.setMarkersAndPosition();
     });
@@ -100,8 +83,6 @@ export class SearchResultsComponent implements OnInit {
   async ngOnInit() {
     this.service.setSearchWithParamMap(this.route.snapshot.queryParamMap);
 
-    this.isMobile.set(window.innerWidth <= 768);
-
     const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
     this.map = new Map(document.getElementById("map") as HTMLElement, {
       center: { lat: 22.5799, lng: -103.1648 },
@@ -110,7 +91,7 @@ export class SearchResultsComponent implements OnInit {
       colorScheme: this.getTheme(this.theme.theme()),
     } as google.maps.MapOptions);
 
-    if (this.isMobile() && (this.service.search().location || this.service.search().specialty)) {
+    if (this.query.isMobile() && (this.service.search().location || this.service.search().specialty)) {
       this.showMobileSearch.set(true);
     }
   }
@@ -179,7 +160,7 @@ export class SearchResultsComponent implements OnInit {
       queryParamsHandling: 'merge'
     });
 
-    if (this.isMobile()) {
+    if (this.query.isMobile()) {
       this.showMobileSearch.set(true);
     }
 
@@ -200,7 +181,7 @@ export class SearchResultsComponent implements OnInit {
         marker.addListener("click", () => {
           this.service.open(doctor);
           this.service.hoveredMarker.set(null);
-          if (this.isMobile() && this.service.selected()) {
+          if (this.query.isMobile() && this.service.selected()) {
             this.showMobileSearch.set(true);
           }
         });

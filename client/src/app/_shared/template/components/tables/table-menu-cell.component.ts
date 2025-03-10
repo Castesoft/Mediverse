@@ -1,4 +1,4 @@
-import { Component, inject, input, TemplateRef, model, ModelSignal, InputSignal } from "@angular/core";
+import { Component, inject, input, TemplateRef, model, ModelSignal, InputSignal, HostListener } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Entity } from "src/app/_models/base/entity";
 import { IconsService } from "src/app/_services/icons.service";
@@ -20,4 +20,8 @@ export class TableMenuCellComponent {
   item: ModelSignal<Entity> = model.required<Entity>();
   isCompact: ModelSignal<boolean> = model.required<boolean>();
   ellipsis: ModelSignal<boolean> = model(false);
+
+  @HostListener('click', ['$event']) onClick(event: MouseEvent) {
+    event.stopPropagation();
+  }
 }

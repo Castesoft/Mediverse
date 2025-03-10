@@ -10,6 +10,7 @@ import { baseTableCells, PartialCellsOf } from "src/app/_models/tables/tableCell
 import { TableRow } from "src/app/_models/tables/tableRow";
 import { DevService } from "src/app/_services/dev.service";
 import { IconsService } from "src/app/_services/icons.service";
+import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 
 
@@ -48,12 +49,13 @@ export default class BaseTable<
   T extends Entity, U extends EntityParams<U>, V extends FormGroup2<U>,
   Z extends ServiceHelper<T, U, V>
 > {
-  protected route = inject(ActivatedRoute);
-  protected router = inject(Router);
-  protected toastr = inject(ToastrService);
-  protected matSnackBar = inject(MatSnackBar);
-  dev = inject(DevService);
-  icons = inject(IconsService);
+  protected readonly route = inject(ActivatedRoute);
+  protected readonly router = inject(Router);
+  protected readonly toastr = inject(ToastrService);
+  protected readonly matSnackBar = inject(MatSnackBar);
+  protected readonly query = inject(MobileQueryService);
+  readonly dev = inject(DevService);
+  readonly icons = inject(IconsService);
 
   service: Z;
 

@@ -1,26 +1,15 @@
-:host {
-  z-index: 999;
+:host.desktop-view {
+  z-index: 1000;
   position: absolute;
   left: 440px;
-  // transform: translateX(105%);
-  // height: 90%;
   top: 10px;
   bottom: 10px;
 }
 
-.schedule-modal {
-  z-index: 999;
+:host.mobile-view {
+  z-index: 1000;
   position: absolute;
-  right: 0;
-  top: 5%;
-  transform: translateX(105%);
-  height: 90%;
-}
-
-.schedule-modal-mobile {
-  z-index: 999;
-  position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   width: 100vw;
   height: 100vh;

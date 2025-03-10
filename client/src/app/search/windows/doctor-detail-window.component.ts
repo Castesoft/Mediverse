@@ -1,17 +1,18 @@
-import { Component, effect, inject, input, model, output } from '@angular/core';
+import { Component, effect, Host, HostBinding, inject, input, model, output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvailableDay } from 'src/app/_models/availableDay';
 import { AvailableTime } from 'src/app/_models/availableTime';
-import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
-import { Search } from "src/app/_models/search/search";
+import { DoctorResult } from 'src/app/_models/doctors/doctorResults/doctorResult';
+import { Search } from 'src/app/_models/search/search';
 import { SearchService } from 'src/app/_services/search.service';
 import { DoctorGeneralTabComponent } from 'src/app/search/tabs/doctor-general-tab.component';
 import { DoctorReviewsTabComponent } from 'src/app/search/tabs/doctor-reviews-tab.component';
 import { DoctorScheduleTabComponent } from 'src/app/search/tabs/doctor-schedule-tab.component';
-import { PhotoSize } from "src/app/_models/photos/photoTypes";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { IconsService } from "src/app/_services/icons.service";
+import { PhotoSize } from 'src/app/_models/photos/photoTypes';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { IconsService } from 'src/app/_services/icons.service';
 import { UtilsService } from 'src/app/_services/utils.service';
+import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 
 @Component({
   selector: 'div[doctorDetailWindow]',
@@ -21,22 +22,35 @@ import { UtilsService } from 'src/app/_services/utils.service';
   styleUrl: './doctor-detail-window.component.scss'
 })
 export class DoctorDetailWindowComponent {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly icons: IconsService = inject(IconsService);
   readonly service = inject(SearchService);
   readonly utilsService = inject(UtilsService);
+  readonly query = inject(MobileQueryService);
 
   startingTab = input<string>();
-  isMobile = input<boolean>(false);
   onEventCreated = output();
   scheduleWindowOpen = model.required<boolean>();
   selectedSchedule = model.required<AvailableDay | null>();
   selectedTime = model.required<AvailableTime | null>();
 
+  @HostBinding('class') get hostClass() {
+    return this.class;
+  }
+
+  class = '';
+
   constructor() {
 
     effect(() => {
+
+      if (this.query.isMobile() === true) {
+        this.class = 'mobile-view';
+      } else if (this.query.isMobile() === false) {
+        this.class = 'desktop-view';
+      }
+
       let selected = this.service.selected();
       if (selected !== null && this.service.search().dayNumber !== null && this.service.search().scheduleOption !== null) {
         selected = new DoctorResult({ ...selected });
