@@ -3,7 +3,9 @@
 @if (!service.loading()) {
   <div class="px-6">
     <h1 class="text-gray-800 fw-bold my-6 text-center">
-      <a routerLink="/">DocHub</a>
+      <a [routerLink]="['/']">
+        <app-logo-icon></app-logo-icon>
+      </a>
     </h1>
     <div class="pt-0 pb-3" searchForm [compact]="true"></div>
 

@@ -1,4 +1,6 @@
-<div searchAuth></div>
+@if(query.isMobile() === false) {
+  <div searchAuth></div>
+}
 
 <div doctorResultsWindow></div>
 
@@ -13,16 +15,17 @@
 }
 @if (scheduleWindowOpen()) {
   <div doctorScheduleWindow
-       [(isMobile)]="isMobile"
        [(selectedTime)]="selectedTime"
        [(selectedSchedule)]="selectedSchedule"
        [(scheduleWindowOpen)]="scheduleWindowOpen"></div>
 }
 
-@if (isMobile() && !showMobileSearch()) {
+@if (query.isMobile() && !showMobileSearch()) {
   <div id="search-mobile" class="position-absolute top-0 p-4" style="z-index: 1;">
-    <h1 class="text-gray-800 fw-bold my-3 text-center">
-      <a routerLink="/">DocHub</a>
+    <h1 class="text-gray-800 fw-bold my-6 text-center">
+      <a [routerLink]="['/']">
+        <app-logo-icon></app-logo-icon>
+      </a>
     </h1>
     <div class="py-3">
       <div searchForm [compact]="true"></div>
@@ -30,52 +33,6 @@
   </div>
 }
 
-<!-- @if (isMobile() && showMobileSearch()) {
-<div class=" position-relative" style="width: 100%;">
-  @if (!service.selected()) {
-  @if (!service.loading()) {
-  <div class="container">
-    <h1 class="text-gray-800 fw-bold my-3 text-center">
-      <a routerLink="/">DocHub</a>
-    </h1>
-    <div class="py-3">
-      <div searchForm [compact]="true"></div>
-    </div>
-
-    <div searchResultCounter></div>
-  </div>
-
-  @if (service.results() && service.results()?.doctors!.length > 0) {
-  <div class="overflow-y-auto" style="flex: 1;">
-      @for (doctor of service.results()?.doctors; let idx = $index; track idx) {
-        <div resultRow [(doctor)]="service.results()!.doctors[idx]"></div>
-        <div class="separator separator-dashed"></div>
-        }
-      </div>
-  <div class="d-flex flex-center pb-6 container">
-    @if (service.pagination()) {
-    <div tablePager [currentPage]="service.pagination()!.currentPage"
-      [itemsPerPage]="service.pagination()!.itemsPerPage" [totalItems]="service.pagination()!.totalItems"
-      (pageChanged)="onPageChanged($event)" [hideShowAll]="true" [hideShowing]="true"></div>
-    }
-  </div>
-  } @else {
-  <div noResultScreen></div>
-  }
-  } @else {
-  <div loadingPlaceholder></div>
-  }
-  }
-
-  @if (service.selected() !== null) {
-  <div class="doctor-details-mobile">
-    <div doctorDetailWindow [isMobile]="isMobile()" [startingTab]="startingTab" (onClose)="service.close()" [(selectedSchedule)]="selectedSchedule" [(scheduleWindowOpen)]="scheduleWindowOpen"
-      (onEventCreated)="onEventCreated()"></div>
-  </div>
-  }
-</div>
-} -->
-
-<div class="w-100" [class.d-none]="isMobile() && showMobileSearch()">
+<div class="w-100" [class.d-none]="query.isMobile() && showMobileSearch()">
   <div id="map" style="height: 100%;"></div>
 </div>

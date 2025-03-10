@@ -1,4 +1,4 @@
-<div class="card card-flush h-lg-100" [style]="isMobile() ? { width: '100%' } : { width: '420px' }">
+<div class="card card-flush h-lg-100" [style]="query.isMobile() ? { width: '100%', height: '100%', } : { width: '420px' }">
   @if (selectedTime()?.available === true) {
     <div class="card-header">
       <div class="card-title">

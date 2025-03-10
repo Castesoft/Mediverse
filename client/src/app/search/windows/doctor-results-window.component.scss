@@ -1,5 +1,11 @@
-:host {
+:host.desktop-view {
   min-width: 420px;
   max-width: 420px;
-  position: absolute;
+  // position: absolute;
+}
+
+:host.mobile-view {
+  min-width: 100%;
+  max-width: 100%;
+  // position: absolute;
 }
