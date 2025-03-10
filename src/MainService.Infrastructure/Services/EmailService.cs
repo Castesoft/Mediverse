@@ -72,8 +72,8 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
                 {GetEmailHeader()}
                 <tr>
                   <td align="center" valign="center" style="text-align:center; padding: 40px">
-                    <a href="https://keenthemes.com" rel="noopener" target="_blank">
-                      <img alt="Logo" src="assets/media/logos/mail.svg" />
+                    <a href="https://dochub.mx" rel="noopener" target="_blank">
+                      <img alt="Logo" src="https://dochub.mx/media/logos/text/logo-text-default.svg" />
                     </a>
                   </td>
                 </tr>
@@ -204,8 +204,8 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
                 {GetEmailHeader()}
                 <tr>
                   <td align="center" valign="center" style="text-align:center; padding: 40px">
-                    <a href="https://keenthemes.com" rel="noopener" target="_blank">
-                      <img alt="Logo" src="assets/media/logos/mail.svg" />
+                    <a href="https://dochub.mx" rel="noopener" target="_blank">
+                      <img alt="Logo" src="https://dochub.mx/media/logos/text/logo-text-default.svg" />
                     </a>
                   </td>
                 </tr>
