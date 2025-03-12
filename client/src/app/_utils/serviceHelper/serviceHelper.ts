@@ -3,6 +3,7 @@ import { Component, effect, inject, ModelSignal, signal, Type, WritableSignal } 
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
+import { finalize } from "rxjs/operators";
 import { SelectOption } from "src/app/_models/base/selectOption";
 import { Modal } from "src/app/_models/modal";
 import { Pagination } from "src/app/_utils/serviceHelper/pagination/pagination";
@@ -71,7 +72,8 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   paginatedData: PaginatedResponse<T> | null = null;
   options = signal<SelectOption[]>([]);
 
-  // We keep a simple param record for forms/parameters but no cache usage
+  loading = signal<boolean>(false);
+
   params = new BehaviorSubject<ParamRecord<T, U>>(new ParamRecord<T, U>(this.paramsConstructor));
   params$ = this.params.asObservable();
 
@@ -99,20 +101,21 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   /**
    * Loads a paginated list of entities from the backend.
+   * Sets the loading signal to true while the request is in progress.
    */
   loadPagedList = (key: string | null, param: U): Observable<PaginatedResponse<T>> => {
     if (key === null) throw new Error("Key cannot be null");
 
     const payload: HttpParams = transformToHttpParams(transform(param));
-
     console.log('Loading paged list with params: ', param);
 
+    this.loading.set(true);
     return getPaginatedResponse<T>(this.baseUrl, payload, this.http).pipe(
       tap((response) => {
-        console.log(response);
         this.paginatedData = response;
         this.data.next(response.result);
-      })
+      }),
+      finalize(() => this.loading.set(false))
     );
   };
 
@@ -192,42 +195,51 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   /**
    * Fetches all entities.
+   * Sets the loading signal to true while the request is in progress.
    */
   getAll(): Observable<T[]> {
+    this.loading.set(true);
     return this.http.get<T[]>(`${this.baseUrl}all/`).pipe(
       map((response) => {
         this.data.next(response);
         return response;
-      })
+      }),
+      finalize(() => this.loading.set(false))
     );
   }
 
   /**
    * Fetches an array of `SelectOption` objects.
+   * Sets the loading signal to true while the request is in progress.
    */
   getOptions(): Observable<SelectOption[]> {
     if (this.options().length > 0) {
       return of(this.options());
     }
+    this.loading.set(true);
     return this.http.get<SelectOption[]>(`${this.baseUrl}options`).pipe(
       map((response) => {
         this.options.set(response);
         return response;
-      })
+      }),
+      finalize(() => this.loading.set(false))
     );
   }
 
   /**
    * Gets a single entity by ID, checking local data first.
+   * Sets the loading signal to true if fetching from the backend.
    */
   getById(id: number): Observable<T> {
     const item = this.data.value.find((a) => a.id === id);
     if (item) return of(item);
 
+    this.loading.set(true);
     return this.http.get<T>(`${this.baseUrl}${id}`).pipe(
       tap((response) => {
         this.data.next([ ...this.data.value, response ]);
-      })
+      }),
+      finalize(() => this.loading.set(false))
     );
   }
 
@@ -240,9 +252,11 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   /**
    * Creates a new entity on the server and updates local data/redirects if needed.
+   * Sets the loading signal to true while the request is in progress.
    */
   create(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
     console.log(form.value);
+    this.loading.set(true);
     return this.http.post<T>(
       _options?.id ? `${this.baseUrl}${_options.id}` : this.baseUrl,
       _options?.value ?? form.value).pipe(
@@ -252,14 +266,17 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
           this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
         }
         this.data.next([ ...this.data.value, response ]);
-      })
+      }),
+      finalize(() => this.loading.set(false))
     );
   }
 
   /**
    * Updates an existing entity on the server and updates local data/redirects if needed.
+   * Sets the loading signal to true while the request is in progress.
    */
   update(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
+    this.loading.set(true);
     return this.http.put<T>(`${this.baseUrl}${_options?.id ?? form.controls.id.value}`, _options?.value ?? form.value).pipe(
       tap(response => {
         console.log('response', response);
@@ -281,15 +298,12 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
         if (this.options().length === 0) {
           this.options.update(oldValues => {
-
             const optionToAdd = new SelectOption();
-
             if (response.name) optionToAdd.name = response.name;
             if (response.code) optionToAdd.code = response.code;
             if (response.id) optionToAdd.id = response.id;
             if (response.isVisible) optionToAdd.visible = response.isVisible;
             if (response.isEnabled) optionToAdd.enabled = response.isEnabled;
-
             return [ optionToAdd ];
           });
         } else if (this.options().length > 0) {
@@ -297,15 +311,13 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
           const index = options.findIndex(o => o.id === id);
           if (index !== -1) {
             const option = options[index];
-
             if (response.name) option.name = response.name;
             if (response.code) option.code = response.code;
-
             this.options.set(options);
           }
-
         }
-      })
+      }),
+      finalize(() => this.loading.set(false))
     );
   }
 
@@ -317,12 +329,15 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   /**
    * Deletes a single entity from the server and updates local data.
+   * Sets the loading signal to true while the request is in progress.
    */
   private delete(id: number): Observable<void> {
+    this.loading.set(true);
     return this.http.delete<void>(`${this.baseUrl}${id}`).pipe(
       tap(() => {
         this.data.next(this.data.value.filter((s) => s.id !== id));
-      })
+      }),
+      finalize(() => this.loading.set(false))
     );
   }
 
@@ -355,9 +370,14 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
 
   /**
    * Deletes a range of entities by their IDs (server-side).
+   * Sets the loading signal to true while the request is in progress.
    */
   private deleteRange(ids: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}range/${ids}`).pipe(tap(() => {}));
+    this.loading.set(true);
+    return this.http.delete<void>(`${this.baseUrl}range/${ids}`).pipe(
+      tap(() => {}),
+      finalize(() => this.loading.set(false))
+    );
   }
 
   submitForm(key: string | null, params: U): void {
@@ -439,27 +459,36 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     return getFormHeaderText(this.dictionary, use, item === null ? null : item.id);
   }
 
-  clickRow(item: T, key: ModelSignal<string | null>, view: ModelSignal<View>, mode: ModelSignal<CatalogMode>, isMobile: WritableSignal<boolean>, relativeRoute: ActivatedRoute, options?: { routeUrl?: string; }) {
+  clickRow(
+    item: T,
+    key: ModelSignal<string | null>,
+    view: ModelSignal<View>,
+    mode: ModelSignal<CatalogMode>,
+    isMobile: WritableSignal<boolean>,
+    relativeRoute: ActivatedRoute,
+    options?: {
+      routeUrl?: string;
+    }
+  ) {
     if (isMobile() === true) {
       if (mode() === 'view') {
         if (view() === 'page' || view() === 'inline') {
           if (options?.routeUrl) {
-            this.router.navigate([item.id], { relativeTo: relativeRoute });
+            this.router.navigate([ item.id ], { relativeTo: relativeRoute });
           } else {
-            this.router.navigate([item.id], { relativeTo: relativeRoute });
+            this.router.navigate([ item.id ], { relativeTo: relativeRoute });
           }
         }
       }
-
     } else if (isMobile() === false) {
       if (mode() === 'view') {
         if (view() === 'modal') {
           // this.
         } else if (view() === 'page') {
           if (options?.routeUrl) {
-            this.router.navigate([item.id, { relativeTo: relativeRoute }]);
+            this.router.navigate([ item.id, { relativeTo: relativeRoute } ]);
           } else {
-            this.router.navigate([item.id], { relativeTo: relativeRoute });
+            this.router.navigate([ item.id ], { relativeTo: relativeRoute });
           }
         }
       }

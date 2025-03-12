@@ -16,6 +16,7 @@ import { Units } from 'src/app/_models/base/types';
 import { SelectOptionOptions, TextareaOptions, TypeaheadOptions } from 'src/app/_models/forms/controlOptions';
 import { FormControl2 } from 'src/app/_models/forms/formControl2';
 import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
+import MultiselectOptions from "src/app/_models/base/multiselectOptions";
 
 /**
  * Represents the information for a control in a form.
@@ -83,6 +84,7 @@ export type ControlInfo<
   type: InputTypes;
   placeholder: string | null;
   selectOptions: SelectOption[];
+  multiselectOptions: MultiselectOptions;
   hidden: boolean;
   hint: string | null;
   isReadonly: boolean;
@@ -321,6 +323,7 @@ export type InputTypes =
   | 'searchDate'
   | 'chips'
   | 'select'
+  | 'selectMat'
   | 'selectPair'
   | 'number'
   | 'email'

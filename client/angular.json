@@ -41,7 +41,8 @@
               "core-js/modules/web.dom-collections.iterator.js",
               "raf",
               "rgbcolor",
-              "quill-delta"
+              "quill-delta",
+              "moment"
             ],
             "outputPath": "../src/MainService/wwwroot",
             "index": "src/index.html",

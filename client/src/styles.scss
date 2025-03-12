@@ -1,23 +1,43 @@
 @use '@angular/material' as mat;
-@use 'public/styles/m3-theme';
+@use 'public/styles/m3-theme' as m3-theme;
 
 $brand-blue: #284092;
-
-:root {
-  @include mat.progress-bar-overrides((
-    active-indicator-color: #00A3FF,
-  ));
-}
-
-mat.$theme-ignore-duplication-warnings: true
-
-;
 
 @include mat.core();
 @include mat.strong-focus-indicators();
 
-
 :root {
+  color-scheme: light dark;
+
+  //====================================================
+  //              LIGHT THEME INITIALIZATION
+  //====================================================
+  @include mat.button-theme(m3-theme.$light-theme);
+  @include mat.system-level-colors(m3-theme.$light-theme);
+  @include mat.system-level-typography(m3-theme.$light-theme);
+  @include mat.all-component-themes(m3-theme.$light-theme);
+  @include mat.strong-focus-indicators-theme(m3-theme.$light-theme);
+
+  @include mat.progress-bar-overrides((
+    active-indicator-color: #00A3FF,
+  ));
+
+  @include mat.progress-spinner-overrides((
+    active-indicator-color: #00A3FF,
+  ));
+
+  @include mat.stepper-overrides((
+    header-icon-foreground-color: #ffffff,
+    header-icon-background-color: #171717,
+    header-selected-state-icon-background-color: #00A3FF,
+    header-edit-state-icon-background-color: #00A3FF,
+  ));
+
+  @include mat.theme-overrides((
+    primary: #00A3FF,
+    on-primary: #FFFFFF,
+  ));
+
   @include mat.button-overrides((
     protected-container-elevation-shadow: transparent,
     protected-disabled-container-elevation-shadow: transparent,
@@ -31,37 +51,33 @@ mat.$theme-ignore-duplication-warnings: true
 
   @include mat.table-overrides((
     row-item-outline-color: transparent,
-    // background-color: transparent,
   ));
-
 
   @include mat.expansion-overrides((
     container-background-color: transparent,
   ));
 
-  //   @include mat.sidenav-overrides((
-  //     container-background-color: orange,
-  //     container-text-color: red,
-  //   ));
-}
-
-html {
-  @include mat.system-level-colors(m3-theme.$light-theme);
-  @include mat.system-level-typography(m3-theme.$light-theme);
-  @include mat.all-component-themes(m3-theme.$light-theme);
-  @include mat.button-theme(m3-theme.$light-theme);
-  @include mat.strong-focus-indicators-theme(m3-theme.$light-theme);
-
+  //====================================================
+  //              DARK THEME INITIALIZATION
+  //====================================================
   .dark-theme {
     @include mat.system-level-colors(m3-theme.$dark-theme);
     @include mat.system-level-typography(m3-theme.$dark-theme);
-    @include mat.all-component-themes(m3-theme.$dark-theme);
-    @include mat.button-theme(m3-theme.$dark-theme);
-    @include mat.strong-focus-indicators-theme(m3-theme.$dark-theme);
+    @include mat.all-component-colors(m3-theme.$dark-theme);
+    @include mat.button-color(m3-theme.$dark-theme);
+    @include mat.strong-focus-indicators-color(m3-theme.$dark-theme);
+
+    @include mat.theme-overrides((
+      primary: #00A3FF,
+    ));
+
+    @include mat.stepper-overrides((
+      header-selected-state-icon-background-color: #00A3FF,
+      header-edit-state-icon-background-color: #00A3FF,
+    ));
   }
 }
 
-/* You can add global styles to this file, and also import other style files */
 html, body {
   height: 100%;
 }
@@ -173,7 +189,7 @@ html {
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-top: 10px so #284092;
+  border-top: 10px solid #284092;
   z-index: 0;
 }
 
@@ -275,13 +291,20 @@ mat-form-field.hide-bottom {
 }
 
 mat-sidenav-content.mat-sidenav-content {
-  width: 100%!important;
+  width: 100% !important;
 }
 
-// mat-sidenav[ng-reflect-opened="false"] {
-//   display: none!important;
-// }
+/// TOASTR
+.toast-container {
+  position: fixed !important;
+}
 
-// mat-sidenav[ng-reflect-opened="true"] {
-//   display: flex!important;
-// }
+.toast-container .ngx-toastr {
+  box-shadow: none !important;
+  transition: box-shadow 0.2s !important;
+}
+
+.toast-container .ngx-toastr:hover {
+  box-shadow: 0 0 6px #00000050 !important;
+}
+

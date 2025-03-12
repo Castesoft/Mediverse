@@ -60,7 +60,9 @@ export class HeaderComponent implements OnInit {
   private subscribeToNotifications(): void {
     this.notificationRealtimeService.getNotification().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (notification) => {
-        console.log('Received notification:', notification);
+        if (notification) {
+          console.log('Received notification:', notification);
+        }
       }
     });
   }

@@ -4,10 +4,9 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { Role } from "src/app/_models/types";
 import { Router } from "@angular/router";
-import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { FormGroup, ValidationErrors } from '@angular/forms';
 import { UserInsuranceModalComponent } from "src/app/account/modals/user-insurance-modal.component";
 import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { View } from "src/app/_models/base/types";
 import { Account } from 'src/app/_models/account/account';
@@ -17,18 +16,17 @@ import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
 import {
   UserMedicalInsuranceCompany
 } from 'src/app/_models/users/userMedicalInsuranceCompany/userMedicalInsuranceCompany';
-import { SnackbarService } from 'src/app/_services/snackbar.service';
 import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { Subscription } from "src/app/_models/subscriptions/subscription";
+import { ToastrService } from "ngx-toastr";
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
-  private snackbarService: SnackbarService = inject(SnackbarService);
-  private snackBar: MatSnackBar = inject(MatSnackBar);
+  private toastr: ToastrService = inject(ToastrService);
   private matDialog: MatDialog = inject(MatDialog);
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
@@ -120,7 +118,7 @@ export class AccountService {
       map(response => {
         if (response) {
           this.setCurrentUser(response);
-          this.snackbarService.success(`Bienvenido ${response.firstName}!`);
+          this.toastr.success(`Bienvenido ${response.firstName}!`);
         }
         return response;
       })
@@ -132,7 +130,7 @@ export class AccountService {
       map(response => {
         if (response) {
           this.setCurrentUser(response);
-          this.snackbarService.success(`Bienvenido ${response.firstName}!`);
+          this.toastr.success(`Bienvenido ${response.firstName}!`);
         }
         return response;
       })
@@ -145,7 +143,7 @@ export class AccountService {
         if (provider === 'GOOGLE') {
           this.setCurrentUser({ ...this.current()!, linkedGoogle: true });
         }
-        this.snackbarService.success(`Cuenta de ${provider} vinculada correctamente`);
+        this.toastr.success(`Cuenta de ${provider} vinculada correctamente`);
       })
     );
   }
@@ -158,7 +156,7 @@ export class AccountService {
     return this.http.post(`${this.baseUrl}two-factor-verify`, { verificationCode }).pipe(
       tap(() => {
         this.setCurrentUser({ ...this.current()!, twoFactorEnabled: true });
-        this.snackbarService.success('Autenticación de dos factores habilitada correctamente');
+        this.toastr.success('Autenticación de dos factores habilitada correctamente');
       })
     );
   }
@@ -167,7 +165,7 @@ export class AccountService {
     return this.http.delete(`${this.baseUrl}two-factor`).pipe(
       tap(() => {
         this.setCurrentUser({ ...this.current()!, twoFactorEnabled: false });
-        this.snackbarService.success('Autenticación de dos factores deshabilitada correctamente');
+        this.toastr.success('Autenticación de dos factores deshabilitada correctamente');
       })
     );
   }
@@ -206,7 +204,7 @@ export class AccountService {
   addPaymentMethod(value: any) {
     return this.http.post<PaymentMethod>(`${this.baseUrl}payment-method`, value).pipe(
       map(newPaymentMethod => {
-        this.snackbarService.success('Método de pago añadido correctamente');
+        this.toastr.success('Método de pago añadido correctamente');
         const currentDetails = this.billingDetailsSubject.getValue();
         if (currentDetails) {
           let updatedPaymentMethods = [ ...currentDetails.userPaymentMethods ];
@@ -222,7 +220,7 @@ export class AccountService {
         }
       }),
       catchError(_ => {
-        this.snackbarService.error('Error al añadir el método de pago');
+        this.toastr.error('Error al añadir el método de pago');
         return of(null);
       })
     );
@@ -231,7 +229,7 @@ export class AccountService {
   deletePaymentMethod(id: string) {
     return this.http.delete(`${this.baseUrl}payment-method/${id}`).pipe(
       tap(() => {
-        this.snackbarService.success('Método de pago eliminado correctamente');
+        this.toastr.success('Método de pago eliminado correctamente');
         const currentDetails = this.billingDetailsSubject.getValue();
         if (currentDetails) {
           const updatedPaymentMethods = currentDetails.userPaymentMethods.filter(
@@ -250,7 +248,7 @@ export class AccountService {
   setMainPaymentMethod(id: string) {
     return this.http.put(`${this.baseUrl}payment-method/${id}`, {}).pipe(
       tap(() => {
-        this.snackbarService.success('Método de pago principal actualizado correctamente');
+        this.toastr.success('Método de pago principal actualizado correctamente');
         const currentDetails = this.billingDetailsSubject.getValue();
         if (currentDetails) {
           const updatedPaymentMethods = currentDetails.userPaymentMethods.map(pm => ({
@@ -270,7 +268,7 @@ export class AccountService {
   addAddress(value: any) {
     return this.http.post<UserAddress>(`${this.baseUrl}address`, value).pipe(
       map(newAddress => {
-        this.snackbarService.success('Dirección añadida correctamente');
+        this.toastr.success('Dirección añadida correctamente');
         const currentDetails = this.billingDetailsSubject.getValue();
         if (currentDetails) {
           let updatedAddresses = [ ...currentDetails.userAddresses ];
@@ -292,7 +290,7 @@ export class AccountService {
   deleteAddress(id: number) {
     return this.http.delete(`${this.baseUrl}address/${id}`).pipe(
       tap(() => {
-        this.snackbarService.success('Dirección eliminada correctamente');
+        this.toastr.success('Dirección eliminada correctamente');
         const currentDetails = this.billingDetailsSubject.getValue();
         if (currentDetails) {
           const updatedAddresses = currentDetails.userAddresses.filter(a => a.id !== id);
@@ -309,7 +307,7 @@ export class AccountService {
   updateAddress(id: number, value: any) {
     return this.http.put<UserAddress>(`${this.baseUrl}address/${id}`, value).pipe(
       tap(_ => {
-        this.snackbarService.success('Dirección actualizada correctamente');
+        this.toastr.success('Dirección actualizada correctamente');
         const currentDetails = this.billingDetailsSubject.getValue();
         if (currentDetails) {
           let addresses = [ ...currentDetails.userAddresses ];
@@ -350,7 +348,7 @@ export class AccountService {
     return this.http.delete<Account>(`${this.baseUrl}medical-insurance-company/${id}`).pipe(
       tap(response => {
         this.current.set(response);
-        this.snackbarService.success('Póliza de seguro eliminada correctamente');
+        this.toastr.success('Póliza de seguro eliminada correctamente');
       })
     );
   }
@@ -363,7 +361,7 @@ export class AccountService {
     return this.http.delete<Account>(`${this.baseUrl}medical-insurance-company-document/${id}`).pipe(
       tap(response => {
         this.current.set(response);
-        this.snackbarService.success('El documento de la póliza de seguro ha sido eliminado correctamente');
+        this.toastr.success('El documento de la póliza de seguro ha sido eliminado correctamente');
       })
     );
   }
@@ -372,7 +370,7 @@ export class AccountService {
     return this.http.post<Account>(`${this.baseUrl}medical-insurance-company`, value).pipe(
       tap((response: Account) => {
         this.current.set(response);
-        this.snackBar.open('Póliza de seguro añadida correctamente', 'Cerrar', { duration: 5000 });
+        this.toastr.success('Póliza de seguro añadida correctamente');
       })
     );
   }
@@ -381,7 +379,7 @@ export class AccountService {
     return this.http.put<Account>(`${this.baseUrl}medical-insurance-company`, model).pipe(
       tap((response: Account) => {
         this.current.set(response);
-        this.snackBar.open('Póliza de seguro actualizada correctamente', 'Cerrar', { duration: 5000 });
+        this.toastr.success('Póliza de seguro actualizada correctamente');
       })
     );
   }
@@ -394,7 +392,7 @@ export class AccountService {
 
     return this.http.put<Account>(`${this.baseUrl}doctor-medical-insurance-company`, null, { params: params, }).pipe(
       tap((account: Account) => {
-        this.snackBar.open('Póliza de seguro actualizada correctamente', 'Cerrar', { duration: 5000 });
+        this.toastr.success('Póliza de seguro actualizada correctamente');
         this.setCurrentUser(account);
       }),
     );
@@ -411,7 +409,7 @@ export class AccountService {
   setDoctorBanner(value: any) {
     return this.http.put<Account>(`${this.baseUrl}doctor-banner`, value).pipe(
       map((response: Account) => {
-        this.snackbarService.success('Banner actualizado correctamente');
+        this.toastr.success('Banner actualizado correctamente');
         this.setCurrentUser(response);
         return response;
       })
@@ -421,7 +419,7 @@ export class AccountService {
   changeEmail(value: any) {
     return this.http.put<Account>(`${this.baseUrl}email`, value).pipe(
       map((response: Account) => {
-        this.snackbarService.success('Email cambiado correctamente');
+        this.toastr.success('Email cambiado correctamente');
         this.setCurrentUser(response);
         return response;
       })
@@ -431,7 +429,7 @@ export class AccountService {
   setPassword(value: any) {
     return this.http.put<Account>(`${this.baseUrl}set-password`, value).pipe(
       map((response: Account) => {
-        this.snackbarService.success('Contraseña establecida correctamente');
+        this.toastr.success('Contraseña establecida correctamente');
         this.setCurrentUser({ ...this.current()!, linkedEmail: true });
         return response;
       })
@@ -441,7 +439,7 @@ export class AccountService {
   changePassword(value: any) {
     return this.http.put<Account>(`${this.baseUrl}password`, value).pipe(
       map((response: Account) => {
-        this.snackbarService.success('Contraseña cambiada correctamente');
+        this.toastr.success('Contraseña cambiada correctamente');
         return response;
       })
     );
@@ -451,7 +449,7 @@ export class AccountService {
     return this.http.put<Account>(`${this.baseUrl}account-details`, value).pipe(
       map((response: Account) => {
         console.log('update account details response', response);
-        this.snackbarService.success('Detalles del perfil actualizados correctamente');
+        this.toastr.success('Detalles del perfil actualizados correctamente');
         this.setCurrentUser({ ...this.current(), ...response });
         return response;
       })
@@ -466,7 +464,7 @@ export class AccountService {
       minutesPerBlock
     }).pipe(
       map((response: Account) => {
-        this.snackbarService.success('Horario de trabajo actualizado correctamente');
+        this.toastr.success('Horario de trabajo actualizado correctamente');
         this.setCurrentUser(response);
         return response;
       })
@@ -480,7 +478,7 @@ export class AccountService {
   updateMedicalRecord(value: any) {
     return this.http.put<MedicalRecord>(`${this.baseUrl}medical-record`, value).pipe(
       map(response => {
-        this.snackbarService.success('Historial clínico actualizado correctamente');
+        this.toastr.success('Historial clínico actualizado correctamente');
         return response;
       })
     );
@@ -493,7 +491,7 @@ export class AccountService {
   submitReview(value: any) {
     return this.http.post<SatisfactionSurvey>(`${this.baseUrl}review`, value).pipe(
       map(response => {
-        this.snackbarService.success('Revisión enviada correctamente');
+        this.toastr.success('Revisión enviada correctamente');
         return response;
       })
     );

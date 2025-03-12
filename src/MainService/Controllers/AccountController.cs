@@ -276,6 +276,7 @@ public class AccountController(
             UserId = user.Id,
             Address = new Address
             {
+                Name = request.Street,
                 State = request.State,
                 City = request.City,
                 Street = request.Street,

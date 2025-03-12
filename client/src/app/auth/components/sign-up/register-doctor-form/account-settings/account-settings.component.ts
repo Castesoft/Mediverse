@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ControlCheckComponent } from 'src/app/_forms/control-check.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
@@ -12,7 +11,7 @@ import {
   selector: 'app-account-settings',
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss',
-  imports: [ ReactiveFormsModule, InputControlComponent, ControlCheckComponent, RouterLink ],
+  imports: [ ReactiveFormsModule, InputControlComponent, ControlCheckComponent ],
 })
 export class AccountSettingsComponent implements OnInit {
   private readonly bsModalService: BsModalService = inject(BsModalService);

@@ -9,11 +9,11 @@ import { OptionalSpan3Component } from "src/app/_forms2/helper/optional-span-3.c
 @NgModule({
   imports: [
     HelpBlock3Component,
-    InvalidFeedback3Component,
     NewBadge3Component,
     OptionalSpan3Component,
     ControlLabel3Component,
     ErrorsAlert3Component,
+    InvalidFeedback3Component
   ],
   exports: [
     HelpBlock3Component,

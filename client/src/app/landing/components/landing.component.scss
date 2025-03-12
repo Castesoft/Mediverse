@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // ---------------------------------------
 // Variables
 // ---------------------------------------
@@ -161,20 +163,20 @@ $colors: (
 
 @mixin text-color($name) {
   .text-#{$name} {
-    color: map-get($colors, $name) !important;
+    color: map.get($colors, $name) !important;
   }
 }
 
 @mixin bg-color($name) {
   .bg-#{$name} {
-    background-color: map-get($colors, $name) !important;
+    background-color: map.get($colors, $name) !important;
   }
 }
 
 @mixin btn-color($name) {
   .btn-#{$name} {
-    background-color: map-get($colors, $name) !important;
-    border-color: map-get($colors, $name) !important;
+    background-color: map.get($colors, $name) !important;
+    border-color: map.get($colors, $name) !important;
   }
 }
 

@@ -1,4 +1,4 @@
-@import 'public/sass/components/variables.scss';
+@use 'public/sass/components/variables' as vars;
 
 .custom-check-cell {
   padding-left: 1rem !important;
@@ -16,7 +16,7 @@
   left: 0;
   height: 100%;
   width: 4px;
-  background-color: $danger;
+  background-color: vars.$danger;
 }
 
 .notification.is-not-read::before {
@@ -26,5 +26,5 @@
   left: 0;
   height: 100%;
   width: 4px;
-  background-color: $primary;
+  background-color: vars.$primary;
 }

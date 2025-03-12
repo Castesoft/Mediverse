@@ -1,28 +1,62 @@
-import { CommonModule, DatePipe } from "@angular/common";
-import { Component, computed, inject, model, ModelSignal, Signal, signal, WritableSignal } from "@angular/core";
-import { FormControl2 } from "src/app/_models/forms/formControl2";
-import { FormGroup2 } from 'src/app/_models/forms/formGroup2';
-import { MaterialModule } from "src/app/_shared/material.module";
+import { CommonModule, DatePipe, KeyValuePipe } from "@angular/common";
+import { Component, model } from "@angular/core";
+import { AbstractControl, FormControl } from "@angular/forms";
+import { ControlErrors } from "src/app/_models/forms/formTypes";
 
 @Component({
+  host: { class: '', },
   selector: 'div[invalidFeedback3]',
   template: `
-    @if (root().submitted) {
-      @for (message of control().errorMessages; let idx = $index; track idx) {
-        <mat-error>{{ message }}</mat-error>
+    @for (error of control().errors | keyvalue; track $index) {
+      @if (submitted() && control().invalid) {
+        @if (!errors()[error.key]) {
+          @switch (error.key) {
+            @case ('required') {
+              Este campo es requerido.
+            }
+            @case ('email') {
+              Debe ser un email válido.
+            }
+            @case ('minlength') {
+              Debe tener al menos {{ control().errors?.['minlength'].requiredLength }} caracteres.
+            }
+            @case ('maxlength') {
+              Deber tener un máximo de {{ control().errors?.['maxlength'].requiredLength }} caracteres.
+            }
+            @case ('pattern') {
+              El formato es inválido.
+            }
+            @case ('min') {
+              Debe ser mayor o igual a {{ control().errors?.['min'].min }}.
+            }
+            @case ('max') {
+              Deber ser menor o igual a {{ control().errors?.['max'].max }}.
+            }
+            @case ('nameExists') {
+              El nombre ya existe.
+            }
+            @case ('controlNumberExists') {
+              El número de control ya existe.
+            }
+            @case ('maxDate') {
+              La fecha debe ser menor o igual a {{ control().errors?.['maxDate'].maxDate | date: 'dd/MM/yyyy' }}.
+            }
+            @default {
+              Error desconocido.
+            }
+          }
+        } @else {
+          {{ errors()[error.key] }}
+        }
       }
     }
   `,
-  imports: [ CommonModule, MaterialModule, ],
+  standalone: true,
+  imports: [ KeyValuePipe, CommonModule, ],
   providers: [ DatePipe ],
 })
 export class InvalidFeedback3Component {
-  datePipe: DatePipe = inject(DatePipe);
-
-  root: Signal<FormGroup2<any>> = computed(() => {
-    return this.control().root as FormGroup2<any>;
-  });
-
-  control: ModelSignal<FormControl2<any>> = model.required();
-  messages: WritableSignal<string[]> = signal([]);
+  errors = model<ControlErrors>({});
+  submitted = model<boolean>(false);
+  control = model.required<FormControl<any> | AbstractControl<any, any>>();
 }

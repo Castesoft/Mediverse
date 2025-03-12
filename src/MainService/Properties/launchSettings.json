@@ -1,15 +1,25 @@
 ﻿{
-    "$schema": "https://json.schemastore.org/launchsettings.json",
-    "profiles": {
-        "http": {
-            "commandName": "Project",
-            "dotnetRunMessages": true,
-            "launchBrowser": false,
-            "applicationUrl": "http://localhost:7401",
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                "provider": "Postgres"
-            }
-        }
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:7401",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "provider": "Postgres"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://192.168.1.5:7401",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "provider": "Postgres"
+      }
     }
+  }
 }
