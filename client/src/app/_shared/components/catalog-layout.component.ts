@@ -35,6 +35,9 @@ import { CollapseDirective } from "ngx-bootstrap/collapse";
 import { FilterConfiguration, FilterOrientation } from "../../_models/base/filter-types";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { DuotoneMagnifierComponent } from "src/app/_shared/template/components/icons/duotone-magnifier.component";
+import {
+  CatalogLayoutSkeletonComponent
+} from "src/app/_shared/components/catalog-layout-skeleton/catalog-layout-skeleton.component";
 
 @Component({
   selector: 'div[catalogLayout]',
@@ -51,6 +54,7 @@ import { DuotoneMagnifierComponent } from "src/app/_shared/template/components/i
     CollapseDirective,
     NgClass,
     DuotoneMagnifierComponent,
+    CatalogLayoutSkeletonComponent,
   ],
 })
 export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>, F extends FormGroup2<P>, Z extends ServiceHelper<T, P, F>> implements OnDestroy, OnInit {

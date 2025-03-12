@@ -37,6 +37,7 @@ import { AccountService } from "src/app/_services/account.service";
 @Component({
   selector: "[eventForm]",
   templateUrl: './event-form.component.html',
+  styleUrl: './event-form.component.scss',
   standalone: true,
   imports: [
     CommonModule,

@@ -11,8 +11,13 @@ import { SiteSection } from "src/app/_models/sections/sectionTypes";
   template: `
     <div breadcrumbs></div>
     <div post>
-      <div productsCatalog [(item)]="item" [(isCompact)]="compact.isCompact" [(key)]="key" [(mode)]="mode"
-           [(params)]="params" [(view)]="view"></div>
+      <div productsCatalog
+           [(item)]="item"
+           [(isCompact)]="compact.isCompact"
+           [(key)]="key"
+           [(mode)]="mode"
+           [(params)]="params"
+           [(view)]="view"></div>
     </div>
   `,
   standalone: false,

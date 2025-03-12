@@ -41,7 +41,7 @@ export class NotificationRealtimeService {
 
     this.hubConnection
       .start()
-      .then(() => console.log('SignalR connection started.'))
+      .then(() => {})
       .catch((err: any) => console.error('Error while starting connection: ', err));
   }
 

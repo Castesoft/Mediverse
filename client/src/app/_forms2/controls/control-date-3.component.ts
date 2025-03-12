@@ -11,8 +11,7 @@ import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module
 import { DateRange } from "src/app/_models/base/dateRange";
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 
-import * as _moment from 'moment';
-// tslint:disable-next-line:no-duplicate-imports
+import _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 
 const moment = _rollupMoment || _moment;
@@ -62,7 +61,7 @@ export class ControlDate3Component {
     return this.control().root as FormGroup2<any>;
   });
 
-  class = 'mb-0';
+  class: string = 'mb-0';
 
   @HostBinding('class') get hostClass() {
     return this.class;
@@ -70,18 +69,24 @@ export class ControlDate3Component {
 
   constructor() {
     effect(() => {
+      let baseClass: string = 'mb-0';
+
       if (this.fromWrapper()) {
-        this.class += ' w-100';
+        baseClass += ' w-100';
       } else {
-        this.class += ' col-auto px-0';
+        baseClass += ' col-auto px-0';
       }
+
+      this.class = baseClass;
 
       if (this.control().isReadonly) {
         this.control().updateValueAndValidity();
       }
 
       if (this.control().disabled && this.control().value) {
-        this.tooltipText.set(this.datePipe.transform(this.control().value! as Date, 'fullDate', '', 'es-MX'));
+        this.tooltipText.set(
+          this.datePipe.transform(this.control().value as Date, 'fullDate', '', 'es-MX')
+        );
       }
     });
   }

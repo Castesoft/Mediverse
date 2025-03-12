@@ -139,18 +139,23 @@ public class ProductRepository(DataContext context, IMapper mapper) : IProductRe
         // Section filtering
         if (!string.IsNullOrEmpty(param.FromSection))
         {
-            if (param.FromSection == SiteSection.Admin)
+            switch (param.FromSection)
             {
-                if (!userRoles.Contains(Roles.Admin.ToString()))
+                case SiteSection.Admin when !userRoles.Contains(Roles.Admin.ToString()):
                     throw new UnauthorizedAccessException("Access denied. Admin role required.");
-
-                query = query.Where(x => x.DoctorProduct == null);
-            }
-            else
-            {
-                query = query.Where(x => x.IsVisible);
-                if (param.DoctorId.HasValue)
-                    query = query.Where(x => x.DoctorProduct.DoctorId == userId || x.DoctorProduct == null);
+                case SiteSection.Admin:
+                    query = query.Where(x => x.DoctorProduct == null);
+                    break;
+                case SiteSection.Home:
+                    query = query.Where(x => x.DoctorProduct.DoctorId == userId);
+                    break;
+                default:
+                {
+                    query = query.Where(x => x.IsVisible);
+                    if (param.DoctorId.HasValue)
+                        query = query.Where(x => x.DoctorProduct.DoctorId == userId || x.DoctorProduct == null);
+                    break;
+                }
             }
         }
         else

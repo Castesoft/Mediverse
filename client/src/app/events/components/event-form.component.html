@@ -4,8 +4,12 @@
 <div class="card">
   <div class="card-body">
     <form [id]="form.id" (ngSubmit)="customSubmit()">
-      <mat-stepper orientation="vertical" [linear]="true" #stepper [(selectedIndex)]="selectedIndex"
-                   style="background: transparent!important;">
+      <mat-stepper
+        #stepper
+        orientation="vertical"
+        [linear]="true"
+        [(selectedIndex)]="selectedIndex"
+        style="background: transparent !important;">
         <mat-step [stepControl]="form.controls.patient.controls.select">
           <ng-template matStepLabel>
             {{ patients.dictionary.singularTitlecase }}

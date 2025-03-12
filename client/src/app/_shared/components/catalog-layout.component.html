@@ -97,8 +97,22 @@
       <mat-drawer-content>
         <div [class.card-body]="useCard()" class="pt-0">
           <div tableWrapper>
-            @if (service().list$(key()) | async; as _list) {
-              <ng-container *ngTemplateOutlet="entityTable; context: { list: _list }"></ng-container>
+            @if (service().loading()) {
+              <app-catalog-layout-skeleton></app-catalog-layout-skeleton>
+            } @else {
+              @if (service().list$(key()) | async; as _list) {
+                @if (_list.length == 0) {
+                  <div class="text-center pt-20 pb-12">
+                    <i class="fs-6x text-gray-400 ki-duotone ki-magnifier">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                    <div class="text-gray-400 fs-5 mt-4">No se encontraron resultados</div>
+                  </div>
+                } @else {
+                  <ng-container *ngTemplateOutlet="entityTable; context: { list: _list }"></ng-container>
+                }
+              }
             }
             @if (service().pagination$(key()) | async; as _pagination) {
               <div class="pt-2" tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination"
@@ -134,8 +148,22 @@
 
     <div [class.card-body]="useCard()" class="pt-0">
       <div tableWrapper>
-        @if (service().list$(key()) | async; as _list) {
-          <ng-container *ngTemplateOutlet="entityTable; context: { list: _list }"></ng-container>
+        @if (service().loading()) {
+          <app-catalog-layout-skeleton></app-catalog-layout-skeleton>
+        } @else {
+          @if (service().list$(key()) | async; as _list) {
+            @if (_list.length == 0) {
+              <div class="text-center pt-20 pb-12">
+                <i class="fs-6x text-gray-400 ki-duotone ki-magnifier">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+                <div class="text-gray-400 fs-5 mt-4">No se encontraron resultados</div>
+              </div>
+            } @else {
+              <ng-container *ngTemplateOutlet="entityTable; context: { list: _list }"></ng-container>
+            }
+          }
         }
         @if (service().pagination$(key()) | async; as _pagination) {
           <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params">

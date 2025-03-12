@@ -8,7 +8,7 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 import { ActivatedRoute, provideRouter, Router, RouterOutlet } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { FlatpickrModule } from "angularx-flatpickr";
-import { provideToastr } from 'ngx-toastr';
+import { provideToastr, ToastContainerDirective } from 'ngx-toastr';
 import { errorInterceptor } from 'src/app/_interceptors/error.interceptor';
 import { jwtInterceptor } from 'src/app/_interceptors/jwt.interceptor';
 import { loadingInterceptor } from 'src/app/_interceptors/loading.interceptor';
@@ -36,6 +36,7 @@ declare var google: any;
   template: `
     <router-outlet></router-outlet>
     <div scrolltop></div>
+    <div toastContainer></div>
 
     @if (cookiesAccepted === 'false') {
       <div class="fixed-bottom bg-dark text-white text-center p-8 shadow-lg"
@@ -56,7 +57,7 @@ declare var google: any;
     }
   `,
   standalone: true,
-  imports: [ RouterOutlet, MaterialModule, ScrolltopComponent ],
+  imports: [ RouterOutlet, MaterialModule, ScrolltopComponent, ToastContainerDirective ],
 })
 export class AppComponent implements OnInit {
   private readonly bsModalService = inject(BsModalService);

@@ -1,26 +1,21 @@
 import {
+  AsyncValidatorFn,
   FormControl,
+  FormControlOptions,
   FormControlState,
   ValidatorFn,
-  FormControlOptions,
-  AsyncValidatorFn,
   Validators
 } from "@angular/forms";
 import { createId } from "@paralleldrive/cuid2";
-import { ControlOrientation } from "./formTypes";
-import { ControlErrors } from "./formTypes";
-import { InputTypes } from "./formTypes";
-import { Style } from "./formTypes";
-import { TypeaheadOptions } from "./controlOptions";
-import { SelectOptionOptions } from "./controlOptions";
-import { TextareaOptions } from "./controlOptions";
+import { ControlErrors, ControlOrientation, FormUse, InputTypes, Style } from "./formTypes";
+import { SelectOptionOptions, TextareaOptions, TypeaheadOptions } from "./controlOptions";
 import { Ranges } from "src/app/_models/base/ranges";
 import { SelectOption } from "src/app/_models/base/selectOption";
-import { FormUse } from "./formTypes";
 import { DateRange } from "../base/dateRange";
 import { MatFormFieldAppearance } from "@angular/material/form-field";
 import MaterialOptions from 'src/app/_models/forms/materialOptions';
 import DateOptions from 'src/app/_models/forms/dateOptions';
+import MultiselectOptions from "src/app/_models/base/multiselectOptions";
 
 
 /**
@@ -75,33 +70,34 @@ export class FormControl2<T extends string | number | boolean | Date | SelectOpt
   placeholder: string | null = null;
   helperText: string | null = null;
   selectOptions: SelectOption[] = [];
-  hidden = false;
+  multiselectOptions: MultiselectOptions = new MultiselectOptions();
+  hidden: boolean = false;
   solid: boolean = false;
   hint: string | null = null;
-  isReadonly = false;
+  isReadonly: boolean = false;
   use: FormUse = FormUse.DETAIL;
-  submitted = false;
-  showLabel = true;
-  optional = false;
-  isNew = false;
+  submitted: boolean = false;
+  showLabel: boolean = true;
+  optional: boolean = false;
+  isNew: boolean = false;
   orientation?: ControlOrientation = "block";
-  validation = false;
-  showCodeSpan = true;
+  validation: boolean = false;
+  showCodeSpan: boolean = true;
   validationErrors: ControlErrors = {};
-  inputGroupPrepend = '';
-  inputGroupAppend = '';
-  isDisabled = false;
-  typeahead = new TypeaheadOptions();
-  textareaOptions = new TextareaOptions();
-  selectOptionOptions = new SelectOptionOptions();
+  inputGroupPrepend: string = '';
+  inputGroupAppend: string = '';
+  isDisabled: boolean = false;
+  typeahead: TypeaheadOptions = new TypeaheadOptions();
+  textareaOptions: TextareaOptions = new TextareaOptions();
+  selectOptionOptions: SelectOptionOptions = new SelectOptionOptions();
   title: string | null = null;
   style: Style = 'bootstrap';
   ranges: Ranges = new Ranges();
   appearance: MatFormFieldAppearance = 'outline';
   prefix: string | null = null;
   suffix: string | null = null;
-  materialOptions = new MaterialOptions();
-  dateOptions = new DateOptions();
+  materialOptions: MaterialOptions = new MaterialOptions();
+  dateOptions: DateOptions = new DateOptions();
   rows: number | null = null; // For TextArea
 
   constructor(
