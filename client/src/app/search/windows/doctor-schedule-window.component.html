@@ -1,3 +1,5 @@
+@let createdEvent = event();
+
 <div class="card card-flush h-lg-100" [style]="query.isMobile() ? { width: '100%', height: '100%', } : { width: '420px' }">
   @if (selectedTime()?.available === true) {
     <div class="card-header">
@@ -171,7 +173,7 @@
       </code>
       </div>
     }
-  } @else if (event() !== null) {
+  } @else if (createdEvent !== null) {
 
     <div class="card-header">
       <div class="card-title">
@@ -200,17 +202,17 @@
       </div>
 
       <div class="d-flex flex-center">
-        <a [routerLink]="['/', 'doctor', event()!.doctor.id]" class="btn btn-light-primary me-3">
+        <a [routerLink]="['/', 'doctor', createdEvent.doctor.id]" class="btn btn-light-primary me-3">
           Ver especialista
         </a>
 
-        <a href="#" class="btn btn-primary">
+        <a [routerLink]="['/', 'cuenta', 'citas', createdEvent.id]" class="btn btn-primary">
           Ver cita
         </a>
       </div>
 
       <div class="text-muted fs-6 text-center mt-5" style="max-width: 252px;">
-        <small>Para ver más servicios del {{ event()!.doctor.specialty }} {{ event()!.doctor.fullName }} da
+        <small>Para ver más servicios del {{ createdEvent.doctor.specialty }} {{ createdEvent.doctor.fullName }} da
           <a
             class="link-primary fw-bold"
             (click)="service.setTab('general')"

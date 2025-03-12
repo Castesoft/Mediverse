@@ -23,7 +23,6 @@ import { SearchFormComponent } from "src/app/search/components/search-form.compo
     LoadingPlaceholderComponent,
     TablesModule,
     RouterModule,
-    LogoIconComponent,
   ],
 })
 export class DoctorResultsWindowComponent {

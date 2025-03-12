@@ -20,6 +20,12 @@ import { doctorGuard } from "src/app/_guards/doctor.guard";
 import {
   AccountNotificationsComponent
 } from "src/app/account/components/account-notifications/account-notifications.component";
+import { AccountEventDetailComponent } from 'src/app/account/components/account-event-detail/account-event-detail.component';
+import createItemResolver from 'src/app/_utils/serviceHelper/functions/createItemResolver';
+import { EventsService } from 'src/app/events/events.config';
+import titleDetailResolver from 'src/app/_utils/serviceHelper/functions/titleDetailResolver';
+import { FormUse } from 'src/app/_models/forms/formTypes';
+import { authGuard } from 'src/app/_guards/auth.guard';
 
 export const itemResolver: ResolveFn<Account | null> = () => {
   const service: AccountService = inject(AccountService);
@@ -81,6 +87,15 @@ const routes: Routes = [
         component: AccountEventsComponent,
         title: 'DocHub | Citas',
         data: { breadcrumb: 'Citas' },
+      },
+      {
+        path: 'citas/:id',
+        component: AccountEventDetailComponent,
+        resolve: { item: createItemResolver(EventsService), },
+        title: titleDetailResolver(EventsService, FormUse.DETAIL, 'id'),
+        data: { breadcrumb: [ 'Citas', 'Detalle de Cita' ], title: 'Detalle de Cita', },
+        runGuardsAndResolvers: 'always',
+        canActivate: [ authGuard, ],
       },
       {
         path: 'suscripcion',

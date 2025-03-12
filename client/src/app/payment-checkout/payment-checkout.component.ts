@@ -33,6 +33,7 @@ import {
 import {
   PaymentDisclaimerComponent
 } from "src/app/payment-checkout/components/subscription-terms-and-conditions-disclaimer-notice/payment-disclaimer.component";
+import { ThemeService } from 'src/app/_services/theme.service';
 
 @Component({
   selector: 'app-payment-checkout',
@@ -58,6 +59,7 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   private readonly toastr: ToastrService = inject(ToastrService);
   private readonly matDialog: MatDialog = inject(MatDialog);
   private readonly router: Router = inject(Router);
+  readonly theme = inject(ThemeService);
 
   private readonly destroy$: Subject<void> = new Subject<void>();
 

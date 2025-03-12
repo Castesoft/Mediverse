@@ -5,18 +5,29 @@
         <i class="ki-duotone ki-black-left fs-1 p-0 text-body"></i>
       </button>
       <a [routerLink]="['/']">
-        <img alt="Logo" class="max-h-50px logo-default theme-light-show" src="media/logos/logo-default.svg"/>
-        <img alt="Logo" class="max-h-50px logo-default theme-dark-show" src="media/logos/logo-default-dark.svg"/>
+        <img src="media/logos/logo-compact.svg" alt="Logo" height="40" class="d-inline-block align-text-top"/>
+        <img src="media/logos/text/logo-text-blue.svg" alt="Logo" height="40" class="d-inline-block align-text-top"/>
       </a>
     </div>
 
     <div class="d-flex flex-grow-1 justify-content-end align-items-center">
-      <small class="text-muted">
+
+      <small class="text-900">
+      @if(theme.effectiveTheme() === 'light') {
         <img
           src="media/stripe/powered-by-stripe-black.svg"
           alt="Stripe"
           style="height: 30px; vertical-align: middle;"
         />
+
+      } @else if (theme.effectiveTheme() === 'dark') {
+        <img
+          src="media/stripe/powered-by-stripe-white.svg"
+          alt="Stripe"
+          style="height: 30px; vertical-align: middle;"
+        />
+      }
+
       </small>
     </div>
   </div>

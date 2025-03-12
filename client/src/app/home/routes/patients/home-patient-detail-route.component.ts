@@ -16,7 +16,10 @@ import { Subject } from "rxjs";
   `,
   standalone: false,
 })
-export class HomePatientDetailRouteComponent extends BaseRouteDetail<Patient> implements OnDestroy {
+export class HomePatientDetailRouteComponent
+  extends BaseRouteDetail<Patient>
+  implements OnDestroy
+{
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor() {
