@@ -20,19 +20,6 @@
        [(scheduleWindowOpen)]="scheduleWindowOpen"></div>
 }
 
-@if (query.isMobile() && !showMobileSearch()) {
-  <div id="search-mobile" class="position-absolute top-0 p-4" style="z-index: 1;">
-    <h1 class="text-gray-800 fw-bold my-6 text-center">
-      <a [routerLink]="['/']">
-        <app-logo-icon></app-logo-icon>
-      </a>
-    </h1>
-    <div class="py-3">
-      <div searchForm [compact]="true"></div>
-    </div>
-  </div>
-}
-
-<div class="w-100" [class.d-none]="query.isMobile() && showMobileSearch()">
+<div class="w-100" [class.d-none]="query.isMobile() === true">
   <div id="map" style="height: 100%;"></div>
 </div>

@@ -26,6 +26,7 @@ import {
   UseOfCookiesModalComponent
 } from 'src/app/auth/components/use-of-cookies-modal/use-of-cookies-modal.component';
 import { providePrimeNG } from "primeng/config";
+import { ShortcutsService } from 'src/app/_services/shortcuts.service';
 
 declare var google: any;
 
@@ -59,10 +60,11 @@ declare var google: any;
   imports: [ RouterOutlet, MaterialModule, ScrolltopComponent, ToastContainerDirective ],
 })
 export class AppComponent implements OnInit {
-  private bsModalService = inject(BsModalService);
-  private accountService = inject(AccountService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly bsModalService = inject(BsModalService);
+  private readonly accountService = inject(AccountService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly shortcuts = inject(ShortcutsService);
 
   cookiesAccepted = 'true';
 
