@@ -54,6 +54,7 @@ export const eventFormInfo: FormInfo<Event> = {
   service: serviceFormInfo,
   clinic: clinicFormInfo,
   nurses: nurseFormInfo,
+  nurseOptions: { label: 'Especialistas', type: 'multiselect', },
   medicalInsuranceCompany: { label: 'Compañía de seguro médico', type: 'typeahead', },
   paymentMethodType: { label: 'Método de pago', type: 'typeahead', },
   payments: paymentFormInfo,

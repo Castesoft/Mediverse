@@ -1,6 +1,8 @@
-<div class="d-flex align-items-center justify-content-between gap-2 flex-grow-1">
+<code class="json">{{control().materialOptions.appearance| json}}</code>
+
+<!-- <div class="d-flex align-items-center justify-content-between gap-2 flex-grow-1">
   <mat-form-field
-    [appearance]="control().materialOptions.appearance || 'fill'"
+    [appearance]="control().materialOptions.appearance"
     style="width: 100%;"
     [subscriptSizing]="'dynamic'"
     [hideRequiredMarker]="false"
@@ -39,8 +41,6 @@
 
   </mat-form-field>
 
-  <!-- <code class="json">{{control().multiselectOptions.showActions | json}}</code> -->
-
   @if (control().multiselectOptions.showActions) {
     @let value = control().value;
     @let count = value !== null && value.length ? value.length : 0;
@@ -58,4 +58,4 @@
       </button>
     }
   }
-</div>
+</div> -->
