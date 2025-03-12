@@ -15,7 +15,7 @@
     <div class="card-toolbar">
       <ul class="nav nav-pills me-3 mb-2 mb-sm-0">
         <li class="nav-item m-0">
-          <a (click)="calendarView.set('table')"
+          <a (click)="calendarView.set('table'); setCalendarViewQueryParam('table')"
              [class.active]="calendarView() === 'table'"
              class="btn btn-icon btn-light btn-color-muted btn-active-primary me-3"
           >
@@ -26,7 +26,7 @@
           </a>
         </li>
         <li class="nav-item m-0">
-          <a (click)="calendarView.set('calendar')"
+          <a (click)="calendarView.set('calendar'); setCalendarViewQueryParam('calendar')"
              [class.active]="calendarView() === 'calendar'"
              class="btn btn-icon btn-light btn-color-muted btn-active-primary"
           >

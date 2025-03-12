@@ -75,6 +75,7 @@ export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, Even
 
   calendarList: EventMonthDayCell[] = [];
 
+
   constructor() {
     super(EventsService, EventFiltersForm);
 
@@ -97,6 +98,15 @@ export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, Even
     });
 
     this.subscribeToEventMonthDayCell();
+  }
+
+  setCalendarViewQueryParam(view: CalendarView): void {
+    this.router.navigate([], {
+      queryParams: {
+        view: view,
+      },
+      queryParamsHandling: 'merge',
+    }).catch(console.error);
   }
 
   private subscribeToEventMonthDayCell(): void {

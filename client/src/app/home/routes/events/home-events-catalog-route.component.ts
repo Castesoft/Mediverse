@@ -53,6 +53,7 @@ export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, Eve
   form: EventFiltersForm = new EventFiltersForm();
 
   fromWrapper: WritableSignal<boolean> = signal(false);
+  calendarViewQueryParam: CalendarView | null = null;
 
   constructor() {
     super(EventsService, 'events');
@@ -60,6 +61,10 @@ export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, Eve
 
     effect(() => {
       if (this.accountService.current()) {
+        if (this.calendarViewQueryParam !== null) {
+          this.calendarView.set(this.calendarViewQueryParam);
+        }
+
         this.account = this.accountService.current();
         console.log(this.account);
         this.params.set(new EventParams(this.key(), {
@@ -71,6 +76,12 @@ export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, Eve
         }));
       }
     });
+
+    this.setInitialTabsFromParams();
+  }
+
+  private setInitialTabsFromParams(): void {
+    this.calendarViewQueryParam = this.route.snapshot.queryParams['view'] || this.calendarView();
   }
 
   ngOnDestroy(): void {

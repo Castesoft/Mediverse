@@ -79,8 +79,8 @@ const routes: Routes = [
       {
         path: 'citas',
         component: AccountEventsComponent,
-        title: 'DocHub | Citas',
-        data: { breadcrumb: 'Citas' },
+        title: 'DocHub | Mis Citas',
+        data: { breadcrumb: 'Mis Citas' },
       },
       {
         path: 'suscripcion',
