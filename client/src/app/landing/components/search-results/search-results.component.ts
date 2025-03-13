@@ -1,5 +1,5 @@
 /// <reference types="@types/google.maps" />
-import { Component, effect, HostListener, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { SearchResults } from 'src/app/_models/doctorSearchResults';
 import { SearchService } from 'src/app/_services/search.service';
@@ -7,11 +7,9 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Search } from "src/app/_models/search/search";
-import { SearchFormComponent } from 'src/app/search/components/search-form.component';
 import { DoctorResult } from "src/app/_models/doctors/doctorResults/doctorResult";
 import { SearchAuthComponent } from 'src/app/search/components/search-auth.component';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DoctorDetailWindowComponent } from 'src/app/search/windows/doctor-detail-window.component';
 import { DoctorScheduleWindowComponent } from 'src/app/search/windows/doctor-schedule-window.component';
 import { AvailableDay } from 'src/app/_models/availableDay';
@@ -20,19 +18,22 @@ import { Theme, ThemeService } from 'src/app/_services/theme.service';
 import { getSearchRouteQueryParams } from 'src/app/_models/search/searchUtils';
 import { AvailableTime } from 'src/app/_models/availableTime';
 import { MobileQueryService } from 'src/app/_services/mobile-query.service';
-import { LogoIconComponent } from 'src/app/_shared/components/logo-icon/logo-icon.component';
 
 @Component({
   selector: 'div[searchResults]',
   host: { class: 'h-100 d-flex mobile-view w-100', },
-  standalone: true,
-  imports: [ SearchFormComponent, CommonModule, RouterModule, BsDropdownModule,
-    SearchAuthComponent, DoctorDetailWindowComponent, DoctorScheduleWindowComponent, DoctorResultsWindowComponent,
-    LogoIconComponent,
-  ],
-  providers: [ BsDropdownDirective, ],
   templateUrl: './search-results.component.html',
-  styleUrl: './search-results.component.scss'
+  styleUrl: './search-results.component.scss',
+  providers: [ BsDropdownDirective, ],
+  imports: [
+    CommonModule,
+    RouterModule,
+    BsDropdownModule,
+    SearchAuthComponent,
+    DoctorDetailWindowComponent,
+    DoctorScheduleWindowComponent,
+    DoctorResultsWindowComponent,
+  ],
 })
 export class SearchResultsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

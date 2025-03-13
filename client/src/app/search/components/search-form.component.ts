@@ -13,10 +13,13 @@ import { Forms2Module } from "src/app/_forms2/forms-2.module";
 
 @Component({
   selector: 'div[searchForm]',
-  standalone: true,
-  imports: [ ReactiveFormsModule, Forms2Module, CommonModule, ],
   templateUrl: './search-form.component.html',
-  styleUrls: [ './search-form.component.scss' ]
+  styleUrls: [ './search-form.component.scss' ],
+  imports: [
+    ReactiveFormsModule,
+    Forms2Module,
+    CommonModule,
+  ],
 })
 export class SearchFormComponent implements OnInit {
   private router: Router = inject(Router);

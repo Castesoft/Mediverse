@@ -1,8 +1,11 @@
-<label [for]="id ? id : controlName" class="fw-semibold  mb-2"
-       [class.required]="!validation.isOptional(control) || isReadonly">
-  {{ label }}
-</label>
-<!-- [class.form-control-solid]="style() === 'solid'" -->
+@if (label) {
+  <label
+    [for]="id ? id : controlName" class="fw-semibold  mb-2"
+    [class.required]="!validation.isOptional(control) || isReadonly">
+    {{ label }}
+  </label>
+}
+
 <input
   type="text"
   mwlFlatpickr
@@ -12,6 +15,7 @@
   [formControl]="control"
   placeholder="{{placeholder}}"
   class="form-control flatpickr-input"
+  [class.form-control-solid]="solid()"
   [id]="id ? id : controlName"
   [attr.autofocus]="autofocus() ? true : null"
   [ngClass]="{

@@ -155,6 +155,16 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             );
         }
 
+        if (param.DateFrom.HasValue)
+        {
+            query = query.Where(x => x.DateFrom >= param.DateFrom);
+        }
+
+        if (param.DateTo.HasValue)
+        {
+            query = query.Where(x => x.DateTo >= param.DateTo);
+        }
+
         if (!string.IsNullOrEmpty(param.Patients))
         {
             var patients = param.GetPatients();
@@ -162,6 +172,16 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
             {
                 query = query.Where(x => x.PatientEvent != null && patients.Contains(x.PatientEvent.PatientId));
             }
+        }
+
+        if (!string.IsNullOrEmpty(param.Search))
+        {
+            var term = param.Search.ToLower();
+
+            query = query.Where(x =>
+                x.DoctorEvent.Doctor.FirstName.ToLower().Contains(term) ||
+                x.DoctorEvent.Doctor.LastName.ToLower().Contains(term)
+            );
         }
 
         if (!string.IsNullOrEmpty(param.Services))
@@ -212,7 +232,7 @@ public class EventRepository(DataContext context, IMapper mapper) : IEventReposi
         {
             query = query.Where(x => x.PatientEvent.PatientId == param.PatientId);
         }
-        
+
         if (param.UserId.HasValue)
         {
             query = query.Where(x =>

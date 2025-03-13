@@ -48,6 +48,13 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
         <body>
           <div style="font-family:Arial,Helvetica,sans-serif; line-height: 1.5; font-weight: normal; font-size: 15px; color: #2F3044; min-height: 100%; margin:0; padding:0; width:100%; background-color:#edf2f7">
             <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse; margin:0 auto; padding:0; max-width:600px">
+            <tr>
+              <td align="center" valign="center" style="text-align:center; padding: 40px">
+                <a href="https://dochub.mx" rel="noopener" target="_blank">
+                  <img alt="Logo" src="https://dochub.mx/media/logos/text/logo-text-blue.png" style="max-width: 250px;" />
+                </a>
+              </td>
+            </tr>
         """;
 
     private static string GetEmailFooter() =>
@@ -71,13 +78,6 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
         return $"""
                 {GetEmailHeader()}
                 <tr>
-                  <td align="center" valign="center" style="text-align:center; padding: 40px">
-                    <a href="https://dochub.mx" rel="noopener" target="_blank">
-                      <img alt="Logo" src="https://dochub.mx/media/logos/text/logo-text-blue.png" style="max-width: 250px;" />
-                    </a>
-                  </td>
-                </tr>
-                <tr>
                   <td align="left" valign="center">
                     <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
                       <div style="padding-bottom: 30px; font-size: 17px;">
@@ -100,13 +100,6 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
     {
         return $"""
                 {GetEmailHeader()}
-                <tr>
-                  <td align="center" valign="center" style="text-align:center; padding: 40px">
-                    <a href="https://dochub.mx" rel="noopener" target="_blank">
-                      <img alt="DocHub Logo" src="assets/media/logos/mail.svg" />
-                    </a>
-                  </td>
-                </tr>
                 <tr>
                   <td align="left" valign="center">
                     <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
@@ -140,13 +133,6 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
         return $"""
                 {GetEmailHeader()}
                 <tr>
-                  <td align="center" valign="center" style="text-align:center; padding: 40px">
-                    <a href="https://dochub.mx" rel="noopener" target="_blank">
-                      <img alt="DocHub Logo" src="assets/media/logos/mail.svg" />
-                    </a>
-                  </td>
-                </tr>
-                <tr>
                   <td align="left" valign="center">
                     <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
                       <div style="padding-bottom: 30px; font-size: 17px;">
@@ -173,28 +159,25 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
     public string CreateResetPasswordEmail(AppUser user, string resetUrl)
     {
         return $"""
-                <html>
-                    <body>
-                        <div style='padding: 2rem; background-color: #e9ecef;'>
-                            <div style='width: 100%; max-width: 600px; margin: auto;'>
-                                <div style='background-color: white; padding: 1.5rem; border-radius: 40px; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); text-align: center;'>
-                                    <p style='color: #888; font-size: 22px; margin-bottom:40px;'>
-                                        ¡Hola {user.FirstName}! 👋
-                                    </p>
-                                    <p style='color: #888; font-size: 22px; margin-bottom:40px;'>
-                                        ¡No te preocupes! 🌟 Si necesitas restablecer tu contraseña, simplemente haz clic en el enlace de abajo 🖱️ y elige una nueva:
-                                    </p>
-                                    <a href='{resetUrl}' target='_blank' style='display: inline-block; font-weight: bold; text-transform: uppercase; color: #fff; background-color: #479eb1; padding: 0.375rem 0.75rem; font-size: 1.25rem; line-height: 1.5; border-radius: 0.3rem; text-decoration: none; margin-bottom: 40px;'>
-                                        Enlace de recuperación de contraseña 🔗
-                                    </a>
-                                    <p style='color: #888; font-size: 22px; margin-bottom:40px;'>
-                                        Si no solicitaste una nueva contraseña, por favor ignora este correo. 🚫 Para cualquier duda o asistencia adicional, estamos aquí para ayudarte. 🤝
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </body>
-                </html>
+                {GetEmailHeader()}
+                <tr>
+                  <td align="center" style="padding: 40px;">
+                    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 6px; text-align: center;">
+                      <h2 style="color: #2F3044; font-size: 20px; margin-bottom: 20px;">Restablecer contraseña</h2>
+                      <p style="color: #2F3044; font-size: 16px; margin-bottom: 30px;">Hola {user.FirstName},</p>
+                      <p style="color: #2F3044; font-size: 16px; margin-bottom: 30px;">
+                        Para restablecer tu contraseña, haz clic en el botón de abajo y elige una nueva.
+                      </p>
+                      <a href="{resetUrl}" target="_blank" style="display: inline-block; text-decoration: none; font-weight: bold; color: #fff; background-color: #284092; padding: 10px 20px; border-radius: 4px;">
+                        Restablecer contraseña
+                      </a>
+                      <p style="color: #2F3044; font-size: 14px; margin-top: 30px;">
+                        Si no solicitaste este cambio, por favor ignora este correo.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                {GetEmailFooter()}
                 """;
     }
 

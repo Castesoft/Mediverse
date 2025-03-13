@@ -1,38 +1,40 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, inject, Input, input, OnInit, Renderer2, Self } from "@angular/core";
+import { Component, inject, Input, input, InputSignal, OnInit, Self } from "@angular/core";
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from "@angular/forms";
-import { FlatpickrModule } from "angularx-flatpickr";
+import { FlatpickrDirective } from "angularx-flatpickr";
 import { HelpBlockComponent } from "src/app/_forms/helpers/help-block.component";
 import { InvalidFeedbackComponent } from "src/app/_forms/helpers/invalid-feedback.component";
 import { ValidationService } from "src/app/_services/validation.service";
 
 @Component({
-  host: {class: 'fv-row mb-9',},
   selector: '[controlDate]',
   templateUrl: './control-date.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, HelpBlockComponent,
-    InvalidFeedbackComponent, FlatpickrModule,],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    HelpBlockComponent,
+    InvalidFeedbackComponent,
+    FlatpickrDirective,
+  ],
 })
 export class ControlDateComponent implements ControlValueAccessor, OnInit {
-  validation = inject(ValidationService);
-  private renderer = inject(Renderer2);
-  private el = inject(ElementRef);
+  validation: ValidationService = inject(ValidationService);
 
-  errors = input<{ [key: string]: string }>({});
-  formText = input<string | null>(null);
-  submitted = input<boolean>(false);
-  autofocus = input<boolean>(false);
-  isNew = input<boolean>(false);
-  optional = input<boolean>(false);
-  timepicker = input<boolean>(false);
+  errors: InputSignal<{ [key: string]: string }> = input({});
+  formText: InputSignal<string | null> = input(null as string | null);
+  solid: InputSignal<boolean> = input(false);
+  submitted: InputSignal<boolean> = input(false);
+  autofocus: InputSignal<boolean> = input(false);
+  isNew: InputSignal<boolean> = input(false);
+  optional: InputSignal<boolean> = input(false);
+  timepicker: InputSignal<boolean> = input(false);
 
   @Input() id?: string;
   @Input() label: string = '';
   @Input() placeholder: string = '';
   @Input() maxDate: Date | undefined;
-  @Input() isReadonly = false;
-  @Input() hideIsOptional = false;
+  @Input() isReadonly: boolean = false;
+  @Input() hideIsOptional: boolean = false;
   @Input() minMode: 'day' | 'month' | 'year' = 'day';
   @Input() popoverText?: string;
   @Input() popoverTitle?: string;
@@ -42,18 +44,6 @@ export class ControlDateComponent implements ControlValueAccessor, OnInit {
   }
 
   ngOnInit(): void {
-    // if (this.autofocus()) {
-    //   const inputEl = this.el.nativeElement.querySelector('input');
-    //   this.renderer.setAttribute(inputEl, 'autofocus', 'autofocus');
-    //   inputEl.focus();
-    // }
-
-    const dateInputFormats = {
-      'day': 'YYYY-MM-DD',
-      'month': 'YYYY-MM',
-      'year': 'YYYY'
-    };
-
     if (this.isReadonly && this.ngControl.control) {
       if (this.popoverText === undefined) this.popoverText = this.ngControl.control!.value;
       if (this.popoverTitle === undefined) this.popoverTitle = this.label;
