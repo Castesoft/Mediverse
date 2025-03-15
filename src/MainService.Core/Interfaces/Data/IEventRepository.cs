@@ -20,7 +20,6 @@ public interface IEventRepository
     Task<List<EventMonthDayCellDto>> GetMonthViewPartialAsync(EventParams param);
     Task<EventDoctorFieldsDto> GetDoctorFieldsDtoAsync(ClaimsPrincipal user);
     Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId);
-    Task<bool> ExistsByIdAsync(int id);
 
     /// <summary>
     /// Asynchronously checks if a doctor has a specific event.

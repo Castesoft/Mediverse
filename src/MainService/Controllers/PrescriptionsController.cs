@@ -91,8 +91,8 @@ public class PrescriptionsController(
         // Validate event if provided
         if (request.EventId.HasValue)
         {
-            if (!await uow.EventRepository.ExistsByIdAsync(request.EventId.Value))
-                return NotFound($"La cita con Id {request.EventId} no existe");
+            var @event = await uow.EventRepository.GetByIdAsNoTrackingAsync(request.EventId.Value);
+            if (@event == null) return NotFound($"La cita con Id {request.EventId} no existe");
 
             if (!await uow.EventRepository.DoctorHasEventAsync(doctorId, request.EventId.Value))
                 return BadRequest($"La cita {request.EventId.Value} no corresponde al doctor {doctorId}.");

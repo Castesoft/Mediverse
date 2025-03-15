@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, effect, HostListener, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { MobileQueryService } from 'src/app/_services/mobile-query.service';
@@ -17,11 +17,10 @@ import {
   NotificationsDropdownComponent
 } from "src/app/_shared/components/notifications/notifications-dropdown/notifications-dropdown.component";
 
-
 @Component({
-  host: { class: 'header' },
   selector: '[header]',
   templateUrl: './header.component.html',
+  styleUrls: [ './header.component.scss' ],
   imports: [
     RouterModule,
     ThemeDropdownComponent,

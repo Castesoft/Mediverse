@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { createId } from "@paralleldrive/cuid2";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { AccountService } from "src/app/_services/account.service";
@@ -25,11 +25,13 @@ import { ControlDateComponent } from "src/app/_forms/control-date.component";
 import {
   CatalogLayoutSkeletonComponent
 } from "src/app/_shared/components/catalog-layout-skeleton/catalog-layout-skeleton.component";
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-account-events',
   templateUrl: './account-events.component.html',
-  styleUrl: './account-events.component.scss',
+  styleUrls: [ './account-events.component.scss' ],
   imports: [
     TableWrapperComponent,
     TableBodyComponent,
@@ -55,69 +57,147 @@ export class AccountEventsComponent implements OnInit {
   private readonly fb: FormBuilder = inject(FormBuilder);
 
   readonly eventsService: EventsService = inject(EventsService);
+  readonly router: Router = inject(Router);
 
   data: Event[] = [];
   account: Account | null = null;
-  filterForm: FormGroup = new FormGroup({});
+  filterForm!: FormGroup;
 
   key: string = createId();
   isCompact: boolean = false;
-  params: EventParams = new EventParams(this.key, { userId: null });
+  params: WritableSignal<EventParams> = signal<EventParams>(new EventParams(this.key, { userId: null }));
 
   constructor() {
     effect(() => {
-      if (!this.accountService.current()) return;
+      const currentAccount: Account | null = this.accountService.current();
+      if (!currentAccount) return;
 
-      this.account = this.accountService.current();
-      this.params = new EventParams(this.key, {
-        fromSection: SiteSection.HOME,
-        userId: this.account?.id
-      })
+      if (!this.account) {
+        this.account = currentAccount;
+        this.params.set(new EventParams(this.key, {
+          fromSection: SiteSection.HOME,
+          userId: this.account.id
+        }))
+      }
+    });
 
-      this.loadPagedList();
-    })
+    effect(() => {
+      this.loadPagedList()
+    });
   }
 
   ngOnInit(): void {
     this.initForm();
+    this.subscribeToStatusChanges();
+    this.subscribeToFormChanges();
     this.subscribeToPagedEventData();
   }
 
-  private initForm(): void {
-    this.filterForm = this.fb.group({
-      status: [ "", [] ],
-      search: [ "", [] ],
-      dateFrom: [ null, [] ],
-      dateTo: [ null, [] ],
+  /**
+   * Resets the filters to their initial state and reloads the event list.
+   */
+  resetFilters(): void {
+    this.filterForm.reset({
+      status: "",
+      search: "",
+      dateFrom: null,
+      dateTo: null
     });
 
-    this.filterForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
-      {
-        next: (value) => {
-          const paramsToSet = { ...this.params, ...value };
+    this.params.set(new EventParams(this.key, {
+      fromSection: SiteSection.HOME,
+      userId: this.account?.id || null
+    }))
 
-          const dateFrom: Date | null = value.dateFrom ? new Date(value.dateFrom) : null;
-          const dateTo: Date | null = value.dateTo ? new Date(value.dateTo) : null;
+    this.loadPagedList();
+  }
 
-          paramsToSet.dateFrom = dateFrom;
-          paramsToSet.dateTo = dateTo;
+  /**
+   * Subscribes to the 'status' control changes and adjusts the date filters accordingly.
+   */
+  private subscribeToStatusChanges(): void {
+    this.filterForm.get('status')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(status => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-          this.params = paramsToSet;
-          this.loadPagedList();
+        switch (status) {
+          case 'before-current-date':
+            this.filterForm.patchValue({ dateFrom: null, dateTo: today });
+            break;
+          case 'after-current-date':
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            this.filterForm.patchValue({ dateFrom: tomorrow, dateTo: null });
+            break;
+          case 'today':
+            const startOfToday = new Date(today);
+            const endOfToday = new Date(today);
+            endOfToday.setHours(23, 59, 59, 999);
+            this.filterForm.patchValue({ dateFrom: startOfToday, dateTo: endOfToday });
+            break;
+          default:
+            this.filterForm.patchValue({ dateFrom: null, dateTo: null });
         }
-      }
-    )
+      });
   }
 
+  /**
+   * Initializes the reactive form.
+   */
+  private initForm(): void {
+    this.filterForm = this.fb.group({
+      status: [ "" ],
+      search: [ "" ],
+      dateFrom: [ null ],
+      dateTo: [ null ],
+    });
+  }
+
+  /**
+   * Subscribes to the entire form value changes (with debouncing to avoid rapid reloads)
+   * and updates the params accordingly.
+   */
+  private subscribeToFormChanges(): void {
+    this.filterForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((value: any) => {
+        this.updateParams(value);
+        this.loadPagedList();
+      });
+  }
+
+  /**
+   * Updates the EventParams based on the form value.
+   * @param value The current form value.
+   */
+  private updateParams(value: any): void {
+    const updatedParams = { ...this.params(), ...value };
+
+    updatedParams.dateFrom = value.dateFrom ? new Date(value.dateFrom) : null;
+    updatedParams.dateTo = value.dateTo ? new Date(value.dateTo) : null;
+
+    this.params.set(updatedParams);
+  }
+
+  /**
+   * Loads the paged event list using the current parameters.
+   */
   private loadPagedList(): void {
-    this.eventsService.loadPagedList(this.key, this.params).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.eventsService.loadPagedList(this.key, this.params()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
-  private subscribeToPagedEventData() {
-    this.eventsService.data$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (pagedList) => {
-        this.data = pagedList;
-      },
+  /**
+   * Subscribes to the paged event data stream.
+   */
+  private subscribeToPagedEventData(): void {
+    this.eventsService.data$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pagedList: Event[]) => {
+      this.data = pagedList;
     });
   }
 }

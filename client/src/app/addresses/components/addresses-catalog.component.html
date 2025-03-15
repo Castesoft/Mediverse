@@ -20,7 +20,8 @@
       <table addressesTable [(mode)]="mode" [(isCompact)]="isCompact" [data]="_list" [(key)]="key" [(view)]="view"
              [(item)]="item" [(params)]="params">
       </table>
-  }
+    }
+
     @if (service.pagination$(key()) | async; as _pagination) {
       <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
     }

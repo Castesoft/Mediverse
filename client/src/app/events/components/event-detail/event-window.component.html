@@ -6,10 +6,6 @@
            [(summaryMode)]="summaryMode"
            [(orientation)]="summaryOrientation"
            [roleToShow]="accountsService.hasRole([ 'Doctor' ]) ? 'patient' : 'doctor'"
-           [(key)]="key"
-           [(title)]="title"
-           [(use)]="use"
-           [(view)]="view"
       ></div>
     } @else {
       <div class="row">
@@ -19,10 +15,6 @@
                [(summaryMode)]="summaryMode"
                [(orientation)]="summaryOrientation"
                [roleToShow]="accountsService.hasRole([ 'Doctor' ]) ? 'patient' : 'doctor'"
-               [(key)]="key"
-               [(title)]="title"
-               [(use)]="use"
-               [(view)]="view"
           ></div>
         </div>
         <div class="col-9">

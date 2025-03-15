@@ -1,5 +1,8 @@
-<div root>
-  <mat-sidenav-container class="page d-flex flex-row flex-column-fluid" autosize style="background-color: transparent;">
+@let isScrolled = scrollService.isScrolled$ | async;
+
+<div class="d-flex flex-column flex-root h-100">
+  <mat-sidenav-container class="page d-flex flex-row flex-column-fluid" autosize
+                         style="background-color: transparent; overflow: unset !important;">
     <mat-sidenav
       #snav
       class="aside aside-default aside-hoverable"
@@ -12,8 +15,9 @@
     </mat-sidenav>
 
     <div wrapper>
-      <div header></div>
-      <div content>
+      <header header [class.shadow]="isScrolled" [ngStyle]="headerStyles"
+              style="z-index: 999999999999999 !important"></header>
+      <div content [style.margin-top.px]="isScrolled ? scrollService.scrollThreshold : 0">
         <div toolbar>
           <div toolbarContainer>
             <div toolbarInfo>

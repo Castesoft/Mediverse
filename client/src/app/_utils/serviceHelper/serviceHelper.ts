@@ -107,7 +107,7 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
     if (key === null) throw new Error("Key cannot be null");
 
     const payload: HttpParams = transformToHttpParams(transform(param));
-    console.log('Loading paged list with params: ', param);
+    // console.log('Loading paged list with params: ', param);
 
     this.loading.set(true);
     return getPaginatedResponse<T>(this.baseUrl, payload, this.http).pipe(

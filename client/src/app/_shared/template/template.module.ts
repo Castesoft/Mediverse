@@ -10,7 +10,6 @@ import { FormWrapperComponent } from "src/app/_shared/template/components/form-w
 import { OnlineBadgeComponent } from "src/app/_shared/template/components/online-badge.component";
 import { PageComponent } from "src/app/_shared/template/components/page.component";
 import { PostComponent } from "src/app/_shared/template/components/post.component";
-import { RootComponent } from "src/app/_shared/template/components/root.component";
 import { WrapperComponent } from "src/app/_shared/template/components/wrapper.component";
 import { AuthAsideComponent } from './components/auth-aside.component';
 import { BreadcrumbsModule } from "src/app/_shared/template/components/breadcrumbs/breadcrumbs.module";
@@ -35,7 +34,6 @@ import { TablesModule } from "src/app/_shared/template/components/tables/tables.
     PostComponent,
     OnlineBadgeComponent,
     WrapperComponent,
-    RootComponent,
     PageComponent,
     FooterComponent,
     AuthAsideComponent,
@@ -62,7 +60,6 @@ import { TablesModule } from "src/app/_shared/template/components/tables/tables.
     OnlineBadgeComponent,
     PageComponent,
     PostComponent,
-    RootComponent,
     WrapperComponent,
 
     AuthAsideComponent,

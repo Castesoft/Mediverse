@@ -5,72 +5,40 @@ import { TemplateModule } from '../_shared/template/template.module';
 import { HomeSearchComponent } from './components/home-search.component';
 
 @Component({
-    selector: 'search-route',
-    template: `<router-outlet></router-outlet>`,
-    standalone: false,
-  })
-  export class SearchComponent implements OnInit {
-    ngOnInit(): void { }
-  }
-
-// export const itemResolver: ResolveFn<Prescription | null> = (route, state) => {
-//     const prescription = inject(PrescriptionsService);
-//     const id = +route.paramMap.get('id')!;
-//     const edited = route.queryParamMap.get('edited');
-//     return prescription.getById(id, { noCache: edited ? true : false });
-//   };
-
-//   export const titleDetailResolver: ResolveFn<string> = (route, state) => {
-//     const prescription = inject(PrescriptionsService);
-//     const id = +route.paramMap.get('id')!;
-//     prescription.getById(id).subscribe();
-//     const item = prescription.getCurrent();
-//     if (!item) return 'Detalle de receta';
-//     const title = `Detalle de receta - ${item.id}`;
-//     return title;
-//   }
-
-//   export const titleEditResolver: ResolveFn<string> = (route, state) => {
-//     const prescription = inject(PrescriptionsService);
-//     const id = +route.paramMap.get('id')!;
-//     prescription.getById(id).subscribe();
-//     const item = prescription.getCurrent();
-//     if (!item) return 'Editar receta';
-//     const title = `Editar receta - ${item.id}`;
-//     return title;
-//   }
+  selector: 'search-route',
+  template: `
+    <router-outlet></router-outlet>`,
+  standalone: false,
+})
+export class SearchComponent implements OnInit {
+  ngOnInit(): void { }
+}
 
 @NgModule({
-    imports: [RouterModule.forChild([
-      {
-        path: '', title: 'Búsqueda', data: { breadcrumb: 'Búsqueda', },
-        component: SearchComponent, runGuardsAndResolvers: 'always',
-        children: [
-          { path: '', component: HomeSearchComponent, title: 'Búsqueda de especialista', data: { breadcrumb: 'Especialista', }, },
-        //   { path: 'create', component: PrescriptionNewComponent, title: 'Crear nueva receta', data: { breadcrumb: 'Nuevo', }, },
-        //   {
-        //     path: ':id', title: titleDetailResolver, data: { breadcrumb: 'Detalle', },
-        //     component: PrescriptionDetailsComponent,
-        //     resolve: { item: itemResolver },
-        //   },
-        //   {
-        //     path: ':id/edit', title: titleEditResolver, data: { breadcrumb: 'Editar', },
-        //     component: PrescriptionEditComponent,
-        //     resolve: { item: itemResolver },
-        //   },
-        ],
-      },
-    ])],
-    exports: [RouterModule]
-  })
-  export class SearchRoutingModule {
-  }
+  imports: [ RouterModule.forChild([
+    {
+      path: '', title: 'Búsqueda', data: { breadcrumb: 'Búsqueda', },
+      component: SearchComponent, runGuardsAndResolvers: 'always',
+      children: [
+        {
+          path: '',
+          component: HomeSearchComponent,
+          title: 'Búsqueda de especialista',
+          data: { breadcrumb: 'Especialista', },
+        },
+      ],
+    },
+  ]) ],
+  exports: [ RouterModule ]
+})
+export class SearchRoutingModule {
+}
 
 @NgModule({
-    declarations: [
-      SearchComponent,
-    ],
-    imports: [CommonModule, SearchRoutingModule, TemplateModule,]
-  })
-  export class SearchModule {
-  }
+  declarations: [
+    SearchComponent,
+  ],
+  imports: [ CommonModule, SearchRoutingModule, TemplateModule, ]
+})
+export class SearchModule {
+}

@@ -1,20 +1,20 @@
 @if (!hideShowing()) {
   <div class="col-auto d-flex">
-    <!-- <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900">
-      Mostrando
-      {{(pagination().currentPage - 1) * pagination().itemsPerPage + 1 | number}}
-      a
-      {{pagination().currentPage * pagination().itemsPerPage < pagination().totalItems ? pagination().currentPage * pagination().itemsPerPage : pagination().totalItems | number}}
-      de
-      {{pagination().totalItems | number}}
-    </p> -->
-    @if (!isLastPage && !hideShowAll()) {
-      @if (pagination().totalCount <= 50) {
+    <!--    <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900">-->
+    <!--      Mostrando-->
+    <!--      {{ (pagination().currentPage - 1) * pagination().itemsPerPage + 1 | number }}-->
+    <!--      a-->
+    <!--      {{ pagination().currentPage * pagination().itemsPerPage < pagination().totalCount ? pagination().currentPage * pagination().itemsPerPage : pagination().totalCount | number }}-->
+    <!--      de-->
+    <!--      {{ pagination().totalCount | number }}-->
+    <!--    </p>-->
+    @if (!isLastPage() && !hideShowAll()) {
+      @if (pagination().totalCount! <= 50) {
         <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadMore()">
           Mostrar todos
           <fa-icon [icon]="icons.faAngleRight" class="ms-1"/>
         </a>
-      } @else if (totalPages > 1 && pagination().itemsPerPage < 50) {
+      } @else if (totalPages > 1 && pagination().itemsPerPage! < 50) {
         <a class="fw-semi-bold pointer" style="text-decoration: none;" (click)="onLoadMore()">
           Cargar más
           <fa-icon [icon]="icons.faAngleRight" class="ms-1"/>
@@ -28,12 +28,13 @@
     }
   </div>
 }
+
 <div class="col-auto d-flex gap-3">
   <button (click)="onPrevious()" data-list-pagination="prev" class="page-link pointer"
-          [disabled]="pagination().currentPage === 1"
-          [class.disabled]="pagination().currentPage === 1">
+          [disabled]="pagination().currentPage === 1 || isLoading()"
+          [class.disabled]="pagination().currentPage === 1 || isLoading()">
     <fa-icon [icon]="icons.faChevronLeft" size="sm"
-             [ngStyle]="{color: pagination().currentPage === 1 ? '#C4CADA' : '#4B5675'}"/>
+             [ngStyle]="{color: pagination().currentPage === 1 || isLoading() ? '#C4CADA' : '#4B5675'}"/>
   </button>
   <ul class="mb-0 pagination">
     @for (page of pages; let idx = $index; track idx) {
@@ -41,16 +42,17 @@
         <button class="page-link pointer" type="button"
                 (click)="page !== pagination().currentPage && navigateToPage(page); $event.preventDefault()"
                 [attr.data-page]="pagination().itemsPerPage"
-                [attr.data-i]="page">
+                [attr.data-i]="page"
+                [disabled]="isLoading()">
           {{ page | number }}
         </button>
       </li>
     }
   </ul>
   <button (click)="onNext()" class="page-link pe-0" data-list-pagination="next"
-          [disabled]="pagination().currentPage === totalPages"
-          [class.disabled]="pagination().currentPage === totalPages">
+          [disabled]="pagination().currentPage === totalPages || isLoading()"
+          [class.disabled]="pagination().currentPage === totalPages || isLoading()">
     <fa-icon [icon]="icons.faChevronRight" size="sm"
-             [ngStyle]="{color: pagination().currentPage === totalPages ? '#C4CADA' : '#4B5675'}"/>
+             [ngStyle]="{color: pagination().currentPage === totalPages || isLoading() ? '#C4CADA' : '#4B5675'}"/>
   </button>
 </div>

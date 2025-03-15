@@ -501,8 +501,6 @@ public class EventsController(
         [FromBody] EventUpdateEvolutionDto request)
     {
         if (string.IsNullOrEmpty(request.Content)) return BadRequest("La evolución es requerida.");
-        if (!await uow.EventRepository.ExistsByIdAsync(id))
-            return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
 
         var item = await uow.EventRepository.GetByIdAsync(id);
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
@@ -523,8 +521,6 @@ public class EventsController(
         [FromBody] EventUpdateNextStepDto request)
     {
         if (string.IsNullOrEmpty(request.Content)) return BadRequest("El siguiente paso es requerido.");
-        if (!await uow.EventRepository.ExistsByIdAsync(id))
-            return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
 
         var item = await uow.EventRepository.GetByIdAsync(id);
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
