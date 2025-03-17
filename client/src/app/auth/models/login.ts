@@ -14,7 +14,7 @@ export class Login {
 
 export const loginInfo: FormInfo<Login> = {
   email: {
-    type: 'text', label: 'Email', validators: [ Validators.required, Validators.email, Validators.maxLength(255) ],
+    type: 'email', label: 'Email', validators: [ Validators.required, Validators.email, Validators.maxLength(255) ],
     validationErrors: {
       required: 'El nombre de usuario o el correo es requerido.',
       minlength:

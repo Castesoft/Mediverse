@@ -36,7 +36,7 @@ export class CardIconComponent {
 
   constructor() {
     effect(() => {
-      const theme: Theme = this.themeService.theme();
+      const theme: Theme = this.themeService.effectiveTheme();
       const key: string = this.brand()?.toString().toLowerCase() || '';
 
       console.log(key);
