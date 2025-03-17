@@ -143,6 +143,30 @@
       }
     }
 
+    @if (consentStatus() === false) {
+      <div
+        class="notice d-flex bg-light-warning rounded border-warning border border-dashed mb-12 p-6 align-items-center">
+        <i class="ki-duotone ki-information fs-2tx text-warning me-4">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"> </span>
+        </i>
+
+        <div class="d-flex flex-stack flex-grow-1 ">
+          <div>
+            <h4 class="text-gray-900 fw-bold mb-1">¡El doctor no puede ver tu historial clínico!</h4>
+            <div class="fs-6 fw-normal text-gray-700 ">
+              Para que el doctor pueda ver tu historial clínico, necesitas compartirlo.
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-warning btn-sm nowrap" (click)="onShareMedicalHistory()">
+          Compartir historial clínico
+        </button>
+      </div>
+    }
+
     <div class="notice d-flex bg-light-danger rounded border-danger border border-dashed p-6">
       <i class="ki-duotone ki-shield-tick fs-2tx text-danger me-4">
         <span class="path1"></span>
@@ -168,7 +192,7 @@
   </div>
 </div>
 
-@if (showPaymentSection) {
+@if (showPaymentSection() === true) {
   <div class="mini-checkout mt-8">
     <h2 class="fw-bold">Completar Pago</h2>
     <div class="row mt-4">

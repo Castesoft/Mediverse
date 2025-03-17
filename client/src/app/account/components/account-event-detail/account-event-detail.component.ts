@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import Event from 'src/app/_models/events/event';
@@ -30,6 +30,9 @@ import {
 } from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
 import { MatDialog } from "@angular/material/dialog";
 import { NurseDisplayCardComponent } from "src/app/nurses/components/nurse-display-card.component";
+import { ClinicalHistoryConsentService } from 'src/app/_services/clinical-history-consent.service';
+import { ClinicalHistoryVerification } from 'src/app/_models/clinicalHistoryVerification';
+import { ClinicalHistoryConsentModalComponent, ClinicalHistoryConsentModalData } from 'src/app/clinical-history/clinical-history-consent-modal.component';
 
 @Component({
   selector: 'account-event-detail-route',
@@ -57,19 +60,54 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
   total: number = 0;
   selectedPaymentMethod: PaymentMethod | null = null;
   selectedAddress: any = null;
-  showPaymentSection: boolean = false;
   selectedTab: string = 'general';
 
+  showPaymentSection = signal<boolean>(false);
+  consentStatus = signal<boolean>(false);
+
+  private readonly consentService: ClinicalHistoryConsentService = inject(ClinicalHistoryConsentService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly toastr: ToastrService = inject(ToastrService);
+  private readonly dialog: MatDialog = inject(MatDialog);
 
   readonly matDialog: MatDialog = inject(MatDialog);
 
   constructor() {
     super('events', FormUse.DETAIL);
     this.key.set(`${this.router.url}#account-event-detail`);
+
+    effect(() => {
+      this.route.paramMap.subscribe({
+        next: params => {
+          if (params.has('id')) {
+            this.id.set(+params.get('id')!);
+          }
+        }
+      });
+      this.route.data.subscribe({
+        next: (data) => {
+          this.item.set(data['item']);
+          const itemForLabel = this.item();
+          if (itemForLabel !== null && itemForLabel !== undefined) {
+            const codeNumberLabel = itemForLabel.codeNumber;
+            if (codeNumberLabel !== null && codeNumberLabel !== undefined) {
+              this.label.update(_ => codeNumberLabel.toString());
+            }
+          }
+        },
+      });
+      const navigation = this.router.getCurrentNavigation();
+      if (navigation !== null) {
+        const key = navigation?.extras?.state?.['key'];
+        if (key) {
+          this.key.set(key);
+        }
+      }
+
+    })
+
   }
 
   ngOnInit(): void {
@@ -92,6 +130,21 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     this.paymentCheckoutService.selectedPaymentMethod$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(method => {
       this.selectedPaymentMethod = method;
     });
+  }
+
+  private fetchConsentStatus(): void {
+    const userId: number | null = this.item()?.doctor?.id || null;
+    const patientId: number | null = this.item()?.patient?.id || null;
+
+    if (!userId || !patientId) {
+      console.error('User or patient ID is null.');
+      return;
+    }
+
+    this.consentService.getConsentStatus(userId, patientId)
+      .subscribe((status: ClinicalHistoryVerification) => {
+        this.consentStatus.update(_ => status.hasAccess);
+      });
   }
 
   onProceedPayment(): void {
@@ -133,13 +186,48 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
       .afterClosed()
       .subscribe((confirmed: boolean) => {
         if (confirmed) {
-          this.showPaymentSection = true;
+          this.showPaymentSection.update(_ => true);
         }
       });
   }
 
   onApplyPromoCode(): void {
     this.toastr.error('El código promocional no es válido');
+  }
+
+  onShareMedicalHistory(): void {
+
+    console.log('Sharing medical history...', this.item());
+
+
+    const patientId: number | null = this.item()?.patient?.id || null;
+    const doctorId: number | null = this.item()?.doctor?.id || null;
+
+    if (!patientId || !doctorId) {
+      console.error('Patient or doctor ID is null.');
+      return
+    }
+
+    const dialogData: ClinicalHistoryConsentModalData = {
+      doctorId: doctorId,
+      patientId: patientId,
+      currentConsent: this.consentStatus()
+    };
+
+    this.dialog.open(ClinicalHistoryConsentModalComponent, {
+      data: dialogData,
+      width: '400px',
+      autoFocus: false
+    }).afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.consentService.updateConsentStatus(doctorId, patientId, !this.consentStatus())
+          .subscribe((updatedStatus: ClinicalHistoryVerification) => {
+            console.log('Updated consent status:', updatedStatus);
+            this.consentStatus.update(_ => updatedStatus.hasAccess);
+            this.toastr.success('Historial clínico compartido exitosamente.');
+          });
+      }
+    });
   }
 
   protected readonly PhotoShape = PhotoShape;
