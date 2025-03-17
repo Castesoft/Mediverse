@@ -240,39 +240,94 @@ public class ClinicsController(
             foreach (var item in doctor.DoctorClinics)
                 item.IsMain = false;
 
-        Address? clinic = await uow.AddressRepository.GetByIdAsync(id);
+        Address? itemToUpdate = await uow.AddressRepository.GetByIdAsync(id);
 
-        if (clinic == null) return BadRequest("Error al obtener la clínica.");
+        if (itemToUpdate == null) return BadRequest("Error al obtener la clínica.");
 
         if (
-            request.Street != clinic.Street ||
-            request.ExteriorNumber != clinic.ExteriorNumber ||
-            request.Neighborhood != clinic.Neighborhood ||
-            request.City != clinic.City ||
-            request.State != clinic.State ||
-            request.Country != clinic.Country ||
-            request.Zipcode != clinic.Zipcode
+            request.Street != itemToUpdate.Street ||
+            request.ExteriorNumber != itemToUpdate.ExteriorNumber ||
+            request.Neighborhood != itemToUpdate.Neighborhood ||
+            request.City != itemToUpdate.City ||
+            request.State != itemToUpdate.State ||
+            request.Country != itemToUpdate.Country ||
+            request.Zipcode != itemToUpdate.Zipcode
         )
         {
             var (latitude, longitude) =
-                await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(clinic));
+                await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(itemToUpdate));
 
-            clinic.Longitude = longitude;
-            clinic.Latitude = latitude;
+            itemToUpdate.Longitude = longitude;
+            itemToUpdate.Latitude = latitude;
 
-            Log.Information("Coordinates updated for {clinicName}.", clinic.Name);
+            Log.Information("Coordinates updated for {clinicName}.", itemToUpdate.Name);
         }
 
-        mapper.Map(request, clinic);
+        itemToUpdate.Name = request.Name;
+        itemToUpdate.Description = request.Description;
+        itemToUpdate.Street = request.Street;
+        itemToUpdate.InteriorNumber = request.InteriorNumber;
+        itemToUpdate.ExteriorNumber = request.ExteriorNumber;
+        itemToUpdate.Neighborhood = request.Neighborhood;
+        itemToUpdate.City = request.City;
+        itemToUpdate.State = request.State;
+        itemToUpdate.Country = request.Country;
+        itemToUpdate.Zipcode = request.Zipcode;
+        itemToUpdate.DoctorClinic.IsMain = request.IsMain;
 
-        clinic.DoctorClinic.IsMain = request.IsMain.Value;
+        if (request.RemovedImageIds != null && request.RemovedImageIds.Any())
+        {
+            var photosToRemove = itemToUpdate.ClinicPhotos
+                .Where(pp => request.RemovedImageIds.Contains(pp.PhotoId.ToString()))
+                .ToList();
+
+            foreach (var photo in photosToRemove)
+            {
+                if (!string.IsNullOrEmpty(photo.Photo.PublicId))
+                {
+                    await cloudinaryService.DeleteAsync(photo.Photo.PublicId);
+                }
+
+                itemToUpdate.ClinicPhotos.Remove(photo);
+                uow.PhotoRepository.Delete(photo.Photo);
+            }
+        }
+
+        if (request.Files != null && request.Files.Count > 0)
+        {
+            foreach (var file in request.Files)
+            {
+                var uploadResult = await UploadImage(file);
+                if (uploadResult != null)
+                {
+                    itemToUpdate.ClinicPhotos.Add(new ClinicPhoto(new Photo
+                    {
+                        Url = uploadResult.SecureUrl,
+                        PublicId = uploadResult.PublicId,
+                        Size = (int?)file.Length
+                    }));
+                }
+            }
+        }
+
+        if (itemToUpdate.ClinicPhotos.Count != 0)
+        {
+            var mainPhotoIndex = request.MainImageIndex;
+            if (mainPhotoIndex >= 0 && mainPhotoIndex < itemToUpdate.ClinicPhotos.Count)
+            {
+                foreach (var (photo, index) in itemToUpdate.ClinicPhotos.Select((p, i) => (p, i)))
+                {
+                    photo.IsMain = index == mainPhotoIndex;
+                }
+            }
+        }
 
         if (uow.HasChanges())
         {
             if (!await uow.Complete()) return BadRequest($"Error al actualizar la clínica de {doctor.FirstName}.");
         }
 
-        ClinicDto? itemToReturn = await uow.ClinicRepository.GetDtoByIdAsync(clinic.Id);
+        ClinicDto? itemToReturn = await uow.ClinicRepository.GetDtoByIdAsync(id);
 
         return itemToReturn;
     }

@@ -49,6 +49,7 @@ namespace MainService.Core.DTOs.Addresses
 
         public int? MainImageIndex { get; set; }
         public List<IFormFile> Files { get; set; } = [];
+        public List<string>? RemovedImageIds { get; set; }
     }
 }
 
