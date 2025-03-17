@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { Account } from 'src/app/_models/account/account';
 import { SatisfactionSurvey } from 'src/app/_models/satisfactionSurvey';
@@ -22,7 +22,6 @@ export class AccountComponent implements OnInit {
   readonly scrollService: ScrollService = inject(ScrollService);
   readonly sidebar: SidebarService = inject(SidebarService);
 
-  isScrolled: boolean = false;
   headerStyles: { [key: string]: string } = {
     left: '0px',
     width: '100%'
@@ -33,6 +32,14 @@ export class AccountComponent implements OnInit {
   account: Account | null = null;
   label?: string;
   satisfactionSurveys: SatisfactionSurvey[] = [];
+
+  constructor() {
+    effect(() => {
+
+      this.updateHeaderStyles();
+
+    });
+  }
 
   ngOnInit(): void {
     this.accountService.getSatisfactionSurveys().subscribe({
@@ -60,29 +67,24 @@ export class AccountComponent implements OnInit {
       }
     });
 
-    this.subscribeToScrollService();
-
     this.account = this.accountService.current();
   }
 
-  private subscribeToScrollService(): void {
-    this.scrollService.isScrolled$.subscribe({
-      next: (isScrolled) => {
-        this.isScrolled = isScrolled;
-        this.updateHeaderStyles();
-      }
-    });
-  }
-
   updateHeaderStyles(): void {
-    if (this.isScrolled) {
+    if (this.scrollService.isScrolled() === true && this.sidebar.opened() === true) {
       const drawerWidth: any = this.drawerElement.nativeElement.getBoundingClientRect().width;
       this.headerStyles = {
         left: `${drawerWidth}px`,
         width: `calc(100% - ${drawerWidth}px)`,
         position: 'fixed'
       };
-    } else {
+    } else if (this.scrollService.isScrolled() === true && this.sidebar.opened() === false) {
+      this.headerStyles = {
+        left: '0px',
+        width: '100%',
+        position: 'fixed'
+      };
+    }else {
       this.headerStyles = {
         left: '0px',
         width: '100%'

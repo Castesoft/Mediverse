@@ -1,22 +1,28 @@
-import { Injectable, NgZone } from '@angular/core';
-import { fromEvent, Observable } from 'rxjs';
-import { distinctUntilChanged, map, startWith, throttleTime } from 'rxjs/operators';
+import { Injectable, NgZone, signal } from '@angular/core';
+import { fromEvent } from 'rxjs';
+import { throttleTime } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScrollService {
   readonly scrollThreshold: number = 80;
-  isScrolled$!: Observable<boolean>;
+  isScrolled = signal<boolean>(false);
 
   constructor(private ngZone: NgZone) {
+    // Set the initial state
+    this.isScrolled.set(window.pageYOffset > this.scrollThreshold);
+
     this.ngZone.runOutsideAngular(() => {
-      this.isScrolled$ = fromEvent(window, 'scroll').pipe(
-        throttleTime(16),
-        map(() => window.pageYOffset > this.scrollThreshold),
-        startWith(window.pageYOffset > this.scrollThreshold),
-        distinctUntilChanged()
-      );
+      fromEvent(window, 'scroll').pipe(
+        throttleTime(16)
+      ).subscribe(() => {
+        const scrolled = window.pageYOffset > this.scrollThreshold;
+        // Update the signal inside Angular's zone to trigger change detection
+        this.ngZone.run(() => {
+          this.isScrolled.set(scrolled);
+        });
+      });
     });
   }
 }
