@@ -65,7 +65,7 @@ export class AccountEventsComponent implements OnInit {
 
   key: string = createId();
   isCompact: boolean = false;
-  params: WritableSignal<EventParams> = signal<EventParams>(new EventParams(this.key, { userId: null }));
+  params: WritableSignal<EventParams> = signal<EventParams>(new EventParams(this.key, { userId: null, fromAccountRoute: true, }));
 
   constructor() {
     effect(() => {
@@ -76,7 +76,8 @@ export class AccountEventsComponent implements OnInit {
         this.account = currentAccount;
         this.params.set(new EventParams(this.key, {
           fromSection: SiteSection.HOME,
-          userId: this.account.id
+          userId: this.account.id,
+          fromAccountRoute: true,
         }))
       }
     });
@@ -106,7 +107,8 @@ export class AccountEventsComponent implements OnInit {
 
     this.params.set(new EventParams(this.key, {
       fromSection: SiteSection.HOME,
-      userId: this.account?.id || null
+      userId: this.account?.id || null,
+      fromAccountRoute: true,
     }))
 
     this.loadPagedList();

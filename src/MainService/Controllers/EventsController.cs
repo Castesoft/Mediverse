@@ -38,6 +38,10 @@ public class EventsController(
     [HttpGet]
     public async Task<ActionResult<PagedList<EventDto>>> GetPagedListAsync([FromQuery] EventParams param)
     {
+        if (!await uow.UserRepository.ExistsByIdAsync(User.GetUserId())) return BadRequest("Usuario no encontrado.");
+        
+        param.AuthenticatedUserId = User.GetUserId();
+        
         if (param.IsCalendarView.HasValue && param.IsCalendarView.Value)
         {
             var list = await uow.EventRepository.GetAllDtoAsync(param);

@@ -10,6 +10,7 @@ using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using DateTime = System.DateTime;
 
 namespace MainService.Infrastructure.Data

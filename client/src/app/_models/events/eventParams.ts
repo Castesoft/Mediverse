@@ -26,6 +26,7 @@ export class EventParams extends EntityParams<Event> {
   year: number | null = null;
 
   isCalendarView: boolean = false;
+  fromAccountRoute: boolean | null = null;
 
   patients: SelectOption[] = [];
   services: SelectOption[] = [];

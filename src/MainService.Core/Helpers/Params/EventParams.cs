@@ -22,7 +22,9 @@ public class EventParams : BaseParams
     public int? NurseId { get; set; }
     public int? PatientId { get; set; }
     public int? UserId { get; set; }
+    public int? AuthenticatedUserId { get; set; }
     public bool? IsCalendarView { get; set; }
+    public bool? FromAccountRoute { get; set; }
 
     // ============================================================
     // New properties for calendar-specific filtering:

@@ -2,6 +2,7 @@ using MainService.Models.Entities;
 using MainService.Core.Helpers.Params;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace MainService.Infrastructure.QueryExtensions
 {
@@ -32,6 +33,18 @@ namespace MainService.Infrastructure.QueryExtensions
         /// </summary>
         public static IQueryable<Event> ApplyFiltering(this IQueryable<Event> query, EventParams param)
         {
+            // log params
+            Log.Information("EventParams: {@param}", param);
+
+            // for example here we are in the account route, so here, we won't get any events in which the AuthenticatedUserId is the same as the DoctorId
+            if (
+                param.FromAccountRoute.HasValue &&
+                param.FromAccountRoute.Value == true &&
+                param.AuthenticatedUserId.HasValue
+            ) {
+                query = query.Where(x => x.DoctorEvent.DoctorId != param.AuthenticatedUserId);
+            }
+            
             if (param.DoctorId.HasValue)
             {
                 query = query.Where(x => x.DoctorEvent.DoctorId == param.DoctorId.Value);
