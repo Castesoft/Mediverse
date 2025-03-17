@@ -318,6 +318,11 @@ public class ClinicsController(
                 foreach (var (photo, index) in itemToUpdate.ClinicPhotos.Select((p, i) => (p, i)))
                 {
                     photo.IsMain = index == mainPhotoIndex;
+
+                    if (photo.IsMain)
+                    {
+                        itemToUpdate.ClinicLogo = new ClinicLogo(photo.Photo);
+                    }
                 }
             }
         }
