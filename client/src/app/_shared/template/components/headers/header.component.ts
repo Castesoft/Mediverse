@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, effect, HostListener, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  InputSignal,
+  OnInit,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { MobileQueryService } from 'src/app/_services/mobile-query.service';
@@ -16,11 +26,15 @@ import { Notification } from "src/app/_models/notifications/notification";
 import {
   NotificationsDropdownComponent
 } from "src/app/_shared/components/notifications/notifications-dropdown/notifications-dropdown.component";
+import {
+  StripeConnectOnboardingDropdownComponent
+} from "src/app/_shared/components/stripe/stripe-connect-onboarding-dropdown/stripe-connect-onboarding-dropdown.component";
 
 @Component({
   selector: '[header]',
   templateUrl: './header.component.html',
   styleUrls: [ './header.component.scss' ],
+  providers: [ BsDropdownDirective, ],
   imports: [
     RouterModule,
     ThemeDropdownComponent,
@@ -28,18 +42,20 @@ import {
     BsDropdownModule,
     HeaderSearchComponent,
     CommonModule,
-    NotificationsDropdownComponent
+    NotificationsDropdownComponent,
+    StripeConnectOnboardingDropdownComponent
   ],
-  providers: [ BsDropdownDirective, ],
 })
 export class HeaderComponent implements OnInit {
   private readonly notificationRealtimeService: NotificationRealtimeService = inject(NotificationRealtimeService);
   private readonly notificationsService: NotificationsService = inject(NotificationsService);
-  private readonly accountService: AccountService = inject(AccountService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  readonly query: MobileQueryService = inject(MobileQueryService);
-  readonly sidebar: SidebarService = inject(SidebarService);
+  readonly mobileQueryService: MobileQueryService = inject(MobileQueryService);
+  readonly accountService: AccountService = inject(AccountService);
+  readonly sidebarService: SidebarService = inject(SidebarService);
+
+  compact: InputSignal<boolean> = input(false);
 
   account: Account | null = null;
   notifications: WritableSignal<Notification[]> = signal([]);

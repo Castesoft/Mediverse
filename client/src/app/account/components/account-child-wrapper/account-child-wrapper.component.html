@@ -1,0 +1,11 @@
+<div breadcrumbs></div>
+
+<div post>
+  @if (account && showAccountCard()) {
+    <div card>
+      <div accountCard [account]="account"></div>
+    </div>
+  }
+
+  <ng-content></ng-content>
+</div>

@@ -10,7 +10,6 @@ import { AdminOrdersCatalogRouteComponent } from "./routes/orders/admin-orders-c
 import { BreadcrumbsComponent } from "../_shared/components/breadcrumbs.component";
 import { PostComponent } from "../_shared/template/components/post.component";
 import { OrdersCatalogComponent } from "../orders/orders-catalog.component";
-import { ToolbarComponent } from "../_shared/template/components/toolbars/toolbar.component";
 import { AdminOrderEditRouteComponent } from "src/app/admin/routes/orders/admin-order-edit-route.component";
 import { AdminOrderCreateRouteComponent } from "src/app/admin/routes/orders/admin-order-create-route.component";
 import { OrderFormComponent } from "src/app/orders/order-form.component";
@@ -75,7 +74,6 @@ import { SubscriptionsCatalogComponent } from "src/app/subscriptions/subscriptio
     BreadcrumbsComponent,
     PostComponent,
     OrdersCatalogComponent,
-    ToolbarComponent,
     OrderFormComponent,
     ProductsCatalogComponent,
     ProductFormComponent,

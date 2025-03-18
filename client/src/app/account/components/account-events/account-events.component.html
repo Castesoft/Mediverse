@@ -1,135 +1,137 @@
 @let loading = eventsService.loading();
 @let pagination = eventsService.pagination$(key) | async;
 
-<div class="card">
-  <div class="card-body px-0">
-    <form [formGroup]="filterForm">
-      <div class="d-flex px-8 pb-8 justify-content-between align-items-center w-100">
-        <div class="d-flex gap-4">
-          <div>
-            <button class="btn btn-light px-4 py-3" (click)="resetFilters()">
-              <i class="ki-duotone ki-arrows-loop pe-0 fs-3">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-            </button>
-          </div>
+<account-child-wrapper>
+  <div class="card">
+    <div class="card-body px-0">
+      <form [formGroup]="filterForm">
+        <div class="d-flex px-8 pb-8 justify-content-between align-items-center w-100">
           <div class="d-flex gap-4">
-            <div controlDate
-                 formControlName="dateFrom"
-                 placeholder="Desde"
-                 [solid]="true"
-            ></div>
-
-            <div controlDate
-                 formControlName="dateTo"
-                 placeholder="Hasta"
-                 [solid]="true"
-            ></div>
-          </div>
-
-          <div class="d-flex">
-            <select class="form-select form-select-solid fs-0 text-1000"
-                    formControlName="status"
-                    name="status"
-                    id="status">
-              <option value="" selected>Todas</option>
-              <option value="before-current-date">Antes de Hoy</option>
-              <option value="today">Hoy</option>
-              <option value="after-current-date">Después de Hoy</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="position-relative">
-          <input type="hidden">
-          <i
-            class="ki-duotone ki-magnifier search-icon fs-2 text-gray-500 position-absolute top-50 translate-middle-y ms-5">
-            <span class="path1"></span>
-            <span class="path2"></span>
-          </i>
-          <input formControlName="search"
-                 type="text"
-                 class="search-input form-control form-control-solid ps-13"
-                 placeholder="Buscar">
-
-        </div>
-      </div>
-    </form>
-    <div tableWrapper>
-      <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer">
-        <tbody templateTableBody>
-          @if (loading) {
-            <div class="mx-8 overflow-hidden">
-              <app-catalog-layout-skeleton></app-catalog-layout-skeleton>
+            <div>
+              <button class="btn btn-light px-4 py-3" (click)="resetFilters()">
+                <i class="ki-duotone ki-arrows-loop pe-0 fs-3">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+              </button>
             </div>
-          } @else {
-            @for (item of data; track item.id; let idx = $index) {
-              <tr class="hover-actions-trigger btn-reveal-trigger event position-static notification bg-hover-light"
-                  (click)="router.navigate(['cuenta', 'citas', item.id])"
-                  [matTooltip]="item.paymentStatus !== 'paid' ? 'Esta cita aún no ha sido pagada. Da clic para pagar.' : ''"
-                  [matTooltipDisabled]="item.paymentStatus === 'paid'"
-                  [cdkContextMenuTriggerFor]="context_menu">
+            <div class="d-flex gap-4">
+              <div controlDate
+                   formControlName="dateFrom"
+                   placeholder="Desde"
+                   [solid]="true"
+              ></div>
 
-                <td timePeriodCell
-                    class="ps-8 event"
-                    [class.unpaid]="item.paymentStatus !== 'paid'"
-                    [class.unconfirmed]="false"
-                    [from]="item.dateFrom"
-                    [to]="item.dateTo"
-                    [showDate]="true"
-                    [allDay]="item.allDay"></td>
+              <div controlDate
+                   formControlName="dateTo"
+                   placeholder="Hasta"
+                   [solid]="true"
+              ></div>
+            </div>
 
-                <td userCell
-                    [user]="item.doctor"
-                    [role]="'Doctor'"></td>
+            <div class="d-flex">
+              <select class="form-select form-select-solid fs-0 text-1000"
+                      formControlName="status"
+                      name="status"
+                      id="status">
+                <option value="" selected>Todas</option>
+                <option value="before-current-date">Antes de Hoy</option>
+                <option value="today">Hoy</option>
+                <option value="after-current-date">Después de Hoy</option>
+              </select>
+            </div>
+          </div>
 
-                <td class="nowrap"
-                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;"
-                    [matTooltip]="item.service.name || ''" [matTooltipShowDelay]="500"
-                >
-                  {{ item.service.name }}
-                </td>
+          <div class="position-relative">
+            <input type="hidden">
+            <i
+              class="ki-duotone ki-magnifier search-icon fs-2 text-gray-500 position-absolute top-50 translate-middle-y ms-5">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+            <input formControlName="search"
+                   type="text"
+                   class="search-input form-control form-control-solid ps-13"
+                   placeholder="Buscar">
 
-                <td addressTableCell [address]="item.clinic || null"></td>
+          </div>
+        </div>
+      </form>
+      <div tableWrapper>
+        <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer">
+          <tbody templateTableBody>
+            @if (loading) {
+              <div class="mx-8 overflow-hidden">
+                <app-catalog-layout-skeleton></app-catalog-layout-skeleton>
+              </div>
+            } @else {
+              @for (item of data; track item.id; let idx = $index) {
+                <tr class="hover-actions-trigger btn-reveal-trigger event position-static notification bg-hover-light"
+                    (click)="router.navigate(['cuenta', 'citas', item.id])"
+                    [matTooltip]="item.paymentStatus !== 'Succeeded' ? 'Esta cita aún no ha sido pagada. Da clic para pagar.' : ''"
+                    [matTooltipDisabled]="item.paymentStatus === 'Succeeded'"
+                    [cdkContextMenuTriggerFor]="context_menu">
 
-                <td tableMenuCell
-                    [item]="item"
-                    class="pe-5"
-                    [ellipsis]="true"
-                    [contextMenu]="context_menu"
-                    [(isCompact)]="isCompact"></td>
+                  <td timePeriodCell
+                      class="ps-8 event"
+                      [class.unpaid]="item.paymentStatus !== 'Succeeded'"
+                      [class.unconfirmed]="false"
+                      [from]="item.dateFrom"
+                      [to]="item.dateTo"
+                      [showDate]="true"
+                      [allDay]="item.allDay"></td>
 
-                <ng-template #context_menu>
-                  <div cdkMenu
-                       class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4 show"
+                  <td userCell
+                      [user]="item.doctor"
+                      [role]="'Doctor'"></td>
+
+                  <td class="nowrap"
+                      style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;"
+                      [matTooltip]="item.service.name || ''" [matTooltipShowDelay]="500"
                   >
-                    <div cdkMenuItem class="menu-item px-3 py-2">
-                      Hola esto es cita
-                    </div>
-                    <button cdkMenuItem class="menu-item px-3 btn-light bg-light">
-                      <a class="menu-link">Descargar</a>
-                    </button>
-                  </div>
-                </ng-template>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
+                    {{ item.service.name }}
+                  </td>
 
-  </div>
-  <div class="card-body pt-0">
-    <div tableWrapper>
-      @if (pagination) {
-        <div tablePager
-             pager
-             [(isCompact)]="isCompact"
-             [pagination]="pagination"
-             [isLoading]="loading"
-             [(params)]="params"></div>
-      }
+                  <td addressTableCell [address]="item.clinic || null"></td>
+
+                  <td tableMenuCell
+                      [item]="item"
+                      class="pe-5"
+                      [ellipsis]="true"
+                      [contextMenu]="context_menu"
+                      [(isCompact)]="isCompact"></td>
+
+                  <ng-template #context_menu>
+                    <div cdkMenu
+                         class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4 show"
+                    >
+                      <div cdkMenuItem class="menu-item px-3 py-2">
+                        Hola esto es cita
+                      </div>
+                      <button cdkMenuItem class="menu-item px-3 btn-light bg-light">
+                        <a class="menu-link">Descargar</a>
+                      </button>
+                    </div>
+                  </ng-template>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <div class="card-body pt-0">
+      <div tableWrapper>
+        @if (pagination) {
+          <div tablePager
+               pager
+               [(isCompact)]="isCompact"
+               [pagination]="pagination"
+               [isLoading]="loading"
+               [(params)]="params"></div>
+        }
+      </div>
     </div>
   </div>
-</div>
+</account-child-wrapper>

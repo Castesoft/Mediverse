@@ -319,6 +319,9 @@ namespace MainService.Postgres.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<bool>("IsStripeConnectAccountOnboarded")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("LastActive")
                         .HasMaxLength(100)
                         .HasColumnType("timestamp with time zone");
@@ -391,6 +394,9 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("StripeCustomerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeOnboardingUrl")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")

@@ -23,6 +23,9 @@ import {
   CardSigninMethodComponent
 } from 'src/app/account/components/account-settings/card-signin-method/card-signin-method.component';
 import { NavMenuComponent } from 'src/app/account/components/account-settings/nav-menu/nav-menu.component';
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'app-account-settings',
@@ -36,7 +39,8 @@ import { NavMenuComponent } from 'src/app/account/components/account-settings/na
     CardProfileDetailsComponent,
     CardConnectedAccountsComponent,
     CardNotificationsComponent,
-    CardDeactivateComponent
+    CardDeactivateComponent,
+    AccountChildWrapperComponent
   ],
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss'

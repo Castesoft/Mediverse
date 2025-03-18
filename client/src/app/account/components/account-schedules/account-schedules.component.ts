@@ -2,11 +2,14 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'app-account-schedules',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [ FormsModule, CommonModule, AccountChildWrapperComponent ],
   templateUrl: './account-schedules.component.html',
   styleUrl: './account-schedules.component.scss'
 })

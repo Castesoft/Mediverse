@@ -329,7 +329,6 @@ import { doctorGuard } from "src/app/_guards/doctor.guard";
           runGuardsAndResolvers: 'always',
           canActivate: [ doctorGuard ]
         },
-        // hasta aqui
         // Farmacia
         {
           path: "farmacia",

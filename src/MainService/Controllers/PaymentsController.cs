@@ -97,6 +97,8 @@ namespace MainService.Controllers
 
                 if (!string.IsNullOrEmpty(accountLinkUrl))
                 {
+                    doctor.StripeOnboardingUrl = accountLinkUrl;
+                    await uow.Complete();
                     return BadRequest(
                         $"Doctor account not fully onboarded. Please complete onboarding here: {accountLinkUrl}");
                 }
@@ -191,6 +193,8 @@ namespace MainService.Controllers
 
                 if (!string.IsNullOrEmpty(accountLinkUrl))
                 {
+                    doctor.StripeOnboardingUrl = accountLinkUrl;
+                    await uow.Complete();
                     return BadRequest(
                         $"Doctor account not fully onboarded. Please complete onboarding here: {accountLinkUrl}");
                 }

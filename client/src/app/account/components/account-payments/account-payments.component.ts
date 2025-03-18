@@ -9,12 +9,15 @@ import { createId } from "@paralleldrive/cuid2";
 import { PaymentParams } from "src/app/_models/payments/paymentParams";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
 import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'div[accountPayments]',
   templateUrl: './account-payments.component.html',
   styleUrl: './account-payments.component.scss',
-  imports: [ TemplateModule, RouterModule, PaymentsCatalogComponent ],
+  imports: [ TemplateModule, RouterModule, PaymentsCatalogComponent, AccountChildWrapperComponent ],
   standalone: true,
 })
 export class AccountPaymentsComponent implements OnInit {

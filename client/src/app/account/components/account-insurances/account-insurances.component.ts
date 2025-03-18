@@ -7,6 +7,9 @@ import { InsuranceCompanySwitchComponent } from "src/app/account/utils/insurance
 import { MedicalInsuranceCompaniesService } from "src/app/medicalInsuranceCompanies/medicalInsuranceCompanies.config";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Account } from "src/app/_models/account/account";
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'app-account-insurances',
@@ -15,6 +18,7 @@ import { Account } from "src/app/_models/account/account";
     InsuranceCompanyItemComponent,
     CommonModule,
     InsuranceCompanySwitchComponent,
+    AccountChildWrapperComponent,
   ],
   templateUrl: './account-insurances.component.html',
   styleUrl: './account-insurances.component.scss'

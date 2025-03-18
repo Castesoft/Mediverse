@@ -1,245 +1,246 @@
-<span class="fw-semibold fs-4 text-gray-600">
-  Cita #{{ event.id }} de
-</span>
+<account-child-wrapper>
 
-<div class="card mt-4">
-  <div class="card-header card-header-stretch border-bottom border-gray-200">
-    <div class="card-title d-flex flex-grow-1 align-items-center">
-      <div class="fs-2 fw-bolder">
-        {{ event.dateFrom | date: 'dd/MM/yyyy' }}
+
+  <span class="fw-semibold fs-4 text-gray-600">
+    Cita #{{ event.id }} de
+  </span>
+
+  <div class="card mt-4">
+    <div class="card-header card-header-stretch border-bottom border-gray-200">
+      <div class="card-title d-flex flex-grow-1 align-items-center">
+        <div class="fs-2 fw-bolder">
+          {{ event.dateFrom | date: 'dd/MM/yyyy' }}
+        </div>
+        <div class="ms-4">
+          <span class="fw-regular badge badge-lg badge-light-info">
+            {{ event.dateFrom | date: 'HH:mm a' }} - {{ event.dateTo | date: 'HH:mm a' }}
+          </span>
+        </div>
       </div>
-
-      <div class="ms-4">
-        <span class="fw-regular badge badge-lg badge-light-info">
-          {{ event.dateFrom | date: 'HH:mm a' }} - {{ event.dateTo | date: 'HH:mm a' }}
-        </span>
+      <div class="card-toolbar m-0">
+        <ul class="nav nav-stretch nav-line-tabs border-transparent" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link fs-5 fw-semibold me-3"
+               [routerLink]="[]"
+               [routerLinkActive]="'active'"
+               [queryParams]="{ inferiorTab: 'general' }"
+               [queryParamsHandling]="'merge'"
+               (click)="selectedTab = 'general'">
+              General
+            </a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link fs-5 fw-semibold me-3"
+               [routerLink]="[]"
+               [routerLinkActive]="'active'"
+               [queryParams]="{ inferiorTab: 'recetas' }"
+               [queryParamsHandling]="'merge'"
+               (click)="selectedTab = 'recetas'">
+              Recetas
+            </a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link fs-5 fw-semibold"
+               [routerLink]="[]"
+               [routerLinkActive]="'active'"
+               [queryParams]="{ inferiorTab: 'especialistas' }"
+               [queryParamsHandling]="'merge'"
+               (click)="selectedTab = 'especialistas'">
+              Especialistas
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="card-toolbar m-0">
-      <ul
-        class="nav nav-stretch nav-line-tabs border-transparent"
-        role="tablist"
-      >
-        <li class="nav-item" role="presentation">
-          <a
-            class="nav-link fs-5 fw-semibold me-3"
-            [routerLink]="[]"
-            [routerLinkActive]="'active'"
-            [queryParams]="{ inferiorTab: 'general' }"
-            [queryParamsHandling]="'merge'"
-            (click)="selectedTab = 'general'"
-          >
-            General
-          </a>
-        </li>
-        <li class="nav-item" role="presentation">
-          <a
-            class="nav-link fs-5 fw-semibold me-3"
-            [routerLink]="[]"
-            [routerLinkActive]="'active'"
-            [queryParams]="{ inferiorTab: 'recetas' }"
-            [queryParamsHandling]="'merge'"
-            (click)="selectedTab = 'recetas'"
-          >
-            Recetas
-          </a>
-        </li>
-        <li class="nav-item" role="presentation">
-          <a
-            class="nav-link fs-5 fw-semibold"
-            [routerLink]="[]"
-            [routerLinkActive]="'active'"
-            [queryParams]="{ inferiorTab: 'especialistas' }"
-            [queryParamsHandling]="'merge'"
-            (click)="selectedTab = 'especialistas'"
-          >
-            Especialistas
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="card-body">
 
-    @switch (selectedTab) {
-      @case ('general') {
-        <div class="d-flex">
-          <div class="symbol symbol-150px mb-5 mb-xl-10">
-            <span class="symbol-label bg-light-danger">
-              <div userProfilePicture
-                   [fullName]="event.doctor.fullName"
-                   [photoUrl]="event.doctor.photoUrl"
-                   [shape]="PhotoShape.SQUARE"
-                   [size]="PhotoSize.LARGE"
-              ></div>
-            </span>
-          </div>
-          <div class="d-flex flex-column ms-4">
-            <h3 class="fw-bolder mb-4">
-              @if ($any(event.doctor.sex) === "Femenino") {
-                Dra.
-              } @else {
-                Dr.
-              }
-              {{ event.doctor.firstName }} {{ event.doctor.lastName }}
-            </h3>
-
-            <div class="mb-3">
-              <h5 class="fw-bold">Servicio</h5>
-              <p class="text-muted">
-                {{ event.service.name }}
-              </p>
+    <div class="card-body">
+      @switch (selectedTab) {
+        @case ('general') {
+          <div class="d-flex">
+            <div class="symbol symbol-160px">
+              <span class="symbol-label bg-light-danger">
+                <div userProfilePicture
+                     [fullName]="event.doctor.fullName"
+                     [photoUrl]="event.doctor.photoUrl"
+                     [shape]="PhotoShape.SQUARE"
+                     [size]="PhotoSize.LARGE">
+                </div>
+              </span>
             </div>
-
-            <div class="mb-3">
-              <h5 class="fw-bold">Clínica</h5>
-              <p class="text-muted">
-                @if (event.clinic) {
-                  {{ event.clinic.name }}
-                  {{ event.clinic.street }} {{ event.clinic.exteriorNumber }},
-                  {{ event.clinic.neighborhood }}
-                } @else {
-                  Sin clínica asignada
-                }
-              </p>
+            <div class="d-flex flex-column ms-4 gap-3">
+              <h2 class="fw-bolder mb-4">
+                {{ getDoctorTitle() }} {{ event.doctor.firstName }} {{ event.doctor.lastName }}
+              </h2>
+              <div>
+                <h5 class="fw-bold">Servicio</h5>
+                <p class="text-muted m-0">{{ event.service.name }}</p>
+              </div>
+              <div>
+                <h5 class="fw-bold">Clínica</h5>
+                <p class="text-muted m-0">
+                  @if (event.clinic) {
+                    {{ event.clinic.name }} {{ event.clinic.street }} {{ event.clinic.exteriorNumber }}, {{ event.clinic.neighborhood }}
+                  } @else {
+                    Sin clínica asignada
+                  }
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      }
-      @case ('recetas') {
-        <div class="text-center py-15">
-          <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
-            <span class="path1"></span>
-            <span class="path2"></span>
-          </i>
-          <p class="fs-5 text-muted">Aún no existen recetas para esta cita</p>
-        </div>
-      }
-      @case ('especialistas') {
-        @if (event.nurses && event.nurses!.length > 0) {
-          <div class="row row-cols-1 row-cols-md-2 g-4">
-            @for (nurse of event.nurses; track nurse.id) {
-              <div nurseDisplayCard [nurse]="nurse" class="col"></div>
-            }
-          </div>
-          <div class="d-flex justify-content-end mt-6">
-            <button type="button" class="btn btn-primary btn-sm">
-              <i class="ki-duotone ki-pencil fs-4 text-white">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-              <span>Editar</span>
-            </button>
-          </div>
-        } @else {
+        }
+        @case ('recetas') {
           <div class="text-center py-15">
             <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
               <span class="path1"></span>
               <span class="path2"></span>
             </i>
-            <p class="fs-5 text-muted">No hay especialistas asignados a esta cita.</p>
+            <p class="fs-5 text-muted">Aún no existen recetas para esta cita</p>
           </div>
         }
+        @case ('especialistas') {
+          @if (event.nurses && event.nurses.length > 0) {
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+              @for (nurse of event.nurses; track nurse.id) {
+                <div class="col">
+                  <div nurseDisplayCard [nurse]="nurse"></div>
+                </div>
+              }
+            </div>
+            <div class="d-flex justify-content-end mt-6">
+              <button type="button" class="btn btn-primary btn-sm">
+                <i class="ki-duotone ki-pencil fs-4 text-white">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+                <span>Editar</span>
+              </button>
+            </div>
+          } @else {
+            <div class="text-center py-15">
+              <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+              <p class="fs-5 text-muted">No hay especialistas asignados a esta cita.</p>
+            </div>
+          }
+        }
       }
-    }
 
-    @if (consentStatus() === false) {
-      <div
-        class="notice d-flex bg-light-warning rounded border-warning border border-dashed mb-12 p-6 align-items-center">
-        <i class="ki-duotone ki-information fs-2tx text-warning me-4">
-          <span class="path1"></span>
-          <span class="path2"></span>
-          <span class="path3"> </span>
-        </i>
-
-        <div class="d-flex flex-stack flex-grow-1 ">
-          <div>
-            <h4 class="text-gray-900 fw-bold mb-1">¡El doctor no puede ver tu historial clínico!</h4>
-            <div class="fs-6 fw-normal text-gray-700 ">
-              Para que el doctor pueda ver tu historial clínico, necesitas compartirlo.
+      @if (!consentStatus) {
+        <div
+          class="notice d-flex bg-light-warning rounded border border-warning border-dashed p-6 align-items-center mt-6">
+          <i class="ki-duotone ki-information fs-2tx text-warning me-4">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+          <div class="d-flex flex-stack flex-grow-1">
+            <div>
+              <h4 class="text-gray-900 fw-bold mb-1">
+                ¡El doctor no puede ver tu historial clínico!
+              </h4>
+              <div class="fs-6 text-gray-700 pe-7">
+                Para que el doctor pueda ver tu historial clínico, necesitas compartirlo.
+              </div>
             </div>
           </div>
+          <button class="btn btn-warning px-6 align-self-center nowrap" (click)="onShareMedicalHistory()">
+            Compartir historial clínico
+          </button>
         </div>
+      }
 
-        <button class="btn btn-warning btn-sm nowrap" (click)="onShareMedicalHistory()">
-          Compartir historial clínico
-        </button>
-      </div>
-    }
-
-    <div class="notice d-flex bg-light-danger rounded border-danger border border-dashed p-6">
-      <i class="ki-duotone ki-shield-tick fs-2tx text-danger me-4">
-        <span class="path1"></span>
-        <span class="path2"></span>
-      </i>
-      <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
-        <div class="mb-3 mb-md-0 fw-semibold">
-          <h4 class="text-gray-900 fw-bold">
-            Pago de cita pendiente
-          </h4>
-          <div class="fs-6 text-gray-700 pe-7">
-            Por favor, completa tu pago para confirmar tu cita.
+      @if (event.paymentStatus !== 'Succeeded') {
+        <div class="notice d-flex bg-light-danger rounded border-danger border border-dashed p-6 mt-6">
+          <i class="ki-duotone ki-shield-tick fs-2tx text-danger me-4">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+          <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+            <div class="mb-3 mb-md-0 fw-semibold">
+              <h4 class="text-gray-900 fw-bold mb-1">
+                Pago de cita pendiente
+              </h4>
+              <div class="fs-6 text-gray-700 pe-7">
+                Por favor, completa tu pago para confirmar tu cita.
+              </div>
+            </div>
+            <button class="btn btn-danger px-6 align-self-center nowrap"
+                    (click)="showConfirmPaymentInitiationNotice()"
+                    [disabled]="showPaymentSection">
+              Iniciar Proceso de Pago
+            </button>
           </div>
         </div>
-        <a
-          class="btn btn-danger px-6 align-self-center text-nowrap"
-          (click)="showConfirmPaymentInitiationNotice()"
-        >
-          Iniciar Proceso de Pago
-        </a>
-      </div>
+      }
     </div>
   </div>
-</div>
 
-@if (showPaymentSection() === true) {
-  <div class="mini-checkout mt-8">
-    <h2 class="fw-bold">Completar Pago</h2>
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <div checkoutAddressEntryCard></div>
-        <div checkoutPaymentMethodEntryCard class="mt-3"></div>
-      </div>
-      <div class="col-md-6">
-        <div class="card mb-4">
-          <div class="card-header">
-            <div class="card-title">
-              <h3>Resumen de Pago</h3>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <div>
-                <p class="text-muted">Subtotal:</p>
-                <p class="text-muted">IVA (16%):</p>
-                <p class="fw-bold">Total:</p>
-              </div>
-              <div class="text-end">
-                <p>{{ subtotal | currency:'MXN' }}</p>
-                <p>{{ tax | currency:'MXN' }}</p>
-                <p class="fw-bold">{{ total | currency:'MXN' }}</p>
+
+
+  @if (showPaymentSection) {
+    <div class="mini-checkout mt-8">
+      <h2 class="fw-bold">Completar Pago</h2>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div checkoutAddressEntryCard [title]="'Dirección de Facturación'"></div>
+          <div checkoutPaymentMethodEntryCard class="mt-3"></div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header">
+              <div class="card-title">
+                <h3>Resumen de Pago</h3>
               </div>
             </div>
-            <div class="d-flex justify-content-end mt-3">
-              <button type="button" class="btn btn-primary w-100" (click)="onProceedPayment()">Completar Pago</button>
-            </div>
-            <div class="row mt-3">
-              <div class="col-9">
-                <input type="text"
-                       class="form-control"
-                       placeholder="Ingrese código promocional"
-                       aria-label="Código promocional"/>
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-muted">Subtotal:</p>
+                  <p class="text-muted">IVA (16%):</p>
+                  <p class="fw-bold">Total:</p>
+                </div>
+                <div class="text-end">
+                  <p>{{ subtotal | currency:'MXN' }}</p>
+                  <p>{{ tax | currency:'MXN' }}</p>
+                  <p class="fw-bold">{{ total | currency:'MXN' }}</p>
+                </div>
               </div>
-              <div class="col-3">
-                <button type="button" class="btn btn-secondary w-100" (click)="onApplyPromoCode()">
-                  Aplicar
+              <div class="d-flex justify-content-end mt-3">
+                <button type="button"
+                        class="btn btn-primary w-100"
+                        (click)="onProceedPayment()"
+                        [disabled]="isSubmittingPayment">
+                  @if (isSubmittingPayment) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                  } @else {
+                    Completar Pago
+                  }
                 </button>
               </div>
+              <div class="row mt-3">
+                <div class="col-9">
+                  <input type="text"
+                         class="form-control"
+                         placeholder="Ingrese código promocional"
+                         aria-label="Código promocional"
+                         [disabled]="isSubmittingPayment"/>
+                </div>
+                <div class="col-3">
+                  <button type="button"
+                          class="btn btn-secondary w-100"
+                          [disabled]="isSubmittingPayment"
+                          (click)="onApplyPromoCode()">
+                    Aplicar
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+          <app-payment-disclaimer></app-payment-disclaimer>
         </div>
-        <app-payment-disclaimer></app-payment-disclaimer>
       </div>
     </div>
-  </div>
-}
+  }
+</account-child-wrapper>

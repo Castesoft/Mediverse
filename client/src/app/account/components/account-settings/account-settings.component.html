@@ -1,21 +1,21 @@
-<div class="d-flex flex-column flex-lg-row">
-  @if(query.isMobile() === false) {
-    <app-nav-menu [currentSection]="currentSection" (onSelectSection)="selectSection($event)"></app-nav-menu>
-  }
+<account-child-wrapper>
+  <div class="d-flex flex-column flex-lg-row">
+    @if (!query.isMobile()) {
+      <app-nav-menu [currentSection]="currentSection" (onSelectSection)="selectSection($event)"></app-nav-menu>
+    }
 
-  <div class="flex-md-row-fluid ms-lg-12">
+    <div class="flex-md-row-fluid ms-lg-12">
+      <app-card-overview (onSelectSection)="selectSection($event)"></app-card-overview>
 
-    <app-card-overview (onSelectSection)="selectSection($event)"></app-card-overview>
+      <app-card-signin-method (onSelectSection)="selectSection($event)"></app-card-signin-method>
 
-    <app-card-signin-method (onSelectSection)="selectSection($event)"></app-card-signin-method>
+      <app-card-profile-details (onSelectSection)="selectSection($event)"></app-card-profile-details>
 
-    <app-card-profile-details (onSelectSection)="selectSection($event)"></app-card-profile-details>
+      <app-card-connected-accounts (onSelectSection)="selectSection($event)"></app-card-connected-accounts>
 
-    <app-card-connected-accounts (onSelectSection)="selectSection($event)"></app-card-connected-accounts>
+      <app-card-notifications (onSelectSection)="selectSection($event)"></app-card-notifications>
 
-    <app-card-notifications (onSelectSection)="selectSection($event)"></app-card-notifications>
-
-    <app-card-deactivate (onSelectSection)="selectSection($event)"></app-card-deactivate>
-
+      <app-card-deactivate (onSelectSection)="selectSection($event)"></app-card-deactivate>
+    </div>
   </div>
-</div>
+</account-child-wrapper>

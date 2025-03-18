@@ -20,6 +20,9 @@ import {
 import { TablePagerComponent } from "src/app/_shared/template/components/tables/table-pager.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'app-account-notifications',
@@ -41,7 +44,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
     NotificationIconComponent,
     AsyncPipe,
     TablePagerComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AccountChildWrapperComponent
   ],
 })
 export class AccountNotificationsComponent implements OnInit {

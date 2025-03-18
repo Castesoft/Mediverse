@@ -46,6 +46,7 @@ export class Account {
 
   requiresTwoFactor: boolean = false;
   removeAvatar: boolean = false;
+  isStripeConnectAccountOnboarded: boolean = false;
 
   roles: Role[] = [];
   permissions: string[] = [];

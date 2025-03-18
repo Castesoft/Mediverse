@@ -1,137 +1,100 @@
-@if (accountService.hasRole([ 'Doctor' ])) {
+<account-child-wrapper>
   <div class="card mb-5 mb-xl-10">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-lg-7">
-          <h3 class="mb-2">Activo hasta Ene 09, 2025</h3>
-          <p class="fs-6 text-gray-600 fw-semibold mb-6 mb-lg-15">
-            Te enviaremos una notificación al vencimiento de la suscripción
-          </p>
-        </div>
-        <div class="col-lg-5">
-          <div class="fs-5 mb-2">
-            <span class="text-gray-800 fw-bold me-1">$199.99 MXN</span>
-            <span class="text-gray-600 fw-semibold">al mes</span>
-          </div>
-          <div class="fs-6 text-gray-600 fw-semibold">
-            Miembro Pro. Acceso a todas las funciones y herramientas
-          </div>
-          <div class="d-flex justify-content-end pb-0 px-0 mt-5">
+    <div class="card-header card-header-stretch">
+      <div class="card-title">
+        <h2 class="m-0">Métodos de pago</h2>
+      </div>
+      <div class="card-toolbar m-0 py-6">
+        <ul
+          class="nav nav-stretch nav-line-tabs border-transparent"
+          role="tablist"
+        >
+          <li class="nav-item" role="presentation">
             <a
-              href="#"
-              class="btn btn-light btn-active-light-primary me-2"
-              id="kt_account_billing_cancel_subscription_btn"
-            >Cancelar Suscripción</a
+              id="kt_billing_creditcard_tab"
+              class="nav-link fs-5 fw-bold me-5 active"
+              data-bs-toggle="tab"
+              role="tab"
             >
-            <button
-              class="btn btn-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#kt_modal_upgrade_plan"
-            >
-              Cambiar Plan
-            </button>
-          </div>
-        </div>
+              Tarjeta de Crédito / Debito
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-  </div>
-}
-
-<div class="card mb-5 mb-xl-10">
-  <div class="card-header card-header-stretch">
-    <div class="card-title">
-      <h2 class="m-0">Métodos de pago</h2>
-    </div>
-    <div class="card-toolbar m-0 py-6">
-      <ul
-        class="nav nav-stretch nav-line-tabs border-transparent"
-        role="tablist"
+    <div id="kt_billing_payment_tab_content" class="card-body pt-0 tab-content">
+      <div
+        id="kt_billing_creditcard"
+        class="tab-pane fade show active"
+        role="tabpanel"
       >
-        <li class="nav-item" role="presentation">
-          <a
-            id="kt_billing_creditcard_tab"
-            class="nav-link fs-5 fw-bold me-5 active"
-            data-bs-toggle="tab"
-            role="tab"
-          >
-            Tarjeta de Crédito / Debito
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div id="kt_billing_payment_tab_content" class="card-body pt-0 tab-content">
-    <div
-      id="kt_billing_creditcard"
-      class="tab-pane fade show active"
-      role="tabpanel"
-    >
-      <div class="row gx-9 gy-6">
-        @for (paymentMethod of billingDetails?.userPaymentMethods; track $index) {
-          <div paymentMethodDisplayCard
-               class="col-xl-6"
-               [paymentMethod]="paymentMethod"
-               (onMainPaymentMethodSelect)="setMainPaymentMethod($event)"
-               (onPaymentMethodDelete)="deletePaymentMethod($event)"
-          ></div>
-        }
-        <div class="col-xl-6">
-          <div
-            class="notice d-flex bg-light-primary rounded border-primary border border-dashed h-lg-100 p-6"
-          >
-            <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
-              <div class="mb-3 mb-md-0 fw-semibold">
-                <h4 class="text-gray-900 fw-bold">¡Aviso importante!</h4>
-                <div class="fs-6 text-gray-700 pe-7">
-                  Por favor lea nuestros<a href="#" class="fw-bold mx-1">Términos de Producto</a>antes de agregar una
-                  nueva tarjeta
+        <div class="row gx-9 gy-6">
+          @for (paymentMethod of billingDetails?.userPaymentMethods; track $index) {
+            <div paymentMethodDisplayCard
+                 class="col-xl-6"
+                 [paymentMethod]="paymentMethod"
+                 (onMainPaymentMethodSelect)="setMainPaymentMethod($event)"
+                 (onPaymentMethodDelete)="deletePaymentMethod($event)"
+            ></div>
+          }
+          <div class="col-xl-6">
+            <div
+              class="notice d-flex bg-light-primary rounded border-primary border border-dashed h-lg-100 p-6"
+            >
+              <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                <div class="mb-3 mb-md-0 fw-semibold">
+                  <h4 class="text-gray-900 fw-bold">¡Aviso importante!</h4>
+                  <div class="fs-6 text-gray-700 pe-7">
+                    Por favor lea nuestros<a href="#" class="fw-bold mx-1">Términos de Producto</a>antes de agregar una
+                    nueva tarjeta
+                  </div>
                 </div>
+                <a
+                  (click)="openAddPaymentMethodModal()"
+                  class="btn btn-primary px-6 align-self-center text-nowrap"
+                  data-bs-toggle="modal"
+                  data-bs-target="#kt_modal_new_card"
+                >
+                  Añadir Tarjeta
+                </a>
               </div>
-              <a
-                (click)="openAddPaymentMethodModal()"
-                class="btn btn-primary px-6 align-self-center text-nowrap"
-                data-bs-toggle="modal"
-                data-bs-target="#kt_modal_new_card"
-              >
-                Añadir Tarjeta
-              </a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
 
-<div class="card mb-5 mb-xl-10">
-  <div class="card-header">
-    <div class="card-title">
-      <h2>Dirección de Facturación</h2>
-    </div>
-  </div>
-  <div class="card-body pt-0">
-    <div class="row gx-9 gy-6">
-      @for (address of billingDetails?.userAddresses; track $index) {
-        <div billingAddressDisplayCard
-             class="col-xl-6"
-             [address]="address"
-             [index]="$index"
-             (onAddressDeleted)="deleteAddress($event)"
-             (onAddressEditClicked)="openEditAddressModal($event)"
-        ></div>
-      }
-      <div class="col-xl-6">
-        <div addressCreateCard class="h-100" (onAddressCreated)="handleBillingDetailsModification()"></div>
+  <div class="card mb-5 mb-xl-10">
+    <div class="card-header">
+      <div class="card-title">
+        <h2>Dirección de Facturación</h2>
       </div>
     </div>
-    <div class="mt-10">
-      <h3 class="mb-3">Impuestos Aplicados</h3>
-      <div class="fw-semibold text-gray-600 fs-6">
-        México - 16% IVA
-        <br/>
-        <a class="fw-bold" href="#">Más Información</a>
+    <div class="card-body pt-0">
+      <div class="row gx-9 gy-6">
+        @for (address of billingDetails?.userAddresses; track $index) {
+          <div billingAddressDisplayCard
+               class="col-xl-6"
+               [address]="address"
+               [index]="$index"
+               (onAddressDeleted)="deleteAddress($event)"
+               (onAddressEditClicked)="openEditAddressModal($event)"
+          ></div>
+        }
+        <div class="col-xl-6">
+          <div addressCreateCard class="h-100" (onAddressCreated)="handleBillingDetailsModification()"></div>
+        </div>
+      </div>
+      <div class="mt-10">
+        <h3 class="mb-3">Impuestos Aplicados</h3>
+        <div class="fw-semibold text-gray-600 fs-6">
+          México - 16% IVA
+          <br/>
+          <a class="fw-bold" href="#">Más Información</a>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</account-child-wrapper>

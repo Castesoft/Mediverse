@@ -9,6 +9,13 @@ import { MainAsideComponent } from 'src/app/_shared/template/components/main-asi
 import { AccountComponent } from "src/app/account/account.component";
 import { AccountRoutingModule } from "src/app/account/account-routing.module";
 import { MaterialModule } from 'src/app/_shared/material.module';
+import {
+  DashboardSidenavComponent
+} from "src/app/_shared/components/dashboard/dashboard-sidenav/dashboard-sidenav.component";
+import {
+  DashboardToolbarComponent
+} from "src/app/_shared/components/dashboard/dashboard-toolbar/dashboard-toolbar.component";
+import { BreadcrumbsComponent } from "src/app/_shared/components/breadcrumbs.component";
 
 @NgModule({
   declarations: [ AccountComponent ],
@@ -22,6 +29,9 @@ import { MaterialModule } from 'src/app/_shared/material.module';
     AccountCardComponent,
     MainAsideComponent,
     MaterialModule,
+    DashboardSidenavComponent,
+    DashboardToolbarComponent,
+    BreadcrumbsComponent,
   ]
 })
 export class AccountModule {}

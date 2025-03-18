@@ -57,6 +57,8 @@ public class AppUser : IdentityUser<int>
     public string? Education { get; set; }
     public string? Post { get; set; }
     public string? StripeConnectAccountId { get; set; }
+    public string? StripeOnboardingUrl { get; set; }
+    public bool IsStripeConnectAccountOnboarded { get; set; } = false;
     public bool? RequireAnticipatedCardPayments { get; set; }
     public List<ClinicNurse> ClinicNurses { get; set; } = [];
     public List<NurseEvent> NurseEvents { get; set; } = [];

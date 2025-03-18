@@ -4,9 +4,7 @@ import {
   AddressDisplayCardComponent
 } from "src/app/addresses/components/address-display-card/address-display-card.component";
 import { BsModalService } from "ngx-bootstrap/modal";
-import {
-  AddPaymentMethodComponent
-} from "src/app/account/components/account-billing/add-payment-method/add-payment-method.component";
+import { AddAddressComponent } from "src/app/account/components/account-billing/add-address/add-address.component";
 
 @Component({
   selector: 'div[addressSelector]',
@@ -28,11 +26,14 @@ export class AddressSelectorComponent {
 
   constructor() {
     effect(() => {
-      const methods: Address[] = this.addresses();
-      const defaultMethod: Address | undefined = methods.find((pm: Address) => pm.isMain);
-      this._selectedAddress = defaultMethod ? defaultMethod : (methods.length > 0 ? methods[0] : null);
+      const addressList: Address[] = this.addresses();
+      const confirmationRequired: boolean = this.confirmOnSelect();
+
+      const defaultAddress: Address | undefined = addressList.find((addr: Address) => addr.isMain);
+      this._selectedAddress = defaultAddress ? defaultAddress : (addressList.length > 0 ? addressList[0] : null);
+
       if (this._selectedAddress) {
-        if (!this.confirmOnSelect()) {
+        if (!confirmationRequired) {
           this.selectedAddress.emit(this._selectedAddress);
         } else {
           this.pendingAddress = this._selectedAddress;
@@ -41,15 +42,18 @@ export class AddressSelectorComponent {
     });
   }
 
-  onCardClick(method: Address) {
+  onCardClick(address: Address) {
     if (this.confirmOnSelect()) {
-      this.pendingAddress = method;
+      this.pendingAddress = address;
     } else {
-      this._selectedAddress = method;
-      this.selectedAddress.emit(method);
+      this._selectedAddress = address;
+      this.selectedAddress.emit(address);
     }
   }
 
+  /**
+   * Confirms the pending selection, setting it as the selected address.
+   */
   confirmSelection() {
     if (this.pendingAddress) {
       this._selectedAddress = this.pendingAddress;
@@ -57,16 +61,23 @@ export class AddressSelectorComponent {
     }
   }
 
-  isSelected(method: Address): boolean {
+  /**
+   * Determines if a given address is currently selected.
+   * When confirmation is required, the pending address is compared.
+   */
+  isSelected(address: Address): boolean {
     if (this.confirmOnSelect() && this.pendingAddress) {
-      return this.pendingAddress.id === method.id;
+      return this.pendingAddress.id === address.id;
     }
-    return this._selectedAddress?.id === method.id;
+    return this._selectedAddress?.id === address.id;
   }
 
+  /**
+   * Opens a modal for creating a new address.
+   */
   openAddressCreateModal() {
-    this.bsModalService.show(AddPaymentMethodComponent, {
-      initialState: { title: 'Añadir método de pago', },
+    this.bsModalService.show(AddAddressComponent, {
+      initialState: { title: 'Añadir nueva dirección' },
       class: "modal-dialog-centered"
     });
   }

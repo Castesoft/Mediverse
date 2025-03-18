@@ -27,6 +27,9 @@ import {
 } from "src/app/_shared/components/catalog-layout-skeleton/catalog-layout-skeleton.component";
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Router } from "@angular/router";
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'app-account-events',
@@ -48,7 +51,8 @@ import { Router } from "@angular/router";
     Forms2Module,
     ReactiveFormsModule,
     ControlDateComponent,
-    CatalogLayoutSkeletonComponent
+    CatalogLayoutSkeletonComponent,
+    AccountChildWrapperComponent
   ],
 })
 export class AccountEventsComponent implements OnInit {

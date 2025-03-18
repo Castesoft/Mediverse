@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250317230727_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250318225958_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -322,6 +322,9 @@ namespace MainService.Postgres.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<bool>("IsStripeConnectAccountOnboarded")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("LastActive")
                         .HasMaxLength(100)
                         .HasColumnType("timestamp with time zone");
@@ -394,6 +397,9 @@ namespace MainService.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("StripeCustomerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeOnboardingUrl")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")

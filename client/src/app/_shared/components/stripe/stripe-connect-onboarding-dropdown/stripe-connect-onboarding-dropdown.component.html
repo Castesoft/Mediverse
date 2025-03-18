@@ -1,0 +1,23 @@
+<div class="btn btn-icon text-danger btn-active-light-danger w-30px h-30px w-md-40px h-md-40px position-relative"
+     dropdownToggle>
+  <i class="ki-duotone ki-information-5 fs-2x text-danger">
+    <span class="path1"></span>
+    <span class="path2"></span>
+    <span class="path3"></span>
+  </i>
+</div>
+
+<div
+  *dropdownMenu
+  class="dropdown-menu dropdown-menu-right menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px">
+  <div class="d-flex px-4 py-3 align-items-center">
+    <div class="">
+      <h5>No puedes recibir pagos</h5>
+      <p class="mb-0">Aun no has conectado tu cuenta de Stripe. Conéctala para poder recibir pagos de tus pacientes.</p>
+    </div>
+
+    <div>
+      <button class="btn btn-primary" (click)="openOnboardingWindow()">Conectar</button>
+    </div>
+  </div>
+</div>

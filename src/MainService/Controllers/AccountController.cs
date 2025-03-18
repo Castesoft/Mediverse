@@ -249,6 +249,37 @@ public class AccountController(
 
         return await usersService.GenerateAccountDtoAsync(user.Id);
     }
+    
+    [HttpGet("connect-onboarding-link/{id:int}")]
+    public async Task<IActionResult> GetConnectOnboardingLinkAsync(int id)
+    {
+        var user = await uow.UserRepository.GetByIdAsync(id);
+        if (user == null)
+            return NotFound($"El usuario con id {id} no existe.");
+    
+        var userStripeAccountId = user.StripeConnectAccountId;
+        if (string.IsNullOrEmpty(userStripeAccountId))
+        {
+            var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(user);
+            if (account == null || string.IsNullOrEmpty(account.Id))
+                return BadRequest("Doctor does not have a Stripe Connect account and creation failed.");
+    
+            user.StripeConnectAccountId = account.Id;
+            uow.UserRepository.Update(user);
+            await uow.Complete();
+            userStripeAccountId = account.Id;
+    
+            if (!string.IsNullOrEmpty(accountLinkUrl))
+            {
+                user.StripeOnboardingUrl = accountLinkUrl;
+                await uow.Complete();
+            }
+        }
+    
+        var onboardingLink = await stripeService.GetOnboardingLinkAsync(userStripeAccountId);
+        return Ok(new { onboardingLink });
+    }
+
 
     [HttpPost("register-doctor")]
     public async Task<ActionResult<AccountDto?>> RegisterDoctorAsync([FromForm] IFormFile file,
@@ -2085,8 +2116,10 @@ public class AccountController(
         if (request.Specialty == null) return BadRequest("No se ha enviado la especialidad.");
         if (!request.Specialty.Id.HasValue) return BadRequest("No se ha enviado el ID de la especialidad.");
         if (string.IsNullOrEmpty(request.LicenseNumber)) return BadRequest("La cédula profesional es requerida.");
-        if (string.IsNullOrEmpty(request.SpecialtyLicense)) return BadRequest("La cédula de especialidad es requerida.");
-        if (!request.IsMain.HasValue) return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
+        if (string.IsNullOrEmpty(request.SpecialtyLicense))
+            return BadRequest("La cédula de especialidad es requerida.");
+        if (!request.IsMain.HasValue)
+            return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
         if (request.File == null) return BadRequest("No se ha enviado el documento.");
 
         if (!await uow.UserRepository.ExistsByIdAsync(userId))
@@ -2105,14 +2138,15 @@ public class AccountController(
         if (specialty == null) return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
 
         AppUser? user = await userManager.Users
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
-            .SingleOrDefaultAsync(x => x.Id == userId)
-        ;
+                .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+                .SingleOrDefaultAsync(x => x.Id == userId)
+            ;
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        if (user.UserMedicalLicenses.Any(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty.Id == request.Specialty.Id.Value))
+        if (user.UserMedicalLicenses.Any(x =>
+                x.MedicalLicense.MedicalLicenseSpecialty.Specialty.Id == request.Specialty.Id.Value))
             return BadRequest("Ya tienes esta especialidad registrada.");
 
         var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
@@ -2142,7 +2176,8 @@ public class AccountController(
 
         user.UserMedicalLicenses.Add(new UserMedicalLicense
         {
-            MedicalLicense = new MedicalLicense {
+            MedicalLicense = new MedicalLicense
+            {
                 LicenseNumber = request.LicenseNumber,
                 SpecialtyLicense = request.SpecialtyLicense,
                 MedicalLicenseSpecialty = new(specialty),
@@ -2171,12 +2206,12 @@ public class AccountController(
         int userId = User.GetUserId();
 
         AppUser? user = await userManager.Users
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
-            .SingleOrDefaultAsync(x => x.Id == userId)
-        ;
+                .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
+                .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+                .SingleOrDefaultAsync(x => x.Id == userId)
+            ;
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
@@ -2199,14 +2234,17 @@ public class AccountController(
         {
             if (!string.IsNullOrEmpty(toDelete.MedicalLicense.MedicalLicenseDocument.Document.PublicId))
             {
-                var deleteResponse = await cloudinaryService.DeleteAsync(toDelete.MedicalLicense.MedicalLicenseDocument.Document.PublicId);
+                var deleteResponse =
+                    await cloudinaryService.DeleteAsync(
+                        toDelete.MedicalLicense.MedicalLicenseDocument.Document.PublicId);
                 if (deleteResponse.Error != null) return BadRequest(deleteResponse.Error.Message);
             }
 
             if (!string.IsNullOrEmpty(toDelete.MedicalLicense.MedicalLicenseDocument.Document.ThumbnailPublicId))
             {
                 var thumbnailDeleteResponse =
-                    await cloudinaryService.DeleteAsync(toDelete.MedicalLicense.MedicalLicenseDocument.Document.ThumbnailPublicId);
+                    await cloudinaryService.DeleteAsync(toDelete.MedicalLicense.MedicalLicenseDocument.Document
+                        .ThumbnailPublicId);
                 if (thumbnailDeleteResponse.Error != null) return BadRequest(thumbnailDeleteResponse.Error.Message);
             }
         }
@@ -2221,13 +2259,13 @@ public class AccountController(
         int userId = User.GetUserId();
 
         AppUser? user = await userManager.Users
-            .AsNoTracking()
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
-            .SingleOrDefaultAsync(x => x.Id == userId)
-        ;
+                .AsNoTracking()
+                .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
+                .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+                .SingleOrDefaultAsync(x => x.Id == userId)
+            ;
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
@@ -2268,25 +2306,27 @@ public class AccountController(
 
     [Authorize]
     [HttpPut("medical-license/{medicalLicenseId:int}")]
-    public async Task<ActionResult<AccountDto?>> UpdateMedicalLicenseAsync([FromRoute]int medicalLicenseId,
+    public async Task<ActionResult<AccountDto?>> UpdateMedicalLicenseAsync([FromRoute] int medicalLicenseId,
         MedicalLicenseUpdateDto request)
     {
         if (request.Specialty == null) return BadRequest("No se ha enviado la especialidad.");
         if (!request.Specialty.Id.HasValue) return BadRequest("No se ha enviado el ID de la especialidad.");
         if (string.IsNullOrEmpty(request.LicenseNumber)) return BadRequest("La cédula profesional es requerida.");
-        if (string.IsNullOrEmpty(request.SpecialtyLicense)) return BadRequest("La cédula de especialidad es requerida.");
-        if (!request.IsMain.HasValue) return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
+        if (string.IsNullOrEmpty(request.SpecialtyLicense))
+            return BadRequest("La cédula de especialidad es requerida.");
+        if (!request.IsMain.HasValue)
+            return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
         if (request.File == null) return BadRequest("No se ha enviado el documento.");
-        
+
         int userId = User.GetUserId();
 
         AppUser? user = await userManager.Users
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
-            .SingleOrDefaultAsync(x => x.Id == userId)
-        ;
+                .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
+                .Include(x => x.UserMedicalLicenses)
+                .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+                .SingleOrDefaultAsync(x => x.Id == userId)
+            ;
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
@@ -2324,7 +2364,8 @@ public class AccountController(
             userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty = new(specialty);
         }
 
-        if (uow.HasChanges()) {
+        if (uow.HasChanges())
+        {
             if (!await uow.Complete()) return BadRequest("Error actualizando la cédula profesional.");
         }
 

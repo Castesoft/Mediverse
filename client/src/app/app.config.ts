@@ -163,6 +163,10 @@ export const appConfig: ApplicationConfig = {
           {
             path: 'pagos',
             loadChildren: () => import('./payments/payments.module').then(m => m.PaymentsModule)
+          },
+          {
+            path: 'onboarding',
+            loadChildren: () => import('./onboarding/onboarding.module').then(m => m.OnboardingModule)
           }
         ]
       },

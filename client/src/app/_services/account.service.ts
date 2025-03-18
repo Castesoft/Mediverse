@@ -80,6 +80,10 @@ export class AccountService {
     );
   }
 
+  getStripeOnboardingLink(id: number): Observable<string> {
+    return this.http.get<string>(`${this.baseUrl}connect-onboarding-link/${id}`);
+  }
+
   refreshActiveSubscriptionStatus(): void {
     this.updateActiveSubscriptionStatus().subscribe();
   }

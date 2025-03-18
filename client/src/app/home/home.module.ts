@@ -75,6 +75,9 @@ import { OrderFormComponent } from "src/app/orders/order-form.component";
 import { ProductFormComponent } from "src/app/products/product-form.component";
 import { PatientFormComponent } from "src/app/patients/patients.config";
 import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
+import {
+  DashboardSidenavComponent
+} from "src/app/_shared/components/dashboard/dashboard-sidenav/dashboard-sidenav.component";
 
 @NgModule({
   declarations: [
@@ -146,6 +149,7 @@ import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
     PatientFormComponent,
     ClinicFormComponent,
     NurseFormComponent,
+    DashboardSidenavComponent,
   ],
   exports: [ HomeComponent ],
 })

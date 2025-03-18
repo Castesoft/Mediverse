@@ -1,60 +1,63 @@
-<div class="card mb-5">
-  <div class="card-header">
-    <div class="card-title">
-      <h3>Mis Horarios</h3>
-    </div>
-  </div>
-  <div class="card-body">
-    <div class="row g-3 mb-4">
-      <div class="col-md-4">
-        <label for="startTime" class="form-label">Hora de inicio:</label>
-        <input type="time" id="startTime" class="form-control" [(ngModel)]="startTime" (change)="updateSchedule()">
-      </div>
-      <div class="col-md-4">
-        <label for="endTime" class="form-label">Hora de fin:</label>
-        <input type="time" id="endTime" class="form-control" [(ngModel)]="endTime" (change)="updateSchedule()">
-      </div>
-      <div class="col-md-4">
-        <label for="minutesPerBlock" class="form-label">Minutos por bloque:</label>
-        <input type="number" id="minutesPerBlock" class="form-control" [(ngModel)]="minutesPerBlock" (change)="updateSchedule()">
+<account-child-wrapper>
+  <div class="card mb-5">
+    <div class="card-header">
+      <div class="card-title">
+        <h3>Mis Horarios</h3>
       </div>
     </div>
-    
-    <div class="table-responsive">
-      <table class="schedule-table">
-        <thead>
+    <div class="card-body">
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label for="startTime" class="form-label">Hora de inicio:</label>
+          <input type="time" id="startTime" class="form-control" [(ngModel)]="startTime" (change)="updateSchedule()">
+        </div>
+        <div class="col-md-4">
+          <label for="endTime" class="form-label">Hora de fin:</label>
+          <input type="time" id="endTime" class="form-control" [(ngModel)]="endTime" (change)="updateSchedule()">
+        </div>
+        <div class="col-md-4">
+          <label for="minutesPerBlock" class="form-label">Minutos por bloque:</label>
+          <input type="number" id="minutesPerBlock" class="form-control" [(ngModel)]="minutesPerBlock"
+                 (change)="updateSchedule()">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="schedule-table">
+          <thead>
           <tr>
             <th class="time-column">Time</th>
             @for (day of displayDays; track $index) {
-                <th>{{ day }}</th>
+              <th>{{ day }}</th>
             }
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
             @for (time of timeSlotsPerDay; track $index) {
-                <tr>
-                    <td class="time-column">{{ time }}</td>
-                    @for (day of displayDays; track $index) {
-                        <td 
-                            [class.selected]="isSelected(time, day)" 
-                            (mousedown)="onMouseDown(time, day)" 
-                            (mouseover)="onMouseOver(time, day)"
-                        ></td>
-                    }
-                </tr>
+              <tr>
+                <td class="time-column">{{ time }}</td>
+                @for (day of displayDays; track $index) {
+                  <td
+                    [class.selected]="isSelected(time, day)"
+                    (mousedown)="onMouseDown(time, day)"
+                    (mouseover)="onMouseOver(time, day)"
+                  ></td>
+                }
+              </tr>
             }
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
+      <button
+        (click)="updateWorkSchedule()"
+        class="btn btn-light-primary btn-flex btn-center btn-sm"
+        type="button"
+      >
+        <span class="indicator-label">Guardar horarios</span>
+        <span class="indicator-progress">
+          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+      </button>
     </div>
-    <button
-      (click)="updateWorkSchedule()"
-      class="btn btn-light-primary btn-flex btn-center btn-sm"
-      type="button"
-    >
-      <span class="indicator-label">Guardar horarios</span>
-      <span class="indicator-progress">
-        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-      </span>
-    </button>
   </div>
-</div>
+</account-child-wrapper>

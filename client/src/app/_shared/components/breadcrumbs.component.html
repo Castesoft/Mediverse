@@ -1,7 +1,9 @@
-<div toolbar>
-  <div toolbarContainer>
-    <div toolbarInfo>
-      <h1 toolbarTitle [title]="title"></h1>
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <h1 class="text-gray-900 fw-bold my-1 fs-2">
+        {{ title }}
+      </h1>
       <ul breadcrumb>
         @for (crumb of breadcrumbs; track crumb) {
           <li

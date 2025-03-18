@@ -38,8 +38,8 @@ namespace MainService.Infrastructure.Services
             var options = new SubscriptionCreateOptions
             {
                 Customer = stripeCustomerId,
-                Items = [new SubscriptionItemOptions { Price = priceId }],
-                Expand = ["latest_invoice.payment_intent"]
+                Items = new List<SubscriptionItemOptions> { new SubscriptionItemOptions { Price = priceId } },
+                Expand = new List<string> { "latest_invoice.payment_intent" }
             };
 
             var service = new SubscriptionService();
@@ -148,29 +148,58 @@ namespace MainService.Infrastructure.Services
             string? accountLinkUrl = null;
             if (account.Capabilities.Transfers != "active")
             {
-                var accountLinkService = new AccountLinkService();
-                var accountLinkOptions = new AccountLinkCreateOptions
-                {
-                    Account = account.Id,
-                    RefreshUrl = config["StripeSettings:RefreshUrl"],
-                    ReturnUrl = config["StripeSettings:ReturnUrl"],
-                    Type = "account_onboarding",
-                };
-
                 try
                 {
-                    var accountLink = await accountLinkService.CreateAsync(accountLinkOptions);
-                    accountLinkUrl = accountLink.Url;
+                    accountLinkUrl = await GetOnboardingLinkAsync(account.Id);
                 }
-                catch (StripeException ex)
+                catch (Exception ex)
                 {
-                    throw new Exception("Error creating account link for onboarding: " + ex.Message, ex);
+                    throw new Exception("Error obtaining onboarding link: " + ex.Message, ex);
                 }
             }
 
             return (account, accountLinkUrl);
         }
 
+        public async Task<string?> GetOnboardingLinkAsync(string accountId)
+        {
+            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+
+            var accountService = new AccountService();
+            Account account;
+            try
+            {
+                account = await accountService.GetAsync(accountId);
+            }
+            catch (StripeException ex)
+            {
+                throw new Exception("Error retrieving account: " + ex.Message, ex);
+            }
+
+            if (account.Capabilities.Transfers == "active")
+            {
+                return null;
+            }
+
+            var accountLinkService = new AccountLinkService();
+            var accountLinkOptions = new AccountLinkCreateOptions
+            {
+                Account = accountId,
+                RefreshUrl = config["StripeSettings:RefreshUrl"],
+                ReturnUrl = config["StripeSettings:ReturnUrl"],
+                Type = "account_onboarding",
+            };
+
+            try
+            {
+                var accountLink = await accountLinkService.CreateAsync(accountLinkOptions);
+                return accountLink.Url;
+            }
+            catch (StripeException ex)
+            {
+                throw new Exception("Error creating account link for onboarding: " + ex.Message, ex);
+            }
+        }
 
         public async Task<PaymentIntent?> CreatePaymentIntentAsync(string customerId, string paymentMethodId,
             string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents)

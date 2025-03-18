@@ -12,9 +12,9 @@ import { MobileQueryService } from 'src/app/_services/mobile-query.service';
 export class HomeComponent implements OnInit {
   account: Account | null = null;
 
-  private readonly accountService = inject(AccountService);
-  readonly sidebar = inject(SidebarService);
-  readonly query = inject(MobileQueryService);
+  private readonly accountService: AccountService = inject(AccountService);
+  readonly query: MobileQueryService = inject(MobileQueryService);
+  readonly sidebar: SidebarService = inject(SidebarService);
 
   ngOnInit(): void {
     this.account = this.accountService.current();

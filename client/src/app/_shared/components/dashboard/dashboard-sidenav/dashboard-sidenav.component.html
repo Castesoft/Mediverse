@@ -1,0 +1,28 @@
+<div class="d-flex flex-column flex-root h-100">
+  <mat-sidenav-container
+    class="page d-flex flex-row flex-column-fluid"
+    autosize
+    style="background-color: transparent; overflow: unset !important;">
+    <mat-sidenav
+      #snav
+      class="aside aside-default aside-hoverable"
+      [mode]="mobileQueryService.isMobile() ? 'over' : 'side'"
+      [(opened)]="sidebarService.opened"
+      style="display: flex !important;"
+      [fixedInViewport]="mobileQueryService.isMobile()"
+    >
+      <div mainAside></div>
+    </mat-sidenav>
+    <div wrapper>
+      <header header
+              [ngStyle]="headerStyles"
+              [compact]="scrollService.isScrolled()"
+              [class.shadow]="scrollService.isScrolled()"
+              style="z-index: 999999999999999 !important"></header>
+      <div content [style.margin-top.px]="scrollService.isScrolled() ? scrollService.scrollThreshold : 0">
+        <ng-content></ng-content>
+      </div>
+      <div footer></div>
+    </div>
+  </mat-sidenav-container>
+</div>

@@ -16,7 +16,6 @@ import { BreadcrumbsModule } from "src/app/_shared/template/components/breadcrum
 import { ButtonsModule } from "src/app/_shared/template/components/buttons/buttons.module";
 import { CardsModule } from "src/app/_shared/template/components/cards/cards.module";
 import { HeadersModule } from "src/app/_shared/template/components/headers/headers.module";
-import { ToolbarsModule } from "src/app/_shared/template/components/toolbars/toolbars.module";
 import { SymbolsModule } from "src/app/_shared/template/components/symbols/symbols.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
 
@@ -26,7 +25,6 @@ import { TablesModule } from "src/app/_shared/template/components/tables/tables.
     ButtonsModule,
     CardsModule,
     HeadersModule,
-    ToolbarsModule,
     SymbolsModule,
     TablesModule,
 
@@ -49,7 +47,6 @@ import { TablesModule } from "src/app/_shared/template/components/tables/tables.
     ButtonsModule,
     CardsModule,
     HeadersModule,
-    ToolbarsModule,
     SymbolsModule,
     TablesModule,
 

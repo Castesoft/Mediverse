@@ -1,11 +1,13 @@
-<div paymentsCatalog
-     class="mb-5 mb-xl-10"
-     [title]="'Mis Pagos'"
-     [item]="paymentItem"
-     [view]="paymentView"
-     [key]="paymentKey"
-     [isCompact]="paymentIsCompact"
-     [embedded]="paymentEmbedded"
-     [mode]="paymentMode"
-     [params]="paymentParams"
-></div>
+<account-child-wrapper>
+  <div paymentsCatalog
+       class="mb-5 mb-xl-10"
+       [title]="'Mis Pagos'"
+       [item]="paymentItem"
+       [view]="paymentView"
+       [key]="paymentKey"
+       [isCompact]="paymentIsCompact"
+       [embedded]="paymentEmbedded"
+       [mode]="paymentMode"
+       [params]="paymentParams"
+  ></div>
+</account-child-wrapper>

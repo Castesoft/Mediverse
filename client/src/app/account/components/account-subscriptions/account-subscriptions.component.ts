@@ -3,13 +3,17 @@ import { DoctorSubscriptionCardComponent } from "src/app/doctors/components/doct
 import { AccountService } from "src/app/_services/account.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Subscription } from "src/app/_models/subscriptions/subscription";
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'app-account-subscriptions',
   templateUrl: './account-subscriptions.component.html',
   styleUrl: './account-subscriptions.component.scss',
   imports: [
-    DoctorSubscriptionCardComponent
+    DoctorSubscriptionCardComponent,
+    AccountChildWrapperComponent
   ],
 })
 export class AccountSubscriptionsComponent implements OnInit {

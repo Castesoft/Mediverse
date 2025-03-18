@@ -17,6 +17,9 @@ import {
 } from "src/app/addresses/components/address-create-card/address-create-card.component";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import {
+  AccountChildWrapperComponent
+} from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 
 @Component({
   selector: 'app-account-billing',
@@ -28,7 +31,8 @@ import { Subject } from "rxjs";
     RouterModule,
     PaymentMethodDisplayCardComponent,
     BillingAddressDisplayCardComponent,
-    AddressCreateCardComponent
+    AddressCreateCardComponent,
+    AccountChildWrapperComponent
   ],
 })
 export class AccountBillingComponent implements OnInit, OnDestroy {
