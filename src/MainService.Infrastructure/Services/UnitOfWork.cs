@@ -13,8 +13,8 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
     public IDocumentRepository DocumentRepository => new DocumentRepository(context, mapper);
     public IPaymentMethodTypeRepository PaymentMethodTypeRepository => new PaymentMethodTypeRepository(context, mapper);
 
-    public IMedicalInsuranceCompanyRepository MedicalInsuranceCompanyRepository =>
-        new MedicalInsuranceCompanyRepository(context, mapper);
+    public IMedicalInsuranceCompanyRepository MedicalInsuranceCompanyRepository => new MedicalInsuranceCompanyRepository(context, mapper);
+    public IMedicalLicenseRepository MedicalLicenseRepository => new MedicalLicenseRepository(context, mapper);
 
     public ISpecialtyRepository SpecialtyRepository => new SpecialtyRepository(context, mapper);
     public IDiseaseRepository DiseaseRepository => new DiseaseRepository(context, mapper);

@@ -17,7 +17,7 @@
 /// la información relevante sobre las licencias médicas se gestione de manera centralizada.
 /// </para>
 /// </remarks>
-public class MedicalLicense : BaseEntity
+public class MedicalLicense : BaseCodeEntity
 {
     public MedicalLicense() {}
     public MedicalLicense(int specialtyId) => MedicalLicenseSpecialty = new (specialtyId);
@@ -66,3 +66,6 @@ public class MedicalLicense : BaseEntity
     public MedicalLicenseSpecialty MedicalLicenseSpecialty { get; set; } = null!;
     public List<MedicalLicenseSubSpecialty> MedicalLicenseSubSpecialties { get; set; } = [];
 }
+
+    public class MedicalLicenseDto : BaseCodeEntity {}
+    public class MedicalLicenseParams : BaseCodeParams {}

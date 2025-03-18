@@ -3,6 +3,14 @@ public class MedicalLicenseSpecialty
 {
     public MedicalLicenseSpecialty() {}
     public MedicalLicenseSpecialty(int specialtyId) => SpecialtyId = specialtyId;
+    public MedicalLicenseSpecialty(int medicalLicenseId, int specialtyId)
+    {
+        MedicalLicenseId = medicalLicenseId;
+        SpecialtyId = specialtyId;
+    }
+
+    public MedicalLicenseSpecialty(Specialty specialty) => Specialty = specialty;
+    public MedicalLicenseSpecialty(MedicalLicense medicalLicense) => MedicalLicense = medicalLicense;
     
     public int MedicalLicenseId { get; set; }
     public int SpecialtyId { get; set; }

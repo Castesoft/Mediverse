@@ -69,7 +69,7 @@ public class AccountController(
             return Ok(new { RequiresTwoFactor = true });
         }
 
-        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+        AccountDto? itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
         return itemToReturn;
     }
@@ -2073,5 +2073,261 @@ public class AccountController(
         }
 
         return Ok();
+    }
+
+    [Authorize]
+    [HttpPost("medical-license")]
+    public async Task<ActionResult<AccountDto?>> AddMedicalLicenseAsync(
+        [FromForm] MedicalLicenseCreateDto request)
+    {
+        int userId = User.GetUserId();
+
+        if (request.Specialty == null) return BadRequest("No se ha enviado la especialidad.");
+        if (!request.Specialty.Id.HasValue) return BadRequest("No se ha enviado el ID de la especialidad.");
+        if (string.IsNullOrEmpty(request.LicenseNumber)) return BadRequest("La cédula profesional es requerida.");
+        if (string.IsNullOrEmpty(request.SpecialtyLicense)) return BadRequest("La cédula de especialidad es requerida.");
+        if (!request.IsMain.HasValue) return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
+        if (request.File == null) return BadRequest("No se ha enviado el documento.");
+
+        if (!await uow.UserRepository.ExistsByIdAsync(userId))
+            return BadRequest($"Usuario de ID {userId} no fue encontrado.");
+
+        var file = request.File;
+        var isMain = request.IsMain.Value;
+        string licenseNumber = request.LicenseNumber;
+        string specialtyLicense = request.SpecialtyLicense;
+
+        if (!await uow.SpecialtyRepository.ExistsByIdAsync(request.Specialty.Id.Value))
+            return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
+
+        Specialty? specialty = await uow.SpecialtyRepository.GetByIdAsync(request.Specialty.Id.Value);
+
+        if (specialty == null) return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
+
+        AppUser? user = await userManager.Users
+            .Include(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+            .SingleOrDefaultAsync(x => x.Id == userId)
+        ;
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (user.UserMedicalLicenses.Any(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty.Id == request.Specialty.Id.Value))
+            return BadRequest("Ya tienes esta especialidad registrada.");
+
+        var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/CedulasProfesionales",
+        });
+
+        if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
+
+        var uploadThumbnailResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/CedulasProfesionales/Thumbnails",
+            Format = "jpg",
+            Transformation = new Transformation().Page(1).Height(300).Width(400).Crop("fill").Gravity("north")
+        });
+
+        if (uploadThumbnailResult.Error != null) return BadRequest(uploadThumbnailResult.Error.Message);
+
+        if (isMain)
+        {
+            var mainMedicalLicense =
+                user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain);
+            if (mainMedicalLicense != null) mainMedicalLicense.IsMain = false;
+        }
+
+        user.UserMedicalLicenses.Add(new UserMedicalLicense
+        {
+            MedicalLicense = new MedicalLicense {
+                LicenseNumber = request.LicenseNumber,
+                SpecialtyLicense = request.SpecialtyLicense,
+                MedicalLicenseSpecialty = new(specialty),
+                MedicalLicenseDocument = new(new Document
+                {
+                    Url = uploadResult.SecureUrl.AbsoluteUri,
+                    PublicId = uploadResult.PublicId,
+                    ThumbnailUrl = uploadThumbnailResult.SecureUrl.AbsoluteUri,
+                    ThumbnailPublicId = uploadThumbnailResult.PublicId,
+                    Name = file.FileName,
+                    Size = (int)file.Length,
+                })
+            },
+            IsMain = isMain,
+        });
+
+        if (!await uow.Complete()) return BadRequest("Error guardando la compañía de seguro médico.");
+
+        return await usersService.GenerateAccountDtoAsync(userId);
+    }
+
+    [Authorize]
+    [HttpDelete("medical-license/{medicalLicenseId}")]
+    public async Task<ActionResult<AccountDto?>> DeleteMedicalLicenseByIdAsync([FromRoute] int medicalLicenseId)
+    {
+        int userId = User.GetUserId();
+
+        AppUser? user = await userManager.Users
+            .Include(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
+            .Include(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+            .SingleOrDefaultAsync(x => x.Id == userId)
+        ;
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (!await uow.MedicalLicenseRepository.ExistsByIdAsync(medicalLicenseId))
+            return BadRequest($"La cédula profesional con id {medicalLicenseId} no existe.");
+
+        var toDelete =
+            user.UserMedicalLicenses.SingleOrDefault(x => x.MedicalLicenseId == medicalLicenseId);
+        if (toDelete == null)
+            return NotFound($"No estás registrado con la cédula profesional con id {medicalLicenseId}.");
+
+        user.UserMedicalLicenses.Remove(toDelete);
+        if (!await uow.Complete()) return BadRequest("Error eliminando la cédula profesional.");
+
+        if (
+            toDelete.MedicalLicense != null &&
+            toDelete.MedicalLicense.MedicalLicenseDocument != null &&
+            toDelete.MedicalLicense.MedicalLicenseDocument.Document != null
+        )
+        {
+            if (!string.IsNullOrEmpty(toDelete.MedicalLicense.MedicalLicenseDocument.Document.PublicId))
+            {
+                var deleteResponse = await cloudinaryService.DeleteAsync(toDelete.MedicalLicense.MedicalLicenseDocument.Document.PublicId);
+                if (deleteResponse.Error != null) return BadRequest(deleteResponse.Error.Message);
+            }
+
+            if (!string.IsNullOrEmpty(toDelete.MedicalLicense.MedicalLicenseDocument.Document.ThumbnailPublicId))
+            {
+                var thumbnailDeleteResponse =
+                    await cloudinaryService.DeleteAsync(toDelete.MedicalLicense.MedicalLicenseDocument.Document.ThumbnailPublicId);
+                if (thumbnailDeleteResponse.Error != null) return BadRequest(thumbnailDeleteResponse.Error.Message);
+            }
+        }
+
+        return await usersService.GenerateAccountDtoAsync(userId);
+    }
+
+    [Authorize]
+    [HttpDelete("medical-license-document/{documentId}")]
+    public async Task<ActionResult<AccountDto?>> DeleteMedicalLicenseDocumentByIdAsync([FromRoute] int documentId)
+    {
+        int userId = User.GetUserId();
+
+        AppUser? user = await userManager.Users
+            .AsNoTracking()
+            .Include(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
+            .Include(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+            .SingleOrDefaultAsync(x => x.Id == userId)
+        ;
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (!await uow.DocumentRepository.ExistsByIdAsync(documentId))
+            return BadRequest($"El documento de la cédula profesional con id {documentId} no existe.");
+
+        if (!user.UserMedicalLicenses.Any(x => x.MedicalLicense.MedicalLicenseDocument.Document.Id == documentId))
+            return BadRequest(
+                $"No estás registrado con la cédula profesional que tiene el documento con id {documentId}.");
+
+        Document? document = await uow.DocumentRepository.GetByIdAsync(documentId);
+
+        if (document == null)
+            return NotFound($"No se ha encontrado el documento de la cédula profesional con id {documentId}.");
+
+        if (!string.IsNullOrEmpty(document.PublicId))
+        {
+            var deleteResponse = await cloudinaryService.DeleteAsync(document.PublicId);
+            if (deleteResponse.Error != null) return BadRequest(deleteResponse.Error.Message);
+        }
+
+        if (!string.IsNullOrEmpty(document.ThumbnailPublicId))
+        {
+            var thumbnailDeleteResponse =
+                await cloudinaryService.DeleteAsync(document.ThumbnailPublicId);
+            if (thumbnailDeleteResponse.Error != null) return BadRequest(thumbnailDeleteResponse.Error.Message);
+        }
+
+        uow.DocumentRepository.Delete(document);
+
+        if (uow.HasChanges())
+        {
+            if (!await uow.Complete()) return BadRequest("Error eliminando el documento de la cédula profesional.");
+        }
+
+        return await usersService.GenerateAccountDtoAsync(userId);
+    }
+
+    [Authorize]
+    [HttpPut("medical-license/{medicalLicenseId:int}")]
+    public async Task<ActionResult<AccountDto?>> UpdateMedicalLicenseAsync([FromRoute]int medicalLicenseId,
+        MedicalLicenseUpdateDto request)
+    {
+        if (request.Specialty == null) return BadRequest("No se ha enviado la especialidad.");
+        if (!request.Specialty.Id.HasValue) return BadRequest("No se ha enviado el ID de la especialidad.");
+        if (string.IsNullOrEmpty(request.LicenseNumber)) return BadRequest("La cédula profesional es requerida.");
+        if (string.IsNullOrEmpty(request.SpecialtyLicense)) return BadRequest("La cédula de especialidad es requerida.");
+        if (!request.IsMain.HasValue) return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
+        if (request.File == null) return BadRequest("No se ha enviado el documento.");
+        
+        int userId = User.GetUserId();
+
+        AppUser? user = await userManager.Users
+            .Include(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
+            .Include(x => x.UserMedicalLicenses)
+            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
+            .SingleOrDefaultAsync(x => x.Id == userId)
+        ;
+
+        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+
+        if (!await uow.SpecialtyRepository.ExistsByIdAsync(request.Specialty.Id.Value))
+            return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
+
+        Specialty? specialty = await uow.SpecialtyRepository.GetByIdAsync(request.Specialty.Id.Value);
+
+        if (specialty == null) return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
+
+        UserMedicalLicense? userMedicalLicense =
+            user.UserMedicalLicenses.SingleOrDefault(x =>
+                x.MedicalLicense.Id == medicalLicenseId);
+
+        if (userMedicalLicense == null)
+            return NotFound($"La cédula profesional con id {medicalLicenseId} no existe.");
+
+        if (request.IsMain.Value)
+        {
+            var mainMedicalLicense = user.UserMedicalLicenses.SingleOrDefault(x => x.IsMain);
+            if (mainMedicalLicense != null) mainMedicalLicense.IsMain = false;
+        }
+
+        userMedicalLicense.IsMain = request.IsMain.Value;
+        userMedicalLicense.MedicalLicense.LicenseNumber = request.LicenseNumber;
+        userMedicalLicense.MedicalLicense.SpecialtyLicense = request.SpecialtyLicense;
+
+        if (
+            userMedicalLicense.MedicalLicense != null &&
+            userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty != null &&
+            userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty.Specialty != null &&
+            userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty.Specialty.Id != request.Specialty.Id.Value
+        )
+        {
+            userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty = new(specialty);
+        }
+
+        if (uow.HasChanges()) {
+            if (!await uow.Complete()) return BadRequest("Error actualizando la cédula profesional.");
+        }
+
+        return await usersService.GenerateAccountDtoAsync(userId);
     }
 }

@@ -1,12 +1,12 @@
-import { SelectOption } from "src/app/_models/base/selectOption";
-import { Doctor } from "../doctors/doctor";
-import { DoctorClinic } from "../doctors/doctorClinics/doctorClinic";
-import { MedicalLicense } from "../medicalLicenses/medicalLicense";
-import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
-import { Role } from "src/app/_models/types";
-import { UserMedicalInsuranceCompany } from "../users/userMedicalInsuranceCompany/userMedicalInsuranceCompany";
-import { WorkSchedule } from "../workSchedules/workSchedule";
-import { WorkScheduleSettings } from "../workSchedules/workScheduleSettings/workScheduleSettings";
+import { SelectOption } from 'src/app/_models/base/selectOption';
+import { PaymentMethodType } from 'src/app/_models/paymentMethodTypes/paymentMethodType';
+import { Role } from 'src/app/_models/types';
+import { UserMedicalInsuranceCompany } from '../users/userMedicalInsuranceCompany/userMedicalInsuranceCompany';
+import { MedicalLicense } from 'src/app/_models/medicalLicenses/medicalLicense';
+import { DoctorClinic } from 'src/app/_models/doctors/doctorClinics/doctorClinic';
+import { Doctor } from 'src/app/_models/doctors/doctor';
+import { WorkSchedule } from 'src/app/_models/workSchedules/workSchedule';
+import { WorkScheduleSettings } from 'src/app/_models/workSchedules/workScheduleSettings/workScheduleSettings';
 
 
 export class Account {

@@ -1,6 +1,9 @@
+using MainService.Models.Entities.Aggregate;
+
 namespace MainService.Core.DTOs.User;
 public class UserMedicalLicenseDto
 {
+    public int Id { get; set; }
     public bool IsMain { get; set; }
     /// <summary>
     /// Cédula Profesional
@@ -39,4 +42,5 @@ public class UserMedicalLicenseDto
     public DocumentDto? Document { get; set; }
     public int SpecialtyId { get; set; }
     public string? SpecialtyName { get; set; }
+    public OptionDto? Specialty { get; set; }
 }

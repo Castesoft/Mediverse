@@ -17,6 +17,9 @@ import { confirmActionModal } from "src/app/_models/base/types";
 import { ConfirmService } from "src/app/_services/confirm/confirm.service";
 import { SpecialtiesService } from "src/app/specialties/specialties.config";
 import { SelectOption } from "src/app/_models/base/selectOption";
+import { CommonModule } from '@angular/common';
+import { MedicalLicenseItemComponent } from 'src/app/account/utils/medical-license-item.component';
+import { FormUse } from 'src/app/_models/forms/formTypes';
 
 @Component({
   selector: 'app-card-profile-details',
@@ -26,17 +29,20 @@ import { SelectOption } from "src/app/_models/base/selectOption";
     Forms2Module,
     ImageThumbnailSelectorComponent,
     CardFooterComponent,
+    CommonModule,
+    MedicalLicenseItemComponent,
   ],
   templateUrl: './card-profile-details.component.html',
 })
 export class CardProfileDetailsComponent implements OnInit {
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
   protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
+  protected readonly FormUse: typeof FormUse = FormUse;
 
-  accountService: AccountService = inject(AccountService);
-  imageHandler: ImageHandlerService = inject(ImageHandlerService);
-  specialtiesService: SpecialtiesService = inject(SpecialtiesService);
-  confirmService: ConfirmService = inject(ConfirmService);
+  readonly accountService: AccountService = inject(AccountService);
+  readonly imageHandler: ImageHandlerService = inject(ImageHandlerService);
+  readonly specialtiesService: SpecialtiesService = inject(SpecialtiesService);
+  readonly confirmService: ConfirmService = inject(ConfirmService);
   onSelectSection: OutputEmitterRef<string> = output();
 
   specialties: SelectOption[] = [];

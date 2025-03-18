@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250303231747_Initial")]
-    partial class Initial
+    [Migration("20250317230727_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1441,10 +1441,25 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CodeNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("text");
 
                     b.Property<string>("LicenseNumber")
@@ -1456,8 +1471,8 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("SpecialtyLicense")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("Visible")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -1839,8 +1854,9 @@ namespace MainService.Postgres.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("NotificationType")
-                        .HasColumnType("integer");
+                    b.Property<string>("NotificationType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Payload")
                         .HasColumnType("text");
@@ -3195,6 +3211,12 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsImportant")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");

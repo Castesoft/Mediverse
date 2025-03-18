@@ -20,6 +20,8 @@ import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { Subscription } from "src/app/_models/subscriptions/subscription";
 import { ToastrService } from "ngx-toastr";
+import { MedicalLicense } from 'src/app/_models/medicalLicenses/medicalLicense';
+import { MedicalLicenseModalComponent } from 'src/app/account/modals/medical-license-modal.component';
 
 
 @Injectable({
@@ -97,6 +99,9 @@ export class AccountService {
   getCurrent(): Observable<Account> {
     return this.http.get<Account>(`${this.baseUrl}`).pipe(
       map(response => {
+        this.current.update(_ => response);
+        localStorage.setItem('user', JSON.stringify(response));
+        this.refreshActiveSubscriptionStatus();
         return response;
       })
     )
@@ -398,6 +403,50 @@ export class AccountService {
     );
   }
 
+  deleteMedicalLicense(id: number) {
+    this._deleteMedicalLicense(id).subscribe();
+  }
+
+  private _deleteMedicalLicense(id: number): Observable<Account> {
+    return this.http.delete<Account>(`${this.baseUrl}medical-license/${id}`).pipe(
+      tap(response => {
+        this.current.set(response);
+        this.toastr.success('Especialidad eliminada correctamente');
+      })
+    );
+  }
+
+  deleteMedicalLicenseDocument(id: number) {
+    this._deleteMedicalLicenseDocument(id).subscribe();
+  }
+
+  private _deleteMedicalLicenseDocument(id: number): Observable<Account> {
+    return this.http.delete<Account>(`${this.baseUrl}medical-license-document/${id}`).pipe(
+      tap(response => {
+        this.current.set(response);
+        this.toastr.success('El documento de la especialidad ha sido eliminado correctamente');
+      })
+    );
+  }
+
+  addMedicalLicense(value: FormData) {
+    return this.http.post<Account>(`${this.baseUrl}medical-license`, value).pipe(
+      tap((response: Account) => {
+        this.current.set(response);
+        this.toastr.success('Especialidad añadida correctamente');
+      })
+    );
+  }
+
+  updateMedicalLicense(model: any, medicalLicenseId: number) {
+    return this.http.put<Account>(`${this.baseUrl}medical-license/${medicalLicenseId}`, model).pipe(
+      tap((response: Account) => {
+        this.current.set(response);
+        this.toastr.success('Especialidad actualizada correctamente');
+      })
+    );
+  }
+
   getPaymentHistory() {
     return this.http.get<Payment[]>(`${this.baseUrl}payment-history`).pipe(
       tap((payments: Payment[]) => {
@@ -667,6 +716,17 @@ export class AccountService {
         panelClass: 'bg-body'
       });
     }
-  };
+  }
+
+  clickMedicalLicense(item: MedicalLicense | null = null, use: FormUse = FormUse.DETAIL, view: View) {
+
+    if (view === "modal") {
+      this.matDialog.open(MedicalLicenseModalComponent, {
+        data: { item: item, use: use, view: 'modal', },
+        maxWidth: '500px',
+        panelClass: 'bg-body'
+      });
+    }
+  }
 
 }

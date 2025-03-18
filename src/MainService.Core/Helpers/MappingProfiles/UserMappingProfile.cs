@@ -291,10 +291,12 @@ public class UserMappingProfile : Profile
             ;
 
         CreateMap<UserMedicalLicense, UserMedicalLicenseDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MedicalLicense.Id))
             .ForMember(dest => dest.SpecialtyId,
                 opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId))
             .ForMember(dest => dest.SpecialtyName,
                 opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.Specialty.Name))
+            .ForMember(dest => dest.Specialty, opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseSpecialty.Specialty))
             .ForMember(dest => dest.Document,
                 opt => opt.MapFrom(src => src.MedicalLicense.MedicalLicenseDocument.Document))
             .ForMember(dest => dest.SpecialtyLicense, opt => opt.MapFrom(src => src.MedicalLicense.SpecialtyLicense))

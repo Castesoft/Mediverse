@@ -36,7 +36,7 @@ export const accountFormInfo: FormInfo<Account> = {
   medicalLicenses: medicalLicenseFormInfo,
   paymentMethodTypes: paymentMethodTypeFormInfo,
   permissions: {},
-  phoneNumber: { label: 'Teléfono', type: 'text' },
+  phoneNumber: { label: 'Teléfono', type: 'tel' },
   phoneNumberCountryCode: { label: 'Código de país de teléfono', type: 'text' },
   photoUrl: { label: 'URL de foto', type: 'text' },
   requireAnticipatedCardPayments: { label: 'Requiere pagos anticipados con tarjeta', type: 'slideToggle' },

@@ -42,17 +42,17 @@
           Teléfono
         </label>
         <div class="col-lg-8">
-          <div controlsWrapper3 [control]="form.controls.phoneNumber" [showBottomMargin]="false"></div>
+          <div controlsWrapper3 [(control)]="form.controls.phoneNumber" [showBottomMargin]="false"></div>
         </div>
       </div>
 
-      @if (accountService.hasRole([ 'Doctor' ])) {
+      <!-- @if (accountService.hasRole([ 'Doctor' ])) {
         <div class="row mb-6">
           <label class="col-lg-4 col-form-label fw-semibold fs-6">
             Cédula Profesional
           </label>
           <div class="col-lg-8">
-            <div controlsWrapper3 [control]="form.controls.licenseNumber" [showBottomMargin]="false"></div>
+            <div controlsWrapper3 [(control)]="form.controls.licenseNumber" [showBottomMargin]="false"></div>
           </div>
         </div>
 
@@ -61,7 +61,7 @@
             Cédula de Especialidad
           </label>
           <div class="col-lg-8">
-            <div controlsWrapper3 [control]="form.controls.specialtyLicense" [showBottomMargin]="false"></div>
+            <div controlsWrapper3 [(control)]="form.controls.specialtyLicense" [showBottomMargin]="false"></div>
           </div>
         </div>
 
@@ -70,7 +70,7 @@
             Especialidad
           </label>
           <div class="col-lg-8">
-            <div controlsWrapper3 [control]="form.controls.specialty" [showBottomMargin]="false"></div>
+            <div controlsWrapper3 [(control)]="form.controls.specialty" [showBottomMargin]="false"></div>
           </div>
         </div>
 
@@ -92,7 +92,7 @@
                  [showBottomMargin]="false"></div>
           </div>
         </div>
-      }
+      } -->
     </div>
 
 <!--    <div class="card-body border-top">-->
@@ -157,3 +157,24 @@
 
   </form>
 </div>
+
+
+@if (accountService.current() !== null) {
+  <div class="card mb-5 mb-xl-10">
+    <div class="card-header">
+      <div class="card-title">
+        <h2>Especialidades</h2>
+      </div>
+    </div>
+    <div class="card-body pt-0">
+      <div class="row gx-9 gy-6">
+        @for (medicalLicense of accountService.current()?.medicalLicenses; let idx = $index; track idx) {
+          <!-- <code class="json">{{medicalLicense | json}}</code> -->
+          <div medicalLicenseItem [(item)]="accountService.current()!.medicalLicenses[idx]"
+               [use]="FormUse.EDIT"></div>
+        }
+        <div medicalLicenseItem [item]="null" [use]="FormUse.CREATE"></div>
+      </div>
+    </div>
+  </div>
+}

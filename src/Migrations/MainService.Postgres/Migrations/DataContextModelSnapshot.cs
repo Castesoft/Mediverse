@@ -1438,10 +1438,25 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CodeNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("text");
 
                     b.Property<string>("LicenseNumber")
@@ -1453,8 +1468,8 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("SpecialtyLicense")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("Visible")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
