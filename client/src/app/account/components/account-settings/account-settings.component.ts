@@ -14,9 +14,6 @@ import {
   CardNotificationsComponent
 } from 'src/app/account/components/account-settings/card-notifications/card-notifications.component';
 import {
-  CardOverviewComponent
-} from 'src/app/account/components/account-settings/card-overview/card-overview.component';
-import {
   CardProfileDetailsComponent
 } from 'src/app/account/components/account-settings/card-profile-details/card-profile-details.component';
 import {
@@ -34,7 +31,6 @@ import {
     TemplateModule,
     RouterModule,
     NavMenuComponent,
-    CardOverviewComponent,
     CardSigninMethodComponent,
     CardProfileDetailsComponent,
     CardConnectedAccountsComponent,
@@ -50,7 +46,7 @@ export class AccountSettingsComponent {
   readonly query: MobileQueryService = inject(MobileQueryService);
 
   account: Account | null = null;
-  currentSection: string = 'account_settings_overview';
+  currentSection: string = 'account_settings_signin_method';
 
   selectSection(section: string) {
     this.currentSection = section;

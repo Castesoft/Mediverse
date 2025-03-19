@@ -39,12 +39,16 @@ export class PaymentCheckoutSuccessComponent implements OnInit {
       this.countdown--;
       if (this.countdown <= 0) {
         clearInterval(intervalId);
-        if (this.redirectUrl) {
-          window.location.href = this.redirectUrl;
-        } else {
-          this.router.navigate([ '/cuenta' ]).then(() => {});
-        }
+        this.redirectToUrl();
       }
     }, 1000);
+  }
+
+  redirectToUrl(): void {
+    if (this.redirectUrl) {
+      window.location.href = this.redirectUrl;
+    } else {
+      this.router.navigate([ '/cuenta' ]).then(() => {});
+    }
   }
 }

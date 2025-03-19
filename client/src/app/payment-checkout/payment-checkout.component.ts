@@ -1,18 +1,15 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import {
   RedirectWarningModalComponent
 } from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
 import { RedirectWarningData } from "src/app/_shared/components/redirect-warning-modal/redirectWarningData";
-import { CurrencyPipe } from "@angular/common";
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { EventsService } from "src/app/events/events.config";
 import Event from "src/app/_models/events/event";
 import { Address } from "src/app/_models/addresses/address";
 import { PaymentCheckoutService } from "src/app/payment-checkout/payment-checkout.service";
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
 import {
   CheckoutAddressEntryCardComponent
 } from "src/app/payment-checkout/components/checkout-address-entry-card/checkout-address-entry-card.component";
@@ -25,31 +22,25 @@ import { PaymentNavigationService } from "src/app/payments/payment-navigation.se
 import { Order } from "src/app/_models/orders/order";
 import { OrdersService } from "src/app/orders/orders.config";
 import {
-  OrderProductsTableComponent
-} from "src/app/orders/components/order-products-table/order-products-table.component";
-import {
   SubscriptionOnboardingComponent
 } from "src/app/payment-checkout/subscription-onboarding/subscription-onboarding.component";
-import {
-  PaymentDisclaimerComponent
-} from "src/app/payment-checkout/components/subscription-terms-and-conditions-disclaimer-notice/payment-disclaimer.component";
 import { ThemeService } from 'src/app/_services/theme.service';
+import { PaymentSummaryComponent } from "src/app/payment-checkout/components/payment-summary/payment-summary.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-payment-checkout',
   templateUrl: './payment-checkout.component.html',
   styleUrls: [ './payment-checkout.component.scss' ],
   imports: [
-    CurrencyPipe,
     CheckoutAddressEntryCardComponent,
     CheckoutPaymentMethodEntryCardComponent,
     RouterLink,
-    OrderProductsTableComponent,
     SubscriptionOnboardingComponent,
-    PaymentDisclaimerComponent
+    PaymentSummaryComponent
   ]
 })
-export class PaymentCheckoutComponent implements OnInit, OnDestroy {
+export class PaymentCheckoutComponent implements OnInit {
   private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
@@ -57,11 +48,11 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   private readonly ordersService: OrdersService = inject(OrdersService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly toastr: ToastrService = inject(ToastrService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly matDialog: MatDialog = inject(MatDialog);
   private readonly router: Router = inject(Router);
-  readonly theme = inject(ThemeService);
 
-  private readonly destroy$: Subject<void> = new Subject<void>();
+  readonly theme: ThemeService = inject(ThemeService);
 
   id!: string;
   type!: 'cita' | 'receta' | 'medicamentos' | 'suscripcion';
@@ -77,6 +68,8 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
 
   event: Event | null = null;
   order: Order | null = null;
+
+  isSubmitting: boolean = true;
 
   ngOnInit(): void {
     const url: string = this.router.url;
@@ -105,13 +98,8 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
     this.subscribeToSelectedPaymentMethod();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private subscribeToSelectedAddress() {
-    this.paymentCheckoutService.selectedAddress$.pipe(takeUntil(this.destroy$)).subscribe({
+    this.paymentCheckoutService.selectedAddress$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (address: Address | null) => {
         this.selectedAddress = address;
       }
@@ -119,7 +107,7 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToSelectedPaymentMethod() {
-    this.paymentCheckoutService.selectedPaymentMethod$.pipe(takeUntil(this.destroy$)).subscribe({
+    this.paymentCheckoutService.selectedPaymentMethod$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (method: PaymentMethod | null) => {
         this.selectedPaymentMethod = method;
       }
@@ -159,6 +147,8 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
   }
 
   onProceedPayment(): void {
+    this.isSubmitting = true;
+
     switch (this.type) {
       case 'cita':
         this.payEvent();
@@ -170,7 +160,6 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
         this.toastr.error('No se ha encontrado el tipo de pago');
 
     }
-
   }
 
   private payEvent(): void {
@@ -184,6 +173,8 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
 
     this.paymentGatewayService.createPaymentIntentForEvent(eventId, selectedPaymentMethodId).subscribe({
       next: (res) => {
+        this.isSubmitting = false;
+
         if (!res.paymentId) {
           console.error('Payment ID not found in response');
           return;
@@ -192,6 +183,7 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
         this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl)
           .catch((err: any) => console.error('Navigation error:', err));
       }, error: (err) => {
+        this.isSubmitting = false;
         console.error('Error creating payment intent:', err);
         this.toastr.error('Error al procesar el pago');
       }
@@ -209,6 +201,8 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
 
     this.paymentGatewayService.createPaymentIntentForOrder(orderId, selectedPaymentMethodId).subscribe({
       next: (res) => {
+        this.isSubmitting = false;
+
         if (!res.paymentId) {
           console.error('Payment ID not found in response');
           return;
@@ -217,14 +211,11 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
         this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl)
           .catch((err: any) => console.error('Navigation error:', err));
       }, error: (err) => {
+        this.isSubmitting = false;
         console.error('Error creating payment intent:', err);
         this.toastr.error('Error al procesar el pago');
       }
     })
-  }
-
-  onApplyPromoCode(): void {
-    this.toastr.error('El código promocional no es válido');
   }
 
   onCancel(): void {
@@ -233,16 +224,14 @@ export class PaymentCheckoutComponent implements OnInit, OnDestroy {
       message: '¿Deseas cancelar la operación?'
     };
 
-    this.matDialog.open(RedirectWarningModalComponent, { data: dialogData })
-      .afterClosed()
-      .subscribe((confirmed: boolean) => {
-        if (confirmed) {
-          if (cancelUrl) {
-            this.router.navigateByUrl(cancelUrl).catch(err => console.error('Navigation error:', err));
-          } else {
-            window.history.back();
-          }
+    this.matDialog.open(RedirectWarningModalComponent, { data: dialogData }).afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        if (cancelUrl) {
+          this.router.navigateByUrl(cancelUrl).catch(err => console.error('Navigation error:', err));
+        } else {
+          window.history.back();
         }
-      });
+      }
+    });
   }
 }

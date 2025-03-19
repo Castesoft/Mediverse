@@ -1,16 +1,24 @@
-import { Component, ElementRef, HostListener, input, OnInit, output, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  input,
+  InputSignal,
+  OnInit,
+  output,
+  OutputEmitterRef,
+  ViewChild
+} from '@angular/core';
 
 @Component({
   selector: 'app-nav-menu',
-  standalone: true,
-  imports: [],
   templateUrl: './nav-menu.component.html',
   styleUrl: './nav-menu.component.scss'
 })
 export class NavMenuComponent implements OnInit {
-  currentSection = input.required<string>();
-  onSelectSection = output<string>();
-  
+  currentSection: InputSignal<string> = input.required<string>();
+  onSelectSection: OutputEmitterRef<string> = output<string>();
+
   @ViewChild('stickyRef', { static: true }) stickyRef!: ElementRef;
   isSticky: boolean = false;
   startingOffset: number = 0;

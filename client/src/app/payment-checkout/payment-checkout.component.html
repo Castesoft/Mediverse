@@ -13,20 +13,20 @@
     <div class="d-flex flex-grow-1 justify-content-end align-items-center">
 
       <small class="text-900">
-      @if(theme.effectiveTheme() === 'light') {
-        <img
-          src="media/stripe/powered-by-stripe-black.svg"
-          alt="Stripe"
-          style="height: 30px; vertical-align: middle;"
-        />
+        @if (theme.effectiveTheme() === 'light') {
+          <img
+            src="media/stripe/powered-by-stripe-black.svg"
+            alt="Stripe"
+            style="height: 30px; vertical-align: middle;"
+          />
 
-      } @else if (theme.effectiveTheme() === 'dark') {
-        <img
-          src="media/stripe/powered-by-stripe-white.svg"
-          alt="Stripe"
-          style="height: 30px; vertical-align: middle;"
-        />
-      }
+        } @else if (theme.effectiveTheme() === 'dark') {
+          <img
+            src="media/stripe/powered-by-stripe-white.svg"
+            alt="Stripe"
+            style="height: 30px; vertical-align: middle;"
+          />
+        }
 
       </small>
     </div>
@@ -44,73 +44,24 @@
       </div>
 
       <div class="col-md-6 ps-3">
-        <div class="card mb-4">
-          <div class="card-header">
-            <div class="card-title">
-              <h3>Resumen de Pedido</h3>
-            </div>
-          </div>
-          <div class="card-body border-top border-gray-200">
-            @switch (type) {
-              @case ('cita') {
-                @if (event) {
-                  <div class="details rounded mb-4">
-                    <h6 class="mb-2">Detalles del Evento</h6>
-                    <p class="text-muted mb-0">
-                      <strong>Servicio:</strong> {{ event.service.name }}
-                    </p>
-                    <p class="text-muted mb-0">
-                      <strong>Precio:</strong> {{ event.service.price | currency:'MXN' }}
-                    </p>
-                  </div>
-                }
-                <div class="payment-breakdown border-top pt-3">
-                  <div class="d-flex justify-content-between">
-                    <div>
-                      <p class="text-muted">IVA (16%):</p>
-                      <p class="text-muted">Subtotal:</p>
-                      <p class="fw-bold">Total:</p>
-                    </div>
-                    <div class="text-end">
-                      <p class="">{{ tax | currency:'MXN' }}</p>
-                      <p class="">{{ subtotal | currency:'MXN' }}</p>
-                      <p class="fw-bold">{{ total | currency:'MXN' }}</p>
-                    </div>
-                  </div>
-                </div>
-              }
-              @case ('receta') {
-                @if (order) {
-                  <div orderProductsTable [order]="order" [showPayButton]="false"></div>
-                }
-              }
-            }
-
-            <div class="d-flex justify-content-end">
-              <button type="button" class="btn btn-primary w-100" (click)="onProceedPayment()">
-                Completar Pago
-              </button>
-            </div>
-
-            <div class="row mt-3 g-3">
-              <div class="col-9">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Ingrese código promocional"
-                  aria-label="Código promocional"
-                />
-              </div>
-              <div class="col-3">
-                <button type="button" class="btn btn-secondary w-100" (click)="onApplyPromoCode()">
-                  Aplicar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <app-payment-disclaimer></app-payment-disclaimer>
+        @switch (type) {
+          @case ('cita') {
+            <div paymentSummary
+                 [subtotal]="subtotal"
+                 [item]="event"
+                 [type]="type"
+                 [isSubmitting]="isSubmitting"
+                 (onPay)="onProceedPayment()"></div>
+          }
+          @case ('receta') {
+            <div paymentSummary
+                 [subtotal]="subtotal"
+                 [item]="order"
+                 [type]="type"
+                 [isSubmitting]="isSubmitting"
+                 (onPay)="onProceedPayment()"></div>
+          }
+        }
       </div>
     </div>
   }

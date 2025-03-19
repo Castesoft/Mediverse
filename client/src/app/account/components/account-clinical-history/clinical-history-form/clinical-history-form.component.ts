@@ -43,7 +43,7 @@ export class ClinicalHistoryFormComponent implements OnInit {
   private readonly colorBlindnesses: ColorBlindnessesService = inject(ColorBlindnessesService);
   private readonly consumptionLevels: ConsumptionLevelsService = inject(ConsumptionLevelsService);
 
-  currentSection: string = 'patientIdentification';
+  currentSection: string = 'clinical_history_patient_identification';
 
   medicalRecord: ModelSignal<MedicalRecord> = model.required();
   use: ModelSignal<FormUse> = model(FormUse.EDIT as FormUse);

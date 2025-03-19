@@ -5,7 +5,7 @@ import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/b
 import Event from 'src/app/_models/events/event';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
-import { Data, Navigation, RouterLink, RouterLinkActive } from '@angular/router';
+import { Navigation, ParamMap, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { PaymentCheckoutService } from 'src/app/payment-checkout/payment-checkout.service';
 import { StripeGatewayService } from 'src/app/_services/stripe-gateway.service';
@@ -18,9 +18,6 @@ import {
 import {
   CheckoutPaymentMethodEntryCardComponent
 } from 'src/app/payment-checkout/components/checkout-payment-method-entry-card/checkout-payment-method-entry-card.component';
-import {
-  PaymentDisclaimerComponent
-} from 'src/app/payment-checkout/components/subscription-terms-and-conditions-disclaimer-notice/payment-disclaimer.component';
 import { PhotoShape, PhotoSize } from 'src/app/_models/photos/photoTypes';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RedirectWarningData } from 'src/app/_shared/components/redirect-warning-modal/redirectWarningData';
@@ -41,6 +38,7 @@ import { Address } from "src/app/_models/addresses/address";
 import {
   AccountChildWrapperComponent
 } from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
+import { PaymentSummaryComponent } from "src/app/payment-checkout/components/payment-summary/payment-summary.component";
 
 @Component({
   selector: 'account-event-detail-route',
@@ -55,9 +53,9 @@ import {
     RouterLinkActive,
     CheckoutAddressEntryCardComponent,
     CheckoutPaymentMethodEntryCardComponent,
-    PaymentDisclaimerComponent,
     NurseDisplayCardComponent,
     AccountChildWrapperComponent,
+    PaymentSummaryComponent,
   ]
 })
 export class AccountEventDetailComponent extends BaseRouteDetail<Event> implements OnInit {
@@ -98,24 +96,16 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
       return;
     }
 
-    this.calculateTotals();
+    this.subtotal = this.event.service.price || 0;
     this.subscribeToCheckoutData();
     this.fetchConsentStatus();
   }
 
   private initializeRouteData(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params: ParamMap) => {
       const idParam: string | null = params.get('id');
       if (idParam) {
         this.id.set(+idParam);
-      }
-    });
-
-    this.route.data.subscribe((data: Data) => {
-      this.item.set(data['item']);
-      const codeNumber: number | null = this.item()?.codeNumber || null;
-      if (codeNumber) {
-        this.label.update(() => codeNumber.toString());
       }
     });
 
@@ -123,14 +113,6 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     const key: string | null = navigation?.extras?.state?.['key'] || null;
     if (key) {
       this.key.set(key);
-    }
-  }
-
-  private calculateTotals(): void {
-    if (this.event.service?.price) {
-      this.subtotal = this.event.service.price;
-      this.tax = this.event.service.price * 0.16;
-      this.total = this.event.service.price + this.tax;
     }
   }
 
@@ -145,8 +127,8 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
   }
 
   private fetchConsentStatus(): void {
-    const userId: number | null = this.item()?.doctor?.id || null;
-    const patientId: number | null = this.item()?.patient?.id || null;
+    const userId: number | null = this.event.doctor?.id || null;
+    const patientId: number | null = this.event.patient?.id || null;
 
     if (!userId || !patientId) {
       console.error('User or patient ID is null.');
@@ -208,13 +190,9 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     });
   }
 
-  onApplyPromoCode(): void {
-    this.toastr.error('El código promocional no es válido');
-  }
-
   onShareMedicalHistory(): void {
-    const patientId: number | null = this.item()?.patient?.id || null;
-    const doctorId: number | null = this.item()?.doctor?.id || null;
+    const patientId: number | null = this.event.patient?.id || null;
+    const doctorId: number | null = this.event.doctor?.id || null;
 
     if (!patientId || !doctorId) {
       console.error('Patient or doctor ID is null.');
