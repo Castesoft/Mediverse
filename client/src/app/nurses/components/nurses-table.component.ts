@@ -34,7 +34,7 @@ import { UserTableCellComponent } from "src/app/users/components/user-table-cell
     UserTableCellComponent,
   ],
 })
-export class NursesTableComponent extends BaseTable<Nurse, NurseParams, NurseFiltersForm, NursesService> implements OnDestroy, TableInputSignals<Nurse, NurseParams> {
+export class NursesTableComponent extends BaseTable<Nurse, NurseParams, NurseFiltersForm, NursesService> implements TableInputSignals<Nurse, NurseParams> {
   item: ModelSignal<Nurse | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -45,10 +45,5 @@ export class NursesTableComponent extends BaseTable<Nurse, NurseParams, NurseFil
 
   constructor() {
     super(NursesService, Nurse, { tableCells: nurseCells, });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

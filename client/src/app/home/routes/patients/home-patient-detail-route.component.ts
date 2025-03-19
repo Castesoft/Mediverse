@@ -1,26 +1,27 @@
-import { Component, effect, OnDestroy } from "@angular/core";
+import { Component, DestroyRef, effect, inject } from "@angular/core";
 import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
 import { Patient } from 'src/app/_models/patients/patient';
 import { FormUse } from "src/app/_models/forms/formTypes";
-import { takeUntil } from "rxjs/operators";
 import { Navigation, ParamMap } from "@angular/router";
-import { Subject } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[homePatientDetailRoute]',
   template: `
     <div breadcrumbs></div>
     <div post>
-      <div patientDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
+      <div patientDetail
+           [(use)]="use"
+           [(view)]="view"
+           [(item)]="item"
+           [(key)]="key"
+           [(title)]="title"></div>
     </div>
   `,
   standalone: false,
 })
-export class HomePatientDetailRouteComponent
-  extends BaseRouteDetail<Patient>
-  implements OnDestroy
-{
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+export class HomePatientDetailRouteComponent extends BaseRouteDetail<Patient> {
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   constructor() {
     super('patients', FormUse.DETAIL);
@@ -34,13 +35,9 @@ export class HomePatientDetailRouteComponent
     });
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
 
   private subscribeToParamMap() {
-    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (params: ParamMap) => {
         if (params.has('id')) this.id.set(+params.get('id')!);
       },
@@ -48,7 +45,7 @@ export class HomePatientDetailRouteComponent
   }
 
   private subcribeToRouteData() {
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);
       },

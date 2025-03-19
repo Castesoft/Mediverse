@@ -17,7 +17,7 @@ import { ProductGridCardComponent } from "src/app/products/components/product-gr
     ProductGridCardComponent
   ],
 })
-export class ProductsGridComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements OnDestroy, TableInputSignals<Product, ProductParams> {
+export class ProductsGridComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements TableInputSignals<Product, ProductParams> {
   item: ModelSignal<Product | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -28,10 +28,5 @@ export class ProductsGridComponent extends BaseTable<Product, ProductParams, Pro
 
   constructor() {
     super(ProductsService, Product, { tableCells: productCells, });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

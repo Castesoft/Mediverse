@@ -36,7 +36,7 @@ import {
     SubscriptionStatusCellComponent,
   ],
 })
-export class SubscriptionsTableComponent extends BaseTable<Subscription, SubscriptionParams, SubscriptionFiltersForm, SubscriptionsService> implements OnDestroy, TableInputSignals<Subscription, SubscriptionParams> {
+export class SubscriptionsTableComponent extends BaseTable<Subscription, SubscriptionParams, SubscriptionFiltersForm, SubscriptionsService> implements TableInputSignals<Subscription, SubscriptionParams> {
   item: ModelSignal<Subscription | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -47,10 +47,5 @@ export class SubscriptionsTableComponent extends BaseTable<Subscription, Subscri
 
   constructor() {
     super(SubscriptionsService, Subscription, { tableCells: subscriptionCells, });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

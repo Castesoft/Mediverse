@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ModelSignal, model, OnDestroy } from "@angular/core";
+import { Component, ModelSignal, model, OnDestroy, DestroyRef, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -36,7 +36,7 @@ import { FormUse } from 'src/app/_models/forms/formTypes';
     SymbolCellComponent,
   ],
 })
-export class ProductsTableComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements OnDestroy, TableInputSignals<Product, ProductParams> {
+export class ProductsTableComponent extends BaseTable<Product, ProductParams, ProductFiltersForm, ProductsService> implements TableInputSignals<Product, ProductParams> {
   protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
 
   item: ModelSignal<Product | null> = model.required();
@@ -49,11 +49,6 @@ export class ProductsTableComponent extends BaseTable<Product, ProductParams, Pr
 
   constructor() {
     super(ProductsService, Product, { tableCells: productCells, });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 
   private updateProduct(item: Product): void {

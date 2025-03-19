@@ -140,13 +140,13 @@ export class SignUpComponent implements OnInit {
     }),
     billingDetailsForm: this.fb.group({
       SameAddress: [ true, [ Validators.required ] ],
-      BillingState: [ '' ],
-      BillingCity: [ '' ],
-      BillingAddress: [ '' ],
-      BillingZipcode: [ '' ],
-      BillingNeighborhood: [ '' ],
-      BillingExteriorNumber: [ '' ],
-      BillingInteriorNumber: [ '' ],
+      State: [ '' ],
+      City: [ '' ],
+      Street: [ '' ],
+      Zipcode: [ '' ],
+      Neighborhood: [ '' ],
+      ExteriorNumber: [ '' ],
+      InteriorNumber: [ '' ],
       DisplayName: [ '', [ Validators.required ] ],
       StripePaymentMethodId: [ '' ],
       Last4: [ '' ],
@@ -222,19 +222,14 @@ export class SignUpComponent implements OnInit {
     this.doctorForm.get('billingDetailsForm.Country')?.setValue(paymentMethod?.paymentMethod?.card?.country);
 
     if (this.doctorForm.get('billingDetailsForm.SameAddress')?.value) {
-      this.doctorForm.get('billingDetailsForm.BillingState')?.setValue(this.doctorForm.get('accountDetailsForm.State')?.value);
-      this.doctorForm.get('billingDetailsForm.BillingCity')?.setValue(this.doctorForm.get('accountDetailsForm.City')?.value);
-      this.doctorForm.get('billingDetailsForm.BillingAddress')?.setValue(this.doctorForm.get('accountDetailsForm.Street')?.value);
-      this.doctorForm.get('billingDetailsForm.BillingZipcode')?.setValue(this.doctorForm.get('accountDetailsForm.Zipcode')?.value);
-      this.doctorForm.get('billingDetailsForm.BillingNeighborhood')?.setValue(this.doctorForm.get('accountDetailsForm.Neighborhood')?.value);
-      this.doctorForm.get('billingDetailsForm.BillingExteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.ExteriorNumber')?.value);
-      this.doctorForm.get('billingDetailsForm.BillingInteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.InteriorNumber')?.value);
+      this.doctorForm.get('billingDetailsForm.State')?.setValue(this.doctorForm.get('accountDetailsForm.State')?.value);
+      this.doctorForm.get('billingDetailsForm.City')?.setValue(this.doctorForm.get('accountDetailsForm.City')?.value);
+      this.doctorForm.get('billingDetailsForm.Street')?.setValue(this.doctorForm.get('accountDetailsForm.Street')?.value);
+      this.doctorForm.get('billingDetailsForm.Zipcode')?.setValue(this.doctorForm.get('accountDetailsForm.Zipcode')?.value);
+      this.doctorForm.get('billingDetailsForm.Neighborhood')?.setValue(this.doctorForm.get('accountDetailsForm.Neighborhood')?.value);
+      this.doctorForm.get('billingDetailsForm.ExteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.ExteriorNumber')?.value);
+      this.doctorForm.get('billingDetailsForm.InteriorNumber')?.setValue(this.doctorForm.get('accountDetailsForm.InteriorNumber')?.value);
     }
-
-    console.log('doctorForm: ', this.doctorForm.getRawValue());
-    console.log('accountSettingsForm: ', this.doctorForm.get('accountSettingsForm')?.getRawValue());
-    console.log('accountDetailsForm: ', this.doctorForm.get('accountDetailsForm')?.getRawValue());
-    console.log('billingDetailsForm: ', this.doctorForm.get('billingDetailsForm')?.getRawValue());
 
     const accountSettingsFormData: any = this.doctorForm.get('accountSettingsForm')?.getRawValue();
     const accountDetailsFormData: any = this.doctorForm.get('accountDetailsForm')?.getRawValue();
@@ -243,27 +238,44 @@ export class SignUpComponent implements OnInit {
     const formData = new FormData();
 
     Object.keys(accountSettingsFormData).forEach((key: string) => {
-      const value: any = accountSettingsFormData[key as keyof typeof accountSettingsFormData];
+      const value: any = accountSettingsFormData[key];
       if (value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
     });
 
     Object.keys(accountDetailsFormData).forEach((key: string) => {
-      const value: any = accountDetailsFormData[key as keyof typeof accountDetailsFormData];
+      const value: any = accountDetailsFormData[key];
       if (value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
     });
+
+    const billingMapping: { [key: string]: string } = {
+      State: 'BillingState',
+      City: 'BillingCity',
+      Street: 'BillingStreet',
+      Zipcode: 'BillingZipcode',
+      Neighborhood: 'BillingNeighborhood',
+      ExteriorNumber: 'BillingExteriorNumber',
+      InteriorNumber: 'BillingInteriorNumber'
+    };
 
     Object.keys(billingDetailsFormData).forEach((key: string) => {
-      const value: any = billingDetailsFormData[key as keyof typeof billingDetailsFormData];
+      const value: any = billingDetailsFormData[key];
       if (value !== null && value !== undefined) {
-        formData.append(key, value.toString());
+        if (billingMapping.hasOwnProperty(key)) {
+          formData.append(billingMapping[key], value.toString());
+        } else {
+          formData.append(key, value.toString());
+        }
       }
     });
 
-    formData.append('file', this.doctorForm.get('accountDetailsForm.file')?.value);
+    const fileValue: any = this.doctorForm.get('accountDetailsForm.file')?.value;
+    if (fileValue) {
+      formData.append('file', fileValue);
+    }
 
     this.accountService.registerDoctor(formData).subscribe({
       next: (_) => {
@@ -276,6 +288,7 @@ export class SignUpComponent implements OnInit {
       }
     });
   }
+
 
   async onSubmit() {
     console.log('Submitting form in sign-up.component.ts');

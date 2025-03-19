@@ -1,15 +1,14 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/_services/account.service';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import { UtilsService } from 'src/app/_services/utils.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { NgClass } from "@angular/common";
 import { AddressesService } from "src/app/addresses/addresses.config";
 import { ToastrService } from "ngx-toastr";
 import { Address } from "src/app/_models/addresses/address";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { AddressFormComponent } from "src/app/addresses/address-form/address-form.component";
 
 @Component({
   selector: 'app-add-address',
@@ -17,17 +16,17 @@ import { Address } from "src/app/_models/addresses/address";
   styleUrls: [ './add-address.component.scss' ],
   imports: [
     ReactiveFormsModule,
-    NgClass
+    AddressFormComponent
   ]
 })
-export class AddAddressComponent implements OnInit, OnDestroy {
+export class AddAddressComponent implements OnInit {
   private readonly addressesService: AddressesService = inject(AddressesService);
   private readonly accountService: AccountService = inject(AccountService);
   private readonly utilsService: UtilsService = inject(UtilsService);
   private readonly toastr: ToastrService = inject(ToastrService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly fb: FormBuilder = inject(FormBuilder);
 
-  private readonly destroy$: Subject<void> = new Subject<void>();
   readonly bsModalRef: BsModalRef = inject(BsModalRef);
 
   addressForm!: FormGroup;
@@ -47,46 +46,40 @@ export class AddAddressComponent implements OnInit, OnDestroy {
     this.subscribeToStateChanges();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private initForm(): void {
     this.addressForm = this.fb.group({
-      street: [ '', Validators.required ],
-      city: [ { value: '', disabled: true }, Validators.required ],
-      state: [ '', Validators.required ],
-      zipCode: [ '', [ Validators.required, Validators.pattern(/^\d{5}(?:[-\s]\d{4})?$/) ] ],
-      country: [ { value: this.countryOptions[0], disabled: true }, Validators.required ],
-      exteriorNumber: [ '', Validators.required ],
-      interiorNumber: [ '' ],
-      isDefault: [ false ],
-      isBilling: [ false ]
+      State: [ '', Validators.required ],
+      City: [ { value: '', disabled: true }, Validators.required ],
+      Street: [ '', Validators.required ],
+      Neighborhood: [ '', Validators.required ],
+      Zipcode: [ '', [ Validators.required, Validators.pattern(/^\d{5}(?:[-\s]\d{4})?$/) ] ],
+      Country: [ { value: this.countryOptions[0], disabled: true }, Validators.required ],
+      ExteriorNumber: [ '', Validators.required ],
+      InteriorNumber: [ '' ],
+      IsDefault: [ false ],
+      IsBilling: [ false ]
     });
   }
 
   private subscribeToStateChanges(): void {
-    this.addressForm.controls['state'].valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((selectedState: SelectOption) => {
-        if (selectedState && selectedState.code) {
-          this.cityOptions = this.utilsService.citySelectOptions(selectedState.code);
-          this.addressForm.controls['city'].enable();
-          if (this.cityOptions && this.cityOptions.length > 0) {
-            this.addressForm.controls['city'].setValue(this.cityOptions[0]);
-          } else {
-            this.addressForm.controls['city'].setValue('');
-          }
+    this.addressForm.controls['state'].valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((selectedState: SelectOption) => {
+      if (selectedState && selectedState.code) {
+        this.cityOptions = this.utilsService.citySelectOptions(selectedState.code);
+        this.addressForm.controls['city'].enable();
+        if (this.cityOptions && this.cityOptions.length > 0) {
+          this.addressForm.controls['city'].setValue(this.cityOptions[0]);
         } else {
-          this.cityOptions = [];
-          this.addressForm.controls['city'].disable();
           this.addressForm.controls['city'].setValue('');
         }
-      });
+      } else {
+        this.cityOptions = [];
+        this.addressForm.controls['city'].disable();
+        this.addressForm.controls['city'].setValue('');
+      }
+    });
   }
 
-  get f() {
+  get form() {
     return this.addressForm.controls;
   }
 

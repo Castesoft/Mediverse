@@ -1,4 +1,4 @@
-import { inject, signal } from "@angular/core";
+import { DestroyRef, inject, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
@@ -62,7 +62,7 @@ export default class BaseTable<
   row = signal<TableRow<T>>(new TableRow({} as any));
   cells = signal<PartialCellsOf<T>>({} as any);
 
-  ngUnsubscribe = new Subject<void>();
+  protected readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   constructor(
     serviceToken: new (...args: any[]) => Z,

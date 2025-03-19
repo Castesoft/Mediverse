@@ -204,7 +204,7 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
             InteriorNumber = request.InteriorNumber,
             ExteriorNumber = request.ExteriorNumber,
             CountryCode = "MX",
-            Zipcode = request.ZipCode,
+            Zipcode = request.Zipcode,
             Notes = request.Notes,
             CrossStreet1 = null,
             CrossStreet2 = null,

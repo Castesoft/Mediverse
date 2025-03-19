@@ -142,25 +142,25 @@ export class EventEditComponent implements OnInit {
   }
 
   private subscribeToSelectedPatient = () => {
-    // this.usersService.selected$(this.selectPatientKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((patient) => {
+    // this.usersService.selected$(this.selectPatientKey).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((patient) => {
     //   this.patient = patient;
     // });
   }
 
   private subscribeToSelectedService = () => {
-    // this.servicesService.selected$(this.selectServiceKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((service) => {
+    // this.servicesService.selected$(this.selectServiceKey).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((service) => {
     //   this.service = service;
     // });
   }
 
   private subscribeToSelectedNurses = () => {
-    // this.usersService.multipleSelected$(this.selectNursesKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((nurses) => {
+    // this.usersService.multipleSelected$(this.selectNursesKey).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((nurses) => {
     //   this.nurses = nurses;
     // });
   }
 
   private subscribeToSelectedClinic = () => {
-    // this.addressesService.selected$(this.selectClinicKey).pipe(takeUntil(this.ngUnsubscribe)).subscribe((clinic) => {
+    // this.addressesService.selected$(this.selectClinicKey).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((clinic) => {
     //   this.address = clinic;
     // });
   }

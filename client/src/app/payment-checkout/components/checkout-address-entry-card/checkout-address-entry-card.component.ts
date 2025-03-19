@@ -1,4 +1,4 @@
-import { Component, inject, input, InputSignal, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, input, InputSignal, OnInit } from '@angular/core';
 import { Address } from "src/app/_models/addresses/address";
 import { AccountService } from "src/app/_services/account.service";
 import { AddressesService } from "src/app/addresses/addresses.config";
@@ -8,7 +8,7 @@ import { CollapseDirective } from "ngx-bootstrap/collapse";
 import {
   AddressDisplayCardComponent
 } from "src/app/addresses/components/address-display-card/address-display-card.component";
-import { Subject } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[checkoutAddressEntryCard]',
@@ -20,12 +20,11 @@ import { Subject } from "rxjs";
     AddressDisplayCardComponent
   ],
 })
-export class CheckoutAddressEntryCardComponent implements OnInit, OnDestroy {
+export class CheckoutAddressEntryCardComponent implements OnInit {
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly addressesService: AddressesService = inject(AddressesService);
   private readonly accountsService: AccountService = inject(AccountService);
-
-  private readonly destroy$: Subject<void> = new Subject<void>();
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   title: InputSignal<string> = input('Dirección de Entrega');
 
@@ -41,13 +40,8 @@ export class CheckoutAddressEntryCardComponent implements OnInit, OnDestroy {
     this.subscribeToSelectedAddress();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private subscribeToSelectedAddress() {
-    this.paymentCheckoutService.selectedAddress$.subscribe({
+    this.paymentCheckoutService.selectedAddress$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (address) => {
         this.selectedAddress = address;
       }

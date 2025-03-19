@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ModelSignal, model, OnDestroy, effect } from "@angular/core";
+import { Component, model, ModelSignal, OnDestroy, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
-import { View, CatalogMode } from "src/app/_models/base/types";
+import { CatalogMode, View } from "src/app/_models/base/types";
 import { Service } from "src/app/_models/services/service";
 import { serviceCells } from "src/app/_models/services/serviceConstants";
 import { ServiceFiltersForm } from "src/app/_models/services/serviceFiltersForm";
@@ -32,10 +32,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     TableMenuComponent,
   ],
 })
-export class ServicesTableComponent
-  extends BaseTable<Service, ServiceParams, ServiceFiltersForm, ServicesService>
-  implements OnInit, OnDestroy, TableInputSignals<Service, ServiceParams>
-{
+export class ServicesTableComponent extends BaseTable<Service, ServiceParams, ServiceFiltersForm, ServicesService> implements TableInputSignals<Service, ServiceParams> {
   item: ModelSignal<Service | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -46,14 +43,5 @@ export class ServicesTableComponent
 
   constructor() {
     super(ServicesService, Service, { tableCells: serviceCells, });
-
-    effect(() => {});
-  }
-
-  ngOnInit(): void {}
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

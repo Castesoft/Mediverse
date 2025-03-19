@@ -1,19 +1,13 @@
-import { Breakpoints, BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  OnDestroy,
-  inject
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { MatDrawerMode } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
 import { SidebarService } from 'src/app/_services/sidebar.service';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { DrawerMode } from '../../_models/base/filter-types';
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 interface SidebarItem {
   link: string;
@@ -24,21 +18,25 @@ interface SidebarItem {
 @Component({
   selector: 'nav[mainSidebar]',
   templateUrl: './sidebar.component.html',
-  standalone: true,
-  imports: [ CommonModule, CdkModule, MaterialModule, RouterModule ],
+  imports: [
+    CommonModule,
+    CdkModule,
+    MaterialModule,
+    RouterModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidebarComponent implements OnInit, OnDestroy {
-  public readonly sidebarService: SidebarService = inject(SidebarService);
+export class SidebarComponent implements OnInit {
   private readonly breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  private readonly destroy$: Subject<void> = new Subject<void>();
+  readonly sidebarService: SidebarService = inject(SidebarService);
 
-  public currentScreenSize: string = '';
-  public mode: MatDrawerMode = DrawerMode.SIDE;
-  public isMobile: boolean = false;
+  mode: MatDrawerMode = DrawerMode.SIDE;
+  currentScreenSize: string = '';
+  isMobile: boolean = false;
 
-  public sidebarItems: SidebarItem[] = [
+  sidebarItems: SidebarItem[] = [
     { link: '/admin', label: 'Inicio' },
     { link: '/admin/pedidos', label: 'Pedidos' },
     { link: '/admin/productos', label: 'Productos' },
@@ -68,7 +66,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     this.breakpointObserver
       .observe(breakpoints)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: BreakpointState) => {
         if (result.breakpoints[Breakpoints.XSmall] || result.breakpoints[Breakpoints.Small]) {
           this.currentScreenSize = this.displayNameMap[Breakpoints.XSmall];
@@ -80,10 +78,5 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.isMobile = false;
         }
       });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

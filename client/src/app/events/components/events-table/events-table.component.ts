@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, input, InputSignal, model, ModelSignal, OnDestroy } from "@angular/core";
+import { Component, effect, input, InputSignal, model, ModelSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -41,7 +41,7 @@ import {
     AddressTableCellComponent,
   ],
 })
-export class EventsTableComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements OnDestroy, TableInputSignals<Event, EventParams> {
+export class EventsTableComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements TableInputSignals<Event, EventParams> {
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -69,10 +69,5 @@ export class EventsTableComponent extends BaseTable<Event, EventParams, EventFil
         this.service.columns = this.columns.filter((column: Column) => column.name !== 'doctor');
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

@@ -1,11 +1,11 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, model, ModelSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ControlsModule } from 'src/app/_forms/controls.module';
 import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
 import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
-import { View, CatalogMode } from 'src/app/_models/base/types';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { TablesModule } from 'src/app/_shared/template/components/tables/tables.module';
@@ -15,7 +15,6 @@ import { PaymentFiltersForm } from 'src/app/_models/payments/paymentFiltersForm'
 import { PaymentsService } from 'src/app/payments/payments.config';
 import { paymentCells } from 'src/app/_models/payments/paymentConstants';
 import { TableMenuComponent } from 'src/app/_shared/components/table-menu.component';
-import { ModelSignal, model } from '@angular/core';
 import { PaymentStatusCellComponent } from "src/app/payments/components/payment-status-cell.component";
 import { PaymentMethodCellComponent } from "src/app/payments/components/payment-method-cell.component";
 import { EventTableCellComponent } from "src/app/events/components/event-table-cell/event-table-cell.component";
@@ -40,7 +39,7 @@ import { EventTableCellComponent } from "src/app/events/components/event-table-c
   ]
 })
 export class PaymentsTableComponent extends BaseTable<Payment, PaymentParams, PaymentFiltersForm, PaymentsService>
-  implements OnDestroy, TableInputSignals<Payment, PaymentParams> {
+  implements TableInputSignals<Payment, PaymentParams> {
 
   item: ModelSignal<Payment | null> = model.required();
   view: ModelSignal<View> = model.required();
@@ -52,10 +51,5 @@ export class PaymentsTableComponent extends BaseTable<Payment, PaymentParams, Pa
 
   constructor() {
     super(PaymentsService, Payment, { tableCells: paymentCells });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

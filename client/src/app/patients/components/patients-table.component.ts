@@ -34,7 +34,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     TableMenuComponent,
   ],
 })
-export class PatientsTableComponent extends BaseTable<Patient, PatientParams, PatientFiltersForm, PatientsService> implements OnDestroy, TableInputSignals<Patient, PatientParams> {
+export class PatientsTableComponent extends BaseTable<Patient, PatientParams, PatientFiltersForm, PatientsService> implements TableInputSignals<Patient, PatientParams> {
   item: ModelSignal<Patient | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -45,10 +45,5 @@ export class PatientsTableComponent extends BaseTable<Patient, PatientParams, Pa
 
   constructor() {
     super(PatientsService, Patient, { tableCells: patientCells, });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, input, model, ModelSignal, OnDestroy } from '@angular/core';
+import { Component, effect, input, InputSignal, model, ModelSignal, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ControlsModule } from 'src/app/_forms/controls.module';
@@ -38,7 +38,9 @@ import {
     AddressTableCellComponent,
   ],
 })
-export class WarehousesTableComponent extends BaseTable<Warehouse, WarehouseParams, WarehouseFiltersForm, WarehousesService> implements OnDestroy, TableInputSignals<Warehouse, WarehouseParams> {
+export class WarehousesTableComponent extends BaseTable<Warehouse, WarehouseParams, WarehouseFiltersForm, WarehousesService> implements TableInputSignals<Warehouse, WarehouseParams> {
+  protected readonly SiteSection: typeof SiteSection = SiteSection;
+
   item: ModelSignal<Warehouse | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -48,7 +50,7 @@ export class WarehousesTableComponent extends BaseTable<Warehouse, WarehousePara
   data: ModelSignal<Warehouse[]> = model.required();
 
   columns: Column[] = [];
-  showDoctorColumn = input<boolean>(false);
+  showDoctorColumn: InputSignal<boolean> = input<boolean>(false);
 
   constructor() {
     super(WarehousesService, Warehouse, { tableCells: warehouseCells });
@@ -58,14 +60,7 @@ export class WarehousesTableComponent extends BaseTable<Warehouse, WarehousePara
         this.columns = this.service.columns;
       }
 
-      this.service.columns = this.columns.filter(column => column.name !== 'doctor');
+      this.service.columns = this.columns.filter((column: Column) => column.name !== 'doctor');
     });
   }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  protected readonly SiteSection = SiteSection;
 }

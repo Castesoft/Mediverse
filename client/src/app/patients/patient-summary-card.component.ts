@@ -47,7 +47,7 @@ export class PatientSummaryCardComponent implements OnInit {
   }
 
   private subscribeToSelectedPatient = (key: string) => {
-    // this.usersService.selected$(key).pipe(takeUntil(this.ngUnsubscribe)).subscribe((patient) => {
+    // this.usersService.selected$(key).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((patient) => {
     //   if (patient) {
     //     if (!patient.photoUrl) {
     //       this.fetchNewPhotoUrl().then((url) => {

@@ -39,7 +39,7 @@ import { PhotoShape } from 'src/app/_models/photos/photoTypes';
     SymbolCellComponent,
   ],
 })
-export class ClinicsTableComponent extends BaseTable<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService> implements OnDestroy, TableInputSignals<Clinic, ClinicParams> {
+export class ClinicsTableComponent extends BaseTable<Clinic, ClinicParams, ClinicFiltersForm, ClinicsService> implements TableInputSignals<Clinic, ClinicParams> {
   item: ModelSignal<Clinic | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -52,10 +52,5 @@ export class ClinicsTableComponent extends BaseTable<Clinic, ClinicParams, Clini
 
   constructor() {
     super(ClinicsService, Clinic, { tableCells: clinicCells, });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

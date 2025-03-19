@@ -17,7 +17,8 @@
               <app-accout-type-selector [(accountType)]="accountType"></app-accout-type-selector>
             } @else if (currentStep() < formSteps.length) {
               @if (accountType() === 'patient') {
-                <app-register-patient-form [(form)]="patientRegisterForm" [(isSubmitting)]="isSubmitting"></app-register-patient-form>
+                <app-register-patient-form [(form)]="patientRegisterForm"
+                                           [(isSubmitting)]="isSubmitting"></app-register-patient-form>
               } @else if (accountType() === 'doctor') {
                 @if (currentStep() === 2) {
                   <app-account-settings

@@ -86,7 +86,7 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
   }
 
   private subscribeToSelectedProduct(): void {
-    // this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    // this.service.selected$(this.key()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
     //   next: (product) => {
     //     this.product.set(product || null);
     //     this.setInputStatusAndValue();
@@ -134,7 +134,7 @@ export class ProductSelectTypeaheadComponent implements OnInit, OnChanges {
   };
 
   private subscribeToFormValueChanges = () => {
-    this.formGroup.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.formGroup.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (formValue) => {
         this.subscribeToSummaries(formValue);
       }

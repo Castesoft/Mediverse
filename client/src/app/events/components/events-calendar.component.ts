@@ -4,18 +4,7 @@ import timeGridDayPlugin from '@fullcalendar/timegrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import interactionPlugin, { DateClickArg, EventDragStopArg } from '@fullcalendar/interaction';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  effect,
-  forwardRef,
-  inject,
-  model,
-  ModelSignal,
-  OnDestroy,
-  OnInit,
-  Signal,
-  viewChild
-} from '@angular/core';
+import { Component, effect, forwardRef, inject, model, ModelSignal, OnInit, Signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -62,8 +51,7 @@ import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
     CommonModule,
   ],
 })
-export class EventsCalendarComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService>
-  implements OnInit, OnDestroy {
+export class EventsCalendarComponent extends BaseTable<Event, EventParams, EventFiltersForm, EventsService> implements OnInit {
   item: ModelSignal<Event | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -179,11 +167,6 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
 
   ngOnInit(): void {
     forwardRef(() => Calendar);
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 
   private getBgColorClass(name: string, dateFrom: Date | null, dateTo: Date | null): string {

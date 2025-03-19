@@ -339,7 +339,7 @@ public class AccountController(
                 {
                     State = request.BillingState,
                     City = request.BillingCity,
-                    Street = request.BillingAddress,
+                    Street = request.BillingStreet,
                     Zipcode = request.BillingZipcode,
                     Neighborhood = request.BillingNeighborhood,
                     ExteriorNumber = request.BillingExteriorNumber,

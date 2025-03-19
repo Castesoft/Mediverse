@@ -19,7 +19,7 @@ public class AddressCreateDto
     public OptionDto? State { get; set; }
 
     [Required(ErrorMessage = "El código postal es requerido.")]
-    public string? ZipCode { get; set; }
+    public string? Zipcode { get; set; }
 
     public OptionDto? Country { get; set; }
 

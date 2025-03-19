@@ -1,4 +1,4 @@
-import { Component, effect, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnDestroy } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import { Warehouse } from 'src/app/_models/warehouses/warehouse';
 import { FormUse } from "src/app/_models/forms/formTypes";
@@ -6,6 +6,7 @@ import { Navigation, ParamMap } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[adminWarehouseEditRoute]',
@@ -18,9 +19,9 @@ import { SiteSection } from "src/app/_models/sections/sectionTypes";
   `,
   standalone: false,
 })
-export class AdminWarehouseEditRouteComponent extends BaseRouteDetail<Warehouse> implements OnDestroy {
+export class AdminWarehouseEditRouteComponent extends BaseRouteDetail<Warehouse> {
   protected readonly SiteSection: typeof SiteSection = SiteSection;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   constructor() {
     super('warehouses', FormUse.EDIT);
@@ -33,13 +34,8 @@ export class AdminWarehouseEditRouteComponent extends BaseRouteDetail<Warehouse>
     });
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
   private subscribeToParamMap() {
-    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (params: ParamMap) => {
         if (params.has('id')) this.id.set(+params.get('id')!);
       },
@@ -47,7 +43,7 @@ export class AdminWarehouseEditRouteComponent extends BaseRouteDetail<Warehouse>
   }
 
   private subcribeToRouteData() {
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);
       },

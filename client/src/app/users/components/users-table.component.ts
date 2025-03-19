@@ -34,7 +34,7 @@ import { UserTableCellComponent } from "src/app/users/components/user-table-cell
     UserTableCellComponent,
   ],
 })
-export class UsersTableComponent extends BaseTable<User, UserParams, UserFiltersForm, UsersService> implements OnDestroy, TableInputSignals<User, UserParams> {
+export class UsersTableComponent extends BaseTable<User, UserParams, UserFiltersForm, UsersService> implements TableInputSignals<User, UserParams> {
   item: ModelSignal<User | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -45,10 +45,5 @@ export class UsersTableComponent extends BaseTable<User, UserParams, UserFilters
 
   constructor() {
     super(UsersService, User, { tableCells: userCells });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

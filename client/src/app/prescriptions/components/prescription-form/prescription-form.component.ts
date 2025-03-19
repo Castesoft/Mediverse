@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   effect,
   HostBinding,
   inject,
@@ -8,7 +9,6 @@ import {
   InputSignal,
   model,
   ModelSignal,
-  OnDestroy,
   OnInit,
   signal,
   ViewChild,
@@ -18,7 +18,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { firstValueFrom, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { Account } from 'src/app/_models/account/account';
 import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
@@ -41,6 +41,7 @@ import { ProfilePictureComponent } from 'src/app/users/components/profile-pictur
 import { Patient } from "src/app/_models/patients/patient";
 import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -60,16 +61,16 @@ import { PhotoSize } from "src/app/_models/photos/photoTypes";
   templateUrl: './prescription-form.component.html',
   styleUrl: './prescription-form.component.scss',
 })
-export class PrescriptionFormComponent extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService> implements OnInit, OnDestroy, FormInputSignals<Prescription> {
-  protected readonly PhotoSize:typeof PhotoSize = PhotoSize;
+export class PrescriptionFormComponent extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService> implements OnInit, FormInputSignals<Prescription> {
+  protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
+  protected readonly FormUse: typeof FormUse = FormUse;
 
   readonly accountService: AccountService = inject(AccountService);
 
   private readonly productsService: ProductsService = inject(ProductsService);
   private readonly patientsService: PatientsService = inject(PatientsService);
   private readonly clinicsService: ClinicsService = inject(ClinicsService);
-
-  private readonly ngUnsubscribe: Subject<void> = new Subject<void>();
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   @ViewChild('memberTabs', { static: false }) memberTabs?: TabsetComponent;
 
@@ -96,8 +97,6 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     this.clinicsService.getOptions().subscribe();
 
     effect(() => {
-      console.log('prescriptionItem', this.item());
-
       this.form
         .setUse(this.use())
         .setValidation(this.validation.active())
@@ -129,7 +128,7 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
   }
 
   private subscribeToFormValueChanges(): void {
-    this.form.controls.patient.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async (patient): Promise<void> => {
+    this.form.controls.patient.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(async (patient): Promise<void> => {
       if (patient && patient.id && this.form.controls?.patient?.value?.id !== patient.id) {
         const patientFull: Patient = await firstValueFrom(this.patientsService.getById(patient.id));
         this.form.controls.patient.patchValue(patientFull as any, { emitEvent: false });
@@ -148,13 +147,8 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     }
   }
 
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
   private subscribeToRouteQueryParams(): void {
-    this.route.queryParams.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (params): void => {
         if (params['tab']) {
           this.selectTab(params['tab']);
@@ -183,6 +177,4 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
       queryParamsHandling: 'merge',
     }).then(() => {});
   };
-
-  protected readonly FormUse = FormUse;
 }

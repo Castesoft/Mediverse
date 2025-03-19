@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, input, model, ModelSignal, OnDestroy } from '@angular/core';
+import { Component, effect, input, InputSignal, model, ModelSignal, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ControlsModule } from 'src/app/_forms/controls.module';
@@ -44,7 +44,7 @@ import {
     AddressTableCellComponent,
   ],
 })
-export class OrdersTableComponent extends BaseTable<Order, OrderParams, OrderFiltersForm, OrdersService> implements OnDestroy, TableInputSignals<Order, OrderParams> {
+export class OrdersTableComponent extends BaseTable<Order, OrderParams, OrderFiltersForm, OrdersService> implements TableInputSignals<Order, OrderParams> {
   protected readonly SiteSection: typeof SiteSection = SiteSection;
 
   item: ModelSignal<Order | null> = model.required();
@@ -56,7 +56,7 @@ export class OrdersTableComponent extends BaseTable<Order, OrderParams, OrderFil
   data: ModelSignal<Order[]> = model.required();
 
   columns: Column[] = [];
-  showDoctorColumn = input<boolean>(false);
+  showDoctorColumn: InputSignal<boolean> = input<boolean>(false);
 
   constructor() {
     super(OrdersService, Order, { tableCells: orderCells, });
@@ -72,10 +72,5 @@ export class OrdersTableComponent extends BaseTable<Order, OrderParams, OrderFil
         this.service.columns = this.columns.filter(column => column.name !== 'doctor');
       }
     })
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, effect, OnDestroy } from "@angular/core";
+import { Component, DestroyRef, effect, inject, OnDestroy } from "@angular/core";
 import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
 import { Doctor } from "src/app/_models/doctors/doctor";
 import { FormUse } from "src/app/_models/forms/formTypes";
@@ -6,21 +6,26 @@ import { takeUntil } from "rxjs/operators";
 import { Navigation, ParamMap } from "@angular/router";
 import { Subject } from "rxjs";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[adminDoctorDetailRoute]',
   template: `
     <div breadcrumbs></div>
     <div post>
-      <div doctorForm [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key"
+      <div doctorForm
+           [(use)]="use"
+           [(view)]="view"
+           [(item)]="item"
+           [(key)]="key"
            [siteSection]="SiteSection.ADMIN"></div>
     </div>
   `,
   standalone: false
 })
-export class AdminDoctorDetailRouteComponent extends BaseRouteDetail<Doctor> implements OnDestroy {
+export class AdminDoctorDetailRouteComponent extends BaseRouteDetail<Doctor> {
   protected readonly SiteSection: typeof SiteSection = SiteSection;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   constructor() {
     super('doctors', FormUse.DETAIL);
@@ -33,13 +38,8 @@ export class AdminDoctorDetailRouteComponent extends BaseRouteDetail<Doctor> imp
     })
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
   private subscribeToParamMap() {
-    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (params: ParamMap) => {
         if (params.has('id')) this.id.set(+params.get('id')!);
       },
@@ -47,7 +47,7 @@ export class AdminDoctorDetailRouteComponent extends BaseRouteDetail<Doctor> imp
   }
 
   private subcribeToRouteData() {
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);
       },

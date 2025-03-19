@@ -1,7 +1,6 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Data, RouterModule } from '@angular/router';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { Account } from "src/app/_models/account/account";
 import { BillingDetails, UserAddress } from 'src/app/_models/billingDetails';
 import { AccountService } from 'src/app/_services/account.service';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
@@ -15,11 +14,10 @@ import {
 import {
   AddressCreateCardComponent
 } from "src/app/addresses/components/address-create-card/address-create-card.component";
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
 import {
   AccountChildWrapperComponent
 } from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-account-billing',
@@ -35,32 +33,20 @@ import {
     AccountChildWrapperComponent
   ],
 })
-export class AccountBillingComponent implements OnInit, OnDestroy {
-  private bsModalService: BsModalService = inject(BsModalService);
-  destroy$: Subject<void> = new Subject<void>();
-  accountService: AccountService = inject(AccountService);
-  route: ActivatedRoute = inject(ActivatedRoute);
-  account: Account | null = null;
+export class AccountBillingComponent implements OnInit {
+  private readonly bsModalService: BsModalService = inject(BsModalService);
+  private readonly accountService: AccountService = inject(AccountService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+
   billingDetails: BillingDetails | null = null;
 
   ngOnInit(): void {
-    this.route.data.subscribe({
-      next: (data: Data) => {
-        this.account = data['item'];
-      }
-    })
-
     this.accountService.getBillingDetails();
     this.subscribeToBillingDetails();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private subscribeToBillingDetails() {
-    this.accountService.billingDetails$.pipe(takeUntil(this.destroy$)).subscribe({
+    this.accountService.billingDetails$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (billingDetails: BillingDetails | null) => {
         this.billingDetails = billingDetails;
       }

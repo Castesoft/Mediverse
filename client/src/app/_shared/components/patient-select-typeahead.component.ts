@@ -77,7 +77,7 @@ export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
   }
 
   private subscribeToSelectedUser(): void {
-    // this.service.selected$(this.key()).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    // this.service.selected$(this.key()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
     //   next: (user) => {
     //     this.user.set(user || null);
     //     this.setInputStatusAndValue();
@@ -125,7 +125,7 @@ export class PatientSelectTypeaheadComponent implements OnInit, OnChanges {
   };
 
   private subscribeToFormValueChanges = () => {
-    this.formGroup.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.formGroup.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (formValue) => {
         this.subscribeToSummaries(formValue);
       }

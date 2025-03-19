@@ -1,25 +1,28 @@
-import { Component, effect, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, effect, inject } from '@angular/core';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import { Product } from 'src/app/_models/products/product';
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Navigation, ParamMap } from "@angular/router";
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[adminProductEditRoute]',
   template: `
     <div breadcrumbs></div>
     <div post>
-      <div productForm [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key"
+      <div productForm
+           [(use)]="use"
+           [(view)]="view"
+           [(item)]="item"
+           [(key)]="key"
            [siteSection]="SiteSection.ADMIN"></div>
     </div>
   `,
   standalone: false,
 })
-export class AdminProductEditRouteComponent extends BaseRouteDetail<Product> implements OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+export class AdminProductEditRouteComponent extends BaseRouteDetail<Product> {
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   protected readonly SiteSection: typeof SiteSection = SiteSection;
 
@@ -34,13 +37,8 @@ export class AdminProductEditRouteComponent extends BaseRouteDetail<Product> imp
     });
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
   private subscribeToParamMap() {
-    this.route.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (params: ParamMap) => {
         if (params.has('id')) this.id.set(+params.get('id')!);
       },
@@ -48,7 +46,7 @@ export class AdminProductEditRouteComponent extends BaseRouteDetail<Product> imp
   }
 
   private subcribeToRouteData() {
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);
       },

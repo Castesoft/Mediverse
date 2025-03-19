@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { PaymentCheckoutService } from "src/app/payment-checkout/payment-checkout.service";
 import { PaymentsService } from "src/app/payments/payments.config";
@@ -7,10 +7,10 @@ import { CollapseDirective } from "ngx-bootstrap/collapse";
 import {
   PaymentMethodSelectorComponent
 } from "src/app/account/components/account-billing/components/payment-method-selector.component";
-import { Subject } from "rxjs";
 import {
   PaymentMethodDisplayCardComponent
 } from "src/app/account/components/account-billing/components/payment-method-display-card.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[checkoutPaymentMethodEntryCard]',
@@ -22,12 +22,11 @@ import {
     PaymentMethodDisplayCardComponent
   ],
 })
-export class CheckoutPaymentMethodEntryCardComponent implements OnInit, OnDestroy {
+export class CheckoutPaymentMethodEntryCardComponent implements OnInit {
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly paymentsService: PaymentsService = inject(PaymentsService);
   private readonly accountsService: AccountService = inject(AccountService);
-
-  private readonly destroy$: Subject<void> = new Subject<void>();
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   paymentMethods: PaymentMethod[] = [];
   selectedPaymentMethod: PaymentMethod | null = null;
@@ -42,13 +41,8 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit, OnDestro
     this.subscribeToSelectedPaymentMethod();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private subscribeToSelectedPaymentMethod() {
-    this.paymentCheckoutService.selectedPaymentMethod$.subscribe({
+    this.paymentCheckoutService.selectedPaymentMethod$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (paymentMethod) => {
         this.selectedPaymentMethod = paymentMethod;
       }

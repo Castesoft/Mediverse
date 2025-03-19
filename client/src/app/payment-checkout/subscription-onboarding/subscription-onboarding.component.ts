@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   CheckoutAddressEntryCardComponent
 } from 'src/app/payment-checkout/components/checkout-address-entry-card/checkout-address-entry-card.component';
@@ -20,6 +20,7 @@ import { BadRequest } from "src/app/_models/forms/badRequest";
 import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
 import { SubscriptionResponse } from "src/app/_models/payments/subscriptionResponse";
 import { ActivatedRoute } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[subscriptionOnboarding]',
@@ -33,12 +34,12 @@ import { ActivatedRoute } from "@angular/router";
     ErrorsAlert3Component
   ],
 })
-export class SubscriptionOnboardingComponent implements OnInit, OnDestroy {
+export class SubscriptionOnboardingComponent implements OnInit {
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly destroy$: Subject<void> = new Subject<void>();
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   step: 1 | 2 = 1;
   totalPrice: number = 199.00;
@@ -59,13 +60,8 @@ export class SubscriptionOnboardingComponent implements OnInit, OnDestroy {
     this.cancelUrl = this.route.snapshot.queryParamMap.get('cancelUrl') || '';
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private subscribeToSelectedAddress() {
-    this.paymentCheckoutService.selectedAddress$.pipe(takeUntil(this.destroy$)).subscribe({
+    this.paymentCheckoutService.selectedAddress$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (address: Address | null) => {
         console.log('Selected address:', address);
         this.selectedAddress = address;
@@ -74,7 +70,7 @@ export class SubscriptionOnboardingComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToSelectedPaymentMethod() {
-    this.paymentCheckoutService.selectedPaymentMethod$.pipe(takeUntil(this.destroy$)).subscribe({
+    this.paymentCheckoutService.selectedPaymentMethod$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (method: PaymentMethod | null) => {
         console.log('Selected payment method:', method);
         this.selectedPaymentMethod = method;

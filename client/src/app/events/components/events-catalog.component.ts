@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, model, ModelSignal, signal, WritableSignal } from "@angular/core";
+import { Component, DestroyRef, effect, inject, model, ModelSignal, signal, WritableSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -25,7 +25,7 @@ import BaseCatalog from 'src/app/_models/base/components/extensions/baseCatalog'
 import CatalogInputSignals from 'src/app/_models/base/components/interfaces/catalogInputSignals';
 import { EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
 import { EventMonthDayCell } from "src/app/_models/event-month-day-cell/eventMonthDayCell";
-import { takeUntil } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: '[eventsCatalog]',
@@ -46,9 +46,10 @@ import { takeUntil } from "rxjs/operators";
   ],
 })
 export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, EventFiltersForm, EventsService> implements CatalogInputSignals<Event, EventParams> {
-  private readonly clinics: ClinicsService = inject(ClinicsService);
-  private readonly patients: PatientsService = inject(PatientsService);
   private readonly services: ServicesService = inject(ServicesService);
+  private readonly patients: PatientsService = inject(PatientsService);
+  private readonly clinics: ClinicsService = inject(ClinicsService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly nurses: NursesService = inject(NursesService);
 
   item: ModelSignal<Event | null> = model.required();
@@ -110,7 +111,7 @@ export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, Even
   }
 
   private subscribeToEventMonthDayCell(): void {
-    this.service.eventMonthDayCells$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((eventMonthDayCells: EventMonthDayCell[]) => {
+    this.service.eventMonthDayCells$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((eventMonthDayCells: EventMonthDayCell[]) => {
       this.calendarList = eventMonthDayCells;
     });
   }

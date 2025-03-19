@@ -78,7 +78,7 @@ public class DoctorRegisterDto
     public required string BillingCity { get; set; }
 
     [Required(ErrorMessage = "La dirección de facturación es obligatoria.")]
-    public required string BillingAddress { get; set; }
+    public required string BillingStreet { get; set; }
 
     [Required(ErrorMessage = "El código postal de facturación es obligatorio.")]
     public required string BillingZipcode { get; set; }

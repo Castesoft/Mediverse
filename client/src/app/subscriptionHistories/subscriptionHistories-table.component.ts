@@ -33,7 +33,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
     TableMenuComponent,
   ],
 })
-export class SubscriptionHistoriesTableComponent extends BaseTable<SubscriptionHistory, SubscriptionHistoryParams, SubscriptionHistoryFiltersForm, SubscriptionHistoriesService> implements OnDestroy, TableInputSignals<SubscriptionHistory, SubscriptionHistoryParams> {
+export class SubscriptionHistoriesTableComponent extends BaseTable<SubscriptionHistory, SubscriptionHistoryParams, SubscriptionHistoryFiltersForm, SubscriptionHistoriesService> implements TableInputSignals<SubscriptionHistory, SubscriptionHistoryParams> {
   item: ModelSignal<SubscriptionHistory | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -44,10 +44,5 @@ export class SubscriptionHistoriesTableComponent extends BaseTable<SubscriptionH
 
   constructor() {
     super(SubscriptionHistoriesService, SubscriptionHistory, { tableCells: subscriptionHistoryCells, });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }

@@ -1,10 +1,10 @@
 import {
   Component,
+  DestroyRef,
   inject,
   Injectable,
   model,
   ModelSignal,
-  OnDestroy,
   OnInit,
   output,
   OutputEmitterRef
@@ -27,8 +27,8 @@ import { MaterialModule } from 'src/app/_shared/material.module';
 import { ModalWrapperModule } from 'src/app/_shared/modal-wrapper.module';
 import { ServiceHelper } from 'src/app/_utils/serviceHelper/serviceHelper';
 import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog.component';
-import { Subject } from "rxjs";
 import { NurseFormComponent } from 'src/app/nurses/nurse-form.component';
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'nurses-catalog-modal',
@@ -75,9 +75,9 @@ import { NurseFormComponent } from 'src/app/nurses/nurse-form.component';
   standalone: true,
   imports: [ MaterialModule, CdkModule, NursesCatalogComponent, ],
 })
-export class NursesCatalogModalComponent implements OnInit, OnDestroy {
+export class NursesCatalogModalComponent implements OnInit {
   private readonly nurses: NursesService = inject(NursesService);
-  private destroy$: Subject<void> = new Subject<void>();
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   data: CatalogDialog<Nurse, NurseParams> = inject<CatalogDialog<Nurse, NurseParams>>(MAT_DIALOG_DATA);
   onConfirm: OutputEmitterRef<void> = output<void>();
@@ -88,13 +88,8 @@ export class NursesCatalogModalComponent implements OnInit, OnDestroy {
     this.subscribeToSelectedNurses();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private subscribeToSelectedNurses(): void {
-    this.nurses.multipleSelected$(this.data.key).subscribe({
+    this.nurses.multipleSelected$(this.data.key).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (selectedNurses: Nurse[]): number => this.selectedNurseCount = selectedNurses.length
     })
   }

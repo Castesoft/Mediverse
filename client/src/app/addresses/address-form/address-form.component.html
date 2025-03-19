@@ -1,0 +1,100 @@
+@if (formGroup()) {
+  <form [formGroup]="formGroup()">
+    <!-- Row 1: Zipcode and Neighborhood -->
+    <div class="row mb-5">
+      <div class="col-xl-4">
+        <div
+          class="fv-row fv-plugins-icon-container"
+          inputControl
+          [solid]="solid()"
+          formControlName="Zipcode"
+          [label]="'Código postal'"
+          [type]="'tel'"
+          [placeholder]="''"
+          (input)="enterZipcode($event)"
+          [errors]="{ required: 'El código postal es requerido.' }">
+        </div>
+      </div>
+      <div class="col-xl-8">
+        <div
+          class="fv-row fv-plugins-icon-container"
+          controlSelect
+          [solid]="solid()"
+          formControlName="Neighborhood"
+          [label]="'Colonia'"
+          [options]="neighborhoods"
+          [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
+          (change)="onNeighborhoodChange($event)"
+          [errors]="{ required: 'La colonia es requerida.' }">
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: City and State -->
+    <div class="row mb-5">
+      <div class="col-xl-6">
+        <div
+          class="fv-row fv-plugins-icon-container"
+          inputControl
+          [solid]="solid()"
+          formControlName="City"
+          [label]="'Ciudad'"
+          [placeholder]="''"
+          [isReadonly]="true"
+          [errors]="{ required: 'La ciudad es requerida.' }">
+        </div>
+      </div>
+      <div class="col-xl-6">
+        <div
+          class="fv-row fv-plugins-icon-container"
+          inputControl
+          [solid]="solid()"
+          formControlName="State"
+          [label]="'Estado'"
+          [placeholder]="''"
+          [isReadonly]="true"
+          [errors]="{ required: 'El estado es requerido.' }">
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Street, Exterior, and Interior Numbers -->
+    <div class="row mb-5">
+      <div class="col-xl-6">
+        <div
+          class="fv-row fv-plugins-icon-container"
+          inputControl
+          [solid]="solid()"
+          formControlName="Street"
+          [label]="'Calle'"
+          [type]="'text'"
+          [placeholder]="''"
+          [errors]="{ required: 'La calle es requerida.' }">
+        </div>
+      </div>
+      <div class="col-xl-3">
+        <div
+          class="fv-row fv-plugins-icon-container"
+          inputControl
+          [solid]="solid()"
+          formControlName="ExteriorNumber"
+          [label]="'No. ext.'"
+          [type]="'tel'"
+          [placeholder]="''"
+          [errors]="{ required: 'El número exterior es requerido.' }">
+        </div>
+      </div>
+      <div class="col-xl-3">
+        <div
+          class="fv-row fv-plugins-icon-container"
+          inputControl
+          [solid]="solid()"
+          formControlName="InteriorNumber"
+          [label]="'No. int.'"
+          [type]="'tel'"
+          [placeholder]="''">
+        </div>
+      </div>
+    </div>
+  </form>
+}

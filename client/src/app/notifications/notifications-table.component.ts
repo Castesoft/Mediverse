@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, input, model, ModelSignal, OnDestroy } from '@angular/core';
+import { Component, effect, input, InputSignal, model, ModelSignal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ControlsModule } from 'src/app/_forms/controls.module';
@@ -34,7 +34,9 @@ import { SiteSection } from "src/app/_models/sections/sectionTypes";
     TableMenuComponent,
   ],
 })
-export class NotificationsTableComponent extends BaseTable<Notification, NotificationParams, NotificationFiltersForm, NotificationsService> implements OnDestroy, TableInputSignals<Notification, NotificationParams> {
+export class NotificationsTableComponent extends BaseTable<Notification, NotificationParams, NotificationFiltersForm, NotificationsService> implements TableInputSignals<Notification, NotificationParams> {
+  protected readonly SiteSection: typeof SiteSection = SiteSection;
+
   item: ModelSignal<Notification | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -43,8 +45,9 @@ export class NotificationsTableComponent extends BaseTable<Notification, Notific
   params: ModelSignal<NotificationParams> = model.required();
   data: ModelSignal<Notification[]> = model.required();
 
+  showDoctorColumn: InputSignal<boolean> = input(false);
+
   columns: Column[] = [];
-  showDoctorColumn = input<boolean>(false);
 
   constructor() {
     super(NotificationsService, Notification, { tableCells: notificationCells });
@@ -54,14 +57,8 @@ export class NotificationsTableComponent extends BaseTable<Notification, Notific
         this.columns = this.service.columns;
       }
 
-      this.service.columns = this.columns.filter(column => column.name !== 'doctor');
+      this.service.columns = this.columns.filter((column: Column) => column.name !== 'doctor');
     });
   }
 
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  protected readonly SiteSection = SiteSection;
 }

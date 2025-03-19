@@ -4,117 +4,8 @@
   </h1>
 </div>
 
-<form
-  class="form w-100"
-  novalidate="novalidate"
-  [formGroup]="myForm">
-  <div class="row mb-5">
-    <div class="col-xl-4">
-      <div
-        class="fv-row fv-plugins-icon-container"
-        inputControl
-        [solid]="true"
-        formControlName="Zipcode"
-        [label]="'Código postal'"
-        [type]="'tel'"
-        [placeholder]="''"
-        (input)="enterZipcode($event)"
-        [errors]="{
-            required: 'El código postal es requerido.'
-        }"
-      ></div>
-    </div>
-
-    <div class="col-xl-8">
-      <div
-        class="fv-row fv-plugins-icon-container"
-        controlSelect
-        [solid]="true"
-        formControlName="Neighborhood"
-        [label]="'Colonia'"
-        [options]="neighborhoods"
-        [placeholder]="neighborhoods.length > 0 ? 'Selecciona una colonia' : 'Ingresa tu código postal'"
-        (change)="onNeighborhoodChange($event)"
-        [errors]="{
-            required: 'La colonia es requerida.'
-        }"
-      ></div>
-    </div>
-  </div>
-
-  <div class="row mb-5">
-    <div class="col-xl-6">
-      <div
-        class="fv-row fv-plugins-icon-container"
-        inputControl
-        [solid]="true"
-        formControlName="City"
-        [label]="'Ciudad'"
-        [placeholder]="''"
-        [isReadonly]="true"
-        [errors]="{
-            required: 'La ciudad es requerida.'
-        }"
-      ></div>
-    </div>
-
-    <div class="col-xl-6">
-      <div
-        class="fv-row fv-plugins-icon-container"
-        inputControl
-        [solid]="true"
-        formControlName="State"
-        [label]="'Estado'"
-        [placeholder]="''"
-        [isReadonly]="true"
-        [errors]="{
-            required: 'El estado es requerido.'
-        }"
-      ></div>
-    </div>
-  </div>
-
-  <div class="row mb-5">
-    <div class="col-xl-6">
-      <div
-        class="fv-row fv-plugins-icon-container"
-        inputControl
-        [solid]="true"
-        formControlName="Street"
-        [label]="'Calle'"
-        [type]="'text'"
-        [placeholder]="''"
-        [errors]="{
-            required: 'La calle es requerida.'
-        }"
-      ></div>
-    </div>
-    <div class="col-xl-3">
-      <div
-        class="fv-row fv-plugins-icon-container"
-        inputControl
-        [solid]="true"
-        formControlName="ExteriorNumber"
-        [label]="'No. ext.'"
-        [type]="'tel'"
-        [placeholder]="''"
-        [errors]="{
-            required: 'El número exterior es requerido.'
-        }"
-      ></div>
-    </div>
-    <div class="col-xl-3">
-      <div
-        class="fv-row fv-plugins-icon-container"
-        inputControl
-        [solid]="true"
-        formControlName="InteriorNumber"
-        [label]="'No. int.'"
-        [type]="'tel'"
-        [placeholder]="''"
-      ></div>
-    </div>
-  </div>
+<form class="form w-100" novalidate="novalidate" [formGroup]="form">
+  <div addressForm [formGroup]="form" [solid]="true"></div>
 
   <div class="row mb-5">
     <div class="col-xl-6">
@@ -146,8 +37,8 @@
         }"
         (onChange)="onFileChange($event)"
       ></div>
-      @if (this.myForm.get('file')?.value) {
-        <div class="mt-2">Archivo seleccionado: {{ this.myForm.get('file')?.value.name }}</div>
+      @if (form.get('file')?.value) {
+        <div class="mt-2">Archivo seleccionado: {{ form.get('file')?.value.name }}</div>
       }
     </div>
   </div>

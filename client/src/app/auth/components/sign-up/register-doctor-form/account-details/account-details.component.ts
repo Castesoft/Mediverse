@@ -1,16 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ControlCheckListComponent } from 'src/app/_forms/control-check-list.component';
 import { ControlSelectComponent } from 'src/app/_forms/control-select.component';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
-import { ZipcodeAddressOption } from 'src/app/_models/billingDetails';
 import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 import { Specialty } from 'src/app/_models/specialties/specialty';
 import { UtilsService } from 'src/app/_services/utils.service';
-import { AddressesService } from 'src/app/addresses/addresses.config';
 import { SpecialtiesService } from "src/app/specialties/specialties.config";
 import { PaymentsService } from "src/app/payments/payments.config";
 import { ControlCheckComponent } from "src/app/_forms/control-check.component";
+import { AddressFormComponent } from "src/app/addresses/address-form/address-form.component";
 
 @Component({
   selector: 'app-account-details',
@@ -20,7 +19,8 @@ import { ControlCheckComponent } from "src/app/_forms/control-check.component";
     InputControlComponent,
     ControlSelectComponent,
     ControlCheckListComponent,
-    ControlCheckComponent
+    ControlCheckComponent,
+    AddressFormComponent
   ],
 })
 export class AccountDetailsComponent implements OnInit {
@@ -28,24 +28,14 @@ export class AccountDetailsComponent implements OnInit {
 
   private utilsService: UtilsService = inject(UtilsService);
   private paymentsService: PaymentsService = inject(PaymentsService);
-  private addressesService: AddressesService = inject(AddressesService);
   private specialtiesService: SpecialtiesService = inject(SpecialtiesService);
 
-  myForm!: FormGroup;
   states: string[] = this.utilsService.states;
-
-  get citiesList() {
-    const selectedState = this.myForm.get('State')?.value;
-    if (!selectedState) return [];
-    return this.utilsService.cities(selectedState);
-  }
 
   specialties: Specialty[] = [];
   paymentMethodTypes: PaymentMethodType[] = [];
-  neighborhoods: ZipcodeAddressOption[] = [];
 
   ngOnInit() {
-    this.myForm = <FormGroup>this.controlContainer.control;
     this.setSpecialtyOptions();
     this.setPaymentMethodOptions();
   }
@@ -66,51 +56,22 @@ export class AccountDetailsComponent implements OnInit {
     })
   }
 
-  unselectCity() {
-    this.myForm.get('City')?.setValue('');
+  get form() {
+    return <FormGroup>this.controlContainer.control;
   }
 
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
-      this.myForm.get('file')?.setValue(event.target.files[0]);
+      this.form.get('file')?.setValue(event.target.files[0]);
     }
   }
 
-  enterZipcode(event: any) {
-    const zipcode = event.target.value;
-    if (zipcode.length === 5) {
-      this.searchZipcodes(zipcode);
-    } else if (zipcode.length < 5) {
-      this.neighborhoods = [];
-    } else {
-      event.target.value = zipcode.slice(0, 5);
-    }
-  }
+  showRequireAnticipatedCardPaymentsField(): boolean {
+    const acceptedPaymentControl: AbstractControl | null = this.form.get('AcceptedPaymentMethods');
+    if (!acceptedPaymentControl) return false;
 
-  searchZipcodes(zipcode: string) {
-    this.addressesService.getAddressesByZipcode(zipcode).subscribe(addresses => {
-      this.neighborhoods = addresses.map((address: ZipcodeAddressOption) => {
-        return {
-          ...address,
-          value: address.neighborhood,
-          name: address.neighborhood
-        }
-      });
-    });
-  }
-
-  onNeighborhoodChange(event: any) {
-    const neighborhood = event.target.value;
-    const selectedNeighborhood = this.neighborhoods.find(n => n.neighborhood === neighborhood);
-    if (selectedNeighborhood) {
-      this.myForm.get('City')?.setValue(selectedNeighborhood.city);
-      this.myForm.get('State')?.setValue(selectedNeighborhood.state);
-    }
-  }
-
-  showRequireAnticipatedCardPaymentsField() {
-    if (this.myForm.get('AcceptedPaymentMethods') === null) return false;
-    const paymentMethods = this.myForm.get('AcceptedPaymentMethods')!.value as string;
-    return paymentMethods.split(',').includes('1') || paymentMethods.split(',').includes('2');
+    const paymentMethods: string = acceptedPaymentControl.value;
+    const methods: string[] = paymentMethods.split(',');
+    return methods.includes('1') || methods.includes('2');
   }
 }

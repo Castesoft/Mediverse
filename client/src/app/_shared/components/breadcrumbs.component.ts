@@ -1,10 +1,9 @@
-import { Component, inject, OnDestroy, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { BreadcrumbComponent } from "src/app/_shared/template/components/breadcrumbs/breadcrumb.component";
 import { BreadcrumbLinkComponent } from "src/app/_shared/template/components/breadcrumbs/breadcrumb-link.component";
 import { BreadcrumbItem, BreadcrumbService } from "src/app/_models/services/breadcrumb.service";
 import { ActivatedRoute } from "@angular/router";
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "div[breadcrumbs]",
@@ -15,8 +14,8 @@ import { takeUntil } from "rxjs/operators";
     BreadcrumbLinkComponent,
   ],
 })
-export class BreadcrumbsComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+export class BreadcrumbsComponent implements OnInit {
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private route: ActivatedRoute = inject(ActivatedRoute);
 
   breadcrumbsService: BreadcrumbService = inject(BreadcrumbService);
@@ -72,13 +71,8 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.breadcrumbsService.breadcrumbItems$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((breadcrumbs) => {
+    this.breadcrumbsService.breadcrumbItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((breadcrumbs) => {
       this.breadcrumbs = breadcrumbs;
     });
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }
