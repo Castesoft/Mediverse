@@ -55,6 +55,7 @@ export class AddAddressComponent implements OnInit {
       Zipcode: [ '', [ Validators.required, Validators.pattern(/^\d{5}(?:[-\s]\d{4})?$/) ] ],
       Country: [ { value: this.countryOptions[0], disabled: true }, Validators.required ],
       ExteriorNumber: [ '', Validators.required ],
+      Name: [ '', Validators.required ],
       InteriorNumber: [ '' ],
       IsDefault: [ false ],
       IsBilling: [ false ]

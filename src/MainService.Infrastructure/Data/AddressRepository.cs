@@ -203,16 +203,16 @@ public class AddressRepository(DataContext context, IMapper mapper) : IAddressRe
             Street = request.Street,
             InteriorNumber = request.InteriorNumber,
             ExteriorNumber = request.ExteriorNumber,
+            Neighborhood = request.Neighborhood,
+            City = request.City,
+            State = request.State,
             CountryCode = "MX",
+            Country = "México",
             Zipcode = request.Zipcode,
             Notes = request.Notes,
             CrossStreet1 = null,
             CrossStreet2 = null,
         };
-
-        if (request.City != null) addressToCreate.City = request.City.Name;
-        if (request.State != null) addressToCreate.State = request.State.Name;
-        if (request.Country != null) addressToCreate.Country = request.Country.Name;
 
         if (request.IsDefault == true)
         {

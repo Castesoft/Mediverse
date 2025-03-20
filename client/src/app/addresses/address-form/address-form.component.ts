@@ -19,6 +19,7 @@ export class AddressFormComponent {
   private readonly addressesService: AddressesService = inject(AddressesService);
 
   formGroup: InputSignal<FormGroup> = input.required();
+  solicitName: InputSignal<boolean> = input(false);
   solid: InputSignal<boolean> = input(false);
 
   zipcodeInput: OutputEmitterRef<any> = output();
