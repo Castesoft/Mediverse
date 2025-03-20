@@ -77,7 +77,7 @@ export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>
   title: ModelSignal<string | undefined> = model();
   hideAddButton: ModelSignal<boolean> = model(false);
   disableSkeleton: ModelSignal<boolean> = model(false);
-  showPagination: ModelSignal<boolean> = model(false);
+  showPagination: ModelSignal<boolean> = model(true);
 
   // Don't modify these:
   @ContentChild('entityTable') entityTable!: TemplateRef<any>;
