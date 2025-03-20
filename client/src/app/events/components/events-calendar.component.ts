@@ -23,12 +23,12 @@ import { AccountService } from 'src/app/_services/account.service';
 import { CatalogModule } from 'src/app/_shared/catalog.module';
 import { TablesModule } from 'src/app/_shared/template/components/tables/tables.module';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
-import { EventsService } from 'src/app/events/events.config';
 import { calcDateDiff } from 'src/app/_utils/util';
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { SiteSection } from 'src/app/_models/sections/sectionTypes';
 import { EventMonthDayCell } from "src/app/_models/event-month-day-cell/eventMonthDayCell";
 import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   host: { class: 'pb-6' },
@@ -60,8 +60,8 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
   params: ModelSignal<EventParams> = model.required();
   data: ModelSignal<EventMonthDayCell[]> = model.required();
 
-  filtersCollapsed = model.required<boolean>();
-  accountService = inject(AccountService);
+  filtersCollapsed: ModelSignal<boolean> = model.required();
+  accountService: AccountService = inject(AccountService);
 
   private colorMap: Record<string, string> = {
     'bg-primary': '#0d6efd',
@@ -90,6 +90,7 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
     select: this.handleSelect.bind(this),
     locale: esLocale,
     eventOverlap: false,
+    datesSet: this.handleDatesSet.bind(this),
   };
 
   fullcalendar: Signal<FullCalendarComponent> = viewChild.required('fullcalendar');
@@ -187,6 +188,23 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
     }
 
     return baseColor;
+  }
+
+  handleDatesSet(dateInfo: { start: Date; end: Date; view: any }): void {
+    const startTime = dateInfo.start.getTime();
+    const endTime = dateInfo.end.getTime();
+    const centerTime = (startTime + endTime) / 2;
+    const centerDate = new Date(centerTime);
+
+    const newYear = centerDate.getFullYear();
+    const newMonth = centerDate.getMonth() + 1;
+
+    this.params.update((oldValues: EventParams) => {
+      if (oldValues.year === newYear && oldValues.month === newMonth) {
+        return oldValues;
+      }
+      return new EventParams(oldValues.key, { ...oldValues, month: newMonth, year: newYear });
+    });
   }
 
   handleDateClick(arg: DateClickArg) {

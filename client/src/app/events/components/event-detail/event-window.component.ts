@@ -39,7 +39,6 @@ import { DetailInputSignals } from 'src/app/_models/forms/formComponentInterface
 import EvolutionForm from 'src/app/_models/events/detail/evolutionForm';
 import NextStepForm from 'src/app/_models/events/detail/nextStepForm';
 
-import { EventsService } from 'src/app/events/events.config';
 import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { IconsService } from 'src/app/_services/icons.service';
 
@@ -76,6 +75,7 @@ import { ClinicalHistoryVerification } from "src/app/_models/clinicalHistoryVeri
 import { ClinicalHistoryConsentService } from "src/app/_services/clinical-history-consent.service";
 import { ToastrService } from "ngx-toastr";
 import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   selector: 'div[eventWindow]',

@@ -1,31 +1,24 @@
-import { Component, inject, Injectable, model, ModelSignal } from "@angular/core";
+import { Component, inject, model, ModelSignal } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
-import { CatalogMode, View } from "src/app/_models/base/types";
+import { View } from "src/app/_models/base/types";
 import Event from "src/app/_models/events/event";
-import { eventColumns, eventDictionary } from "src/app/_models/events/eventConstants";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { CalendarView } from "src/app/_models/events/eventTypes";
 import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
-import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
-import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { EventWindowComponent } from 'src/app/events/components/event-detail/event-window.component';
 import { EventFormComponent } from 'src/app/events/components/event-form.component';
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
-import { EventMonthDayCell } from "src/app/_models/event-month-day-cell/eventMonthDayCell";
-import { HttpParams } from "@angular/common/http";
-import { transform, transformToHttpParams } from "src/app/_models/base/paramUtils";
-import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   selector: 'events-catalog-modal',
@@ -58,77 +51,6 @@ export class EventsCatalogModalComponent {
     calendarView: CalendarView;
     filtersCollapsed: boolean;
   }>(MAT_DIALOG_DATA);
-}
-
-@Injectable({
-  providedIn: 'root',
-})
-export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<EventParams>> {
-  private eventMonthDayCellsSubject: BehaviorSubject<EventMonthDayCell[]> = new BehaviorSubject<EventMonthDayCell[]>([]);
-  public eventMonthDayCells$: Observable<EventMonthDayCell[]> = this.eventMonthDayCellsSubject.asObservable();
-
-  constructor() {
-    super(EventParams, 'events', eventDictionary, eventColumns, EventDetailModalComponent);
-  }
-
-  showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
-    this.matDialog.open<
-      EventsCatalogModalComponent,
-      CatalogDialog<Event, EventParams>
-    >(EventsCatalogModalComponent, {
-      data: {
-        isCompact: true,
-        key: key,
-        mode: mode,
-        params: new EventParams(key),
-        view: view,
-        title: this.dictionary.title,
-        item: null,
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      panelClass: [ "window" ]
-    });
-  };
-
-  createRaw(model: any) {
-    console.log("posting event with model", model);
-    return this.http.post<Event>(`${this.baseUrl}`, model);
-  }
-
-  getSummaryByIdFromCalendarData(id: number): EventSummary | null {
-    return this.eventMonthDayCellsSubject.value.flatMap((cell) => cell.events).find((event) => event?.id === id) || null;
-  }
-
-  /**
-   * Loads partial month data: each day cell has up to N events, plus a total count.
-   */
-  getMonthViewPartial(key: string | null, params: EventParams): Observable<EventMonthDayCell[]> {
-    if (key === null) throw new Error("Key cannot be null");
-
-    const payload: HttpParams = transformToHttpParams(transform(params));
-
-    return this.http.get<EventMonthDayCell[]>(`${this.baseUrl}month-partial`, { params: payload }).pipe(
-      tap((response) => {
-        this.eventMonthDayCellsSubject.next(response);
-      }));
-  }
-
-  updateEvolution(id: number, evolution: string): Observable<Event> {
-    return this.http.put<Event>(`${this.baseUrl}${id}/evolution`, { content: evolution }).pipe(
-      tap(() => {
-        this.matSnackBar.open('Evolución actualizada', 'Cerrar', { duration: 5000 });
-      })
-    )
-  }
-
-  updateNextSteps(id: number, nextSteps: string): Observable<Event> {
-    return this.http.put<Event>(`${this.baseUrl}${id}/next-steps`, { content: nextSteps }).pipe(
-      tap(() => {
-        this.matSnackBar.open('Próximos pasos actualizados', 'Cerrar', { duration: 5000 });
-      })
-    )
-  }
 }
 
 @Component({

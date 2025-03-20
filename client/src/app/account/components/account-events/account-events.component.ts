@@ -8,8 +8,6 @@ import { TableWrapperComponent } from "src/app/_shared/template/components/table
 import { TableBodyComponent } from "src/app/_shared/template/components/tables/table-body.component";
 import Event from "src/app/_models/events/event";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { EventsService } from "src/app/events/events.config";
-import { AsyncPipe } from "@angular/common";
 import { TablePagerComponent } from "src/app/_shared/template/components/tables/table-pager.component";
 import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
 import { TableMenuCellComponent } from "src/app/_shared/template/components/tables/table-menu-cell.component";
@@ -30,15 +28,17 @@ import { Router } from "@angular/router";
 import {
   AccountChildWrapperComponent
 } from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
+import { EventsService } from "src/app/events/events.service";
+import { AsyncPipe } from "@angular/common";
 
 @Component({
   selector: 'app-account-events',
   templateUrl: './account-events.component.html',
   styleUrls: [ './account-events.component.scss' ],
+  standalone: true,
   imports: [
     TableWrapperComponent,
     TableBodyComponent,
-    AsyncPipe,
     TablePagerComponent,
     CdkContextMenuTrigger,
     CdkMenu,
@@ -52,7 +52,8 @@ import {
     ReactiveFormsModule,
     ControlDateComponent,
     CatalogLayoutSkeletonComponent,
-    AccountChildWrapperComponent
+    AccountChildWrapperComponent,
+    AsyncPipe
   ],
 })
 export class AccountEventsComponent implements OnInit {
@@ -69,7 +70,10 @@ export class AccountEventsComponent implements OnInit {
 
   key: string = createId();
   isCompact: boolean = false;
-  params: WritableSignal<EventParams> = signal<EventParams>(new EventParams(this.key, { userId: null, fromAccountRoute: true, }));
+  params: WritableSignal<EventParams> = signal<EventParams>(new EventParams(this.key, {
+    userId: null,
+    fromAccountRoute: true,
+  }));
 
   constructor() {
     effect(() => {

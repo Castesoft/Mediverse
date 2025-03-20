@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import Event from "src/app/_models/events/event";
 import { Router } from '@angular/router';
-import { EventsService } from 'src/app/events/events.config';
 import { PhotoShape, PhotoSize } from "src/app/_models/photos/photoTypes";
 import { TooltipDirective } from "ngx-bootstrap/tooltip";
 import { User } from "src/app/_models/users/user";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   selector: 'div[eventSummary]',

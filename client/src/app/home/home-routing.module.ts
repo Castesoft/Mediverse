@@ -9,7 +9,6 @@ import { HomeComponent } from './home.component';
 import { HomePatientDetailRouteComponent } from 'src/app/home/routes/patients/home-patient-detail-route.component';
 import createItemResolver from 'src/app/_utils/serviceHelper/functions/createItemResolver';
 import { PatientsService } from 'src/app/patients/patients.config';
-import { EventsService } from 'src/app/events/events.config';
 import { HomeEventDetailRouteComponent } from 'src/app/home/routes/events/home-event-detail-route.component';
 import titleDetailResolver from 'src/app/_utils/serviceHelper/functions/titleDetailResolver';
 import titleCatalogResolver from 'src/app/_utils/serviceHelper/functions/titleCatalogResolver';
@@ -56,6 +55,7 @@ import { HomePharmacyCatalogRouteComponent } from "./routes/pharmacy/home-pharma
 import { PharmaciesService } from "../pharmacies/pharmacies.config";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { doctorGuard } from "src/app/_guards/doctor.guard";
+import { EventsService } from "src/app/events/events.service";
 
 
 @NgModule({

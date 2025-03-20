@@ -24,10 +24,10 @@ import {
   AccountEventDetailComponent
 } from 'src/app/account/components/account-event-detail/account-event-detail.component';
 import createItemResolver from 'src/app/_utils/serviceHelper/functions/createItemResolver';
-import { EventsService } from 'src/app/events/events.config';
 import titleDetailResolver from 'src/app/_utils/serviceHelper/functions/titleDetailResolver';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { authGuard } from 'src/app/_guards/auth.guard';
+import { EventsService } from "src/app/events/events.service";
 
 export const itemResolver: ResolveFn<Account | null> = () => {
   const service: AccountService = inject(AccountService);

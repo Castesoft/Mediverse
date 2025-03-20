@@ -7,13 +7,13 @@ import { EventParams } from "src/app/_models/events/eventParams";
 import { CalendarView } from "src/app/_models/events/eventTypes";
 import { PaddingService } from 'src/app/_services/padding.service';
 import { ClinicsService } from 'src/app/clinics/clinics.config';
-import { EventsService } from "src/app/events/events.config";
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientsService } from 'src/app/patients/patients.config';
 import { ServicesService } from 'src/app/services/services.config';
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
 import { AccountService } from "src/app/_services/account.service";
 import { Account } from "src/app/_models/account/account";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   selector: 'div[homeEventsCatalogRoute]',

@@ -13,7 +13,6 @@ import { EventParams } from "src/app/_models/events/eventParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
-import { EventsService } from "src/app/events/events.config";
 import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
 import { TimePeriodCellComponent } from "src/app/_shared/template/components/tables/cells/time-period-cell.component";
 import { Column } from "src/app/_models/base/column";
@@ -21,6 +20,7 @@ import { TableMenuComponent } from "src/app/_shared/components/table-menu.compon
 import {
   AddressTableCellComponent
 } from "src/app/_shared/template/components/tables/cells/address-table-cell.component";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },

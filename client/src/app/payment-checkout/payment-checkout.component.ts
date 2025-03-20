@@ -6,7 +6,6 @@ import {
 } from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
 import { RedirectWarningData } from "src/app/_shared/components/redirect-warning-modal/redirectWarningData";
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
-import { EventsService } from "src/app/events/events.config";
 import Event from "src/app/_models/events/event";
 import { Address } from "src/app/_models/addresses/address";
 import { PaymentCheckoutService } from "src/app/payment-checkout/payment-checkout.service";
@@ -27,6 +26,7 @@ import {
 import { ThemeService } from 'src/app/_services/theme.service';
 import { PaymentSummaryComponent } from "src/app/payment-checkout/components/payment-summary/payment-summary.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   selector: 'app-payment-checkout',

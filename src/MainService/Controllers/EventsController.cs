@@ -42,12 +42,6 @@ public class EventsController(
         
         param.AuthenticatedUserId = User.GetUserId();
         
-        if (param.IsCalendarView.HasValue && param.IsCalendarView.Value)
-        {
-            var list = await uow.EventRepository.GetAllDtoAsync(param);
-            return Ok(list);
-        }
-
         var pagedList = await uow.EventRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(

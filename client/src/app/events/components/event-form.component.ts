@@ -28,11 +28,11 @@ import { CdkModule } from 'src/app/_shared/cdk.module';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { ClinicsService } from 'src/app/clinics/clinics.config';
 import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
-import { EventsService } from 'src/app/events/events.config';
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientFormComponent, PatientsService } from 'src/app/patients/patients.config';
 import { ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
 import { AccountService } from "src/app/_services/account.service";
+import { EventsService } from "src/app/events/events.service";
 
 @Component({
   selector: "[eventForm]",

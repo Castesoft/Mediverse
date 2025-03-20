@@ -3,7 +3,6 @@ import { PaymentMethod } from 'src/app/_models/paymentMethod/paymentMethod';
 import { CreatePaymentIntentResponse } from 'src/app/_models/payments/createPaymentIntentResponse';
 import { StripeGatewayService } from 'src/app/_services/stripe-gateway.service';
 import { PaymentsService } from 'src/app/payments/payments.config';
-import { EventsService } from 'src/app/events/events.config';
 import { CurrencyPipe } from '@angular/common';
 import { PaymentIntent, PaymentIntentResult, Stripe } from '@stripe/stripe-js';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -13,6 +12,7 @@ import {
   PaymentMethodSelectorComponent
 } from "src/app/account/components/account-billing/components/payment-method-selector.component";
 import { DevService } from "src/app/_services/dev.service";
+import { EventsService } from "src/app/events/events.service";
 
 export interface PaymentModalData {
   eventId: number;

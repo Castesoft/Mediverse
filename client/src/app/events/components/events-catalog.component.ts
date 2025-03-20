@@ -11,7 +11,6 @@ import { EventParams } from "src/app/_models/events/eventParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { TablesModule } from "src/app/_shared/template/components/tables/tables.module";
-import { EventsService } from "src/app/events/events.config";
 import { EventsTableComponent } from "src/app/events/components/events-table/events-table.component";
 import { CalendarView } from "src/app/_models/events/eventTypes";
 import { EventsCalendarComponent } from "src/app/events/components/events-calendar.component";
@@ -26,11 +25,14 @@ import CatalogInputSignals from 'src/app/_models/base/components/interfaces/cata
 import { EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
 import { EventMonthDayCell } from "src/app/_models/event-month-day-cell/eventMonthDayCell";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { EventsService } from "src/app/events/events.service";
+import {
+  CatalogLayoutSkeletonComponent
+} from "src/app/_shared/components/catalog-layout-skeleton/catalog-layout-skeleton.component";
 
 @Component({
   selector: '[eventsCatalog]',
   templateUrl: './events-catalog.component.html',
-  standalone: true,
   imports: [
     FontAwesomeModule,
     EventsTableComponent,
@@ -43,6 +45,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     Forms2Module,
     EventsCalendarComponent,
     GenericCatalogComponent,
+    CatalogLayoutSkeletonComponent,
   ],
 })
 export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, EventFiltersForm, EventsService> implements CatalogInputSignals<Event, EventParams> {
