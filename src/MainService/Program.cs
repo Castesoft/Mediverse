@@ -1,6 +1,7 @@
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Hubs;
+using MainService.Infrastructure;
 using MainService.Infrastructure.Data;
 using MainService.Middleware;
 using MainService.Models;

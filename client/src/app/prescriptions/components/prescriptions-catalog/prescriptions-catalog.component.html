@@ -15,7 +15,7 @@
     </div>
   </ng-template>
   <ng-template #entityTable let-list="list">
-    @defer(on viewport) {
+    @defer (on viewport) {
       <table prescriptionsTable
              [(mode)]="mode"
              [(isCompact)]="isCompact"
@@ -25,11 +25,8 @@
              [(item)]="item"
              [(params)]="params">
       </table>
-    }@loading {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }@placeholder(minimum 1000ms) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    } @placeholder {
+      <app-catalog-layout-skeleton></app-catalog-layout-skeleton>
     }
-
   </ng-template>
 </div>

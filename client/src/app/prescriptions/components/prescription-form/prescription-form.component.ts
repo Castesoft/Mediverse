@@ -45,7 +45,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: '[prescriptionForm]',
-  standalone: true,
+  templateUrl: './prescription-form.component.html',
+  styleUrl: './prescription-form.component.scss',
   imports: [
     FaIconComponent,
     BootstrapModule,
@@ -58,8 +59,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     ProfilePictureComponent,
     SymbolCellComponent,
   ],
-  templateUrl: './prescription-form.component.html',
-  styleUrl: './prescription-form.component.scss',
 })
 export class PrescriptionFormComponent extends BaseForm<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionForm, PrescriptionsService> implements OnInit, FormInputSignals<Prescription> {
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
@@ -109,7 +108,6 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
       } else {
         const item: Prescription | null = this.item();
         if (item !== null) {
-          console.log('item', item);
           this.form.patchValue(item, { emitEvent: false });
         }
       }

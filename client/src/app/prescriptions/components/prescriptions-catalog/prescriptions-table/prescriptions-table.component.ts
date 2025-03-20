@@ -46,7 +46,6 @@ import { FormUse } from "src/app/_models/forms/formTypes";
     id: 'kt_table_prescriptions',
   },
   selector: 'table[prescriptionsTable]',
-  standalone: true,
   templateUrl: './prescriptions-table.component.html',
   imports: [
     FontAwesomeModule,
@@ -139,6 +138,8 @@ export class PrescriptionsTableComponent
   }
 
   async printPrescription(item: Prescription) {
+    console.log('print prescription', item);
+
     item.isCollapsed = true;
 
     await new Promise((resolve) => setTimeout(resolve, 400));
