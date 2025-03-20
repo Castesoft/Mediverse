@@ -125,8 +125,6 @@ export class EventsCalendarComponent extends BaseTable<Event, EventParams, Event
           const startDate = new Date(evt.dateFrom as any);
           const endDate = new Date(evt.dateTo as any);
 
-          console.log('event', evt);
-
           return {
             id: evt.id,
             start: startDate,

@@ -58,6 +58,7 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
    */
   getMonthViewPartial(key: string | null, params: EventParams): Observable<EventMonthDayCell[]> {
     if (key === null) throw new Error("Key cannot be null");
+    this.eventMonthDayCellsSubject.next([]);
 
     const payload: HttpParams = transformToHttpParams(transform(params));
 

@@ -97,11 +97,11 @@
       <mat-drawer-content>
         <div [class.card-body]="useCard()" class="pt-0">
           <div tableWrapper>
-            @if (service().loading()) {
+            @if (service().loading() && !disableSkeleton()) {
               <app-catalog-layout-skeleton></app-catalog-layout-skeleton>
             } @else {
               @if (service().list$(key()) | async; as _list) {
-                @if (_list.length == 0) {
+                @if (_list.length == 0 && !service().loading()) {
                   <div class="text-center pt-20 pb-12">
                     <i class="fs-6x text-gray-400 ki-duotone ki-magnifier">
                       <span class="path1"></span>
@@ -114,10 +114,12 @@
                 }
               }
             }
-            @if (service().pagination$(key()) | async; as _pagination) {
-              <div class="pt-2" tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination"
-                   [(params)]="params">
-              </div>
+            @if (showPagination()) {
+              @if (service().pagination$(key()) | async; as _pagination) {
+                <div class="pt-2" tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination"
+                     [(params)]="params">
+                </div>
+              }
             }
           </div>
         </div>
@@ -148,11 +150,11 @@
 
     <div [class.card-body]="useCard()" class="pt-0">
       <div tableWrapper>
-        @if (service().loading()) {
+        @if (service().loading() && !disableSkeleton()) {
           <app-catalog-layout-skeleton></app-catalog-layout-skeleton>
         } @else {
           @if (service().list$(key()) | async; as _list) {
-            @if (_list.length == 0) {
+            @if (_list.length == 0 && !service().loading()) {
               <div class="text-center pt-20 pb-12">
                 <i class="fs-6x text-gray-400 ki-duotone ki-magnifier">
                   <span class="path1"></span>
@@ -165,9 +167,10 @@
             }
           }
         }
-        @if (service().pagination$(key()) | async; as _pagination) {
-          <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params">
-          </div>
+        @if (showPagination()) {
+          @if (service().pagination$(key()) | async; as _pagination) {
+            <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
+          }
         }
       </div>
     </div>

@@ -417,11 +417,11 @@ public static class Seed
             {
                 Photo = new Photo
                 {
-                    Url =
-                        new Uri(
-                            "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*"),
+                    Url = new Uri(
+                        "https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*"),
                     PublicId = "avatars/ramiro_castellanos_barron",
-                    Size = 24471, Name = "Foto_ramiro.png"
+                    Size = 24471,
+                    Name = "Foto_ramiro.png"
                 }
             },
             DoctorSignature = new DoctorSignature
@@ -999,9 +999,12 @@ public static class Seed
         }
     }
 
+    /// <summary>
+    /// Creates a PatientEvent using a generated date that spans from two months before to two months after the current month.
+    /// </summary>
     private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices, AppUser patient)
     {
-        var eventDate = DateGenerator.GenerateRandomDate(DateTime.UtcNow.Year, DateTime.UtcNow.Month);
+        var eventDate = GenerateTestEventDate(DateTime.UtcNow);
 
         var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
 
@@ -1038,6 +1041,47 @@ public static class Seed
 
         var patientEvent = new PatientEvent { Event = evt };
         return patientEvent;
+    }
+
+    /// <summary>
+    /// Helper method to generate a test event date spread over 4 months from the current month.
+    /// The distribution is weighted so that the current month has the highest probability.
+    /// </summary>
+    private static DateTime GenerateTestEventDate(DateTime currentDate)
+    {
+        var currentMonth = currentDate.Month;
+        var currentYear = currentDate.Year;
+
+        var rand = Random.Next(100);
+        
+        var offset = rand switch
+        {
+            < 50 => 0,
+            < 70 => -1,
+            < 90 => 1,
+            < 95 => -2,
+            _ => 2
+        };
+
+        var targetMonth = currentMonth + offset;
+        var targetYear = currentYear;
+        switch (targetMonth)
+        {
+            case < 1:
+                targetMonth += 12;
+                targetYear--;
+                break;
+            case > 12:
+                targetMonth -= 12;
+                targetYear++;
+                break;
+        }
+
+        var daysInTargetMonth = DateTime.DaysInMonth(targetYear, targetMonth);
+        var day = Random.Next(1, daysInTargetMonth + 1);
+        var hour = Random.Next(9, 18);
+
+        return new DateTime(targetYear, targetMonth, day, hour, 0, 0, DateTimeKind.Utc);
     }
 
     private static void AddNursesToEvent(PatientEvent patientEvent, List<DoctorNurse> doctorNurses)

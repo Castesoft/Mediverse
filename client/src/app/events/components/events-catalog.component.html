@@ -7,6 +7,8 @@
      [(useCard)]="useCard"
      [(embedded)]="embedded"
      [(isCompact)]="isCompact"
+     [disableSkeleton]="calendarView() === 'calendar'"
+     [showPagination]="calendarView() !== 'calendar'"
      [(filterConfig)]="filterConfig"
      [(item)]="item"
      [(params)]="params"

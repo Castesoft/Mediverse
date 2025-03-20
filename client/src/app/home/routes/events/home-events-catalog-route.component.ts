@@ -66,14 +66,21 @@ export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, Eve
         }
 
         this.account = this.accountService.current();
-        console.log(this.account);
-        this.params.set(new EventParams(this.key(), {
+
+        const paramsToSet = new EventParams(this.key(), {
           isCalendarView: this.calendarView() == 'calendar',
           fromSection: SiteSection.HOME,
           userId: this.account?.id,
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear()
-        }));
+        });
+
+        if (!paramsToSet.month || !paramsToSet.year) {
+          paramsToSet.month = new Date().getMonth() + 1;
+          paramsToSet.year = new Date().getFullYear();
+        }
+
+        console.log('setting new params with month and year', paramsToSet.month, paramsToSet.year);
+
+        this.params.set(paramsToSet);
       }
     });
 

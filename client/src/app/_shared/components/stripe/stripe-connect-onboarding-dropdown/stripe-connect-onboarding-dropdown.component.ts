@@ -3,6 +3,7 @@ import { BsDropdownMenuDirective, BsDropdownToggleDirective } from "ngx-bootstra
 import { AccountService } from "src/app/_services/account.service";
 import { Account } from "src/app/_models/account/account";
 import { firstValueFrom } from "rxjs";
+import { StripeOnboardingResponse } from "src/app/_models/account/stripe-onboarding-response.model";
 
 @Component({
   host: { class: 'd-flex align-items-center ms-2 ms-lg-3', id: 'stripeConnectOnboardingDropdown' },
@@ -24,9 +25,15 @@ export class StripeConnectOnboardingDropdownComponent implements OnInit {
   }
 
   async openOnboardingWindow(): Promise<void> {
-    if (this.account) {
-      const link: any = await firstValueFrom(this.accountsService.getStripeOnboardingLink(this.account.id!));
-      window.open(link.onboardingLink, '_blank');
+    if (!this.account) return;
+
+    const newWindow: Window | null = window.open('', '_blank');
+    const response: StripeOnboardingResponse = await firstValueFrom(this.accountsService.getStripeOnboardingLink(this.account.id!));
+
+    if (newWindow) {
+      newWindow.location.href = response.url;
+    } else {
+      console.error('Popup was blocked. Please allow popups for this site.');
     }
   }
 }

@@ -276,8 +276,8 @@ public class AccountController(
             }
         }
     
-        var onboardingLink = await stripeService.GetOnboardingLinkAsync(userStripeAccountId);
-        return Ok(new { onboardingLink });
+        var url = await stripeService.GetOnboardingLinkAsync(userStripeAccountId);
+        return Ok(new { url });
     }
 
 
