@@ -13,7 +13,7 @@ public class PrescriptionDto
     public DateTime CreatedAt { get; set; }
     public AddressDto? Clinic { get; set; }
     public BaseUserDto? Patient { get; set; }
-    public BaseUserDto? Doctor { get; set; }
+    public DoctorSummaryDto? Doctor { get; set; }
     public EventSummaryDto? Event { get; set; }
     public List<PrescriptionItemDto> Items { get; set; } = [];
     public string? LogoUrl { get; set; }

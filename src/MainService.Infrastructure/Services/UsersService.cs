@@ -1,6 +1,7 @@
 using AutoMapper;
 using MainService.Core.DTOs.User;
 using MainService.Core.Interfaces.Services;
+using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -39,10 +40,9 @@ public class UsersService(
 
     public async Task<AccountDto?> GenerateAccountDtoAsync(int userId)
     {
-        AppUser? user = await context.Users
+        var user = await context.Users.Include(appUser => appUser.Doctors)
             .ApplyIncludes()
-            .SingleOrDefaultAsync(x => x.Id == userId)
-        ;
+            .SingleOrDefaultAsync(x => x.Id == userId);
 
         if (user == null) return null;
 
@@ -158,9 +158,7 @@ public class UsersService(
     public async Task<ClinicalHistoryVerificationDto?> VerifyClinicalHistoryAccessAsync(int doctorId, int patientId)
     {
         if (!await uow.UserRepository.ExistsByIdAsync(doctorId) || !await uow.UserRepository.ExistsByIdAsync(patientId))
-        {
             return null;
-        }
 
         return await uow.UserRepository.GetClinicalHistoryVerificationAsync(doctorId, patientId);
     }
@@ -168,11 +166,8 @@ public class UsersService(
     public async Task<ClinicalHistoryVerificationDto?> UpdateClinicalHistoryConsentAsync(int doctorId, int patientId,
         bool consent)
     {
-        if (!await uow.UserRepository.ExistsByIdAsync(doctorId) ||
-            !await uow.UserRepository.ExistsByIdAsync(patientId))
-        {
+        if (!await uow.UserRepository.ExistsByIdAsync(doctorId) || !await uow.UserRepository.ExistsByIdAsync(patientId))
             return null;
-        }
 
         var dpRecord = await context.DoctorPatients
             .FirstOrDefaultAsync(dp => dp.DoctorId == doctorId && dp.PatientId == patientId);
@@ -230,46 +225,4 @@ public class UsersService(
             .AsNoTracking()
             .Include(x => x.Patients)
             .AnyAsync(x => x.Id == doctorId && x.Patients.Any(p => p.PatientId == patientId));
-}
-
-public static class UserRepositoryExtensions {
-    public static IQueryable<AppUser> ApplyIncludes(this IQueryable<AppUser> query) =>
-        query
-            .AsSplitQuery()
-            .Include(x => x.DoctorSpecialty.Specialty)
-            .Include(x => x.UserMedicalInsuranceCompanies)
-            .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
-            .Include(x => x.UserMedicalInsuranceCompanies)
-            .ThenInclude(x => x.Document)
-            .Include(x => x.DoctorMedicalInsuranceCompanies)
-            .ThenInclude(x => x.MedicalInsuranceCompany.MedicalInsuranceCompanyPhoto.Photo)
-            .Include(x => x.UserPhoto.Photo)
-            .Include(x => x.DoctorBannerPhoto.Photo)
-            .Include(x => x.UserRoles)
-            .ThenInclude(x => x.Role)
-            .Include(x => x.UserPermissions)
-            .ThenInclude(x => x.Permission)
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
-            .Include(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
-            .Include(x => x.UserAddresses)
-            .ThenInclude(x => x.Address)
-            .Include(x => x.DoctorPaymentMethodTypes)
-            .ThenInclude(x => x.PaymentMethodType)
-            .Include(x => x.DoctorWorkSchedules)
-            .ThenInclude(x => x.WorkSchedule)
-            .Include(x => x.DoctorWorkScheduleSettings)
-            .ThenInclude(x => x.WorkScheduleSettings)
-            .Include(x => x.DoctorClinics)
-            .ThenInclude(x => x.Clinic)
-            .ThenInclude(x => x.ClinicLogo)
-            .ThenInclude(x => x.Photo)
-            .Include(x => x.Doctors)
-            .ThenInclude(x => x.Doctor)
-            .ThenInclude(x => x.UserMedicalLicenses)
-            .ThenInclude(x => x.MedicalLicense)
-            .ThenInclude(x => x.MedicalLicenseSpecialty)
-            .ThenInclude(x => x.Specialty)
-        ;
 }

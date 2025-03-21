@@ -3,7 +3,7 @@ import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescriptionFiltersForm";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
-import { PrescriptionsService } from "src/app/prescriptions/prescriptions.config";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.service";
 
 @Component({
   selector: 'div[homePrescriptionsCatalogRoute]',

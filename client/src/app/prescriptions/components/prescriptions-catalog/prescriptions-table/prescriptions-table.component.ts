@@ -1,16 +1,14 @@
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  OnDestroy,
-  ModelSignal,
-  model,
   input,
-  output,
-  signal,
   InputSignal,
+  model,
+  ModelSignal,
+  OnDestroy,
+  output,
   OutputEmitterRef,
+  signal,
   WritableSignal
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +20,7 @@ import { Subscription } from 'rxjs';
 import { Account } from 'src/app/_models/account/account';
 import BaseTable from 'src/app/_models/base/components/extensions/baseTable';
 import TableInputSignals from 'src/app/_models/base/components/interfaces/tableInputSignals';
-import { View, CatalogMode } from 'src/app/_models/base/types';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
 import { prescriptionCells } from 'src/app/_models/prescriptions/prescriptionConstants';
 import { PrescriptionFiltersForm } from 'src/app/_models/prescriptions/prescriptionFiltersForm';
@@ -34,11 +32,11 @@ import { TableHeaderComponent } from 'src/app/_shared/template/components/tables
 import {
   PrescriptionFormComponent
 } from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
-import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { UserTableCellComponent } from 'src/app/users/components/user-table-cell.component';
 import { Column } from "src/app/_models/base/column";
 import { TableMenuComponent } from "src/app/_shared/components/table-menu.component";
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.service";
 
 @Component({
   host: {
@@ -62,10 +60,9 @@ import { FormUse } from "src/app/_models/forms/formTypes";
     TableMenuComponent,
   ],
 })
-export class PrescriptionsTableComponent
-  extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
-  implements OnDestroy, TableInputSignals<Prescription, PrescriptionParams>
-{
+export class PrescriptionsTableComponent extends BaseTable<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> implements OnDestroy, TableInputSignals<Prescription, PrescriptionParams> {
+  protected readonly FormUse: typeof FormUse = FormUse;
+
   item: ModelSignal<Prescription | null> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
@@ -107,92 +104,21 @@ export class PrescriptionsTableComponent
 
   async downloadPrescription(item: Prescription) {
     item.isCollapsed = true;
+    await new Promise((resolve: (value: unknown) => void) => setTimeout(resolve, 100));
 
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    const element: HTMLElement | null = document.getElementById(`prescription-form-${item.id}`);
+    if (!element) return;
 
-    const prescriptionElement = document.getElementById(`prescription-form-${item.id}`);
-
-    if (prescriptionElement) {
-      const options = {
-        scale: 3,
-        useCORS: true,
-        allowTaint: true,
-        logging: true,
-        letterRendering: true,
-        windowWidth: 1024,
-      };
-
-      const canvas = await html2canvas(prescriptionElement, options);
-
-      const pdfWidth = 297;
-      const pdfHeight = 210;
-      const pdf = new jsPDF('l', 'mm', [ pdfWidth, pdfHeight ]);
-
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
-
-      pdf.save(`${item.patient!.name!} - ${item.createdAt}.pdf`);
-    } else {
-      console.error('Prescription form element not found');
-    }
+    await this.service.export(item, element, 'download');
   }
 
   async printPrescription(item: Prescription) {
-    console.log('print prescription', item);
-
     item.isCollapsed = true;
+    await new Promise((resolve: (value: unknown) => void) => setTimeout(resolve, 100));
 
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    const element: HTMLElement | null = document.getElementById(`prescription-form-${item.id}`);
+    if (!element) return;
 
-    const prescriptionElement = document.getElementById(
-      `prescription-form-${item.id}`
-    );
-
-    if (prescriptionElement) {
-      const options = {
-        scale: 3,
-        useCORS: true,
-        allowTaint: true,
-        logging: true,
-        letterRendering: true,
-        windowWidth: 1024,
-      };
-
-      const canvas = await html2canvas(prescriptionElement, options);
-      const imgData = canvas.toDataURL('image/png');
-
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>Imprimir Receta</title>
-              <style>
-                body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-                img { max-width: 100%; max-height: 100%; }
-              </style>
-            </head>
-            <body>
-              <img src="${imgData}" />
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-        printWindow.focus();
-
-        printWindow.onload = () => {
-          printWindow.print();
-          printWindow.onafterprint = () => {
-            printWindow.close();
-          };
-        };
-      } else {
-        console.error('Unable to open print window');
-      }
-    } else {
-      console.error('Prescription form element not found');
-    }
+    await this.service.export(item, element, 'print');
   }
-
-  protected readonly FormUse = FormUse;
 }

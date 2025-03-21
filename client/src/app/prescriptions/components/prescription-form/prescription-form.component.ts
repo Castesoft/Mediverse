@@ -16,14 +16,14 @@ import {
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { firstValueFrom } from 'rxjs';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import { Account } from 'src/app/_models/account/account';
 import BaseForm from 'src/app/_models/base/components/extensions/baseForm';
 import { View } from 'src/app/_models/base/types';
-import { Doctor } from 'src/app/_models/doctors/doctor';
+import { Doctor } from 'src/app/_models/doctors/doctor.model';
 import { FormInputSignals } from 'src/app/_models/forms/formComponentInterfaces';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { Prescription } from 'src/app/_models/prescriptions/prescription';
@@ -35,13 +35,13 @@ import { BootstrapModule } from 'src/app/_shared/bootstrap.module';
 import { TableHeaderComponent } from 'src/app/_shared/template/components/tables/table-header.component';
 import { ClinicsService } from 'src/app/clinics/clinics.config';
 import { PatientsService } from 'src/app/patients/patients.config';
-import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { ProductsService } from 'src/app/products/products.config';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { Patient } from "src/app/_models/patients/patient";
 import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.service";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -83,10 +83,10 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
   item: ModelSignal<Prescription | null> = model.required<Prescription | null>();
   key: ModelSignal<string | null> = model.required();
 
-  activeTab?: TabDirective;
-
   fromWrapper: WritableSignal<boolean> = signal<boolean>(false);
   fromEventWindow: InputSignal<boolean> = input<boolean>(false);
+  showActions: InputSignal<boolean> = input<boolean>(true);
+  referenceId: InputSignal<string | undefined> = input();
 
   constructor() {
     super(PrescriptionsService, PrescriptionForm);
@@ -145,34 +145,21 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     }
   }
 
-  private subscribeToRouteQueryParams(): void {
-    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (params): void => {
-        if (params['tab']) {
-          this.selectTab(params['tab']);
-        } else {
-          this.selectTab('patient');
-        }
-      },
-    });
-  };
+  async downloadPrescription() {
+    if (!this.item()) return;
 
-  private selectTab(id: string): void {
-    if (this.memberTabs) {
-      const tab: TabDirective | undefined = this.memberTabs.tabs.find((x) => x.id === id);
-      if (tab) {
-        tab.active = true;
-      }
-    }
-  };
+    const element: HTMLElement | null = document.getElementById(`prescription-form-${this.item()!.id}`);
+    if (!element) return;
 
-  onTabActivated(data: TabDirective): void {
-    this.activeTab = data;
+    await this.service.export(this.item()!, element, 'download');
+  }
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab: data.id },
-      queryParamsHandling: 'merge',
-    }).then(() => {});
-  };
+  async printPrescription() {
+    if (!this.item()) return;
+
+    const element: HTMLElement | null = document.getElementById(`prescription-form-${this.item()!.id}`);
+    if (!element) return;
+
+    await this.service.export(this.item()!, element, 'print');
+  }
 }

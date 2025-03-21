@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, Injectable, model, ModelSignal, NgModule } from "@angular/core";
+import { Component, effect, inject, model, ModelSignal, NgModule } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
@@ -9,12 +9,10 @@ import BaseRouteCatalog from "src/app/_models/base/components/extensions/routes/
 import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
-import { CatalogMode, View } from "src/app/_models/base/types";
+import { View } from "src/app/_models/base/types";
 import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
-import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
-import { prescriptionColumns, prescriptionDictionary } from "src/app/_models/prescriptions/prescriptionConstants";
 import { PrescriptionFiltersForm } from "src/app/_models/prescriptions/prescriptionFiltersForm";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
@@ -22,13 +20,13 @@ import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { BreadcrumbsModule } from "src/app/_utils/breadcrumbs.module";
 import createItemResolver from "src/app/_utils/serviceHelper/functions/createItemResolver";
-import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import {
   PrescriptionFormComponent
 } from "src/app/prescriptions/components/prescription-form/prescription-form.component";
 import {
   PrescriptionsCatalogComponent
 } from "src/app/prescriptions/components/prescriptions-catalog/prescriptions-catalog.component";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.service";
 
 @Component({
   selector: 'prescriptions-catalog-modal',
@@ -58,49 +56,24 @@ export class PrescriptionsCatalogModalComponent {
   data = inject<CatalogDialog<Prescription, PrescriptionParams>>(MAT_DIALOG_DATA);
 }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class PrescriptionsService extends ServiceHelper<Prescription, PrescriptionParams, FormGroup2<PrescriptionParams>> {
-  constructor() {
-    super(PrescriptionParams, 'prescriptions', prescriptionDictionary, prescriptionColumns);
-  }
-
-  showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {
-    this.matDialog.open<
-      PrescriptionsCatalogModalComponent,
-      CatalogDialog<Prescription, PrescriptionParams>
-    >(PrescriptionsCatalogModalComponent, {
-      data: {
-        isCompact: true,
-        key: key,
-        mode: mode,
-        params: new PrescriptionParams(key),
-        view: view,
-        title: this.dictionary.title,
-        item: null,
-      },
-      disableClose: true,
-      hasBackdrop: false,
-      panelClass: [ "window" ]
-    });
-  };
-}
 
 @Component({
   selector: 'div[prescriptionDetail]',
   template: `
-    <div container3 [type]="'inline'">
-      <!-- <div detailHeader [(use)]="use" [(view)]="view" [(dictionary)]="service.dictionary" [id]="item() !== null ? item()!.id : null" (onDelete)="service.delete$(item()!)"></div> -->
-    </div>
-    <div prescriptionForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+    <div prescriptionForm
+         [(item)]="item"
+         [(key)]="key"
+         [(use)]="use"
+         [(view)]="view"></div>
   `,
-  standalone: true,
-  imports: [ PrescriptionFormComponent, ControlsModule, Forms2Module, ],
+  imports: [
+    PrescriptionFormComponent,
+    ControlsModule,
+    Forms2Module,
+    PrescriptionFormComponent,
+  ],
 })
-export class PrescriptionDetailComponent
-  extends BaseDetail<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService>
-  implements DetailInputSignals<Prescription> {
+export class PrescriptionDetailComponent extends BaseDetail<Prescription, PrescriptionParams, PrescriptionFiltersForm, PrescriptionsService> implements DetailInputSignals<Prescription> {
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   item: ModelSignal<Prescription | null> = model.required();
@@ -110,7 +83,6 @@ export class PrescriptionDetailComponent
   constructor() {
     super(PrescriptionsService);
   }
-
 }
 
 @Component({

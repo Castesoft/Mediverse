@@ -114,14 +114,14 @@
                 }
               }
             }
-            @if (showPagination()) {
-              @if (service().pagination$(key()) | async; as _pagination) {
-                <div class="pt-2" tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination"
-                     [(params)]="params">
-                </div>
-              }
-            }
           </div>
+          @if (showPagination()) {
+            @if (service().pagination$(key()) | async; as _pagination) {
+              <div class="pt-2" tablePager [(isCompact)]="isCompact" [pagination]="_pagination"
+                   [(params)]="params">
+              </div>
+            }
+          }
         </div>
       </mat-drawer-content>
     </mat-drawer-container>
@@ -167,12 +167,12 @@
             }
           }
         }
-        @if (showPagination()) {
-          @if (service().pagination$(key()) | async; as _pagination) {
-            <div tablePager pager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
-          }
-        }
       </div>
+      @if (showPagination()) {
+        @if (service().pagination$(key()) | async; as _pagination) {
+          <div tablePager [(isCompact)]="isCompact" [pagination]="_pagination" [(params)]="params"></div>
+        }
+      }
     </div>
   }
 </div>

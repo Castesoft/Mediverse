@@ -4,7 +4,7 @@ import { Role } from 'src/app/_models/types';
 import { UserMedicalInsuranceCompany } from '../users/userMedicalInsuranceCompany/userMedicalInsuranceCompany';
 import { MedicalLicense } from 'src/app/_models/medicalLicenses/medicalLicense';
 import { DoctorClinic } from 'src/app/_models/doctors/doctorClinics/doctorClinic';
-import { Doctor } from 'src/app/_models/doctors/doctor';
+import { Doctor } from 'src/app/_models/doctors/doctor.model';
 import { WorkSchedule } from 'src/app/_models/workSchedules/workSchedule';
 import { WorkScheduleSettings } from 'src/app/_models/workSchedules/workScheduleSettings/workScheduleSettings';
 

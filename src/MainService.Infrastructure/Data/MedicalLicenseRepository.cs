@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using MainService.Core.DTOs.MedicalLicense;
 using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
@@ -9,9 +10,10 @@ using MainService.Models.Entities.Aggregate;
 
 
 namespace MainService.Infrastructure.Data;
+
 public class MedicalLicenseRepository(DataContext context, IMapper mapper) : IMedicalLicenseRepository
 {
-    public async Task<MedicalLicenseDto?> FindDtoByNameAsync(string name) => 
+    public async Task<MedicalLicenseDto?> FindDtoByNameAsync(string name) =>
         await context.MedicalLicenses.ProjectTo<MedicalLicenseDto>(mapper.ConfigurationProvider).AsNoTracking()
             .SingleOrDefaultAsync(x => x.Name == name);
 
@@ -25,9 +27,9 @@ public class MedicalLicenseRepository(DataContext context, IMapper mapper) : IMe
     public void Delete(MedicalLicense item) => context.MedicalLicenses.Remove(item);
 
     public async Task<List<MedicalLicenseDto>> GetAllDtosAsync() => await context.MedicalLicenses
-            .AsNoTracking()
-            .ProjectTo<MedicalLicenseDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        .AsNoTracking()
+        .ProjectTo<MedicalLicenseDto>(mapper.ConfigurationProvider)
+        .ToListAsync();
 
     public async Task<MedicalLicense?> GetAsNoTrackingByIdAsync(int id) =>
         await context.MedicalLicenses
@@ -51,22 +53,36 @@ public class MedicalLicenseRepository(DataContext context, IMapper mapper) : IMe
         {
             query = param.Sort.ToLower() switch
             {
-                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id),
-                "code" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Code) : query.OrderByDescending(x => x.Code),
-                "codenumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CodeNumber) : query.OrderByDescending(x => x.CodeNumber),
-                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
-                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.Description) : query.OrderByDescending(x => x.Description),
-                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
+                "id" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Id)
+                    : query.OrderByDescending(x => x.Id),
+                "code" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Code)
+                    : query.OrderByDescending(x => x.Code),
+                "codenumber" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.CodeNumber)
+                    : query.OrderByDescending(x => x.CodeNumber),
+                "name" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Name)
+                    : query.OrderByDescending(x => x.Name),
+                "description" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.Description)
+                    : query.OrderByDescending(x => x.Description),
+                "createdat" => param.IsSortAscending.HasValue && param.IsSortAscending.Value
+                    ? query.OrderBy(x => x.CreatedAt)
+                    : query.OrderByDescending(x => x.CreatedAt),
                 _ => query.OrderByDescending(x => x.CreatedAt),
             };
-        } else {
+        }
+        else
+        {
             query = query.OrderByDescending(x => x.CreatedAt);
         }
 
         if (!string.IsNullOrEmpty(param.Search))
         {
             string term = param.Search.ToLower();
-            
+
             query = query.Where(
                 x =>
                     !string.IsNullOrEmpty(x.Code) && x.Code.ToLower().Contains(term) ||
@@ -82,25 +98,25 @@ public class MedicalLicenseRepository(DataContext context, IMapper mapper) : IMe
             param.PageSize);
     }
 
-    public async Task<List<OptionDto>> GetOptionsAsync() => 
+    public async Task<List<OptionDto>> GetOptionsAsync() =>
         await context.MedicalLicenses
             .Include(x => x.MedicalLicenseDocument.Document)
             .AsNoTracking()
             .ProjectTo<OptionDto>(mapper.ConfigurationProvider)
-            .ToListAsync()
-        ;
+            .ToListAsync();
 
     public async Task<bool> ExistsByIdAsync(int id) =>
         await context.MedicalLicenses.AnyAsync(x => x.Id == id);
 
-    public Task<bool> ExistsByNameAsync(string name) => 
+    public Task<bool> ExistsByNameAsync(string name) =>
         context.MedicalLicenses.AnyAsync(x => x.Name == name);
 
     public Task<bool> ExistsByCodeAsync(string code) =>
         context.MedicalLicenses.AnyAsync(x => x.Code == code);
 
-    public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId) => 
+    public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId) =>
         await context.MedicalLicenses
             .Include(x => x.MedicalLicenseSpecialty.Specialty.DoctorSpecialties)
-            .AnyAsync(x => x.Id == id && x.MedicalLicenseSpecialty.Specialty.DoctorSpecialties.Any(y => y.DoctorId == doctorId));
+            .AnyAsync(x =>
+                x.Id == id && x.MedicalLicenseSpecialty.Specialty.DoctorSpecialties.Any(y => y.DoctorId == doctorId));
 }

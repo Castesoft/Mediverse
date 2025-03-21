@@ -8,9 +8,6 @@ import { Component } from "@angular/core";
     <div class="table-responsive">
       <ng-content></ng-content>
     </div>
-    <ng-content select="[pager]"></ng-content>
   `,
-  standalone: true,
 })
-export class TableWrapperComponent {
-}
+export class TableWrapperComponent {}

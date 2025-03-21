@@ -1,3 +1,4 @@
+using MainService.Core.DTOs.MedicalLicense;
 using MainService.Core.Helpers.Pagination;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;

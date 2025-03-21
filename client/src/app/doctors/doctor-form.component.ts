@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
-import { Doctor } from "src/app/_models/doctors/doctor";
+import { Doctor } from "src/app/_models/doctors/doctor.model";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { CatalogMode, View } from "src/app/_models/base/types";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";

@@ -1,5 +1,5 @@
 import { EntityParams } from "src/app/_models/base/entityParams";
-import { Doctor } from "src/app/_models/doctors/doctor";
+import { Doctor } from "src/app/_models/doctors/doctor.model";
 
 
 export class DoctorParams extends EntityParams<Doctor> {

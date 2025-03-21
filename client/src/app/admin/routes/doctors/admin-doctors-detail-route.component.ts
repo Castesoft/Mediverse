@@ -1,6 +1,6 @@
 import { Component, DestroyRef, effect, inject, OnDestroy } from "@angular/core";
 import BaseRouteDetail from "src/app/_models/base/components/extensions/routes/baseRouteDetail";
-import { Doctor } from "src/app/_models/doctors/doctor";
+import { Doctor } from "src/app/_models/doctors/doctor.model";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { takeUntil } from "rxjs/operators";
 import { Navigation, ParamMap } from "@angular/router";

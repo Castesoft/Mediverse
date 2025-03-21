@@ -43,7 +43,6 @@ import {
   selector: 'div[catalogLayout]',
   templateUrl: './catalog-layout.component.html',
   styleUrls: [ './catalog-layout.component.scss' ],
-  standalone: true,
   imports: [
     NgTemplateOutlet,
     AsyncPipe,

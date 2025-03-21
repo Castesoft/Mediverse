@@ -27,4 +27,9 @@ export class TableMenuComponent<T extends Entity, P extends EntityParams<P>, F e
     event.preventDefault();
     this.printClicked.emit();
   }
+
+  onDownloadClicked(event: Event) {
+    event.preventDefault();
+    this.downloadClicked.emit();
+  }
 }

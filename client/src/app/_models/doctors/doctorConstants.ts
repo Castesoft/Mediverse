@@ -1,4 +1,4 @@
-import { Doctor } from "src/app/_models/doctors/doctor";
+import { Doctor } from "src/app/_models/doctors/doctor.model";
 import { FormInfo } from "src/app/_models/forms/formTypes";
 import { DoctorParams } from "src/app/_models/doctors/doctorParams";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";

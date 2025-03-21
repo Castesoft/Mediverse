@@ -1,7 +1,7 @@
 import { Entity } from "src/app/_models/base/entity";
 import { Product } from "src/app/_models/products/product";
 import { SelectOption } from 'src/app/_models/base/selectOption';
-import { Doctor } from "src/app/_models/doctors/doctor";
+import { Doctor } from "src/app/_models/doctors/doctor.model";
 import { Patient } from "src/app/_models/patients/patient";
 import { Address } from "src/app/_models/addresses/address";
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";

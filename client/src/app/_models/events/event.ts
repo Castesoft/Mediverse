@@ -4,7 +4,7 @@ import { SelectOption } from "src/app/_models/base/selectOption";
 import { Payment } from "../payments/payment";
 import { Prescription } from "../prescriptions/prescription";
 import { Service } from "src/app/_models/services/service";
-import { Doctor } from 'src/app/_models/doctors/doctor';
+import { Doctor } from 'src/app/_models/doctors/doctor.model';
 import { Patient } from 'src/app/_models/patients/patient';
 import Nurse from 'src/app/_models/nurses/nurse';
 

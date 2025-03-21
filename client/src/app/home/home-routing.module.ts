@@ -19,7 +19,6 @@ import { HomeNurseDetailRouteComponent } from 'src/app/home/routes/nurses/home-n
 import { HomePatientCreateRouteComponent } from 'src/app/home/routes/patients/home-patient-create-route.component';
 import { ClinicsService } from 'src/app/clinics/clinics.config';
 import { ServicesService } from 'src/app/services/services.config';
-import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.config';
 import { OrdersService } from 'src/app/orders/orders.config';
 import { ProductsService } from 'src/app/products/products.config';
 import { HomeEventEditRouteComponent } from 'src/app/home/routes/events/home-event-edit-route.component';
@@ -56,6 +55,7 @@ import { PharmaciesService } from "../pharmacies/pharmacies.config";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { doctorGuard } from "src/app/_guards/doctor.guard";
 import { EventsService } from "src/app/events/events.service";
+import { PrescriptionsService } from "src/app/prescriptions/prescriptions.service";
 
 
 @NgModule({

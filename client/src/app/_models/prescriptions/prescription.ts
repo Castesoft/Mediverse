@@ -4,7 +4,7 @@ import Clinic from "src/app/_models/clinics/clinic";
 import Event from "src/app/_models/events/event";
 import { PrescriptionItem } from "src/app/_models/prescriptionItem";
 import { Patient } from "../patients/patient";
-import { Doctor } from 'src/app/_models/doctors/doctor';
+import { Doctor } from 'src/app/_models/doctors/doctor.model';
 
 
 export class Prescription extends Entity {

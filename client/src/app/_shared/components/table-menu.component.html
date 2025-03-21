@@ -39,7 +39,7 @@
     </span>
   </div>
 
-  <button cdkMenuItem class="menu-item px-3 btn-light bg-light" (click)="downloadClicked.emit()">
+  <button cdkMenuItem class="menu-item px-3 btn-light bg-light" (mousedown)="onDownloadClicked($event)">
     <span class="menu-link">Descargar</span>
   </button>
 

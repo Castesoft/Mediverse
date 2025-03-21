@@ -14,12 +14,16 @@ $prescription-max-width: 1000px;
   margin: $prescription-horizontal-margin;
 }
 
+.title-container {
+  margin: $prescription-horizontal-margin;
+  max-width: $prescription-max-width;
+}
+
 .prescription-pad {
   background-image: linear-gradient(90deg, rgba(200, 200, 200, .07) 1px, transparent 1px),
   linear-gradient(rgba(200, 200, 200, .07) 1px, transparent 1px);
   background-size: 25px 25px;
-  border: 1px solid #d4d4d4;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
   font-family: 'Courier New', monospace;
   position: relative;
   padding: $prescription-padding;
@@ -46,7 +50,9 @@ $prescription-max-width: 1000px;
   right: 0;
   bottom: 0;
   background: linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.05) 50%, transparent 52%);
+  border-radius: 16px;
   background-size: 10px 10px;
+  border: 1px solid #eee;
   z-index: 1;
   pointer-events: none;
 }

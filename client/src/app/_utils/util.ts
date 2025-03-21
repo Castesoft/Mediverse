@@ -122,3 +122,10 @@ export function isNullOrWhiteSpace(
 
   return false;
 }
+
+export function formatFilename(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/[^\w-]/g, '');
+}

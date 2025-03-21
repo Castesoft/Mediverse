@@ -105,11 +105,12 @@
         <div [collapse]="!item.isCollapsed" [id]="'collapseBasic' + item.id" [isAnimated]="true">
           <div class="p-4 border bg-light">
             <div prescriptionForm
-                 [use]="FormUse.DETAIL"
                  [(key)]="key"
-                 [view]="'inline'"
                  [(item)]="data()[idx]"
-                 [id]="'prescription-form-' + data()[idx].id">
+                 [view]="'inline'"
+                 [showActions]="false"
+                 [use]="FormUse.DETAIL"
+                 [referenceId]="'prescription-form-' + data()[idx].id">
             </div>
           </div>
         </div>

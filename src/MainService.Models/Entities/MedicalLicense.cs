@@ -19,11 +19,16 @@
 /// </remarks>
 public class MedicalLicense : BaseCodeEntity
 {
-    public MedicalLicense() {}
-    public MedicalLicense(int specialtyId) => MedicalLicenseSpecialty = new (specialtyId);
-    public MedicalLicense(int specialtyId, string documentPublicId, string documentUrl) {
-        MedicalLicenseSpecialty = new (specialtyId);
-        MedicalLicenseDocument = new (documentPublicId, documentUrl);
+    public MedicalLicense()
+    {
+    }
+
+    public MedicalLicense(int specialtyId) => MedicalLicenseSpecialty = new MedicalLicenseSpecialty(specialtyId);
+
+    public MedicalLicense(int specialtyId, string documentPublicId, string documentUrl)
+    {
+        MedicalLicenseSpecialty = new MedicalLicenseSpecialty(specialtyId);
+        MedicalLicenseDocument = new MedicalLicenseDocument(documentPublicId, documentUrl);
     }
 
     /// <summary>
@@ -63,9 +68,9 @@ public class MedicalLicense : BaseCodeEntity
     /// </para>
     /// </remarks>
     public MedicalLicenseDocument MedicalLicenseDocument { get; set; } = null!;
+
     public MedicalLicenseSpecialty MedicalLicenseSpecialty { get; set; } = null!;
     public List<MedicalLicenseSubSpecialty> MedicalLicenseSubSpecialties { get; set; } = [];
 }
 
-    public class MedicalLicenseDto : BaseCodeEntity {}
-    public class MedicalLicenseParams : BaseCodeParams {}
+public class MedicalLicenseParams : BaseCodeParams;
