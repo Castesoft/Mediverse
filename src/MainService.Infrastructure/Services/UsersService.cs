@@ -40,7 +40,8 @@ public class UsersService(
 
     public async Task<AccountDto?> GenerateAccountDtoAsync(int userId)
     {
-        var user = await context.Users.Include(appUser => appUser.Doctors)
+        var user = await context.Users
+            .Include(appUser => appUser.Doctors)
             .ApplyIncludes()
             .SingleOrDefaultAsync(x => x.Id == userId);
 

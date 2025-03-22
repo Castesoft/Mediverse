@@ -42,6 +42,8 @@ import { SymbolCellComponent } from "src/app/_shared/template/components/tables/
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PrescriptionsService } from "src/app/prescriptions/prescriptions.service";
+import { MedicalLicense } from "src/app/_models/medicalLicenses/medicalLicense";
+import { SubmitOptions } from "src/app/_utils/serviceHelper/types/submitOptions";
 
 @Component({
   selector: '[prescriptionForm]',
@@ -103,9 +105,7 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
         .setPatientOptions(this.patientsService.options())
         .setClinicOptions(this.clinicsService.options());
 
-      if (this.use() === FormUse.CREATE) {
-
-      } else {
+      if (this.use() !== FormUse.CREATE) {
         const item: Prescription | null = this.item();
         if (item !== null) {
           this.form.patchValue(item, { emitEvent: false });
@@ -121,8 +121,25 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
         }
       }
     });
+  }
 
+  ngOnInit(): void {
+    if (this.item()) {
+      this.form.patch(this.item()!, this.fromEventWindow());
+    }
+
+    this.setAccountProperties();
     this.subscribeToFormValueChanges();
+  }
+
+  private setAccountProperties(): void {
+    const account: Account | null = this.accountService.current();
+    if (account) {
+      this.form.controls.doctor.patchValue(new Doctor({ ...account } as any));
+      this.accountService.getMedicalLicenses().subscribe((licenses: MedicalLicense[]) => {
+        this.form.patchMedicalLicenses(licenses)
+      });
+    }
   }
 
   private subscribeToFormValueChanges(): void {
@@ -132,17 +149,6 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
         this.form.controls.patient.patchValue(patientFull as any, { emitEvent: false });
       }
     });
-  }
-
-  ngOnInit(): void {
-    if (this.item()) {
-      this.form.patch(this.item()!, this.fromEventWindow());
-    }
-
-    const account: Account | null = this.accountService.current();
-    if (account) {
-      this.form.controls.doctor.patchValue(new Doctor({ ...account } as any));
-    }
   }
 
   async downloadPrescription() {
@@ -161,5 +167,16 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
     if (!element) return;
 
     await this.service.export(this.item()!, element, 'print');
+  }
+
+  handleSubmit(): void {
+    const submitOptions: SubmitOptions = {
+      value: this.form.payload,
+      redirectUrl: this.router.url.split('/').slice(0, -1).join('/'),
+      useIdAfterResponseForRedirect: true,
+      toastMessage: '¡Receta creada exitosamente!',
+    };
+
+    this.onSubmit(this.view, this.use, submitOptions)
   }
 }

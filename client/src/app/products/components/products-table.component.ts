@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, ModelSignal, model, OnDestroy, DestroyRef, inject } from "@angular/core";
+import { Component, model, ModelSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import BaseTable from "src/app/_models/base/components/extensions/baseTable";
 import TableInputSignals from "src/app/_models/base/components/interfaces/tableInputSignals";
-import { View, CatalogMode } from "src/app/_models/base/types";
+import { CatalogMode, View } from "src/app/_models/base/types";
 import { Product } from "src/app/_models/products/product";
 import { productCells } from "src/app/_models/products/productConstants";
 import { ProductFiltersForm } from "src/app/_models/products/productFiltersForm";
@@ -60,7 +60,7 @@ export class ProductsTableComponent extends BaseTable<Product, ProductParams, Pr
 
     if (item.id === null) throw new Error('Product ID is null');
 
-    this.service.update({} as any, this.view(), { use: FormUse.EDIT, value: formData, id: item.id, }).subscribe({
+    this.service.update({} as any, { use: FormUse.EDIT, value: formData, id: item.id, }).subscribe({
       error: (error) => {
         this.toastr.error(error.message);
       }

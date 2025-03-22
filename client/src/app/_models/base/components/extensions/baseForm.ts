@@ -12,7 +12,7 @@ import { DevService } from "src/app/_services/dev.service";
 import { IconsService } from "src/app/_services/icons.service";
 import { ValidationService } from "src/app/_services/validation.service";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
-import SubmitOptions from 'src/app/_utils/serviceHelper/types/submitOptions';
+import { SubmitOptions } from "src/app/_utils/serviceHelper/types/submitOptions";
 
 
 /**
@@ -93,6 +93,7 @@ export default class BaseForm<
    *
    * @param view - A signal representing the current view model.
    * @param use - A signal representing the form use case.
+   * @param options - Additional options for the submission.
    */
   onSubmit(view: ModelSignal<View>, use: ModelSignal<FormUse>, options?: Partial<SubmitOptions>) {
     this.form.submitted = true;
@@ -111,28 +112,21 @@ export default class BaseForm<
    *
    * @param view - A signal representing the current view model.
    * @param use - A signal representing the form use case.
+   * @param options - Additional options for the submission.
    */
   create(view: ModelSignal<View>, use: ModelSignal<FormUse>, options?: Partial<SubmitOptions>) {
+    const id: number | null = this.form.controls.id.getRawValue();
 
-    const id = this.form.controls.id.getRawValue();
-
-    if (
-      id !== null &&
-      options !== undefined &&
-      options.id === undefined
-    ) {
+    if (id !== null && options !== undefined && options.id === undefined) {
       options = { ...options, id: id };
     }
 
-    console.log(options);
-
-
     if (this.form.submittable) {
-      this.service.create(this.form, view(), options).subscribe({
+      this.service.create(this.form, options).subscribe({
         next: response => {
           this.form.onSuccess(response);
 
-          const _use = options?.use;
+          const _use: FormUse | undefined = options?.use;
 
           if (_use !== undefined) {
             this.form.use = _use;
@@ -152,26 +146,23 @@ export default class BaseForm<
    *
    * @param view - A signal representing the current view model.
    * @param use - A signal representing the form use case.
+   * @param options - Additional options for the submission.
    */
   update(view: ModelSignal<View>, use: ModelSignal<FormUse>, options?: Partial<SubmitOptions>) {
+    const id: number | null = this.form.controls.id.getRawValue();
 
-    const id = this.form.controls.id.getRawValue();
-
-    if (
-      id !== null &&
-      options?.id === undefined
-    ) {
+    if (id !== null && options?.id === undefined) {
       options = { ...options, id: id };
     }
 
     console.log(options);
 
     if (this.form.submittable) {
-      this.service.update(this.form, view(), options).subscribe({
+      this.service.update(this.form, options).subscribe({
         next: response => {
           this.form.onSuccess(response);
 
-          const _use = options?.use;
+          const _use: FormUse | undefined = options?.use;
 
           if (_use !== undefined) {
             this.form.use = _use;

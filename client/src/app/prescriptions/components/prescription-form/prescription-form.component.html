@@ -43,7 +43,7 @@
   </div>
 }
 
-<form class="prescription-pad bg-body" (ngSubmit)="onSubmit(view, use, { value: form.payload, })"
+<form class="prescription-pad bg-body" (ngSubmit)="handleSubmit()"
       [id]="referenceId() ? referenceId() : 'prescription-form-' + item()?.id">
   <div class="prescription-header">
     <div class="logo">
@@ -258,7 +258,7 @@
       <button (click)="router.navigate(['/inicio/recetas'])" class="btn btn-light me-2" type="button">
         Cancelar
       </button>
-      <button class="btn btn-primary" type="submit" [attr.form]="form.id">
+      <button class="btn btn-primary" type="button" [attr.form]="form.id" (click)="handleSubmit()">
         Guardar receta
       </button>
     </div>

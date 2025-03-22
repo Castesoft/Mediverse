@@ -115,8 +115,8 @@ export class NurseFormComponent
 
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Nurse> = isNew
-      ? this.service.create(this.form, this.view(), { use: this.use(), value: formData, })
-      : this.service.update(this.form, this.view(), {
+      ? this.service.create(this.form, { use: this.use(), value: formData, })
+      : this.service.update(this.form, {
         use: this.use(),
         value: formData,
         id: this.form.controls.id.value ?? undefined,

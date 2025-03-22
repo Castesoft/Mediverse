@@ -420,6 +420,17 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         };
     }
 
+    public Task<List<UserMedicalLicenseDto>> GetUserMedicalLicensesAsync(int doctorId)
+    {
+        return context.UserMedicalLicenses
+            .Where(x => x.UserId == doctorId)
+            .Include(x => x.MedicalLicense).ThenInclude(x => x.MedicalLicenseDocument)
+            .Include(x => x.MedicalLicense).ThenInclude(x => x.MedicalLicenseSpecialty)
+            .Include(x => x.MedicalLicense).ThenInclude(x => x.MedicalLicenseSubSpecialties)
+            .ProjectTo<UserMedicalLicenseDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
     public async Task<int?> GetMainAddressIdAsync(int userId) =>
         await context.UserAddresses
             .Where(x => x.UserId == userId && x.IsMain)

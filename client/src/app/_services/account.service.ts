@@ -408,6 +408,10 @@ export class AccountService {
     );
   }
 
+  getMedicalLicenses() {
+    return this.http.get<MedicalLicense[]>(`${this.baseUrl}medical-licenses`);
+  }
+
   deleteMedicalLicense(id: number) {
     this._deleteMedicalLicense(id).subscribe();
   }

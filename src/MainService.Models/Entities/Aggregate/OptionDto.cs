@@ -43,6 +43,7 @@ public class Options
     public double? Dosage { get; set; }
     public string? Unit { get; set; }
     public string? Description { get; set; }
+    public int? Age { get; set; }
     public string? Race { get; set; }
     public decimal? Price { get; set; }
     public string? PhotoUrl { get; set; }

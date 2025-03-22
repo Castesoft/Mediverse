@@ -98,8 +98,8 @@ export class WarehouseFormComponent extends BaseForm<Warehouse, WarehouseParams,
 
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Warehouse> = isNew
-      ? this.service.create(this.form, this.view(), { use: this.use(), value: this.form.getRawValue()})
-      : this.service.update(this.form, this.view(), { use: this.use(), value: this.form.getRawValue(), id: this.form.controls.id.value ?? undefined, });
+      ? this.service.create(this.form, { use: this.use(), value: this.form.getRawValue()})
+      : this.service.update(this.form, { use: this.use(), value: this.form.getRawValue(), id: this.form.controls.id.value ?? undefined, });
 
     observable.subscribe({
       next: (warehouse) => {

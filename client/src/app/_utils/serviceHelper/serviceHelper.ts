@@ -26,7 +26,8 @@ import { SelectionService } from "src/app/_models/services/selection.service";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
 import { ClickLinkHandler } from "src/app/_utils/serviceHelper/clickLinkHandler";
-import SubmitOptions from 'src/app/_utils/serviceHelper/types/submitOptions';
+import { SubmitOptions } from "src/app/_utils/serviceHelper/types/submitOptions";
+import { ToastrService } from "ngx-toastr";
 
 /**
  * A helper class that provides common service functionalities for handling entities, parameters, forms, etc.
@@ -42,6 +43,8 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
   protected readonly route = inject(ActivatedRoute);
   protected readonly confirm = inject(ConfirmService);
   protected readonly matSnackBar = inject(MatSnackBar);
+  protected readonly toastr = inject(ToastrService);
+
   readonly dev = inject(DevService);
 
   private readonly selectionService: SelectionService<T> = inject(SelectionService<T>);
@@ -254,17 +257,14 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
    * Creates a new entity on the server and updates local data/redirects if needed.
    * Sets the loading signal to true while the request is in progress.
    */
-  create(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
+  create(form: FormGroup2<T>, options?: Partial<SubmitOptions>): Observable<T> {
     console.log(form.value);
     this.loading.set(true);
     return this.http.post<T>(
-      _options?.id ? `${this.baseUrl}${_options.id}` : this.baseUrl,
-      _options?.value ?? form.value).pipe(
+      options?.id ? `${this.baseUrl}${options.id}` : this.baseUrl,
+      options?.value ?? form.value).pipe(
       tap(response => {
-        this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} creado correctamente`, 'Cerrar', { duration: 3000 });
-        if (view === 'page') {
-          this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
-        }
+        this.handleOptionsAfterRequest(options, response);
         this.data.next([ ...this.data.value, response ]);
       }),
       finalize(() => this.loading.set(false))
@@ -275,18 +275,14 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
    * Updates an existing entity on the server and updates local data/redirects if needed.
    * Sets the loading signal to true while the request is in progress.
    */
-  update(form: FormGroup2<T>, view: View, _options?: Partial<SubmitOptions>): Observable<T> {
+  update(form: FormGroup2<T>, options?: Partial<SubmitOptions>): Observable<T> {
     this.loading.set(true);
-    return this.http.put<T>(`${this.baseUrl}${_options?.id ?? form.controls.id.value}`, _options?.value ?? form.value).pipe(
+    return this.http.put<T>(`${this.baseUrl}${options?.id ?? form.controls.id.value}`, options?.value ?? form.value).pipe(
       tap(response => {
-        console.log('response', response);
-
-        if (view === 'page') {
-          this.router.navigate([ this.dictionary.catalogRoute, response.id ]);
-        }
         this.matSnackBar.open(`${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`, 'Cerrar', { duration: 3000 });
 
-        const id = _options?.id;
+        this.handleOptionsAfterRequest(options, response);
+        const id: number | undefined = options?.id;
 
         if (id !== undefined) {
           if (this.data.value.length === 0) {
@@ -299,11 +295,13 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
         if (this.options().length === 0) {
           this.options.update(oldValues => {
             const optionToAdd = new SelectOption();
+
             if (response.name) optionToAdd.name = response.name;
             if (response.code) optionToAdd.code = response.code;
             if (response.id) optionToAdd.id = response.id;
             if (response.isVisible) optionToAdd.visible = response.isVisible;
             if (response.isEnabled) optionToAdd.enabled = response.isEnabled;
+
             return [ optionToAdd ];
           });
         } else if (this.options().length > 0) {
@@ -319,6 +317,22 @@ export class ServiceHelper<T extends Entity, U extends EntityParams<U>, V extend
       }),
       finalize(() => this.loading.set(false))
     );
+  }
+
+  private handleOptionsAfterRequest(options: Partial<SubmitOptions> | undefined, response: T): void {
+    if (!options) return;
+
+    const { redirectUrl, useIdAfterResponseForRedirect, toastMessage } = options;
+    const id: string = response.id?.toString() || '';
+
+    if (redirectUrl) {
+      const url: string = `${redirectUrl}/${useIdAfterResponseForRedirect ? id : ''}`;
+      this.router.navigate([ url ]).catch(console.error);
+    }
+
+    if (toastMessage) {
+      this.toastr.success(toastMessage);
+    }
   }
 
   /**

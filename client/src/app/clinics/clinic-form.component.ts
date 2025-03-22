@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ModelSignal, model, effect, inject, InputSignal, input, signal, OnInit } from '@angular/core';
+import { Component, effect, inject, input, InputSignal, model, ModelSignal, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
 import { ControlsModule } from 'src/app/_forms/controls.module';
@@ -21,6 +21,7 @@ import { ImageHandlerService } from 'src/app/_services/image-handler.service';
 import { ImageSelectorComponent } from 'src/app/_shared/components/image-selector.component';
 import { ImageThumbnailSelectorComponent } from 'src/app/_shared/components/image-thumbnail-selector.component';
 import { ClinicsService } from 'src/app/clinics/clinics.config';
+import { SubmitOptions } from "src/app/_utils/serviceHelper/types/submitOptions";
 
 
 @Component({
@@ -38,8 +39,7 @@ import { ClinicsService } from 'src/app/clinics/clinics.config';
 })
 export class ClinicFormComponent
   extends BaseForm<Clinic, ClinicParams, ClinicFiltersForm, ClinicForm, ClinicsService>
-  implements FormInputSignals<Clinic>, OnInit
-{
+  implements FormInputSignals<Clinic>, OnInit {
   protected readonly SiteSection: typeof SiteSection = SiteSection;
   protected readonly PhotoShape: typeof PhotoShape = PhotoShape;
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
@@ -64,13 +64,9 @@ export class ClinicFormComponent
     console.log('ClinicFormComponent constructor', this.form);
 
     effect(() => {
-      this.form
-        .setUse(this.use())
-        .setValidation(this.validation.active())
-      ;
+      this.form.setUse(this.use());
 
-      const value = this.item();
-
+      const value: Clinic | null = this.item();
       if (value !== null) {
         this.form.patchValue(value);
       }
@@ -117,9 +113,18 @@ export class ClinicFormComponent
     });
 
     const isNew: boolean = !this.item()?.id;
+
+    const submitOptions: SubmitOptions = {
+      use: this.use(),
+      value: formData,
+      id: this.form.controls.id.value ?? undefined,
+      redirectUrl: 'inicio/clinicas',
+      useIdAfterResponseForRedirect: true,
+    }
+
     const observable: Observable<Clinic> = isNew
-      ? this.service.create(this.form, this.view(), { use: this.use(), value: formData, })
-      : this.service.update(this.form, this.view(), { use: this.use(), value: formData, id: this.form.controls.id.value ?? undefined, });
+      ? this.service.create(this.form, submitOptions)
+      : this.service.update(this.form, submitOptions);
 
     observable.subscribe({
       next: (clinic) => {

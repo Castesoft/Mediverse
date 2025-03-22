@@ -5,7 +5,7 @@
     }
     <input type="text"
            [formControl]="$any(control())"
-           [placeholder]="control().placeholder != null && control().placeholder"
+           [placeholder]="control().placeholder != null && control().placeholder !== '' ? control().placeholder : ''"
            [id]="control().id"
            [matAutocomplete]="auto"
            class="form-control " [class.ps-12]="useIcon()">
@@ -16,7 +16,7 @@
           [id]="item.id.toString()"
           class="bg-body w-100 full-width-option"
           (onSelectionChange)="onSelectionChange.emit($event.source.value)">
-          <div class="d-flex w-100">
+        <div class="d-flex w-100">
             @if (item.options && item.options.photoUrl) {
               <img alt="" class="example-option-img rounded me-2" [src]="item.options.photoUrl" height="28">
             }

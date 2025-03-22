@@ -180,8 +180,8 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
 
     const isNew: boolean = !this.item()?.id;
     const observable: Observable<Product> = isNew
-      ? this.service.create(this.form, this.view(), { use: this.use(), value: formData, })
-      : this.service.update(this.form, this.view(), {
+      ? this.service.create(this.form, { use: this.use(), value: formData, })
+      : this.service.update(this.form, {
         use: this.use(),
         value: formData,
         id: this.form.controls.id.value ?? undefined,

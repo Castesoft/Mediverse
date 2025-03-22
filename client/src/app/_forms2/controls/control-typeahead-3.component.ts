@@ -1,7 +1,19 @@
-import { Component, computed, effect, HostBinding, inject, input, model, OnInit, output } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  HostBinding,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  OnInit,
+  output,
+  OutputEmitterRef,
+  Signal
+} from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { ValidationService } from "src/app/_services/validation.service";
 import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module";
 import { FormControl2 } from "src/app/_models/forms/formControl2";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
@@ -14,7 +26,6 @@ import { MaterialModule } from "src/app/_shared/material.module";
   selector: "[controlTypeahead3]",
   templateUrl: "./control-typeahead-3.component.html",
   styleUrls: [ "./control-typeahead-3.component.scss" ],
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     Forms2HelperModule,
@@ -25,19 +36,16 @@ import { MaterialModule } from "src/app/_shared/material.module";
   ],
 })
 export class ControlTypeahead3Component implements OnInit {
-  validation = inject(ValidationService);
+  control: ModelSignal<FormControl2<SelectOption | null>> = model.required<FormControl2<SelectOption | null>>();
+  fromWrapper: ModelSignal<boolean> = model.required<boolean>();
+  useIcon: InputSignal<boolean> = input<boolean>(false);
 
-  control = model.required<FormControl2<SelectOption | null>>();
-  fromWrapper = model.required<boolean>();
-  useIcon = input<boolean>(false);
-
-  onSelectionChange = output<SelectOption | null>();
-
+  onSelectionChange: OutputEmitterRef<SelectOption | null> = output();
   filteredOptions: Observable<SelectOption[]> = new Observable<SelectOption[]>();
 
-  root = computed<FormGroup2<any>>(() => this.control().root as FormGroup2<any>);
+  root: Signal<FormGroup2<any>> = computed(() => this.control().root as FormGroup2<any>);
 
-  class = 'mb-0';
+  class: string = 'mb-0';
 
   @HostBinding('class') get hostClass() {
     return this.class;
@@ -51,7 +59,7 @@ export class ControlTypeahead3Component implements OnInit {
         this.class += ' col-auto px-0';
       }
 
-      this.control.set(this.control().setValidation(this.validation.active()));
+      this.control.set(this.control().setValidation(this.root().validation));
     });
   }
 
@@ -71,14 +79,14 @@ export class ControlTypeahead3Component implements OnInit {
       );
   }
 
-  displayFn = (option: SelectOption): string => option?.name || '';
+  displayFn: (option: SelectOption) => string = (option: SelectOption): string => option?.name || '';
 
   /**
    * Filters all available options by the typed input.
    */
   private filter(value: string): SelectOption[] {
-    const filterValue = this.normalizeValue(value);
-    return this.control().selectOptions.filter(option =>
+    const filterValue: string = this.normalizeValue(value);
+    return this.control().selectOptions.filter((option: SelectOption) =>
       this
         .normalizeValue(option.name)
         .includes(filterValue)

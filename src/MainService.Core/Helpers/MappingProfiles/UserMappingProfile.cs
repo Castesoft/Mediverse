@@ -27,7 +27,8 @@ public class UserMappingProfile : Profile
                 PhotoUrl = (src.UserPhoto != null && src.UserPhoto.Photo != null && src.UserPhoto.Photo.Url != null)
                     ? src.UserPhoto.Photo.Url.AbsoluteUri
                     : null,
-                Sex = src.Sex
+                Sex = src.Sex,
+                Age = src.DateOfBirth.HasValue ? src.DateOfBirth.Value.CalculateAge() : 0
             }));
 
         // Map AppUser to DoctorSearchResultDto.

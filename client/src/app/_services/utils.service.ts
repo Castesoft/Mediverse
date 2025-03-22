@@ -39,7 +39,9 @@ export class UtilsService {
     }));
   }
 
-  getBootstrapClass(name: string) {
+  getBootstrapClass(name: string | null): string {
+    if (!name) return '';
+
     const bootstrapClasses: string[] = [
       'success',
       'danger',

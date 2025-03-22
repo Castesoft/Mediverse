@@ -37,39 +37,12 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     super(Prescription, new Prescription(), prescriptionFormInfo);
 
     this.addEmptyProductItem();
+
     this.controls.patient.controls.select.showLabel = false;
     this.controls.date.showLabel = false;
 
-    this.controls.patient.controls.select.valueChanges.subscribe({
-      next: (value: SelectOption | null): void => {
-        if (value !== null && value !== undefined && !isNullOrWhiteSpace(value)) {
-          this.controls.patient.controls.id.patchValue(value.id);
-          this.controls.patient.controls.fullName.patchValue(value.name);
-          this.controls.patient.controls.email.patchValue(value.code);
-
-          if (value.options !== null) {
-            this.controls.patient.controls.photoUrl.patchValue(value.options.photoUrl);
-            if (value.options.sex !== null) {
-              this.controls.patient.controls.sex.patchValue(new SelectOption({
-                name: value.options.sex,
-                code: value.options.sex,
-              }));
-            }
-          }
-        }
-      }
-    });
-
-    this.controls.clinic.controls.select.valueChanges.subscribe({
-      next: (value: SelectOption | null): void => {
-        if (value !== null && value !== undefined && !isNullOrWhiteSpace(value)) {
-          this.controls.clinic.controls.id.patchValue(value.id);
-          if (value.options !== null) {
-            this.controls.clinic.controls.photoUrl.patchValue(value.options.photoUrl);
-          }
-        }
-      }
-    });
+    this.subscribeToPatientSelectChanges();
+    this.subscribeToClinicSelectChanges();
   }
 
   get addButtonEnabled(): boolean {
@@ -129,6 +102,46 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
       exchangeAmount: this.controls.exchangeAmount.value,
       notes: this.controls.notes.value,
     };
+  }
+
+  private subscribeToPatientSelectChanges() {
+    this.controls.patient.controls.select.valueChanges.subscribe({
+      next: (value: SelectOption | string | null | undefined): void => {
+        if (typeof value === 'string' || value === null || value === undefined) {
+          return;
+        }
+
+        const { patient } = this.controls;
+
+        patient.controls.id.patchValue(value.id);
+        patient.controls.fullName.patchValue(value.name);
+        patient.controls.email.patchValue(value.code);
+
+        if (value.options) {
+          patient.controls.photoUrl.patchValue(value.options.photoUrl);
+          patient.controls.age.patchValue(value.options.age);
+
+          if (value.options.sex) {
+            patient.controls.sex.patchValue(new SelectOption({
+              name: value.options.sex,
+              code: value.options.sex,
+            }));
+          }
+        }
+      }
+    });
+  }
+
+  private subscribeToClinicSelectChanges() {
+    this.controls.clinic.controls.select.valueChanges.subscribe((value: SelectOption | null): void => {
+        if (value !== null && value !== undefined && !isNullOrWhiteSpace(value)) {
+          this.controls.clinic.controls.id.patchValue(value.id);
+          if (value.options !== null) {
+            this.controls.clinic.controls.photoUrl.patchValue(value.options.photoUrl);
+          }
+        }
+      }
+    );
   }
 
   setProductOptions(value: SelectOption[]): this {
@@ -231,17 +244,8 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
         this.controls.doctor.patchValue(doctor, { emitEvent: false });
         this.controls.patient.patchValue(patient, { emitEvent: false });
 
-        if (doctor && doctor.medicalLicenses.length && doctor.medicalLicenses.length > 0) {
-          doctor.medicalLicenses.forEach((license: MedicalLicense) => {
-            console.log('[patch] Adding medical license to form:', license);
-            this.controls.doctor.controls.medicalLicenses.push(new FormGroup2<MedicalLicense>(MedicalLicense, new MedicalLicense({
-              ...license,
-              licenseNumber: license.licenseNumber,
-              specialtyId: license.specialtyId,
-              specialtyLicense: license.specialtyLicense,
-              specialtyName: license.specialtyName,
-            }), medicalLicenseFormInfo));
-          });
+        if (doctor) {
+          this.patchMedicalLicenses(doctor.medicalLicenses);
         }
       }
     }
@@ -250,6 +254,21 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
       this.controls.date.disable({ emitEvent: false });
       this.controls.patient.controls.select.disable({ emitEvent: false });
     }
+  }
+
+  patchMedicalLicenses(medicalLicenses: MedicalLicense[]): void {
+    if (!medicalLicenses.length || medicalLicenses.length == 0) return;
+
+    medicalLicenses.forEach((license: MedicalLicense) => {
+      console.log('[patch] Adding medical license to form:', license);
+      this.controls.doctor.controls.medicalLicenses.push(new FormGroup2<MedicalLicense>(MedicalLicense, new MedicalLicense({
+        ...license,
+        licenseNumber: license.licenseNumber,
+        specialtyId: license.specialtyId,
+        specialtyLicense: license.specialtyLicense,
+        specialtyName: license.specialtyName,
+      }), medicalLicenseFormInfo));
+    });
   }
 
   patchProductItem(value: SelectOption | null, index: number) {

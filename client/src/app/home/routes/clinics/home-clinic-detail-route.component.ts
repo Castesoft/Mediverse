@@ -1,7 +1,7 @@
 import { Component, effect, HostBinding, inject, signal } from '@angular/core';
 import { createId } from '@paralleldrive/cuid2';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
-import { View, CatalogMode } from 'src/app/_models/base/types';
+import { CatalogMode, View } from 'src/app/_models/base/types';
 import Clinic from 'src/app/_models/clinics/clinic';
 import { ClinicTabs } from 'src/app/_models/clinics/clinicTypes';
 import { EventParams } from 'src/app/_models/events/eventParams';
@@ -14,16 +14,11 @@ import { NurseParams } from 'src/app/_models/nurses/nurseParams';
 @Component({
   host: { class: '' },
   selector: 'div[homeClinicDetailRoute]',
-  // template: `
-  //   <div clinicDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  // `,
   templateUrl: './home-clinic-detail-route.component.html',
   standalone: false,
 })
 export class HomeClinicDetailRouteComponent
-  extends BaseRouteDetail<Clinic>
-
-{
+  extends BaseRouteDetail<Clinic> {
   readonly service = inject(ClinicsService);
 
   compact = inject(CompactTableService);
@@ -80,7 +75,7 @@ export class HomeClinicDetailRouteComponent
           }
         },
       });
-      
+
       this.route.data.subscribe({
         next: (data) => {
           this.item.set(data['item']);
@@ -100,9 +95,11 @@ export class HomeClinicDetailRouteComponent
           break;
       }
 
-      this.router.navigate([], { queryParams: {
-        tab: this.tab(),
-      }, queryParamsHandling: 'merge' });
+      this.router.navigate([], {
+        queryParams: {
+          tab: this.tab(),
+        }, queryParamsHandling: 'merge'
+      });
     });
   }
 

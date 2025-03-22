@@ -40,4 +40,6 @@ public interface IUserRepository
     /// Returns the clinical history verification information for a given patient-doctor pair.
     /// </summary>
     Task<ClinicalHistoryVerificationDto?> GetClinicalHistoryVerificationAsync(int doctorId, int patientId);
+    
+    Task<List<UserMedicalLicenseDto>> GetUserMedicalLicensesAsync(int doctorId);
 }

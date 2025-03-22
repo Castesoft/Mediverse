@@ -69,7 +69,7 @@ public class AccountController(
             return Ok(new { RequiresTwoFactor = true });
         }
 
-        AccountDto? itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
+        var itemToReturn = await usersService.GenerateAccountDtoAsync(user.Id);
 
         return itemToReturn;
     }
@@ -2105,13 +2105,21 @@ public class AccountController(
 
         return Ok();
     }
+    
+    [Authorize]
+    [HttpGet("medical-licenses")]
+    public async Task<ActionResult<List<UserMedicalLicenseDto>>?> GetMedicalLicensesAsync()
+    {
+        var userId = User.GetUserId();
+        return await uow.UserRepository.GetUserMedicalLicensesAsync(userId);
+    }
 
     [Authorize]
     [HttpPost("medical-license")]
     public async Task<ActionResult<AccountDto?>> AddMedicalLicenseAsync(
         [FromForm] MedicalLicenseCreateDto request)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
         if (request.Specialty == null) return BadRequest("No se ha enviado la especialidad.");
         if (!request.Specialty.Id.HasValue) return BadRequest("No se ha enviado el ID de la especialidad.");
@@ -2127,17 +2135,17 @@ public class AccountController(
 
         var file = request.File;
         var isMain = request.IsMain.Value;
-        string licenseNumber = request.LicenseNumber;
-        string specialtyLicense = request.SpecialtyLicense;
+        var licenseNumber = request.LicenseNumber;
+        var specialtyLicense = request.SpecialtyLicense;
 
         if (!await uow.SpecialtyRepository.ExistsByIdAsync(request.Specialty.Id.Value))
             return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
 
-        Specialty? specialty = await uow.SpecialtyRepository.GetByIdAsync(request.Specialty.Id.Value);
+        var specialty = await uow.SpecialtyRepository.GetByIdAsync(request.Specialty.Id.Value);
 
         if (specialty == null) return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
                 .Include(x => x.UserMedicalLicenses)
                 .ThenInclude(x => x.MedicalLicense.MedicalLicenseSpecialty.Specialty)
                 .SingleOrDefaultAsync(x => x.Id == userId)
@@ -2203,9 +2211,9 @@ public class AccountController(
     [HttpDelete("medical-license/{medicalLicenseId}")]
     public async Task<ActionResult<AccountDto?>> DeleteMedicalLicenseByIdAsync([FromRoute] int medicalLicenseId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
                 .Include(x => x.UserMedicalLicenses)
                 .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
                 .Include(x => x.UserMedicalLicenses)
@@ -2256,9 +2264,9 @@ public class AccountController(
     [HttpDelete("medical-license-document/{documentId}")]
     public async Task<ActionResult<AccountDto?>> DeleteMedicalLicenseDocumentByIdAsync([FromRoute] int documentId)
     {
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
                 .AsNoTracking()
                 .Include(x => x.UserMedicalLicenses)
                 .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
@@ -2276,7 +2284,7 @@ public class AccountController(
             return BadRequest(
                 $"No estás registrado con la cédula profesional que tiene el documento con id {documentId}.");
 
-        Document? document = await uow.DocumentRepository.GetByIdAsync(documentId);
+        var document = await uow.DocumentRepository.GetByIdAsync(documentId);
 
         if (document == null)
             return NotFound($"No se ha encontrado el documento de la cédula profesional con id {documentId}.");
@@ -2318,9 +2326,9 @@ public class AccountController(
             return BadRequest("No se ha enviado si la compañía de seguro médico es principal o no.");
         if (request.File == null) return BadRequest("No se ha enviado el documento.");
 
-        int userId = User.GetUserId();
+        var userId = User.GetUserId();
 
-        AppUser? user = await userManager.Users
+        var user = await userManager.Users
                 .Include(x => x.UserMedicalLicenses)
                 .ThenInclude(x => x.MedicalLicense.MedicalLicenseDocument.Document)
                 .Include(x => x.UserMedicalLicenses)
@@ -2333,11 +2341,11 @@ public class AccountController(
         if (!await uow.SpecialtyRepository.ExistsByIdAsync(request.Specialty.Id.Value))
             return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
 
-        Specialty? specialty = await uow.SpecialtyRepository.GetByIdAsync(request.Specialty.Id.Value);
+        var specialty = await uow.SpecialtyRepository.GetByIdAsync(request.Specialty.Id.Value);
 
         if (specialty == null) return BadRequest($"La especialidad con id {request.Specialty.Id.Value} no existe.");
 
-        UserMedicalLicense? userMedicalLicense =
+        var userMedicalLicense =
             user.UserMedicalLicenses.SingleOrDefault(x =>
                 x.MedicalLicense.Id == medicalLicenseId);
 
