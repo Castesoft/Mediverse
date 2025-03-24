@@ -9,6 +9,10 @@ $brand-blue: #284092;
 :root {
   color-scheme: light dark;
 
+  --prescription-overlay-bg: rgba(255, 255, 255, 0);
+  --prescription-overlay-border: rgba(255, 255, 255, 0);
+  --prescription-overlay-gradient: linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.05) 50%, transparent 52%);
+
   //====================================================
   //              LIGHT THEME INITIALIZATION
   //====================================================
@@ -61,6 +65,10 @@ $brand-blue: #284092;
   //              DARK THEME INITIALIZATION
   //====================================================
   .dark-theme {
+    --prescription-overlay-bg: rgba(30, 30, 30, 0);
+    --prescription-overlay-border: rgba(30, 30, 30, 1);
+    --prescription-overlay-gradient: linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.05) 50%, transparent 52%);
+
     @include mat.system-level-colors(m3-theme.$dark-theme);
     @include mat.system-level-typography(m3-theme.$dark-theme);
     @include mat.all-component-colors(m3-theme.$dark-theme);
