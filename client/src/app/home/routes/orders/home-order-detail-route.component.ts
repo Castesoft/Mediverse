@@ -14,7 +14,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
            [(use)]="use"
            [(view)]="view"
            [(item)]="item"
-           [(key)]="key"></div>
+           [(key)]="key"
+           [fromAccountRoute]="false"></div>
     </div>
   `,
   standalone: false,

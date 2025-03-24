@@ -39,8 +39,6 @@ export class CardIconComponent {
       const theme: Theme = this.themeService.effectiveTheme();
       const key: string = this.brand()?.toString().toLowerCase() || '';
 
-      console.log(key);
-
       if (theme === 'dark') {
         if (key && this.routes[key]) {
           this.imgRoute = this.routes[key].dark;

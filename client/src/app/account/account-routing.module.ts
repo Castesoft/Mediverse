@@ -28,6 +28,11 @@ import titleDetailResolver from 'src/app/_utils/serviceHelper/functions/titleDet
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { authGuard } from 'src/app/_guards/auth.guard';
 import { EventsService } from "src/app/events/events.service";
+import { AccountOrdersComponent } from "src/app/account/components/account-orders/account-orders.component";
+import {
+  AccountOrderDetailComponent
+} from "src/app/account/components/account-order-detail/account-order-detail.component";
+import { OrdersService } from "src/app/orders/orders.config";
 
 export const itemResolver: ResolveFn<Account | null> = () => {
   const service: AccountService = inject(AccountService);
@@ -126,6 +131,27 @@ const routes: Routes = [
         data: {
           breadcrumb: [ 'Cuenta', 'Citas', 'Detalle' ],
           title: 'Detalle de Cita'
+        },
+        runGuardsAndResolvers: 'always',
+        canActivate: [ authGuard ]
+      },
+      {
+        path: 'pedidos',
+        component: AccountOrdersComponent,
+        title: 'DocHub | Mis Pedidos',
+        data: {
+          breadcrumb: [ 'Cuenta', 'Pedidos' ],
+          title: 'Mis Pedidos'
+        }
+      },
+      {
+        path: 'pedidos/:id',
+        component: AccountOrderDetailComponent,
+        resolve: { item: createItemResolver(OrdersService) },
+        title: titleDetailResolver(OrdersService, FormUse.DETAIL, 'id'),
+        data: {
+          breadcrumb: [ 'Cuenta', 'Pedidos', 'Detalle' ],
+          title: 'Detalle de Pedido'
         },
         runGuardsAndResolvers: 'always',
         canActivate: [ authGuard ]

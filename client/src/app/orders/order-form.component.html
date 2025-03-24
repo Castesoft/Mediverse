@@ -22,7 +22,7 @@
       </ul>
     </div>
     <div>
-      @if (use() === FormUse.DETAIL) {
+      @if (use() === FormUse.DETAIL && !fromAccountRoute()) {
         <button
           class="btn bg-body btn-color-gray-700 btn-active-primary align-items-center d-flex me-4"
           (click)="router.navigate(['admin', 'pedidos', item()?.id, 'editar'])"
@@ -289,7 +289,10 @@
         </div>
 
         <div class="card-body pt-0">
-          <div orderProductsTable [order]="item()!" (onPay)="navigateToCheckout()" [showPayButton]="item()?.amountDue !== 0"></div>
+          @if (item()) {
+            <div orderProductsTable [order]="item()!" (onPay)="navigateToCheckout()"
+                 [showPayButton]="item()?.amountDue !== 0"></div>
+          }
         </div>
       </div>
       <!--end :: Order details -->

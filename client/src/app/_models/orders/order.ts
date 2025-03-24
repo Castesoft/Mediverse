@@ -20,6 +20,7 @@ export class Order extends Entity {
   pickupAddress: Address | null = null;
   items: Product[] = [];
   status: SelectOption | null = null;
+  paymentStatus: string | null = null;
   deliveryStatus: SelectOption | null = null;
   paymentMethod: PaymentMethod | null = null;
 

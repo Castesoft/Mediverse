@@ -4,12 +4,12 @@
   padding-left: 1rem !important;
 }
 
-.event {
+.order {
   position: relative;
   transition: background-color 0.3s;
 }
 
-.event.unpaid::before {
+.order.unpaid::before {
   content: '';
   position: absolute;
   top: 0;
@@ -17,10 +17,9 @@
   height: 100%;
   width: 4px;
   background-color: vars.$danger;
-
 }
 
-.event.is-not-read::before {
+.order.is-not-read::before {
   content: '';
   position: absolute;
   top: 0;

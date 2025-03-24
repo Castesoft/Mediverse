@@ -50,7 +50,7 @@
                  [subtotal]="subtotal"
                  [item]="event"
                  [type]="type"
-                 [isSubmitting]="isSubmitting"
+                 [isSubmitting]="isLoading"
                  (onPay)="onProceedPayment()"></div>
           }
           @case ('receta') {
@@ -58,7 +58,7 @@
                  [subtotal]="subtotal"
                  [item]="order"
                  [type]="type"
-                 [isSubmitting]="isSubmitting"
+                 [isSubmitting]="isLoading"
                  (onPay)="onProceedPayment()"></div>
           }
         }

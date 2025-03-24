@@ -16,10 +16,8 @@ import { Pagination } from 'src/app/_utils/serviceHelper/pagination/pagination';
  * @selector div[tablePager]
  * @standalone
  * @imports CommonModule, MaterialModule, FontAwesomeModule, NumberPipe
- * @host { class: 'row' } - Applies 'row' class to the host element for layout purposes.
  */
 @Component({
-  host: { class: 'row' },
   selector: 'div[tablePager]',
   templateUrl: './table-pager.component.html',
   imports: [ CommonModule, MaterialModule, FontAwesomeModule ]
@@ -30,8 +28,8 @@ export class TablePagerComponent {
   @HostBinding('class')
   get hostClasses(): string {
     return this.isCompact()
-      ? 'row align-items-center justify-content-between py-0 pe-0 fs-9'
-      : 'row align-items-center justify-content-end pt-4 pe-0 fs-8';
+      ? 'align-items-center justify-content-between py-0 pe-0 fs-9'
+      : 'align-items-center justify-content-end pt-4 pe-0 fs-8';
   }
 
   params: ModelSignal<EntityParams<Entity>> = model.required<EntityParams<Entity>>();

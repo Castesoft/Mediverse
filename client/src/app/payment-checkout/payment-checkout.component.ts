@@ -69,7 +69,7 @@ export class PaymentCheckoutComponent implements OnInit {
   event: Event | null = null;
   order: Order | null = null;
 
-  isSubmitting: boolean = true;
+  isLoading: boolean = false;
 
   ngOnInit(): void {
     const url: string = this.router.url;
@@ -147,7 +147,7 @@ export class PaymentCheckoutComponent implements OnInit {
   }
 
   onProceedPayment(): void {
-    this.isSubmitting = true;
+    this.isLoading = true;
 
     switch (this.type) {
       case 'cita':
@@ -173,7 +173,7 @@ export class PaymentCheckoutComponent implements OnInit {
 
     this.paymentGatewayService.createPaymentIntentForEvent(eventId, selectedPaymentMethodId).subscribe({
       next: (res) => {
-        this.isSubmitting = false;
+        this.isLoading = false;
 
         if (!res.paymentId) {
           console.error('Payment ID not found in response');
@@ -183,7 +183,7 @@ export class PaymentCheckoutComponent implements OnInit {
         this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl)
           .catch((err: any) => console.error('Navigation error:', err));
       }, error: (err) => {
-        this.isSubmitting = false;
+        this.isLoading = false;
         console.error('Error creating payment intent:', err);
         this.toastr.error('Error al procesar el pago');
       }
@@ -201,7 +201,7 @@ export class PaymentCheckoutComponent implements OnInit {
 
     this.paymentGatewayService.createPaymentIntentForOrder(orderId, selectedPaymentMethodId).subscribe({
       next: (res) => {
-        this.isSubmitting = false;
+        this.isLoading = false;
 
         if (!res.paymentId) {
           console.error('Payment ID not found in response');
@@ -211,7 +211,7 @@ export class PaymentCheckoutComponent implements OnInit {
         this.paymentNavigationService.navigateToCheckoutSuccess(res.paymentId, this.cancelUrl)
           .catch((err: any) => console.error('Navigation error:', err));
       }, error: (err) => {
-        this.isSubmitting = false;
+        this.isLoading = false;
         console.error('Error creating payment intent:', err);
         this.toastr.error('Error al procesar el pago');
       }

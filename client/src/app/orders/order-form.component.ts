@@ -72,6 +72,8 @@ export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFilter
   use: ModelSignal<FormUse> = model.required();
   view: ModelSignal<View> = model.required();
   key: ModelSignal<string | null> = model.required();
+
+  fromAccountRoute: InputSignal<boolean> = input(false);
   useCard: InputSignal<boolean> = input(true);
   siteSection: InputSignal<SiteSection | undefined> = input();
 

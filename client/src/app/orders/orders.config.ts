@@ -93,6 +93,7 @@ export class OrdersService extends ServiceHelper<Order, OrderParams, FormGroup2<
           [(view)]="data.view"
           [(key)]="data.key"
           [(item)]="data.item"
+          [fromAccountRoute]="true"
         ></div>
       </mat-dialog-content>
       <mat-dialog-actions>
