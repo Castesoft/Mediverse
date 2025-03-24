@@ -11,6 +11,10 @@ import {
   PaymentMethodDisplayCardComponent
 } from "src/app/account/components/account-billing/components/payment-method-display-card.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  AddPaymentMethodComponent
+} from "src/app/account/components/account-billing/add-payment-method/add-payment-method.component";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
   selector: 'div[checkoutPaymentMethodEntryCard]',
@@ -26,6 +30,7 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit {
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly paymentsService: PaymentsService = inject(PaymentsService);
   private readonly accountsService: AccountService = inject(AccountService);
+  private readonly bsModalService: BsModalService = inject(BsModalService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   paymentMethods: PaymentMethod[] = [];
@@ -37,8 +42,9 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.getUserPaymentMethods();
     this.subscribeToSelectedPaymentMethod();
+    this.subscribeToUserPaymentMethods();
+    this.getUserPaymentMethods();
   }
 
   private subscribeToSelectedPaymentMethod() {
@@ -49,29 +55,38 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit {
     });
   }
 
-  private getUserPaymentMethods() {
-    this.isLoading = true;
-
-    if (!this.accountsService.current()) {
-      console.error("User not authenticated");
-      return;
-    }
-
-    this.paymentsService.getMethodsForUser(this.accountsService.current()!.id!).subscribe({
+  private subscribeToUserPaymentMethods() {
+    this.paymentsService.paymentMethods$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (methods) => {
         this.paymentMethods = methods;
         const defaultMethod: PaymentMethod | undefined = methods.find((m: PaymentMethod) => m.isDefault);
         this.selectedPaymentMethod = defaultMethod ? defaultMethod : (methods[0] ?? null);
         this.paymentCheckoutService.setSelectedPaymentMethod(this.selectedPaymentMethod);
+        this.isLoading = false;
       },
       error: (err) => {
         this.isLoading = false;
         console.error('Error fetching payment methods:', err);
       },
-      complete: () => {
-        this.isLoading = false;
-      }
-    });
+    })
+  }
+
+  private getUserPaymentMethods(triggerLoading?: boolean) {
+    if (triggerLoading) {
+      this.isLoading = true;
+    }
+
+    if (!this.accountsService.current()) {
+      console.error("User not authenticated");
+      this.isLoading = false;
+      return;
+    }
+
+    this.loadPaymentMethods(this.accountsService.current()!.id!);
+  }
+
+  loadPaymentMethods(userId: number): void {
+    this.paymentsService.getMethodsForUser(userId).subscribe();
   }
 
   onPaymentMethodSelected(address: PaymentMethod | null) {
@@ -97,5 +112,16 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit {
     if (this.selectorCollapsed) {
       this.displayCollapsed = false;
     }
+  }
+
+  openPaymentMethodCreateModal() {
+    const modalRef: BsModalRef<AddPaymentMethodComponent> = this.bsModalService.show(AddPaymentMethodComponent, {
+      initialState: { title: 'Añadir método de pago', },
+      class: "modal-dialog-centered"
+    });
+
+    modalRef.onHidden?.subscribe(() => {
+      this.getUserPaymentMethods(false);
+    });
   }
 }

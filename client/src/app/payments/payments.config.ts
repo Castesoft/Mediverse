@@ -14,7 +14,7 @@ import { PaymentFormComponent } from "src/app/payments/payment-form.component";
 import { PaymentFiltersForm } from "src/app/_models/payments/paymentFiltersForm";
 import { paymentColumns, paymentDictionary } from "src/app/_models/payments/paymentConstants";
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable, tap } from "rxjs";
 
 @Component({
   selector: 'payments-catalog-modal',
@@ -52,13 +52,18 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
     super(PaymentParams, 'payments', paymentDictionary, paymentColumns);
   }
 
+  private paymentMethodsSubject: BehaviorSubject<PaymentMethod[]> = new BehaviorSubject<PaymentMethod[]>([]);
+  public paymentMethods$: Observable<PaymentMethod[]> = this.paymentMethodsSubject.asObservable();
+
   /**
    * Retrieves the available payment methods for a given user.
    * @param userId - The identifier for the user.
    * @returns An Observable of an array of PaymentMethod.
    */
   getMethodsForUser(userId: number): Observable<PaymentMethod[]> {
-    return this.http.get<PaymentMethod[]>(`${this.baseUrl}methods/${userId}`);
+    return this.http.get<PaymentMethod[]>(`${this.baseUrl}methods/${userId}`).pipe(
+      tap((methods) => this.paymentMethodsSubject.next(methods))
+    );
   }
 
   getAllMethods(): Observable<PaymentMethod[]> {

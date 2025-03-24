@@ -19,6 +19,7 @@ import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { AddressesCatalogComponent } from "src/app/addresses/components/addresses-catalog.component";
+import { BehaviorSubject, Observable, tap } from "rxjs";
 
 @Component({
   selector: 'addresses-catalog-modal',
@@ -56,13 +57,18 @@ export class AddressesService extends ServiceHelper<Address, AddressParams, Form
     super(AddressParams, 'addresses', addressDictionary, addressColumns);
   }
 
+  addressOptionsSubject: BehaviorSubject<Address[]> = new BehaviorSubject<Address[]>([]);
+  addressOptions$: Observable<Address[]> = this.addressOptionsSubject.asObservable();
+
   createRaw(model: any, userId: number) {
     console.log("posting with model", model);
     return this.http.post<Address>(`${this.baseUrl}user/${userId}`, model);
   }
 
-  getOptionsByUserId(userId: number) {
-    return this.http.get<Address[]>(`${this.baseUrl}options/user/${userId}`)
+  getOptionsByUserId(userId: number): Observable<Address[]> {
+    return this.http.get<Address[]>(`${this.baseUrl}options/user/${userId}`).pipe(
+      tap((addresses) => this.addressOptionsSubject.next(addresses))
+    );
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {

@@ -20,6 +20,18 @@
         </div>
       </div>
     </div>
+  } @else if (paymentMethods.length === 0) {
+    <div class="card-body border-top">
+      <div class="d-flex flex-column align-items-center gap-3 py-4">
+        <p class="text-center mb-2 text-gray-600">
+          No tienes métodos de pago guardados.
+        </p>
+        <button type="button" class="btn btn-primary btn-light-primary" (click)="openPaymentMethodCreateModal()">
+          <i class="ki-duotone ki-plus fs-2 me-1"></i>
+          Añadir método de pago
+        </button>
+      </div>
+    </div>
   } @else {
     <div [collapse]="displayCollapsed" [isAnimated]="true" (collapsed)="onDisplayHidden()">
       <div class="card-body border-top border-gray-200">

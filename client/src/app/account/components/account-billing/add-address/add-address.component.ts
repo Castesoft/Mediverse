@@ -7,7 +7,6 @@ import { UtilsService } from 'src/app/_services/utils.service';
 import { AddressesService } from "src/app/addresses/addresses.config";
 import { ToastrService } from "ngx-toastr";
 import { Address } from "src/app/_models/addresses/address";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AddressFormComponent } from "src/app/addresses/address-form/address-form.component";
 
 @Component({
@@ -24,7 +23,6 @@ export class AddAddressComponent implements OnInit {
   private readonly accountService: AccountService = inject(AccountService);
   private readonly utilsService: UtilsService = inject(UtilsService);
   private readonly toastr: ToastrService = inject(ToastrService);
-  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly fb: FormBuilder = inject(FormBuilder);
 
   readonly bsModalRef: BsModalRef = inject(BsModalRef);
@@ -35,7 +33,6 @@ export class AddAddressComponent implements OnInit {
   title?: string;
 
   stateOptions: SelectOption[] = [];
-  cityOptions: SelectOption[] = [];
   countryOptions: SelectOption[] = [
     new SelectOption({ id: 1, code: 'MX', name: 'México' })
   ];
@@ -43,7 +40,6 @@ export class AddAddressComponent implements OnInit {
   ngOnInit(): void {
     this.stateOptions = this.utilsService.stateSelectOptions;
     this.initForm();
-    this.subscribeToStateChanges();
   }
 
   private initForm(): void {
@@ -59,24 +55,6 @@ export class AddAddressComponent implements OnInit {
       InteriorNumber: [ '' ],
       IsDefault: [ false ],
       IsBilling: [ false ]
-    });
-  }
-
-  private subscribeToStateChanges(): void {
-    this.addressForm.controls['state'].valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((selectedState: SelectOption) => {
-      if (selectedState && selectedState.code) {
-        this.cityOptions = this.utilsService.citySelectOptions(selectedState.code);
-        this.addressForm.controls['city'].enable();
-        if (this.cityOptions && this.cityOptions.length > 0) {
-          this.addressForm.controls['city'].setValue(this.cityOptions[0]);
-        } else {
-          this.addressForm.controls['city'].setValue('');
-        }
-      } else {
-        this.cityOptions = [];
-        this.addressForm.controls['city'].disable();
-        this.addressForm.controls['city'].setValue('');
-      }
     });
   }
 

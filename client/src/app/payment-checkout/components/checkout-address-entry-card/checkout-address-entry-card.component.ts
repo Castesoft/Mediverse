@@ -9,6 +9,8 @@ import {
   AddressDisplayCardComponent
 } from "src/app/addresses/components/address-display-card/address-display-card.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { AddAddressComponent } from "src/app/account/components/account-billing/add-address/add-address.component";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
   selector: 'div[checkoutAddressEntryCard]',
@@ -24,6 +26,7 @@ export class CheckoutAddressEntryCardComponent implements OnInit {
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly addressesService: AddressesService = inject(AddressesService);
   private readonly accountsService: AccountService = inject(AccountService);
+  private readonly bsModalService: BsModalService = inject(BsModalService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   title: InputSignal<string> = input('Dirección de Entrega');
@@ -36,8 +39,10 @@ export class CheckoutAddressEntryCardComponent implements OnInit {
   selectorCollapsed: boolean = true;
 
   ngOnInit(): void {
-    this.getUserAddresses();
+    this.isLoading = true;
     this.subscribeToSelectedAddress();
+    this.subscribeToUserAddresses();
+    this.getUserAddresses();
   }
 
   private subscribeToSelectedAddress() {
@@ -48,8 +53,27 @@ export class CheckoutAddressEntryCardComponent implements OnInit {
     });
   }
 
-  private getUserAddresses() {
-    this.isLoading = true;
+  private subscribeToUserAddresses() {
+    this.addressesService.addressOptions$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (addresses) => {
+        this.addresses = addresses;
+        const defaultAddress: Address | undefined = addresses.find((a: Address) => a.isMain);
+        this.selectedAddress = defaultAddress ? defaultAddress : (addresses[0] || null);
+        this.paymentCheckoutService.setSelectedAddress(this.selectedAddress);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error("Error fetching addresses:", err);
+      },
+    });
+  }
+
+  private getUserAddresses(toggleLoading?: boolean) {
+    if (toggleLoading) {
+      this.isLoading = true;
+    }
+
 
     if (!this.accountsService.current()) {
       console.error("User not authenticated");
@@ -57,21 +81,11 @@ export class CheckoutAddressEntryCardComponent implements OnInit {
       return;
     }
 
-    this.addressesService.getOptionsByUserId(this.accountsService.current()!.id!).subscribe({
-      next: (addresses) => {
-        this.addresses = addresses;
-        const defaultAddress: Address | undefined = addresses.find((a: Address) => a.isMain);
-        this.selectedAddress = defaultAddress ? defaultAddress : (addresses[0] || null);
-        this.paymentCheckoutService.setSelectedAddress(this.selectedAddress);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        console.error("Error fetching addresses:", err);
-      },
-      complete: () => {
-        this.isLoading = false;
-      }
-    });
+    this.loadUserAddresses(this.accountsService.current()!.id!);
+  }
+
+  loadUserAddresses(userId: number): void {
+    this.addressesService.getOptionsByUserId(userId).subscribe();
   }
 
   onAddressSelected(address: Address | null) {
@@ -97,5 +111,16 @@ export class CheckoutAddressEntryCardComponent implements OnInit {
     if (this.selectorCollapsed) {
       this.displayCollapsed = false;
     }
+  }
+
+  openAddressCreateModal() {
+    const modalRef: BsModalRef<AddAddressComponent> = this.bsModalService.show(AddAddressComponent, {
+      initialState: { title: 'Añadir nueva dirección' },
+      class: "modal-dialog-centered"
+    });
+
+    modalRef.onHidden?.subscribe(() => {
+      this.getUserAddresses(false);
+    });
   }
 }
