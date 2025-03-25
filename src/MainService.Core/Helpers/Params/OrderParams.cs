@@ -5,5 +5,6 @@ public class OrderParams : BaseParams
     public int? DoctorId { get; set; }
     public int? PatientId { get; set; }
     public int? RequestingUserId { get; set; }
+    public string? Status { get; set; }
     public IEnumerable<string> RequestingUserRole { get; set; } = [];
 }

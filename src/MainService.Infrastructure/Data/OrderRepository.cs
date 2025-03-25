@@ -181,10 +181,55 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
         {
             var term = param.Search.ToLower();
 
-            query = query.Where(
-                x => !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term)
-                     || !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)
+            query = query.Where(x =>
+                !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term) || 
+                !string.IsNullOrEmpty(x.OrderOrderStatus.OrderStatus.Name) && x.OrderOrderStatus.OrderStatus.Name.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderDeliveryStatus.DeliveryStatus.Name) && x.OrderDeliveryStatus.DeliveryStatus.Name.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.DoctorOrder.Doctor.FirstName) && x.DoctorOrder.Doctor.FirstName.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.DoctorOrder.Doctor.LastName) && x.DoctorOrder.Doctor.LastName.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.PatientOrder.Patient.FirstName) && x.PatientOrder.Patient.FirstName.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.PatientOrder.Patient.LastName) && x.PatientOrder.Patient.LastName.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderItems.FirstOrDefault().Product.Name) && x.OrderItems.FirstOrDefault().Product.Name.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderItems.FirstOrDefault().Product.Description) && x.OrderItems.FirstOrDefault().Product.Description.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderItems.FirstOrDefault().Product.Manufacturer) && x.OrderItems.FirstOrDefault().Product.Manufacturer.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderItems.FirstOrDefault().Product.LotNumber) && x.OrderItems.FirstOrDefault().Product.LotNumber.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderItems.FirstOrDefault().Product.Unit) && x.OrderItems.FirstOrDefault().Product.Unit.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderDeliveryAddress.DeliveryAddress.Street) && x.OrderDeliveryAddress.DeliveryAddress.Street.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderDeliveryAddress.DeliveryAddress.City) && x.OrderDeliveryAddress.DeliveryAddress.City.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderDeliveryAddress.DeliveryAddress.State) && x.OrderDeliveryAddress.DeliveryAddress.State.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderDeliveryAddress.DeliveryAddress.Country) && x.OrderDeliveryAddress.DeliveryAddress.Country.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderDeliveryAddress.DeliveryAddress.Zipcode) && x.OrderDeliveryAddress.DeliveryAddress.Zipcode.ToLower().Contains(term) ||
+                !string.IsNullOrEmpty(x.OrderDeliveryAddress.DeliveryAddress.ExteriorNumber) && x.OrderDeliveryAddress.DeliveryAddress.ExteriorNumber.ToLower().Contains(term)
             );
+        }
+
+        if (param.DateFrom.HasValue)
+        {
+            query = query.Where(x => x.CreatedAt >= param.DateFrom.Value);
+        }
+
+        if (param.DateTo.HasValue)
+        {
+            query = query.Where(x => x.CreatedAt <= param.DateTo.Value);
+        }
+
+        if (!string.IsNullOrEmpty(param.Status))
+        {
+            var status = param.Status.ToLower();
+
+            switch (status)
+            {
+                case "paid":
+                    query = query.Where(x => x.PaymentStatus == PaymentStatus.Succeeded);
+                    break;
+                case "unpaid":
+                    query = query.Where(x => x.PaymentStatus != PaymentStatus.Succeeded);
+                    break;
+                default:
+                    Log.Warning("Invalid status parameter: {Status}", param.Status);
+                    break;
+            }
         }
 
         return await PagedList<OrderDto>.CreateAsync(
