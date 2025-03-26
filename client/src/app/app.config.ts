@@ -144,6 +144,10 @@ export const appConfig: ApplicationConfig = {
         loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
       },
       {
+        path: 'error',
+        loadChildren: () => import('./error/error.module').then(m => m.ErrorModule),
+      },
+      {
         path: '',
         runGuardsAndResolvers: 'always',
         canActivate: [ authGuard ],
@@ -171,7 +175,7 @@ export const appConfig: ApplicationConfig = {
         ]
       },
     ]),
-    provideHttpClient(withInterceptors([ errorInterceptor(false), jwtInterceptor, loadingInterceptor ])),
+    provideHttpClient(withInterceptors([ errorInterceptor(), jwtInterceptor, loadingInterceptor ])),
     provideAnimations(),
     providePrimeNG(),
     provideAnimationsAsync(),

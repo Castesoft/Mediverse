@@ -1,9 +1,11 @@
+using MainService.Authorization.Handlers;
 using MainService.Core.Interfaces.Services;
 using Serilog;
 using MainService.Infrastructure.Data;
 using MainService.Core.Settings;
 using MainService.Helpers;
 using MainService.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MainService.Extensions;
@@ -67,6 +69,12 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IWarehousesService, WarehousesService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<INotificationsService, NotificationsService>();
+        
+        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, EventAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, ClinicAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, OrderAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, ProductAuthorizationHandler>();
 
         services.AddSignalR();
         

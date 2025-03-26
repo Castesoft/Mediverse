@@ -16,6 +16,7 @@ using MainService.Models.Helpers.Enums;
 using Serilog;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
+using MainService.Authorization.Operations;
 
 namespace MainService.Controllers;
 
@@ -26,7 +27,8 @@ public class ClinicsController(
     UserManager<AppUser> userManager,
     IMapper mapper,
     IGoogleService googleService,
-    ICloudinaryService cloudinaryService
+    ICloudinaryService cloudinaryService,
+    IAuthorizationService authService
 ) : BaseApiController
 {
     private const string Subject = "clínica";
@@ -77,20 +79,29 @@ public class ClinicsController(
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ClinicDto?>> GetByIdAsync([FromRoute] int id)
     {
-        ClinicDto? item = await uow.ClinicRepository.GetDtoByIdAsync(id);
+        var item = await uow.ClinicRepository.GetDtoByIdAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var clinic = await uow.AddressRepository.GetByIdAsNoTrackingAsync(id);
+        if (clinic == null)
+            return NotFound($"Clinic with ID {id} not found.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, clinic, ClinicOperations.Read);
+        if (!authorizationResult.Succeeded) return Forbid();
 
         return item;
     }
 
-    // [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
         var item = await uow.AddressRepository.GetByIdAsNoTrackingAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, item, ClinicOperations.Delete);
+        if (!authorizationResult.Succeeded) return Forbid();
 
         var deleteResult = await service.DeleteAsync(item);
 
@@ -109,6 +120,9 @@ public class ClinicsController(
             var itemToDelete = await uow.AddressRepository.GetByIdAsNoTrackingAsync(item);
 
             if (itemToDelete == null) return NotFound($"{SubjectArticle} {Subject} de ID {item} no fue encontrado.");
+
+            var authorizationResult = await authService.AuthorizeAsync(User, itemToDelete, ClinicOperations.Delete);
+            if (!authorizationResult.Succeeded) return Forbid();
 
             var deleteResult = await service.DeleteAsync(itemToDelete);
 
@@ -131,7 +145,7 @@ public class ClinicsController(
         if (string.IsNullOrEmpty(request.Zipcode)) return BadRequest("El código postal es requerido.");
         if (!request.IsMain.HasValue) return BadRequest("El rol de la dirección es requerido.");
 
-        AppUser? doctor = await userManager.Users
+        var doctor = await userManager.Users
             .Include(x => x.DoctorClinics)
             .ThenInclude(x => x.Clinic)
             .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
@@ -142,7 +156,7 @@ public class ClinicsController(
             foreach (var item in doctor.DoctorClinics)
                 item.IsMain = false;
 
-        Address clinic = mapper.Map<ClinicCreateDto, Address>(request);
+        var clinic = mapper.Map<ClinicCreateDto, Address>(request);
 
         var (latitude, longitude) =
             await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(clinic));
@@ -150,10 +164,13 @@ public class ClinicsController(
         clinic.Longitude = longitude;
         clinic.Latitude = latitude;
 
+        var authorizationResult = await authService.AuthorizeAsync(User, clinic, ClinicOperations.Create);
+        if (!authorizationResult.Succeeded) return Forbid();
+
         // Existing image upload logic.
-        if (request.Files.Count() > 0 && request.MainImageIndex.HasValue)
+        if (request.Files.Count != 0 && request.MainImageIndex.HasValue)
         {
-            foreach (IFormFile file in request.Files)
+            foreach (var file in request.Files)
             {
                 var fileName = Guid.NewGuid().ToString();
                 var uploadParams = new ImageUploadParams
@@ -162,7 +179,7 @@ public class ClinicsController(
                     File = new FileDescription(fileName, file.OpenReadStream())
                 };
 
-                ImageUploadResult uploadResult = await cloudinaryService.UploadAsync(file, uploadParams);
+                var uploadResult = await cloudinaryService.UploadAsync(file, uploadParams);
 
                 if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
@@ -226,7 +243,7 @@ public class ClinicsController(
 
         if (!await uow.AddressRepository.ExistsByIdAsync(id)) return NotFound("La dirección no fue encontrada.");
 
-        AppUser? doctor = await userManager.Users
+        var doctor = await userManager.Users
             .Include(x => x.DoctorClinics)
             .ThenInclude(x => x.Clinic)
             .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
@@ -240,9 +257,12 @@ public class ClinicsController(
             foreach (var item in doctor.DoctorClinics)
                 item.IsMain = false;
 
-        Address? itemToUpdate = await uow.AddressRepository.GetByIdAsync(id);
+        var itemToUpdate = await uow.AddressRepository.GetByIdAsync(id);
 
         if (itemToUpdate == null) return BadRequest("Error al obtener la clínica.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, itemToUpdate, ClinicOperations.Update);
+        if (!authorizationResult.Succeeded) return Forbid();
 
         if (
             request.Street != itemToUpdate.Street ||
@@ -332,8 +352,7 @@ public class ClinicsController(
             if (!await uow.Complete()) return BadRequest($"Error al actualizar la clínica de {doctor.FirstName}.");
         }
 
-        ClinicDto? itemToReturn = await uow.ClinicRepository.GetDtoByIdAsync(id);
-
+        var itemToReturn = await uow.ClinicRepository.GetDtoByIdAsync(id);
         return itemToReturn;
     }
 

@@ -3,208 +3,296 @@ import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Entity } from 'src/app/_models/base/entity';
 
+interface CompositeKey {
+  warehouseId?: number;
+  productId?: number;
+
+  [key: string]: any;
+}
+
 /**
  * Generic selection service that manages both single and multiple selections.
  *
- * This version uses a helper method getEntityKey() to compare entities. If an entity's
- * id is 0 (or falsy), it uses a composite key (for example, warehouseId-productId) as the unique key.
+ * This service maintains selection state while preserving entity immutability.
+ * It uses an efficient key generation strategy to uniquely identify entities.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SelectionService<T extends Entity> {
-  // Single selections: key → one entity or null.
-  private readonly singleSelections = new BehaviorSubject<Record<string, T | null>>({});
-  // Multiple selections: key → array of entities.
-  private readonly multipleSelections = new BehaviorSubject<Record<string, T[]>>({});
+  private readonly singleSelections = new BehaviorSubject<Map<string, T | null>>(new Map());
+  private readonly multipleSelections = new BehaviorSubject<Map<string, T[]>>(new Map());
+  private readonly entityKeyCache = new Map<number, string>();
 
-  // Observables so that other parts of the app can subscribe.
   readonly singleSelections$ = this.singleSelections.asObservable();
   readonly multipleSelections$ = this.multipleSelections.asObservable();
 
-  // Helper: Returns a unique key for an entity.
-  // If the entity's id is truthy (and not zero) it uses that
+  /**
+   * Returns a unique key for an entity.
+   * Uses ID when available, falls back to composite keys for special cases.
+   * @param entity The entity to generate a key for
+   * @returns A string key that uniquely identifies the entity
+   */
   private getEntityKey(entity: T): string {
+    if (entity.id && entity.id !== 0 && this.entityKeyCache.has(entity.id)) {
+      return this.entityKeyCache.get(entity.id)!;
+    }
+
+    let key: string;
+
     if (entity.id && entity.id !== 0) {
-      return entity.id.toString();
+      key = entity.id.toString();
+      this.entityKeyCache.set(entity.id, key);
+      return key;
     }
 
-    // If the entity is a WarehouseProduct, then use warehouseId and productId.
-    const asAny = entity as any;
-    if (asAny.warehouseId !== undefined && asAny.productId !== undefined) {
-      return `${asAny.warehouseId}-${asAny.productId}`;
+    const compositeEntity = entity as unknown as CompositeKey;
+
+    if (
+      compositeEntity.warehouseId !== undefined &&
+      compositeEntity.productId !== undefined
+    ) {
+      return `${compositeEntity.warehouseId}-${compositeEntity.productId}`;
     }
 
+    const identifier = new Map<string, any>();
+
+    if (entity.code) identifier.set('code', entity.code);
+    if (entity.codeNumber) identifier.set('codeNumber', entity.codeNumber);
+    if (entity.name) identifier.set('name', entity.name);
+
+    if (identifier.size > 0) {
+      return Array.from(identifier.entries())
+        .sort(([ keyA ], [ keyB ]) => keyA.localeCompare(keyB))
+        .map(([ k, v ]) => `${k}:${v}`)
+        .join('|');
+    }
+
+    console.warn(
+      'Using JSON.stringify for entity key - consider adding a proper ID or identifier',
+      entity
+    );
     return JSON.stringify(entity);
   }
 
+  /**
+   * Gets an observable of the current selection for a key
+   * @param key The selection context key
+   * @returns Observable of the selected entity or null
+   */
   getSelection$(key: string | null): Observable<T | null> {
     this.validateKey(key);
     return this.singleSelections$.pipe(
-      map(selections => selections[key!] || null)
+      map((selections) => selections.get(key!) || null)
     );
   }
 
+  /**
+   * Gets an observable of multiple selections for a key
+   * @param key The selection context key
+   * @returns Observable of selected entities array
+   */
   getMultipleSelections$(key: string | null): Observable<T[]> {
     this.validateKey(key);
     return this.multipleSelections$.pipe(
-      map(selections => selections[key!] || [])
+      map((selections) => selections.get(key!) || [])
     );
   }
 
+  /**
+   * Gets the current selection value synchronously
+   * @param key The selection context key
+   * @returns The selected entity or null
+   */
   getCurrentSelection(key: string | null): T | null {
     this.validateKey(key);
-    return this.singleSelections.value[key!] || null;
+    return this.singleSelections.value.get(key!) || null;
   }
 
-  getCurrentMultipleSelections(key: string | null): T[] {
+  /**
+   * Gets multiple selections synchronously
+   * @param key The selection context key
+   * @returns Array of selected entities
+   */
+  getMultipleSelections(key: string | null): T[] {
     this.validateKey(key);
-    return this.multipleSelections.value[key!] || [];
+    return this.multipleSelections.value.get(key!) || [];
   }
 
+  /**
+   * Checks if there's a selection for the given key
+   * @param key The selection context key
+   * @returns Whether a selection exists
+   */
   hasSelection(key: string | null): boolean {
     this.validateKey(key);
-    return !!this.singleSelections.value[key!];
+    return (
+      this.singleSelections.value.has(key!) &&
+      this.singleSelections.value.get(key!) !== null
+    );
   }
 
   /**
    * Sets (or replaces) the single selection for the given key.
-   * If replacing an existing selection, the previous one is deselected.
+   * Creates a copy of the selection with isSelected set appropriately.
+   * @param key The selection context key
+   * @param value The entity to select or null to clear
    */
   setSelection(key: string | null, value: T | null): void {
     this.validateKey(key);
-    const current = this.singleSelections.value[key!];
 
-    if (current && (!value || this.getEntityKey(current) !== this.getEntityKey(value))) {
-      current.isSelected = false;
-    }
+    const current = this.singleSelections.value.get(key!);
+
+    const newSelections = new Map(this.singleSelections.value);
+
     if (value) {
-      value.isSelected = true;
+      const selectedEntity = this.createSelectionCopy(value, true);
+      newSelections.set(key!, selectedEntity);
+    } else {
+      newSelections.set(key!, null);
     }
-    this.singleSelections.next({
-      ...this.singleSelections.value,
-      [key!]: value
-    });
+
+    this.singleSelections.next(newSelections);
   }
 
   /**
    * Sets the multiple selections for the given key.
-   * Entities not present in the new list are deselected; those in the list are marked as selected.
+   * Copies entities with appropriate isSelected state.
+   * @param key The selection context key
+   * @param values The entities to select
    */
   setMultipleSelections(key: string | null, values: T[]): void {
     this.validateKey(key);
 
-    const previous = this.multipleSelections.value[key!] || [];
+    const selectedEntities = values.map((entity) =>
+      this.createSelectionCopy(entity, true)
+    );
 
-    previous.forEach(item => {
-      if (!values.some(v => this.getEntityKey(v) === this.getEntityKey(item))) {
-        item.isSelected = false;
-      }
-    });
+    const newSelections = new Map(this.multipleSelections.value);
+    newSelections.set(key!, selectedEntities);
 
-    values.forEach(item => {
-      item.isSelected = true;
-    });
-
-    this.multipleSelections.next({
-      ...this.multipleSelections.value,
-      [key!]: values
-    });
+    this.multipleSelections.next(newSelections);
   }
 
   /**
    * Toggles a single item in the multiple selections for the given key.
-   * It compares entities using the getEntityKey helper.
+   * @param key The selection context key
+   * @param value The entity to toggle
    */
   toggleSelection(key: string | null, value: T): void {
     this.validateKey(key);
     if (!value) return;
 
-    const currentSelections = this.multipleSelections.value[key!] || [];
-    const index = currentSelections.findIndex(item => this.getEntityKey(item) === this.getEntityKey(value));
+    const currentSelections = this.multipleSelections.value.get(key!) || [];
+    const entityKey = this.getEntityKey(value);
 
-    if (index !== -1) {
-      currentSelections[index].isSelected = false;
-      const newSelections = currentSelections.filter(item => this.getEntityKey(item) !== this.getEntityKey(value));
+    const isSelected = currentSelections.some(
+      (item) => this.getEntityKey(item) === entityKey
+    );
+
+    if (isSelected) {
+      const newSelections = currentSelections.filter(
+        (item) => this.getEntityKey(item) !== entityKey
+      );
       this.setMultipleSelections(key, newSelections);
     } else {
-      value.isSelected = true;
-      this.setMultipleSelections(key, [ ...currentSelections, value ]);
+      const newSelections = [ ...currentSelections, value ];
+      this.setMultipleSelections(key, newSelections);
     }
   }
 
   /**
-   * Toggles an array of items in the multiple selections for the given key.
-   * For each item provided, if it is already selected (by key) it is deselected; otherwise, it is selected.
+   * Toggles multiple items in the selection at once
+   * @param key The selection context key
+   * @param values The entities to toggle
    */
   toggleMultipleSelectArray(key: string | null, values: T[]): void {
     this.validateKey(key);
     if (!values || values.length === 0) return;
 
-    const currentSelections = this.multipleSelections.value[key!] || [];
-    let newSelections = [ ...currentSelections ];
+    const currentSelections = this.multipleSelections.value.get(key!) || [];
+    let result = [ ...currentSelections ];
 
-    values.forEach(value => {
-      const idx = newSelections.findIndex(item => this.getEntityKey(item) === this.getEntityKey(value));
-      if (idx !== -1) {
-        newSelections[idx].isSelected = false;
-        newSelections = newSelections.filter(item => this.getEntityKey(item) !== this.getEntityKey(value));
+    values.forEach((value) => {
+      const entityKey = this.getEntityKey(value);
+
+      const index = result.findIndex(
+        (item) => this.getEntityKey(item) === entityKey
+      );
+
+      if (index !== -1) {
+        result = result.filter((_, i) => i !== index);
       } else {
-        value.isSelected = true;
-        newSelections = [ ...newSelections, value ];
+        result.push(this.createSelectionCopy(value, true));
       }
     });
 
-    this.setMultipleSelections(key, newSelections);
+    const newSelections = new Map(this.multipleSelections.value);
+    newSelections.set(key!, result);
+    this.multipleSelections.next(newSelections);
   }
 
   /**
-   * Toggles the selection of all items (for select-all behavior).
-   * If every item (by key) is selected, they are all deselected; otherwise, all are selected.
+   * Toggles all items (select all/deselect all)
+   * @param key The selection context key
+   * @param allItems All available items
    */
   toggleAllSelections(key: string | null, allItems: T[]): void {
     this.validateKey(key);
-    const currentSelections = this.multipleSelections.value[key!] || [];
-    const allSelected = allItems.every(item => currentSelections.some(sel => this.getEntityKey(sel) === this.getEntityKey(item)));
+
+    const currentSelections = this.multipleSelections.value.get(key!) || [];
+
+    const allSelected =
+      allItems.length > 0 &&
+      allItems.every((item) =>
+        currentSelections.some(
+          (sel) => this.getEntityKey(sel) === this.getEntityKey(item)
+        )
+      );
 
     if (allSelected) {
-      allItems.forEach(item => item.isSelected = false);
-      this.setMultipleSelections(key, []);
+      const newSelections = new Map(this.multipleSelections.value);
+      newSelections.set(key!, []);
+      this.multipleSelections.next(newSelections);
     } else {
-      allItems.forEach(item => item.isSelected = true);
-      this.setMultipleSelections(key, [ ...allItems ]);
+      this.setMultipleSelections(key, allItems);
     }
   }
 
   /**
-   * Clears both the single and multiple selections for the given key.
-   * All affected entities have their isSelected flag set to false.
+   * Clears all selections for a key
+   * @param key The selection context key
    */
   clearSelections(key: string | null): void {
     this.validateKey(key);
-    const currentSingle = this.singleSelections.value[key!];
 
-    if (currentSingle) {
-      currentSingle.isSelected = false;
-    }
+    const newSingleSelections = new Map(this.singleSelections.value);
+    newSingleSelections.set(key!, null);
+    this.singleSelections.next(newSingleSelections);
 
-    const currentMultiple = this.multipleSelections.value[key!] || [];
-    currentMultiple.forEach(item => item.isSelected = false);
-
-    this.singleSelections.next({
-      ...this.singleSelections.value,
-      [key!]: null
-    });
-
-    this.multipleSelections.next({
-      ...this.multipleSelections.value,
-      [key!]: []
-    });
+    const newMultipleSelections = new Map(this.multipleSelections.value);
+    newMultipleSelections.set(key!, []);
+    this.multipleSelections.next(newMultipleSelections);
   }
 
+  /**
+   * Creates a copy of an entity with the selection state set
+   * @param entity The entity to copy
+   * @param isSelected The selection state to set
+   * @returns A new entity copy
+   */
+  private createSelectionCopy(entity: T, isSelected: boolean): T {
+    return { ...entity, isSelected };
+  }
+
+  /**
+   * Validates that a key is not null or empty
+   * @param key The key to validate
+   * @throws Error if key is invalid
+   */
   private validateKey(key: string | null): void {
     if (!key) {
-      throw new Error("Selection key cannot be null or empty");
+      throw new Error('Selection key cannot be null or empty');
     }
   }
 }

@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
 using Serilog;
 using Product = MainService.Models.Entities.Product;
+using MainService.Authorization.Operations;
 
 namespace MainService.Controllers;
 
@@ -24,7 +25,8 @@ public class ProductsController(
     IProductsService service,
     IMapper mapper,
     ICloudinaryService cloudinaryService,
-    UserManager<AppUser> userManager) : BaseApiController
+    UserManager<AppUser> userManager,
+    IAuthorizationService authService) : BaseApiController
 {
     private const string Subject = "producto";
     private const string SubjectArticle = "El";
@@ -64,10 +66,13 @@ public class ProductsController(
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ProductDto?>> GetByIdAsync([FromRoute] int id)
     {
+        var product = await uow.ProductRepository.GetByIdAsNoTrackingAsync(id);
+        if (product == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, product, ProductOperations.Read);
+        if (!authorizationResult.Succeeded) return Forbid();
+
         var item = await uow.ProductRepository.GetDtoByIdAsync(id);
-
-        if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
-
         return item;
     }
     
@@ -77,6 +82,9 @@ public class ProductsController(
         var product = await uow.ProductRepository.GetByIdAsync(id);
         if (product == null)
             return NotFound($"Product with ID {id} not found.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, product, ProductOperations.ManageWarehouses);
+        if (!authorizationResult.Succeeded) return Forbid();
 
         var currentWarehouseIds = product.WarehouseProducts.Select(wp => wp.WarehouseId).ToList();
 
@@ -116,6 +124,9 @@ public class ProductsController(
         if (item == null)
             return NotFound($"{SubjectArticle} {Subject} con ID {id} no fue encontrado.");
 
+        var authorizationResult = await authService.AuthorizeAsync(User, item, ProductOperations.Update);
+        if (!authorizationResult.Succeeded) return Forbid();
+
         if (request.Name != null) item.Name = request.Name;
         if (request.Description != null) item.Description = request.Description;
         if (request.Price.HasValue) item.Price = request.Price.Value;
@@ -140,8 +151,12 @@ public class ProductsController(
                 ? "Product {Name} is now {Status}. Value: {Value}"
                 : "Product {Name} visibility remains unchanged. Current Value: {Value}",
             item.Name, item.IsVisible ? "visible" : "hidden", item.IsVisible);
+
         if (request.RemovedImageIds != null && request.RemovedImageIds.Any())
         {
+            var photosAuthResult = await authService.AuthorizeAsync(User, item, ProductOperations.ManagePhotos);
+            if (!photosAuthResult.Succeeded) return Forbid("You don't have permission to manage product photos");
+
             var photosToRemove = item.ProductPhotos
                 .Where(pp => request.RemovedImageIds.Contains(pp.PhotoId.ToString()))
                 .ToList();
@@ -160,6 +175,9 @@ public class ProductsController(
 
         if (request.Files != null && request.Files.Count > 0)
         {
+            var photosAuthResult = await authService.AuthorizeAsync(User, item, ProductOperations.ManagePhotos);
+            if (!photosAuthResult.Succeeded) return Forbid("You don't have permission to manage product photos");
+
             foreach (var file in request.Files)
             {
                 var uploadResult = await UploadImage(file);
@@ -199,7 +217,6 @@ public class ProductsController(
         return BadRequest($"Error al recuperar el producto actualizado.");
     }
 
-
     [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
@@ -207,6 +224,9 @@ public class ProductsController(
         var item = await uow.ProductRepository.GetByIdAsNoTrackingAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, item, ProductOperations.Delete);
+        if (!authorizationResult.Succeeded) return Forbid();
 
         var deleteResult = await service.DeleteAsync(item);
 
@@ -230,11 +250,14 @@ public class ProductsController(
     {
         var selectedIds = ids.Split(',').Select(int.Parse).ToList();
 
-        foreach (var item in selectedIds)
+        foreach (var itemId in selectedIds)
         {
-            var itemToDelete = await uow.ProductRepository.GetByIdAsNoTrackingAsync(item);
+            var itemToDelete = await uow.ProductRepository.GetByIdAsNoTrackingAsync(itemId);
 
-            if (itemToDelete == null) return NotFound($"{SubjectArticle} {Subject} de ID {item} no fue encontrado.");
+            if (itemToDelete == null) return NotFound($"{SubjectArticle} {Subject} de ID {itemId} no fue encontrado.");
+
+            var authorizationResult = await authService.AuthorizeAsync(User, itemToDelete, ProductOperations.Delete);
+            if (!authorizationResult.Succeeded) return Forbid($"No tienes permiso para eliminar el producto con ID {itemId}");
 
             var deleteResult = await service.DeleteAsync(itemToDelete);
 
@@ -247,6 +270,9 @@ public class ProductsController(
     [HttpPost]
     public async Task<ActionResult<ProductDto>> CreateAsync([FromForm] ProductCreateDto request)
     {
+        if (!User.IsInRole("Doctor") && !User.IsInRole("Admin"))
+            return Forbid("Only doctors and admins can create products");
+
         var itemExists = await uow.ProductRepository.GetByNameAsync(request.Name, User);
         if (itemExists != null)
             return BadRequest($"El producto de nombre '{request.Name}' ya existe.");

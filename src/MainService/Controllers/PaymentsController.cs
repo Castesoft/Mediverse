@@ -71,9 +71,16 @@ namespace MainService.Controllers
             if (order == null)
                 return NotFound($"Order with ID {orderId} not found.");
 
+            var shippingAddress = await uow.AddressRepository.GetByIdAsync(request.AddressId);
+            if (shippingAddress == null)
+                return BadRequest($"Address with ID {request.AddressId} not found.");
+
             var paymentMethod = await uow.PaymentMethodRepository.GetByIdAsync(request.PaymentMethodId);
             if (paymentMethod == null)
                 return BadRequest("Payment method not found.");
+
+            if (paymentMethod.UserId != requestingUserId)
+                return Unauthorized("You are not authorized to use this payment method.");
 
             var patientStripeCustomerId = paymentMethod.User.StripeCustomerId;
             if (string.IsNullOrEmpty(patientStripeCustomerId))
@@ -91,8 +98,10 @@ namespace MainService.Controllers
                     return BadRequest("Doctor does not have a Stripe Connect account and creation failed.");
 
                 doctor.StripeConnectAccountId = account.Id;
+
                 uow.UserRepository.Update(doctor);
                 await uow.Complete();
+
                 doctorStripeAccountId = account.Id;
 
                 if (!string.IsNullOrEmpty(accountLinkUrl))
@@ -107,6 +116,21 @@ namespace MainService.Controllers
             var amountInCents = order.Total * 100;
 
             if (!amountInCents.HasValue) return BadRequest("Order total could not be calculated.");
+
+            if (order.OrderDeliveryAddress == null)
+            {
+                order.OrderDeliveryAddress = new OrderDeliveryAddress
+                {
+                    AddressId = shippingAddress.Id
+                };
+            }
+            else
+            {
+                if (order.OrderDeliveryAddress.AddressId != shippingAddress.Id)
+                {
+                    order.OrderDeliveryAddress.AddressId = shippingAddress.Id;
+                }
+            }
 
             var paymentIntent = await stripeService.CreatePaymentIntentAsync(
                 patientStripeCustomerId,
@@ -146,11 +170,11 @@ namespace MainService.Controllers
             var amountInMxn = amountInCents.Value / 100m;
 
             order.PaymentStatus = PaymentStatus.Succeeded;
-            order.AmountPaid += amountInMxn;
-            order.AmountDue -= amountInMxn;
+            order.AmountPaid = (order.AmountPaid ?? 0) + amountInMxn;
+            order.AmountDue = (order.AmountDue ?? order.Total ?? 0) - amountInMxn;
 
             if (!await uow.Complete())
-                return BadRequest("Payment creation failed.");
+                return BadRequest("Failed to save payment and update order details.");
 
             return Ok(new CreatePaymentIntentResponseDto
             {
@@ -167,9 +191,16 @@ namespace MainService.Controllers
             if (eventItem == null)
                 return NotFound($"Event with ID {eventId} not found.");
 
+            var billingAddress = await uow.AddressRepository.GetByIdAsync(request.AddressId);
+            if (billingAddress == null)
+                return BadRequest($"Address with ID {request.AddressId} not found.");
+
             var paymentMethod = await uow.PaymentMethodRepository.GetByIdAsync(request.PaymentMethodId);
             if (paymentMethod == null)
                 return BadRequest("Payment method not found.");
+
+            if (paymentMethod.UserId != User.GetUserId())
+                return Unauthorized("You are not authorized to use this payment method.");
 
             var patientStripeCustomerId = paymentMethod.User.StripeCustomerId;
             if (string.IsNullOrEmpty(patientStripeCustomerId))
@@ -188,6 +219,7 @@ namespace MainService.Controllers
 
                 doctor.StripeConnectAccountId = account.Id;
                 uow.UserRepository.Update(doctor);
+
                 await uow.Complete();
                 doctorStripeAccountId = account.Id;
 
@@ -205,6 +237,8 @@ namespace MainService.Controllers
                 return BadRequest("Service not found for event.");
 
             var amountInCents = serviceEntity.Price * 100;
+
+            eventItem.BillingAddressId = billingAddress.Id;
 
             var paymentIntent = await stripeService.CreatePaymentIntentAsync(
                 patientStripeCustomerId,
@@ -234,7 +268,7 @@ namespace MainService.Controllers
             eventItem.PaymentStatus = PaymentStatus.Succeeded;
 
             if (!await uow.Complete())
-                return BadRequest("Payment creation failed.");
+                return BadRequest("Failed to save payment and update event details.");
 
             return Ok(new CreatePaymentIntentResponseDto
             {
@@ -242,7 +276,6 @@ namespace MainService.Controllers
                 PaymentId = payment.Id
             });
         }
-
 
         [HttpPost]
         public async Task<ActionResult<PaymentDto>> CreateAsync([FromBody] PaymentDto paymentDto)

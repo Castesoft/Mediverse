@@ -49,17 +49,25 @@ export class StripeGatewayService {
    * Creates a PaymentIntent for a given event.
    * @param eventId - The event identifier.
    * @param paymentMethodId - The internal payment method ID to be used.
+   * @param addressId - The ID of the shipping address to use.
    * @returns An Observable emitting a CreatePaymentIntentResponse.
    */
-  createPaymentIntentForEvent(eventId: number, paymentMethodId: number): Observable<CreatePaymentIntentResponse> {
+  createPaymentIntentForEvent(eventId: number, paymentMethodId: number, addressId: number): Observable<CreatePaymentIntentResponse> {
     return this.http.post<CreatePaymentIntentResponse>(
-      `${this.paymentsBaseUrl}create-payment-intent/event/${eventId}`, { paymentMethodId }
+      `${this.paymentsBaseUrl}create-payment-intent/event/${eventId}`, { paymentMethodId, addressId }
     );
   }
 
-  createPaymentIntentForOrder(orderId: number, paymentMethodId: number): Observable<CreatePaymentIntentResponse> {
+  /**
+   * Creates a PaymentIntent for a given order.
+   * @param orderId - The order identifier.
+   * @param paymentMethodId - The internal payment method ID to be used.
+   * @param addressId - The ID of the billing address to use.
+   * @returns An Observable emitting a CreatePaymentIntentResponse.
+   */
+  createPaymentIntentForOrder(orderId: number, paymentMethodId: number, addressId: number): Observable<CreatePaymentIntentResponse> {
     return this.http.post<CreatePaymentIntentResponse>(
-      `${this.paymentsBaseUrl}create-payment-intent/order/${orderId}`, { paymentMethodId }
+      `${this.paymentsBaseUrl}create-payment-intent/order/${orderId}`, { paymentMethodId, addressId }
     );
   }
 

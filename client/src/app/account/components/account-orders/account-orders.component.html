@@ -4,6 +4,9 @@
 <account-child-wrapper>
   <div class="card">
     <div class="card-body px-0">
+      <div class="px-8 mb-6">
+        <h2>Mis Pedidos</h2>
+      </div>
       <form [formGroup]="filterForm">
         <div class="d-flex px-8 pb-8 justify-content-between align-items-center w-100">
           <div class="d-flex gap-4">
@@ -59,14 +62,14 @@
       <div tableWrapper>
         <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer">
           <thead>
-          <tr>
-            <th class="ps-8">Fecha</th>
-            <th>Doctor</th>
-            <th>Envío</th>
-            <th>Dirección de Entrega</th>
-            <th>Método de Pago</th>
-            <th class="text-end ps-0 pe-3">Total</th>
-            <th></th>
+          <tr class="text-uppercase fw-bold fs-7 text-gray-500 text-start">
+            <th class="ps-8 dt-column-title">Fecha</th>
+            <th class="dt-column-title">Doctor</th>
+            <th class="dt-column-title">Envío</th>
+            <th class="dt-column-title">Dirección de Entrega</th>
+            <th class="dt-column-title">Método de Pago</th>
+            <th class="dt-column-title text-end ps-0 pe-3">Total</th>
+            <th class="dt-column-title"></th>
           </tr>
           </thead>
           <tbody templateTableBody>

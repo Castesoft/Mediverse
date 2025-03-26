@@ -165,13 +165,24 @@ export class PaymentCheckoutComponent implements OnInit {
   private payEvent(): void {
     const eventId: number | null = this.event?.id || null;
     const selectedPaymentMethodId: number | null = this.selectedPaymentMethod?.id || null;
+    const selectedAddressId: number | null = this.selectedAddress?.id || null;
 
-    if (!eventId || !selectedPaymentMethodId) {
-      this.toastr.error('No se ha seleccionado un método de pago o no se ha encontrado el evento');
+    if (!eventId) {
+      this.toastr.error('No se ha encontrado el evento');
       return;
     }
 
-    this.paymentGatewayService.createPaymentIntentForEvent(eventId, selectedPaymentMethodId).subscribe({
+    if (!selectedPaymentMethodId) {
+      this.toastr.error('No se ha seleccionado un método de pago');
+      return;
+    }
+
+    if (!selectedAddressId) {
+      this.toastr.error('No se ha seleccionado una dirección de envío');
+      return;
+    }
+
+    this.paymentGatewayService.createPaymentIntentForEvent(eventId, selectedPaymentMethodId, selectedAddressId).subscribe({
       next: (res) => {
         this.isLoading = false;
 
@@ -193,13 +204,24 @@ export class PaymentCheckoutComponent implements OnInit {
   private payOrder(): void {
     const orderId: number | null = this.order?.id || null;
     const selectedPaymentMethodId: number | null = this.selectedPaymentMethod?.id || null;
+    const selectedAddressId: number | null = this.selectedAddress?.id || null;
 
-    if (!orderId || !selectedPaymentMethodId) {
-      this.toastr.error('No se ha seleccionado un método de pago o no se ha encontrado la orden');
+    if (!orderId) {
+      this.toastr.error('No se ha encontrado la orden.');
       return;
     }
 
-    this.paymentGatewayService.createPaymentIntentForOrder(orderId, selectedPaymentMethodId).subscribe({
+    if (!selectedPaymentMethodId) {
+      this.toastr.error('No se ha seleccionado un método de pago');
+      return;
+    }
+
+    if (!selectedAddressId) {
+      this.toastr.error('No se ha seleccionado una dirección de envío');
+      return;
+    }
+
+    this.paymentGatewayService.createPaymentIntentForOrder(orderId, selectedPaymentMethodId, selectedAddressId).subscribe({
       next: (res) => {
         this.isLoading = false;
 

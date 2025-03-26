@@ -15,7 +15,7 @@ using MainService.Core.DTOs.Payment;
 using MainService.Hubs;
 using MainService.Models.Helpers;
 using Microsoft.AspNetCore.SignalR;
-using Serilog;
+using MainService.Authorization.Operations;
 
 namespace MainService.Controllers;
 
@@ -29,7 +29,10 @@ public class EventsController(
     INotificationsService notificationsService,
     IMapper mapper,
     IHubContext<NotificationHub> hubContext,
-    IUsersService usersService) : BaseApiController
+    IUsersService usersService,
+    IAuthorizationService authService,
+    ILogger<EventsController> logger)
+    : BaseApiController
 {
     private const string Subject = "cita";
     private const string SubjectArticle = "La";
@@ -38,10 +41,12 @@ public class EventsController(
     [HttpGet]
     public async Task<ActionResult<PagedList<EventDto>>> GetPagedListAsync([FromQuery] EventParams param)
     {
-        if (!await uow.UserRepository.ExistsByIdAsync(User.GetUserId())) return BadRequest("Usuario no encontrado.");
-        
-        param.AuthenticatedUserId = User.GetUserId();
-        
+        var userId = User.GetUserId();
+
+        if (!await uow.UserRepository.ExistsByIdAsync(userId))
+            return BadRequest("Usuario no encontrado.");
+
+        param.AuthenticatedUserId = userId;
         var pagedList = await uow.EventRepository.GetPagedListAsync(param);
 
         Response.AddPaginationHeader(new PaginationHeader(
@@ -55,50 +60,82 @@ public class EventsController(
     }
 
     [HttpGet("doctor-fields")]
+    [Authorize(Roles = "Doctor")]
     public async Task<ActionResult<EventDoctorFieldsDto>> GetDoctorFieldsAsync()
     {
         var item = await uow.EventRepository.GetDoctorFieldsDtoAsync(User);
 
-        if (item == null) return NotFound($"{SubjectArticle} {Subject} no fue encontrado.");
+        if (item == null)
+            return NotFound($"{SubjectArticle} {Subject} no fue encontrado.");
 
         return item;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<EventDto?>> GetByIdAsync([FromRoute] int id)
     {
+        var userId = User.GetUserId();
+
+        var eventResource = await uow.EventRepository.GetByIdAsNoTrackingAsync(id);
+        if (eventResource == null)
+            return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, eventResource, EventOperations.Read);
+        if (!authorizationResult.Succeeded) return Forbid();
+
         var item = await uow.EventRepository.GetDtoByIdAsync(id);
+        // Check if item is null again, although unlikely if resource was found
+        if (item != null)
+            return item;
 
-        if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
-
-        return item;
+        logger.LogError(
+            "GetByIdAsync: Event DTO for {EventId} is null after resource found and authorization succeeded.", id);
+        return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
     }
 
     [HttpGet("summary")]
     public async Task<ActionResult<List<EventSummaryDto>>> GetSummaryAsync([FromQuery] EventParams param)
     {
-        param.DoctorId = User.GetUserId();
+        var userId = User.GetUserId();
+        param.DoctorId = userId;
 
         var item = await uow.EventRepository.GetSummaryDtosAsync(param);
-
-        if (item == null) return NotFound($"{SubjectArticle} {Subject} no fue encontrado.");
-
         return item;
     }
 
     [HttpDelete("range/{ids}")]
     public async Task<ActionResult> DeleteRangeAsync([FromRoute] string ids)
     {
-        var selectedIds = ids.Split(',').Select(int.Parse).ToList();
+        var userId = User.GetUserId();
 
-        foreach (var item in selectedIds)
+        if (string.IsNullOrWhiteSpace(ids))
+            return BadRequest("No event IDs provided.");
+
+        List<int> selectedIds;
+        try
         {
-            var itemToDelete = await uow.EventRepository.GetByIdAsNoTrackingAsync(item);
+            selectedIds = ids.Split(',').Select(int.Parse).ToList();
+        }
+        catch (FormatException ex)
+        {
+            logger.LogError(ex, "Invalid format for event IDs: {EventIds}", ids);
+            return BadRequest("Invalid format for event IDs.");
+        }
 
-            if (itemToDelete == null) return NotFound($"{SubjectArticle} {Subject} de ID {item} no fue encontrado.");
+        foreach (var eventId in selectedIds)
+        {
+            var itemToDelete = await uow.EventRepository.GetByIdAsync(eventId);
+            if (itemToDelete == null) continue;
+
+            var authorizationResult = await authService.AuthorizeAsync(User, itemToDelete, EventOperations.Delete);
+            if (!authorizationResult.Succeeded) return Forbid($"No tienes permiso para eliminar el evento con ID {eventId}.");
 
             var deleteResult = await service.DeleteAsync(itemToDelete);
+            if (!deleteResult) return BadRequest($"Error al intentar eliminar el evento con ID {eventId} a través del servicio.");
         }
+
+        if (!await uow.Complete())
+            return BadRequest("Error saving deletions.");
 
         return Ok();
     }
@@ -106,6 +143,9 @@ public class EventsController(
     [HttpGet("month-partial")]
     public async Task<ActionResult<List<EventMonthDayCellDto>>> GetMonthViewPartialAsync([FromQuery] EventParams param)
     {
+        var userId = User.GetUserId();
+        param.AuthenticatedUserId = userId;
+
         var list = await uow.EventRepository.GetMonthViewPartialAsync(param);
         return Ok(list);
     }
@@ -200,41 +240,32 @@ public class EventsController(
                 request.DateTo.Value))
             return BadRequest("El doctor no está disponible en el horario seleccionado.");
 
-        var doctor = await uow.UserRepository.GetByIdAsync(request.Doctor.Id.Value);
-        if (doctor == null)
-            return BadRequest($"Doctor de ID {request.Doctor.Id.Value} no fue encontrado.");
-
-        var patient = await uow.UserRepository.GetByIdAsync(userId);
-        if (patient == null)
-            return BadRequest($"Usuario de ID {userId} no fue encontrado.");
-
-        var serviceNoTracking = await uow.ServiceRepository.GetByIdAsNoTrackingAsync(request.Service.Id.Value);
-        if (serviceNoTracking == null)
-            return BadRequest($"Tratamiento de ID {request.Service.Id.Value} no fue encontrado.");
+        var serviceNoTracking =
+            await uow.ServiceRepository.GetByIdAsNoTrackingAsync(request.Service.Id.Value);
 
         if ((request.PaymentMethodType.Id.Value == 1 || request.PaymentMethodType.Id.Value == 2) &&
-            doctor.RequireAnticipatedCardPayments.HasValue &&
-            doctor.RequireAnticipatedCardPayments.Value)
+            doctorFromRepo.RequireAnticipatedCardPayments.HasValue &&
+            doctorFromRepo.RequireAnticipatedCardPayments.Value)
         {
             if (string.IsNullOrEmpty(request.StripePaymentMethodId))
                 return BadRequest("StripePaymentMethodId es requerido para el pago anticipado.");
 
-            if (string.IsNullOrEmpty(doctor.StripeConnectAccountId))
+            if (string.IsNullOrEmpty(doctorFromRepo.StripeConnectAccountId))
             {
-                var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctor);
-                if (!await usersService.UpdateStripeConnectAccountId(doctor.Id, account.Id))
+                var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(doctorFromRepo);
+                if (!await usersService.UpdateStripeConnectAccountId(doctorFromRepo.Id, account.Id))
                     return BadRequest("Error al actualizar la cuenta de Stripe del doctor.");
             }
 
-            if (!string.IsNullOrEmpty(patient.StripeCustomerId) &&
-                !string.IsNullOrEmpty(doctor.StripeConnectAccountId) &&
+            if (!string.IsNullOrEmpty(patientFromRepo.StripeCustomerId) &&
+                !string.IsNullOrEmpty(doctorFromRepo.StripeConnectAccountId) &&
                 !string.IsNullOrEmpty(request.StripePaymentMethodId))
             {
                 var amountInCents = serviceNoTracking.Price * 100;
                 var paymentIntent = await stripeService.CreatePaymentIntentAsync(
-                    patient.StripeCustomerId,
+                    patientFromRepo.StripeCustomerId,
                     request.StripePaymentMethodId,
-                    doctor.StripeConnectAccountId,
+                    doctorFromRepo.StripeConnectAccountId,
                     amountInCents,
                     CommissionInCents
                 );
@@ -250,123 +281,123 @@ public class EventsController(
             }
         }
 
-        if (!await usersService.AddPatientToDoctorAsync(doctor.Id, patient.Id))
+        if (!await usersService.AddPatientToDoctorAsync(doctorFromRepo.Id, patientFromRepo.Id))
             return BadRequest("Error al agregar el paciente al doctor.");
 
         eventToCreate.DateFrom = request.DateFrom.Value.Add(TimeSpan.Parse(request.TimeFrom));
         eventToCreate.DateTo = request.DateTo.Value.Add(TimeSpan.Parse(request.TimeTo));
-
         eventToCreate.PatientEvent = new PatientEvent(userId);
         eventToCreate.DoctorEvent = new DoctorEvent(request.Doctor.Id.Value);
         eventToCreate.EventService = new EventService(request.Service.Id.Value);
         eventToCreate.EventClinic = new EventClinic(request.Clinic.Id.Value);
+        if (request.MedicalInsuranceCompany?.Id.HasValue ?? false)
+            eventToCreate.EventMedicalInsuranceCompany =
+                new EventMedicalInsuranceCompany(request.MedicalInsuranceCompany.Id.Value);
+        if (request.PaymentMethodType?.Id.HasValue ?? false) // Add PaymentMethodType if it was missing
+            eventToCreate.EventPaymentMethodType = new EventPaymentMethodType(request.PaymentMethodType.Id.Value);
 
         uow.EventRepository.Add(eventToCreate);
 
         if (!await uow.Complete())
             return BadRequest($"Error al crear {Subject}.");
 
-        var marketingSuccess = await ProcessEventMarketingAsync(
-            eventToCreate,
-            doctor,
-            patient,
-            serviceNoTracking,
-            request.DateFrom.Value,
-            request.DateTo.Value
-        );
+        if (doctorFromRepo != null && serviceNoTracking != null)
+        {
+            var marketingSuccess = await ProcessEventMarketingAsync(
+                eventToCreate, doctorFromRepo, patientFromRepo, serviceNoTracking, request.DateFrom.Value,
+                request.DateTo.Value
+            );
+            if (!marketingSuccess)
+                logger.LogWarning("Marketing/Notification processing failed for Event {EventId}",
+                    eventToCreate.Id);
 
-        if (!marketingSuccess)
-            return BadRequest("Error al enviar confirmación de cita.");
+            if (!await uow.Complete())
+                return BadRequest("Error al guardar notificaciones.");
+        }
 
-        if (!await uow.Complete())
-            return BadRequest("Error al guardar notificaciones.");
+        var createdDto = await uow.EventRepository.GetDtoByIdAsync(eventToCreate.Id);
+        if (createdDto == null)
+            return NotFound("Cita creada pero no se pudo recuperar la información detallada.");
 
-        return await uow.EventRepository.GetDtoByIdAsync(eventToCreate.Id);
+        return Ok(createdDto);
     }
-
 
     [HttpPost("{id:int}/pay")]
     public async Task<ActionResult> PayForEventAsync([FromRoute] int id, [FromBody] PaymentRequestDto request)
     {
+        var userId = User.GetUserId();
+
         var eventItem = await uow.EventRepository.GetByIdAsync(id);
-        if (eventItem == null)
-            return NotFound($"Event with ID {id} not found.");
+        if (eventItem == null) return NotFound($"Event with ID {id} not found.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, eventItem, EventOperations.Pay);
+        if (!authorizationResult.Succeeded) return Forbid("You are not authorized to pay for this event.");
 
         var paymentMethod = await uow.PaymentMethodRepository.GetByIdAsync(request.PaymentMethodId);
-        if (paymentMethod == null)
-            return BadRequest("Payment method not found.");
+        if (paymentMethod == null) return BadRequest("Payment method not found.");
 
-        var patientStripeCustomerId = paymentMethod.User.StripeCustomerId;
+        if (paymentMethod.UserId != userId)
+            return Forbid("Payment method does not belong to the current user.");
+
+        var patientStripeCustomerId = paymentMethod.User?.StripeCustomerId;
         if (string.IsNullOrEmpty(patientStripeCustomerId))
             return BadRequest("Patient does not have a Stripe customer account.");
 
-        var doctorStripeAccountId = eventItem.DoctorEvent.Doctor.StripeConnectAccountId;
+        var doctorStripeAccountId = eventItem.DoctorEvent?.Doctor?.StripeConnectAccountId;
         if (string.IsNullOrEmpty(doctorStripeAccountId))
             return BadRequest("Doctor does not have a Stripe Connect account.");
 
         var serviceEntity = await uow.ServiceRepository.GetByIdAsync(eventItem.EventService.ServiceId);
-        if (serviceEntity == null)
-            return BadRequest("Service not found for event.");
+        if (serviceEntity == null) return BadRequest("Service not found for event.");
 
         var amountInCents = serviceEntity.Price * 100;
-
-        if (paymentMethod.StripePaymentMethodId == null)
+        if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
             return BadRequest("The selected PaymentMethod does not have a Stripe PaymentMethodId.");
 
         var paymentIntent = await stripeService.CreatePaymentIntentAsync(
-            patientStripeCustomerId,
-            paymentMethod.StripePaymentMethodId,
-            doctorStripeAccountId,
-            amountInCents,
+            patientStripeCustomerId, paymentMethod.StripePaymentMethodId, doctorStripeAccountId, amountInCents,
             CommissionInCents
         );
-
         if (paymentIntent == null)
             return BadRequest("Error processing payment.");
 
-        var status = Utils.MapStripeStatusToPaymentStatus(paymentIntent.Status);
+        if (paymentIntent.Status != "succeeded" && paymentIntent.Status != "processing")
+            return BadRequest($"Payment failed with status: {paymentIntent.Status}. Please try again.");
 
+        var status = Utils.MapStripeStatusToPaymentStatus(paymentIntent.Status);
         var payment = new Payment
         {
-            Amount = serviceEntity.Price,
-            Currency = "MXN",
-            Date = DateTime.UtcNow,
-            PaymentStatus = status,
-            StripePaymentIntent = paymentIntent.Id,
-            EventId = eventItem.Id,
-            PaymentMethodId = paymentMethod.Id
+            Amount = serviceEntity.Price, Currency = "MXN", Date = DateTime.UtcNow,
+            PaymentStatus = status, StripePaymentIntent = paymentIntent.Id,
+            EventId = eventItem.Id, PaymentMethodId = paymentMethod.Id
         };
 
         eventItem.Payments.Add(payment);
         uow.PaymentRepository.Add(payment);
 
-        if (!await uow.Complete())
-            return BadRequest("Error saving payment details.");
+        if (!await uow.Complete()) return BadRequest("Error saving payment details.");
 
         return Ok(new { PaymentIntentId = paymentIntent.Id, Status = paymentIntent.Status });
     }
 
     [HttpPost]
+    [Authorize(Roles = "Doctor, Nurse, Patient, Admin")]
     public async Task<ActionResult<EventDto?>> CreateAsync([FromBody] EventCreateDto request)
     {
         if (request.DateFrom == default || request.DateTo == default)
             return BadRequest("Las fechas de inicio y fin son requeridas.");
 
         var currentUser = await uow.UserRepository.GetByIdAsync(User.GetUserId());
-        if (currentUser == null)
-            return BadRequest($"Usuario de ID {User.GetUserId()} no fue encontrado.");
+        if (currentUser == null) return BadRequest($"Usuario de ID {User.GetUserId()} no fue encontrado.");
 
         var patient = await uow.UserRepository.GetByIdAsync(request.PatientId);
-        if (patient == null)
-            return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado.");
+        if (patient == null) return BadRequest($"Paciente de ID {request.PatientId} no fue encontrado.");
 
         var serviceEntity = await uow.ServiceRepository.GetByIdAsync(request.ServiceId);
-        if (serviceEntity == null)
-            return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
+        if (serviceEntity == null) return BadRequest($"Tratamiento de ID {request.ServiceId} no fue encontrado.");
 
         var clinicEntity = await uow.AddressRepository.GetByIdAsync(request.ClinicId);
-        if (clinicEntity == null)
-            return BadRequest($"Clínica de ID {request.ClinicId} no fue encontrada.");
+        if (clinicEntity == null) return BadRequest($"Clínica de ID {request.ClinicId} no fue encontrada.");
 
         AppUser? doctor;
         var userRoles = await userManager.GetRolesAsync(currentUser);
@@ -421,8 +452,7 @@ public class EventsController(
                     return BadRequest("El ID de la enfermera debe ser un valor positivo.");
 
                 var nurseEntity = await uow.UserRepository.GetByIdAsync(nurseId);
-                if (nurseEntity == null)
-                    return BadRequest($"Enfermera de ID {nurseId} no fue encontrada.");
+                if (nurseEntity == null) return BadRequest($"Enfermera de ID {nurseId} no fue encontrada.");
 
                 nurseEvents.Add(new NurseEvent(nurseEntity.Id));
             }
@@ -448,8 +478,7 @@ public class EventsController(
 
         uow.EventRepository.Add(newEvent);
 
-        if (!await uow.Complete())
-            return BadRequest("Error al crear el evento.");
+        if (!await uow.Complete()) return BadRequest("Error al crear el evento.");
 
         var marketingSuccess = await ProcessEventMarketingAsync(
             newEvent,
@@ -473,55 +502,64 @@ public class EventsController(
     public async Task<ActionResult<EventDto?>> UpdateAsync([FromRoute] int id, [FromBody] EventUpdateDto request)
     {
         var item = await uow.EventRepository.GetByIdAsync(id);
-        if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+        if (item == null)
+            return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
 
-        if (request.Evolution != null)
-        {
-            item.Evolution = request.Evolution;
-        }
+        var authorizationResult = await authService.AuthorizeAsync(User, item, EventOperations.Update);
+        if (!authorizationResult.Succeeded) return Forbid();
 
-        if (request.NextSteps != null)
-        {
-            item.NextSteps = request.NextSteps;
-        }
+        if (request.Evolution != null) item.Evolution = request.Evolution;
+        if (request.NextSteps != null) item.NextSteps = request.NextSteps;
 
         if (uow.HasChanges())
         {
-            if (!await uow.Complete()) return BadRequest($"Error al actualizar {Subject}.");
+            if (!await uow.Complete())
+                return BadRequest($"Error al actualizar {Subject}.");
         }
 
         var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
-        return itemDto;
+        return Ok(itemDto);
     }
 
     [HttpPut("{id:int}/evolution")]
     public async Task<ActionResult<EventDto?>> UpdateEvolutionAsync([FromRoute] int id,
         [FromBody] EventUpdateEvolutionDto request)
     {
-        if (string.IsNullOrEmpty(request.Content)) return BadRequest("La evolución es requerida.");
+        var userId = User.GetUserId();
 
         var item = await uow.EventRepository.GetByIdAsync(id);
-        if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+        if (item == null)
+            return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, item, EventOperations.UpdateEvolution);
+        if (!authorizationResult.Succeeded)
+            return Forbid();
+
+        if (request.Content == null) return BadRequest("El contenido de la evolución no puede ser nulo.");
 
         item.Evolution = request.Content;
 
         if (uow.HasChanges())
         {
-            if (!await uow.Complete()) return BadRequest($"Error al actualizar {Subject}.");
+            if (!await uow.Complete())
+                return BadRequest($"Error al actualizar {Subject}.");
         }
 
         var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
-        return itemDto;
+        return Ok(itemDto);
     }
 
     [HttpPut("{id:int}/next-steps")]
     public async Task<ActionResult<EventDto?>> UpdateNextStepAsync([FromRoute] int id,
         [FromBody] EventUpdateNextStepDto request)
     {
-        if (string.IsNullOrEmpty(request.Content)) return BadRequest("El siguiente paso es requerido.");
-
         var item = await uow.EventRepository.GetByIdAsync(id);
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, item, EventOperations.UpdateNextSteps);
+        if (!authorizationResult.Succeeded) return Forbid();
+
+        if (request.Content == null) return BadRequest("El contenido de los siguientes pasos no puede ser nulo.");
 
         item.NextSteps = request.Content;
 
@@ -531,53 +569,78 @@ public class EventsController(
         }
 
         var itemDto = await uow.EventRepository.GetDtoByIdAsync(item.Id);
-        return itemDto;
+        return Ok(itemDto);
     }
 
-    private async Task<bool> ProcessEventMarketingAsync(Event eventItem, AppUser doctor, AppUser patient,
+    private async Task<bool> ProcessEventMarketingAsync(Event? eventItem, AppUser? doctor, AppUser? patient,
         dynamic serviceEntity, DateTime dateFrom, DateTime dateTo)
     {
-        var formattedDate = dateFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-        var doctorName = $"{doctor.FirstName} {doctor.LastName}";
-        var appointmentTime = $"{dateFrom.TimeOfDay} - {dateTo.TimeOfDay}";
-        const string emailSubject = "DocHub | Confirmación de cita";
-
-        if (string.IsNullOrEmpty(serviceEntity.Name))
+        if (eventItem == null || doctor == null || patient == null || serviceEntity == null)
         {
+            logger.LogError("ProcessEventMarketingAsync called with null arguments. EventId: {EventId}", eventItem?.Id);
             return false;
         }
 
-        var htmlMessage = emailService.CreateAppointmentConfirmationEmail(
-            doctorName,
-            formattedDate,
-            appointmentTime,
-            serviceEntity.Name
-        );
-
-        var patientEmail = patient.Email;
-        if (!string.IsNullOrEmpty(patientEmail))
+        try
         {
-            await emailService.SendMail(patientEmail, emailSubject, htmlMessage);
+            var formattedDate = dateFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+            var doctorName = $"{doctor.FirstName} {doctor.LastName}";
+
+            var appointmentTime = $"{dateFrom:HH:mm} - {dateTo:HH:mm}";
+            const string emailSubject = "DocHub | Confirmación de cita";
+
+            string serviceName = serviceEntity.Name ?? "Consulta";
+            if (string.IsNullOrEmpty(serviceEntity.Name))
+            {
+                logger.LogWarning("Service name is missing for Event {EventId}", eventItem.Id);
+            }
+
+            var htmlMessage = emailService.CreateAppointmentConfirmationEmail(
+                doctorName, formattedDate, appointmentTime, serviceName
+            );
+
+            var patientEmail = patient.Email;
+            if (!string.IsNullOrEmpty(patientEmail))
+            {
+                await emailService.SendMail(patientEmail, emailSubject, htmlMessage);
+            }
+            else
+            {
+                logger.LogWarning("Patient email is missing for event ID {EventId}", eventItem.Id);
+            }
+
+            var patientEventNotification =
+                await notificationsService.CreateForPatientEventConfirmation(eventItem, patient);
+            if (patientEventNotification != null)
+            {
+                await NotifyUserAsync(patient.Id, mapper.Map<NotificationDto>(patientEventNotification));
+            }
+
+            var doctorEventNotification =
+                await notificationsService.CreateForDoctorEventConfirmation(eventItem, doctor);
+            if (doctorEventNotification != null)
+            {
+                await NotifyUserAsync(doctor.Id, mapper.Map<NotificationDto>(doctorEventNotification));
+            }
+
+            return true;
         }
-        else
+        catch (Exception ex)
         {
-            Log.Warning("Patient email is missing for event ID {EventId}", eventItem.Id);
+            logger.LogError(ex, "Error during ProcessEventMarketingAsync for Event {EventId}", eventItem.Id);
+            return false;
         }
-
-        var patientEventNotification = await notificationsService.CreateForPatientEventConfirmation(eventItem, patient);
-        await NotifyUserAsync(User.GetUserId(), mapper.Map<NotificationDto>(patientEventNotification));
-        patient.UserNotifications.Add(patientEventNotification);
-
-        var doctorEventNotification = await notificationsService.CreateForDoctorEventConfirmation(eventItem, doctor);
-        await NotifyUserAsync(doctor.Id, mapper.Map<NotificationDto>(doctorEventNotification));
-        doctor.UserNotifications.Add(doctorEventNotification);
-
-        return true;
     }
 
     private async Task NotifyUserAsync(int userId, NotificationDto notification)
     {
-        Log.Information("Sending notification to user ID {UserId}", userId);
-        await hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveNotification", notification);
+        try
+        {
+            await hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveNotification", notification);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to send SignalR notification to User {UserId}", userId);
+        }
     }
 }

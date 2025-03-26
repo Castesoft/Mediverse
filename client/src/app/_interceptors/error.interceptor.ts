@@ -1,52 +1,55 @@
 import { HttpErrorResponse, HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { catchError } from "rxjs";
+import { Router } from "@angular/router"; // Import Router
+import { catchError, EMPTY, throwError } from "rxjs"; // Import EMPTY and throwError
 import { BadRequest } from '../_models/forms/badRequest';
 
-export const errorInterceptor: (showSnackBars: boolean) => HttpInterceptorFn = (showSnackBars) => (req, next) => {
-  const matSnackBar: MatSnackBar = inject(MatSnackBar);
+const FORBIDDEN_ROUTE = '/error/403';
+const NOT_FOUND_ROUTE = '/error/404';
+
+export const errorInterceptor: () => HttpInterceptorFn = () => (req, next) => {
+  const router: Router = inject(Router);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error) {
         switch (error.status) {
           case 400:
-            const item = new BadRequest(error);
-            if (showSnackBars) {
-              item.message && matSnackBar.open(item.message, 'Cerrar', { duration: 5000 });
-              if (item.validationErrors && item.validationErrors.length > 0) {
-                matSnackBar.open(`${item.validationErrors.length} errores de validación.`, 'Cerrar', { duration: 5000 });
-              }
-            }
-            throw item;
+            const badRequestError = new BadRequest(error);
+            return throwError(() => badRequestError);
+
           case 401:
             const unauthorizedError = new BadRequest(error);
-            if (showSnackBars) {
-              matSnackBar.open(`401 No autorizado: ${unauthorizedError.message}`, 'Cerrar', { duration: 5000 });
-            }
-            throw unauthorizedError;
+            return throwError(() => unauthorizedError);
+
+          case 403:
+            // TODO - Uncomment this block to redirect to the FORBIDDEN_ROUTE
+            // const forbiddenError = new BadRequest(error);
+            // if (showSnackBars) {
+            //   matSnackBar.open(`403 Prohibido: ${forbiddenError.message || 'No tiene permisos suficientes.'}`, 'Cerrar', { duration: 3000 });
+            // }
+            console.error('403 Forbidden - Redirecting:', error);
+            router.navigate([ FORBIDDEN_ROUTE ]).catch(console.error);
+            return EMPTY;
+
           case 404:
-            const notFoundError = new BadRequest(error);
-            if (showSnackBars) {
-              matSnackBar.open(`404 No encontrado: ${notFoundError.message}`, 'Cerrar', { duration: 5000 });
-            }
-            throw notFoundError;
+            console.error('404 Not Found - Redirecting:', error);
+            router.navigate([ NOT_FOUND_ROUTE ]).catch(console.error);
+            return EMPTY;
+
           case 500:
-            if (showSnackBars) {
-              matSnackBar.open('500 Error interno del servidor.', 'Cerrar', { duration: 5000 });
-            }
             const serverError = new BadRequest(error);
-            throw serverError;
+            console.error('500 Internal Server Error:', error);
+            return throwError(() => serverError);
+
           default:
             const defaultError = new BadRequest(error);
-            if (showSnackBars) {
-              matSnackBar.open(`${defaultError.error.status}: Error desconocido.`, 'Cerrar', { duration: 5000 });
-            }
-            throw defaultError;
+            const status: number | string = defaultError.error?.status || error.status || 'Desconocido';
+            console.error(`Unhandled HTTP Error (${status}):`, error);
+            return throwError(() => defaultError);
         }
       }
-      throw error;
+      return throwError(() => error);
     })
   );
 };

@@ -4,15 +4,12 @@ using MainService.Errors;
 using Microsoft.AspNetCore.Authorization;
 
 namespace MainService.Authorization.Handlers;
-public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
-{
-    private readonly IPermissionManager _permissionManager;
-    public PermissionAuthorizationHandler(IPermissionManager permissionManager)
-    {
-        _permissionManager = permissionManager;
-    }
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+public class PermissionAuthorizationHandler(IPermissionManager permissionManager)
+    : AuthorizationHandler<PermissionRequirement>
+{
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        PermissionRequirement requirement)
     {
         var permissionsClaim = context.User.Claims.FirstOrDefault(c => c.Value == requirement.Permission);
 
@@ -22,7 +19,8 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         }
         else
         {
-            string permissionDescription = await _permissionManager.GetPermissionDescriptionByName(requirement.Permission);
+            string permissionDescription =
+                await permissionManager.GetPermissionDescriptionByName(requirement.Permission);
             string? email = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             throw new PermissionDeniedException(email, permissionDescription);

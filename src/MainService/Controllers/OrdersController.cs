@@ -9,10 +9,11 @@ using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using MainService.Authorization.Operations;
 
 namespace MainService.Controllers;
 
-public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : BaseApiController
+public class OrdersController(IUnitOfWork uow, IOrdersService ordersService, IAuthorizationService authService) : BaseApiController
 {
     private const string Subject = "orden";
     private const string SubjectArticle = "La";
@@ -38,13 +39,15 @@ public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : B
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderDto?>> GetByIdAsync([FromRoute] int id)
     {
-        var order = await uow.OrderRepository.GetDtoByIdAsync(id);
-
+        var order = await uow.OrderRepository.GetByIdAsNoTrackingAsync(id);
         if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
 
-        return order;
-    }
+        var authorizationResult = await authService.AuthorizeAsync(User, order, OrderOperations.Read);
+        if (!authorizationResult.Succeeded) return Forbid();
 
+        var orderDto = await uow.OrderRepository.GetDtoByIdAsync(id);
+        return orderDto;
+    }
 
     [Authorize]
     [HttpPut("{id:int}")]
@@ -52,6 +55,12 @@ public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : B
     {
         var userId = User.GetUserId();
         if (userId == 0) return Unauthorized();
+
+        var order = await uow.OrderRepository.GetByIdAsync(id);
+        if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, order, OrderOperations.Update);
+        if (!authorizationResult.Succeeded) return Forbid();
 
         try
         {
@@ -77,28 +86,29 @@ public class OrdersController(IUnitOfWork uow, IOrdersService ordersService) : B
     public async Task<ActionResult<List<OrderHistoryDto>>?> GetHistoryAsync([FromRoute] int id)
     {
         var order = await uow.OrderRepository.GetByIdAsync(id);
-
         if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
 
-        var history = await uow.OrderRepository.GetHistoryByIdAsync(id);
+        var authorizationResult = await authService.AuthorizeAsync(User, order, OrderOperations.Read);
+        if (!authorizationResult.Succeeded) return Forbid();
 
+        var history = await uow.OrderRepository.GetHistoryByIdAsync(id);
         return history;
     }
 
     [HttpPut("{id:int}/approve")]
     public async Task<ActionResult<OrderDto?>> ApproveAsync([FromRoute] int id)
     {
-        if (!await uow.OrderRepository.ExistsByIdAsync(id)) return NotFound($"{SubjectArticle} {Subject} no existe");
+        var order = await uow.OrderRepository.GetByIdAsync(id);
+        if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
+
+        var authorizationResult = await authService.AuthorizeAsync(User, order, OrderOperations.Approve);
+        if (!authorizationResult.Succeeded) return Forbid();
 
         var orderStatus = await uow.OrderStatusRepository.GetByNameAsync("Completado");
         var deliveryStatus = await uow.DeliveryStatusRepository.GetByNameAsync("Procesando");
 
         if (orderStatus == null) return NotFound("Estado de orden no existe");
         if (deliveryStatus == null) return NotFound("Estado de entrega no existe");
-
-        var order = await uow.OrderRepository.GetByIdAsync(id);
-
-        if (order == null) return NotFound($"{SubjectArticle} {Subject} no existe");
 
         // order.Status = OrderStatus.Completed;
         // order.DeliveryStatus = OrderDeliveryStatus.Processing;

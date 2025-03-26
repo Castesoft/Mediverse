@@ -127,12 +127,10 @@ const routes: Routes = [
         path: 'citas/:id',
         component: AccountEventDetailComponent,
         resolve: { item: createItemResolver(EventsService) },
-        title: titleDetailResolver(EventsService, FormUse.DETAIL, 'id'),
         data: {
           breadcrumb: [ 'Cuenta', 'Citas', 'Detalle' ],
           title: 'Detalle de Cita'
         },
-        runGuardsAndResolvers: 'always',
         canActivate: [ authGuard ]
       },
       {

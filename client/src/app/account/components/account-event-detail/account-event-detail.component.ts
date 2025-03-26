@@ -96,19 +96,16 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
       return;
     }
 
+    if (this.event.id) {
+      this.id.set(this.event.id);
+    }
+
     this.subtotal = this.event.service.price || 0;
     this.subscribeToCheckoutData();
     this.fetchConsentStatus();
   }
 
   private initializeRouteData(): void {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      const idParam: string | null = params.get('id');
-      if (idParam) {
-        this.id.set(+idParam);
-      }
-    });
-
     const navigation: Navigation | null = this.router.getCurrentNavigation();
     const key: string | null = navigation?.extras?.state?.['key'] || null;
     if (key) {
@@ -145,14 +142,27 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
 
     const eventId: number | null = this.event?.id;
     const selectedPaymentMethodId: number | null = this.selectedPaymentMethod?.id || null;
+    const selectedAddressId: number | null = this.selectedAddress?.id || null;
 
-    if (!eventId || !selectedPaymentMethodId) {
-      this.toastr.error('No se ha seleccionado un método de pago o no se ha encontrado el evento');
+    if (!eventId) {
+      console.error('Event ID not found');
       this.isSubmittingPayment = false;
       return;
     }
 
-    this.paymentGatewayService.createPaymentIntentForEvent(eventId, selectedPaymentMethodId).subscribe({
+    if (!selectedPaymentMethodId) {
+      console.error('Payment method ID not found');
+      this.isSubmittingPayment = false;
+      return;
+    }
+
+    if (!selectedAddressId) {
+      console.error('Address ID not found');
+      this.isSubmittingPayment = false;
+      return;
+    }
+
+    this.paymentGatewayService.createPaymentIntentForEvent(eventId, selectedPaymentMethodId, selectedAddressId).subscribe({
       next: (res) => {
         if (!res.paymentId) {
           console.error('Payment ID not found in response');
