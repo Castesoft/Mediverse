@@ -6,7 +6,6 @@ import { Navigation, ParamMap } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
-  host: { class: 'card card-flush' },
   selector: 'div[homeProductEditRoute]',
   template: `
     <div breadcrumbs></div>

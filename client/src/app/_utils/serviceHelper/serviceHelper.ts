@@ -12,7 +12,6 @@ import {
   Type,
   WritableSignal,
 } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
@@ -76,7 +75,6 @@ export class ServiceHelper<
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
   protected readonly confirm = inject(ConfirmService);
-  protected readonly matSnackBar = inject(MatSnackBar);
   protected readonly toastr = inject(ToastrService);
 
   readonly dev = inject(DevService);
@@ -91,22 +89,14 @@ export class ServiceHelper<
   clickLinkHandler?: ClickLinkHandler<T>;
 
   selected$ = (key: string) => this.selectionService.getSelection$(key);
-  getSelected$ = (key: string) =>
-    this.selectionService.getCurrentSelection(key)
-      ? [this.selectionService.getCurrentSelection(key)!]
-      : [];
+  getSelected$ = (key: string) => this.selectionService.getCurrentSelection(key) ? [ this.selectionService.getCurrentSelection(key)! ] : [];
   hasSelected$ = (key: string) => this.selectionService.hasSelection(key);
-  setSelected$ = (key: string, value: T | null) =>
-    this.selectionService.setSelection(key, value);
+  setSelected$ = (key: string, value: T | null) => this.selectionService.setSelection(key, value);
 
-  multipleSelected$ = (key: string) =>
-    this.selectionService.getMultipleSelections$(key);
-  setMultipleSelected = (key: string, values: T[]) =>
-    this.selectionService.setMultipleSelections(key, values);
-  toggleMultipleSelected$ = (key: string, value: T) =>
-    this.selectionService.toggleSelection(key, value);
-  toggleMultipleSelectedArray$ = (key: string, values: T[]) =>
-    this.selectionService.toggleMultipleSelectArray(key, values);
+  multipleSelected$ = (key: string) => this.selectionService.getMultipleSelections$(key);
+  setMultipleSelected = (key: string, values: T[]) => this.selectionService.setMultipleSelections(key, values);
+  toggleMultipleSelected$ = (key: string, value: T) => this.selectionService.toggleSelection(key, value);
+  toggleMultipleSelectedArray$ = (key: string, values: T[]) => this.selectionService.toggleMultipleSelectArray(key, values);
 
   baseUrl: string;
   dictionary: NamingSubject;
@@ -161,7 +151,7 @@ export class ServiceHelper<
    * @private
    */
   private updateColumns(columns: Column[]): void {
-    this.columns = this.dev.isDev() ? [columnId, ...columns] : columns;
+    this.columns = this.dev.isDev() ? [ columnId, ...columns ] : columns;
   }
 
   /**
@@ -277,17 +267,13 @@ export class ServiceHelper<
       console.error(
         'Modal component not defined during constructor initialization'
       );
-      this.toastr.error(
-        'Cannot open modal view - component not configured',
-        'Configuration Error'
-      );
     } else {
       const route = this.dictionary.buildFromSiteSection(
         use,
         item?.id,
         siteSection
       );
-      this.router.navigate([route]).then(
+      this.router.navigate([ route ]).then(
         () => {},
         (error) => console.error('Navigation error:', error)
       );
@@ -311,7 +297,7 @@ export class ServiceHelper<
       },
       disableClose: true,
       hasBackdrop: true,
-      panelClass: ['window'],
+      panelClass: [ 'window' ],
     };
   }
 
@@ -406,7 +392,7 @@ export class ServiceHelper<
         if (response.id) {
           this.entityCache.set(response.id, response);
         }
-        this.data.next([...this.data.value, response]);
+        this.data.next([ ...this.data.value, response ]);
       }),
       catchError((error) => this.handleError(error, `getById(${id})`)),
       finalize(() => this.setLoadingState(false)),
@@ -430,10 +416,6 @@ export class ServiceHelper<
    */
   create(form: FormGroup2<T>, options?: Partial<SubmitOptions>): Observable<T> {
     if (!form.valid) {
-      this.toastr.warning(
-        'Please correct the form errors before submitting.',
-        'Form Validation'
-      );
       return EMPTY;
     }
 
@@ -445,17 +427,12 @@ export class ServiceHelper<
       )
       .pipe(
         tap((response) => {
-          this.toastr.success(
-            `${this.dictionary.singularTitlecase} created successfully`,
-            'Success'
-          );
-
           this.handleOptionsAfterRequest(options, response);
 
           if (response.id) {
             this.entityCache.set(response.id, response);
           }
-          this.data.next([...this.data.value, response]);
+          this.data.next([ ...this.data.value, response ]);
         }),
         catchError((error) => this.handleError(error, 'create')),
         finalize(() => this.setLoadingState(false))
@@ -467,10 +444,6 @@ export class ServiceHelper<
    */
   update(form: FormGroup2<T>, options?: Partial<SubmitOptions>): Observable<T> {
     if (!form.valid) {
-      this.toastr.warning(
-        'Please correct the form errors before submitting.',
-        'Form Validation'
-      );
       return EMPTY;
     }
 
@@ -481,12 +454,6 @@ export class ServiceHelper<
       .put<T>(`${this.baseUrl}${id}`, options?.value ?? form.value)
       .pipe(
         tap((response) => {
-          this.matSnackBar.open(
-            `${this.dictionary.singularTitlecase} ${response.id} actualizado correctamente`,
-            'Cerrar',
-            { duration: 3000 }
-          );
-
           this.handleOptionsAfterRequest(options, response);
 
           if (response.id) {
@@ -507,7 +474,7 @@ export class ServiceHelper<
    */
   private updateDataAfterModification(id: number, response: T): void {
     if (this.data.value.length === 0) {
-      this.data.next([response]);
+      this.data.next([ response ]);
     } else {
       this.data.next(this.data.value.map((a) => (a.id === id ? response : a)));
     }
@@ -526,12 +493,12 @@ export class ServiceHelper<
       if (response.isVisible) optionToAdd.visible = response.isVisible;
       if (response.isEnabled) optionToAdd.enabled = response.isEnabled;
 
-      this.options.update((oldValues) => [...oldValues, optionToAdd]);
+      this.options.update((oldValues) => [ ...oldValues, optionToAdd ]);
     } else {
       this.options.update((options) => {
         const index = options.findIndex((o) => o.id === id);
         if (index !== -1) {
-          const updatedOptions = [...options];
+          const updatedOptions = [ ...options ];
           const option = { ...updatedOptions[index] };
 
           if (response.name) option.name = response.name;
@@ -566,12 +533,8 @@ export class ServiceHelper<
       const url: string = useIdAfterResponseForRedirect
         ? `${redirectUrl}/${id}`
         : redirectUrl;
-      this.router.navigate([url]).catch((error) => {
+      this.router.navigate([ url ]).catch((error) => {
         console.error('Navigation error:', error);
-        this.toastr.error(
-          'Failed to navigate after operation',
-          'Navigation Error'
-        );
       });
     }
 
@@ -608,7 +571,6 @@ export class ServiceHelper<
    */
   delete$ = (item: T) => {
     if (!item || !item.id) {
-      this.toastr.error('Cannot delete item without an ID', 'Delete Error');
       return;
     }
 
@@ -617,11 +579,7 @@ export class ServiceHelper<
         if (confirmed) {
           this.delete(item.id!).subscribe({
             next: () => {
-              this.matSnackBar.open(
-                `${this.dictionary.articles.definedSingular} ${this.dictionary.singular} ${item.id} ha sido eliminado`,
-                'Cerrar',
-                { duration: 5000 }
-              );
+              console.log(`Deleted item with ID: ${item.id}`);
             },
           });
         }
@@ -671,10 +629,6 @@ export class ServiceHelper<
    */
   deleteRangeByIds$(ids: number[]): Observable<boolean> {
     if (!ids.length) {
-      this.toastr.warning(
-        'No items selected for deletion',
-        'Selection Required'
-      );
       return of(false);
     }
 
@@ -683,11 +637,6 @@ export class ServiceHelper<
         if (result) {
           return this.deleteRange(ids.join(',')).pipe(
             map(() => {
-              this.matSnackBar.open(
-                `Los (${ids.length}) ${this.dictionary.plural} seleccionados fueron eliminados.`,
-                'Cerrar',
-                { duration: 5000 }
-              );
               return true;
             }),
             catchError(() => {
@@ -773,10 +722,6 @@ export class ServiceHelper<
     }
   ) {
     if (!item?.id) {
-      this.toastr.warning(
-        'Cannot navigate to item without an ID',
-        'Navigation Error'
-      );
       return;
     }
 
@@ -786,29 +731,24 @@ export class ServiceHelper<
           .navigate(path, { relativeTo: relativeRoute })
           .catch((error) => {
             console.error('Navigation error:', error);
-            this.toastr.error('Failed to navigate', 'Navigation Error');
           });
       };
 
       if (isMobile()) {
         if (mode() === 'view' && (view() === 'page' || view() === 'inline')) {
-          navigateTo([item.id]);
+          navigateTo([ item.id ]);
         }
       } else {
         if (mode() === 'view') {
           if (view() === 'modal' && this.modalComponent) {
             this.clickLink(item, key(), FormUse.DETAIL, 'modal');
           } else if (view() === 'page') {
-            navigateTo([item.id]);
+            navigateTo([ item.id ]);
           }
         }
       }
     } catch (error) {
       console.error('Error in clickRow:', error);
-      this.toastr.error(
-        'An error occurred while handling the row click',
-        'Navigation Error'
-      );
     }
   }
 

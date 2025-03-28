@@ -1,4 +1,5 @@
 using AutoMapper;
+using MainService.Authorization.Operations;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
@@ -6,6 +7,7 @@ using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -15,13 +17,15 @@ public class PrescriptionsController(
     IUnitOfWork uow,
     IPrescriptionsService service,
     IMapper mapper,
-    IOrdersService ordersService) : BaseApiController
+    IOrdersService ordersService,
+    IAuthorizationService authorizationService) : BaseApiController
 {
     private const string Subject = "receta";
     private const string SubjectArticle = "La";
 
     public async Task<ActionResult<PagedList<PrescriptionDto>>> GetPagedListAsync([FromQuery] PrescriptionParams param)
     {
+        // Authorization is handled at the repository level through filters based on user roles and ID
         var pagedList = await uow.PrescriptionRepository.GetPagedListAsync(param, User);
 
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
@@ -33,11 +37,15 @@ public class PrescriptionsController(
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PrescriptionDto?>> GetByIdAsync([FromRoute] int id)
     {
-        var item = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
+        var item = await uow.PrescriptionRepository.GetByIdAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
 
-        return item;
+        var authResult = await authorizationService.AuthorizeAsync(User, item, PrescriptionOperations.Read);
+        if (!authResult.Succeeded) return Forbid();
+
+        var itemDto = await uow.PrescriptionRepository.GetDtoByIdAsync(id);
+        return itemDto;
     }
 
     [HttpPut("{id:int}")]
@@ -47,6 +55,9 @@ public class PrescriptionsController(
         var item = await uow.PrescriptionRepository.GetByIdAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} con ID {id} no fue encontrado.");
+
+        var authResult = await authorizationService.AuthorizeAsync(User, item, PrescriptionOperations.Update);
+        if (!authResult.Succeeded) return Forbid();
 
         mapper.Map(request, item);
 
@@ -59,9 +70,10 @@ public class PrescriptionsController(
     [HttpPost]
     public async Task<ActionResult<PrescriptionDto?>> CreateAsync([FromBody] PrescriptionCreateDto request)
     {
-        Log.Information("Prescription HttpPost received with request: {@request}", request);
-        
-        // Validate essential fields
+        var authResult =
+            await authorizationService.AuthorizeAsync(User, new Prescription(), PrescriptionOperations.Create);
+        if (!authResult.Succeeded) return Forbid();
+
         if (!request.Date.HasValue)
             return BadRequest("La fecha es requerida");
 
@@ -81,14 +93,12 @@ public class PrescriptionsController(
         var patientId = request.Patient.Id.Value;
         var clinicId = request.Clinic.Id.Value;
 
-        // Validate patient existence and association
         if (!await uow.UserRepository.ExistsByIdAsync(patientId))
             return NotFound($"El paciente con Id {patientId} no existe");
 
         if (!await uow.PatientRepository.ExistsAsync(patientId, doctorId))
             return BadRequest($"El paciente {patientId} no corresponde al doctor {doctorId}.");
 
-        // Validate event if provided
         if (request.EventId.HasValue)
         {
             var @event = await uow.EventRepository.GetByIdAsNoTrackingAsync(request.EventId.Value);
@@ -98,14 +108,12 @@ public class PrescriptionsController(
                 return BadRequest($"La cita {request.EventId.Value} no corresponde al doctor {doctorId}.");
         }
 
-        // Validate clinic existence and association
         if (!await uow.AddressRepository.ExistsByIdAsync(clinicId))
             return NotFound($"La clínica con Id {clinicId} no existe");
 
         if (!await uow.AddressRepository.DoctorHasAddressAsync(doctorId, clinicId))
             return BadRequest($"La clínica {clinicId} no corresponde al doctor {doctorId}.");
 
-        // Retrieve patient data
         var patient = await uow.UserRepository.GetByIdAsNoTrackingAsync(patientId);
         if (patient == null) return NotFound($"Paciente {patientId} no existe");
 
@@ -169,8 +177,7 @@ public class PrescriptionsController(
             }
         }
 
-        if (uow.HasChanges() && !await uow.Complete())
-            return BadRequest($"Error al crear {SubjectArticle} {Subject}.");
+        if (uow.HasChanges() && !await uow.Complete()) return BadRequest($"Error al crear {SubjectArticle} {Subject}.");
 
         return await uow.PrescriptionRepository.GetDtoByIdAsync(prescriptionToCreate.Id);
     }
@@ -201,9 +208,12 @@ public class PrescriptionsController(
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
-        var item = await uow.PrescriptionRepository.GetByIdAsNoTrackingAsync(id);
+        var item = await uow.PrescriptionRepository.GetByIdAsync(id);
 
         if (item == null) return NotFound($"{SubjectArticle} {Subject} de ID {id} no fue encontrado.");
+
+        var authResult = await authorizationService.AuthorizeAsync(User, item, PrescriptionOperations.Delete);
+        if (!authResult.Succeeded) return Forbid();
 
         var deleteResult = await service.DeleteAsync(item);
 
@@ -219,9 +229,13 @@ public class PrescriptionsController(
 
         foreach (var item in selectedIds)
         {
-            var itemToDelete = await uow.PrescriptionRepository.GetByIdAsNoTrackingAsync(item);
+            var itemToDelete = await uow.PrescriptionRepository.GetByIdAsync(item);
 
             if (itemToDelete == null) return NotFound($"{SubjectArticle} {Subject} de ID {item} no fue encontrado.");
+
+            var authResult =
+                await authorizationService.AuthorizeAsync(User, itemToDelete, PrescriptionOperations.Delete);
+            if (!authResult.Succeeded) return Forbid();
 
             var deleteResult = await service.DeleteAsync(itemToDelete);
 

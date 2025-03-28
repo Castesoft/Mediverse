@@ -38,7 +38,6 @@ import { EventsService } from "src/app/events/events.service";
   selector: "[eventForm]",
   templateUrl: './event-form.component.html',
   styleUrl: './event-form.component.scss',
-  standalone: true,
   imports: [
     CommonModule,
     RouterModule,
@@ -91,6 +90,7 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
   clinicPanelOpen: boolean = false;
 
   selectedIndex: number = 0;
+  isSubmitting: boolean = false;
 
   constructor() {
     super(EventsService, EventForm);
@@ -171,8 +171,11 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
   }
 
   customSubmit(): void {
+    this.isSubmitting = true;
+
     const patientId: number | null = this.form.controls.patient.getRawValue().id;
     if (patientId === null) {
+      this.isSubmitting = false;
       console.error('Patient is required');
       return;
     }
@@ -181,12 +184,14 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
 
     const serviceId: number | null = this.form.controls.service.getRawValue().id;
     if (serviceId === null) {
+      this.isSubmitting = false;
       console.error('Service is required');
       return;
     }
 
     const clinicId: number | null = this.form.controls.clinic?.controls?.select.getRawValue()?.id || null;
     if (clinicId === null) {
+      this.isSubmitting = false;
       console.error('Clinic is required');
       return;
     }
@@ -195,6 +200,7 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
     const dateTo: Date | null = new Date(this.form.controls.dateTo.getRawValue() as any);
 
     if (dateFrom === null || dateTo === null) {
+      this.isSubmitting = false;
       console.error('Date is required');
       return;
     }
@@ -234,12 +240,12 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
 
     this.service.createRaw(payload).subscribe({
       next: (event: Event): void => {
-        this.matSnackBar.open('Evento creado', 'Cerrar', { duration: 5000 });
-        this.router.navigate([ '/events', event.id ]).then(() => {});
+        this.isSubmitting = false;
+        this.router.navigate([ 'inicio/citas/', event.id ]).catch(console.error);
       },
       error: (error: any): void => {
         console.error('Error creating event', error);
-        this.matSnackBar.open('Error creando evento', 'Cerrar', { duration: 5000 });
+        this.isSubmitting = false;
       }
     })
   }

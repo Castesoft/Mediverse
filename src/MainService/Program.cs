@@ -1,3 +1,4 @@
+using MainService.Authorization;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Hubs;
@@ -97,6 +98,8 @@ try
 
     await Seed.SeedRolesAndPermissionsAsync(roleManager, permissionManager);
     await Seed.SeedAsync(userManager, context, stripeService, 30, 100);
+    
+    AuthorizationDiagnostics.VerifyAuthorizationHandlersRegistration(services);
 }
 catch (Exception ex)
 {

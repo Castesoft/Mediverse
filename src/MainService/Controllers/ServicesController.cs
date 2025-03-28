@@ -11,10 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using MainService.Models.Entities.Aggregate;
+using MainService.Authorization.Operations;
 
 namespace MainService.Controllers;
 [Authorize]
-public class ServicesController(IUnitOfWork uow, IServicesService service, UserManager<AppUser> userManager, IMapper mapper) : BaseApiController
+public class ServicesController(
+    IUnitOfWork uow, 
+    IServicesService service, 
+    UserManager<AppUser> userManager, 
+    IMapper mapper,
+    IAuthorizationService authorizationService) : BaseApiController
 {
     private static readonly string subject = "servicio";
     private static readonly string subjectArticle = "El";
@@ -50,20 +56,27 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
     [HttpGet("{id}")]
     public async Task<ActionResult<ServiceDto?>> GetByIdAsync([FromRoute]int id)
     {
-        var item = await uow.ServiceRepository.GetDtoByIdAsync(id);
+        var item = await uow.ServiceRepository.GetByIdAsync(id);
 
         if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
 
-        return item;
+        var authResult = await authorizationService.AuthorizeAsync(User, item, ServiceOperations.Read);
+        if (!authResult.Succeeded) return Forbid();
+
+        var itemDto = await uow.ServiceRepository.GetDtoByIdAsync(id);
+        return itemDto;
     }
 
     // [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
-        var item = await uow.ServiceRepository.GetByIdAsNoTrackingAsync(id);
+        var item = await uow.ServiceRepository.GetByIdAsync(id);
 
         if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+
+        var authResult = await authorizationService.AuthorizeAsync(User, item, ServiceOperations.Delete);
+        if (!authResult.Succeeded) return Forbid();
 
         var deleteResult = await service.DeleteAsync(item);
 
@@ -79,9 +92,12 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
 
         foreach (var item in selectedIds)
         {
-            var itemToDelete = await uow.ServiceRepository.GetByIdAsNoTrackingAsync(item);
+            var itemToDelete = await uow.ServiceRepository.GetByIdAsync(item);
 
             if (itemToDelete == null) return NotFound($"{subjectArticle} {subject} de ID {item} no fue encontrado.");
+
+            var authResult = await authorizationService.AuthorizeAsync(User, itemToDelete, ServiceOperations.Delete);
+            if (!authResult.Succeeded) return Forbid();
 
             var deleteResult = await service.DeleteAsync(itemToDelete);
 
@@ -94,6 +110,9 @@ public class ServicesController(IUnitOfWork uow, IServicesService service, UserM
     [HttpPost]
     public async Task<ActionResult<ServiceDto?>> CreateAsync([FromBody] ServiceCreateDto request)
     {
+        var authResult = await authorizationService.AuthorizeAsync(User, new Service(), ServiceOperations.Create);
+        if (!authResult.Succeeded) return Forbid();
+
         Service? itemExists = await uow.ServiceRepository.GetByNameAsync(request.Name, User);
 
         if (itemExists != null) return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");

@@ -71,7 +71,7 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
   updateEvolution(id: number, evolution: string): Observable<Event> {
     return this.http.put<Event>(`${this.baseUrl}${id}/evolution`, { content: evolution }).pipe(
       tap(() => {
-        this.matSnackBar.open('Evolución actualizada', 'Cerrar', { duration: 5000 });
+        this.toastr.success('Evolución actualizada');
       })
     )
   }
@@ -79,7 +79,7 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
   updateNextSteps(id: number, nextSteps: string): Observable<Event> {
     return this.http.put<Event>(`${this.baseUrl}${id}/next-steps`, { content: nextSteps }).pipe(
       tap(() => {
-        this.matSnackBar.open('Próximos pasos actualizados', 'Cerrar', { duration: 5000 });
+        this.toastr.success('Próximos pasos actualizados');
       })
     )
   }

@@ -6,6 +6,7 @@ using MainService.Core.DTOs.Services;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Data;
+using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
@@ -26,92 +27,61 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
 
     public async Task<List<ServiceDto>> GetAllDtoAsync(ServiceParams param, ClaimsPrincipal user)
     {
-        var query = context.Services
+        return await context.Services
             .AsNoTracking()
-            .ProjectTo<ServiceDto>(mapper.ConfigurationProvider);
-
-        return await query.ToListAsync();
+            .ProjectTo<ServiceDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
     }
 
-    public async Task<Service?> GetByIdAsNoTrackingAsync(int id) =>
-        await context.Services
-            .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id);
+    public async Task<Service?> GetByIdAsNoTrackingAsync(int id)
+    {
+        return await context.Services
+                .ApplyIncludes()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Id == id);
+    }
 
-    public async Task<Service?> GetByIdAsync(int id) =>
-        await context.Services
-            .Include(x => x.DoctorService)
-            .ThenInclude(x => x.Doctor)
-            .SingleOrDefaultAsync(x => x.Id == id);
 
-    public async Task<Service?> GetByNameAsync(string name, ClaimsPrincipal user) =>
-        await context.Services
-            .Include(x => x.DoctorService)
+    public async Task<Service?> GetByIdAsync(int id)
+    {
+        return await context.Services
+            .ApplyIncludes()
+            .SingleOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<Service?> GetByNameAsync(string name, ClaimsPrincipal user)
+    {
+        return await context.Services
+            .ApplyIncludes()
             .Where(x => x.DoctorService.DoctorId == user.GetUserId())
             .SingleOrDefaultAsync(x => x.Name == name);
+    }
 
     public async Task<bool> ExistsByIdAndDoctorIdAsync(int id, int doctorId)
     {
         return await context.Services
-            .Include(x => x.DoctorService)
+            .ApplyIncludes()
             .AnyAsync(x => x.Id == id && x.DoctorService.DoctorId == doctorId);
     }
 
-    public async Task<ServiceDto?> GetDtoByIdAsync(int id) =>
-        await context.Services
+    public async Task<ServiceDto?> GetDtoByIdAsync(int id)
+    {
+        return await context.Services
+            .ApplyIncludes()
             .AsNoTracking()
             .ProjectTo<ServiceDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
+    }
 
     public async Task<PagedList<ServiceDto>> GetPagedListAsync(ServiceParams param, ClaimsPrincipal user)
     {
-        var query = context.Services
-            .Include(x => x.DoctorService)
-            .AsQueryable();
+        var query = context.Services.AsQueryable();
 
-        var userId = user.GetUserId();
-        query = query.Where(x => x.DoctorService.DoctorId == userId);
-
-        if (!string.IsNullOrEmpty(param.Search))
-        {
-            var term = param.Search.ToLower();
-            query = query.Where(x =>
-                (!string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(term)) ||
-                (!string.IsNullOrEmpty(x.Description) && x.Description.ToLower().Contains(term)) ||
-                (x.Price != null && x.Price.ToString().ToLower().Contains(term)) ||
-                (x.Discount != null && x.Discount.ToString().ToLower().Contains(term))
-            );
-        }
-
-        if (!string.IsNullOrEmpty(param.Sort))
-        {
-            query = param.Sort.ToLower() switch
-            {
-                "id" => param.IsSortAscending.GetValueOrDefault()
-                    ? query.OrderBy(x => x.Id)
-                    : query.OrderByDescending(x => x.Id),
-                "name" => param.IsSortAscending.GetValueOrDefault()
-                    ? query.OrderBy(x => x.Name)
-                    : query.OrderByDescending(x => x.Name),
-                "description" => param.IsSortAscending.GetValueOrDefault()
-                    ? query.OrderBy(x => x.Description)
-                    : query.OrderByDescending(x => x.Description),
-                "price" => param.IsSortAscending.GetValueOrDefault()
-                    ? query.OrderBy(x => x.Price)
-                    : query.OrderByDescending(x => x.Price),
-                "discount" => param.IsSortAscending.GetValueOrDefault()
-                    ? query.OrderBy(x => x.Discount)
-                    : query.OrderByDescending(x => x.Discount),
-                "createdat" => param.IsSortAscending.GetValueOrDefault()
-                    ? query.OrderBy(x => x.CreatedAt)
-                    : query.OrderByDescending(x => x.CreatedAt),
-                _ => query.OrderByDescending(x => x.CreatedAt),
-            };
-        }
-        else
-        {
-            query = query.OrderByDescending(x => x.CreatedAt);
-        }
+        // Apply the query extensions
+        query = query.ApplyIncludes();
+        query = query.ApplyAccessControl(param, user);
+        query = query.ApplyFiltering(param);
+        query = query.ApplySorting(param);
 
         return await PagedList<ServiceDto>.CreateAsync(
             query.AsNoTracking().ProjectTo<ServiceDto>(mapper.ConfigurationProvider),
@@ -126,13 +96,8 @@ public class ServiceRepository(DataContext context, IMapper mapper) : IServiceRe
     public async Task<List<OptionDto>> GetOptionsAsync(ServiceParams param)
     {
         var query = context.Services
-            .Include(x => x.DoctorService)
-            .AsQueryable();
-
-        if (param.DoctorId.HasValue)
-        {
-            query = query.Where(x => x.DoctorService.DoctorId == param.DoctorId.Value);
-        }
+            .ApplyIncludes()
+            .ApplyOptionsFilter(param);
 
         return await query
             .AsNoTracking()

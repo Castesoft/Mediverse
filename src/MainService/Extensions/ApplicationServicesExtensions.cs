@@ -71,10 +71,12 @@ public static class ApplicationServicesExtensions
         services.AddScoped<INotificationsService, NotificationsService>();
         
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, PrescriptionAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, EventAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, ClinicAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, OrderAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, ProductAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, ServiceAuthorizationHandler>();
 
         services.AddSignalR();
         

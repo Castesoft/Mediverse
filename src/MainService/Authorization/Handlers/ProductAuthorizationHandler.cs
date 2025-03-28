@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using MainService.Core.Interfaces.Services;
 using MainService.Models.Entities;
 using MainService.Authorization.Operations;
 using MainService.Core.Extensions;
@@ -8,95 +7,105 @@ using MainService.Core.Extensions;
 namespace MainService.Authorization.Handlers
 {
     /// <summary>
-    /// Handles authorization requirements for specific Product resources based on user relationship.
+    /// Handles authorization requirements for Product resources based on user roles and ownership.
+    /// - Admins: Full access.
+    /// - Doctors: Can only read products they own (DoctorProduct.DoctorId == userId) or global products (DoctorProduct is null)
+    /// - Other Users: Can read all products.
+    /// - Doctors: Can create products.
+    /// - Doctors: Can modify (Update, Delete, ManagePhotos, ManageWarehouses) ONLY products where DoctorProduct is not null and DoctorProduct.DoctorId matches their UserId.
+    /// - Products with null DoctorProduct can only be modified by Admins.
     /// </summary>
-    public class ProductAuthorizationHandler(IUnitOfWork uow, ILogger<ProductAuthorizationHandler> logger)
-        : AuthorizationHandler<OperationAuthorizationRequirement, Product>
+    public class ProductAuthorizationHandler(ILogger<ProductAuthorizationHandler> logger) : AuthorizationHandler<OperationAuthorizationRequirement, Product>
     {
-        protected override async Task HandleRequirementAsync(
-            AuthorizationHandlerContext context,
-            OperationAuthorizationRequirement requirement,
-            Product resource)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, Product resource)
         {
+            // Basic authentication checks
             if (context.User == null || !context.User.Identity.IsAuthenticated)
             {
-                logger.LogWarning("Authorization failed: User is not authenticated.");
                 context.Fail();
-                return;
+                return Task.CompletedTask;
             }
 
             var userId = context.User.GetUserId();
             if (userId <= 0)
             {
-                logger.LogWarning("Authorization failed: User ID not found or invalid in claims.");
                 context.Fail();
-                return;
+                return Task.CompletedTask;
             }
 
-            logger.LogDebug("Evaluating requirement {RequirementName} for User {UserId} on Product {ProductId}", requirement.Name, userId, resource.Id);
+            logger.LogDebug("Evaluating {RequirementName} for User:{UserId} on Product:{ProductId}",
+                requirement.Name, userId, resource.Id);
 
-            var isAuthorized = false;
-
-            // Admin has full access to all products
+            // Admin bypass
             if (context.User.IsInRole("Admin"))
             {
-                logger.LogInformation("Admin authorization granted for User {UserId} on Product {ProductId}", userId, resource.Id);
+                logger.LogInformation("ADMIN User:{UserId} granted {RequirementName} on Product:{ProductId}",
+                    userId, requirement.Name, resource.Id);
                 context.Succeed(requirement);
-                return;
+                return Task.CompletedTask;
             }
 
+            // Role/Ownership based logic
             switch (requirement.Name)
             {
                 case nameof(ProductOperations.Read):
-                    // Anyone can read products that are visible
-                    if (resource.DoctorProduct == null)
+                    if (context.User.IsInRole("Doctor"))
                     {
-                        logger.LogWarning("doctorproduct is null");
-                        isAuthorized = true;
+                        if (resource.DoctorProduct == null || resource.DoctorProduct.DoctorId == userId)
+                        {
+                            logger.LogInformation("Doctor:{UserId} granted Read access to Product:{ProductId} - {Reason}", userId, resource.Id, resource.DoctorProduct == null ? "Global Product" : "Owner Match");
+                            context.Succeed(requirement);
+                        }
+                        else
+                        {
+                            logger.LogWarning("Read access DENIED for Doctor:{UserId} on Product:{ProductId} - Owned by Doctor:{OwnerId}", userId, resource.Id, resource.DoctorProduct.DoctorId);
+                        }
                     }
                     else
                     {
-                        // Doctors can see their own products even if not visible
-                        isAuthorized = context.User.IsInRole("Doctor") && resource.DoctorProduct.DoctorId == userId;
+                        context.Succeed(requirement);
                     }
                     break;
 
                 case nameof(ProductOperations.Create):
-                    // Only doctors can create products
-                    isAuthorized = context.User.IsInRole("Doctor");
+                    if (context.User.IsInRole("Doctor"))
+                    {
+                        context.Succeed(requirement);
+                    }
                     break;
 
                 case nameof(ProductOperations.Update):
                 case nameof(ProductOperations.ManagePhotos):
-                    // Doctors can update their own products
-                    isAuthorized = context.User.IsInRole("Doctor") && resource.DoctorProduct.DoctorId == userId;
-                    break;
-
                 case nameof(ProductOperations.Delete):
-                    // Only doctors can delete their own products
-                    isAuthorized = context.User.IsInRole("Doctor") && resource.DoctorProduct.DoctorId == userId;
-                    break;
-
                 case nameof(ProductOperations.ManageWarehouses):
-                    // Only doctors with warehouse management permissions can manage warehouses
-                    isAuthorized = context.User.IsInRole("Doctor") && resource.DoctorProduct.DoctorId == userId;
+                    if (context.User.IsInRole("Doctor"))
+                    {
+                        if (resource.DoctorProduct != null && resource.DoctorProduct.DoctorId == userId)
+                        {
+                            context.Succeed(requirement);
+                        }
+                        else
+                        {
+                            var reason = resource.DoctorProduct == null
+                                ? "Product has no Doctor association"
+                                : $"Doctor does not own product (Owner: {resource.DoctorProduct.DoctorId})";
+
+                            logger.LogWarning("Authorization FAILED for Doctor:{UserId} on Product:{ProductId} ({RequirementName}). Reason: {Reason}", userId, resource.Id, requirement.Name, reason);
+                        }
+                    }
                     break;
 
                 default:
-                    logger.LogWarning("Authorization requirement {RequirementName} is not handled by ProductAuthorizationHandler for Product {ProductId}.", requirement.Name, resource.Id);
-                    isAuthorized = false;
+                    logger.LogWarning("Unhandled requirement: {RequirementName} for Product:{ProductId}", requirement.Name, resource.Id);
                     break;
             }
 
-            if (isAuthorized)
+            if (!context.HasSucceeded)
             {
-                logger.LogInformation("Authorization SUCCEEDED for User {UserId} requirement {RequirementName} on Product {ProductId}", userId, requirement.Name, resource.Id);
-                context.Succeed(requirement);
+                logger.LogWarning("Authorization FAILED for User:{UserId} on Product:{ProductId} ({RequirementName})", userId, resource.Id, requirement.Name);
             }
-            else
-            {
-                logger.LogDebug("Authorization final result: FAILED for User {UserId} requirement {RequirementName} on Product {ProductId}", userId, requirement.Name, resource.Id);
-            }
+
+            return Task.CompletedTask;
         }
     }
 }

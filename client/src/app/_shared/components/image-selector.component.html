@@ -4,7 +4,7 @@
      (drop)="onDrop($event)"
      [class.dropzone-active]="isDragging">
   <div class="dropzone dz-clickable"
-       [class.d-none]="hasRealImages()"
+       [class.d-none]="!editable() || hasRealImages()"
        (click)="fileInput.click()">
     <div class="dz-message needsclick">
       <i class="ki-duotone ki-file-up text-primary fs-3x">
@@ -19,6 +19,21 @@
           Máximo {{ maxFiles() }} imágenes ({{ maxFileSizeMB() }}MB cada una)
           Formatos aceptados: {{ allowedTypes() }}
         </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-100 bg-gray-200 h-100 rounded border border-gray-300" [class.d-none]="editable() || hasRealImages()">
+    <div
+      class="d-flex flex-column gap-1 w-100 h-100 justify-content-center align-items-center py-10 text-gray-300">
+      <div>
+        <i class="ki-duotone ki-picture fs-4x">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </div>
+      <div class="text-gray-500 fs-5 text-center">
+        No hay imágenes disponibles.
       </div>
     </div>
   </div>

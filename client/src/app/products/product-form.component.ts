@@ -61,6 +61,7 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
   availableWarehouses: any[] = [];
   selectedWarehouseIds: number[] = [];
   warehousesChanged: boolean = false;
+  isSubmitting: boolean = false;
 
   constructor() {
     super(ProductsService, ProductForm);
@@ -156,9 +157,18 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
     });
   }
 
+  onEdit(): void {
+    this.router.navigate([ `inicio/productos/${this.item()?.id}/editar` ]).catch(console.error);
+  }
+
   override async onSubmit(): Promise<void> {
+    this.isSubmitting = true;
+
     const authorized: boolean = await firstValueFrom(this.confirmService.confirm(confirmActionModal));
-    if (!authorized) return;
+    if (!authorized) {
+      this.isSubmitting = false;
+      return;
+    }
 
     const formData = new FormData();
     formData.append('mainImageIndex', this.imageHandler.getMainImageIndex().toString());
@@ -190,10 +200,13 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
     observable.subscribe({
       next: (product) => {
         console.log(isNew ? 'Created:' : 'Updated:', product);
+        this.isSubmitting = false;
         this.toastr.success(`Producto ${isNew ? 'creado' : 'actualizado'} exitosamente`);
+        this.router.navigate([ `inicio/productos/${product.id}` ]).catch(console.error);
       },
       error: (err) => {
         console.error(`Error ${isNew ? 'creating' : 'updating'} product:`, err);
+        this.isSubmitting = false;
         this.toastr.error(`Error ${isNew ? 'creando' : 'actualizando'} el producto`);
       }
     });
