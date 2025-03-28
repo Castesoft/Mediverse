@@ -1,9 +1,4 @@
-import {
-  Column,
-  columnCreatedAt,
-  columnDescription,
-  columnName
-} from "src/app/_models/base/column";
+import { Column, columnCreatedAt, columnDescription, columnName } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -22,14 +17,28 @@ import {
   tableCellName,
   tableCellVisible
 } from "src/app/_models/tables/tableCellItem";
+import { Validators } from "@angular/forms";
 
 
 export const serviceFormInfo: FormInfo<Service> = {
   ...baseInfo,
-  discount: { label: 'Descuento', type: 'number' },
+  name: {
+    label: 'Nombre',
+    type: 'text',
+    validators: [ Validators.required, Validators.minLength(3), Validators.maxLength(100) ]
+  },
+  description: {
+    label: 'Descripción',
+    type: 'text',
+    validators: [ Validators.required, Validators.minLength(3), Validators.maxLength(500) ]
+  },
+  discount: { label: 'Descuento', type: 'number', validators: [ Validators.min(0), Validators.max(1) ] },
   photoUrl: { label: 'URL de foto', type: 'text' },
-  price: { label: 'Precio', type: 'number' },
-
+  price: {
+    label: 'Precio',
+    type: 'number',
+    validators: [ Validators.required, Validators.min(1), Validators.max(1000000) ]
+  },
   select: { label: 'Servicio', type: 'select' },
 } as FormInfo<Service>;
 

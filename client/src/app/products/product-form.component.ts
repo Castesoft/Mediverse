@@ -61,7 +61,6 @@ export class ProductFormComponent extends BaseForm<Product, ProductParams, Produ
   availableWarehouses: any[] = [];
   selectedWarehouseIds: number[] = [];
   warehousesChanged: boolean = false;
-  isSubmitting: boolean = false;
 
   constructor() {
     super(ProductsService, ProductForm);

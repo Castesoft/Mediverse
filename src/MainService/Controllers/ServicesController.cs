@@ -14,18 +14,19 @@ using MainService.Models.Entities.Aggregate;
 using MainService.Authorization.Operations;
 
 namespace MainService.Controllers;
+
 [Authorize]
 public class ServicesController(
-    IUnitOfWork uow, 
-    IServicesService service, 
-    UserManager<AppUser> userManager, 
+    IUnitOfWork uow,
+    IServicesService service,
+    UserManager<AppUser> userManager,
     IMapper mapper,
     IAuthorizationService authorizationService) : BaseApiController
 {
     private static readonly string subject = "servicio";
     private static readonly string subjectArticle = "El";
 
-        
+
     [HttpGet]
     public async Task<ActionResult<PagedList<ServiceDto>>> GetPagedListAsync([FromQuery] ServiceParams param)
     {
@@ -38,9 +39,10 @@ public class ServicesController(
     }
 
     [HttpGet("options")]
-    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] ServiceParams param) {
+    public async Task<ActionResult<List<OptionDto>>> GetOptionDtosAsync([FromQuery] ServiceParams param)
+    {
         param.DoctorId = User.GetUserId();
-        
+
         return await uow.ServiceRepository.GetOptionsAsync(param);
     }
 
@@ -49,12 +51,12 @@ public class ServicesController(
     public async Task<ActionResult<List<ServiceDto>>> GetAllAsync([FromQuery] ServiceParams param)
     {
         var data = await uow.ServiceRepository.GetAllDtoAsync(param, User);
-        
+
         return data;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ServiceDto?>> GetByIdAsync([FromRoute]int id)
+    public async Task<ActionResult<ServiceDto?>> GetByIdAsync([FromRoute] int id)
     {
         var item = await uow.ServiceRepository.GetByIdAsync(id);
 
@@ -86,8 +88,8 @@ public class ServicesController(
     }
 
     [HttpDelete("range/{ids}")]
-    public async Task<ActionResult> DeleteRangeAsync([FromRoute]string ids)
-    {   
+    public async Task<ActionResult> DeleteRangeAsync([FromRoute] string ids)
+    {
         var selectedIds = ids.Split(',').Select(int.Parse).ToList();
 
         foreach (var item in selectedIds)
@@ -103,7 +105,7 @@ public class ServicesController(
 
             if (!deleteResult) return BadRequest($"Error al eliminar {subject} de {itemToDelete.Name}.");
         }
-        
+
         return Ok();
     }
 
@@ -113,21 +115,31 @@ public class ServicesController(
         var authResult = await authorizationService.AuthorizeAsync(User, new Service(), ServiceOperations.Create);
         if (!authResult.Succeeded) return Forbid();
 
-        Service? itemExists = await uow.ServiceRepository.GetByNameAsync(request.Name, User);
+        var itemExists = await uow.ServiceRepository.GetByNameAsync(request.Name, User);
 
-        if (itemExists != null) return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
+        if (itemExists != null)
+            return BadRequest($"{subjectArticle} {subject} de nombre '{request.Name}' ya existe para los servicios que ofreces.");
 
-        AppUser? doctor = await userManager.Users
-            .Include(x => x.DoctorServices)
+        var doctor = await userManager.Users
+                .Include(x => x.DoctorServices)
                 .ThenInclude(x => x.Service)
-            .SingleOrDefaultAsync(x => x.Id == User.GetUserId())
-        ;
+                .SingleOrDefaultAsync(x => x.Id == User.GetUserId());
 
         if (doctor == null) return BadRequest("No se encontró el doctor.");
 
-        var item = mapper.Map<Service>(request);
+        var item = new Service
+        {
+            Name = request.Name,
+            Description = request.Description,
+            Price = request.Price,
+        };
 
-        doctor.DoctorServices.Add(new(item));
+        if (request.Discount.HasValue)
+        {
+            item.Discount = request.Discount.Value;
+        }
+        
+        doctor.DoctorServices.Add(new DoctorService(item));
 
         await userManager.UpdateAsync(doctor);
 

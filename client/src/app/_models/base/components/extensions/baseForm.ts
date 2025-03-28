@@ -75,6 +75,11 @@ export default class BaseForm<
   form: W;
 
   /**
+   * Indicates whether the form is currently being submitted.
+   */
+  isSubmitting: boolean = false;
+
+  /**
    * Constructs a new instance of BaseForm.
    *
    * @param serviceToken - The service token for the service helper.
@@ -115,30 +120,39 @@ export default class BaseForm<
    * @param options - Additional options for the submission.
    */
   create(view: ModelSignal<View>, use: ModelSignal<FormUse>, options?: Partial<SubmitOptions>) {
+    this.isSubmitting = true;
+
     const id: number | null = this.form.controls.id.getRawValue();
 
     if (id !== null && options !== undefined && options.id === undefined) {
       options = { ...options, id: id };
     }
 
-    if (this.form.submittable) {
-      this.service.create(this.form, options).subscribe({
-        next: response => {
-          this.form.onSuccess(response);
-
-          const _use: FormUse | undefined = options?.use;
-
-          if (_use !== undefined) {
-            this.form.use = _use;
-            use.set(_use);
-          } else {
-            this.form.use = FormUse.DETAIL;
-            use.set(FormUse.DETAIL);
-          }
-        },
-        error: (error: BadRequest) => this.form.error = error
-      })
+    if (!this.form.submittable) {
+      this.isSubmitting = false;
+      return;
     }
+
+    this.service.create(this.form, options).subscribe({
+      next: response => {
+        this.form.onSuccess(response);
+        const _use: FormUse | undefined = options?.use;
+
+        if (_use !== undefined) {
+          this.form.use = _use;
+          use.set(_use);
+        } else {
+          this.form.use = FormUse.DETAIL;
+          use.set(FormUse.DETAIL);
+        }
+
+        this.isSubmitting = false;
+      },
+      error: (error: BadRequest) => {
+        this.isSubmitting = false;
+        this.form.error = error
+      }
+    })
   }
 
   /**
@@ -149,6 +163,8 @@ export default class BaseForm<
    * @param options - Additional options for the submission.
    */
   update(view: ModelSignal<View>, use: ModelSignal<FormUse>, options?: Partial<SubmitOptions>) {
+    this.isSubmitting = true;
+
     const id: number | null = this.form.controls.id.getRawValue();
 
     if (id !== null && options?.id === undefined) {
@@ -171,8 +187,12 @@ export default class BaseForm<
             this.form.use = FormUse.DETAIL;
             use.set(FormUse.DETAIL);
           }
+          this.isSubmitting = false;
         },
-        error: (error: BadRequest) => this.form.error = error
+        error: (error: BadRequest) => {
+          this.form.error = error
+          this.isSubmitting = false;
+        }
       })
     }
   }

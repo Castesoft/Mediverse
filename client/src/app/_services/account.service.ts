@@ -23,6 +23,9 @@ import { ToastrService } from "ngx-toastr";
 import { MedicalLicense } from 'src/app/_models/medicalLicenses/medicalLicense';
 import { MedicalLicenseModalComponent } from 'src/app/account/modals/medical-license-modal.component';
 import { StripeOnboardingResponse } from "src/app/_models/account/stripe-onboarding-response.model";
+import {
+  StripeOnboardingVerificationResponse
+} from "src/app/_models/account/stripe-onboarding-verification-response.model";
 
 
 @Injectable({
@@ -83,6 +86,10 @@ export class AccountService {
 
   getStripeOnboardingLink(id: number): Observable<StripeOnboardingResponse> {
     return this.http.get<StripeOnboardingResponse>(`${this.baseUrl}connect-onboarding-link/${id}`);
+  }
+
+  verifyAndUpdateStripeOnboardingStatus(id: number): Observable<StripeOnboardingVerificationResponse> {
+    return this.http.get<StripeOnboardingVerificationResponse>(`${this.baseUrl}verify-onboarding/${id}`);
   }
 
   refreshActiveSubscriptionStatus(): void {

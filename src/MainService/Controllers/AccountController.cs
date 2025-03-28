@@ -280,6 +280,32 @@ public class AccountController(
         return Ok(new { url });
     }
 
+    [HttpGet("verify-onboarding/{id:int}")]
+    public async Task<IActionResult> GetVerifyOnboardingLinkAsync(int id)
+    {
+        var user = await uow.UserRepository.GetByIdAsync(id);
+        if (user == null)
+        {
+            return NotFound($"El usuario con id {id} no existe.");
+        }
+
+        if (string.IsNullOrEmpty(user.StripeConnectAccountId))
+        {
+            return BadRequest("El usuario no tiene una cuenta de Stripe Connect.");
+        }
+
+        var isOnboarded = await stripeService.VerifyConnectAccountOnboardingStatusAsync(user.StripeConnectAccountId);
+
+        if (isOnboarded && !user.IsStripeConnectAccountOnboarded)
+        {
+            user.IsStripeConnectAccountOnboarded = true;
+            uow.UserRepository.Update(user);
+            await uow.Complete();
+            Log.Information("Updated onboarding status for user {UserId} to {IsOnboarded}", id, isOnboarded);
+        }
+
+        return Ok(new { isOnboarded });
+    }
 
     [HttpPost("register-doctor")]
     public async Task<ActionResult<AccountDto?>> RegisterDoctorAsync([FromForm] IFormFile file,

@@ -1,14 +1,18 @@
 using MainService.Core.Interfaces.Services;
-using Microsoft.Extensions.Configuration;
+using MainService.Core.Settings;
+using Microsoft.Extensions.Options;
+using Serilog;
 using Stripe;
 
 namespace MainService.Infrastructure.Services
 {
-    public class StripeService(IConfiguration config) : IStripeService
+    public class StripeService(IOptions<StripeSettings> stripeSettings) : IStripeService
     {
+        private readonly StripeSettings _stripeSettings = stripeSettings.Value;
+
         public async Task<bool> AddPaymentMethodAsync(string customerId, string paymentMethodId, bool isMain)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             var service = new PaymentMethodService();
             var options = new PaymentMethodAttachOptions { Customer = customerId };
@@ -33,13 +37,13 @@ namespace MainService.Infrastructure.Services
         public async Task<(string SubscriptionId, DateTime NextBillingDate)> CreateStripeSubscriptionAsync(
             string stripeCustomerId, string priceId)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             var options = new SubscriptionCreateOptions
             {
                 Customer = stripeCustomerId,
-                Items = new List<SubscriptionItemOptions> { new SubscriptionItemOptions { Price = priceId } },
-                Expand = new List<string> { "latest_invoice.payment_intent" }
+                Items = [new SubscriptionItemOptions { Price = priceId }],
+                Expand = ["latest_invoice.payment_intent"]
             };
 
             var service = new SubscriptionService();
@@ -57,7 +61,7 @@ namespace MainService.Infrastructure.Services
 
         public async Task<string> CreateCustomerAsync(string email, string name, string paymentMethodId)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             var customerService = new CustomerService();
             var customer = await customerService.CreateAsync(new CustomerCreateOptions
@@ -77,7 +81,7 @@ namespace MainService.Infrastructure.Services
         public async Task<(Account account, string? accountLinkUrl)> CreateExpressAccountAsync(
             Models.Entities.AppUser user)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             if (string.IsNullOrEmpty(user.Email))
                 throw new ArgumentException("User email is required for account creation.");
@@ -163,7 +167,7 @@ namespace MainService.Infrastructure.Services
 
         public async Task<string?> GetOnboardingLinkAsync(string accountId)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             var accountService = new AccountService();
             Account account;
@@ -182,11 +186,15 @@ namespace MainService.Infrastructure.Services
             }
 
             var accountLinkService = new AccountLinkService();
+            
+            Log.Information("Creating account link for onboarding for account ID: {AccountId}", accountId);
+            Log.Information("StripeSettings {@StripeSettings}", _stripeSettings);
+            
             var accountLinkOptions = new AccountLinkCreateOptions
             {
                 Account = accountId,
-                RefreshUrl = config["StripeSettings:RefreshUrl"],
-                ReturnUrl = config["StripeSettings:ReturnUrl"],
+                RefreshUrl = _stripeSettings.RefreshUrl,
+                ReturnUrl = _stripeSettings.ReturnUrl,
                 Type = "account_onboarding",
             };
 
@@ -204,7 +212,7 @@ namespace MainService.Infrastructure.Services
         public async Task<PaymentIntent?> CreatePaymentIntentAsync(string customerId, string paymentMethodId,
             string doctorStripeAccountId, decimal amountInCents, decimal commissionInCents)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             PaymentIntentCreateOptions options = new()
             {
@@ -227,7 +235,7 @@ namespace MainService.Infrastructure.Services
 
         public async Task<bool> DeletePaymentMethodAsync(string paymentMethodId)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             var service = new PaymentMethodService();
             try
@@ -244,7 +252,7 @@ namespace MainService.Infrastructure.Services
 
         public async Task<bool> SetMainPaymentMethodAsync(string customerId, string paymentMethodId)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
             var customerService = new CustomerService();
             await customerService.UpdateAsync(customerId, new CustomerUpdateOptions
@@ -256,6 +264,29 @@ namespace MainService.Infrastructure.Services
             });
 
             return true;
+        }
+
+        public async Task<bool> VerifyConnectAccountOnboardingStatusAsync(string accountId)
+        {
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+
+            var accountService = new AccountService();
+            try 
+            {
+                Log.Information("Verifying Stripe Connect account status for account ID: {AccountId}", accountId);
+                var account = await accountService.GetAsync(accountId);
+                
+                // Check if the account has transfers capability active, which indicates completed onboarding
+                var isOnboarded = account.Capabilities.Transfers == "active";
+                Log.Information("Account {AccountId} onboarding status: {IsOnboarded}", accountId, isOnboarded);
+                
+                return isOnboarded;
+            }
+            catch (StripeException ex)
+            {
+                Log.Error(ex, "Error verifying Stripe Connect account status for account ID: {AccountId}", accountId);
+                return false;
+            }
         }
     }
 }

@@ -416,6 +416,7 @@ export class ServiceHelper<
    */
   create(form: FormGroup2<T>, options?: Partial<SubmitOptions>): Observable<T> {
     if (!form.valid) {
+      console.error('Form is invalid');
       return EMPTY;
     }
 

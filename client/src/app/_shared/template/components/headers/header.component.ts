@@ -64,6 +64,7 @@ export class HeaderComponent implements OnInit {
     effect(() => {
       this.account = this.accountService.current();
       this.retrieveUserNotifications();
+      this.verifyOnboardingStatus();
     });
   }
 
@@ -88,6 +89,16 @@ export class HeaderComponent implements OnInit {
         this.retrieveUserNotifications();
       }
     });
+  }
+
+  private verifyOnboardingStatus(): void {
+    if (this.account) {
+      this.accountService.verifyAndUpdateStripeOnboardingStatus(this.account.id!).subscribe(({ isOnboarded }) => {
+        if (this.account?.isStripeConnectAccountOnboarded !== isOnboarded) {
+          this.accountService.setCurrentUser({ ...this.account!, isStripeConnectAccountOnboarded: isOnboarded });
+        }
+      })
+    }
   }
 
   private retrieveUserNotifications(): void {

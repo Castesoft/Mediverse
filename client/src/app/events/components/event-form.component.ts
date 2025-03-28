@@ -30,9 +30,10 @@ import { ClinicsService } from 'src/app/clinics/clinics.config';
 import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
 import { NursesService } from 'src/app/nurses/nurses.config';
 import { PatientFormComponent, PatientsService } from 'src/app/patients/patients.config';
-import { ServiceFormComponent, ServicesService } from 'src/app/services/services.config';
+import { ServicesService } from 'src/app/services/services.config';
 import { AccountService } from "src/app/_services/account.service";
 import { EventsService } from "src/app/events/events.service";
+import { ServiceFormComponent } from "src/app/services/service-form.component";
 
 @Component({
   selector: "[eventForm]",
@@ -90,7 +91,6 @@ export class EventFormComponent extends BaseForm<Event, EventParams, EventFilter
   clinicPanelOpen: boolean = false;
 
   selectedIndex: number = 0;
-  isSubmitting: boolean = false;
 
   constructor() {
     super(EventsService, EventForm);

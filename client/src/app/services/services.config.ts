@@ -1,27 +1,24 @@
-import { CommonModule } from "@angular/common";
-import { Component, effect, inject, Injectable, model, ModelSignal } from "@angular/core";
+import { Component, inject, Injectable, model, ModelSignal } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { RouterModule } from "@angular/router";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
-import BaseForm from "src/app/_models/base/components/extensions/baseForm";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { CatalogMode, View } from "src/app/_models/base/types";
-import { DetailInputSignals, FormInputSignals } from "src/app/_models/forms/formComponentInterfaces";
+import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Service } from "src/app/_models/services/service";
 import { serviceColumns, serviceDictionary } from "src/app/_models/services/serviceConstants";
 import { ServiceFiltersForm } from "src/app/_models/services/serviceFiltersForm";
-import { ServiceForm } from "src/app/_models/services/serviceForm";
 import { ServiceParams } from "src/app/_models/services/serviceParams";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { ServicesCatalogComponent } from "src/app/services/components/services-catalog.component";
+import { ServiceFormComponent } from "src/app/services/service-form.component";
 
 @Component({
   selector: 'services-catalog-modal',
@@ -82,42 +79,6 @@ export class ServicesService extends ServiceHelper<Service, ServiceParams, FormG
 }
 
 @Component({
-  selector: "[serviceForm]",
-  templateUrl: './service-form.component.html',
-  standalone: true,
-  imports: [ CommonModule, RouterModule, ControlsModule, Forms2Module, ]
-})
-export class ServiceFormComponent
-  extends BaseForm<
-    Service, ServiceParams, ServiceFiltersForm, ServiceForm, ServicesService
-  >
-  implements FormInputSignals<Service> {
-  item: ModelSignal<Service | null> = model.required();
-  use: ModelSignal<FormUse> = model.required();
-  view: ModelSignal<View> = model.required();
-  key: ModelSignal<string | null> = model.required();
-
-  constructor() {
-    super(ServicesService, ServiceForm);
-
-    effect(() => {
-      this.form
-        .setUse(this.use())
-        .setValidation(this.validation.active())
-      ;
-
-      const value = this.item();
-
-      if (value !== null) {
-        this.form.patchValue(value);
-      }
-    });
-  }
-
-  protected readonly FormUse = FormUse;
-}
-
-@Component({
   selector: 'div[serviceDetail]',
   template: `
     <div serviceForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
@@ -137,7 +98,6 @@ export class ServiceDetailComponent
   constructor() {
     super(ServicesService);
   }
-
 }
 
 @Component({

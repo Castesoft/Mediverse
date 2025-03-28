@@ -1,16 +1,16 @@
 <div class="card">
   <div class="card-body">
-    <form [id]="form.id" (ngSubmit)="onSubmit(view, use)">
+    <form [id]="form.id" (ngSubmit)="handleSubmission()">
       @if (form.error !== null) {
         <div errorsAlert3 [(error)]="form.error"></div>
       }
 
-      <div formBuilder3 [cols]="2" [controls]="[
-        form.controls.name,
-        form.controls.description,
-        form.controls.price,
-        form.controls.discount,
-      ]"></div>
+      <div controlsRow3 [grid]="2">
+        <div controlsWrapper3 [control]="form.controls.name"></div>
+        <div controlsWrapper3 [control]="form.controls.description"></div>
+        <div controlsWrapper3 [control]="form.controls.price"></div>
+        <div controlsWrapper3 [control]="form.controls.discount"></div>
+      </div>
     </form>
   </div>
 </div>
@@ -21,13 +21,13 @@
       <button class="btn btn-light me-5 text-muted">
         Cancelar
       </button>
-      <button type="button" class="btn btn-primary" (click)="onSubmit(view, use)">
-        <span class="indicator-label">
-          Crear servicio
-        </span>
-        <span class="indicator-progress">
-          Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-        </span>
+      <button type="button" class="btn btn-primary" (click)="handleSubmission()" [disabled]="isSubmitting">
+        @if (!isSubmitting) {
+          Crear Servicio
+        } @else {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Creando...
+        }
       </button>
     </div>
   </div>

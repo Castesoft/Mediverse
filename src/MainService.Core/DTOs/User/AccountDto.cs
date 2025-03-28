@@ -28,6 +28,7 @@ public class AccountDto
     public string? Country { get; set; } = "México";
     public string? State { get; set; }
     public string? City { get; set; }
+    public bool? IsStripeConnectAccountOnboarded { get; set; }
     public string? Address { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public DateTime CreatedAt { get; set; }

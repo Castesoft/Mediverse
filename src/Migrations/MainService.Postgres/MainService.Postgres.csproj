@@ -21,6 +21,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>MainService.Postgres</RootNamespace>
+    <UserSecretsId>17a44aa7-b3b6-4210-a2ce-6a0dae702088</UserSecretsId>
   </PropertyGroup>
 
 </Project>

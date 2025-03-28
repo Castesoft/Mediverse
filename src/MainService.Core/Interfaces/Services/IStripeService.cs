@@ -17,4 +17,6 @@ public interface IStripeService
 
     Task<(string SubscriptionId, DateTime NextBillingDate)> CreateStripeSubscriptionAsync(
         string stripeCustomerId, string priceId);
+
+    Task<bool> VerifyConnectAccountOnboardingStatusAsync(string accountId);
 }

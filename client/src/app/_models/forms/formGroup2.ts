@@ -216,15 +216,11 @@ export class FormGroup2<T extends object> extends FormGroup<TypedFormGroup<T>> {
   }
 
   get submittable(): boolean {
-    if (this.validation === false) return true;
-
-    if (
-      this.validation === true &&
-      this.valid
-    )
+    if (!this.validation) {
       return true;
 
-    return false;
+    }
+    return this.validation && this.valid;
   }
 
   setSubmitted() {

@@ -23,6 +23,8 @@ public static class ApplicationServicesExtensions
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.Configure<GoogleSettings>(config.GetSection("GoogleSettings"));
         services.Configure<ClientSettings>(config.GetSection("ClientSettings"));
+        services.Configure<StripeSettings>(config.GetSection("StripeSettings"));
+        
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         // TODO: Add hosted services
