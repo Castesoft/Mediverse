@@ -33,6 +33,7 @@ import {
   AccountOrderDetailComponent
 } from "src/app/account/components/account-order-detail/account-order-detail.component";
 import { OrdersService } from "src/app/orders/orders.config";
+import { nonDoctorGuard } from "src/app/_guards/non-doctor.guard";
 
 export const itemResolver: ResolveFn<Account | null> = () => {
   const service: AccountService = inject(AccountService);
@@ -140,7 +141,8 @@ const routes: Routes = [
         data: {
           breadcrumb: [ 'Cuenta', 'Pedidos' ],
           title: 'Mis Pedidos'
-        }
+        },
+        canActivate: [ nonDoctorGuard ]
       },
       {
         path: 'pedidos/:id',
