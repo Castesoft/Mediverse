@@ -1,5 +1,5 @@
 import { addressFormInfo } from 'src/app/_models/addresses/addressConstants';
-import { Column, columnName } from "src/app/_models/base/column";
+import { Column, columnId, columnName } from "src/app/_models/base/column";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import Clinic from "src/app/_models/clinics/clinic";
@@ -27,6 +27,7 @@ export const clinicDictionary: NamingSubject = new NamingSubject(
 );
 
 export const clinicColumns: Column[] = [
+  columnId,
   new Column('image', 'Imagen', { options: new ColumnOptions({ justify: 'start', }) }),
   columnName,
   new Column('address', 'Dirección'),

@@ -15,7 +15,6 @@ import {
   ClinicalHistoryFormComponent
 } from 'src/app/account/components/account-clinical-history/clinical-history-form/clinical-history-form.component';
 import { EventParams } from "src/app/_models/events/eventParams";
-import { createId } from "@paralleldrive/cuid2";
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
 import { CalendarView } from "src/app/_models/events/eventTypes";
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
@@ -23,12 +22,14 @@ import { Account } from "src/app/_models/account/account";
 import { AccountService } from "src/app/_services/account.service";
 import { ClinicalHistoryVerification } from "src/app/_models/clinicalHistoryVerification";
 import { ClinicalHistoryConsentService } from "src/app/_services/clinical-history-consent.service";
+import { Payment } from "src/app/_models/payments/payment";
+import Event from "src/app/_models/events/event";
 
 
 @Component({
   selector: 'div[patientFullDetail]',
   templateUrl: './patient-full-detail.component.html',
-  styleUrls: ['./patient-full-detail.component.scss'],
+  styleUrls: [ './patient-full-detail.component.scss' ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -41,6 +42,7 @@ import { ClinicalHistoryConsentService } from "src/app/_services/clinical-histor
 })
 export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParams, PatientFiltersForm, PatientsService> implements DetailInputSignals<Patient> {
   protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
+  protected readonly FormUse: typeof FormUse = FormUse;
 
   private readonly consentService: ClinicalHistoryConsentService = inject(ClinicalHistoryConsentService);
   private readonly accountsService: AccountService = inject(AccountService);
@@ -60,7 +62,7 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
 
   eventItem: WritableSignal<null> = signal(null);
   eventView: WritableSignal<View> = signal('inline' as View);
-  eventParams: WritableSignal<EventParams> = signal(new EventParams(createId()));
+  eventParams: WritableSignal<EventParams | null> = signal(null);
   eventUseCard: WritableSignal<boolean> = signal(false);
   eventEmbedded: WritableSignal<boolean> = signal(false);
   eventIsCompact: WritableSignal<boolean> = signal(true);
@@ -72,12 +74,22 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
     super(PatientsService);
 
     effect(() => {
-      this.eventParams.set(new EventParams(this.key(), { patientId: this.item()!.id }));
       console.log('PatientFullDetailComponent', this.item(), this.eventParams());
 
       this.currentAccount = this.accountsService.current();
       this.fetchConsentStatus();
+
+      if (this.eventParams() === null) {
+        this.setInitialParams();
+      }
     });
+  }
+
+  private setInitialParams() {
+    this.eventParams.set(new EventParams(this.key(), {
+      patientId: this.item()!.id,
+      doctorId: this.currentAccount!.id
+    }));
   }
 
   private fetchConsentStatus(): void {
@@ -96,14 +108,17 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
       });
   }
 
-  onSelectTab = (tab: string) => this.activeTab = tab;
+  onSelectTab(tab: string) {
+    this.activeTab = tab;
+  }
 
-  getEarnings = () => this.item()!.doctorPayments?.map(p => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
+  getEarnings() {
+    return this.item()!.doctorPayments?.map((p: Payment) => p.amount).reduce((a, b) => a! + b!, 0) ?? 0
+  }
 
-  getPendingPayments = () => {
-    const total: number = this.item()!.doctorEvents?.map(e => e.service?.price!).reduce((a, b) => a + b, 0) ?? 0;
-    const paid: number = this.item()!.doctorPayments?.map(p => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
+  getPendingPayments() {
+    const total: number = this.item()!.doctorEvents?.map((e: Event) => e.service?.price!).reduce((a, b) => a + b, 0) ?? 0;
+    const paid: number = this.item()!.doctorPayments?.map((p: Payment) => p.amount).reduce((a, b) => a! + b!, 0) ?? 0;
     return total - paid;
   };
-  protected readonly FormUse = FormUse;
 }

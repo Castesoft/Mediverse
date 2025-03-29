@@ -4,7 +4,7 @@ import { FormInfo } from "src/app/_models/forms/formTypes";
 import { Payment } from "src/app/_models/payments/payment";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { PaymentParams } from "src/app/_models/payments/paymentParams";
-import { Column } from "src/app/_models/base/column";
+import { Column, columnId } from "src/app/_models/base/column";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
 import { baseTableCells, PartialCellsOf } from "src/app/_models/tables/tableCellItem";
 
@@ -27,6 +27,7 @@ export const paymentFormInfo: FormInfo<Payment> = {
 } as FormInfo<Payment>;
 
 export const paymentColumns: Column[] = [
+  columnId,
   new Column('date', 'Fecha'),
   new Column('amount', 'Cantidad'),
   new Column('status', 'Estado'),

@@ -1,4 +1,4 @@
-import { Column } from 'src/app/_models/base/column';
+import { Column, columnId } from 'src/app/_models/base/column';
 import { NamingSubject } from 'src/app/_models/base/namingSubject';
 import { FormInfo } from 'src/app/_models/forms/formTypes';
 import { baseInfo } from 'src/app/_models/base/entity';
@@ -16,6 +16,7 @@ export const subscriptionDictionary: NamingSubject = new NamingSubject(
 );
 
 export const subscriptionColumns: Column[] = [
+  columnId,
   new Column('subscriptionPlanName', 'Plan'),
   new Column('subscriptionStartDate', 'Fecha de Inicio'),
   new Column('nextBillingDate', 'Próxima Facturación'),

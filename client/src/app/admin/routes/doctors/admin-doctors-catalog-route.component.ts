@@ -14,8 +14,13 @@ import { SelectOption } from "src/app/_models/base/selectOption";
     <div breadcrumbs></div>
     <div post>
       @if (!isLoading) {
-        <div usersCatalog [(item)]="item" [(isCompact)]="compact.isCompact" [(key)]="key" [(mode)]="mode"
-             [(params)]="params" [(view)]="view"></div>
+        <div usersCatalog
+             [(item)]="item"
+             [(isCompact)]="compact.isCompact"
+             [(key)]="key"
+             [(mode)]="mode"
+             [(params)]="params"
+             [(view)]="view"></div>
       }
     </div>
   `,

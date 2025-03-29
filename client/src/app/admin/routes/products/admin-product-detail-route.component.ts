@@ -44,7 +44,7 @@ export class AdminProductDetailRouteComponent extends BaseRouteDetail<Product> i
 
     effect(() => {
       this.subscribeToParamMap();
-      this.subcribeToRouteData();
+      this.subscribeToRouteData();
       this.setKey();
     });
   }
@@ -62,7 +62,7 @@ export class AdminProductDetailRouteComponent extends BaseRouteDetail<Product> i
     });
   }
 
-  private subcribeToRouteData() {
+  private subscribeToRouteData() {
     this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);

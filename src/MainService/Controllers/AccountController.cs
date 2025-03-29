@@ -291,7 +291,7 @@ public class AccountController(
 
         if (string.IsNullOrEmpty(user.StripeConnectAccountId))
         {
-            return BadRequest("El usuario no tiene una cuenta de Stripe Connect.");
+            return Ok(new { isOnboarded = false });
         }
 
         var isOnboarded = await stripeService.VerifyConnectAccountOnboardingStatusAsync(user.StripeConnectAccountId);

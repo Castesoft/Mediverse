@@ -18,12 +18,20 @@ import { PatientFormComponent, PatientsService } from "src/app/patients/patients
   selector: 'div[patientDetail]',
   template: `
     @if (item() !== null && use() === 'detail') {
-      <div patientFullDetail [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view" [(title)]="title"></div>
+      <div patientFullDetail
+           [(item)]="item"
+           [(key)]="key"
+           [(use)]="use"
+           [(view)]="view"
+           [(title)]="title"></div>
     } @else if (use() === 'edit' || use() === 'create') {
-      <div patientForm [(item)]="item" [(key)]="key" [(use)]="use" [(view)]="view"></div>
+      <div patientForm
+           [(item)]="item"
+           [(key)]="key"
+           [(use)]="use"
+           [(view)]="view"></div>
     }
   `,
-  standalone: true,
   imports: [
     PatientFormComponent,
     ControlsModule,

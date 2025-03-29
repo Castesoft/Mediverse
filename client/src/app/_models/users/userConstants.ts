@@ -31,6 +31,7 @@ export const userDictionary: NamingSubject = new NamingSubject(
 );
 
 export const userColumns: Column[] = [
+  columnId,
   new Column('user', 'Usuario'),
   new Column('role', 'Roles'),
   columnCreatedAt,

@@ -1,4 +1,4 @@
-import { Column, columnCreatedAt } from 'src/app/_models/base/column';
+import { Column, columnCreatedAt, columnId } from 'src/app/_models/base/column';
 import { baseInfo } from 'src/app/_models/base/entity';
 import { baseFilterFormInfo } from 'src/app/_models/base/entityParams';
 import { NamingSubject } from 'src/app/_models/base/namingSubject';
@@ -52,6 +52,7 @@ export const nurseFiltersFormInfo: FormInfo<NurseParams> = {
 } as FormInfo<NurseParams>;
 
 export const nurseColumns: Column[] = [
+  columnId,
   new Column('fullName', 'Nombre'),
   new Column('email', 'Correo electrónico'),
   new Column('phoneNumber', 'Teléfono'),

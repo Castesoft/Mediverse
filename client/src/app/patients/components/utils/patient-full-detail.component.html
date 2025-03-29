@@ -100,19 +100,21 @@
         <div class="card-body">
           @if (activeTab === 'events') {
             @if (item()!.doctorEvents && item()!.doctorEvents!.length > 0) {
-              <div
-                eventsCatalog
-                [(item)]="eventItem"
-                [(view)]="eventView"
-                [(isCompact)]="eventIsCompact"
-                [(params)]="eventParams"
-                [(useCard)]="eventUseCard"
-                [(embedded)]="eventEmbedded"
-                [(key)]="key"
-                [(mode)]="eventMode"
-                [(calendarView)]="eventCalendarView"
-                [(filtersCollapsed)]="eventFiltersCollapsed"
-              ></div>
+              @if (eventParams() !== null) {
+                <div
+                  eventsCatalog
+                  [(item)]="eventItem"
+                  [(view)]="eventView"
+                  [(isCompact)]="eventIsCompact"
+                  [(params)]="$any(eventParams)"
+                  [(useCard)]="eventUseCard"
+                  [(embedded)]="eventEmbedded"
+                  [(key)]="key"
+                  [(mode)]="eventMode"
+                  [(calendarView)]="eventCalendarView"
+                  [(filtersCollapsed)]="eventFiltersCollapsed"
+                ></div>
+              }
               <!-- <div tableWrapper>
                 <table eventsTable [data]="item()!.doctorEvents" [mode]="'view'" [key]="'event-recipe'" [(item)]="eventItem" [(view)]="eventView" [(isCompact)]="eventIsCompact" [(params)]="eventParams"
                   [location]="'user-detail'"

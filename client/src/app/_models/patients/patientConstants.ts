@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { Column, columnCreatedAt } from "src/app/_models/base/column"
+import { Column, columnCreatedAt, columnId } from "src/app/_models/base/column"
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -72,6 +72,7 @@ export const patientFiltersFormInfo: FormInfo<PatientParams> = {
 } as FormInfo<PatientParams>;
 
 export const patientColumns: Column[] = [
+  columnId,
   new Column('fullName', 'Nombre'),
   new Column('age', 'Edad'),
   new Column('sex', 'Sexo'),

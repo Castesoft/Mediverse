@@ -29,7 +29,7 @@ export class AdminWarehouseEditRouteComponent extends BaseRouteDetail<Warehouse>
 
     effect(() => {
       this.subscribeToParamMap();
-      this.subcribeToRouteData();
+      this.subscribeToRouteData();
       this.setKey();
     });
   }
@@ -42,7 +42,7 @@ export class AdminWarehouseEditRouteComponent extends BaseRouteDetail<Warehouse>
     });
   }
 
-  private subcribeToRouteData() {
+  private subscribeToRouteData() {
     this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);

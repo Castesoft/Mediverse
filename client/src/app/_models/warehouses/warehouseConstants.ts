@@ -1,4 +1,4 @@
-import { Column, columnCreatedAt } from "src/app/_models/base/column";
+import { Column, columnCreatedAt, columnId } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -16,6 +16,7 @@ export const warehouseDictionary: NamingSubject = new NamingSubject(
 );
 
 export const warehouseColumns: Column[] = [
+  columnId,
   new Column('name', 'Nombre'),
   new Column('description', 'Descripción'),
   new Column('address', 'Dirección'),

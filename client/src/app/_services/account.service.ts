@@ -99,12 +99,6 @@ export class AccountService {
   setCurrentUser(user: Account) {
     localStorage.setItem('user', JSON.stringify(user));
     this.current.set(user);
-    //
-    // this.getCurrent().subscribe({
-    //   next: response => {
-    //     this.current.set(response);
-    //   }
-    // });
     this.refreshActiveSubscriptionStatus();
   }
 

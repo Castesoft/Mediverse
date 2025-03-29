@@ -1,4 +1,4 @@
-import { Column, columnCreatedAt } from "src/app/_models/base/column";
+import { Column, columnCreatedAt, columnId } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -99,9 +99,10 @@ export const eventDictionary: NamingSubject = new NamingSubject(
 );
 
 export const eventColumns: Column[] = [
+  columnId,
   new Column('date', 'Fecha'),
+  new Column('doctor', 'Doctor', { devModeOnly: true }),
   new Column('patient', 'Paciente'),
-  new Column('doctor', 'Doctor'),
   new Column('service', 'Servicio'),
   new Column('clinic', 'Clínica'),
   new Column('evolution', 'Evolución'),

@@ -9,7 +9,7 @@
       </th>
     }
     @for (column of columns(); track column; let idx = $index; let last = $last; let first = $first) {
-      @if (!column.devModeOnly || (column.devModeOnly && isDev)) {
+      @if (!column.devModeOnly || (column.devModeOnly && dev.isDev())) {
         <th (click)="onClick(column.name)"
             class="dt-orderable-asc dt-orderable-desc"
             [tabIndex]="mode() === 'readonly' ? -1 : 0"

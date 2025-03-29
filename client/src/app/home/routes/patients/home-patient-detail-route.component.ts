@@ -4,6 +4,7 @@ import { Patient } from 'src/app/_models/patients/patient';
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { Navigation, ParamMap } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: 'div[homePatientDetailRoute]',
@@ -22,6 +23,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 })
 export class HomePatientDetailRouteComponent extends BaseRouteDetail<Patient> {
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly titleService: Title = inject(Title);
 
   constructor() {
     super('patients', FormUse.DETAIL);
@@ -30,11 +32,10 @@ export class HomePatientDetailRouteComponent extends BaseRouteDetail<Patient> {
 
     effect(() => {
       this.subscribeToParamMap();
-      this.subcribeToRouteData();
+      this.subscribeToRouteData();
       this.setKey();
     });
   }
-
 
   private subscribeToParamMap() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -44,10 +45,13 @@ export class HomePatientDetailRouteComponent extends BaseRouteDetail<Patient> {
     });
   }
 
-  private subcribeToRouteData() {
+  private subscribeToRouteData() {
     this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);
+        const fullName = `${data['item'].firstName} ${data['item'].lastName}`;
+        this.title.set(fullName);
+        this.titleService.setTitle(`DocHub | ${fullName}`);
       },
     });
   }

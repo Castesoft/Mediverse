@@ -12,6 +12,7 @@ import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
 import { HttpParams } from "@angular/common/http";
 import { transform, transformToHttpParams } from "src/app/_models/base/paramUtils";
 import { EventDetailModalComponent, EventsCatalogModalComponent } from "src/app/events/events.config";
+import { Column } from "src/app/_models/base/column";
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,10 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
       panelClass: [ "window" ]
     });
   };
+
+  protected override updateColumns(columns: Column[]): void {
+    this.columns = columns;
+  }
 
   createRaw(model: any) {
     console.log("posting event with model", model);

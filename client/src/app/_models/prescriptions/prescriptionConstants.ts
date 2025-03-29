@@ -1,5 +1,5 @@
 import { addressFormInfo } from 'src/app/_models/addresses/addressConstants';
-import { Column } from 'src/app/_models/base/column';
+import { Column, columnId } from 'src/app/_models/base/column';
 import { baseInfo } from 'src/app/_models/base/entity';
 import { baseFilterFormInfo } from 'src/app/_models/base/entityParams';
 import { NamingSubject } from 'src/app/_models/base/namingSubject';
@@ -42,7 +42,9 @@ export const prescriptionDictionary: NamingSubject = new NamingSubject(
 );
 
 export const prescriptionColumns: Column[] = [
+  columnId,
   new Column('patient', 'Paciente'),
+  new Column('notes', 'Notas'),
   new Column('date', 'Fecha'),
 ];
 

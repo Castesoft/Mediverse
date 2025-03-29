@@ -89,7 +89,6 @@ import { PrescriptionsService } from "src/app/prescriptions/prescriptions.servic
           path: 'pacientes/:id',
           component: HomePatientDetailRouteComponent,
           resolve: { item: createItemResolver(PatientsService), },
-          title: titleDetailResolver(PatientsService, FormUse.DETAIL, 'fullName'),
           data: { breadcrumb: [ 'Pacientes', 'Ver Paciente' ], title: 'Ver Detalle de Paciente' },
           runGuardsAndResolvers: 'always',
           canActivate: [ doctorGuard ]

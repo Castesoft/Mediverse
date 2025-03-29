@@ -148,10 +148,10 @@ export class ServiceHelper<
   /**
    * Add ID column if development mode is enabled.
    * @param columns
-   * @private
+   * @protected
    */
-  private updateColumns(columns: Column[]): void {
-    this.columns = this.dev.isDev() ? [ columnId, ...columns ] : columns;
+  protected updateColumns(columns: Column[]): void {
+    this.columns = columns;
   }
 
   /**

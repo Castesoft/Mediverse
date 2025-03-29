@@ -1,9 +1,18 @@
 import { CommonModule } from "@angular/common";
-import { Component, ViewEncapsulation, OnInit, inject, model, input, output, effect } from "@angular/core";
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  output,
+  OutputEmitterRef,
+  ViewEncapsulation
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { faSortUp, faSortDown, faSort } from "@fortawesome/free-solid-svg-icons";
-import { createId } from "@paralleldrive/cuid2";
 import { Column } from "src/app/_models/base/column";
 import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
@@ -16,48 +25,45 @@ import { IconsService } from "src/app/_services/icons.service";
 import {
   TableHeaderCheckCellComponent
 } from "src/app/_shared/template/components/tables/table-header-check-cell.component";
-import {
-  TABLE_HEADER_CHECK_CELL_TH_CLASS,
-  TABLE_HEADER_CHECK_CELL_TH_STYLE,
-  TABLE_HEADER_TR_CLASS
-} from "src/app/_shared/template/components/tables/tableConstants";
+import { TABLE_HEADER_TR_CLASS } from "src/app/_shared/template/components/tables/tableConstants";
 
 @Component({
   selector: "thead[tableHeader]",
   templateUrl: "./table-header.component.html",
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [ CommonModule, FontAwesomeModule, FormsModule, TableHeaderCheckCellComponent ]
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    FormsModule,
+    TableHeaderCheckCellComponent
+  ]
 })
-export class TableHeaderComponent implements OnInit {
-  private dev = inject(DevService);
-  icons = inject(IconsService);
+export class TableHeaderComponent {
+  readonly dev: DevService = inject(DevService);
+  readonly icons: IconsService = inject(IconsService);
 
   // Inputs
-  columns = model.required<Column[]>();
-  isCompact = model.required<boolean>();
-  mode = model<CatalogMode>("view");
-  show = input<boolean>(true);
-  disableFirstCellPadding = input<boolean>(false);
+  columns: ModelSignal<Column[]> = model.required();
+  isCompact: ModelSignal<boolean> = model.required();
+  mode: ModelSignal<CatalogMode> = model("view" as CatalogMode);
 
-  params = model<EntityParams<any> | null>(null);
-  dictionary = model<NamingSubject | null>(null);
+  show: InputSignal<boolean> = input(true);
+  disableFirstCellPadding: InputSignal<boolean> = input(false);
 
-  selected = model(false);
+  params: ModelSignal<EntityParams<any> | null> = model(null as EntityParams<any> | null);
+  dictionary: ModelSignal<NamingSubject | null> = model(null as NamingSubject | null);
+
+  selected: ModelSignal<boolean> = model(false);
 
   // Optional inputs
-  sortable = input<boolean>(true);
-  showActions = input<boolean>(true);
+  sortable: InputSignal<boolean> = input(true);
+  showActions: InputSignal<boolean> = input(true);
 
   // Outputs
-  onParamsChange = output<SortOptions>();
-  onSelectAll = output<boolean>();
+  onParamsChange: OutputEmitterRef<SortOptions> = output();
+  onSelectAll: OutputEmitterRef<boolean> = output();
 
-  isDev = false;
-  guid = createId();
-  trClass = TABLE_HEADER_TR_CLASS;
-  tableHeaderCheckCellThStyle = TABLE_HEADER_CHECK_CELL_TH_STYLE;
-  tableHeaderCheckCellThClass = TABLE_HEADER_CHECK_CELL_TH_CLASS;
+  trClass: string = TABLE_HEADER_TR_CLASS;
 
   constructor() {
     effect(() => {
@@ -69,24 +75,6 @@ export class TableHeaderComponent implements OnInit {
         this.dictionary.set(new NamingSubject('masculine', 'entidad', 'entidades', 'Entidades', 'entities'));
       }
     });
-  }
-
-  ngOnInit(): void {
-  }
-
-  selectAllItems(event: boolean) {
-    this.selected.set(event);
-    this.onSelectAll.emit(event);
-  }
-
-  getIcon(columnName: string) {
-    if (this.params() && this.params()!.sort?.name === columnName && this.params()!.isSortAscending) {
-      return faSortUp;
-    } else if (this.params() && this.params()!.sort?.name === columnName && !this.params()!.isSortAscending) {
-      return faSortDown;
-    } else {
-      return faSort;
-    }
   }
 
   onClick(name: string) {

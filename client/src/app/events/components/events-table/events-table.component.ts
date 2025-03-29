@@ -62,12 +62,6 @@ export class EventsTableComponent extends BaseTable<Event, EventParams, EventFil
       if (this.columns.length === 0) {
         this.columns = [ ...this.service.columns ];
       }
-
-      if (this.displayRole() === 'doctor') {
-        this.service.columns = this.columns.filter((column: Column) => column.name !== 'patient');
-      } else {
-        this.service.columns = this.columns.filter((column: Column) => column.name !== 'doctor');
-      }
     });
   }
 }

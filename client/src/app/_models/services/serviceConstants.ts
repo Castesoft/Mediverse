@@ -1,4 +1,4 @@
-import { Column, columnCreatedAt, columnDescription, columnName } from "src/app/_models/base/column";
+import { Column, columnCreatedAt, columnDescription, columnId, columnName } from "src/app/_models/base/column";
 import { baseInfo } from "src/app/_models/base/entity";
 import { baseFilterFormInfo } from "src/app/_models/base/entityParams";
 import { NamingSubject } from "src/app/_models/base/namingSubject";
@@ -67,6 +67,7 @@ export const serviceDictionary: NamingSubject = new NamingSubject(
 );
 
 export const serviceColumns: Column[] = [
+  columnId,
   columnName,
   columnDescription,
   new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', }) }),

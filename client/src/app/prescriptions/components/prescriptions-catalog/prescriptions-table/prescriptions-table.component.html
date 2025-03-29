@@ -59,6 +59,23 @@
         }
       }
 
+      @if (dev.isDev()) {
+        <td
+          class="name align-middle white-space-nowrap px-0 py-0"
+          [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+        >
+          <div class="d-flex align-items-center justify-content-start px-0">
+            <a
+              [routerLink]="[service.dictionary.catalogRoute, item.id]"
+              [href]="[service.dictionary.catalogRoute, item.id]"
+              class="fw-semibold text-primary"
+            >
+              #{{ item.id | number }}
+            </a>
+          </div>
+        </td>
+      }
+
       <td userCell [user]="item.patient" [role]="'Patient'"></td>
 
       <td class="align-middle">{{ item.notes }}</td>

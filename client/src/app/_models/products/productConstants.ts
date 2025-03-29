@@ -1,7 +1,7 @@
 import {
   Column,
   columnCreatedAt,
-  columnEnabled,
+  columnEnabled, columnId,
   columnName,
   columnVisible
 } from "src/app/_models/base/column";
@@ -61,6 +61,7 @@ export const productDictionary: NamingSubject = new NamingSubject(
 );
 
 export const productColumns: Column[] = [
+  columnId,
   new Column('image', 'Imagen', { options: new ColumnOptions({ justify: 'start', }) }),
   columnName,
   new Column('price', 'Precio', { options: new ColumnOptions({ justify: 'end', }) }),
