@@ -1,209 +1,198 @@
-@let _item = item();
+<div breadcrumbs></div>
 
-@if(_item !== null) {
-  <div class="flex-column flex-lg-row-auto w-100 w-xl-350px mb-10">
-    <div class="card mb-5 mb-xl-8">
-      <div class="card-body pt-15">
-        <div class="d-flex flex-center flex-column mb-5">
-            <a [routerLink]="" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">
-              {{ _item.name }}
-            </a>
+<div post>
+  @if (item() !== null) {
+    <div class="d-flex flex-column flex-lg-row">
+      <div class="flex-column flex-lg-row-auto w-100 w-xl-350px mb-10">
+        <div class="card mb-5 mb-xl-8">
+          <div class="card-body pt-15">
+            <div class="d-flex flex-center flex-column mb-5">
+              <a [routerLink]="" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">
+                {{ item()!.name }}
+              </a>
 
-            <div class="fs-5 fw-semibold text-muted mb-6">
-              {{ _item.description }}
+              <div class="fs-5 fw-semibold text-muted mb-6">
+                {{ item()!.description }}
+              </div>
             </div>
 
-            <!-- <div class="d-flex flex-wrap flex-center">
-                <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
-                    <div class="fs-4 fw-bold text-gray-700">
-                        <span class="w-75px">6,900</span>
-                        <i class="ki-duotone ki-arrow-up fs-3 text-success"><span class="path1"></span><span class="path2"></span></i>                    </div>
-                    <div class="fw-semibold text-muted">Earnings</div>
-                </div>
-
-                <div class="border border-gray-300 border-dashed rounded py-3 px-3 mx-4 mb-3">
-                    <div class="fs-4 fw-bold text-gray-700">
-                        <span class="w-50px">130</span>
-                        <i class="ki-duotone ki-arrow-down fs-3 text-danger"><span class="path1"></span><span class="path2"></span></i>                    </div>
-                    <div class="fw-semibold text-muted">Tasks</div>
-                </div>
-
-                <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
-                    <div class="fs-4 fw-bold text-gray-700">
-                        <span class="w-50px">500</span>
-                        <i class="ki-duotone ki-arrow-up fs-3 text-success"><span class="path1"></span><span class="path2"></span></i>                    </div>
-                    <div class="fw-semibold text-muted">Hours</div>
-                </div>
-            </div> -->
-        </div>
-
-        <div class="d-flex flex-stack fs-4 py-3">
-            <div class="fw-bold rotate collapsible active" (click)="accordionItem.toggle()" [attr.aria-expanded]="accordionItem.expanded" role="button" aria-controls="kt_customer_view_details">
+            <div class="d-flex flex-stack fs-4 py-3">
+              <div class="fw-bold rotate collapsible active" (click)="accordionItem.toggle()"
+                   [attr.aria-expanded]="accordionItem.expanded" role="button" aria-controls="kt_customer_view_details">
                 Details
                 <span class="ms-2 rotate-180">
-                    <i class="ki-duotone ki-down fs-3"></i></span>
-            </div>
+                  <i class="ki-duotone ki-down fs-3"></i></span>
+              </div>
 
-            <span>
+              <span>
                 <a [routerLink]="[]" class="btn btn-sm btn-light-primary">
-                    Editar
+                  Editar
                 </a>
-            </span>
-        </div>
-
-        <div class="separator separator-dashed my-3"></div>
-
-        <cdk-accordion>
-            <cdk-accordion-item class="py-5 fs-6" #accordionItem="cdkAccordionItem" [style.display]="accordionItem.expanded ? '' : 'none'">
-                    <div class="fw-bold mt-5">Precio</div>
-                    <div class="text-gray-600">{{ _item.fullName }}</div>
-                    <div class="fw-bold mt-5">Descuento</div>
-                    <div class="text-gray-600">{{ _item.fullName }}</div>
-                </cdk-accordion-item>
-        </cdk-accordion>
-    </div>
-    </div>
-  </div>
-  <div class="flex-lg-row-fluid ms-lg-15">
-    <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8" role="tablist">
-      <li class="nav-item" role="presentation">
-        <a [routerLink]="[]" [routerLinkActive]="'active'" [queryParams]="{ tab: 'general' }"
-          [queryParamsHandling]="'merge'" class="nav-link text-active-primary pb-4" role="tab" (click)="tab.set('general')">
-          General
-        </a>
-      </li>
-      <li class="nav-item" role="presentation">
-        <a [routerLink]="[]" [routerLinkActive]="'active'" [queryParams]="{ tab: 'citas' }"
-          [queryParamsHandling]="'merge'" class="nav-link text-active-primary pb-4" role="tab" (click)="tab.set('citas')">
-          Citas
-        </a>
-      </li>
-      <li class="nav-item" role="presentation">
-        <a [routerLink]="[]" [routerLinkActive]="'active'" [queryParams]="{ tab: 'clinicas' }"
-          [queryParamsHandling]="'merge'" class="nav-link text-active-primary pb-4" role="tab" (click)="tab.set('clinicas')">
-          Clinicas
-        </a>
-      </li>
-
-      <li class="nav-item ms-auto">
-        <button class="btn btn-primary ps-7" [cdkMenuTriggerFor]="actions">
-          Opciones
-          <i class="ki-duotone ki-down fs-2 me-0"></i>
-        </button>
-        <ng-template #actions>
-          <div cdkMenu
-          class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold py-4 w-250px fs-6"
-            style="display: block;">
-          <div class="menu-item px-5">
-            <div class="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
-              Pagos
+              </span>
             </div>
-          </div>
 
-          <div class="menu-item px-5" cdkMenuItem>
-            <a [routerLink]="[]" [queryParamsHandling]="'merge'" class="menu-link px-5">
-              Crear pago
+            <div class="separator separator-dashed my-3"></div>
+
+            <cdk-accordion>
+              <cdk-accordion-item class="py-5 fs-6" #accordionItem="cdkAccordionItem"
+                                  [style.display]="accordionItem.expanded ? '' : 'none'">
+                <div class="fw-bold mt-5">Precio</div>
+                <div class="text-gray-600">{{ item()!.fullName }}</div>
+                <div class="fw-bold mt-5">Descuento</div>
+                <div class="text-gray-600">{{ item()!.fullName }}</div>
+              </cdk-accordion-item>
+            </cdk-accordion>
+          </div>
+        </div>
+      </div>
+      <div class="flex-lg-row-fluid ms-lg-15">
+        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8"
+            role="tablist">
+          <li class="nav-item" role="presentation">
+            <a [routerLink]="[]" [routerLinkActive]="'active'" [queryParams]="{ tab: 'general' }"
+               [queryParamsHandling]="'merge'" class="nav-link text-active-primary pb-4" role="tab"
+               (click)="tab.set('general')">
+              General
             </a>
-          </div>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a [routerLink]="[]" [routerLinkActive]="'active'" [queryParams]="{ tab: 'citas' }"
+               [queryParamsHandling]="'merge'" class="nav-link text-active-primary pb-4" role="tab"
+               (click)="tab.set('citas')">
+              Citas
+            </a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a [routerLink]="[]" [routerLinkActive]="'active'" [queryParams]="{ tab: 'clinicas' }"
+               [queryParamsHandling]="'merge'" class="nav-link text-active-primary pb-4" role="tab"
+               (click)="tab.set('clinicas')">
+              Clinicas
+            </a>
+          </li>
 
-          <div class="separator my-3"></div>
+          <li class="nav-item ms-auto">
+            <button class="btn btn-primary ps-7" [cdkMenuTriggerFor]="actions">
+              Opciones
+              <i class="ki-duotone ki-down fs-2 me-0"></i>
+            </button>
+            <ng-template #actions>
+              <div cdkMenu
+                   class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold py-4 w-250px fs-6"
+                   style="display: block;">
+                <div class="menu-item px-5">
+                  <div class="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
+                    Pagos
+                  </div>
+                </div>
 
-          <div class="menu-item px-5">
-            <div class="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
-              Especialista
+                <div class="menu-item px-5" cdkMenuItem>
+                  <a [routerLink]="[]" [queryParamsHandling]="'merge'" class="menu-link px-5">
+                    Crear pago
+                  </a>
+                </div>
+
+                <div class="separator my-3"></div>
+
+                <div class="menu-item px-5">
+                  <div class="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">
+                    Especialista
+                  </div>
+                </div>
+
+                <div class="menu-item px-5" cdkMenuItem>
+                  <a [routerLink]="[]" [queryParamsHandling]="'merge'" class="menu-link text-danger px-5">
+                    Eliminar especialista
+                  </a>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active">
+
+            <div class="card pt-4 mb-6 mb-xl-9">
+
+              @switch (tab()) {
+                @case ('general') {
+
+                  <div class="card-header border-0">
+                    <div class="card-title">
+                      <h2>
+                        General
+                      </h2>
+                    </div>
+                    <div class="card-toolbar">
+                      <button type="button" class="btn btn-sm btn-flex btn-light-primary">
+                        <i class="ki-duotone ki-plus-square fs-3"><span class="path1"></span><span
+                          class="path2"></span><span class="path3"></span></i>
+                        Add payment
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body pt-0 pb-5">
+
+                  </div>
+
+                }
+                @case ('citas') {
+
+                  <div class="card-header border-0">
+                    <div class="card-title">
+                      <h2>
+                        Citas
+                      </h2>
+                    </div>
+                    <div class="card-toolbar">
+                      <button type="button" class="btn btn-sm btn-flex btn-light-primary">
+                        <i class="ki-duotone ki-plus-square fs-3"><span class="path1"></span><span
+                          class="path2"></span><span class="path3"></span></i>
+                        Add payment
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body pt-0 pb-5">
+                    <div
+                      eventsCatalog
+                      [(calendarView)]="eventCalendarView"
+                      [(isCompact)]="compact.isCompact"
+                      [(item)]="eventItem"
+                      [(key)]="eventKey"
+                      [(mode)]="eventMode"
+                      [(params)]="eventParams"
+                      [(view)]="eventView"
+                      [(filtersCollapsed)]="eventFiltersCollapsed"
+                    ></div>
+                  </div>
+
+                }
+                @case ('clinicas') {
+
+                  <div class="card-header border-0">
+                    <div class="card-title">
+                      <h2>
+                        Clínicas
+                      </h2>
+                    </div>
+                    <div class="card-toolbar">
+                      <button type="button" class="btn btn-sm btn-flex btn-light-primary">
+                        <i class="ki-duotone ki-plus-square fs-3"><span class="path1"></span><span
+                          class="path2"></span><span class="path3"></span></i>
+                        Add payment
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body pt-0 pb-5">
+
+                  </div>
+
+                }
+              }
             </div>
-          </div>
 
-          <div class="menu-item px-5" cdkMenuItem>
-            <a [routerLink]="[]" [queryParamsHandling]="'merge'" class="menu-link text-danger px-5">
-              Eliminar especialista
-            </a>
           </div>
         </div>
-        </ng-template>
-      </li>
-    </ul>
-    <div class="tab-content">
-      <div class="tab-pane fade show active">
-
-        <div class="card pt-4 mb-6 mb-xl-9">
-
-          @switch(tab()) {
-            @case('general') {
-
-              <div class="card-header border-0">
-                <div class="card-title">
-                  <h2>
-                    General
-                  </h2>
-                </div>
-                <div class="card-toolbar">
-                  <button type="button" class="btn btn-sm btn-flex btn-light-primary">
-                      <i class="ki-duotone ki-plus-square fs-3"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                      Add payment
-                  </button>
-              </div>
-              </div>
-              <div class="card-body pt-0 pb-5">
-
-              </div>
-
-            }
-            @case('citas') {
-
-              <div class="card-header border-0">
-                <div class="card-title">
-                  <h2>
-                    Citas
-                  </h2>
-                </div>
-                <div class="card-toolbar">
-                  <button type="button" class="btn btn-sm btn-flex btn-light-primary">
-                      <i class="ki-duotone ki-plus-square fs-3"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                      Add payment
-                  </button>
-              </div>
-              </div>
-              <div class="card-body pt-0 pb-5">
-                <div
-                  eventsCatalog
-                  [(calendarView)]="eventCalendarView"
-                  [(isCompact)]="compact.isCompact"
-                  [(item)]="eventItem"
-                  [(key)]="eventKey"
-                  [(mode)]="eventMode"
-                  [(params)]="eventParams"
-                  [(view)]="eventView"
-                  [(filtersCollapsed)]="eventFiltersCollapsed"
-                  ></div>
-              </div>
-
-            }
-            @case('clinicas') {
-
-              <div class="card-header border-0">
-                <div class="card-title">
-                  <h2>
-                    Clínicas
-                  </h2>
-                </div>
-                <div class="card-toolbar">
-                  <button type="button" class="btn btn-sm btn-flex btn-light-primary">
-                      <i class="ki-duotone ki-plus-square fs-3"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                      Add payment
-                  </button>
-              </div>
-              </div>
-              <div class="card-body pt-0 pb-5">
-
-              </div>
-
-            }
-          }
-        </div>
-
       </div>
     </div>
-  </div>
-}
-
+  }
+</div>

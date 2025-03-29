@@ -11,9 +11,6 @@ import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: 'div[homeServiceDetailRoute]',
-  // template: `
-  //   <div serviceDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  // `,
   templateUrl: './home-service-detail-route.component.html',
   standalone: false,
 })
@@ -71,12 +68,6 @@ export class HomeServiceDetailRouteComponent
         if (key) {
           this.key.set(key);
         }
-      }
-
-      switch (this.use()) {
-        case 'detail':
-          this.hostClass = 'd-flex flex-column flex-xl-row';
-          break;
       }
 
       this.router.navigate([], { queryParams: {

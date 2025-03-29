@@ -123,7 +123,6 @@ import { PrescriptionsService } from "src/app/prescriptions/prescriptions.servic
           path: 'citas/:id',
           component: HomeEventDetailRouteComponent,
           resolve: { item: createItemResolver(EventsService), },
-          title: titleDetailResolver(EventsService, FormUse.DETAIL),
           data: { breadcrumb: [ 'Citas', 'Ver Cita' ], title: 'Ver Detalle de Cita' },
           runGuardsAndResolvers: 'always',
           canActivate: [ doctorGuard ]

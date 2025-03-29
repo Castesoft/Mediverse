@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class PaymentCalculationService {
-  private readonly DEFAULT_TAX_RATE: number = 0.16;
+  private readonly DEFAULT_TAX_RATE: number = 0;
 
   calculateTax(subtotal: number, discount: number = 0, taxRate: number = this.DEFAULT_TAX_RATE): number {
     const effectiveSubtotal: number = Math.max(0, subtotal - discount);

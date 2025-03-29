@@ -12,7 +12,6 @@ import { ClinicsService } from 'src/app/clinics/clinics.config';
 import { NurseParams } from 'src/app/_models/nurses/nurseParams';
 
 @Component({
-  host: { class: '' },
   selector: 'div[homeClinicDetailRoute]',
   templateUrl: './home-clinic-detail-route.component.html',
   standalone: false,
@@ -87,12 +86,6 @@ export class HomeClinicDetailRouteComponent
         if (key) {
           this.key.set(key);
         }
-      }
-
-      switch (this.use()) {
-        case 'detail':
-          this.hostClass = 'd-flex flex-column flex-xl-row';
-          break;
       }
 
       this.router.navigate([], {

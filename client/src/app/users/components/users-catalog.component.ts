@@ -1,5 +1,5 @@
-import { Component, ModelSignal, model, inject, InputSignal, input } from "@angular/core";
-import { View, CatalogMode, } from "src/app/_models/base/types";
+import { Component, inject, model, ModelSignal } from "@angular/core";
+import { CatalogMode, View, } from "src/app/_models/base/types";
 import { User } from "src/app/_models/users/user";
 import { UserParams } from "src/app/_models/users/userParams";
 import { UsersTableComponent } from "src/app/users/components/users-table.component";
@@ -10,14 +10,17 @@ import { ControlsRow3Component } from "src/app/_forms2/builder/controls-row-3.co
 import { ControlsWrapper3Component } from "src/app/_forms2/builder/controls-wrapper-3.component";
 import { FormsModule } from "@angular/forms";
 import { FilterConfiguration } from "../../_models/base/filter-types";
-import { SiteSection } from "src/app/_models/sections/sectionTypes";
-import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: '[usersCatalog]',
   templateUrl: './users-catalog.component.html',
-  imports: [ UsersTableComponent, GenericCatalogComponent, ControlsRow3Component, ControlsWrapper3Component, FormsModule ],
-  standalone: true,
+  imports: [
+    UsersTableComponent,
+    GenericCatalogComponent,
+    ControlsRow3Component,
+    ControlsWrapper3Component,
+    FormsModule
+  ],
 })
 export class UsersCatalogComponent {
   item: ModelSignal<User | null> = model.required();
@@ -29,5 +32,5 @@ export class UsersCatalogComponent {
   filterConfig: ModelSignal<FilterConfiguration> = model(new FilterConfiguration());
 
   service: UsersService = inject(UsersService);
-  form = model(new UserFiltersForm());
+  form: ModelSignal<UserFiltersForm> = model(new UserFiltersForm());
 }

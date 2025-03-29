@@ -2,68 +2,48 @@
 
 <div post>
   @if (item() !== null) {
-    <div class="flex-column flex-lg-row-auto w-100 w-xl-350px mb-10">
-      <div class="card mb-5 mb-xl-8">
-        <div class="card-body pt-15">
-          <div class="d-flex flex-center flex-column mb-5">
-            <a [routerLink]="" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">
-              {{ item()!.name }}
-            </a>
-
-            <div class="fs-5 fw-semibold text-muted mb-6">
-              {{ item()!.description }}
-            </div>
-
-            <!-- <div class="d-flex flex-wrap flex-center">
-                <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
-                    <div class="fs-4 fw-bold text-gray-700">
-                        <span class="w-75px">6,900</span>
-                        <i class="ki-duotone ki-arrow-up fs-3 text-success"><span class="path1"></span><span class="path2"></span></i>                    </div>
-                    <div class="fw-semibold text-muted">Earnings</div>
-                </div>
-
-                <div class="border border-gray-300 border-dashed rounded py-3 px-3 mx-4 mb-3">
-                    <div class="fs-4 fw-bold text-gray-700">
-                        <span class="w-50px">130</span>
-                        <i class="ki-duotone ki-arrow-down fs-3 text-danger"><span class="path1"></span><span class="path2"></span></i>                    </div>
-                    <div class="fw-semibold text-muted">Tasks</div>
-                </div>
-
-                <div class="border border-gray-300 border-dashed rounded py-3 px-3 mb-3">
-                    <div class="fs-4 fw-bold text-gray-700">
-                        <span class="w-50px">500</span>
-                        <i class="ki-duotone ki-arrow-up fs-3 text-success"><span class="path1"></span><span class="path2"></span></i>                    </div>
-                    <div class="fw-semibold text-muted">Hours</div>
-                </div>
-            </div> -->
-          </div>
-
-          <div class="d-flex flex-stack fs-4 py-3">
-            <div class="fw-bold rotate collapsible active" (click)="accordionItem.toggle()"
-                 [attr.aria-expanded]="accordionItem.expanded" role="button" aria-controls="kt_customer_view_details">
-              Details
-              <span class="ms-2 rotate-180">
-                <i class="ki-duotone ki-down fs-3"></i></span>
-            </div>
-
-            <span>
-              <a [routerLink]="[]" class="btn btn-sm btn-light-primary">
-                Editar
+    <div class="d-flex flex-column flex-lg-row">
+      <div class="flex-column flex-lg-row-auto w-100 w-xl-350px mb-10">
+        <div class="card mb-5 mb-xl-8">
+          <div class="card-body pt-15">
+            <div class="d-flex flex-center flex-column mb-5">
+              <a [routerLink]="" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-1">
+                {{ item()!.name }}
               </a>
-            </span>
+
+              <div class="fs-5 fw-semibold text-muted mb-6">
+                {{ item()!.description }}
+              </div>
+
+            </div>
+
+            <div class="d-flex flex-stack fs-4 py-3">
+              <div class="fw-bold rotate collapsible active" (click)="accordionItem.toggle()"
+                   [attr.aria-expanded]="accordionItem.expanded" role="button" aria-controls="kt_customer_view_details">
+                Details
+                <span class="ms-2 rotate-180">
+                  <i class="ki-duotone ki-down fs-3"></i></span>
+              </div>
+
+              <span>
+                <a [routerLink]="[]" class="btn btn-sm btn-light-primary">
+                  Editar
+                </a>
+              </span>
+            </div>
+
+            <div class="separator separator-dashed my-3"></div>
+
+            <cdk-accordion>
+              <cdk-accordion-item class="py-5 fs-6" #accordionItem="cdkAccordionItem"
+                                  [style.display]="accordionItem.expanded ? '' : 'none'">
+                <div class="fw-bold mt-5">Precio</div>
+                <div class="text-gray-600">{{ item()!.price | currency : 'MXN' : 'symbol' : '1.2-2' }}</div>
+                <div class="fw-bold mt-5">Descuento</div>
+                <div class="text-gray-600">{{ item()!.discount | percent }}</div>
+              </cdk-accordion-item>
+            </cdk-accordion>
           </div>
-
-          <div class="separator separator-dashed my-3"></div>
-
-          <cdk-accordion>
-            <cdk-accordion-item class="py-5 fs-6" #accordionItem="cdkAccordionItem"
-                                [style.display]="accordionItem.expanded ? '' : 'none'">
-              <div class="fw-bold mt-5">Precio</div>
-              <div class="text-gray-600">{{ item()!.price | currency : 'MXN' : 'symbol' : '1.2-2' }}</div>
-              <div class="fw-bold mt-5">Descuento</div>
-              <div class="text-gray-600">{{ item()!.discount | percent }}</div>
-            </cdk-accordion-item>
-          </cdk-accordion>
         </div>
       </div>
     </div>

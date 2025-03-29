@@ -4,6 +4,7 @@ import { FormUse } from "src/app/_models/forms/formTypes";
 import Event from "src/app/_models/events/event";
 import { Navigation, ParamMap } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: 'div[homeEventDetailRoute]',
@@ -22,6 +23,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 })
 export class HomeEventDetailRouteComponent extends BaseRouteDetail<Event> {
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly titleService: Title = inject(Title);
 
   constructor() {
     super('events', FormUse.DETAIL);
@@ -47,6 +49,7 @@ export class HomeEventDetailRouteComponent extends BaseRouteDetail<Event> {
     this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.item.set(data['item']);
+        this.titleService.setTitle(`DocHub | Cita de ${ data['item']?.patient?.fullName }`);
       },
     });
   }

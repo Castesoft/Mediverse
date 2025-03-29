@@ -10,11 +10,7 @@ import { CompactTableService } from 'src/app/_services/compact-table.service';
 import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
-  // host: { class: 'card card-flush' },
   selector: 'div[homeNurseDetailRoute]',
-  // template: `
-  //   <div nurseDetail [(use)]="use" [(view)]="view" [(item)]="item" [(key)]="key" [(title)]="title"></div>
-  // `,
   templateUrl: './home-nurse-detail-route.component.html',
   standalone: false,
 })
@@ -72,12 +68,6 @@ export class HomeNurseDetailRouteComponent
         if (key) {
           this.key.set(key);
         }
-      }
-
-      switch (this.use()) {
-        case 'detail':
-          this.hostClass = 'd-flex flex-column flex-xl-row';
-          break;
       }
 
       this.router.navigate([], { queryParams: {

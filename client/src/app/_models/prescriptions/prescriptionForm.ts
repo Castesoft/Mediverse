@@ -260,7 +260,6 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
     if (!medicalLicenses.length || medicalLicenses.length == 0) return;
 
     medicalLicenses.forEach((license: MedicalLicense) => {
-      console.log('[patch] Adding medical license to form:', license);
       this.controls.doctor.controls.medicalLicenses.push(new FormGroup2<MedicalLicense>(MedicalLicense, new MedicalLicense({
         ...license,
         licenseNumber: license.licenseNumber,

@@ -120,7 +120,7 @@ export class PaymentCheckoutComponent implements OnInit {
         this.event = event;
         if (event.service && event.service.price) {
           this.subtotal = event.service.price;
-          this.tax = event.service.price * 0.16;
+          this.tax = 0;
           this.total = event.service.price + this.tax;
         }
       },
@@ -136,7 +136,7 @@ export class PaymentCheckoutComponent implements OnInit {
         this.order = order;
         if (order.total) {
           this.subtotal = order.total;
-          this.tax = order.total * 0.16;
+          this.tax = 0;
           this.total = order.total + this.tax;
         }
       },

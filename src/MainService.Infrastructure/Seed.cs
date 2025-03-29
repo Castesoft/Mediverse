@@ -1088,7 +1088,7 @@ public static class Seed
             }
 
             order.Subtotal = order.OrderItems.Sum(x => x.Price * x.Quantity);
-            order.Tax = order.Subtotal * 0.16m;
+            order.Tax = 0;
             order.Discount = 0;
             order.AmountPaid = 0;
             order.Total = order.Subtotal + order.Tax - (decimal?)order.Discount;

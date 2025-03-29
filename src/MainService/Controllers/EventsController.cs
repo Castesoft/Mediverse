@@ -609,17 +609,17 @@ public class EventsController(
                 logger.LogWarning("Patient email is missing for event ID {EventId}", eventItem.Id);
             }
 
-            var patientEventNotification =
-                await notificationsService.CreateForPatientEventConfirmation(eventItem, patient);
+            var patientEventNotification = await notificationsService.CreateForPatientEventConfirmation(eventItem, patient);
             if (patientEventNotification != null)
             {
+                await uow.UserNotificationRepository.AddAsync(patientEventNotification);
                 await NotifyUserAsync(patient.Id, mapper.Map<NotificationDto>(patientEventNotification));
             }
 
-            var doctorEventNotification =
-                await notificationsService.CreateForDoctorEventConfirmation(eventItem, doctor);
+            var doctorEventNotification = await notificationsService.CreateForDoctorEventConfirmation(eventItem, doctor);
             if (doctorEventNotification != null)
             {
+                await uow.UserNotificationRepository.AddAsync(doctorEventNotification);
                 await NotifyUserAsync(doctor.Id, mapper.Map<NotificationDto>(doctorEventNotification));
             }
 

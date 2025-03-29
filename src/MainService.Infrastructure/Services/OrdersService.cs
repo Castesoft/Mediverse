@@ -59,7 +59,7 @@ namespace MainService.Infrastructure.Services
                 orderItem.Product = null!;
             }
 
-            order.Tax = order.Subtotal * (decimal)0.16;
+            order.Tax = 0;
             order.Total = order.Subtotal + order.Tax;
             order.AmountDue = order.Total;
             

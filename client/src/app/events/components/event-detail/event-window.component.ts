@@ -268,7 +268,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
     if (!event) return;
 
     if (event.service) {
-      this.tax = event.service.price ? event.service.price * 0.16 : 0;
+      this.tax = 0;
       this.total = event.service.price ? event.service.price + (this.tax ?? 0) : 0;
     }
 
