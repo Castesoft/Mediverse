@@ -2,6 +2,8 @@ namespace MainService.Models.Entities;
 
 public enum PaymentStatus
 {
+    AwaitingPayment,
+    // Stripe specific
     RequiresPaymentMethod,
     RequiresConfirmation,
     RequiresAction,
@@ -9,5 +11,5 @@ public enum PaymentStatus
     RequiresCapture,
     Succeeded,
     Canceled,
-    Refunded
+    Refunded,
 }

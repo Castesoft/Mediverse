@@ -10,6 +10,7 @@ public interface IEventRepository
 {
     void Add(Event item);
     void Delete(Event item);
+    void Update(Event item);
     Task<Event?> GetByIdAsync(int id);
     Task<EventDto?> GetDtoByIdAsync(int id);
     Task<Event?> GetByIdAsNoTrackingAsync(int id);

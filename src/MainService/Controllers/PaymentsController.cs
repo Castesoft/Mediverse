@@ -1,4 +1,5 @@
 using AutoMapper;
+using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Payment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,62 @@ namespace MainService.Controllers
             if (user == null) return BadRequest("User not found.");
 
             return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
+        }
+
+        [HttpPut("confirm-cash/event/{eventId:int}")]
+        [Authorize]
+        public async Task<ActionResult<EventDto>> ConfirmCashPaymentForEvent(int eventId) // Return DTO
+        {
+            var confirmingUserId = User.GetUserId();
+            var userRoles = User.GetRoles();
+            
+            if (!userRoles.Contains("Doctor"))
+            {
+                return Unauthorized("Only doctors can confirm cash payments.");
+            }
+
+            var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
+            if (eventItem == null) return NotFound($"Event with ID {eventId} not found.");
+
+            if (eventItem.PaymentStatus != PaymentStatus.AwaitingPayment)
+            {
+                return BadRequest($"Event is not awaiting payment (Current: {eventItem.PaymentStatus}).");
+            }
+
+            var now = DateTime.UtcNow;
+
+            var serviceEntity = await uow.ServiceRepository.GetByIdAsync(eventItem.EventService.ServiceId);
+            if (serviceEntity == null) return BadRequest("Service not found for event.");
+            var amount = serviceEntity.Price;
+
+            var cashPayment = new Payment
+            {
+                Amount = amount,
+                Currency = "mxn",
+                Date = now,
+                PaymentStatus = PaymentStatus.Succeeded,
+                EventId = eventId,
+                PaymentMethodId = null,
+                MarkedPaidByUserId = confirmingUserId,
+            };
+            uow.PaymentRepository.Add(cashPayment);
+
+
+            eventItem.PaymentStatus = PaymentStatus.Succeeded;
+            uow.EventRepository.Update(eventItem);
+
+
+            if (uow.HasChanges())
+            {
+                if (!await uow.Complete())
+                {
+                    return BadRequest("Failed to confirm cash payment and update records.");
+                }
+            }
+
+            var updatedEvent = await uow.EventRepository.GetByIdAsync(eventId);
+            var eventDto = mapper.Map<EventDto>(updatedEvent);
+            return Ok(eventDto);
         }
 
         [AllowAnonymous]

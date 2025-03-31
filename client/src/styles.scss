@@ -60,30 +60,80 @@ $brand-blue: #284092;
   @include mat.expansion-overrides((
     container-background-color: transparent,
   ));
+}
 
-  //====================================================
-  //              DARK THEME INITIALIZATION
-  //====================================================
-  .dark-theme {
-    --prescription-overlay-bg: rgba(30, 30, 30, 0);
-    --prescription-overlay-border: rgba(30, 30, 30, 1);
-    --prescription-overlay-gradient: linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.05) 50%, transparent 52%);
+.print-light-theme {
+  --prescription-overlay-bg: rgba(255, 255, 255, 0);
+  --prescription-overlay-border: rgba(255, 255, 255, 0);
+  --prescription-overlay-gradient: linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.05) 50%, transparent 52%);
 
-    @include mat.system-level-colors(m3-theme.$dark-theme);
-    @include mat.system-level-typography(m3-theme.$dark-theme);
-    @include mat.all-component-colors(m3-theme.$dark-theme);
-    @include mat.button-color(m3-theme.$dark-theme);
-    @include mat.strong-focus-indicators-color(m3-theme.$dark-theme);
+  color-scheme: light;
+  background-color: white !important;
 
-    @include mat.theme-overrides((
-      primary: #00A3FF,
-    ));
+  @include mat.system-level-colors(m3-theme.$light-theme);
+  @include mat.system-level-typography(m3-theme.$light-theme);
+  @include mat.all-component-colors(m3-theme.$light-theme);
+  @include mat.button-color(m3-theme.$light-theme);
+  @include mat.strong-focus-indicators-color(m3-theme.$light-theme);
 
-    @include mat.stepper-overrides((
-      header-selected-state-icon-background-color: #00A3FF,
-      header-edit-state-icon-background-color: #00A3FF,
-    ));
+  * {
+    background-color: transparent !important;
   }
+
+  p, span, div, h1, h2, h3, h4, h5, h6, td, th, label, input, textarea {
+    color: #212121 !important;
+  }
+
+  .text-gray-900 {
+    color: #212121 !important;
+  }
+
+  input, select, textarea, mat-form-field {
+    background-color: white !important;
+    color: #212121 !important;
+    border-color: #757575 !important;
+  }
+
+  mat-form-field, button, mat-checkbox, mat-radio-button {
+    @include mat.all-component-colors(m3-theme.$light-theme);
+
+    .mat-mdc-form-field-focus-overlay {
+      background-color: transparent !important;
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+      background-color: white !important;
+    }
+  }
+
+  table, tr, td, th {
+    border-color: #757575 !important;
+  }
+
+  hr {
+    border-color: #212121 !important;
+  }
+}
+
+.dark-theme {
+  --prescription-overlay-bg: rgba(30, 30, 30, 0);
+  --prescription-overlay-border: rgba(30, 30, 30, 1);
+  --prescription-overlay-gradient: linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.05) 50%, transparent 52%);
+
+  @include mat.system-level-colors(m3-theme.$dark-theme);
+  @include mat.system-level-typography(m3-theme.$dark-theme);
+  @include mat.all-component-colors(m3-theme.$dark-theme);
+  @include mat.button-color(m3-theme.$dark-theme);
+  @include mat.strong-focus-indicators-color(m3-theme.$dark-theme);
+
+  @include mat.theme-overrides((
+    primary: #00A3FF,
+  ));
+
+  @include mat.stepper-overrides((
+    header-selected-state-icon-background-color: #00A3FF,
+    header-edit-state-icon-background-color: #00A3FF,
+  ));
 }
 
 html, body {

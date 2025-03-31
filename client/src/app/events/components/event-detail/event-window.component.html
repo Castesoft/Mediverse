@@ -16,6 +16,7 @@
                [(orientation)]="summaryOrientation"
                [roleToShow]="accountsService.hasRole([ 'Doctor' ]) ? 'patient' : 'doctor'"
           ></div>
+
         </div>
         <div class="col-9">
           <div class="card mb-5">
@@ -360,6 +361,16 @@
                       Pagar Ahora
                     </button>
                   </div>
+                }
+
+                @if (accountsService.hasRole(['Doctor', 'Admin', 'Staff'])) {
+                  <button class="btn btn-success mt-4" (click)="confirmCashReceived()" [disabled]="isConfirmingCash()">
+                    @if (!isConfirmingCash()) {
+                      <i class="ki-duotone ki-check-square fs-3 me-1 text-light-success"><span class="path1"></span><span class="path2"></span></i> Marcar como Pagado (Efectivo)
+                    } @else {
+                      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Confirmando...
+                    }
+                  </button>
                 }
               </div>
             }

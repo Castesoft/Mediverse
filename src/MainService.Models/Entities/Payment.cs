@@ -22,4 +22,8 @@ public class Payment : BaseEntity
     public Order? Order { get; set; }
     public int? PaymentMethodId { get; set; }
     public PaymentMethod? PaymentMethod { get; set; }
+    
+    // For cash payments
+    public int? MarkedPaidByUserId { get; set; }
+    public AppUser? MarkedPaidByUser { get; set; }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { Prescription } from "src/app/_models/prescriptions/prescription";
 import { PrescriptionParams } from "src/app/_models/prescriptions/prescriptionParams";
@@ -9,20 +9,45 @@ import jsPDF, { jsPDFOptions } from "jspdf";
 import { PrintPrescriptionOptions } from "src/app/prescriptions/printPrescriptionOptions.model";
 import { DownloadPrescriptionOptions } from "src/app/prescriptions/downloadPrescriptionOptions.model";
 import { formatFilename } from "src/app/_utils/util";
+import { ThemeService } from "src/app/_services/theme.service";
 
 @Injectable({
   providedIn: 'root',
 })
 export class PrescriptionsService extends ServiceHelper<Prescription, PrescriptionParams, FormGroup2<PrescriptionParams>> {
+  private themeService: ThemeService = inject(ThemeService);
+
   constructor() {
     super(PrescriptionParams, 'prescriptions', prescriptionDictionary, prescriptionColumns);
   }
 
   async export(item: Prescription, element: HTMLElement, action: 'print' | 'download') {
-    if (action === 'download') {
-      await this.downloadPrescription(item, element);
-    } else {
-      await this.printPrescription(element);
+    const clone = element.cloneNode(true) as HTMLElement;
+
+    if (this.themeService.theme() === 'dark') {
+      clone.classList.add('print-light-theme');
+
+      const allTextElements: NodeListOf<Element> = clone.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, td, th, label');
+      allTextElements.forEach((el: Element) => {
+        (el as HTMLElement).style.color = '#212121';
+      });
+
+      clone.style.backgroundColor = 'white';
+    }
+
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+
+    document.body.appendChild(clone);
+
+    try {
+      if (action === 'download') {
+        await this.downloadPrescription(item, clone);
+      } else {
+        await this.printPrescription(clone);
+      }
+    } finally {
+      document.body.removeChild(clone);
     }
   }
 
@@ -34,6 +59,8 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
       logging: true,
       letterRendering: true,
       windowWidth: 1024,
+      backgroundColor: '#FFFFFF',
+      removeContainer: true,
       ...options.html2canvasOptions
     };
 
@@ -47,7 +74,7 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
             <head>
               <title>${options.printTitle || 'Imprimir Receta'}</title>
               <style>
-                body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+                body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: white; }
                 img { max-width: 100%; max-height: 100%; }
                 @media print {
                   @page {
@@ -56,6 +83,7 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
                   body {
                     margin: 0;
                     padding: 0;
+                    background-color: white !important;
                   }
                   img {
                     width: 100%;
@@ -92,6 +120,8 @@ export class PrescriptionsService extends ServiceHelper<Prescription, Prescripti
       allowTaint: true,
       logging: true,
       windowWidth: 1024,
+      backgroundColor: '#FFFFFF',
+      removeContainer: true,
       ...options.html2canvasOptions
     };
 

@@ -48,4 +48,17 @@ export class PaymentStatus {
   public static readonly Succeeded: string = "Succeeded";
   public static readonly Canceled: string = "Canceled";
   public static readonly Refunded: string = "Refunded";
+  public static readonly AwaitingPayment: string = "AwaitingPayment";
+}
+
+export function getPaymentStatusText(status: PaymentStatus | string | null): string {
+  switch (status) {
+    case PaymentStatus.Succeeded: return 'Pagado';
+    case PaymentStatus.AwaitingPayment : return 'Esperando Pago';
+    case PaymentStatus.Canceled: return 'Cancelado';
+    case PaymentStatus.Refunded: return 'Reembolsado';
+    case PaymentStatus.Processing: return 'Procesando';
+    // Add others as needed
+    default: return 'Desconocido';
+  }
 }

@@ -15,6 +15,7 @@ import { PaymentFiltersForm } from "src/app/_models/payments/paymentFiltersForm"
 import { paymentColumns, paymentDictionary } from "src/app/_models/payments/paymentConstants";
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { BehaviorSubject, Observable, tap } from "rxjs";
+import Event from "src/app/_models/events/event";
 
 @Component({
   selector: 'payments-catalog-modal',
@@ -68,6 +69,10 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
 
   getAllMethods(): Observable<PaymentMethod[]> {
     return this.http.get<PaymentMethod[]>(`${this.baseUrl}method-types/all`);
+  }
+
+  confirmCashPaymentForEvent(eventId: number): Observable<Event> {
+    return this.http.put<Event>(`${this.baseUrl}confirm-cash/event/${eventId}`, {});
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {

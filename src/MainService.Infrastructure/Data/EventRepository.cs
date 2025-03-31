@@ -25,6 +25,7 @@ namespace MainService.Infrastructure.Data
         public void Add(Event item) => context.Events.Add(item);
 
         public void Delete(Event item) => context.Events.Remove(item);
+        public void Update(Event item) => context.Events.Update(item);
 
         #endregion
 

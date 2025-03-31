@@ -10,7 +10,7 @@
   WritableSignal
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CommonModule } from "@angular/common";
+import { CommonModule, CurrencyPipe } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -76,6 +76,8 @@ import { ClinicalHistoryConsentService } from "src/app/_services/clinical-histor
 import { ToastrService } from "ngx-toastr";
 import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
 import { EventsService } from "src/app/events/events.service";
+import { PaymentsService } from "src/app/payments/payments.config";
+import { getPaymentStatusText, PaymentStatus } from "src/app/_models/payments/paymentConstants";
 
 @Component({
   selector: 'div[eventWindow]',
@@ -110,6 +112,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
   private readonly consentService: ClinicalHistoryConsentService = inject(ClinicalHistoryConsentService);
   private readonly paymentNavigation: PaymentNavigationService = inject(PaymentNavigationService);
+  private readonly paymentService: PaymentsService = inject(PaymentsService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly toastr: ToastrService = inject(ToastrService);
   private readonly dialog: MatDialog = inject(MatDialog);
@@ -120,6 +123,11 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   readonly nurses: NursesService = inject(NursesService);
   readonly icons: IconsService = inject(IconsService);
   readonly matDialog: MatDialog = inject(MatDialog);
+
+  protected readonly PaymentStatus: typeof PaymentStatus = PaymentStatus;
+  protected readonly getPaymentStatusText = getPaymentStatusText;
+
+  isConfirmingCash: WritableSignal<boolean> = signal(false);
 
   tax?: number;
   total?: number;
@@ -346,6 +354,60 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
             .catch((err: any) => console.error('Navigation error:', err));
         }
       });
+  }
+
+  /**
+   * Initiates the cash confirmation process. Opens a confirmation dialog first.
+   */
+  confirmCashReceived(): void {
+    const eventId: number | null = this.item()?.id || null;
+    const currentStatus: string | null = this.item()?.paymentStatus || null;
+
+    // TODO - Uncomment this when the payment status is available
+    // if (!eventId || currentStatus !== PaymentStatus.AwaitingPayment) {
+    //   this.toastr.warning('No se puede confirmar el pago para esta cita en este momento.');
+    //   return;
+    // }
+
+    if (!eventId) {
+      this.toastr.warning('No se puede confirmar el pago para esta cita en este momento.');
+      return;
+    }
+
+    const amountText: string | null = this.total !== undefined ? new CurrencyPipe('en-US').transform(this.total, 'MXN', 'symbol', '1.2-2') : 'el monto acordado';
+
+    const dialogData: RedirectWarningData = {
+      message: `¿Confirmas que has recibido ${amountText} en efectivo para la cita #${eventId}? Esta acción no se puede deshacer.`
+    };
+
+    this.dialog.open(RedirectWarningModalComponent, { data: dialogData })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.proceedWithCashConfirmation(eventId);
+        }
+      });
+  }
+
+  /**
+   * Executes the backend call to confirm cash payment after user confirmation.
+   */
+  private proceedWithCashConfirmation(eventId: number): void {
+    this.isConfirmingCash.set(true);
+    this.paymentService.confirmCashPaymentForEvent(eventId).subscribe({
+      next: (updatedEvent: Event) => {
+        this.isConfirmingCash.set(false);
+        this.toastr.success('Pago en efectivo confirmado exitosamente.');
+        this.item.set(updatedEvent);
+      },
+      error: (err) => {
+        this.isConfirmingCash.set(false);
+        console.error('Error confirming cash payment:', err);
+
+        const errorMsg = err?.error?.message || 'Error al confirmar el pago. Inténtalo de nuevo.';
+        this.toastr.error(errorMsg);
+      }
+    });
   }
 
 
