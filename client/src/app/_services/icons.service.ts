@@ -7,9 +7,11 @@ import {
   faAngleRight,
   faAngleUp,
   faArrowDownWideShort,
+  faArrowRightArrowLeft,
   faArrowsRotate,
   faArrowUpRightFromSquare,
   faArrowUpWideShort,
+  faCakeCandles,
   faCalendar,
   faCalendarDays,
   faCancel,
@@ -44,6 +46,7 @@ import {
   faHorseHead,
   faHospital,
   faInfoCircle,
+  faKitMedical,
   faLink,
   faList,
   faLocationDot,
@@ -56,6 +59,7 @@ import {
   faPenToSquare,
   faPersonBreastfeeding,
   faPersonCane,
+  faPhone,
   faPlus,
   faSave,
   faSearch,
@@ -65,6 +69,8 @@ import {
   faSort,
   faSortDown,
   faSortUp,
+  faSquareEnvelope,
+  faSquarePhone,
   faTableCellsLarge,
   faTableList,
   faTimes,
@@ -83,18 +89,23 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faCalendar as faRegCalendar,
+  faCheckCircle,
   faCircleQuestion as faRegCircleQuestion,
+  faCircleUser,
   faClipboard,
+  faCreditCard,
   faEdit,
   faEye,
   faFileZipper as farFileZipper,
   faIdCard as faRegIdCard,
   faImage as farImage,
   faNoteSticky,
+  faPaperPlane,
   faTrashCan as faRegTrashCan,
   faUser as farUser,
   faWindowRestore
 } from "@fortawesome/free-regular-svg-icons";
+import { IconDefinition } from "@fortawesome/angular-fontawesome";
 
 @Injectable({
   providedIn: "root"
@@ -102,97 +113,107 @@ import {
 export class IconsService {
   constructor() {}
 
-  faSort = faSort;
-  faEllipsisH = faEllipsisH;
-  faPlus = faPlus;
-  faFileExport = faFileExport;
-  faArrowsRotate = faArrowsRotate;
-  faTimes = faTimes;
-  faArrowsRoate = faArrowsRotate;
-  faMinus = faMinus;
-  faPenToSquare = faPenToSquare;
-  faTrashCan = faTrashCan;
-  faCheck = faCheck;
-  faChevronRight = faChevronRight;
-  faChevronLeft = faChevronLeft;
-  faCalendar = faCalendar;
-  faRegCalendar = faRegCalendar;
-  faSearch = faSearch;
-  faCancel = faCancel;
-  faAngleLeft = faAngleLeft;
-  faAngleRight = faAngleRight;
-  faClock = faClock;
-  faWeightScale = faWeightScale;
-  faWeightHanging = faWeightHanging;
-  faCalendarDays = faCalendarDays;
-  faLocationDot = faLocationDot;
-  faSortUp = faSortUp;
-  faSortDown = faSortDown;
-  faArrowDownWideShort = faArrowDownWideShort;
-  faArrowUpWideShort = faArrowUpWideShort;
-  faAngleDown = faAngleDown;
-  faAngleUp = faAngleUp;
-  faSliders = faSliders;
-  faAngleDoubleLeft = faAngleDoubleLeft;
-  faAngleDoubleRight = faAngleDoubleRight;
-  faPersonBreastfeeding = faPersonBreastfeeding;
-  faNotesMedical = faNotesMedical;
-  faWheatAwn = faWheatAwn;
-  faHandHoldingHeart = faHandHoldingHeart;
-  faHospital = faHospital;
-  faClipboard = faClipboard;
-  faTriangleExclamation = faTriangleExclamation;
-  faMoneyBills = faMoneyBills;
-  faDna = faDna;
-  faNoteSticky = faNoteSticky;
-  faEarthAmericas = faEarthAmericas;
-  faPencil = faPencil;
-  faChevronDown = faChevronDown;
-  faHandsHoldingChild = faHandsHoldingChild;
-  faPersonCane = faPersonCane;
-  faEye = faEye;
-  faEdit = faEdit;
-  faUser = faUser;
-  faUserAlt = faUserAlt;
-  farUser = farUser;
-  faHome = faHome;
-  faCow = faCow;
-  faHorseHead = faHorseHead;
-  faUsers = faUsers;
-  faCogs = faCogs;
-  faSave = faSave;
-  faCircleInfo = faCircleInfo;
-  faArrowUpRightFromSquare = faArrowUpRightFromSquare;
-  faSignOut = faSignOut;
-  faSignInAlt = faSignInAlt;
-  faCog = faCog;
-  faVenus = faVenus;
-  faMars = faMars;
-  faList = faList;
-  faTableCellsLarge = faTableCellsLarge;
-  faMoneyBill1Wave = faMoneyBill1Wave;
-  faTrademark = faTrademark;
-  faVectorSquare = faVectorSquare;
-  faClockRotateLeft = faClockRotateLeft;
-  faLink = faLink;
-  farFileZipper = farFileZipper;
-  farImage = farImage;
-  faCaretRight = faCaretRight;
-  faCircle = faCircle;
-  faCaretUp = faCaretUp;
-  faCaretLeft = faCaretLeft;
-  faCaretDown = faCaretDown;
-  faFilter = faFilter;
-  faFilterCircleDollar = faFilterCircleDollar;
-  faFilterCircleXmark = faFilterCircleXmark;
-  faFileContract = faFileContract;
-  faFileSignature = faFileSignature;
-  faWindowRestore = faWindowRestore;
-  faRegCircleQuestion = faRegCircleQuestion;
-  faTableList = faTableList;
-  faRegIdCard = faRegIdCard;
-  faInfoCircle = faInfoCircle;
-  faRegTrashCan = faRegTrashCan;
-  faFileImport = faFileImport;
-  faXmark = faXmark;
+  faSort: IconDefinition = faSort;
+  faEllipsisH: IconDefinition = faEllipsisH;
+  faPlus: IconDefinition = faPlus;
+  faFileExport: IconDefinition = faFileExport;
+  faArrowsRotate: IconDefinition = faArrowsRotate;
+  faTimes: IconDefinition = faTimes;
+  faArrowsRoate: IconDefinition = faArrowsRotate;
+  faMinus: IconDefinition = faMinus;
+  faPenToSquare: IconDefinition = faPenToSquare;
+  faTrashCan: IconDefinition = faTrashCan;
+  faCheck: IconDefinition = faCheck;
+  faChevronRight: IconDefinition = faChevronRight;
+  faChevronLeft: IconDefinition = faChevronLeft;
+  faCalendar: IconDefinition = faCalendar;
+  faRegCalendar: IconDefinition = faRegCalendar;
+  faSearch: IconDefinition = faSearch;
+  faCancel: IconDefinition = faCancel;
+  faAngleLeft: IconDefinition = faAngleLeft;
+  faAngleRight: IconDefinition = faAngleRight;
+  faClock: IconDefinition = faClock;
+  faWeightScale: IconDefinition = faWeightScale;
+  faWeightHanging: IconDefinition = faWeightHanging;
+  faCalendarDays: IconDefinition = faCalendarDays;
+  faLocationDot: IconDefinition = faLocationDot;
+  faSortUp: IconDefinition = faSortUp;
+  faSortDown: IconDefinition = faSortDown;
+  faArrowDownWideShort: IconDefinition = faArrowDownWideShort;
+  faArrowUpWideShort: IconDefinition = faArrowUpWideShort;
+  faAngleDown: IconDefinition = faAngleDown;
+  faAngleUp: IconDefinition = faAngleUp;
+  faSliders: IconDefinition = faSliders;
+  faAngleDoubleLeft: IconDefinition = faAngleDoubleLeft;
+  faAngleDoubleRight: IconDefinition = faAngleDoubleRight;
+  faPersonBreastfeeding: IconDefinition = faPersonBreastfeeding;
+  faNotesMedical: IconDefinition = faNotesMedical;
+  faWheatAwn: IconDefinition = faWheatAwn;
+  faHandHoldingHeart: IconDefinition = faHandHoldingHeart;
+  faHospital: IconDefinition = faHospital;
+  faClipboard: IconDefinition = faClipboard;
+  faTriangleExclamation: IconDefinition = faTriangleExclamation;
+  faMoneyBills: IconDefinition = faMoneyBills;
+  faDna: IconDefinition = faDna;
+  faNoteSticky: IconDefinition = faNoteSticky;
+  faEarthAmericas: IconDefinition = faEarthAmericas;
+  faPencil: IconDefinition = faPencil;
+  faChevronDown: IconDefinition = faChevronDown;
+  faHandsHoldingChild: IconDefinition = faHandsHoldingChild;
+  faPersonCane: IconDefinition = faPersonCane;
+  faEye: IconDefinition = faEye;
+  faEdit: IconDefinition = faEdit;
+  faUser: IconDefinition = faUser;
+  faUserAlt: IconDefinition = faUserAlt;
+  farUser: IconDefinition = farUser;
+  faHome: IconDefinition = faHome;
+  faCow: IconDefinition = faCow;
+  faHorseHead: IconDefinition = faHorseHead;
+  faUsers: IconDefinition = faUsers;
+  faCogs: IconDefinition = faCogs;
+  faSave: IconDefinition = faSave;
+  faCircleInfo: IconDefinition = faCircleInfo;
+  faArrowUpRightFromSquare: IconDefinition = faArrowUpRightFromSquare;
+  faSignOut: IconDefinition = faSignOut;
+  faSignInAlt: IconDefinition = faSignInAlt;
+  faCog: IconDefinition = faCog;
+  faVenus: IconDefinition = faVenus;
+  faMars: IconDefinition = faMars;
+  faList: IconDefinition = faList;
+  faTableCellsLarge: IconDefinition = faTableCellsLarge;
+  faMoneyBill1Wave: IconDefinition = faMoneyBill1Wave;
+  faTrademark: IconDefinition = faTrademark;
+  faVectorSquare: IconDefinition = faVectorSquare;
+  faClockRotateLeft: IconDefinition = faClockRotateLeft;
+  faLink: IconDefinition = faLink;
+  farFileZipper: IconDefinition = farFileZipper;
+  farImage: IconDefinition = farImage;
+  faCaretRight: IconDefinition = faCaretRight;
+  faCircle: IconDefinition = faCircle;
+  faCaretUp: IconDefinition = faCaretUp;
+  faCaretLeft: IconDefinition = faCaretLeft;
+  faCaretDown: IconDefinition = faCaretDown;
+  faFilter: IconDefinition = faFilter;
+  faFilterCircleDollar: IconDefinition = faFilterCircleDollar;
+  faFilterCircleXmark: IconDefinition = faFilterCircleXmark;
+  faFileContract: IconDefinition = faFileContract;
+  faFileSignature: IconDefinition = faFileSignature;
+  faWindowRestore: IconDefinition = faWindowRestore;
+  faRegCircleQuestion: IconDefinition = faRegCircleQuestion;
+  faTableList: IconDefinition = faTableList;
+  faRegIdCard: IconDefinition = faRegIdCard;
+  faInfoCircle: IconDefinition = faInfoCircle;
+  faRegTrashCan: IconDefinition = faRegTrashCan;
+  faFileImport: IconDefinition = faFileImport;
+  faXmark: IconDefinition = faXmark;
+  faPhone: IconDefinition = faPhone;
+  faSquarePhone: IconDefinition = faSquarePhone;
+  faSquareEnvelope: IconDefinition = faSquareEnvelope;
+  faCircleUser: IconDefinition = faCircleUser;
+  faCakeCandles: IconDefinition = faCakeCandles;
+  faKitMedical: IconDefinition = faKitMedical;
+  faCreditCard: IconDefinition = faCreditCard;
+  faArrowRightArrowLeft: IconDefinition = faArrowRightArrowLeft;
+  faCheckCircle: IconDefinition = faCheckCircle;
+  faPaperPlane: IconDefinition = faPaperPlane;
 }

@@ -14,6 +14,7 @@ public class PaymentMappingProfile : Profile
             .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src =>
                 src.Event != null ? src.Event.EventPaymentMethodType.PaymentMethodType : null))
             .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+            .ForMember(dest=>dest.NonLinkedPaymentMethod, opt => opt.MapFrom(src => src.NonLinkedPaymentMethod))
             .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.EventId))
             .ForMember(dest => dest.Event, opt => opt.MapFrom(src => src.Event));
 

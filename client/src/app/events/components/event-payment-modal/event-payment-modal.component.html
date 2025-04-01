@@ -1,0 +1,204 @@
+@defer {
+  <div class="card mw-450px overflow-hidden">
+    @if (!paymentSucceeded) {
+      @if (data.title) {
+        <div class="card-header border-bottom">
+          <div class="card-title">
+            <h3>{{ data.title }}</h3>
+          </div>
+          <button class="btn p-1 text-900" type="button" aria-label="Close" mat-dialog-close>
+            <fa-icon [icon]="iconsService.faTimes" class="fs--1"></fa-icon>
+          </button>
+        </div>
+      }
+
+      <div class="container-fluid mt-8">
+        <div class="row row-cols-3 gy-4">
+          <div class="col">
+            <div
+              class="payment-method-card d-flex justify-content-center align-items-center card p-2 py-4 h-100 cursor-pointer"
+              [class.payment-method-card-active]="selectedPaymentMethod === PaymentConfirmationMethod.Cash"
+              (click)="onSelectPaymentMethod(PaymentConfirmationMethod.Cash)"
+            >
+              <div class="d-flex flex-column justify-content-center align-items-center">
+                <fa-icon [icon]="iconsService.faMoneyBills" class="fs-1"></fa-icon>
+                <div class="text-center">
+                  Efectivo
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div
+              class="payment-method-card d-flex justify-content-center align-items-center card p-2 py-4 h-100 cursor-pointer"
+              [class.payment-method-card-active]="selectedPaymentMethod === PaymentConfirmationMethod.Transfer"
+              (click)="onSelectPaymentMethod(PaymentConfirmationMethod.Transfer)">
+              <div class="d-flex flex-column justify-content-center align-items-center">
+                <fa-icon [icon]="iconsService.faArrowRightArrowLeft" class="fs-1"></fa-icon>
+                <div class="text-center">
+                  Transferencia Bancaria
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div
+              class="payment-method-card d-flex justify-content-center align-items-center card p-2 py-4 h-100 cursor-pointer"
+              [class.payment-method-card-active]="selectedPaymentMethod === PaymentConfirmationMethod.CreditCard"
+              (click)="onSelectPaymentMethod(PaymentConfirmationMethod.CreditCard)">
+              <div class="d-flex flex-column justify-content-center align-items-center">
+                <fa-icon [icon]="iconsService.faCreditCard" class="fs-1"></fa-icon>
+                <div class="text-center">
+                  Tarjeta de Crédito
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div
+              class="payment-method-card d-flex justify-content-center align-items-center card p-2 py-4 h-100 cursor-pointer"
+              [class.payment-method-card-active]="selectedPaymentMethod === PaymentConfirmationMethod.DebitCard"
+              (click)="onSelectPaymentMethod(PaymentConfirmationMethod.DebitCard)">
+              <div class="d-flex flex-column justify-content-center align-items-center">
+                <fa-icon [icon]="iconsService.faCreditCard" class="fs-1"></fa-icon>
+                <div class="text-center">
+                  Tarjeta de Débito
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between px-8 pt-8 align-items-center border-top mt-8 mb-4">
+        <div class="fw-bold fs-3">
+          Total:
+        </div>
+        <div class="fw-semibold fs-3">
+          {{ data.item?.service?.price | currency:'MXN' }}
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between px-8 pb-8 align-items-center">
+        <div>
+          <input
+            type="checkbox"
+            id="savePaymentMethod"
+            class="form-check-input"
+          />
+          <label class="form-check-label ms-2" for="savePaymentMethod">
+            Envíar recibo al paciente por correo
+          </label>
+        </div>
+        <button
+          (click)="onConfirm()"
+          [disabled]="!selectedPaymentMethod || isSubmitting"
+          class="btn btn-primary d-flex nowrap align-items-center justify-content-center"
+          type="button">
+          @if (!isSubmitting) {
+            Confirmar
+          } @else {
+            <span class="mx-8">
+              <span class="spinner-border spinner-border-sm"></span>
+            </span>
+          }
+        </button>
+      </div>
+    } @else {
+      <div class="d-flex flex-column p-8" style="min-width: 450px;">
+        <div class="d-flex flex-column justify-content-center align-items-center pt-8">
+          <fa-icon [icon]="iconsService.faCheckCircle" class="text-success me-2 mb-3" size="6x"></fa-icon>
+          <div class="fw-bold fs-2">
+            El pago se ha realizado con éxito
+          </div>
+          <div class="text-gray-800">
+            Venta #{{ data.item?.id }}
+          </div>
+        </div>
+
+        <div class="d-flex flex-column mt-8">
+          <div class="text-gray-600 fs-7 fw-bold">CLIENTE</div>
+          <div class="fw-semibold fs-4">
+            {{ data.item?.patient?.fullName }}
+          </div>
+          <div class="text-gray-800">
+            <fa-icon [icon]="iconsService.faSquareEnvelope" class="fs--1 me-1"
+                     [tooltip]="'Correo Electrónico'"></fa-icon>
+            {{ data.item?.patient?.email }}
+          </div>
+          <div class="text-gray-800">
+            <fa-icon [icon]="iconsService.faSquarePhone" class="fs--1 me-1" [tooltip]="'Teléfono'"></fa-icon>
+            {{ data.item?.patient?.phoneNumber }}
+          </div>
+        </div>
+
+        <hr class="my-8"/>
+
+        <div class="d-flex flex-column">
+          <div class="text-gray-600 fs-7 fw-bold">MÉTODO DE PAGO</div>
+          <div class="d-flex justify-content-between fw-semibold">
+            <div class="text-gray-800">
+              EFECTIVO
+            </div>
+
+            <div class="text-gray-800">
+              {{ data.item?.service?.price | currency:'MXN' }}
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-8"/>
+
+        <div class="d-flex flex-column gap-2">
+          <div class="text-gray-600 fs-7 fw-bold">DETALLE DEL PAGO</div>
+
+          <div class="d-flex justify-content-between">
+            <div class="fw-bold">
+              Subtotal:
+            </div>
+            <div class="fw-semibold">
+              {{ data.item?.service?.price | currency:'MXN' }}
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <div class="fw-bold">
+              Descuento:
+            </div>
+            <div class="fw-semibold">
+              {{ 0 | currency:'MXN' }}
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <div class="fw-bold">
+              Total:
+            </div>
+            <div class="fw-semibold">
+              {{ data.item?.service?.price | currency:'MXN' }}
+            </div>
+          </div>
+        </div>
+
+
+        <button
+          class="btn btn-light-primary d-flex nowrap align-items-center justify-content-center mt-8"
+          type="button"
+        >
+          <fa-icon [icon]="iconsService.faPaperPlane" class="me-4"></fa-icon>
+          Envíar comprobante
+        </button>
+
+        <button
+          (click)="onClose()"
+          class="btn btn-primary d-flex nowrap align-items-center justify-content-center mt-4"
+          type="button">
+          Cerrar
+        </button>
+      </div>
+    }
+  </div>
+}

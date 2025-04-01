@@ -115,6 +115,21 @@ $brand-blue: #284092;
   }
 }
 
+.payment-method-card {
+  transition: all 0.3s ease-in-out !important;
+}
+
+.payment-method-card:hover {
+  border: 1px solid #00A3FF !important;
+  color: #00A3FF !important;
+}
+
+.payment-method-card-active {
+  border: 1px solid #00A3FF !important;
+  color: #00A3FF !important;
+  background-color: #00A3FF10 !important;
+}
+
 .dark-theme {
   --prescription-overlay-bg: rgba(30, 30, 30, 0);
   --prescription-overlay-border: rgba(30, 30, 30, 1);

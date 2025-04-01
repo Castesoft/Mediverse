@@ -2876,6 +2876,8 @@ namespace MainService.Postgres.Migrations
                     EventId = table.Column<int>(type: "integer", nullable: true),
                     OrderId = table.Column<int>(type: "integer", nullable: true),
                     PaymentMethodId = table.Column<int>(type: "integer", nullable: true),
+                    NonLinkedPaymentMethod = table.Column<string>(type: "text", nullable: true),
+                    MarkedPaidByUserId = table.Column<int>(type: "integer", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -2884,6 +2886,11 @@ namespace MainService.Postgres.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_AspNetUsers_MarkedPaidByUserId",
+                        column: x => x.MarkedPaidByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Payments_Events_EventId",
                         column: x => x.EventId,
@@ -3488,6 +3495,11 @@ namespace MainService.Postgres.Migrations
                 name: "IX_Payments_EventId",
                 table: "Payments",
                 column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_MarkedPaidByUserId",
+                table: "Payments",
+                column: "MarkedPaidByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_OrderId",

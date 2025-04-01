@@ -18,6 +18,9 @@ import { TableMenuComponent } from 'src/app/_shared/components/table-menu.compon
 import { PaymentStatusCellComponent } from "src/app/payments/components/payment-status-cell.component";
 import { PaymentMethodCellComponent } from "src/app/payments/components/payment-method-cell.component";
 import { EventTableCellComponent } from "src/app/events/components/event-table-cell/event-table-cell.component";
+import {
+  NonLinkedPaymentMethodCellComponent
+} from "src/app/payments/components/non-linked-payment-method-cell/non-linked-payment-method-cell.component";
 
 @Component({
   host: { class: 'table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer' },
@@ -36,6 +39,7 @@ import { EventTableCellComponent } from "src/app/events/components/event-table-c
     PaymentMethodCellComponent,
     PaymentStatusCellComponent,
     EventTableCellComponent,
+    NonLinkedPaymentMethodCellComponent,
   ]
 })
 export class PaymentsTableComponent extends BaseTable<Payment, PaymentParams, PaymentFiltersForm, PaymentsService>

@@ -23,6 +23,9 @@ public class Payment : BaseEntity
     public int? PaymentMethodId { get; set; }
     public PaymentMethod? PaymentMethod { get; set; }
     
+    // TODO: Find a better way to handle this
+    public string? NonLinkedPaymentMethod { get; set; } = string.Empty;
+    
     // For cash payments
     public int? MarkedPaidByUserId { get; set; }
     public AppUser? MarkedPaidByUser { get; set; }

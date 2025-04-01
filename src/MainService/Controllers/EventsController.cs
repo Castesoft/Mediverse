@@ -290,9 +290,12 @@ public class EventsController(
         eventToCreate.DoctorEvent = new DoctorEvent(request.Doctor.Id.Value);
         eventToCreate.EventService = new EventService(request.Service.Id.Value);
         eventToCreate.EventClinic = new EventClinic(request.Clinic.Id.Value);
+        
+        eventToCreate.PaymentStatus = PaymentStatus.AwaitingPayment;
+        
         if (request.MedicalInsuranceCompany?.Id.HasValue ?? false)
-            eventToCreate.EventMedicalInsuranceCompany =
-                new EventMedicalInsuranceCompany(request.MedicalInsuranceCompany.Id.Value);
+            eventToCreate.EventMedicalInsuranceCompany = new EventMedicalInsuranceCompany(request.MedicalInsuranceCompany.Id.Value);
+        
         if (request.PaymentMethodType?.Id.HasValue ?? false) // Add PaymentMethodType if it was missing
             eventToCreate.EventPaymentMethodType = new EventPaymentMethodType(request.PaymentMethodType.Id.Value);
 

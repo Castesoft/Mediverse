@@ -1,10 +1,9 @@
 import { Component, inject, model, ModelSignal } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ControlsModule } from "src/app/_forms/controls.module";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
 import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
-import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { View } from "src/app/_models/base/types";
 import Event from "src/app/_models/events/event";
 import { EventFiltersForm } from "src/app/_models/events/eventFiltersForm";
@@ -14,7 +13,6 @@ import { DetailInputSignals } from "src/app/_models/forms/formComponentInterface
 import { FormUse } from "src/app/_models/forms/formTypes";
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
-import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { EventWindowComponent } from 'src/app/events/components/event-detail/event-window.component';
 import { EventFormComponent } from 'src/app/events/components/event-form.component';
 import { EventsCatalogComponent } from "src/app/events/components/events-catalog.component";
@@ -75,56 +73,5 @@ export class EventDetailComponent extends BaseDetail<Event, EventParams, EventFi
 
   constructor() {
     super(EventsService);
-  }
-}
-
-@Component({
-  selector: 'event-detail-modal',
-  template: `
-    @defer {
-      <div class="card">
-        @if (data.title) {
-          <div class="card-header">
-            <div class="card-title">
-              <h3>{{ data.title }}</h3>
-            </div>
-          </div>
-        }
-
-        <div class="card-body pt-0">
-          <div
-            eventDetail
-            [(use)]="data.use"
-            [(view)]="data.view"
-            [(key)]="data.key"
-            [(item)]="data.item"
-            [(title)]="data.title"
-          ></div>
-          <div class="d-flex w-100 justify-content-between mt-6">
-            <button class="btn btn-light-secondary" mat-dialog-close>Cerrar</button>
-            <button class="btn btn-primary" (click)="navigateToDetail(data.item)">Ver Detalle</button>
-          </div>
-        </div>
-      </div>
-    }
-  `,
-  standalone: true,
-  imports: [ EventDetailComponent, ModalWrapperModule, MaterialModule, CdkModule ],
-})
-export class EventDetailModalComponent {
-  private readonly dialogRef: MatDialogRef<EventDetailModalComponent> = inject(MatDialogRef);
-  private readonly eventsService: EventsService = inject(EventsService);
-
-  readonly data: DetailDialog<Event> = inject(MAT_DIALOG_DATA);
-
-  navigateToDetail(item: Event | null): void {
-    const eventId: number | null = item?.id || null;
-    if (!eventId) {
-      console.error('No se puede navegar a un evento sin ID');
-      return;
-    }
-
-    this.dialogRef.close();
-    this.eventsService.clickLink(item, null, FormUse.DETAIL, 'page');
   }
 }

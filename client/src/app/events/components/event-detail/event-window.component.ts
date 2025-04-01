@@ -115,7 +115,6 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   private readonly paymentService: PaymentsService = inject(PaymentsService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly toastr: ToastrService = inject(ToastrService);
-  private readonly dialog: MatDialog = inject(MatDialog);
   private readonly router: Router = inject(Router);
 
   readonly compact: CompactTableService = inject(CompactTableService);
@@ -363,13 +362,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
     const eventId: number | null = this.item()?.id || null;
     const currentStatus: string | null = this.item()?.paymentStatus || null;
 
-    // TODO - Uncomment this when the payment status is available
-    // if (!eventId || currentStatus !== PaymentStatus.AwaitingPayment) {
-    //   this.toastr.warning('No se puede confirmar el pago para esta cita en este momento.');
-    //   return;
-    // }
-
-    if (!eventId) {
+    if (!eventId || currentStatus !== PaymentStatus.AwaitingPayment) {
       this.toastr.warning('No se puede confirmar el pago para esta cita en este momento.');
       return;
     }
@@ -380,7 +373,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       message: `¿Confirmas que has recibido ${amountText} en efectivo para la cita #${eventId}? Esta acción no se puede deshacer.`
     };
 
-    this.dialog.open(RedirectWarningModalComponent, { data: dialogData })
+    this.matDialog.open(RedirectWarningModalComponent, { data: dialogData })
       .afterClosed()
       .subscribe((confirmed: boolean) => {
         if (confirmed) {
@@ -393,21 +386,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
    * Executes the backend call to confirm cash payment after user confirmation.
    */
   private proceedWithCashConfirmation(eventId: number): void {
-    this.isConfirmingCash.set(true);
-    this.paymentService.confirmCashPaymentForEvent(eventId).subscribe({
-      next: (updatedEvent: Event) => {
-        this.isConfirmingCash.set(false);
-        this.toastr.success('Pago en efectivo confirmado exitosamente.');
-        this.item.set(updatedEvent);
-      },
-      error: (err) => {
-        this.isConfirmingCash.set(false);
-        console.error('Error confirming cash payment:', err);
-
-        const errorMsg = err?.error?.message || 'Error al confirmar el pago. Inténtalo de nuevo.';
-        this.toastr.error(errorMsg);
-      }
-    });
+   //TODO - Implement this
   }
 
 
@@ -443,7 +422,7 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
       currentConsent: this.consentStatus
     };
 
-    this.dialog.open(ClinicalHistoryConsentModalComponent, {
+    this.matDialog.open(ClinicalHistoryConsentModalComponent, {
       data: dialogData,
       width: '400px',
       autoFocus: false

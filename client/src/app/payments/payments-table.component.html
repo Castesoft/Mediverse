@@ -54,6 +54,8 @@
       <td>
         @if (item.paymentMethod) {
           <div paymentMethodCell [paymentMethod]="item.paymentMethod"></div>
+        } @else if (item.nonLinkedPaymentMethod) {
+          <div nonLinkedPaymentMethodCell [nonLinkedPaymentMethod]="item.nonLinkedPaymentMethod"></div>
         } @else {
           <span class="text-gray-600">
             N/A

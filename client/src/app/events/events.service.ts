@@ -11,8 +11,9 @@ import CatalogDialog from "src/app/_models/base/components/types/catalogDialog";
 import { EventSummary } from "src/app/_models/events/eventSummary/eventSummary";
 import { HttpParams } from "@angular/common/http";
 import { transform, transformToHttpParams } from "src/app/_models/base/paramUtils";
-import { EventDetailModalComponent, EventsCatalogModalComponent } from "src/app/events/events.config";
+import { EventsCatalogModalComponent } from "src/app/events/events.config";
 import { Column } from "src/app/_models/base/column";
+import { EventDetailModalComponent } from "src/app/events/components/event-detail-modal/event-detail-modal.component";
 
 @Injectable({
   providedIn: 'root',

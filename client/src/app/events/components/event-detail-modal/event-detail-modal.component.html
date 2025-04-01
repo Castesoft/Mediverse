@@ -1,0 +1,89 @@
+@defer {
+  <div class="card mw-450px">
+    @if (data.title) {
+      <div class="card-header">
+        <div class="card-title">
+          <h3>{{ data.title }}</h3>
+        </div>
+        <button class="btn p-1 text-900" type="button" aria-label="Close" mat-dialog-close>
+          <fa-icon [icon]="iconsService.faTimes" class="fs--1"></fa-icon>
+        </button>
+      </div>
+    }
+
+    @if (data.use === FormUse.CREATE) {
+      <div eventDetail
+           [use]="data.use"
+           [view]="data.view"
+           [item]="event"
+           [key]="data.key"
+           [title]="data.title"
+      ></div>
+    } @else {
+      <div class="card-body border-top fs-6">
+        <div class="d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="fw-bold fs-4 d-flex align-items-center">
+              <div symbolCell [photoUrl]="event?.patient?.photoUrl || null" [size]="PhotoSize.EXTRA_SMALL"></div>
+              <div class="ms-2">
+                {{ event?.patient?.fullName }}
+              </div>
+            </div>
+
+            <div class="">
+              {{ event?.dateFrom | date: 'dd/MM/yyyy' }} -
+              {{ event?.dateFrom | date: 'HH:mm' }} a
+              {{ event?.dateTo | date: 'HH:mm' }} hrs
+            </div>
+          </div>
+
+          <div>
+            <fa-icon [icon]="iconsService.faKitMedical" class="fs--1 me-1" [tooltip]="'Servicio'"></fa-icon>
+            {{ event?.service?.name }}
+          </div>
+          <div class="mb-2 fw-bold">
+            {{ event?.service?.price | currency }}
+          </div>
+
+        </div>
+
+        <div class="d-flex align-items-center gap-2 mt-4">
+          <fa-icon [icon]="iconsService.faCakeCandles" class="fs--1 me-1" [tooltip]="'Fecha de Nacimiento'"></fa-icon>
+          <div
+            [tooltip]="'Fecha de Nacimiento'">{{ event?.patient?.dateOfBirth ? (event?.patient?.dateOfBirth | date: 'dd/MM/yyyy') : 'Sin Informacion' }}
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <fa-icon [icon]="iconsService.faSquarePhone" class="fs--1 me-1" [tooltip]="'Teléfono'"></fa-icon>
+          <div [tooltip]="'Teléfono'">{{ event?.patient?.phoneNumber || 'Sin Informacion' }}</div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <fa-icon [icon]="iconsService.faSquareEnvelope" class="fs--1 me-1" [tooltip]="'Correo Electrónico'"></fa-icon>
+          <div [tooltip]="'Correo Electrónico'">{{ event?.patient?.email || 'Sin Informacion' }}</div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <fa-icon [icon]="iconsService.faCircleUser" class="fs--1 me-1" [tooltip]="'Sexo'"></fa-icon>
+          <div [tooltip]="'Sexo'">{{ event?.patient?.sex || 'Sin Informacion' }}</div>
+        </div>
+
+        <div class="d-flex w-100 justify-content-between mt-6">
+          @if (event?.paymentStatus === PaymentStatus.AwaitingPayment) {
+            <button class="btn btn-light-success" (click)="openPaymentModal()">
+              Pagar
+              <fa-icon [icon]="iconsService.faMoneyBills" class="fs--1 ms-1"></fa-icon>
+            </button>
+          } @else {
+            <div></div>
+          }
+
+          <button class="btn btn-primary" (click)="navigateToDetail(data.item)">Ver Detalle</button>
+        </div>
+      </div>
+    }
+
+
+  </div>
+}

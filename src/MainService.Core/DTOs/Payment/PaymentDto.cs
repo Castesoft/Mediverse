@@ -16,6 +16,7 @@ namespace MainService.Core.DTOs.Payment
         public string? StripePaymentId { get; set; }
         public string? StripeInvoiceId { get; set; }
         public UserPaymentMethodDto? PaymentMethod { get; set; }
+        public string? NonLinkedPaymentMethod { get; set; } = string.Empty;
         public OptionDto? PaymentMethodType { get; set; }
         public EventSummaryDto? Event { get; set; }
         public int DoctorId { get; set; }

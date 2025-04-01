@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250326223639_Initial")]
+    [Migration("20250401225741_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -2254,7 +2254,13 @@ namespace MainService.Postgres.Migrations
                     b.Property<int?>("EventId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("MarkedPaidByUserId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NonLinkedPaymentMethod")
                         .HasColumnType("text");
 
                     b.Property<int?>("OrderId")
@@ -2285,6 +2291,8 @@ namespace MainService.Postgres.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("MarkedPaidByUserId");
 
                     b.HasIndex("OrderId");
 
@@ -4702,6 +4710,10 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("MainService.Models.Entities.AppUser", "MarkedPaidByUser")
+                        .WithMany()
+                        .HasForeignKey("MarkedPaidByUserId");
+
                     b.HasOne("MainService.Models.Entities.Order", "Order")
                         .WithMany("Payments")
                         .HasForeignKey("OrderId")
@@ -4712,6 +4724,8 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("PaymentMethodId");
 
                     b.Navigation("Event");
+
+                    b.Navigation("MarkedPaidByUser");
 
                     b.Navigation("Order");
 

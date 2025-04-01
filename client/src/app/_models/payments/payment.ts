@@ -11,6 +11,7 @@ export class Payment extends Entity {
   stripePaymentId?: string;
   stripeInvoiceId?: string;
   paymentMethod?: Partial<PaymentMethod>;
+  nonLinkedPaymentMethod?: string;
   paymentStatus?: string;
   doctorId?: number;
   customerStripeId?: string;

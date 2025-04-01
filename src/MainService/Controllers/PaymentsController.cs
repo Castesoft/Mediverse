@@ -55,20 +55,30 @@ namespace MainService.Controllers
             return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
         }
 
-        [HttpPut("confirm-cash/event/{eventId:int}")]
+        [HttpPut("confirm-payment/event/{eventId:int}")]
         [Authorize]
-        public async Task<ActionResult<EventDto>> ConfirmCashPaymentForEvent(int eventId) // Return DTO
+        public async Task<ActionResult<EventDto>> ConfirmPaymentForEvent(int eventId,
+            [FromQuery] PaymentConfirmationParams @params)
         {
             var confirmingUserId = User.GetUserId();
             var userRoles = User.GetRoles();
-            
+
+            var validPaymentMethods = new List<string> { "cash", "transfer", "credit_card", "debit_card", "other" };
+            if (!validPaymentMethods.Contains(@params.SelectedPaymentMethod))
+            {
+                return BadRequest("Invalid payment method selected.");
+            }
+
             if (!userRoles.Contains("Doctor"))
             {
                 return Unauthorized("Only doctors can confirm cash payments.");
             }
 
             var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
-            if (eventItem == null) return NotFound($"Event with ID {eventId} not found.");
+            if (eventItem == null)
+            {
+                return NotFound($"Event with ID {eventId} not found.");
+            }
 
             if (eventItem.PaymentStatus != PaymentStatus.AwaitingPayment)
             {
@@ -78,7 +88,11 @@ namespace MainService.Controllers
             var now = DateTime.UtcNow;
 
             var serviceEntity = await uow.ServiceRepository.GetByIdAsync(eventItem.EventService.ServiceId);
-            if (serviceEntity == null) return BadRequest("Service not found for event.");
+            if (serviceEntity == null)
+            {
+                return BadRequest("Service not found for event.");
+            }
+
             var amount = serviceEntity.Price;
 
             var cashPayment = new Payment
@@ -90,6 +104,7 @@ namespace MainService.Controllers
                 EventId = eventId,
                 PaymentMethodId = null,
                 MarkedPaidByUserId = confirmingUserId,
+                NonLinkedPaymentMethod = @params.SelectedPaymentMethod
             };
             uow.PaymentRepository.Add(cashPayment);
 
@@ -106,9 +121,7 @@ namespace MainService.Controllers
                 }
             }
 
-            var updatedEvent = await uow.EventRepository.GetByIdAsync(eventId);
-            var eventDto = mapper.Map<EventDto>(updatedEvent);
-            return Ok(eventDto);
+            return Ok(await uow.EventRepository.GetDtoByIdAsync(eventId));
         }
 
         [AllowAnonymous]
