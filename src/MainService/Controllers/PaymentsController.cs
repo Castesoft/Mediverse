@@ -1,3 +1,4 @@
+using System.Net.Mail;
 using AutoMapper;
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Payment;
@@ -10,13 +11,15 @@ using MainService.Core.Extensions;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
+using MainService.Models.Enums;
+using Serilog;
 
 namespace MainService.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PaymentsController(IUnitOfWork uow, IMapper mapper, IStripeService stripeService) : BaseApiController
+    public class PaymentsController(IUnitOfWork uow, IMapper mapper, IStripeService stripeService, IEmailService emailService) : BaseApiController
     {
         private const int CommissionInCents = 5 * 100;
 
@@ -54,74 +57,216 @@ namespace MainService.Controllers
 
             return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
         }
+        
+        [HttpPost("event/{eventId:int}/send-receipt")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> SendEventReceiptEmail(int eventId, [FromBody] SendReceiptRequestDto request)
+        {
+            var doctorId = User.GetUserId();
+
+            // 1. Fetch Event with necessary related data
+            var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
+
+            // 2. Validations
+            if (eventItem == null)
+            {
+                return NotFound($"Evento con ID {eventId} no encontrado.");
+            }
+
+            if (eventItem.DoctorEvent?.DoctorId != doctorId)
+            {
+                return Unauthorized("No está autorizado para enviar un comprobante para este evento.");
+            }
+
+            if (eventItem.PaymentStatus != PaymentStatus.Succeeded)
+            {
+                return BadRequest("El comprobante solo puede enviarse para eventos cuyo pago se haya completado exitosamente.");
+            }
+
+            var patient = eventItem.PatientEvent?.Patient;
+            if (patient == null)
+            {
+                 return BadRequest("No se encontraron los detalles del paciente para este evento.");
+            }
+
+            var doctor = eventItem.DoctorEvent?.Doctor;
+            if (doctor == null)
+            {
+                return BadRequest("No se encontraron los detalles del doctor para este evento.");
+            }
+
+            var service = eventItem.EventService?.Service;
+            if (service == null)
+            {
+                return BadRequest("No se encontraron los detalles del servicio para este evento.");
+            }
+
+            var clinic = eventItem.EventClinic?.Clinic;
+
+             // 3. Find the relevant Payment record
+            var payment = eventItem.Payments
+                .FirstOrDefault(p => p.PaymentStatus == PaymentStatus.Succeeded &&
+                                     p.PaymentProcessingMode == PaymentProcessingMode.ManualConfirmation &&
+                                     p.MarkedPaidByUserId == doctorId); 
+
+            if (payment == null)
+            {
+                 payment = eventItem.Payments.FirstOrDefault(p => p.PaymentStatus == PaymentStatus.Succeeded);
+            }
+
+            if (payment == null)
+            {
+                return BadRequest("No se pudieron encontrar los detalles del pago para el comprobante de este evento.");
+            }
+
+            var paymentMethodName = payment.ManualPaymentDetail?.PaymentMethodType?.Name ?? "Desconocido";
+
+            // 4. Prepare Email Content
+             var patientFullName = $"{patient.FirstName} {patient.LastName}".Trim();
+             var doctorFullName = $"{doctor.FirstName} {doctor.LastName}".Trim();
+             var clinicName = clinic?.Name ?? "Clínica"; 
+
+             var subject = $"Comprobante de Pago - Cita #{eventId} - {service.Name}";
+
+            try
+            {
+                 var htmlBody = emailService.CreateEventReceiptEmail(
+                    patientName: patientFullName,
+                    doctorName: doctorFullName,
+                    eventDate: eventItem.DateFrom ?? DateTime.UtcNow,
+                    serviceName: service.Name,
+                    amountPaid: payment.Amount, 
+                    paymentMethodName: paymentMethodName,
+                    paymentDate: payment.Date,
+                    referenceNumber: payment.ManualPaymentDetail?.ReferenceNumber,
+                    notes: payment.ManualPaymentDetail?.Notes,
+                    eventId: eventItem.Id,
+                    clinicName: clinicName
+                );
+
+                // 5. Send Email
+                await emailService.SendMail(request.Email, subject, htmlBody);
+
+                // 6. Update Event to mark receipt as sent
+                eventItem.IsReceiptSent = true; 
+                uow.EventRepository.Update(eventItem);
+
+
+                if (!await uow.Complete())
+                {
+                    return BadRequest("Error al enviar el comprobante por correo electrónico.");
+                }
+
+                return Ok();
+            }
+            catch (SmtpException smtpEx)
+            {
+                 Log.Error(smtpEx, "SMTP Error sending receipt email for Event ID {EventId} to {Email}", eventId, request.Email);
+                 return Problem("Hubo un problema al enviar el correo electrónico debido a un inconveniente con la red o el servidor de correo.", statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error sending receipt email for Event ID {EventId} to {Email}", eventId, request.Email);
+                return Problem("Ocurrió un error inesperado al intentar enviar el comprobante por correo electrónico.");
+            }
+        }
 
         [HttpPut("confirm-payment/event/{eventId:int}")]
-        [Authorize]
-        public async Task<ActionResult<EventDto>> ConfirmPaymentForEvent(int eventId,
+        [Authorize(Roles = "Doctor")]
+        public async Task<ActionResult<EventDto>> ConfirmManualPaymentForEvent(int eventId,
             [FromQuery] PaymentConfirmationParams @params)
         {
             var confirmingUserId = User.GetUserId();
-            var userRoles = User.GetRoles();
 
-            var validPaymentMethods = new List<string> { "cash", "transfer", "credit_card", "debit_card", "other" };
-            if (!validPaymentMethods.Contains(@params.SelectedPaymentMethod))
+            // 1. Validate Payment Method Type AND check if it's manual
+            var paymentMethodType = await uow.PaymentMethodTypeRepository.GetByIdAsync(@params.SelectedPaymentMethodTypeId);
+            if (paymentMethodType == null)
             {
-                return BadRequest("Invalid payment method selected.");
+                return BadRequest($"ID de Tipo de Método de Pago inválido: {@params.SelectedPaymentMethodTypeId}.");
             }
 
-            if (!userRoles.Contains("Doctor"))
+            // 2. Check if Doctor accepts this payment type
+            var doctorAcceptsMethod = await uow.UserRepository.UserAcceptsPaymentMethodTypeByIdAsync(confirmingUserId,
+                    @params.SelectedPaymentMethodTypeId);
+            if (!doctorAcceptsMethod)
             {
-                return Unauthorized("Only doctors can confirm cash payments.");
+                return BadRequest($"No has configurado tu cuenta para aceptar pagos del tipo '{paymentMethodType.Name}'.");
             }
 
+            // 3. Get and Validate Event
             var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
             if (eventItem == null)
             {
-                return NotFound($"Event with ID {eventId} not found.");
+                return NotFound($"Evento con ID {eventId} no encontrado.");
             }
 
+            // 4. Authorize: Ensure confirming doctor owns the event
+            if (eventItem.DoctorEvent?.DoctorId != confirmingUserId)
+            {
+                return Unauthorized("Solo puedes confirmar pagos para tus propios eventos.");
+            }
+
+            // 5. Check Event Payment Status
             if (eventItem.PaymentStatus != PaymentStatus.AwaitingPayment)
             {
-                return BadRequest($"Event is not awaiting payment (Current: {eventItem.PaymentStatus}).");
+                return BadRequest($"El evento no está pendiente de pago (Actual: {eventItem.PaymentStatus}).");
             }
 
-            var now = DateTime.UtcNow;
-
-            var serviceEntity = await uow.ServiceRepository.GetByIdAsync(eventItem.EventService.ServiceId);
+            // 6. Get Service and Amount
+            var serviceEntity = eventItem.EventService?.Service;
             if (serviceEntity == null)
             {
-                return BadRequest("Service not found for event.");
+                return BadRequest("Detalles del servicio no encontrados para el evento.");
             }
 
             var amount = serviceEntity.Price;
+            var now = DateTime.UtcNow;
 
-            var cashPayment = new Payment
+            // 7. Create Payment Entity
+            var manualPayment = new Payment
             {
                 Amount = amount,
                 Currency = "mxn",
                 Date = now,
                 PaymentStatus = PaymentStatus.Succeeded,
                 EventId = eventId,
-                PaymentMethodId = null,
                 MarkedPaidByUserId = confirmingUserId,
-                NonLinkedPaymentMethod = @params.SelectedPaymentMethod
+                PaymentProcessingMode = PaymentProcessingMode.ManualConfirmation,
             };
-            uow.PaymentRepository.Add(cashPayment);
+            uow.PaymentRepository.Add(manualPayment);
+
+            // 8. Create ManualPaymentDetail Entity
+            var paymentDetail = new ManualPaymentDetail
+            {
+                Payment = manualPayment,
+                PaymentMethodTypeId = @params.SelectedPaymentMethodTypeId,
+                ReferenceNumber = @params.ReferenceNumber,
+                Notes = @params.Notes
+            };
+            manualPayment.ManualPaymentDetail = paymentDetail;
+            uow.ManualPaymentDetailRepository.Add(paymentDetail);
 
 
+            // 9. Update Event Status
             eventItem.PaymentStatus = PaymentStatus.Succeeded;
             uow.EventRepository.Update(eventItem);
 
 
-            if (uow.HasChanges())
+            // 10. Save Changes
+            if (!await uow.Complete())
             {
-                if (!await uow.Complete())
-                {
-                    return BadRequest("Failed to confirm cash payment and update records.");
-                }
+                Log.Error("Failed to save manual payment confirmation for Event ID {EventId}", eventId);
+                return BadRequest("Error al confirmar el pago y actualizar los registros. Por favor, inténtalo de nuevo.");
             }
 
-            return Ok(await uow.EventRepository.GetDtoByIdAsync(eventId));
+            // 11. Return Updated Event DTO
+            var updatedEventDto = await uow.EventRepository.GetDtoByIdAsync(eventId);
+            if (updatedEventDto == null)
+            {
+                return Problem("Error al recuperar los detalles actualizados del evento después de guardar.");
+            }
+
+            return Ok(updatedEventDto);
         }
 
         [AllowAnonymous]

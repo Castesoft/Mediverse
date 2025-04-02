@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using MainService.Core.Interfaces.Services;
@@ -287,4 +288,64 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
                 </html>
                 """;
     }
+    
+     public string CreateEventReceiptEmail(
+            string patientName,
+            string doctorName,
+            DateTime eventDate,
+            string serviceName,
+            decimal amountPaid,
+            string paymentMethodName,
+            DateTime paymentDate,
+            string? referenceNumber,
+            string? notes,
+            int eventId,
+            string clinicName)
+        {
+            var culture = new CultureInfo("es-MX");
+
+            return $"""
+                    {GetEmailHeader()}
+                    <tr>
+                      <td align="left" valign="center">
+                        <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                          <div style="padding-bottom: 20px; font-size: 18px; font-weight: bold; text-align: center;">
+                            Comprobante de Pago - Cita #{eventId}
+                          </div>
+
+                          <div style="padding-bottom: 15px;">
+                            Estimado(a) {patientName},
+                          </div>
+                          <div style="padding-bottom: 20px;">
+                            Adjuntamos el comprobante de pago para su cita con {doctorName} en {clinicName}.
+                          </div>
+
+                          <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
+
+                          <div style="padding-bottom: 10px;"><strong>Detalles de la Cita:</strong></div>
+                          <div style="padding-bottom: 5px;"><strong>Servicio:</strong> {serviceName}</div>
+                          <div style="padding-bottom: 20px;"><strong>Fecha y Hora:</strong> {eventDate.ToString("f", culture)}</div>
+
+                          <div style="padding-bottom: 10px;"><strong>Detalles del Pago:</strong></div>
+                          <div style="padding-bottom: 5px;"><strong>Fecha de Pago:</strong> {paymentDate.ToString("f", culture)}</div>
+                          <div style="padding-bottom: 5px;"><strong>Método de Pago:</strong> {paymentMethodName}</div>
+                          {(string.IsNullOrEmpty(referenceNumber) ? "" : $"<div style=\"padding-bottom: 5px;\"><strong>Referencia:</strong> {WebUtility.HtmlEncode(referenceNumber)}</div>")}
+                          {(string.IsNullOrEmpty(notes) ? "" : $"<div style=\"padding-bottom: 20px;\"><strong>Notas:</strong> {WebUtility.HtmlEncode(notes)}</div>")}
+
+                          <div style="padding-bottom: 10px; font-size: 16px; font-weight: bold;"><strong>Monto Pagado:</strong> {amountPaid.ToString("C", culture)}</div>
+
+                          <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
+
+                          <div style="padding-bottom: 10px;">
+                            Si tiene alguna pregunta sobre este comprobante, por favor contacte a su especialista.
+                          </div>
+                          <div style="padding-bottom: 10px;">
+                            Gracias por su preferencia.
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {GetEmailFooter()}
+                    """;
+        }
 }

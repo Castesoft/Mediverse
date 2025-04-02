@@ -104,7 +104,7 @@ namespace MainService.Models.Helpers
     {
         private static readonly Random Random = new();
 
-        public static readonly IEnumerable<string> roles =
+        public static readonly IEnumerable<string> Roles =
         [
             "Admin",
             "Staff",
@@ -113,14 +113,14 @@ namespace MainService.Models.Helpers
             "Nurse",
         ];
 
-        public static readonly List<OrderStatus> orderStatuses =
+        public static readonly List<OrderStatus> OrderStatuses =
         [
             new("Pending", "Pendiente", "El pedido está pendiente de confirmación."),
             new("Completed", "Completado", "El pedido ha sido completado con éxito."),
             new("Cancelled", "Cancelado", "El pedido ha sido cancelado.")
         ];
 
-        public static readonly List<DeliveryStatus> deliveryStatuses =
+        public static readonly List<DeliveryStatus> DeliveryStatuses =
         [
             new("Pending", "Pendiente", "El pedido está pendiente de confirmación."),
             new("Processing", "Procesando", "El pedido está siendo procesado."),
@@ -303,7 +303,7 @@ namespace MainService.Models.Helpers
                 "El paciente tiene una alteración de la visión de los colores distinta a las listadas, y puede especificarla.")
         ];
 
-        public static readonly IEnumerable<MedicalInsuranceCompany> medicalInsuranceCompanies =
+        public static readonly IEnumerable<MedicalInsuranceCompany> MedicalInsuranceCompanies =
         [
             new()
             {
@@ -517,13 +517,14 @@ namespace MainService.Models.Helpers
             }
         ];
 
-        public static readonly IEnumerable<PaymentMethodType> paymentMethodTypes =
+        public static readonly IEnumerable<PaymentMethodType> PaymentMethodTypes =
         [
-            new() { Name = "Tarjeta de Crédito" },
-            new() { Name = "Tarjeta de Débito" },
-            new() { Name = "Transferencia Bancaria" },
-            new() { Name = "Efectivo" },
-            new() { Name = "Paypal" }
+            new() { Name = "Efectivo", Code = "cash" },
+            new() { Name = "Transferencia Bancaria", Code = "bank_transfer" },
+            new() { Name = "Tarjeta de Crédito", Code = "credit_card" },
+            new() { Name = "Tarjeta de Débito", Code = "debit_card" },
+            new() { Name = "Cheque", Code = "check" },
+            new() { Name = "Otro", Code = "other" }
         ];
 
         public static readonly List<SubscriptionPlan> SubscriptionPlans =
@@ -599,7 +600,7 @@ namespace MainService.Models.Helpers
             return rolesWithPermissions;
         }
 
-        public static readonly List<Warehouse> warehouses =
+        public static readonly List<Warehouse> Warehouses =
         [
             new()
             {
@@ -668,7 +669,7 @@ namespace MainService.Models.Helpers
             }
         ];
 
-        public static readonly List<Product> products =
+        public static readonly List<Product> Products =
         [
             new()
             {
@@ -1230,7 +1231,7 @@ namespace MainService.Models.Helpers
         ];
 
 
-        public static readonly IEnumerable<Service> services =
+        public static readonly IEnumerable<Service> Services =
         [
             new("Consulta general para diagnóstico y tratamiento de enfermedades comunes",
                 "Esta consulta general ofrece un diagnóstico y tratamiento para una variedad de enfermedades comunes. Incluye una revisión completa del historial médico del paciente y exámenes físicos básicos para determinar el mejor curso de acción."),
@@ -1865,13 +1866,13 @@ namespace MainService.Models.Helpers
                     user.PaymentMethods.Add(paymentMethod);
                 }
 
-                if (role == Roles.Nurse || role == Roles.Doctor)
+                if (role == Entities.Roles.Nurse || role == Entities.Roles.Doctor)
                 {
                     user.Post = GetRandomMedicalJobPosts();
                     user.Education = GetRandomMedicalSpecialty();
                 }
 
-                if (role == Roles.Doctor)
+                if (role == Entities.Roles.Doctor)
                 {
                     user.DoctorClinics = GenerateDoctorClinics();
                 }
@@ -2521,7 +2522,7 @@ namespace MainService.Models.Helpers
             return cities[Random.Next(cities.Length)];
         }
 
-        public static readonly MedicalLicenseDocument medicalLicenseDocument = new()
+        public static readonly MedicalLicenseDocument MedicalLicenseDocument = new()
         {
             Document = new Document
             {

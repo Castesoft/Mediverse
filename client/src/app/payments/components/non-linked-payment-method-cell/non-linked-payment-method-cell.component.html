@@ -1,37 +1,8 @@
 <div class="badge badge-light-success badge-lg">
   <div class="d-flex align-items-center justify-content-start px-0">
-    @switch (nonLinkedPaymentMethod()) {
-      @case (PaymentConfirmationMethod.Cash) {
-        <fa-icon [icon]="iconsService.faMoneyBills"></fa-icon>
-        <span class="fw-semibold ms-2">
-          Efectivo
-        </span>
-      }
-      @case (PaymentConfirmationMethod.CreditCard) {
-        <fa-icon [icon]="iconsService.faCreditCard"></fa-icon>
-        <span class="fw-semibold ms-2">
-          Tarjeta de Crédito
-        </span>
-      }
-      @case (PaymentConfirmationMethod.DebitCard) {
-        <fa-icon [icon]="iconsService.faCreditCard"></fa-icon>
-        <span class="fw-semibold ms-2">
-          Tarjeta de Débito
-        </span>
-      }
-      @case (PaymentConfirmationMethod.Transfer) {
-        <fa-icon [icon]="iconsService.faArrowRightArrowLeft"></fa-icon>
-        <span class="fw-semibold ms-2">
-          Transferencia Bancaria
-        </span>
-      }
-      @case (PaymentConfirmationMethod.Other) {
-
-        <fa-icon [icon]="iconsService.faMoneyBills"></fa-icon>
-        <span class="fw-semibold ms-2">
-          Otros
-        </span>
-      }
-    }
+    <fa-icon [icon]="[paymentMethodType().iconPrefix || '', paymentMethodType().iconName || '']"></fa-icon>
+    <span class="fw-semibold ms-2">
+      {{ paymentMethodType().name }}
+    </span>
   </div>
 </div>

@@ -19,10 +19,12 @@ public interface IUserRepository
     Task<bool> NurseExistsAsync(int id, int doctorId);
     Task<UserDto?> GetDtoByEmailAsync(string email);
     Task<AppUser?> GetByIdAsNoTrackingAsync(int id);
+    Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypeDtosForUserByIdAsync(int userId);
     Task<List<AppUser>> GetAllAsync();
     Task<List<UserDto>> GetAllDtoAsync(UserParams param);
     Task<PagedList<UserDto>> GetPagedListAsync(UserParams param, ClaimsPrincipal user);
     Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypesAsync();
+    Task<bool> UserAcceptsPaymentMethodTypeByIdAsync(int userId, int paymentMethodTypeId);
     Task<List<SpecialtyDto>> GetSpecialtiesAsync();
     Task<List<MedicalInsuranceCompanyDto>> GetMedicalInsuranceCompaniesAsync();
     Task<bool> DeleteDoctorWorkScheduleAsync(WorkSchedule workSchedule);

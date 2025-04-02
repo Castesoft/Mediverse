@@ -1,6 +1,8 @@
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.User;
+using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
+using MainService.Models.Enums;
 
 namespace MainService.Core.DTOs.Payment
 {
@@ -16,8 +18,8 @@ namespace MainService.Core.DTOs.Payment
         public string? StripePaymentId { get; set; }
         public string? StripeInvoiceId { get; set; }
         public UserPaymentMethodDto? PaymentMethod { get; set; }
-        public string? NonLinkedPaymentMethod { get; set; } = string.Empty;
-        public OptionDto? PaymentMethodType { get; set; }
+        public ManualPaymentType? ManualPaymentType { get; set; }
+        public PaymentMethodTypeDto? PaymentMethodType { get; set; }
         public EventSummaryDto? Event { get; set; }
         public int DoctorId { get; set; }
         

@@ -6,6 +6,7 @@ public class PatientOrder
     {
     }
 
+    public PatientOrder(AppUser patient) => Patient = patient;
     public PatientOrder(int patientId) => PatientId = patientId;
 
     public PatientOrder(int patientId, int orderId)

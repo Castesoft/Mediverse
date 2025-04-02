@@ -35,6 +35,7 @@ public class Event : BaseEntity
 
     public string? Evolution { get; set; }
     public string? NextSteps { get; set; }
+    public bool IsReceiptSent { get; set; } = false;
     
     public int? BillingAddressId { get; set; } 
     public Address? BillingAddress { get; set; } 

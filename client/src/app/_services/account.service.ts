@@ -26,6 +26,7 @@ import { StripeOnboardingResponse } from "src/app/_models/account/stripe-onboard
 import {
   StripeOnboardingVerificationResponse
 } from "src/app/_models/account/stripe-onboarding-verification-response.model";
+import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
 
 
 @Injectable({
@@ -100,6 +101,10 @@ export class AccountService {
     localStorage.setItem('user', JSON.stringify(user));
     this.current.set(user);
     this.refreshActiveSubscriptionStatus();
+  }
+
+  getPaymentMethodTypesForUserById(userId: number): Observable<PaymentMethodType[]> {
+    return this.http.get<PaymentMethodType[]>(`${this.baseUrl}payment-method-types/${userId}`);
   }
 
   getCurrent(): Observable<Account> {

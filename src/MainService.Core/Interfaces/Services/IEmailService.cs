@@ -16,4 +16,17 @@ public interface IEmailService
         string service);
 
     string CreateSatisfactionSurveyEmail(AppUser doctor, AppUser patient, Event @event);
+    string CreateEventReceiptEmail(
+        string patientName,
+        string doctorName,
+        DateTime eventDate,
+        string serviceName,
+        decimal amountPaid,
+        string paymentMethodName,
+        DateTime paymentDate,
+        string? referenceNumber,
+        string? notes,
+        int eventId,
+        string clinicName 
+    );
 }

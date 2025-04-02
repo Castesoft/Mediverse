@@ -3,6 +3,10 @@ namespace MainService.Models.Entities;
 public class DoctorOrder
 {
     public DoctorOrder() {}
+    public DoctorOrder(AppUser doctor)
+    {
+        Doctor = doctor;
+    }
     public DoctorOrder(int doctorId) => DoctorId = doctorId;
     public DoctorOrder(AppUser doctor, Order order)
     {

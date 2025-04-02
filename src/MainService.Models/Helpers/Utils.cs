@@ -93,19 +93,11 @@ public static class Utils
     }
 
 
-    // from the number of paymentMethodTypes that come in as a parameter to 1, select randomly one and create a DoctorPaymentMethodType
-    public static List<DoctorPaymentMethodType> CreateDoctorPaymentMethodTypes(
-        List<PaymentMethodType> paymentMethodTypes)
+    public static List<DoctorPaymentMethodType> CreateDoctorPaymentMethodTypes(List<PaymentMethodType> allPaymentMethodTypes)
     {
-        int count = random.Next(1, paymentMethodTypes.Count + 1);
-        List<PaymentMethodType> shuffledPaymentMethodTypes = paymentMethodTypes.OrderBy(x => random.Next()).ToList();
-
-        List<PaymentMethodType> selectedPaymentMethodTypes = shuffledPaymentMethodTypes.Take(count).ToList();
-
-        var doctorPaymentMethodTypes =
-            selectedPaymentMethodTypes.Select(pm => new DoctorPaymentMethodType(pm.Id)).ToList();
-
-        return doctorPaymentMethodTypes;
+        var assignedTypes = new List<DoctorPaymentMethodType>();
+        assignedTypes.AddRange(allPaymentMethodTypes.Select(t => new DoctorPaymentMethodType(t.Id))); 
+        return assignedTypes;
     }
 
     public static List<DoctorWorkSchedule> CreateDoctorWorkSchedules()

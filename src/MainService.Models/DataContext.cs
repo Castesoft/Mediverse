@@ -93,6 +93,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<UserNotification> UserNotifications { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<SubscriptionCancellation> SubscriptionCancellations { get; set; }
+    public DbSet<ManualPaymentDetail> ManualPaymentDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

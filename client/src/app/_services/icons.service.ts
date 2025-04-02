@@ -33,6 +33,7 @@ import {
   faDna,
   faEarthAmericas,
   faEllipsisH,
+  faExclamationCircle,
   faFileContract,
   faFileExport,
   faFileImport,
@@ -42,6 +43,7 @@ import {
   faFilterCircleXmark,
   faHandHoldingHeart,
   faHandsHoldingChild,
+  faHashtag,
   faHome,
   faHorseHead,
   faHospital,
@@ -61,6 +63,7 @@ import {
   faPersonCane,
   faPhone,
   faPlus,
+  faRotateRight,
   faSave,
   faSearch,
   faSignInAlt,
@@ -95,7 +98,9 @@ import {
   faClipboard,
   faCreditCard,
   faEdit,
+  faEnvelope,
   faEye,
+  faFileLines,
   faFileZipper as farFileZipper,
   faIdCard as faRegIdCard,
   faImage as farImage,
@@ -105,13 +110,124 @@ import {
   faUser as farUser,
   faWindowRestore
 } from "@fortawesome/free-regular-svg-icons";
-import { IconDefinition } from "@fortawesome/angular-fontawesome";
+import { FaIconLibrary, IconDefinition } from "@fortawesome/angular-fontawesome";
 
 @Injectable({
   providedIn: "root"
 })
 export class IconsService {
-  constructor() {}
+  constructor(private library: FaIconLibrary) {
+    this.loadIcons();
+  }
+
+  loadIcons(): void {
+    this.library.addIcons(
+      faSort,
+      faEllipsisH,
+      faPlus,
+      faFileExport,
+      faArrowsRotate,
+      faTimes,
+      faArrowsRotate,
+      faMinus,
+      faPenToSquare,
+      faTrashCan,
+      faCheck,
+      faChevronRight,
+      faChevronLeft,
+      faCalendar,
+      faRegCalendar,
+      faSearch,
+      faCancel,
+      faAngleLeft,
+      faAngleRight,
+      faClock,
+      faWeightScale,
+      faWeightHanging,
+      faCalendarDays,
+      faLocationDot,
+      faSortUp,
+      faSortDown,
+      faArrowDownWideShort,
+      faArrowUpWideShort,
+      faAngleDown,
+      faAngleUp,
+      faSliders,
+      faAngleDoubleLeft,
+      faAngleDoubleRight,
+      faPersonBreastfeeding,
+      faNotesMedical,
+      faWheatAwn,
+      faHandHoldingHeart,
+      faHospital,
+      faClipboard,
+      faTriangleExclamation,
+      faMoneyBills,
+      faDna,
+      faNoteSticky,
+      faEarthAmericas,
+      faPencil,
+      faChevronDown,
+      faHandsHoldingChild,
+      faPersonCane,
+      faEye,
+      faEdit,
+      faUser,
+      faUserAlt,
+      farUser,
+      faHome,
+      faCow,
+      faHorseHead,
+      faUsers,
+      faCogs,
+      faSave,
+      faCircleInfo,
+      faArrowUpRightFromSquare,
+      faSignOut,
+      faSignInAlt,
+      faCog,
+      faVenus,
+      faMars,
+      faList,
+      faTableCellsLarge,
+      faMoneyBill1Wave,
+      faTrademark,
+      faVectorSquare,
+      faClockRotateLeft,
+      faLink,
+      farFileZipper,
+      farImage,
+      faCaretRight,
+      faCircle,
+      faCaretUp,
+      faCaretLeft,
+      faCaretDown,
+      faFilter,
+      faFilterCircleDollar,
+      faFilterCircleXmark,
+      faFileContract,
+      faFileSignature,
+      faWindowRestore,
+      faRegCircleQuestion,
+      faTableList,
+      faRegIdCard,
+      faInfoCircle,
+      faRegTrashCan,
+      faFileImport,
+      faXmark,
+      faPhone,
+      faSquarePhone,
+      faSquareEnvelope,
+      faCircleUser,
+      faCakeCandles,
+      faKitMedical,
+      faCreditCard,
+      faArrowRightArrowLeft,
+      faCheckCircle,
+      faPaperPlane,
+      faRegCircleQuestion,
+    );
+  }
 
   faSort: IconDefinition = faSort;
   faEllipsisH: IconDefinition = faEllipsisH;
@@ -216,4 +332,10 @@ export class IconsService {
   faArrowRightArrowLeft: IconDefinition = faArrowRightArrowLeft;
   faCheckCircle: IconDefinition = faCheckCircle;
   faPaperPlane: IconDefinition = faPaperPlane;
+  faQuestionCircle: IconDefinition = faRegCircleQuestion;
+  faFileLines: IconDefinition = faFileLines;
+  faHashtag: IconDefinition = faHashtag;
+  faEnvelope: IconDefinition = faEnvelope;
+  faRotateRight: IconDefinition = faRotateRight;
+  faExclamationCircle: IconDefinition = faExclamationCircle;
 }

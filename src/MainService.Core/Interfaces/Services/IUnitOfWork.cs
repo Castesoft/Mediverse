@@ -40,6 +40,7 @@ public interface IUnitOfWork
     ISubscriptionPlanRepository SubscriptionPlanRepository { get; }
     ISubscriptionCancellationRepository SubscriptionCancellationRepository { get; }
     IUserNotificationRepository UserNotificationRepository { get; }
+    IManualPaymentDetailRepository ManualPaymentDetailRepository { get; }
     Task<bool> Complete();
 
     bool HasChanges();

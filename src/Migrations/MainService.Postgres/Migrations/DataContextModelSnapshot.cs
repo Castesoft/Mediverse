@@ -1173,6 +1173,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Evolution")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsReceiptSent")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsSatisfactionSurveyCompleted")
                         .HasColumnType("boolean");
 
@@ -1340,6 +1343,48 @@ namespace MainService.Postgres.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Link");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.ManualPaymentDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentMethodTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("PaymentMethodTypeId");
+
+                    b.ToTable("ManualPaymentDetails");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MaritalStatus", b =>
@@ -2257,13 +2302,13 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("NonLinkedPaymentMethod")
-                        .HasColumnType("text");
-
                     b.Property<int?>("OrderId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentProcessingMode")
                         .HasColumnType("integer");
 
                     b.Property<string>("PaymentStatus")
@@ -2398,6 +2443,12 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<bool>("Enabled")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("IconName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IconPrefix")
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .HasColumnType("text");
@@ -4230,6 +4281,25 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.ManualPaymentDetail", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.Payment", "Payment")
+                        .WithOne("ManualPaymentDetail")
+                        .HasForeignKey("MainService.Models.Entities.ManualPaymentDetail", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.PaymentMethodType", "PaymentMethodType")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("PaymentMethodType");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.MedicalInsuranceCompanyPhoto", b =>
                 {
                     b.HasOne("MainService.Models.Entities.MedicalInsuranceCompany", "MedicalInsuranceCompany")
@@ -5485,6 +5555,11 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.OrderStatus", b =>
                 {
                     b.Navigation("OrderOrderStatuses");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Payment", b =>
+                {
+                    b.Navigation("ManualPaymentDetail");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethod", b =>

@@ -1,7 +1,7 @@
-import { Component, inject, input, InputSignal } from '@angular/core';
-import { PaymentConfirmationMethod } from "src/app/events/components/event-payment-modal/paymentConfirmationMethod";
-import { IconsService } from "src/app/_services/icons.service";
+import { Component, effect, input, InputSignal } from '@angular/core';
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMethodType";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   selector: 'div[nonLinkedPaymentMethodCell]',
@@ -12,9 +12,9 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   ]
 })
 export class NonLinkedPaymentMethodCellComponent {
-  protected readonly PaymentConfirmationMethod: typeof PaymentConfirmationMethod = PaymentConfirmationMethod;
+  paymentMethodType: InputSignal<PaymentMethodType> = input.required();
 
-  readonly iconsService: IconsService = inject(IconsService);
-
-  nonLinkedPaymentMethod: InputSignal<PaymentConfirmationMethod> = input.required();
+  constructor(private readonly iconsService: IconsService) {
+    this.iconsService.loadIcons();
+  }
 }

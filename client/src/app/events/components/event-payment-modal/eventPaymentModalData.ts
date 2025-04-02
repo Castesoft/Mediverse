@@ -1,4 +1,5 @@
 import Event from "src/app/_models/events/event";
+import { ManualPaymentType } from "src/app/payments/models/manual-payment-type.enum";
 
 export interface EventPaymentModalData {
   title: string;
@@ -7,7 +8,9 @@ export interface EventPaymentModalData {
 }
 
 export interface EventPaymentModalResult {
-  paymentMethod: 'cash' | 'transfer' | 'credit_card' | 'debit_card' | 'other';
+  paymentMethodTypeId: number;
+  updatedEvent: Event | null;
   sendBill: boolean;
   success?: boolean;
+  notes?: string;
 }

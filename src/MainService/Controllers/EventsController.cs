@@ -16,6 +16,7 @@ using MainService.Hubs;
 using MainService.Models.Helpers;
 using Microsoft.AspNetCore.SignalR;
 using MainService.Authorization.Operations;
+using MainService.Models.Enums;
 
 namespace MainService.Controllers;
 
@@ -372,7 +373,8 @@ public class EventsController(
         {
             Amount = serviceEntity.Price, Currency = "MXN", Date = DateTime.UtcNow,
             PaymentStatus = status, StripePaymentIntent = paymentIntent.Id,
-            EventId = eventItem.Id, PaymentMethodId = paymentMethod.Id
+            EventId = eventItem.Id, PaymentMethodId = paymentMethod.Id,
+            PaymentProcessingMode = PaymentProcessingMode.Integrated
         };
 
         eventItem.Payments.Add(payment);

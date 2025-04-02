@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, WritableSignal } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
@@ -12,15 +12,15 @@ import { SymbolCellComponent } from "src/app/_shared/template/components/tables/
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
-import { TooltipDirective } from "ngx-bootstrap/tooltip";
 import { EventDetailComponent } from "src/app/events/events.config";
 import { PaymentStatus } from "src/app/_models/payments/paymentConstants";
-import { ToastrService } from "ngx-toastr";
-import { PaymentsService } from "src/app/payments/payments.config";
 import {
   EventPaymentModalComponent
 } from "src/app/events/components/event-payment-modal/event-payment-modal.component";
-import { EventPaymentModalData, EventPaymentModalResult } from "src/app/events/components/event-payment-modal/eventPaymentModalData";
+import {
+  EventPaymentModalData,
+  EventPaymentModalResult
+} from "src/app/events/components/event-payment-modal/eventPaymentModalData";
 
 @Component({
   selector: 'event-detail-modal',
@@ -33,7 +33,6 @@ import { EventPaymentModalData, EventPaymentModalResult } from "src/app/events/c
     DatePipe,
     SymbolCellComponent,
     FaIconComponent,
-    TooltipDirective,
     EventDetailComponent
   ],
 })
@@ -43,22 +42,22 @@ export class EventDetailModalComponent implements OnInit {
   protected readonly FormUse: typeof FormUse = FormUse;
 
   private readonly dialogRef: MatDialogRef<EventDetailModalComponent> = inject(MatDialogRef);
-  private readonly paymentService: PaymentsService = inject(PaymentsService);
   private readonly eventsService: EventsService = inject(EventsService);
-  private readonly toastr: ToastrService = inject(ToastrService);
   private readonly dialog: MatDialog = inject(MatDialog);
 
   readonly iconsService: IconsService = inject(IconsService)
   readonly data: DetailDialog<Event> = inject(MAT_DIALOG_DATA);
 
-  isConfirmingCash: WritableSignal<boolean> = signal(false);
-
   event: Event | null = null;
-  total: number = 0;
 
   ngOnInit(): void {
-    console.log(this.data);
-    this.event = this.data.item;
+    console.log('EventDetailModal received data:', this.data);
+
+    this.event = this.data.item ?? null;
+    if (!this.event) {
+      console.error("EventDetailModal received null event item!");
+      this.dialogRef.close();
+    }
   }
 
   navigateToDetail(item: Event | null): void {
@@ -73,45 +72,37 @@ export class EventDetailModalComponent implements OnInit {
   }
 
   openPaymentModal(): void {
-    const eventId: number | null = this.event?.id || null;
-    const currentStatus: string | null = this.event?.paymentStatus || null;
-
-    if (!eventId || currentStatus !== PaymentStatus.AwaitingPayment) {
-      this.toastr.warning('No se puede confirmar el pago para esta cita en este momento.');
+    if (!this.event || !this.event.id) {
+      console.error('Attempted to open payment modal without a valid event object:', this.event);
       return;
     }
 
-    const data: EventPaymentModalData = {
-      title: 'Confirmar Pago',
-      item: this.event
+    const eventId: number = this.event.id;
+    const currentStatus: string | null = this.event.paymentStatus || null;
+
+    if (currentStatus !== PaymentStatus.AwaitingPayment) {
+      return;
     }
 
-    const dialogRef = this.dialog.open(EventPaymentModalComponent, { data });
-    
-    dialogRef.afterClosed().subscribe((result: EventPaymentModalResult) => {
-      if (result?.success) {
-        this.dialogRef.close();
+    const paymentModalData: EventPaymentModalData = {
+      title: `Confirmar Pago Cita #${eventId}`,
+      item: this.event
+    };
+
+    const dialogRef = this.dialog.open(EventPaymentModalComponent, {
+      data: paymentModalData,
+    });
+
+    dialogRef.afterClosed().subscribe((result: EventPaymentModalResult | undefined) => {
+      console.log('Payment modal closed with result:', result);
+      if (result && result.success && result.updatedEvent) {
+        console.log('Payment successful, updating event in detail modal:', result.updatedEvent);
+        this.event = result.updatedEvent;
+      } else if (result && !result.success) {
+        console.log('Payment modal closed without success.');
+      } else {
+        console.log('Payment modal closed without returning a result (likely cancelled).');
       }
     });
-  }
-
-  /**
-   * Initiates the cash confirmation process. Opens a confirmation dialog first.
-   */
-  confirmCashReceived(): void {
-    const eventId: number | null = this.event?.id || null;
-    const currentStatus: string | null = this.event?.paymentStatus || null;
-
-    if (!eventId || currentStatus !== PaymentStatus.AwaitingPayment) {
-      this.toastr.warning('No se puede confirmar el pago para esta cita en este momento.');
-      return;
-    }
-
-    const data: EventPaymentModalData = {
-      title: 'Confirmar Pago',
-      item: this.event
-    }
-
-    this.dialog.open(EventPaymentModalComponent, { data });
   }
 }

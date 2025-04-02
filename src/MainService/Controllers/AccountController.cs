@@ -1152,6 +1152,25 @@ public class AccountController(
 
         return mapper.Map<UserPaymentMethodDto>(user.PaymentMethods.Last());
     }
+    
+    [HttpGet("payment-method-types/{userId:int}")]
+    public async Task<ActionResult<List<PaymentMethodTypeDto>>> GetPaymentMethodTypes(int userId)
+    {
+        var requestingUserId = User.GetUserId();
+        
+        if (requestingUserId != userId)
+        {
+            return Forbid("No tienes permisos para acceder a los métodos de pago de este usuario.");
+        }
+        
+        var user = await uow.UserRepository.GetByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound($"El usuario con id {userId} no existe.");
+        }
+
+        return await uow.UserRepository.GetPaymentMethodTypeDtosForUserByIdAsync(userId);
+    }
 
     [Authorize]
     [HttpDelete("payment-method/{paymentMethodId}")]

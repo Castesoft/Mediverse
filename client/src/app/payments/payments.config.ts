@@ -17,7 +17,7 @@ import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { BehaviorSubject, Observable, tap } from "rxjs";
 import Event from "src/app/_models/events/event";
 import { HttpParams } from "@angular/common/http";
-import { PaymentConfirmationMethod } from "src/app/events/components/event-payment-modal/paymentConfirmationMethod";
+import { PaymentConfirmationPayload } from "src/app/payments/models/payment-confirmation-payload.model";
 
 @Component({
   selector: 'payments-catalog-modal',
@@ -73,10 +73,31 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
     return this.http.get<PaymentMethod[]>(`${this.baseUrl}method-types/all`);
   }
 
-  confirmPaymentForEvent(eventId: number, paymentMethod: PaymentConfirmationMethod): Observable<Event> {
-    const httpParams = new HttpParams().set('selectedPaymentMethod', paymentMethod.toString());
+  confirmPaymentForEvent(eventId: number, payload: PaymentConfirmationPayload): Observable<Event> {
+    let httpParams: HttpParams = new HttpParams();
+
+    console.log('Confirming payment with payload:', payload);
+
+    httpParams = httpParams.set('selectedPaymentMethodTypeId', payload.selectedPaymentMethodTypeId.toString());
+    httpParams = httpParams.set('referenceNumber', payload.referenceNumber || '');
+    httpParams = httpParams.set('notes', payload.notes || '');
 
     return this.http.put<Event>(`${this.baseUrl}confirm-payment/event/${eventId}`, {}, { params: httpParams });
+  }
+
+  /**
+   * Sends an email receipt for a specific event to the given email address.
+   * @param eventId The ID of the event.
+   * @param email The email address to send the receipt to.
+   * @returns An Observable<void> indicating completion.
+   */
+  sendEventReceiptEmail(eventId: number, email: string): Observable<void> {
+    const url = `${this.baseUrl}event/${eventId}/send-receipt`;
+    const body = { email: email };
+
+    console.log(`Sending email receipt request to ${url} for email ${email}`);
+
+    return this.http.post<void>(url, body);
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {

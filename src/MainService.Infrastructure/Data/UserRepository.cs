@@ -21,6 +21,18 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public void Delete(AppUser item) => context.Users.Remove(item);
     public void Update(AppUser item) => context.Users.Update(item);
 
+    public async Task<List<PaymentMethodTypeDto>> GetPaymentMethodTypeDtosForUserByIdAsync(int userId)
+    {
+        return await context.Users
+            .Include(x => x.DoctorPaymentMethodTypes)
+            .ThenInclude(x => x.PaymentMethodType)
+            .Where(x => x.Id == userId)
+            .SelectMany(x => x.DoctorPaymentMethodTypes)
+            .Select(x => x.PaymentMethodType)
+            .ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
     public async Task<List<AppUser>> GetAllAsync()
     {
         return await context.Users.ToListAsync();
@@ -292,6 +304,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.PaymentMethodTypes
             .ProjectTo<PaymentMethodTypeDto>(mapper.ConfigurationProvider)
             .ToListAsync();
+    }
+
+    public Task<bool> UserAcceptsPaymentMethodTypeByIdAsync(int userId, int paymentMethodTypeId)
+    {
+        return context.DoctorPaymentMethodTypes
+            .AnyAsync(x => x.DoctorId == userId && x.PaymentMethodTypeId == paymentMethodTypeId);
     }
 
     public async Task<List<SpecialtyDto>> GetSpecialtiesAsync()

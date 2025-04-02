@@ -83,7 +83,7 @@ public static class Seed
     {
         if (await context.DeliveryStatuses.AnyAsync()) return;
 
-        await context.DeliveryStatuses.AddRangeAsync(SeedData.deliveryStatuses);
+        await context.DeliveryStatuses.AddRangeAsync(SeedData.DeliveryStatuses);
         await context.SaveChangesAsync();
     }
 
@@ -91,7 +91,7 @@ public static class Seed
     {
         if (await context.OrderStatuses.AnyAsync()) return;
 
-        await context.OrderStatuses.AddRangeAsync(SeedData.orderStatuses);
+        await context.OrderStatuses.AddRangeAsync(SeedData.OrderStatuses);
         await context.SaveChangesAsync();
     }
 
@@ -100,7 +100,7 @@ public static class Seed
         if (await context.PaymentMethodTypes.AnyAsync())
             return await context.PaymentMethodTypes.AsNoTracking().ToListAsync();
 
-        await context.PaymentMethodTypes.AddRangeAsync(SeedData.paymentMethodTypes.ToArray());
+        await context.PaymentMethodTypes.AddRangeAsync(SeedData.PaymentMethodTypes.ToArray());
         await context.SaveChangesAsync();
 
         return await context.PaymentMethodTypes.AsNoTracking().ToListAsync();
@@ -198,7 +198,7 @@ public static class Seed
     {
         if (await context.MedicalInsuranceCompanies.AnyAsync()) return;
 
-        await context.MedicalInsuranceCompanies.AddRangeAsync(SeedData.medicalInsuranceCompanies.ToArray());
+        await context.MedicalInsuranceCompanies.AddRangeAsync(SeedData.MedicalInsuranceCompanies.ToArray());
         await context.SaveChangesAsync();
     }
 
@@ -531,7 +531,7 @@ public static class Seed
     {
         if (!await context.Products.AnyAsync())
         {
-            await context.Products.AddRangeAsync(SeedData.products.ToArray());
+            await context.Products.AddRangeAsync(SeedData.Products.ToArray());
             await context.SaveChangesAsync();
             Log.Information("Seeding products.");
         }
@@ -546,7 +546,7 @@ public static class Seed
     {
         if (!await context.Warehouses.AnyAsync())
         {
-            await context.Warehouses.AddRangeAsync(SeedData.warehouses.ToArray());
+            await context.Warehouses.AddRangeAsync(SeedData.Warehouses.ToArray());
             await context.SaveChangesAsync();
             Log.Information("Seeding warehouses.");
         }
@@ -587,7 +587,7 @@ public static class Seed
     private static async Task SeedServicesAsync(DataContext context)
     {
         if (await context.Services.AnyAsync()) return;
-        await context.Services.AddRangeAsync(SeedData.services.ToArray());
+        await context.Services.AddRangeAsync(SeedData.Services.ToArray());
         await context.SaveChangesAsync();
     }
 
@@ -625,7 +625,7 @@ public static class Seed
     {
         var random = new Random();
         var numberOfProductsToAdd = random.Next(5, 16);
-        var products = SeedData.products.OrderBy(_ => Guid.NewGuid()).Take(numberOfProductsToAdd).ToList();
+        var products = SeedData.Products.OrderBy(_ => Guid.NewGuid()).Take(numberOfProductsToAdd).ToList();
 
         var doctorProducts = products.Select(product => new DoctorProduct
         {
@@ -652,7 +652,7 @@ public static class Seed
     private static async Task<List<DoctorService>> SeedDoctorServicesAsync(DataContext context, AppUser doctor)
     {
         var random = new Random();
-        var services = SeedData.services.ToList();
+        var services = SeedData.Services.ToList();
 
         foreach (var service in services.Take(random.Next(4, services.Count + 1)))
         {
@@ -685,13 +685,24 @@ public static class Seed
     {
         var doctors = await GetDoctorsAsync(userManager);
         var userIndex = 0;
+        
+        var paymentTypes = await context.PaymentMethodTypes
+            .AsNoTracking()             
+            .ToListAsync();
 
+        if (paymentTypes.Count == 0)
+        {
+            Log.Warning("No payment types found in DB. Payment types will not be seeded for events.");
+        }
+
+        
         foreach (var doctor in doctors)
         {
             Log.Information("Seeding random data for doctor {Index,-15} ==> {Email}",
                 $"{userIndex++}/{doctors.Count - 1}", doctor.Email);
-            await SeedDoctorDataAsync(context, userManager, doctor);
+            await SeedDoctorDataAsync(context, userManager, doctor, paymentTypes);
         }
+        
 
         Log.Information("Saving random doctor data changes to database...");
         await context.SaveChangesAsync();
@@ -701,12 +712,14 @@ public static class Seed
     private static async Task<List<AppUser>> GetDoctorsAsync(UserManager<AppUser> userManager)
     {
         return await userManager.Users
+            .Include(d => d.Patients).ThenInclude(dp => dp.Patient).ThenInclude(p => p.PaymentMethods)
+            .Include(d => d.DoctorClinics).ThenInclude(dc => dc.Clinic)
             .Include(x => x.UserRoles).ThenInclude(ur => ur.Role)
             .Where(x => x.UserRoles.Any(ur => ur.Role.Name == "Doctor"))
             .ToListAsync();
     }
 
-    private static async Task SeedDoctorDataAsync(DataContext context, UserManager<AppUser> userManager, AppUser doctor)
+    private static async Task SeedDoctorDataAsync(DataContext context, UserManager<AppUser> userManager, AppUser doctor, List<PaymentMethodType> paymentMethods)
     {
         var doctorNurses = await SeedDoctorNursesAsync(context, userManager, doctor.Id);
         var doctorProducts = await SeedDoctorProductsAsync(context, doctor);
@@ -716,7 +729,7 @@ public static class Seed
 
         foreach (var patient in doctor.Patients.Select(x => x.Patient))
         {
-            SeedPatientEventsAsync(doctor, patient, doctorNurses, doctorProducts, doctorServices);
+            SeedPatientEventsAsync(doctor, patient, doctorNurses, doctorProducts, doctorServices, paymentMethods);
         }
     }
 
@@ -917,52 +930,130 @@ public static class Seed
     private static string GetRandomAddress() =>
         $"{SeedData.GetRandomStreet()} {Random.Shared.Next(100, 9999)}, {SeedData.GetRandomCity()}";
 
-    private static void SeedPatientEventsAsync(AppUser doctor, AppUser patient, List<DoctorNurse> doctorNurses,
-        List<DoctorProduct> doctorProducts, List<DoctorService> doctorServices)
+    private static void SeedPatientEventsAsync(
+        AppUser doctor,
+        AppUser patient, // Ensure patient.PaymentMethods are loaded before calling this
+        List<DoctorNurse> doctorNurses,
+        List<DoctorProduct> doctorProducts,
+        List<DoctorService> doctorServices,
+        List<PaymentMethodType> manualPaymentTypes) // <-- ADDED Parameter
     {
-        for (var i = 2; i < Random.Next(2, 11); i++)
+        // Generate a random number of events for this patient-doctor pair
+        for (var i = 0; i < Random.Next(2, 11); i++)
         {
-            var newPatientEvent = CreatePatientEvent(doctor, doctorServices, patient);
-            AddNursesToEvent(newPatientEvent, doctorNurses);
-            AddPrescriptionsToEvent(newPatientEvent, doctorProducts, patient, doctor);
-            patient.PatientEvents.Add(newPatientEvent);
-        }
-    }
+            // --- Basic Event Setup ---
+            var eventDate = GenerateTestEventDate(DateTime.UtcNow); // Get a random date/time
+            // Select a random service offered by this doctor
+            var selectedDoctorService = doctorServices[Random.Next(doctorServices.Count)];
+            var servicePrice = selectedDoctorService.Service.Price; // Get the price for payment amount
+            // Select one of the doctor's clinics randomly (main or other)
+            var isMainClinic = Random.Next(2) > 0;
+            var randomClinic =
+                doctor.DoctorClinics?.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic; // Use ?. for safety
 
-    private static PatientEvent CreatePatientEvent(AppUser doctor, List<DoctorService> doctorServices, AppUser patient)
-    {
-        var eventDate = GenerateTestEventDate(DateTime.UtcNow);
-        var selectedService = doctorServices[Random.Next(doctorServices.Count)].Service;
-        var isMainClinic = Random.Next(2) > 0;
-        var randomClinic = doctor.DoctorClinics.FirstOrDefault(x => x.IsMain == isMainClinic)?.Clinic;
-
-        var evt = new Event
-        {
-            DoctorEvent = new DoctorEvent(doctor),
-            DateFrom = eventDate.ToUniversalTime(),
-            DateTo = eventDate.AddHours(1).ToUniversalTime(),
-            EventService = new EventService(selectedService),
-            Payments = SeedEventPayments.GetEventPayments(
-                new Event { EventService = new EventService(selectedService) })
-        };
-
-        if (evt.Payments.Count != 0 && patient.PaymentMethods.Count != 0)
-        {
-            foreach (var payment in evt.Payments)
+            var evt = new Event
             {
-                var assignedMethod = patient.PaymentMethods.OrderBy(_ => Random.Next()).First();
-                payment.PaymentMethod = assignedMethod;
+                DoctorEvent = new DoctorEvent(doctor),
+                DateFrom = eventDate.ToUniversalTime(),
+                DateTo = eventDate.AddHours(1).ToUniversalTime(), // Assume 1-hour events
+                EventService = new EventService(selectedDoctorService.Service),
+                Payments = [], // Initialize empty payments list
+                // PaymentStatus will be set after potential payment is added
+            };
+
+            // Assign clinic if one was found
+            if (randomClinic != null)
+                evt.EventClinic = new EventClinic(randomClinic);
+
+            // --- Payment Seeding Logic ---
+            bool shouldHavePayment = Random.NextDouble() < 0.8; // 80% chance event has a payment record
+
+            if (shouldHavePayment)
+            {
+                // Decide if it's a manual payment (e.g., 40% chance) or integrated (Stripe)
+                bool isManualPayment = Random.NextDouble() < 0.4;
+
+                // Create the base Payment object
+                Payment? payment = new Payment // Nullable initially
+                {
+                    Amount = servicePrice,
+                    Currency = "mxn", // Or from config/doctor setting
+                    Date = eventDate.AddMinutes(Random.Next(5, 55)).ToUniversalTime(), // Payment time during event
+                    PaymentStatus = PaymentStatus.Succeeded, // Seed successful payments
+                    Event = evt // Link back to the event
+                    // Specific fields (ManualDetail, Stripe info) set below
+                };
+
+                // Branch based on payment type
+                if (isManualPayment && manualPaymentTypes.Any())
+                {
+                    // --- Seed MANUAL Payment ---
+                    var chosenManualType = manualPaymentTypes[Random.Next(manualPaymentTypes.Count)];
+
+                    payment.MarkedPaidByUserId = doctor.Id; // Doctor marked it paid
+                    payment.PaymentMethodId = null; // No specific Stripe method instance
+                    payment.StripePaymentId = null; // No Stripe charge ID
+                    payment.StripePaymentIntent = null; // No Stripe intent ID
+
+                    // Create and link the ManualPaymentDetail
+                    payment.ManualPaymentDetail = new ManualPaymentDetail
+                    {
+                        Payment = payment, // Link back to payment object
+                        PaymentMethodTypeId = chosenManualType.Id, // Set the type ID
+                        // Add optional fake details for realism
+                        ReferenceNumber = chosenManualType.Code == "bank_transfer"
+                            ? $"TR-{Random.Next(100000, 999999)}"
+                            : null,
+                        Notes = $"Pago registrado por Dr. {doctor.LastName} ({chosenManualType.Name})"
+                    };
+                }
+                else if (!isManualPayment && patient.PaymentMethods != null && patient.PaymentMethods.Any())
+                {
+                    // --- Seed STRIPE Payment ---
+                    var assignedStripeMethod = patient.PaymentMethods.OrderBy(_ => Random.Next()).First();
+
+                    payment.PaymentMethodId = assignedStripeMethod.Id; // Link to specific Stripe PM
+                    payment.PaymentMethod = assignedStripeMethod; // Link navigation property
+                    payment.MarkedPaidByUserId = null; // Not marked manually
+                    payment.ManualPaymentDetail = null; // No manual details
+
+                    // Add fake Stripe IDs
+                    payment.StripePaymentIntent = $"pi_{Guid.NewGuid().ToString("N")[..24]}";
+                    payment.StripePaymentId = $"ch_{Guid.NewGuid().ToString("N")[..24]}";
+                }
+                else
+                {
+                    // Could not seed the desired type (e.g., wanted Stripe but patient had no cards, or wanted manual but no manual types existed)
+                    // For seeding, we simply won't create a payment record in this case.
+                    Log.Debug(
+                        "Skipping payment seeding for Event on {EventDate} for Patient {PatientId} - Conditions not met.",
+                        eventDate, patient.Id);
+                    payment = null; // Ensure no payment is added
+                }
+
+                // If a payment was successfully configured, add it to the event's list
+                if (payment != null)
+                {
+                    evt.Payments.Add(payment);
+                }
             }
+            // --- End Payment Seeding Logic ---
+
+            // Determine the final payment status for the event based on added payments
+            evt.PaymentStatus = evt.Payments.Any(p => p.PaymentStatus == PaymentStatus.Succeeded)
+                ? PaymentStatus.Succeeded
+                : PaymentStatus.AwaitingPayment; // Simplified for seeding
+
+            // --- Add other related data (Nurses, Prescriptions) ---
+            // Pass the 'evt' object directly now
+            AddNursesToEvent(evt, doctorNurses);
+            AddPrescriptionsToEvent(evt, doctorProducts, patient, doctor);
+
+            // --- Link Event to Patient ---
+            // Ensure the Patient object has its navigation properties initialized if needed
+            patient.PatientEvents ??= []; // Initialize if null
+            patient.PatientEvents.Add(new PatientEvent { Event = evt }); // Add the relationship
         }
-
-        evt.PaymentStatus = evt.Payments.Sum(p => p.Amount) >= selectedService.Price
-            ? PaymentStatus.Succeeded
-            : PaymentStatus.RequiresPaymentMethod;
-
-        if (randomClinic != null)
-            evt.EventClinic = new EventClinic(randomClinic);
-
-        return new PatientEvent { Event = evt };
     }
 
     private static DateTime GenerateTestEventDate(DateTime currentDate)
@@ -1000,135 +1091,160 @@ public static class Seed
         return new DateTime(targetYear, targetMonth, day, hour, 0, 0, DateTimeKind.Utc);
     }
 
-    private static void AddNursesToEvent(PatientEvent patientEvent, List<DoctorNurse> doctorNurses)
+    private static void AddNursesToEvent(Event evt, List<DoctorNurse> doctorNurses)
     {
-        if (Random.Next(2) == 0) return;
+        if (doctorNurses.Count != 0 || Random.Next(2) == 0) return;
 
-        var randomNurses = doctorNurses.Select(x => x.Nurse).Take(Random.Next(1, 4)).ToList();
+        var numberOfNursesToAdd = Random.Next(1, Math.Min(3, doctorNurses.Count) + 1);
+        var randomNurses = doctorNurses.Select(dn => dn.Nurse)
+            .Where(n => n != null)
+            .OrderBy(_ => Random.Next())
+            .Take(numberOfNursesToAdd)
+            .ToList();
+
         foreach (var nurse in randomNurses)
         {
-            patientEvent.Event.NurseEvents.Add(new NurseEvent { Nurse = nurse });
+            evt.NurseEvents.Add(new NurseEvent { NurseId = nurse!.Id });
         }
     }
 
-    private static void AddPrescriptionsToEvent(PatientEvent patientEvent, List<DoctorProduct> doctorProducts,
-        AppUser patient, AppUser doctor)
+    private static void AddPrescriptionsToEvent(
+        Event evt, // Takes Event directly
+        List<DoctorProduct> doctorProducts,
+        AppUser patient,
+        AppUser doctor)
     {
-        if (Random.Next(2) == 0) return;
+        // Check if the doctor has any products to prescribe or if we randomly skip
+        if (!doctorProducts.Any() || Random.Next(2) == 0) return;
 
-        for (var j = 1; j < Random.Next(1, 4); j++)
+        // Create 1 to 3 prescriptions for this event
+        for (var j = 0; j < Random.Next(1, 4); j++)
         {
-            var productIds = doctorProducts.Select(x => x.Product.Id).ToList();
-            var newPrescriptionItems = new List<PrescriptionProduct>();
-            var existingMedicineIds = new HashSet<int>();
-            var order = new Order();
+            var prescriptionProducts = new List<PrescriptionProduct>();
+            var orderItems = new List<OrderProduct>();
+            // Get distinct product IDs available to this doctor
+            var availableProductIds = doctorProducts.Select(dp => dp.ProductId).Distinct().ToList();
+            var usedProductIdsInPrescription = new HashSet<int>();
 
-            for (var k = 1; k < Random.Next(1, 4); k++)
+            // Add 1 to 3 products per prescription
+            for (var k = 0; k < Random.Next(1, 4); k++)
             {
-                if (existingMedicineIds.Count >= productIds.Count)
-                {
-                    Log.Warning("All products have been used for patient {PatientId}", patient.Id);
-                    break;
-                }
+                // Check if there are any available products left that haven't been added to *this* prescription
+                var remainingProductIds = availableProductIds.Except(usedProductIdsInPrescription).ToList();
+                if (!remainingProductIds.Any()) break; // No more unique products left for this prescription
 
-                int randomMedicineId;
-                do
-                {
-                    randomMedicineId = productIds[Random.Next(productIds.Count)];
-                } while (existingMedicineIds.Contains(randomMedicineId));
+                // Select a random product ID from the remaining available ones
+                var randomProductId = remainingProductIds[Random.Next(remainingProductIds.Count)];
+                usedProductIdsInPrescription.Add(randomProductId);
 
-                existingMedicineIds.Add(randomMedicineId);
+                // Find the corresponding DoctorProduct to get the actual Product entity details
+                var doctorProduct = doctorProducts.FirstOrDefault(dp => dp.ProductId == randomProductId);
+                // Ensure we found the DoctorProduct and it has a linked Product
+                if (doctorProduct?.Product == null) continue;
+                var product = doctorProduct.Product;
 
-                var randomMedicine = doctorProducts.Select(x => x.Product)
-                    .FirstOrDefault(p => p.Id == randomMedicineId);
-                if (randomMedicine == null)
-                {
-                    Log.Error("Failed to find medicine with ID {MedicineId}", randomMedicineId);
-                    continue;
-                }
+                // Determine random quantity, dosage, unit, and instructions
+                var quantity = Random.Next(1, 4); // Smaller quantity for prescriptions
+                var dosage = product.Dosage ?? Random.Next(100, 501); // Use product dosage or random default
+                var unit = product.Unit ?? "mg"; // Use product unit or default
+                var instructions = $"Tomar {dosage}{unit} cada {Random.Next(4, 13)} horas";
 
-                var quantity = Random.Next(1, 10);
-                var newPrescriptionItem = new PrescriptionProduct
+                // Add to the list for the Prescription entity
+                prescriptionProducts.Add(new PrescriptionProduct
                 {
-                    ProductId = randomMedicineId,
-                    Product = randomMedicine,
+                    ProductId = product.Id,
+                    // Product navigation property will likely be set by EF Core based on ProductId
                     Quantity = quantity,
-                    Dosage = 500,
-                    Instructions = "Tomar 1 tableta cada 6 horas",
-                    Unit = "mg"
-                };
+                    Dosage = dosage,
+                    Instructions = instructions,
+                    Unit = unit
+                });
 
-                newPrescriptionItems.Add(newPrescriptionItem);
-
-                var orderItem = new OrderProduct
+                // Add a corresponding item to the list for the Order entity
+                orderItems.Add(new OrderProduct
                 {
+                    ProductId = product.Id,
+                    // Product navigation property likely set by EF Core
                     Quantity = quantity,
-                    Dosage = randomMedicine.Dosage,
-                    Instructions = newPrescriptionItem.Instructions,
-                    Unit = randomMedicine.Unit,
-                    Price = randomMedicine.Price,
-                    Discount = 0,
-                    Product = randomMedicine
-                };
-
-                order.OrderItems.Add(orderItem);
+                    Dosage = dosage,
+                    Instructions = instructions,
+                    Unit = unit,
+                    Price = product.Price ?? 0, // Use product price or 0 if null
+                    Discount = 0 // Default discount for seeding
+                });
             }
 
-            var deliveryStatus = SeedData.deliveryStatuses[Random.Next(SeedData.deliveryStatuses.Count)];
-            order.OrderDeliveryStatus = new OrderDeliveryStatus(deliveryStatus);
+            // Only proceed if products were actually added to this prescription
+            if (!prescriptionProducts.Any()) continue;
 
-            var status = SeedData.orderStatuses[Random.Next(SeedData.orderStatuses.Count)];
-            order.OrderOrderStatus = new OrderOrderStatus(status);
+            // --- Create Order linked to Prescription ---
+            var order = new Order
+            {
+                OrderItems = orderItems,
+                Subtotal = orderItems.Sum(oi => oi.Price * oi.Quantity),
+                Tax = 0, // Simplified for seeding
+                Discount = 0, // Simplified for seeding
+                AmountPaid = 0, // Initially unpaid
+                PatientOrder = new PatientOrder(patient), // Link to Patient using constructor/navigation
+                DoctorOrder = new DoctorOrder(doctor), // Link to Doctor using constructor/navigation
+                OrderHistories = [] // Initialize history
+            };
+            // Calculate totals
+            order.Total = order.Subtotal + order.Tax - (decimal)order.Discount;
+            order.AmountDue = order.Total;
 
-            var deliveryAddress = patient.UserAddresses.FirstOrDefault(x => x.IsMain)?.Address;
+            // Assign random status (using the static SeedData lists)
+            var deliveryStatus = SeedData.DeliveryStatuses[Random.Next(SeedData.DeliveryStatuses.Count)];
+            var orderStatus = SeedData.OrderStatuses[Random.Next(SeedData.OrderStatuses.Count)];
+            order.OrderDeliveryStatus = new OrderDeliveryStatus(deliveryStatus); // Link status
+            order.OrderOrderStatus = new OrderOrderStatus(orderStatus); // Link status
+
+            // Assign delivery/pickup address (use patient's main address if available)
+            var deliveryAddress = patient.UserAddresses?.FirstOrDefault(x => x.IsMain)?.Address;
             if (deliveryAddress != null)
             {
                 order.OrderDeliveryAddress = new OrderDeliveryAddress(deliveryAddress);
+                // For simplicity, using the same address for pickup during seeding
                 order.OrderPickupAddress = new OrderPickupAddress(deliveryAddress);
             }
 
-            order.Subtotal = order.OrderItems.Sum(x => x.Price * x.Quantity);
-            order.Tax = 0;
-            order.Discount = 0;
-            order.AmountPaid = 0;
-            order.Total = order.Subtotal + order.Tax - (decimal?)order.Discount;
-            order.AmountDue = order.Total;
-            order.PatientOrder = new PatientOrder(patient, order);
-            order.DoctorOrder = new DoctorOrder(doctor, order);
-
+            // Add Order History entries
             order.OrderHistories.Add(new OrderHistory
             {
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                User = doctor,
+                User = doctor, // Doctor created the order/prescription
                 ChangeType = OrderChangeType.Created,
-                Property = OrderProperty.OrderStatus,
+                Property = OrderProperty.OrderStatus, // Or maybe just 'Order'
                 OldValue = null,
-                NewValue = null
+                NewValue = orderStatus.Name, // Record the initial status name
+                CreatedAt = DateTime.UtcNow, // Use current time for seed history
+                UpdatedAt = DateTime.UtcNow
             });
-
             order.OrderHistories.Add(new OrderHistory
             {
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
                 User = doctor,
                 ChangeType = OrderChangeType.PrescriptionLinked,
-                Property = OrderProperty.Items,
+                Property = OrderProperty.Items, // Indicates items added from prescription
                 OldValue = null,
-                NewValue = null
+                NewValue = $"{orderItems.Count} items added", // Example detail
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             });
 
-            patientEvent.Event.EventPrescriptions.Add(new EventPrescription(new Prescription
+            // --- Create Prescription and link Order ---
+            var prescription = new Prescription
             {
-                Date = DateTime.SpecifyKind(
-                    new DateTime(Random.Next(2019, 2024), Random.Next(1, 12), Random.Next(1, 28)), DateTimeKind.Utc),
-                ExchangeAmount = Random.Next(1, 6),
-                Notes = "Infección de las vías respiratorias superiores (posiblemente viral).",
-                PatientPrescription = new PatientPrescription { Patient = patient },
-                DoctorPrescription = new DoctorPrescription { Doctor = doctor },
-                PrescriptionItems = newPrescriptionItems,
-                PrescriptionOrder = new PrescriptionOrder(order)
-            }));
+                Date = evt.DateFrom, // Use the event date/time for the prescription date
+                ExchangeAmount = Random.Next(1, 4), // Random number of exchanges allowed
+                Notes = "Prescripción generada automáticamente para evento.", // Generic note
+                PatientPrescription = new PatientPrescription { Patient = patient }, // Link to patient
+                DoctorPrescription = new DoctorPrescription { Doctor = doctor }, // Link to doctor
+                PrescriptionItems = prescriptionProducts, // Assign the items created earlier
+                PrescriptionOrder = new PrescriptionOrder(order) // Link the order created above
+            };
+
+            // --- Link Prescription to Event ---
+            evt.EventPrescriptions ??= []; // Initialize if null
+            evt.EventPrescriptions.Add(new EventPrescription(prescription)); // Add the relationship
         }
     }
 }

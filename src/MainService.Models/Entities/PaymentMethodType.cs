@@ -6,13 +6,19 @@ namespace MainService.Models.Entities;
 public class PaymentMethodType : BaseCodeEntity
 {
     public List<DoctorPaymentMethodType> DoctorPaymentMethodTypes { get; set; } = [];
-
     // The following legacy navigation properties are no longer needed.
     // public List<EventPaymentMethodType> EventPaymentMethodTypes { get; set; } = [];
-    // public List<PaymentPaymentMethodType> PaymentPaymentMethodTypes { get; set; } = [];
+    // public List<PaymentPaymentMethodType> PaymentPaymentMethodTypes { get; set; }  [];
+    
+    public string? IconPrefix { get; set; }
+    public string? IconName { get; set; }
 }
 
-public class PaymentMethodTypeDto : BaseCodeEntity;
+public class PaymentMethodTypeDto : BaseCodeEntity
+{
+    public string? IconPrefix { get; set; }
+    public string? IconName { get; set; }
+}
 
 public class PaymentMethodTypeParams : BaseCodeParams;
 
