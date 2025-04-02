@@ -1,0 +1,4107 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+
+#nullable disable
+
+namespace MainService.Postgres.Migrations
+{
+    /// <inheritdoc />
+    public partial class Initial : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Street = table.Column<string>(type: "text", nullable: true),
+                    InteriorNumber = table.Column<string>(type: "text", nullable: true),
+                    ExteriorNumber = table.Column<string>(type: "text", nullable: true),
+                    Neighborhood = table.Column<string>(type: "text", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: true),
+                    State = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true),
+                    CountryCode = table.Column<string>(type: "text", nullable: true),
+                    Zipcode = table.Column<string>(type: "text", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    CrossStreet1 = table.Column<string>(type: "text", nullable: true),
+                    CrossStreet2 = table.Column<string>(type: "text", nullable: true),
+                    Latitude = table.Column<double>(type: "double precision", nullable: true),
+                    Longitude = table.Column<double>(type: "double precision", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TranslatedName = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EmailVerificationCodeHash = table.Column<byte[]>(type: "bytea", nullable: true),
+                    EmailVerificationCodeSalt = table.Column<byte[]>(type: "bytea", nullable: true),
+                    PhoneNumberVerificationCodeHash = table.Column<byte[]>(type: "bytea", nullable: true),
+                    PhoneNumberVerificationCodeSalt = table.Column<byte[]>(type: "bytea", nullable: true),
+                    FirstName = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    LastName = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Sex = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastActive = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: false),
+                    PhoneNumberCountryCode = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: true),
+                    EmailVerificationExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: true),
+                    PhoneNumberVerificationExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", maxLength: 100, nullable: true),
+                    StripeCustomerId = table.Column<string>(type: "text", nullable: true),
+                    RecommendedBy = table.Column<string>(type: "text", nullable: true),
+                    RFC = table.Column<string>(type: "text", nullable: true),
+                    CURP = table.Column<string>(type: "text", nullable: true),
+                    CommercialName = table.Column<string>(type: "text", nullable: true),
+                    LegalName = table.Column<string>(type: "text", nullable: true),
+                    Education = table.Column<string>(type: "text", nullable: true),
+                    Post = table.Column<string>(type: "text", nullable: true),
+                    StripeConnectAccountId = table.Column<string>(type: "text", nullable: true),
+                    StripeOnboardingUrl = table.Column<string>(type: "text", nullable: true),
+                    IsStripeConnectAccountOnboarded = table.Column<bool>(type: "boolean", nullable: false),
+                    RequireAnticipatedCardPayments = table.Column<bool>(type: "boolean", nullable: true),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ColorBlindnesses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ColorBlindnesses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Companions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Age = table.Column<int>(type: "integer", nullable: true),
+                    Sex = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    HomePhone = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ConsumptionLevels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConsumptionLevels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeliveryStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeliveryStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Diseases",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diseases", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Documents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    PublicId = table.Column<string>(type: "text", nullable: true),
+                    Size = table.Column<int>(type: "integer", nullable: true),
+                    ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
+                    ThumbnailPublicId = table.Column<string>(type: "text", nullable: true),
+                    ThumbnailSize = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Documents", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EducationLevels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EducationLevels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FamilyMembers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Age = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FamilyMembers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Link",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    SiteName = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Link", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaritalStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaritalStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalInsuranceCompanies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalInsuranceCompanies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalLicenses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LicenseNumber = table.Column<string>(type: "text", nullable: true),
+                    SpecialtyLicense = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalLicenses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PatientName = table.Column<string>(type: "text", nullable: true),
+                    Age = table.Column<int>(type: "integer", nullable: true),
+                    Sex = table.Column<string>(type: "text", nullable: true),
+                    BirthPlace = table.Column<string>(type: "text", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    YearsOfSchooling = table.Column<int>(type: "integer", nullable: true),
+                    HandDominance = table.Column<string>(type: "text", nullable: true),
+                    CurrentLivingSituation = table.Column<string>(type: "text", nullable: true),
+                    CurrentAddress = table.Column<string>(type: "text", nullable: true),
+                    HomePhone = table.Column<string>(type: "text", nullable: true),
+                    MobilePhone = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    HasCompanion = table.Column<bool>(type: "boolean", nullable: false),
+                    EconomicDependence = table.Column<string>(type: "text", nullable: true),
+                    UsesGlassesOrHearingAid = table.Column<bool>(type: "boolean", nullable: true),
+                    Comments = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecords", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Neighborhoods",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Settlement = table.Column<string>(type: "text", nullable: true),
+                    Zipcode = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Neighborhoods", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    ActionUrl = table.Column<string>(type: "text", nullable: true),
+                    NotificationType = table.Column<string>(type: "text", nullable: false),
+                    Payload = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Occupations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Occupations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Total = table.Column<decimal>(type: "numeric", nullable: true),
+                    Subtotal = table.Column<decimal>(type: "numeric", nullable: true),
+                    Discount = table.Column<double>(type: "double precision", nullable: true),
+                    Tax = table.Column<decimal>(type: "numeric", nullable: true),
+                    AmountPaid = table.Column<decimal>(type: "numeric", nullable: true),
+                    AmountDue = table.Column<decimal>(type: "numeric", nullable: true),
+                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentMethodTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IconPrefix = table.Column<string>(type: "text", nullable: true),
+                    IconName = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethodTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Phone",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    CountryCode = table.Column<string>(type: "text", nullable: true),
+                    Extension = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Phone", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Photos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    PublicId = table.Column<string>(type: "text", nullable: true),
+                    Size = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Photos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Prescriptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ExchangeAmount = table.Column<int>(type: "integer", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prescriptions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Dosage = table.Column<double>(type: "double precision", nullable: true),
+                    Unit = table.Column<string>(type: "text", nullable: true),
+                    Manufacturer = table.Column<string>(type: "text", nullable: true),
+                    LotNumber = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<decimal>(type: "numeric", nullable: true),
+                    Discount = table.Column<double>(type: "double precision", nullable: true),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    IsVisible = table.Column<bool>(type: "boolean", nullable: false),
+                    SKU = table.Column<string>(type: "text", nullable: false),
+                    Barcode = table.Column<string>(type: "text", nullable: false),
+                    Category = table.Column<string>(type: "text", nullable: true),
+                    CostPrice = table.Column<decimal>(type: "numeric", nullable: true),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RelativeTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RelativeTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    Rating = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Services",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Discount = table.Column<double>(type: "double precision", nullable: true),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Services", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Specialties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Specialties", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "States",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_States", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubscriptionPlans",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    BillingFrequencyInMonths = table.Column<int>(type: "integer", nullable: false),
+                    StripePlanId = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubscriptionPlans", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubSpecialties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubSpecialties", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Substances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: true),
+                    CodeNumber = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Visible = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Substances", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TaxRegime",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaxRegime", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkSchedules",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DayOfWeek = table.Column<int>(type: "integer", nullable: true),
+                    StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
+                    EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkSchedules", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkScheduleSettings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StartTime = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    MinutesPerBlock = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkScheduleSettings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AllDay = table.Column<bool>(type: "boolean", nullable: false),
+                    DateFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DateTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsServiceRecommended = table.Column<bool>(type: "boolean", nullable: false),
+                    IsSatisfactionSurveyEmailSent = table.Column<bool>(type: "boolean", nullable: false),
+                    IsSatisfactionSurveyCompleted = table.Column<bool>(type: "boolean", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "integer", nullable: true),
+                    Evolution = table.Column<string>(type: "text", nullable: true),
+                    NextSteps = table.Column<string>(type: "text", nullable: true),
+                    IsReceiptSent = table.Column<bool>(type: "boolean", nullable: false),
+                    BillingAddressId = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Addresses_BillingAddressId",
+                        column: x => x.BillingAddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Warehouses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AddressId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Warehouses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Warehouses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    RoleId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicNurses",
+                columns: table => new
+                {
+                    ClinicId = table.Column<int>(type: "integer", nullable: false),
+                    NurseId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicNurses", x => new { x.NurseId, x.ClinicId });
+                    table.ForeignKey(
+                        name: "FK_ClinicNurses_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClinicNurses_AspNetUsers_NurseId",
+                        column: x => x.NurseId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorClinics",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ClinicId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorClinics", x => new { x.DoctorId, x.ClinicId });
+                    table.ForeignKey(
+                        name: "FK_DoctorClinics_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorClinics_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorNurses",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    NurseId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorNurses", x => new { x.DoctorId, x.NurseId });
+                    table.ForeignKey(
+                        name: "FK_DoctorNurses_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorNurses_AspNetUsers_NurseId",
+                        column: x => x.NurseId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorPatients",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    HasClinicalHistoryAccess = table.Column<bool>(type: "boolean", nullable: false),
+                    ConsentGrantedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorPatients", x => new { x.DoctorId, x.PatientId });
+                    table.ForeignKey(
+                        name: "FK_DoctorPatients_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPatients_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentMethods",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false),
+                    CardholderName = table.Column<string>(type: "text", nullable: true),
+                    Funding = table.Column<string>(type: "text", nullable: true),
+                    BillingAddress = table.Column<string>(type: "text", nullable: true),
+                    BillingZipCode = table.Column<string>(type: "text", nullable: true),
+                    BillingCity = table.Column<string>(type: "text", nullable: true),
+                    BillingCountry = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    DisplayName = table.Column<string>(type: "text", nullable: true),
+                    Last4 = table.Column<string>(type: "text", nullable: true),
+                    Brand = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true),
+                    ExpirationMonth = table.Column<int>(type: "integer", nullable: true),
+                    ExpirationYear = table.Column<int>(type: "integer", nullable: true),
+                    StripePaymentMethodId = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentMethods_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAddresses",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    AddressId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false),
+                    IsBilling = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAddresses", x => new { x.UserId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_UserAddresses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserAddresses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorLinks",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    LinkId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorLinks", x => new { x.DoctorId, x.LinkId });
+                    table.ForeignKey(
+                        name: "FK_DoctorLinks_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorLinks_Link_LinkId",
+                        column: x => x.LinkId,
+                        principalTable: "Link",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorMedicalInsuranceCompany",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorMedicalInsuranceCompany", x => new { x.DoctorId, x.MedicalInsuranceCompanyId });
+                    table.ForeignKey(
+                        name: "FK_DoctorMedicalInsuranceCompany_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorMedicalInsuranceCompany_MedicalInsuranceCompanies_Med~",
+                        column: x => x.MedicalInsuranceCompanyId,
+                        principalTable: "MedicalInsuranceCompanies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserMedicalInsuranceCompanies",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false),
+                    DocumentId = table.Column<int>(type: "integer", nullable: true),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false),
+                    PolicyNumber = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMedicalInsuranceCompanies", x => new { x.UserId, x.MedicalInsuranceCompanyId });
+                    table.ForeignKey(
+                        name: "FK_UserMedicalInsuranceCompanies_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserMedicalInsuranceCompanies_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserMedicalInsuranceCompanies_MedicalInsuranceCompanies_Med~",
+                        column: x => x.MedicalInsuranceCompanyId,
+                        principalTable: "MedicalInsuranceCompanies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalLicenseDocuments",
+                columns: table => new
+                {
+                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
+                    DocumentId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalLicenseDocuments", x => new { x.MedicalLicenseId, x.DocumentId });
+                    table.ForeignKey(
+                        name: "FK_MedicalLicenseDocuments_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalLicenseDocuments_MedicalLicenses_MedicalLicenseId",
+                        column: x => x.MedicalLicenseId,
+                        principalTable: "MedicalLicenses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserMedicalLicenses",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMedicalLicenses", x => new { x.UserId, x.MedicalLicenseId });
+                    table.ForeignKey(
+                        name: "FK_UserMedicalLicenses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserMedicalLicenses_MedicalLicenses_MedicalLicenseId",
+                        column: x => x.MedicalLicenseId,
+                        principalTable: "MedicalLicenses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordColorBlindnesses",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    ColorBlindnessId = table.Column<int>(type: "integer", nullable: false),
+                    Other = table.Column<string>(type: "text", nullable: true),
+                    IsPresent = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordColorBlindnesses", x => new { x.MedicalRecordId, x.ColorBlindnessId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordColorBlindnesses_ColorBlindnesses_ColorBlindne~",
+                        column: x => x.ColorBlindnessId,
+                        principalTable: "ColorBlindnesses",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordColorBlindnesses_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordCompanions",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    CompanionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordCompanions", x => new { x.MedicalRecordId, x.CompanionId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordCompanions_Companions_CompanionId",
+                        column: x => x.CompanionId,
+                        principalTable: "Companions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordCompanions_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordEducationLevels",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    EducationLevelId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordEducationLevels", x => new { x.MedicalRecordId, x.EducationLevelId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordEducationLevels_EducationLevels_EducationLevel~",
+                        column: x => x.EducationLevelId,
+                        principalTable: "EducationLevels",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordEducationLevels_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordFamilyMembers",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    FamilyMemberId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordFamilyMembers", x => new { x.MedicalRecordId, x.FamilyMemberId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyMembers_FamilyMembers_FamilyMemberId",
+                        column: x => x.FamilyMemberId,
+                        principalTable: "FamilyMembers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyMembers_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordMaritalStatuses",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    MaritalStatusId = table.Column<int>(type: "integer", nullable: false),
+                    Other = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordMaritalStatuses", x => new { x.MedicalRecordId, x.MaritalStatusId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordMaritalStatuses_MaritalStatuses_MaritalStatusId",
+                        column: x => x.MaritalStatusId,
+                        principalTable: "MaritalStatuses",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordMaritalStatuses_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordPersonalDiseases",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    DiseaseId = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Other = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordPersonalDiseases", x => new { x.MedicalRecordId, x.DiseaseId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordPersonalDiseases_Diseases_DiseaseId",
+                        column: x => x.DiseaseId,
+                        principalTable: "Diseases",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordPersonalDiseases_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserMedicalRecords",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMedicalRecords", x => new { x.UserId, x.MedicalRecordId });
+                    table.ForeignKey(
+                        name: "FK_UserMedicalRecords_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserMedicalRecords_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CityNeighborhood",
+                columns: table => new
+                {
+                    CityId = table.Column<int>(type: "integer", nullable: false),
+                    NeighborhoodId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CityNeighborhood", x => new { x.CityId, x.NeighborhoodId });
+                    table.ForeignKey(
+                        name: "FK_CityNeighborhood_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CityNeighborhood_Neighborhoods_NeighborhoodId",
+                        column: x => x.NeighborhoodId,
+                        principalTable: "Neighborhoods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserNotifications",
+                columns: table => new
+                {
+                    AppUserId = table.Column<int>(type: "integer", nullable: false),
+                    NotificationId = table.Column<int>(type: "integer", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    IsFavorite = table.Column<bool>(type: "boolean", nullable: false),
+                    IsImportant = table.Column<bool>(type: "boolean", nullable: false),
+                    ReadAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeliveredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserNotifications", x => new { x.AppUserId, x.NotificationId });
+                    table.ForeignKey(
+                        name: "FK_UserNotifications_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserNotifications_Notifications_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "Notifications",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanionOccupations",
+                columns: table => new
+                {
+                    CompanionId = table.Column<int>(type: "integer", nullable: false),
+                    OccupationId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanionOccupations", x => new { x.CompanionId, x.OccupationId });
+                    table.ForeignKey(
+                        name: "FK_CompanionOccupations_Companions_CompanionId",
+                        column: x => x.CompanionId,
+                        principalTable: "Companions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanionOccupations_Occupations_OccupationId",
+                        column: x => x.OccupationId,
+                        principalTable: "Occupations",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordOccupations",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    OccupationId = table.Column<int>(type: "integer", nullable: false),
+                    Other = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordOccupations", x => new { x.MedicalRecordId, x.OccupationId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordOccupations_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordOccupations_Occupations_OccupationId",
+                        column: x => x.OccupationId,
+                        principalTable: "Occupations",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorOrder",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorOrder", x => new { x.DoctorId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_DoctorOrder_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDeliveryAddress",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    AddressId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDeliveryAddress", x => new { x.OrderId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_OrderDeliveryAddress_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDeliveryAddress_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDeliveryStatus",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    DeliveryStatusId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDeliveryStatus", x => new { x.OrderId, x.DeliveryStatusId });
+                    table.ForeignKey(
+                        name: "FK_OrderDeliveryStatus_DeliveryStatuses_DeliveryStatusId",
+                        column: x => x.DeliveryStatusId,
+                        principalTable: "DeliveryStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDeliveryStatus_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: true),
+                    ChangeType = table.Column<int>(type: "integer", nullable: false),
+                    Property = table.Column<int>(type: "integer", nullable: false),
+                    OldValue = table.Column<string>(type: "text", nullable: true),
+                    NewValue = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderHistories_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OrderHistories_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderPickupAddress",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    AddressId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderPickupAddress", x => new { x.OrderId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_OrderPickupAddress_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderPickupAddress_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientOrder",
+                columns: table => new
+                {
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientOrder", x => new { x.PatientId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_PatientOrder_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderOrderStatus",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    OrderStatusId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderOrderStatus", x => new { x.OrderId, x.OrderStatusId });
+                    table.ForeignKey(
+                        name: "FK_OrderOrderStatus_OrderStatuses_OrderStatusId",
+                        column: x => x.OrderStatusId,
+                        principalTable: "OrderStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderOrderStatus_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorPaymentMethodTypes",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorPaymentMethodTypes", x => new { x.DoctorId, x.PaymentMethodTypeId });
+                    table.ForeignKey(
+                        name: "FK_DoctorPaymentMethodTypes_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPaymentMethodTypes_PaymentMethodTypes_PaymentMethodTy~",
+                        column: x => x.PaymentMethodTypeId,
+                        principalTable: "PaymentMethodTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppRolePermission",
+                columns: table => new
+                {
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    PermissionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppRolePermission", x => new { x.RoleId, x.PermissionId });
+                    table.ForeignKey(
+                        name: "FK_AppRolePermission_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppRolePermission_Permissions_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPermissions",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    PermissionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPermissions", x => new { x.UserId, x.PermissionId });
+                    table.ForeignKey(
+                        name: "FK_UserPermissions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserPermissions_Permissions_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorPhones",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    PhoneId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorPhones", x => new { x.DoctorId, x.PhoneId });
+                    table.ForeignKey(
+                        name: "FK_DoctorPhones_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPhones_Phone_PhoneId",
+                        column: x => x.PhoneId,
+                        principalTable: "Phone",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicLogos",
+                columns: table => new
+                {
+                    AddressId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicLogos", x => new { x.AddressId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_ClinicLogos_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClinicLogos_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClinicPhotos",
+                columns: table => new
+                {
+                    ClinicId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClinicPhotos", x => new { x.ClinicId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_ClinicPhotos_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClinicPhotos_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorBannerPhoto",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorBannerPhoto", x => new { x.UserId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_DoctorBannerPhoto_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorBannerPhoto_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorSignature",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    SignatureId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorSignature", x => new { x.DoctorId, x.SignatureId });
+                    table.ForeignKey(
+                        name: "FK_DoctorSignature_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorSignature_Photos_SignatureId",
+                        column: x => x.SignatureId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalInsuranceCompanyPhoto",
+                columns: table => new
+                {
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalInsuranceCompanyPhoto", x => new { x.MedicalInsuranceCompanyId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_MedicalInsuranceCompanyPhoto_MedicalInsuranceCompanies_Medi~",
+                        column: x => x.MedicalInsuranceCompanyId,
+                        principalTable: "MedicalInsuranceCompanies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalInsuranceCompanyPhoto_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPhotos",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPhotos", x => new { x.UserId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_UserPhotos_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserPhotos_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorPrescription",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorPrescription", x => new { x.DoctorId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_DoctorPrescription_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPrescription_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientPrescription",
+                columns: table => new
+                {
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientPrescription", x => new { x.PatientId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_PatientPrescription_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PatientPrescription_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrescriptionClinic",
+                columns: table => new
+                {
+                    ClinicId = table.Column<int>(type: "integer", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrescriptionClinic", x => new { x.PrescriptionId, x.ClinicId });
+                    table.ForeignKey(
+                        name: "FK_PrescriptionClinic_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PrescriptionClinic_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrescriptionOrder",
+                columns: table => new
+                {
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrescriptionOrder", x => new { x.PrescriptionId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_PrescriptionOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PrescriptionOrder_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorProducts",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorProducts", x => new { x.DoctorId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_DoctorProducts_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorProducts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderItems",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: true),
+                    Dosage = table.Column<double>(type: "double precision", nullable: true),
+                    Instructions = table.Column<string>(type: "text", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    Unit = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<decimal>(type: "numeric", nullable: true),
+                    Discount = table.Column<double>(type: "double precision", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItems", x => new { x.OrderId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrescriptionItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: true),
+                    Quantity = table.Column<int>(type: "integer", nullable: true),
+                    Dosage = table.Column<double>(type: "double precision", nullable: true),
+                    Instructions = table.Column<string>(type: "text", nullable: true),
+                    Unit = table.Column<string>(type: "text", nullable: true),
+                    Manufacturer = table.Column<string>(type: "text", nullable: true),
+                    LotNumber = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<decimal>(type: "numeric", nullable: true),
+                    Discount = table.Column<double>(type: "double precision", nullable: true),
+                    PhotoUrl = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrescriptionItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PrescriptionItems_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PrescriptionItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductPhoto",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductPhoto", x => new { x.ProductId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_ProductPhoto_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductPhoto_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanionRelativeTypes",
+                columns: table => new
+                {
+                    CompanionId = table.Column<int>(type: "integer", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanionRelativeTypes", x => new { x.CompanionId, x.RelativeTypeId });
+                    table.ForeignKey(
+                        name: "FK_CompanionRelativeTypes_Companions_CompanionId",
+                        column: x => x.CompanionId,
+                        principalTable: "Companions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanionRelativeTypes_RelativeTypes_RelativeTypeId",
+                        column: x => x.RelativeTypeId,
+                        principalTable: "RelativeTypes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordFamilyDiseases",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    DiseaseId = table.Column<int>(type: "integer", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Other = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordFamilyDiseases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_Diseases_DiseaseId",
+                        column: x => x.DiseaseId,
+                        principalTable: "Diseases",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyDiseases_RelativeTypes_RelativeTypeId",
+                        column: x => x.RelativeTypeId,
+                        principalTable: "RelativeTypes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordFamilyMemberRelativeTypes",
+                columns: table => new
+                {
+                    FamilyMemberId = table.Column<int>(type: "integer", nullable: false),
+                    RelativeTypeId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordFamilyMemberRelativeTypes", x => new { x.FamilyMemberId, x.RelativeTypeId });
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyMemberRelativeTypes_FamilyMembers_Family~",
+                        column: x => x.FamilyMemberId,
+                        principalTable: "FamilyMembers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordFamilyMemberRelativeTypes_RelativeTypes_Relati~",
+                        column: x => x.RelativeTypeId,
+                        principalTable: "RelativeTypes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorReviews",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ReviewId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorReviews", x => new { x.DoctorId, x.ReviewId });
+                    table.ForeignKey(
+                        name: "FK_DoctorReviews_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorReviews_Reviews_ReviewId",
+                        column: x => x.ReviewId,
+                        principalTable: "Reviews",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserReviews",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ReviewId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserReviews", x => new { x.UserId, x.ReviewId });
+                    table.ForeignKey(
+                        name: "FK_UserReviews_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserReviews_Reviews_ReviewId",
+                        column: x => x.ReviewId,
+                        principalTable: "Reviews",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorServices",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ServiceId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorServices", x => new { x.DoctorId, x.ServiceId });
+                    table.ForeignKey(
+                        name: "FK_DoctorServices_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorServices_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ServicePhoto",
+                columns: table => new
+                {
+                    ServiceId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServicePhoto", x => new { x.ServiceId, x.PhotoId });
+                    table.ForeignKey(
+                        name: "FK_ServicePhoto_Photos_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Photos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ServicePhoto_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorSpecialty",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    SpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorSpecialty", x => new { x.DoctorId, x.SpecialtyId });
+                    table.ForeignKey(
+                        name: "FK_DoctorSpecialty_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorSpecialty_Specialties_SpecialtyId",
+                        column: x => x.SpecialtyId,
+                        principalTable: "Specialties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalLicenseSpecialty",
+                columns: table => new
+                {
+                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
+                    SpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalLicenseSpecialty", x => new { x.MedicalLicenseId, x.SpecialtyId });
+                    table.ForeignKey(
+                        name: "FK_MedicalLicenseSpecialty_MedicalLicenses_MedicalLicenseId",
+                        column: x => x.MedicalLicenseId,
+                        principalTable: "MedicalLicenses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalLicenseSpecialty_Specialties_SpecialtyId",
+                        column: x => x.SpecialtyId,
+                        principalTable: "Specialties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpecialtyService",
+                columns: table => new
+                {
+                    SpecialtyId = table.Column<int>(type: "integer", nullable: false),
+                    ServiceId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpecialtyService", x => new { x.SpecialtyId, x.ServiceId });
+                    table.ForeignKey(
+                        name: "FK_SpecialtyService_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SpecialtyService_Specialties_SpecialtyId",
+                        column: x => x.SpecialtyId,
+                        principalTable: "Specialties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StateCity",
+                columns: table => new
+                {
+                    StateId = table.Column<int>(type: "integer", nullable: false),
+                    CityId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StateCity", x => new { x.StateId, x.CityId });
+                    table.ForeignKey(
+                        name: "FK_StateCity_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StateCity_States_StateId",
+                        column: x => x.StateId,
+                        principalTable: "States",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subscriptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    SubscriptionPlanId = table.Column<int>(type: "integer", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    NextBillingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StripeSubscriptionId = table.Column<string>(type: "text", nullable: true),
+                    StripeCustomerId = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscriptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_SubscriptionPlans_SubscriptionPlanId",
+                        column: x => x.SubscriptionPlanId,
+                        principalTable: "SubscriptionPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalLicenseSubSpecialties",
+                columns: table => new
+                {
+                    MedicalLicenseId = table.Column<int>(type: "integer", nullable: false),
+                    SubSpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalLicenseSubSpecialties", x => new { x.MedicalLicenseId, x.SubSpecialtyId });
+                    table.ForeignKey(
+                        name: "FK_MedicalLicenseSubSpecialties_MedicalLicenses_MedicalLicense~",
+                        column: x => x.MedicalLicenseId,
+                        principalTable: "MedicalLicenses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalLicenseSubSpecialties_SubSpecialties_SubSpecialtyId",
+                        column: x => x.SubSpecialtyId,
+                        principalTable: "SubSpecialties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpecialitySubSpecialties",
+                columns: table => new
+                {
+                    SpecialtyId = table.Column<int>(type: "integer", nullable: false),
+                    SubSpecialtyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpecialitySubSpecialties", x => new { x.SpecialtyId, x.SubSpecialtyId });
+                    table.ForeignKey(
+                        name: "FK_SpecialitySubSpecialties_Specialties_SpecialtyId",
+                        column: x => x.SpecialtyId,
+                        principalTable: "Specialties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SpecialitySubSpecialties_SubSpecialties_SubSpecialtyId",
+                        column: x => x.SubSpecialtyId,
+                        principalTable: "SubSpecialties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecordSubstances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MedicalRecordId = table.Column<int>(type: "integer", nullable: false),
+                    SubstanceId = table.Column<int>(type: "integer", nullable: false),
+                    ConsumptionLevelId = table.Column<int>(type: "integer", nullable: false),
+                    StartAge = table.Column<int>(type: "integer", nullable: true),
+                    EndAge = table.Column<int>(type: "integer", nullable: true),
+                    IsCurrent = table.Column<bool>(type: "boolean", nullable: false),
+                    Other = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecordSubstances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordSubstances_ConsumptionLevels_ConsumptionLevelId",
+                        column: x => x.ConsumptionLevelId,
+                        principalTable: "ConsumptionLevels",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordSubstances_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicalRecordSubstances_Substances_SubstanceId",
+                        column: x => x.SubstanceId,
+                        principalTable: "Substances",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTaxRegimes",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    TaxRegimeId = table.Column<int>(type: "integer", nullable: false),
+                    IsMain = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTaxRegimes", x => new { x.UserId, x.TaxRegimeId });
+                    table.ForeignKey(
+                        name: "FK_UserTaxRegimes_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserTaxRegimes_TaxRegime_TaxRegimeId",
+                        column: x => x.TaxRegimeId,
+                        principalTable: "TaxRegime",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorWorkSchedules",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    WorkScheduleId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorWorkSchedules", x => new { x.UserId, x.WorkScheduleId });
+                    table.ForeignKey(
+                        name: "FK_DoctorWorkSchedules_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorWorkSchedules_WorkSchedules_WorkScheduleId",
+                        column: x => x.WorkScheduleId,
+                        principalTable: "WorkSchedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorWorkScheduleSettings",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    WorkScheduleSettingsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorWorkScheduleSettings", x => new { x.UserId, x.WorkScheduleSettingsId });
+                    table.ForeignKey(
+                        name: "FK_DoctorWorkScheduleSettings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorWorkScheduleSettings_WorkScheduleSettings_WorkSchedul~",
+                        column: x => x.WorkScheduleSettingsId,
+                        principalTable: "WorkScheduleSettings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorEvent",
+                columns: table => new
+                {
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorEvent", x => new { x.DoctorId, x.EventId });
+                    table.ForeignKey(
+                        name: "FK_DoctorEvent_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorEvent_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventClinic",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    ClinicId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventClinic", x => new { x.EventId, x.ClinicId });
+                    table.ForeignKey(
+                        name: "FK_EventClinic_Addresses_ClinicId",
+                        column: x => x.ClinicId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventClinic_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventMedicalInsuranceCompany",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    MedicalInsuranceCompanyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventMedicalInsuranceCompany", x => new { x.EventId, x.MedicalInsuranceCompanyId });
+                    table.ForeignKey(
+                        name: "FK_EventMedicalInsuranceCompany_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventMedicalInsuranceCompany_MedicalInsuranceCompanies_Medi~",
+                        column: x => x.MedicalInsuranceCompanyId,
+                        principalTable: "MedicalInsuranceCompanies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventPaymentMethodType",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventPaymentMethodType", x => new { x.EventId, x.PaymentMethodTypeId });
+                    table.ForeignKey(
+                        name: "FK_EventPaymentMethodType_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventPaymentMethodType_PaymentMethodTypes_PaymentMethodType~",
+                        column: x => x.PaymentMethodTypeId,
+                        principalTable: "PaymentMethodTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventPrescription",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    PrescriptionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventPrescription", x => new { x.EventId, x.PrescriptionId });
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventPrescription_Prescriptions_PrescriptionId",
+                        column: x => x.PrescriptionId,
+                        principalTable: "Prescriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventService",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    ServiceId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventService", x => new { x.EventId, x.ServiceId });
+                    table.ForeignKey(
+                        name: "FK_EventService_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventService_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NurseEvent",
+                columns: table => new
+                {
+                    NurseId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NurseEvent", x => new { x.NurseId, x.EventId });
+                    table.ForeignKey(
+                        name: "FK_NurseEvent_AspNetUsers_NurseId",
+                        column: x => x.NurseId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NurseEvent_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientEvent",
+                columns: table => new
+                {
+                    PatientId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientEvent", x => new { x.PatientId, x.EventId });
+                    table.ForeignKey(
+                        name: "FK_PatientEvent_AspNetUsers_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientEvent_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WarehouseProducts",
+                columns: table => new
+                {
+                    WarehouseId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    ReservedQuantity = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    DamagedQuantity = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    OnHoldQuantity = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    ReorderLevel = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    SafetyStock = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LotNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WarehouseProducts", x => new { x.WarehouseId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_WarehouseProducts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WarehouseProducts_Warehouses_WarehouseId",
+                        column: x => x.WarehouseId,
+                        principalTable: "Warehouses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Currency = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PaymentStatus = table.Column<string>(type: "text", nullable: false),
+                    PaymentProcessingMode = table.Column<int>(type: "integer", nullable: false),
+                    StripePaymentIntent = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    StripePaymentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    StripeInvoiceId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    PaymentMethodId = table.Column<int>(type: "integer", nullable: true),
+                    EventId = table.Column<int>(type: "integer", nullable: true),
+                    OrderId = table.Column<int>(type: "integer", nullable: true),
+                    MarkedPaidByUserId = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_AspNetUsers_MarkedPaidByUserId",
+                        column: x => x.MarkedPaidByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Payments_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Payments_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Payments_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubscriptionCancellations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CancellationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TooExpensive = table.Column<bool>(type: "boolean", nullable: false),
+                    NotEnoughUse = table.Column<bool>(type: "boolean", nullable: false),
+                    FoundAlternative = table.Column<bool>(type: "boolean", nullable: false),
+                    MissingFeatures = table.Column<bool>(type: "boolean", nullable: false),
+                    TechnicalProblems = table.Column<bool>(type: "boolean", nullable: false),
+                    PoorSupport = table.Column<bool>(type: "boolean", nullable: false),
+                    OtherReason = table.Column<bool>(type: "boolean", nullable: false),
+                    Feedback = table.Column<string>(type: "character varying(1500)", maxLength: 1500, nullable: true),
+                    UserSubscriptionId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubscriptionCancellations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubscriptionCancellations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SubscriptionCancellations_Subscriptions_UserSubscriptionId",
+                        column: x => x.UserSubscriptionId,
+                        principalTable: "Subscriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubscriptionHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserSubscriptionId = table.Column<int>(type: "integer", nullable: false),
+                    ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    OldStatus = table.Column<string>(type: "text", nullable: false),
+                    NewStatus = table.Column<string>(type: "text", nullable: false),
+                    Note = table.Column<string>(type: "text", nullable: true),
+                    AppUserId = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubscriptionHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubscriptionHistories_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SubscriptionHistories_Subscriptions_UserSubscriptionId",
+                        column: x => x.UserSubscriptionId,
+                        principalTable: "Subscriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ManualPaymentDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PaymentId = table.Column<int>(type: "integer", nullable: false),
+                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false),
+                    ReferenceNumber = table.Column<string>(type: "text", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ManualPaymentDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ManualPaymentDetails_PaymentMethodTypes_PaymentMethodTypeId",
+                        column: x => x.PaymentMethodTypeId,
+                        principalTable: "PaymentMethodTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ManualPaymentDetails_Payments_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppRolePermission_PermissionId",
+                table: "AppRolePermission",
+                column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityNeighborhood_NeighborhoodId",
+                table: "CityNeighborhood",
+                column: "NeighborhoodId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicLogos_AddressId",
+                table: "ClinicLogos",
+                column: "AddressId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicLogos_PhotoId",
+                table: "ClinicLogos",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicNurses_ClinicId",
+                table: "ClinicNurses",
+                column: "ClinicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClinicPhotos_PhotoId",
+                table: "ClinicPhotos",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanionOccupations_CompanionId",
+                table: "CompanionOccupations",
+                column: "CompanionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanionOccupations_OccupationId",
+                table: "CompanionOccupations",
+                column: "OccupationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanionRelativeTypes_CompanionId",
+                table: "CompanionRelativeTypes",
+                column: "CompanionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanionRelativeTypes_RelativeTypeId",
+                table: "CompanionRelativeTypes",
+                column: "RelativeTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorBannerPhoto_PhotoId",
+                table: "DoctorBannerPhoto",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorBannerPhoto_UserId",
+                table: "DoctorBannerPhoto",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorClinics_ClinicId",
+                table: "DoctorClinics",
+                column: "ClinicId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorEvent_EventId",
+                table: "DoctorEvent",
+                column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorLinks_LinkId",
+                table: "DoctorLinks",
+                column: "LinkId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorMedicalInsuranceCompany_MedicalInsuranceCompanyId",
+                table: "DoctorMedicalInsuranceCompany",
+                column: "MedicalInsuranceCompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorNurses_NurseId",
+                table: "DoctorNurses",
+                column: "NurseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorOrder_OrderId",
+                table: "DoctorOrder",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorPatients_PatientId",
+                table: "DoctorPatients",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorPaymentMethodTypes_PaymentMethodTypeId",
+                table: "DoctorPaymentMethodTypes",
+                column: "PaymentMethodTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorPhones_PhoneId",
+                table: "DoctorPhones",
+                column: "PhoneId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorPrescription_PrescriptionId",
+                table: "DoctorPrescription",
+                column: "PrescriptionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorProducts_ProductId",
+                table: "DoctorProducts",
+                column: "ProductId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorReviews_ReviewId",
+                table: "DoctorReviews",
+                column: "ReviewId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorServices_ServiceId",
+                table: "DoctorServices",
+                column: "ServiceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorSignature_DoctorId",
+                table: "DoctorSignature",
+                column: "DoctorId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorSignature_SignatureId",
+                table: "DoctorSignature",
+                column: "SignatureId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorSpecialty_DoctorId",
+                table: "DoctorSpecialty",
+                column: "DoctorId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorSpecialty_SpecialtyId",
+                table: "DoctorSpecialty",
+                column: "SpecialtyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorWorkSchedules_WorkScheduleId",
+                table: "DoctorWorkSchedules",
+                column: "WorkScheduleId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorWorkScheduleSettings_UserId",
+                table: "DoctorWorkScheduleSettings",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorWorkScheduleSettings_WorkScheduleSettingsId",
+                table: "DoctorWorkScheduleSettings",
+                column: "WorkScheduleSettingsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventClinic_ClinicId",
+                table: "EventClinic",
+                column: "ClinicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventClinic_EventId",
+                table: "EventClinic",
+                column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventMedicalInsuranceCompany_EventId",
+                table: "EventMedicalInsuranceCompany",
+                column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventMedicalInsuranceCompany_MedicalInsuranceCompanyId",
+                table: "EventMedicalInsuranceCompany",
+                column: "MedicalInsuranceCompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventPaymentMethodType_EventId",
+                table: "EventPaymentMethodType",
+                column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventPaymentMethodType_PaymentMethodTypeId",
+                table: "EventPaymentMethodType",
+                column: "PaymentMethodTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventPrescription_PrescriptionId",
+                table: "EventPrescription",
+                column: "PrescriptionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_BillingAddressId",
+                table: "Events",
+                column: "BillingAddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventService_EventId",
+                table: "EventService",
+                column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventService_ServiceId",
+                table: "EventService",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ManualPaymentDetails_PaymentId",
+                table: "ManualPaymentDetails",
+                column: "PaymentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ManualPaymentDetails_PaymentMethodTypeId",
+                table: "ManualPaymentDetails",
+                column: "PaymentMethodTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalInsuranceCompanyPhoto_MedicalInsuranceCompanyId",
+                table: "MedicalInsuranceCompanyPhoto",
+                column: "MedicalInsuranceCompanyId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalInsuranceCompanyPhoto_PhotoId",
+                table: "MedicalInsuranceCompanyPhoto",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalLicenseDocuments_DocumentId",
+                table: "MedicalLicenseDocuments",
+                column: "DocumentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalLicenseDocuments_MedicalLicenseId",
+                table: "MedicalLicenseDocuments",
+                column: "MedicalLicenseId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalLicenseSpecialty_MedicalLicenseId",
+                table: "MedicalLicenseSpecialty",
+                column: "MedicalLicenseId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalLicenseSpecialty_SpecialtyId",
+                table: "MedicalLicenseSpecialty",
+                column: "SpecialtyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalLicenseSubSpecialties_SubSpecialtyId",
+                table: "MedicalLicenseSubSpecialties",
+                column: "SubSpecialtyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordColorBlindnesses_ColorBlindnessId",
+                table: "MedicalRecordColorBlindnesses",
+                column: "ColorBlindnessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordColorBlindnesses_MedicalRecordId",
+                table: "MedicalRecordColorBlindnesses",
+                column: "MedicalRecordId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordCompanions_CompanionId",
+                table: "MedicalRecordCompanions",
+                column: "CompanionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordCompanions_MedicalRecordId",
+                table: "MedicalRecordCompanions",
+                column: "MedicalRecordId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordEducationLevels_EducationLevelId",
+                table: "MedicalRecordEducationLevels",
+                column: "EducationLevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordEducationLevels_MedicalRecordId",
+                table: "MedicalRecordEducationLevels",
+                column: "MedicalRecordId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyDiseases_DiseaseId",
+                table: "MedicalRecordFamilyDiseases",
+                column: "DiseaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyDiseases_MedicalRecordId",
+                table: "MedicalRecordFamilyDiseases",
+                column: "MedicalRecordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyDiseases_RelativeTypeId",
+                table: "MedicalRecordFamilyDiseases",
+                column: "RelativeTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyMemberRelativeTypes_FamilyMemberId",
+                table: "MedicalRecordFamilyMemberRelativeTypes",
+                column: "FamilyMemberId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyMemberRelativeTypes_RelativeTypeId",
+                table: "MedicalRecordFamilyMemberRelativeTypes",
+                column: "RelativeTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordFamilyMembers_FamilyMemberId",
+                table: "MedicalRecordFamilyMembers",
+                column: "FamilyMemberId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordMaritalStatuses_MaritalStatusId",
+                table: "MedicalRecordMaritalStatuses",
+                column: "MaritalStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordMaritalStatuses_MedicalRecordId",
+                table: "MedicalRecordMaritalStatuses",
+                column: "MedicalRecordId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordOccupations_MedicalRecordId",
+                table: "MedicalRecordOccupations",
+                column: "MedicalRecordId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordOccupations_OccupationId",
+                table: "MedicalRecordOccupations",
+                column: "OccupationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordPersonalDiseases_DiseaseId",
+                table: "MedicalRecordPersonalDiseases",
+                column: "DiseaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordSubstances_ConsumptionLevelId",
+                table: "MedicalRecordSubstances",
+                column: "ConsumptionLevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordSubstances_MedicalRecordId",
+                table: "MedicalRecordSubstances",
+                column: "MedicalRecordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecordSubstances_SubstanceId",
+                table: "MedicalRecordSubstances",
+                column: "SubstanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NurseEvent_EventId",
+                table: "NurseEvent",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDeliveryAddress_AddressId",
+                table: "OrderDeliveryAddress",
+                column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDeliveryAddress_OrderId",
+                table: "OrderDeliveryAddress",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDeliveryStatus_DeliveryStatusId",
+                table: "OrderDeliveryStatus",
+                column: "DeliveryStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDeliveryStatus_OrderId",
+                table: "OrderDeliveryStatus",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderHistories_OrderId",
+                table: "OrderHistories",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderHistories_UserId",
+                table: "OrderHistories",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_ProductId",
+                table: "OrderItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderOrderStatus_OrderId",
+                table: "OrderOrderStatus",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderOrderStatus_OrderStatusId",
+                table: "OrderOrderStatus",
+                column: "OrderStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderPickupAddress_AddressId",
+                table: "OrderPickupAddress",
+                column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderPickupAddress_OrderId",
+                table: "OrderPickupAddress",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientEvent_EventId",
+                table: "PatientEvent",
+                column: "EventId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientOrder_OrderId",
+                table: "PatientOrder",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientPrescription_PrescriptionId",
+                table: "PatientPrescription",
+                column: "PrescriptionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentMethods_UserId",
+                table: "PaymentMethods",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_EventId",
+                table: "Payments",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_MarkedPaidByUserId",
+                table: "Payments",
+                column: "MarkedPaidByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_OrderId",
+                table: "Payments",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_PaymentMethodId",
+                table: "Payments",
+                column: "PaymentMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionClinic_ClinicId",
+                table: "PrescriptionClinic",
+                column: "ClinicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionClinic_PrescriptionId",
+                table: "PrescriptionClinic",
+                column: "PrescriptionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionItems_PrescriptionId",
+                table: "PrescriptionItems",
+                column: "PrescriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionItems_ProductId",
+                table: "PrescriptionItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionOrder_OrderId",
+                table: "PrescriptionOrder",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrescriptionOrder_PrescriptionId",
+                table: "PrescriptionOrder",
+                column: "PrescriptionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductPhoto_PhotoId",
+                table: "ProductPhoto",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServicePhoto_PhotoId",
+                table: "ServicePhoto",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpecialitySubSpecialties_SubSpecialtyId",
+                table: "SpecialitySubSpecialties",
+                column: "SubSpecialtyId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpecialtyService_ServiceId",
+                table: "SpecialtyService",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StateCity_CityId",
+                table: "StateCity",
+                column: "CityId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionCancellations_UserId",
+                table: "SubscriptionCancellations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionCancellations_UserSubscriptionId",
+                table: "SubscriptionCancellations",
+                column: "UserSubscriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionHistories_AppUserId",
+                table: "SubscriptionHistories",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionHistories_UserSubscriptionId",
+                table: "SubscriptionHistories",
+                column: "UserSubscriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_SubscriptionPlanId",
+                table: "Subscriptions",
+                column: "SubscriptionPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_UserId",
+                table: "Subscriptions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAddresses_AddressId",
+                table: "UserAddresses",
+                column: "AddressId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMedicalInsuranceCompanies_DocumentId",
+                table: "UserMedicalInsuranceCompanies",
+                column: "DocumentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMedicalInsuranceCompanies_MedicalInsuranceCompanyId",
+                table: "UserMedicalInsuranceCompanies",
+                column: "MedicalInsuranceCompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMedicalLicenses_MedicalLicenseId",
+                table: "UserMedicalLicenses",
+                column: "MedicalLicenseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMedicalRecords_MedicalRecordId",
+                table: "UserMedicalRecords",
+                column: "MedicalRecordId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMedicalRecords_UserId",
+                table: "UserMedicalRecords",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserNotifications_NotificationId",
+                table: "UserNotifications",
+                column: "NotificationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPermissions_PermissionId",
+                table: "UserPermissions",
+                column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPhotos_PhotoId",
+                table: "UserPhotos",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPhotos_UserId",
+                table: "UserPhotos",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReviews_ReviewId",
+                table: "UserReviews",
+                column: "ReviewId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTaxRegimes_TaxRegimeId",
+                table: "UserTaxRegimes",
+                column: "TaxRegimeId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WarehouseProducts_ProductId",
+                table: "WarehouseProducts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Warehouses_AddressId",
+                table: "Warehouses",
+                column: "AddressId");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "AppRolePermission");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CityNeighborhood");
+
+            migrationBuilder.DropTable(
+                name: "ClinicLogos");
+
+            migrationBuilder.DropTable(
+                name: "ClinicNurses");
+
+            migrationBuilder.DropTable(
+                name: "ClinicPhotos");
+
+            migrationBuilder.DropTable(
+                name: "CompanionOccupations");
+
+            migrationBuilder.DropTable(
+                name: "CompanionRelativeTypes");
+
+            migrationBuilder.DropTable(
+                name: "DoctorBannerPhoto");
+
+            migrationBuilder.DropTable(
+                name: "DoctorClinics");
+
+            migrationBuilder.DropTable(
+                name: "DoctorEvent");
+
+            migrationBuilder.DropTable(
+                name: "DoctorLinks");
+
+            migrationBuilder.DropTable(
+                name: "DoctorMedicalInsuranceCompany");
+
+            migrationBuilder.DropTable(
+                name: "DoctorNurses");
+
+            migrationBuilder.DropTable(
+                name: "DoctorOrder");
+
+            migrationBuilder.DropTable(
+                name: "DoctorPatients");
+
+            migrationBuilder.DropTable(
+                name: "DoctorPaymentMethodTypes");
+
+            migrationBuilder.DropTable(
+                name: "DoctorPhones");
+
+            migrationBuilder.DropTable(
+                name: "DoctorPrescription");
+
+            migrationBuilder.DropTable(
+                name: "DoctorProducts");
+
+            migrationBuilder.DropTable(
+                name: "DoctorReviews");
+
+            migrationBuilder.DropTable(
+                name: "DoctorServices");
+
+            migrationBuilder.DropTable(
+                name: "DoctorSignature");
+
+            migrationBuilder.DropTable(
+                name: "DoctorSpecialty");
+
+            migrationBuilder.DropTable(
+                name: "DoctorWorkSchedules");
+
+            migrationBuilder.DropTable(
+                name: "DoctorWorkScheduleSettings");
+
+            migrationBuilder.DropTable(
+                name: "EventClinic");
+
+            migrationBuilder.DropTable(
+                name: "EventMedicalInsuranceCompany");
+
+            migrationBuilder.DropTable(
+                name: "EventPaymentMethodType");
+
+            migrationBuilder.DropTable(
+                name: "EventPrescription");
+
+            migrationBuilder.DropTable(
+                name: "EventService");
+
+            migrationBuilder.DropTable(
+                name: "ManualPaymentDetails");
+
+            migrationBuilder.DropTable(
+                name: "MedicalInsuranceCompanyPhoto");
+
+            migrationBuilder.DropTable(
+                name: "MedicalLicenseDocuments");
+
+            migrationBuilder.DropTable(
+                name: "MedicalLicenseSpecialty");
+
+            migrationBuilder.DropTable(
+                name: "MedicalLicenseSubSpecialties");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordColorBlindnesses");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordCompanions");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordEducationLevels");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordFamilyDiseases");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordFamilyMemberRelativeTypes");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordFamilyMembers");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordMaritalStatuses");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordOccupations");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordPersonalDiseases");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecordSubstances");
+
+            migrationBuilder.DropTable(
+                name: "NurseEvent");
+
+            migrationBuilder.DropTable(
+                name: "OrderDeliveryAddress");
+
+            migrationBuilder.DropTable(
+                name: "OrderDeliveryStatus");
+
+            migrationBuilder.DropTable(
+                name: "OrderHistories");
+
+            migrationBuilder.DropTable(
+                name: "OrderItems");
+
+            migrationBuilder.DropTable(
+                name: "OrderOrderStatus");
+
+            migrationBuilder.DropTable(
+                name: "OrderPickupAddress");
+
+            migrationBuilder.DropTable(
+                name: "PatientEvent");
+
+            migrationBuilder.DropTable(
+                name: "PatientOrder");
+
+            migrationBuilder.DropTable(
+                name: "PatientPrescription");
+
+            migrationBuilder.DropTable(
+                name: "PrescriptionClinic");
+
+            migrationBuilder.DropTable(
+                name: "PrescriptionItems");
+
+            migrationBuilder.DropTable(
+                name: "PrescriptionOrder");
+
+            migrationBuilder.DropTable(
+                name: "ProductPhoto");
+
+            migrationBuilder.DropTable(
+                name: "ServicePhoto");
+
+            migrationBuilder.DropTable(
+                name: "SpecialitySubSpecialties");
+
+            migrationBuilder.DropTable(
+                name: "SpecialtyService");
+
+            migrationBuilder.DropTable(
+                name: "StateCity");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionCancellations");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionHistories");
+
+            migrationBuilder.DropTable(
+                name: "UserAddresses");
+
+            migrationBuilder.DropTable(
+                name: "UserMedicalInsuranceCompanies");
+
+            migrationBuilder.DropTable(
+                name: "UserMedicalLicenses");
+
+            migrationBuilder.DropTable(
+                name: "UserMedicalRecords");
+
+            migrationBuilder.DropTable(
+                name: "UserNotifications");
+
+            migrationBuilder.DropTable(
+                name: "UserPermissions");
+
+            migrationBuilder.DropTable(
+                name: "UserPhotos");
+
+            migrationBuilder.DropTable(
+                name: "UserReviews");
+
+            migrationBuilder.DropTable(
+                name: "UserTaxRegimes");
+
+            migrationBuilder.DropTable(
+                name: "WarehouseProducts");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Neighborhoods");
+
+            migrationBuilder.DropTable(
+                name: "Link");
+
+            migrationBuilder.DropTable(
+                name: "Phone");
+
+            migrationBuilder.DropTable(
+                name: "WorkSchedules");
+
+            migrationBuilder.DropTable(
+                name: "WorkScheduleSettings");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethodTypes");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "ColorBlindnesses");
+
+            migrationBuilder.DropTable(
+                name: "Companions");
+
+            migrationBuilder.DropTable(
+                name: "EducationLevels");
+
+            migrationBuilder.DropTable(
+                name: "RelativeTypes");
+
+            migrationBuilder.DropTable(
+                name: "FamilyMembers");
+
+            migrationBuilder.DropTable(
+                name: "MaritalStatuses");
+
+            migrationBuilder.DropTable(
+                name: "Occupations");
+
+            migrationBuilder.DropTable(
+                name: "Diseases");
+
+            migrationBuilder.DropTable(
+                name: "ConsumptionLevels");
+
+            migrationBuilder.DropTable(
+                name: "Substances");
+
+            migrationBuilder.DropTable(
+                name: "DeliveryStatuses");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatuses");
+
+            migrationBuilder.DropTable(
+                name: "Prescriptions");
+
+            migrationBuilder.DropTable(
+                name: "SubSpecialties");
+
+            migrationBuilder.DropTable(
+                name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "Specialties");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
+
+            migrationBuilder.DropTable(
+                name: "States");
+
+            migrationBuilder.DropTable(
+                name: "Subscriptions");
+
+            migrationBuilder.DropTable(
+                name: "Documents");
+
+            migrationBuilder.DropTable(
+                name: "MedicalInsuranceCompanies");
+
+            migrationBuilder.DropTable(
+                name: "MedicalLicenses");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecords");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "Photos");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "TaxRegime");
+
+            migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Warehouses");
+
+            migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethods");
+
+            migrationBuilder.DropTable(
+                name: "SubscriptionPlans");
+
+            migrationBuilder.DropTable(
+                name: "Addresses");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+        }
+    }
+}
