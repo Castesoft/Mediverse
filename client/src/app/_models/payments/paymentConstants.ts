@@ -49,6 +49,7 @@ export class PaymentStatus {
   public static readonly Canceled: string = "Canceled";
   public static readonly Refunded: string = "Refunded";
   public static readonly AwaitingPayment: string = "AwaitingPayment";
+  public static readonly PartiallyPaid: string = "PartiallyPaid";
 }
 
 export function getPaymentStatusText(status: PaymentStatus | string | null): string {
@@ -58,7 +59,11 @@ export function getPaymentStatusText(status: PaymentStatus | string | null): str
     case PaymentStatus.Canceled: return 'Cancelado';
     case PaymentStatus.Refunded: return 'Reembolsado';
     case PaymentStatus.Processing: return 'Procesando';
-    // Add others as needed
+    case PaymentStatus.RequiresPaymentMethod: return 'Requiere Método de Pago';
+    case PaymentStatus.RequiresAction: return 'Requiere Acción';
+    case PaymentStatus.RequiresConfirmation: return 'Requiere Confirmación';
+    case PaymentStatus.RequiresCapture: return 'Requiere Captura';
+    case PaymentStatus.PartiallyPaid: return 'Pagado Parcialmente';
     default: return 'Desconocido';
   }
 }

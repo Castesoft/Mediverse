@@ -94,6 +94,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<SubscriptionCancellation> SubscriptionCancellations { get; set; }
     public DbSet<ManualPaymentDetail> ManualPaymentDetails { get; set; }
+    public DbSet<PaymentMethodPreference> PaymentMethodPreferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

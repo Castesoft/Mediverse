@@ -848,6 +848,8 @@ namespace MainService.Postgres.Migrations
                     IsServiceRecommended = table.Column<bool>(type: "boolean", nullable: false),
                     IsSatisfactionSurveyEmailSent = table.Column<bool>(type: "boolean", nullable: false),
                     IsSatisfactionSurveyCompleted = table.Column<bool>(type: "boolean", nullable: false),
+                    AmountPaid = table.Column<decimal>(type: "numeric", nullable: true),
+                    AmountDue = table.Column<decimal>(type: "numeric", nullable: true),
                     PaymentStatus = table.Column<int>(type: "integer", nullable: true),
                     Evolution = table.Column<string>(type: "text", nullable: true),
                     NextSteps = table.Column<string>(type: "text", nullable: true),
@@ -1743,6 +1745,39 @@ namespace MainService.Postgres.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DoctorPaymentMethodTypes_PaymentMethodTypes_PaymentMethodTy~",
+                        column: x => x.PaymentMethodTypeId,
+                        principalTable: "PaymentMethodTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentMethodPreferences",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    PaymentMethodTypeId = table.Column<int>(type: "integer", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "integer", nullable: false),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethodPreferences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentMethodPreferences_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PaymentMethodPreferences_PaymentMethodTypes_PaymentMethodTy~",
                         column: x => x.PaymentMethodTypeId,
                         principalTable: "PaymentMethodTypes",
                         principalColumn: "Id",
@@ -2874,6 +2909,9 @@ namespace MainService.Postgres.Migrations
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PaymentStatus = table.Column<string>(type: "text", nullable: false),
                     PaymentProcessingMode = table.Column<int>(type: "integer", nullable: false),
+                    IsPartialPayment = table.Column<bool>(type: "boolean", nullable: false),
+                    FullAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    RemainingAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     StripePaymentIntent = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     StripePaymentId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     StripeInvoiceId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
@@ -3533,6 +3571,16 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentMethodPreferences_PaymentMethodTypeId",
+                table: "PaymentMethodPreferences",
+                column: "PaymentMethodTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentMethodPreferences_UserId",
+                table: "PaymentMethodPreferences",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_UserId",
                 table: "PaymentMethods",
                 column: "UserId");
@@ -3912,6 +3960,9 @@ namespace MainService.Postgres.Migrations
                 name: "PatientPrescription");
 
             migrationBuilder.DropTable(
+                name: "PaymentMethodPreferences");
+
+            migrationBuilder.DropTable(
                 name: "PrescriptionClinic");
 
             migrationBuilder.DropTable(
@@ -3990,9 +4041,6 @@ namespace MainService.Postgres.Migrations
                 name: "WorkScheduleSettings");
 
             migrationBuilder.DropTable(
-                name: "PaymentMethodTypes");
-
-            migrationBuilder.DropTable(
                 name: "Payments");
 
             migrationBuilder.DropTable(
@@ -4030,6 +4078,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderStatuses");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethodTypes");
 
             migrationBuilder.DropTable(
                 name: "Prescriptions");

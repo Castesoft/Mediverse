@@ -18,6 +18,8 @@ public class EventDto
     public ServiceDto? Service { get; set; }
     public PatientDto? Patient { get; set; }
     public List<UserDto> Nurses { get; set; } = [];
+    public decimal? AmountPaid { get; set; }
+    public decimal? AmountDue { get; set; }
     public DateTime? DateFrom { get; set; }
     public DateTime? DateTo { get; set; }
     public PaymentMethodTypeDto? PaymentMethodType { get; set; }

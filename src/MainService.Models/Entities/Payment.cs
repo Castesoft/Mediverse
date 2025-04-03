@@ -14,6 +14,11 @@ public class Payment : BaseEntity
     public PaymentStatus PaymentStatus { get; set; }
     public PaymentProcessingMode PaymentProcessingMode { get; set; } = PaymentProcessingMode.Integrated;
 
+    // --- Partial Payment Fields ---
+    public bool IsPartialPayment { get; set; } = false;
+    public decimal FullAmount { get; set; }
+    public decimal RemainingAmount { get; set; } = 0;
+
     // --- Stripe Specific Fields ---
     public string? StripePaymentIntent { get; set; }
 
@@ -29,10 +34,8 @@ public class Payment : BaseEntity
     public int? OrderId { get; set; }
     public Order? Order { get; set; }
 
-
+    // --- Manual Confirmation Specific Fields --- (Already exists)
     public ManualPaymentDetail? ManualPaymentDetail { get; set; }
-
-    // For cash payments
     public int? MarkedPaidByUserId { get; set; }
     public AppUser? MarkedPaidByUser { get; set; }
 }

@@ -22,6 +22,9 @@ public class Event : BaseEntity
     public bool IsSatisfactionSurveyEmailSent { get; set; } = false;
     public bool IsSatisfactionSurveyCompleted { get; set; } = false;
 
+    public decimal? AmountPaid { get; set; }
+    public decimal? AmountDue { get; set; }
+
     public List<Payment> Payments { get; set; }
     public EventService EventService { get; set; } = null!;
     public EventClinic EventClinic { get; set; } = null!;
@@ -37,6 +40,6 @@ public class Event : BaseEntity
     public string? NextSteps { get; set; }
     public bool IsReceiptSent { get; set; } = false;
     
-    public int? BillingAddressId { get; set; } 
-    public Address? BillingAddress { get; set; } 
+    public int? BillingAddressId { get; set; }
+    public Address? BillingAddress { get; set; }
 }

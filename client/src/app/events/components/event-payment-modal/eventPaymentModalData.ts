@@ -1,5 +1,5 @@
-import Event from "src/app/_models/events/event";
-import { ManualPaymentType } from "src/app/payments/models/manual-payment-type.enum";
+import Event from 'src/app/_models/events/event';
+import { ManualPaymentType } from 'src/app/payments/models/manual-payment-type.enum';
 
 export interface EventPaymentModalData {
   title: string;
@@ -13,4 +13,6 @@ export interface EventPaymentModalResult {
   sendBill: boolean;
   success?: boolean;
   notes?: string;
+  isPartial?: boolean;
+  amountPaid?: number;
 }

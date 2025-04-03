@@ -519,12 +519,12 @@ namespace MainService.Models.Helpers
 
         public static readonly IEnumerable<PaymentMethodType> PaymentMethodTypes =
         [
-            new() { Name = "Efectivo", Code = "cash" },
-            new() { Name = "Transferencia Bancaria", Code = "bank_transfer" },
-            new() { Name = "Tarjeta de Crédito", Code = "credit_card" },
-            new() { Name = "Tarjeta de Débito", Code = "debit_card" },
-            new() { Name = "Cheque", Code = "check" },
-            new() { Name = "Otro", Code = "other" }
+            new() { Name = "Efectivo", Code = "cash", IconPrefix = "fas", IconName = "money-bills" },
+            new() { Name = "Transferencia Bancaria", Code = "bank_transfer", IconPrefix = "fas", IconName = "arrow-right-arrow-left" },
+            new() { Name = "Tarjeta de Crédito", Code = "credit_card", IconPrefix = "far", IconName = "credit-card" },
+            new() { Name = "Tarjeta de Débito", Code = "debit_card", IconPrefix = "far", IconName = "credit-card" },
+            new() { Name = "Cheque", Code = "check", IconPrefix = "far", IconName = "id-card" },
+            new() { Name = "Otro", Code = "other", IconPrefix = "far", IconName = "circle-question" }
         ];
 
         public static readonly List<SubscriptionPlan> SubscriptionPlans =

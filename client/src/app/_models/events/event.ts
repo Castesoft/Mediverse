@@ -25,6 +25,9 @@ export default class Event extends Entity {
   doctor: Doctor = new Doctor();
   service: Service = new Service();
   clinic?: Address | undefined = new Address();
+  amountPaid: number | null = null;
+  amountDue: number | null = null;
+  isReceiptSent: boolean = false;
   nurses: Nurse[] = [];
   nurseOptions: SelectOption[] = [];
   payments: Payment[] = [];

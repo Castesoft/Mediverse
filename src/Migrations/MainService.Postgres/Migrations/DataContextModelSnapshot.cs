@@ -1155,6 +1155,12 @@ namespace MainService.Postgres.Migrations
                     b.Property<bool>("AllDay")
                         .HasColumnType("boolean");
 
+                    b.Property<decimal?>("AmountDue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("AmountPaid")
+                        .HasColumnType("numeric");
+
                     b.Property<int?>("BillingAddressId")
                         .HasColumnType("integer");
 
@@ -2296,6 +2302,12 @@ namespace MainService.Postgres.Migrations
                     b.Property<int?>("EventId")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("FullAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool>("IsPartialPayment")
+                        .HasColumnType("boolean");
+
                     b.Property<int?>("MarkedPaidByUserId")
                         .HasColumnType("integer");
 
@@ -2314,6 +2326,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal>("RemainingAmount")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("StripeInvoiceId")
                         .HasMaxLength(100)
@@ -2416,6 +2431,50 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PaymentMethods");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PaymentMethodPreference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PaymentMethodTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentMethodTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PaymentMethodPreferences");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PaymentMethodType", b =>
@@ -4806,6 +4865,25 @@ namespace MainService.Postgres.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.PaymentMethodPreference", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.PaymentMethodType", "PaymentMethodType")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethodType");
 
                     b.Navigation("User");
                 });

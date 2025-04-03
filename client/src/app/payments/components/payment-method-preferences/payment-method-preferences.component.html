@@ -1,0 +1,160 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-title">
+      <h2 class="m-0">Métodos de Pago Aceptados</h2>
+    </div>
+    @if (isLoading) {
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Guardando...</span>
+      </div>
+    }
+  </div>
+  <div class="card-body pt-0">
+    @if (saveError) {
+      <alert [type]="'danger'" class="mb-4">
+        <fa-icon [icon]="iconsService.faExclamationCircle" class="me-2"></fa-icon>
+        {{ errorMessage }}
+      </alert>
+    }
+
+    @if (getAvailableMethodsToAdd().length === 0 && preferences.length === 0) {
+      <div class="alert alert-info mb-4">
+        <fa-icon [icon]="iconsService.faInfoCircle" class="me-2"></fa-icon>
+        No hay métodos de pago disponibles para agregar o ya tienes todos configurados.
+      </div>
+    } @else {
+      <div class="row row-cols-1 row-cols-md-2 g-3 mb-4">
+        @for (method of getAvailableMethodsToAdd(); track method.id) {
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body d-flex align-items-center py-2 px-3">
+                <div class="payment-method-icon me-3">
+                  <fa-icon
+                    [icon]="[method.iconPrefix || 'fas', method.iconName || 'money-bill-wave']"
+                    class="fs-4 text-primary"
+                  ></fa-icon>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-0">{{ method.name }}</h6>
+                </div>
+                <button
+                  class="btn btn-sm btn-success"
+                  (click)="addPaymentMethod(method.id)"
+                  [disabled]="isLoading"
+                  title="Agregar {{method.name}}"
+                >
+                  <fa-icon [icon]="iconsService.faPlus"></fa-icon>
+                  <span class="visually-hidden">Agregar {{ method.name }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+
+    @if (preferences.length === 0) {
+      <div class="alert alert-warning mb-4">
+        <fa-icon [icon]="iconsService.faTriangleExclamation" class="me-2"></fa-icon>
+        No tienes métodos de pago configurados. Agrega métodos desde la sección de disponibles.
+      </div>
+    } @else {
+      <div cdkDropList (cdkDropListDropped)="onDrop($event)" class="payment-methods-list mb-3">
+        @for (preference of preferences; track preference.paymentMethodTypeId; let i = $index; let first = $first; let last = $last) {
+          @if (i > 0 && !preference.isActive && preferences[i - 1].isActive) {
+            <hr class="my-3 inactive-separator"/>
+            <div class="text-muted small mb-2 ms-1">Inactivos</div>
+          }
+
+          <div cdkDrag
+               class="card payment-method-item border rounded mb-4"
+               [class.inactive-item]="!preference.isActive"
+               [cdkDragDisabled]="!preference.isActive"
+          >
+            <div *cdkDragPreview
+                 class="payment-method-item-preview border rounded px-3 py-4 bg-body shadow-lg d-flex align-items-center">
+              <div class="drag-handle me-4">
+                <fa-icon [icon]="iconsService.faGripVertical" class="text-muted"></fa-icon>
+              </div>
+              <div class="payment-method-icon me-3">
+                <fa-icon [icon]="getPaymentMethodIcon(preference.paymentMethodTypeId)" class="fs-4"></fa-icon>
+              </div>
+              <div class="flex-grow-1 fw-bold">
+                {{ preference.paymentMethodTypeName || getPaymentMethodName(preference.paymentMethodTypeId) }}
+              </div>
+            </div>
+            <div *cdkDragPlaceholder
+                 class="payment-method-item-placeholder border border-dashed rounded mb-2 p-3 bg-light"></div>
+
+            <div class="d-flex align-items-center p-4">
+              <div class="drag-handle me-4" cdkDragHandle
+                   [title]="preference.isActive ? 'Arrastrar para reordenar' : 'Activa para reordenar'">
+                <fa-icon
+                  [icon]="iconsService.faGripVertical"
+                  class="text-muted">
+                </fa-icon>
+              </div>
+
+              <div class="payment-method-icon me-3">
+                <fa-icon
+                  [icon]="getPaymentMethodIcon(preference.paymentMethodTypeId)"
+                  class="fs-4"
+                  [class.text-muted]="!preference.isActive"
+                ></fa-icon>
+              </div>
+
+              <div class="d-flex flex-grow-1 gap-2">
+                <div [class.fw-bold]="preference.isActive" [class.opacity-75]="!preference.isActive">
+                  {{ preference.paymentMethodTypeName || getPaymentMethodName(preference.paymentMethodTypeId) }}
+                </div>
+                @if (preference.isDefault && preference.isActive) {
+                  <div class="badge badge-light-primary badge-sm">Predeterminado</div>
+                }
+              </div>
+
+              <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="form-check form-switch" title="Activar/Desactivar método">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    [id]="'activeSwitch_' + preference.paymentMethodTypeId"
+                    [checked]="preference.isActive"
+                    (change)="toggleActive(preference)"
+                    [disabled]="isLoading"
+                  >
+                  <label class="form-check-label small" [for]="'activeSwitch_' + preference.paymentMethodTypeId">
+                    {{ preference.isActive ? 'Activo' : 'Inactivo' }}
+                  </label>
+                </div>
+
+                @if (preference.isActive) {
+                  <div class="form-check form-switch" title="Marcar como predeterminado">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      [id]="'defaultSwitch_' + preference.paymentMethodTypeId"
+                      [checked]="preference.isDefault"
+                      (change)="toggleDefault(preference)"
+                      [disabled]="isLoading || preference.isDefault"
+                    >
+                    <label class="form-check-label small" [for]="'defaultSwitch_' + preference.paymentMethodTypeId">
+                      Predet.
+                    </label>
+                  </div>
+                } @else {
+                  <div class="form-check form-switch invisible">
+                    <input class="form-check-input" type="checkbox" role="switch" disabled>
+                    <label class="form-check-label small">Predet.</label>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

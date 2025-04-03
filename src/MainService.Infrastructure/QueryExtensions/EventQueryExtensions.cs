@@ -24,7 +24,8 @@ namespace MainService.Infrastructure.QueryExtensions
                 .Include(x => x.EventPrescriptions).ThenInclude(x => x.Prescription)
                 .Include(x => x.EventPaymentMethodType)
                 .Include(x => x.EventMedicalInsuranceCompany)
-                .Include(x => x.Payments)
+                .Include(x => x.Payments).ThenInclude(p => p.ManualPaymentDetail)
+                .ThenInclude(mpd => mpd.PaymentMethodType)
                 .AsSplitQuery();
         }
 
@@ -33,10 +34,6 @@ namespace MainService.Infrastructure.QueryExtensions
         /// </summary>
         public static IQueryable<Event> ApplyFiltering(this IQueryable<Event> query, EventParams param)
         {
-            // log params
-            Log.Information("EventParams: {@param}", param);
-
-            // for example here we are in the account route, so here, we won't get any events in which the AuthenticatedUserId is the same as the DoctorId
             if (
                 param.FromAccountRoute.HasValue &&
                 param.FromAccountRoute.Value == true &&

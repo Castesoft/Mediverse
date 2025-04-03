@@ -1,4 +1,5 @@
 using MainService.Core.Interfaces.Data;
+using MainService.Core.Interfaces.Repositories;
 
 namespace MainService.Core.Interfaces.Services;
 
@@ -41,6 +42,7 @@ public interface IUnitOfWork
     ISubscriptionCancellationRepository SubscriptionCancellationRepository { get; }
     IUserNotificationRepository UserNotificationRepository { get; }
     IManualPaymentDetailRepository ManualPaymentDetailRepository { get; }
+    IPaymentMethodPreferenceRepository PaymentMethodPreferenceRepository { get; }
     Task<bool> Complete();
 
     bool HasChanges();

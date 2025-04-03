@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import {
   faAngleDoubleLeft,
   faAngleDoubleRight,
@@ -16,6 +16,7 @@ import {
   faCalendarDays,
   faCancel,
   faCaretDown,
+  faGear,
   faCaretLeft,
   faCaretRight,
   faCaretUp,
@@ -41,6 +42,7 @@ import {
   faFilter,
   faFilterCircleDollar,
   faFilterCircleXmark,
+  faGripVertical,
   faHandHoldingHeart,
   faHandsHoldingChild,
   faHashtag,
@@ -88,8 +90,8 @@ import {
   faWeightHanging,
   faWeightScale,
   faWheatAwn,
-  faXmark
-} from "@fortawesome/free-solid-svg-icons";
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   faCalendar as faRegCalendar,
   faCheckCircle,
@@ -108,12 +110,15 @@ import {
   faPaperPlane,
   faTrashCan as faRegTrashCan,
   faUser as farUser,
-  faWindowRestore
-} from "@fortawesome/free-regular-svg-icons";
-import { FaIconLibrary, IconDefinition } from "@fortawesome/angular-fontawesome";
+  faWindowRestore,
+} from '@fortawesome/free-regular-svg-icons';
+import {
+  FaIconLibrary,
+  IconDefinition,
+} from '@fortawesome/angular-fontawesome';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root',
 })
 export class IconsService {
   constructor(private library: FaIconLibrary) {
@@ -225,7 +230,7 @@ export class IconsService {
       faArrowRightArrowLeft,
       faCheckCircle,
       faPaperPlane,
-      faRegCircleQuestion,
+      faRegCircleQuestion
     );
   }
 
@@ -338,4 +343,6 @@ export class IconsService {
   faEnvelope: IconDefinition = faEnvelope;
   faRotateRight: IconDefinition = faRotateRight;
   faExclamationCircle: IconDefinition = faExclamationCircle;
+  faGripVertical: IconDefinition = faGripVertical;
+  faGear: IconDefinition = faGear;
 }

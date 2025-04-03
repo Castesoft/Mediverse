@@ -18,5 +18,10 @@ public class PaymentMappingProfile : Profile
 
         CreateMap<PaymentDto, Payment>()
             .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore());
+            
+        CreateMap<PaymentMethodPreference, PaymentMethodPreferenceDto>()
+            .ForMember(dest => dest.PaymentMethodTypeName, opt => opt.MapFrom(src => src.PaymentMethodType.Name))
+            .ForMember(dest => dest.PaymentMethodTypeIconName, opt => opt.MapFrom(src => src.PaymentMethodType.IconName))
+            .ForMember(dest => dest.PaymentMethodTypeIconPrefix, opt => opt.MapFrom(src => src.PaymentMethodType.IconPrefix));
     }
 }

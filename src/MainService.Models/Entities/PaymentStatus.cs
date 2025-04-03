@@ -12,4 +12,5 @@ public enum PaymentStatus
     Succeeded,
     Canceled,
     Refunded,
+    PartiallyPaid,
 }

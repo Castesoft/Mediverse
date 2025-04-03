@@ -18,6 +18,9 @@ import {
   AccountChildWrapperComponent
 } from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  PaymentMethodPreferencesComponent
+} from "src/app/payments/components/payment-method-preferences/payment-method-preferences.component";
 
 @Component({
   selector: 'app-account-billing',
@@ -30,7 +33,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     PaymentMethodDisplayCardComponent,
     BillingAddressDisplayCardComponent,
     AddressCreateCardComponent,
-    AccountChildWrapperComponent
+    AccountChildWrapperComponent,
+    PaymentMethodPreferencesComponent
   ],
 })
 export class AccountBillingComponent implements OnInit {

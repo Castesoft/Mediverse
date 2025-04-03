@@ -15,6 +15,7 @@ import { PaymentFiltersForm } from "src/app/_models/payments/paymentFiltersForm"
 import { paymentColumns, paymentDictionary } from "src/app/_models/payments/paymentConstants";
 import { PaymentMethod } from "src/app/_models/paymentMethod/paymentMethod";
 import { BehaviorSubject, Observable, tap } from "rxjs";
+import { PaymentMethodPreference, PaymentMethodPreferenceDto } from "./models/payment-method-preference.model";
 import Event from "src/app/_models/events/event";
 import { HttpParams } from "@angular/common/http";
 import { PaymentConfirmationPayload } from "src/app/payments/models/payment-confirmation-payload.model";
@@ -57,6 +58,9 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
 
   private paymentMethodsSubject: BehaviorSubject<PaymentMethod[]> = new BehaviorSubject<PaymentMethod[]>([]);
   public paymentMethods$: Observable<PaymentMethod[]> = this.paymentMethodsSubject.asObservable();
+  
+  private paymentMethodPreferencesSubject: BehaviorSubject<PaymentMethodPreferenceDto[]> = new BehaviorSubject<PaymentMethodPreferenceDto[]>([]);
+  public paymentMethodPreferences$: Observable<PaymentMethodPreferenceDto[]> = this.paymentMethodPreferencesSubject.asObservable();
 
   /**
    * Retrieves the available payment methods for a given user.
@@ -72,6 +76,47 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
   getAllMethods(): Observable<PaymentMethod[]> {
     return this.http.get<PaymentMethod[]>(`${this.baseUrl}method-types/all`);
   }
+  
+  /**
+   * Gets the payment method preferences for a user
+   * @param userId The user ID
+   * @returns Observable of payment method preferences
+   */
+  getPaymentMethodPreferences(userId: number): Observable<PaymentMethodPreferenceDto[]> {
+    return this.http.get<PaymentMethodPreferenceDto[]>(`${this.baseUrl}method-preferences/${userId}`).pipe(
+      tap(preferences => this.paymentMethodPreferencesSubject.next(preferences))
+    );
+  }
+  
+  /**
+   * Saves a payment method preference
+   * @param preference The preference to save
+   * @returns Observable of the saved preference
+   */
+  savePaymentMethodPreference(preference: PaymentMethodPreference): Observable<PaymentMethodPreferenceDto> {
+    return this.http.post<PaymentMethodPreferenceDto>(`${this.baseUrl}method-preferences`, preference);
+  }
+  
+  /**
+   * Updates a payment method preference
+   * @param userId The user ID
+   * @param paymentMethodTypeId The payment method type ID
+   * @param preference The updated preference
+   * @returns Observable of the updated preference
+   */
+  updatePaymentMethodPreference(userId: number, paymentMethodTypeId: number, preference: Partial<PaymentMethodPreference>): Observable<PaymentMethodPreferenceDto> {
+    return this.http.put<PaymentMethodPreferenceDto>(`${this.baseUrl}method-preferences/${userId}/${paymentMethodTypeId}`, preference);
+  }
+  
+  /**
+   * Deletes a payment method preference
+   * @param userId The user ID
+   * @param paymentMethodTypeId The payment method type ID
+   * @returns Observable of void
+   */
+  deletePaymentMethodPreference(userId: number, paymentMethodTypeId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}method-preferences/${userId}/${paymentMethodTypeId}`);
+  }
 
   confirmPaymentForEvent(eventId: number, payload: PaymentConfirmationPayload): Observable<Event> {
     let httpParams: HttpParams = new HttpParams();
@@ -81,6 +126,10 @@ export class PaymentsService extends ServiceHelper<Payment, PaymentParams, Payme
     httpParams = httpParams.set('selectedPaymentMethodTypeId', payload.selectedPaymentMethodTypeId.toString());
     httpParams = httpParams.set('referenceNumber', payload.referenceNumber || '');
     httpParams = httpParams.set('notes', payload.notes || '');
+    
+    if (payload.partialPaymentAmount) {
+      httpParams = httpParams.set('partialPaymentAmount', payload.partialPaymentAmount.toString());
+    }
 
     return this.http.put<Event>(`${this.baseUrl}confirm-payment/event/${eventId}`, {}, { params: httpParams });
   }
