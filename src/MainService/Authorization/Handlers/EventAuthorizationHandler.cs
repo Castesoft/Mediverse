@@ -61,8 +61,10 @@ public class EventAuthorizationHandler(IEventsService eventsService, ILogger<Eve
                 if (!isAuthorized) logger.LogWarning("Authorization DENIED for User {UserId} to PAY for Event {EventId}", userId, resource.Id);
                 break;
 
-            // TODO - Cancel operation
-
+            case nameof(EventOperations.Cancel):
+                isAuthorized = await eventsService.CanCancelEventAsync(userId, resource.Id);
+                if (!isAuthorized) logger.LogWarning("Authorization DENIED for User {UserId} to CANCEL Event {EventId}", userId, resource.Id);
+                break;
             default:
                 logger.LogWarning("Authorization requirement {RequirementName} is not handled by EventAuthorizationHandler for Event {EventId}.", requirement.Name, resource.Id);
                 isAuthorized = false;

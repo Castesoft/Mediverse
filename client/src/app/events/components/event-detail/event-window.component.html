@@ -32,7 +32,19 @@
                   }
                 </h3>
               </div>
-              <div class="card-toolbar m-0">
+              <div class="card-toolbar m-0 d-flex align-items-center">
+                <!-- Menu Trigger Button -->
+                <button class="btn btn-sm btn-icon btn-active-light-primary me-3" type="button" [matMenuTriggerFor]="eventMenu" aria-label="Event options" *ngIf="userRole === 'doctor'">
+                  <fa-icon [icon]="icons.faEllipsisVertical" class="fs-3"></fa-icon>
+                </button>
+                <!-- Menu Definition -->
+                <mat-menu #eventMenu="matMenu">
+                  <button mat-menu-item (click)="openCancelConfirmation()">
+                    <fa-icon [icon]="icons.faBan" class="me-2 text-danger"></fa-icon>
+                    <span class="text-danger">Cancelar Cita</span>
+                  </button>
+                </mat-menu>
+
                 <ul
                   class="nav nav-stretch nav-line-tabs border-transparent"
                   role="tablist"
@@ -329,7 +341,7 @@
             </div>
           }
           @case ("pagos") {
-            @if (item()?.paymentStatus?.toLowerCase() === 'succeeded') {
+            @if (item()?.paymentStatus === PaymentStatus.Succeeded || item()?.paymentStatus === PaymentStatus.AwaitingPayment) {
               <div paymentsCatalog
                    [item]="paymentItem"
                    [view]="paymentView"

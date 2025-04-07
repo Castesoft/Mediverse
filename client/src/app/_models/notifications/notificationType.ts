@@ -6,5 +6,6 @@ export enum NotificationType {
   BILLING_ALERT = "billing-alert",
   SYSTEM_ALERT = "system-alert",
   FEEDBACK_REQUEST = "feedback-request",
-  SECURITY = "security"
+  SECURITY = "security",
+  APPOINTMENT_CANCELLED = "appointment-cancelled"
 }

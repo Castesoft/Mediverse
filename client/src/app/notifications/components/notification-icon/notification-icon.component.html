@@ -101,5 +101,17 @@
         </i>
       </span>
     }
+    @case (NotificationType.APPOINTMENT_CANCELLED) {
+      <span
+        class="symbol-label bg-light-danger"
+        [placement]="'left'"
+        [tooltip]="'Cita cancelada'">
+        <i class="ki-duotone ki-information-5 fs-2 text-danger"> 
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+      </span>
+    }
   }
 </div>

@@ -70,4 +70,18 @@ public class EventsService(IUnitOfWork uow) : IEventsService
         // Same rules as modification - typically only doctors can delete
         return await CanModifyEventAsync(userId, eventId);
     }
+
+    public async Task<bool> CanCancelEventAsync(int userId, int eventId)
+    {
+        var eventEntity = await uow.EventRepository.GetByIdAsNoTrackingAsync(eventId);
+        if (eventEntity == null) return false;
+        
+        if (eventEntity.DoctorEvent.DoctorId == userId) return true;
+
+        // TODO: Add check for Admin role if admins should also be allowed to cancel
+        // var user = await uow.UserRepository.GetByIdAsync(userId);
+        // if (user != null && await uow.UserRepository.IsInRoleAsync(user, "Admin")) return true;
+
+        return false;
+    }
 }

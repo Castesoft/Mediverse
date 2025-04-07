@@ -29,9 +29,9 @@ public class OptionDto
     public string? Code { get; set; }
     public string? Name { get; set; }
     public Options? Options { get; set; }
-    public bool? Enabled { get; set; }
-    public bool? Visible { get; set; }
-    
+    public bool Enabled { get; set; } = true;
+    public bool Visible { get; set; } = true;
+
 }
 
 

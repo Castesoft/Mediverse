@@ -7,6 +7,17 @@
           <span class="text-muted mt-1 fw-semibold fs-7">{{ event?.dateFrom | date: 'EEEE, dd MMMM yyyy' }}</span>
         </h3>
         <div class="card-toolbar">
+          <button class="btn btn-sm btn-icon btn-active-light-primary me-2" type="button" [matMenuTriggerFor]="eventMenu" aria-label="Event options">
+            <fa-icon [icon]="iconsService.faEllipsisVertical" class="fs-4"></fa-icon>
+          </button>
+
+          <mat-menu #eventMenu="matMenu">
+            <button mat-menu-item (click)="openCancelConfirmation()">
+              <fa-icon [icon]="iconsService.faBan" class="me-2 text-danger"></fa-icon>
+              <span class="text-danger">Cancelar Cita</span>
+            </button>
+          </mat-menu>
+
           <button class="btn btn-sm btn-icon btn-active-light-primary" type="button" aria-label="Close"
                   mat-dialog-close>
             <fa-icon [icon]="iconsService.faTimes" class="fs-4"></fa-icon>

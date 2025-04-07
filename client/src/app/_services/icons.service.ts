@@ -34,6 +34,7 @@ import {
   faDna,
   faEarthAmericas,
   faEllipsisH,
+  faEllipsisVertical,
   faExclamationCircle,
   faFileContract,
   faFileExport,
@@ -91,6 +92,8 @@ import {
   faWeightScale,
   faWheatAwn,
   faXmark,
+  faBan,
+  faCircleXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faCalendar as faRegCalendar,
@@ -230,7 +233,10 @@ export class IconsService {
       faArrowRightArrowLeft,
       faCheckCircle,
       faPaperPlane,
-      faRegCircleQuestion
+      faRegCircleQuestion,
+      faEllipsisVertical,
+      faBan,
+      faCircleXmark
     );
   }
 
@@ -345,4 +351,7 @@ export class IconsService {
   faExclamationCircle: IconDefinition = faExclamationCircle;
   faGripVertical: IconDefinition = faGripVertical;
   faGear: IconDefinition = faGear;
+  faEllipsisVertical: IconDefinition = faEllipsisVertical;
+  faBan: IconDefinition = faBan;
+  faCircleXmark: IconDefinition = faCircleXmark;
 }

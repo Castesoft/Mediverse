@@ -44,4 +44,9 @@ public static class NotificationType
     /// A security-related notification, such as account changes or suspicious activity.
     /// </summary>
     public const string Security = "security";
+
+    /// <summary>
+    /// A notification that an appointment has been cancelled.
+    /// </summary>
+    public const string AppointmentCancelled = "appointment-cancelled";
 }

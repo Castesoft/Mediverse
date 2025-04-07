@@ -10,4 +10,5 @@ public interface IEventsService
     Task<bool> CanModifyEventAsync(int userId, int eventId);
     Task<bool> CanDeleteEventAsync(int userId, int eventId);
     Task<bool> CanPatientAccessEventAsync(int patientId, int eventId);
+    Task<bool> CanCancelEventAsync(int userId, int eventId);
 }

@@ -28,4 +28,7 @@ public static class EventOperations
 
     public static readonly OperationAuthorizationRequirement Pay =
         new() { Name = nameof(Pay) };
+
+    public static readonly OperationAuthorizationRequirement Cancel =
+        new() { Name = nameof(Cancel) };
 }

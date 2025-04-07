@@ -3,6 +3,7 @@ import {
   computed,
   effect,
   HostBinding,
+  inject,
   model,
   ModelSignal,
   OnInit,
@@ -20,6 +21,8 @@ import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module
 import { CdkModule } from "src/app/_shared/cdk.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { InvalidFeedback3Component } from "src/app/_forms2/helper/invalid-feedback-3.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   selector: "div[controlMultiselect3]",
@@ -32,9 +35,12 @@ import { InvalidFeedback3Component } from "src/app/_forms2/helper/invalid-feedba
     CdkModule,
     MaterialModule,
     InvalidFeedback3Component,
+    FaIconComponent,
   ]
 })
 export class ControlMultiselect3Component implements OnInit {
+  readonly icons: IconsService = inject(IconsService);
+
   control: ModelSignal<FormControl2<SelectOption[] | null>> = model.required();
   fromWrapper: ModelSignal<boolean> = model.required();
 
@@ -67,6 +73,22 @@ export class ControlMultiselect3Component implements OnInit {
         console.error(e);
       }
     });
+  }
+
+  get value(): SelectOption[] | null {
+    return this.control().value;
+  }
+
+  get count(): number {
+    return this.control().value?.length || 0;
+  }
+
+  get optionsCount(): number {
+    return this.control().selectOptions.length;
+  }
+
+  handleClick(): void {
+    console.log(this.control().selectOptions);
   }
 
   ngOnInit(): void {
@@ -103,10 +125,24 @@ export class ControlMultiselect3Component implements OnInit {
     })
   }
 
+  deselectOption(optionToDeselect: SelectOption): void {
+    const currentValue = this.control().value;
+    if (!currentValue) {
+      return;
+    }
+
+    const newValue = currentValue.filter(option => option.id !== optionToDeselect.id);
+
+    this.control.update(oldValue => {
+      oldValue.patchValue(newValue.length > 0 ? newValue : null);
+      oldValue.markAsDirty();
+      return oldValue;
+    });
+  }
+
   clearOptions() {
     this.control.update(oldValue => {
       oldValue.patchValue(null);
-
       return oldValue;
     })
   }

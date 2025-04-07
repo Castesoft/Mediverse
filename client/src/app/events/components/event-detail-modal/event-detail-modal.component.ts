@@ -2,13 +2,19 @@ import { Component, inject, OnInit } from "@angular/core";
 import { ModalWrapperModule } from "src/app/_shared/modal-wrapper.module";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { CdkModule } from "src/app/_shared/cdk.module";
+import { MatMenuModule } from '@angular/material/menu';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { EventsService } from "src/app/events/events.service";
 import DetailDialog from "src/app/_models/base/components/types/detailDialog";
 import { FormUse } from "src/app/_models/forms/formTypes";
 import Event from "src/app/_models/events/event";
 import { CurrencyPipe, DatePipe } from "@angular/common";
+import { filter, take } from 'rxjs/operators';
 import { SymbolCellComponent } from "src/app/_shared/template/components/tables/cells/symbol-cell.component";
+import {
+  ConfirmationDialogData,
+  ConfirmationModalComponent
+} from 'src/app/_shared/components/confirmation-modal/confirmation-modal.component';
 import { PhotoSize } from "src/app/_models/photos/photoTypes";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { IconsService } from "src/app/_services/icons.service";
@@ -29,17 +35,18 @@ import { PaymentStatus } from "src/app/_models/payments/paymentConstants";
     ModalWrapperModule,
     MaterialModule,
     CdkModule,
+    MatMenuModule,
     CurrencyPipe,
     DatePipe,
     SymbolCellComponent,
     FaIconComponent,
-    EventDetailComponent
+    EventDetailComponent,
   ],
 })
 export class EventDetailModalComponent implements OnInit {
-  protected readonly PaymentStatus = PaymentStatus;
-  protected readonly PhotoSize = PhotoSize;
-  protected readonly FormUse = FormUse;
+  protected readonly PaymentStatus: typeof PaymentStatus = PaymentStatus;
+  protected readonly PhotoSize: typeof PhotoSize = PhotoSize;
+  protected readonly FormUse: typeof FormUse = FormUse;
 
   private readonly dialogRef: MatDialogRef<EventDetailModalComponent> = inject(MatDialogRef);
   private readonly eventsService: EventsService = inject(EventsService);
@@ -101,6 +108,42 @@ export class EventDetailModalComponent implements OnInit {
       } else {
         console.log('Payment modal closed without returning a result (likely cancelled).');
       }
+    });
+  }
+
+  openCancelConfirmation(): void {
+    if (!this.event || !this.event.id) {
+      console.error('Cannot cancel event without a valid event object:', this.event);
+      return;
+    }
+    const eventId: number = this.event.id;
+    const dialogData: ConfirmationDialogData = {
+      title: 'Confirmar Cancelación',
+      message: `¿Estás seguro de que deseas cancelar la cita #${eventId}? Esta acción no se puede deshacer.`,
+      confirmButtonText: 'Sí, Cancelar',
+      confirmButtonColor: 'warn'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+      data: dialogData,
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().pipe(
+      filter(result => result === true),
+      take(1)
+    ).subscribe(() => {
+      this.eventsService.cancelEvent(eventId)
+        .pipe(take(1))
+        .subscribe({
+          next: (updatedEvent) => {
+            console.log('Event cancelled successfully:', updatedEvent);
+            this.event = updatedEvent;
+          },
+          error: (err) => {
+            console.error('Error cancelling event:', err);
+          }
+        });
     });
   }
 }

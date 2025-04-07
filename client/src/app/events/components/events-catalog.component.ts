@@ -29,6 +29,8 @@ import { EventsService } from "src/app/events/events.service";
 import {
   CatalogLayoutSkeletonComponent
 } from "src/app/_shared/components/catalog-layout-skeleton/catalog-layout-skeleton.component";
+import { firstValueFrom } from "rxjs";
+import { SelectOption } from "src/app/_models/base/selectOption";
 
 @Component({
   selector: '[eventsCatalog]',
@@ -83,25 +85,30 @@ export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, Even
   constructor() {
     super(EventsService, EventFiltersForm);
 
-    this.clinics.getOptions().subscribe();
-    this.patients.getOptions().subscribe();
-    this.services.getOptions().subscribe();
-    this.nurses.getOptions().subscribe();
-
     effect(() => {
-      this.filtersForm()
-        .setValidation(this.validation.active())
-        .setClinicOptions(this.clinics.options())
-        .setPatientOptions(this.patients.options())
-        .setServiceOptions(this.services.options())
-        .setNurseOptions(this.nurses.options());
-
       if (this.calendarView() === 'calendar') {
         this.service.getMonthViewPartial(this.key(), this.params()).subscribe();
       }
     });
 
+    this.retrieveFilterOptions().catch(console.error);
     this.subscribeToEventMonthDayCell();
+  }
+
+  private async retrieveFilterOptions(): Promise<void> {
+    const clinicOptions: SelectOption[] = await firstValueFrom(this.clinics.getOptions());
+    const patientOptions: SelectOption[] = await firstValueFrom(this.patients.getOptions());
+    const serviceOptions: SelectOption[] = await firstValueFrom(this.services.getOptions());
+    const nurseOptions: SelectOption[] = await firstValueFrom(this.nurses.getOptions());
+
+    this.filtersForm.update((prev) => {
+      prev.controls.patients.selectOptions = patientOptions;
+      prev.controls.services.selectOptions = serviceOptions;
+      prev.controls.nurses.selectOptions = nurseOptions;
+      prev.controls.clinics.selectOptions = clinicOptions;
+
+      return prev;
+    });
   }
 
   setCalendarViewQueryParam(view: CalendarView): void {

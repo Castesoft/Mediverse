@@ -102,6 +102,7 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
 
     this.subtotal = this.event.service.price || 0;
     this.subscribeToCheckoutData();
+    this.subscribeToQueryParams();
     this.fetchConsentStatus();
   }
 
@@ -111,6 +112,15 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     if (key) {
       this.key.set(key);
     }
+  }
+
+  private subscribeToQueryParams(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params: ParamMap) => {
+      const inferiorTab: string | null = params.get('inferiorTab');
+      if (inferiorTab) {
+        this.selectedTab = inferiorTab;
+      }
+    });
   }
 
   private subscribeToCheckoutData(): void {

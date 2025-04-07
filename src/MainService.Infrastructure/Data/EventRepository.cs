@@ -23,7 +23,6 @@ namespace MainService.Infrastructure.Data
         #region Basic CRUD
 
         public void Add(Event item) => context.Events.Add(item);
-
         public void Delete(Event item) => context.Events.Remove(item);
         public void Update(Event item) => context.Events.Update(item);
 
@@ -88,23 +87,29 @@ namespace MainService.Infrastructure.Data
         public async Task<List<Event>> GetAllAsync() =>
             await context.Events.ToListAsync();
 
-        public async Task<Event?> GetByIdAsNoTrackingAsync(int id) =>
-            await context.Events
+        public async Task<Event?> GetByIdAsNoTrackingAsync(int id)
+        {
+            return await context.Events
                 .Includes()
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == id);
+        }
 
-        public async Task<Event?> GetByIdAsync(int id) =>
-            await context.Events
+        public async Task<Event?> GetByIdAsync(int id)
+        {
+            return await context.Events
                 .Includes()
                 .SingleOrDefaultAsync(x => x.Id == id);
+        }
 
-        public async Task<EventDto?> GetDtoByIdAsync(int id) =>
-            await context.Events
+        public async Task<EventDto?> GetDtoByIdAsync(int id)
+        {
+            return await context.Events
                 .Includes()
                 .AsNoTracking()
                 .ProjectTo<EventDto>(mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(x => x.Id == id);
+        }
 
         public async Task<PagedList<EventDto>> GetPagedListAsync(EventParams param)
         {
@@ -195,8 +200,9 @@ namespace MainService.Infrastructure.Data
                 .ToListAsync();
         }
 
-        public async Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId) =>
-            await context.Events
+        public async Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId)
+        {
+            return await context.Events
                 .Where(x => x.PatientEvent.PatientId == userId &&
                             x.IsSatisfactionSurveyEmailSent == true &&
                             x.IsSatisfactionSurveyCompleted == false)
@@ -205,8 +211,9 @@ namespace MainService.Infrastructure.Data
                 .Include(x => x.EventService)
                 .ThenInclude(x => x.Service)
                 .ToListAsync();
+        }
 
-        public async Task<EventDoctorFieldsDto> GetDoctorFieldsDtoAsync(ClaimsPrincipal user)
+        public async Task<EventDoctorFieldsDto?> GetDoctorFieldsDtoAsync(ClaimsPrincipal user)
         {
             var doctor = await context.Users
                 .Where(x => x.Id == user.GetUserId())
@@ -217,10 +224,12 @@ namespace MainService.Infrastructure.Data
             return mapper.Map<EventDoctorFieldsDto>(doctor);
         }
 
-        public async Task<bool> DoctorHasEventAsync(int doctorId, int eventId) =>
-            await context.Events
+        public async Task<bool> DoctorHasEventAsync(int doctorId, int eventId)
+        {
+            return await context.Events
                 .Include(x => x.DoctorEvent)
                 .AnyAsync(x => x.Id == eventId && x.DoctorEvent.DoctorId == doctorId);
+        }
 
         #endregion
     }

@@ -77,6 +77,7 @@ export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>
   hideAddButton: ModelSignal<boolean> = model(false);
   disableSkeleton: ModelSignal<boolean> = model(false);
   showPagination: ModelSignal<boolean> = model(true);
+  filtersCollapsedInitialState: InputSignal<boolean | null> = input<boolean | null>(null);
 
   // Don't modify these:
   @ContentChild('entityTable') entityTable!: TemplateRef<any>;
@@ -109,6 +110,12 @@ export class GenericCatalogComponent<T extends Entity, P extends EntityParams<P>
 
   ngOnInit(): void {
     this.defaultFilterParams = { ...this.params() };
+
+    const initialState = this.filtersCollapsedInitialState();
+    if (initialState !== null) {
+      this.isCollapsed = initialState;
+      this.isDrawerOpen = !initialState;
+    }
   }
 
   onSubmit(): void {

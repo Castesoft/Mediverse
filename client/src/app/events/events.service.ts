@@ -89,4 +89,12 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
       })
     )
   }
+
+  cancelEvent(id: number): Observable<Event> {
+    return this.http.put<Event>(`${this.baseUrl}${id}/cancel`, {}).pipe(
+      tap((updatedEvent) => {
+        this.toastr.success(`Cita #${id} cancelada`);
+      })
+    );
+  }
 }

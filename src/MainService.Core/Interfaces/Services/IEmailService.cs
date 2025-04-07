@@ -13,8 +13,9 @@ public interface IEmailService
     string CreateVerifyEmailAddressEmailForUpdate(AppUser user, string verificationCode);
 
     string CreateAppointmentConfirmationEmail(string doctorName, string appointmentDate, string appointmentTime,
+        string service, int eventId);
+    string CreateAppointmentCancellationEmail(string doctorName, string appointmentDate, string appointmentTime,
         string service);
-
     string CreateSatisfactionSurveyEmail(AppUser doctor, AppUser patient, Event @event);
     string CreateEventReceiptEmail(
         string patientName,

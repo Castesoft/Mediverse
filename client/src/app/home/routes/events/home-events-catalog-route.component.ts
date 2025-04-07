@@ -19,18 +19,17 @@ import { EventsService } from "src/app/events/events.service";
   selector: 'div[homeEventsCatalogRoute]',
   template: `
     <div breadcrumbs></div>
-    <div post>
-      <div eventsCatalog
-           [(item)]="item"
-           [(isCompact)]="compact.isCompact"
-           [(key)]="key"
-           [(mode)]="mode"
-           [(params)]="params"
-           [(view)]="view"
-           [(calendarView)]="calendarView"
-           [(filtersCollapsed)]="filtersCollapsed"
-      ></div>
-    </div>
+    <div eventsCatalog
+         class="px-8"
+         [(item)]="item"
+         [(isCompact)]="compact.isCompact"
+         [(key)]="key"
+         [(mode)]="mode"
+         [(params)]="params"
+         [(view)]="view"
+         [(calendarView)]="calendarView"
+         [(filtersCollapsed)]="filtersCollapsed"
+    ></div>
   `,
   standalone: false,
 })
@@ -88,7 +87,13 @@ export class HomeEventsCatalogRouteComponent extends BaseRouteCatalog<Event, Eve
   }
 
   private setInitialTabsFromParams(): void {
-    this.calendarViewQueryParam = this.route.snapshot.queryParams['view'] || this.calendarView();
+    const queryParams = this.route.snapshot.queryParams;
+    this.calendarViewQueryParam = queryParams['view'] || this.calendarView();
+
+    const filtersCollapsedParam = queryParams['filtersCollapsed'];
+    const initialFiltersCollapsed = filtersCollapsedParam === 'true';
+
+    this.filtersCollapsed.set(initialFiltersCollapsed);
   }
 
   ngOnDestroy(): void {

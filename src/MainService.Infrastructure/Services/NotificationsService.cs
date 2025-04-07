@@ -61,4 +61,57 @@ public class NotificationsService : INotificationsService
 
         return $"{doctorArticle} {doctorSuffix} {doctor.LastName}";
     }
+
+    public Task<UserNotification?> CreateForPatientEventCancellation(Event @event, AppUser patient)
+    {
+        if (@event.DateFrom == null || @event.DateTo == null) return Task.FromResult<UserNotification?>(null);
+
+        var notification = new Notification
+        {
+            Title = "Cita cancelada",
+            Message =
+                $"Tu cita con {GetDoctorTitle(@event.DoctorEvent.Doctor)} del día {@event.DateFrom:dd/MM/yyyy} a las {@event.DateTo:HH:mm} ha sido cancelada.",
+            ActionUrl = null,
+            NotificationType = NotificationType.AppointmentCancelled,
+            Payload = null,
+        };
+
+        var userNotification = new UserNotification
+        {
+            AppUserId = patient.Id,
+            Notification = notification,
+            IsRead = false,
+            IsFavorite = false,
+            IsImportant = true,
+        };
+
+        return Task.FromResult<UserNotification?>(userNotification);
+    }
+
+    public Task<UserNotification?> CreateForDoctorEventCancellation(Event @event, AppUser doctor)
+    {
+         if (@event.DateFrom == null || @event.DateTo == null) return Task.FromResult<UserNotification?>(null);
+
+        var patientName = @event.PatientEvent.Patient.FirstName + " " + @event.PatientEvent.Patient.LastName;
+        var notification = new Notification
+        {
+            Title = $"Cita cancelada con {patientName}",
+            Message =
+                $"La cita con {patientName} del día {@event.DateFrom:dd/MM/yyyy} a las {@event.DateTo:HH:mm} ha sido cancelada.",
+            ActionUrl = null,
+            NotificationType = NotificationType.AppointmentCancelled,
+            Payload = null,
+        };
+
+        var userNotification = new UserNotification
+        {
+            AppUserId = doctor.Id,
+            Notification = notification,
+            IsRead = false,
+            IsFavorite = false,
+            IsImportant = true,
+        };
+
+        return Task.FromResult<UserNotification?>(userNotification);
+    }
 }

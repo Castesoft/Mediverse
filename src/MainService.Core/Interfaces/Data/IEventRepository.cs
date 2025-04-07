@@ -19,7 +19,7 @@ public interface IEventRepository
     Task<List<EventDto>> GetAllDtoAsync(EventParams param);
     Task<PagedList<EventDto>> GetPagedListAsync(EventParams param);
     Task<List<EventMonthDayCellDto>> GetMonthViewPartialAsync(EventParams param);
-    Task<EventDoctorFieldsDto> GetDoctorFieldsDtoAsync(ClaimsPrincipal user);
+    Task<EventDoctorFieldsDto?> GetDoctorFieldsDtoAsync(ClaimsPrincipal user);
     Task<List<Event>> GetPendingSatisfactionSurveysAsync(int userId);
 
     /// <summary>

@@ -68,24 +68,28 @@ export const eventFiltersFormInfo: FormInfo<EventParams> = {
     label: 'Clínicas',
     type: 'multiselect',
     materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    multiselectOptions: { showActions: false },
     showCodeSpan: false,
   },
   nurses: {
     label: 'Especialistas',
     type: 'multiselect',
     materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    multiselectOptions: { showActions: false },
     showCodeSpan: false,
   },
   patients: {
     label: 'Pacientes',
     type: 'multiselect',
     materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    multiselectOptions: { showActions: false },
     showCodeSpan: false,
   },
   services: {
     label: 'Servicios',
     type: 'multiselect',
     materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    multiselectOptions: { showActions: false },
     showCodeSpan: false,
   },
 } as FormInfo<EventParams>;

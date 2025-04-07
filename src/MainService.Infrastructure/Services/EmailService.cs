@@ -4,15 +4,16 @@ using System.Net.Mail;
 using MainService.Core.Interfaces.Services;
 using MainService.Core.Settings;
 using MainService.Models.Entities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace MainService.Infrastructure.Services;
 
-public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger) : IEmailService
+public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger, IConfiguration configuration) : IEmailService
 {
-    private readonly EmailSettings _emailSettings =
-        emailSettings.Value ?? throw new ArgumentNullException(nameof(emailSettings));
+    private readonly EmailSettings _emailSettings = emailSettings.Value ?? throw new ArgumentNullException(nameof(emailSettings));
+    private readonly IConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
     public async Task SendMail(string to, string subject, string htmlMessage)
     {
@@ -74,8 +75,10 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
         """;
 
     public string CreateAppointmentConfirmationEmail(string doctorName, string appointmentDate, string appointmentTime,
-        string service)
+        string service, int eventId)
     {
+        var frontendBaseUrl = _configuration["ClientSettings:Url"] ?? "https://dochub.mx";
+        
         return $"""
                 {GetEmailHeader()}
                 <tr>
@@ -88,8 +91,39 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
                       <div style="padding-bottom: 20px">Expecialista: {doctorName}</div>
                       <div style="padding-bottom: 20px">Día: {appointmentDate}</div>
                       <div style="padding-bottom: 20px">Hora: {appointmentTime}</div>
-                      <div style="padding-bottom: 40px">Servicio: {service}</div>
+                      <div style="padding-bottom: 20px">Servicio: {service}</div>
+                      
+                      <div style="text-align: center; padding-top: 20px; padding-bottom: 20px;">
+                        <a href="{frontendBaseUrl}/cuenta/citas/{eventId}" target="_blank" style="display: inline-block; text-decoration: none; font-weight: bold; color: #fff; background-color: #284092; padding: 12px 25px; border-radius: 6px; font-size: 16px;">
+                          Confirmar Asistencia
+                        </a>
+                      </div>
+                      
                       <div style="padding-bottom: 10px">Si alguna de esta información es incorrecta, por favor contacta a tu especialista.</div>
+                    </div>
+                  </td>
+                </tr>
+                {GetEmailFooter()}
+                """;
+    }
+
+    public string CreateAppointmentCancellationEmail(string doctorName, string appointmentDate, string appointmentTime,
+        string service)
+    {
+        return $"""
+                {GetEmailHeader()}
+                <tr>
+                  <td align="left" valign="center">
+                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                      <div style="padding-bottom: 30px; font-size: 17px;">
+                        <strong>Tu cita ha sido cancelada.</strong>
+                      </div>
+                      <div style="padding-bottom: 20px">Estos son los detalles de la cita cancelada:</div>
+                      <div style="padding-bottom: 20px">Expecialista: {doctorName}</div>
+                      <div style="padding-bottom: 20px">Día: {appointmentDate}</div>
+                      <div style="padding-bottom: 20px">Hora: {appointmentTime}</div>
+                      <div style="padding-bottom: 40px">Servicio: {service}</div>
+                      <div style="padding-bottom: 10px">Si tienes alguna pregunta o necesitas reagendar, por favor contacta a tu especialista.</div>
                     </div>
                   </td>
                 </tr>
@@ -288,64 +322,64 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
                 </html>
                 """;
     }
-    
-     public string CreateEventReceiptEmail(
-            string patientName,
-            string doctorName,
-            DateTime eventDate,
-            string serviceName,
-            decimal amountPaid,
-            string paymentMethodName,
-            DateTime paymentDate,
-            string? referenceNumber,
-            string? notes,
-            int eventId,
-            string clinicName)
-        {
-            var culture = new CultureInfo("es-MX");
 
-            return $"""
-                    {GetEmailHeader()}
-                    <tr>
-                      <td align="left" valign="center">
-                        <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
-                          <div style="padding-bottom: 20px; font-size: 18px; font-weight: bold; text-align: center;">
-                            Comprobante de Pago - Cita #{eventId}
-                          </div>
+    public string CreateEventReceiptEmail(
+        string patientName,
+        string doctorName,
+        DateTime eventDate,
+        string serviceName,
+        decimal amountPaid,
+        string paymentMethodName,
+        DateTime paymentDate,
+        string? referenceNumber,
+        string? notes,
+        int eventId,
+        string clinicName)
+    {
+        var culture = new CultureInfo("es-MX");
 
-                          <div style="padding-bottom: 15px;">
-                            Estimado(a) {patientName},
-                          </div>
-                          <div style="padding-bottom: 20px;">
-                            Adjuntamos el comprobante de pago para su cita con {doctorName} en {clinicName}.
-                          </div>
-
-                          <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
-
-                          <div style="padding-bottom: 10px;"><strong>Detalles de la Cita:</strong></div>
-                          <div style="padding-bottom: 5px;"><strong>Servicio:</strong> {serviceName}</div>
-                          <div style="padding-bottom: 20px;"><strong>Fecha y Hora:</strong> {eventDate.ToString("f", culture)}</div>
-
-                          <div style="padding-bottom: 10px;"><strong>Detalles del Pago:</strong></div>
-                          <div style="padding-bottom: 5px;"><strong>Fecha de Pago:</strong> {paymentDate.ToString("f", culture)}</div>
-                          <div style="padding-bottom: 5px;"><strong>Método de Pago:</strong> {paymentMethodName}</div>
-                          {(string.IsNullOrEmpty(referenceNumber) ? "" : $"<div style=\"padding-bottom: 5px;\"><strong>Referencia:</strong> {WebUtility.HtmlEncode(referenceNumber)}</div>")}
-                          {(string.IsNullOrEmpty(notes) ? "" : $"<div style=\"padding-bottom: 20px;\"><strong>Notas:</strong> {WebUtility.HtmlEncode(notes)}</div>")}
-
-                          <div style="padding-bottom: 10px; font-size: 16px; font-weight: bold;"><strong>Monto Pagado:</strong> {amountPaid.ToString("C", culture)}</div>
-
-                          <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
-
-                          <div style="padding-bottom: 10px;">
-                            Si tiene alguna pregunta sobre este comprobante, por favor contacte a su especialista.
-                          </div>
-                          <div style="padding-bottom: 10px;">
-                            Gracias por su preferencia.
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    {GetEmailFooter()}
-                    """;
-        }
+        return $"""
+                {GetEmailHeader()}
+                <tr>
+                  <td align="left" valign="center">
+                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                      <div style="padding-bottom: 20px; font-size: 18px; font-weight: bold; text-align: center;">
+                        Comprobante de Pago - Cita #{eventId}
+                      </div>
+                
+                      <div style="padding-bottom: 15px;">
+                        Estimado(a) {patientName},
+                      </div>
+                      <div style="padding-bottom: 20px;">
+                        Adjuntamos el comprobante de pago para su cita con {doctorName} en {clinicName}.
+                      </div>
+                
+                      <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
+                
+                      <div style="padding-bottom: 10px;"><strong>Detalles de la Cita:</strong></div>
+                      <div style="padding-bottom: 5px;"><strong>Servicio:</strong> {serviceName}</div>
+                      <div style="padding-bottom: 20px;"><strong>Fecha y Hora:</strong> {eventDate.ToString("f", culture)}</div>
+                
+                      <div style="padding-bottom: 10px;"><strong>Detalles del Pago:</strong></div>
+                      <div style="padding-bottom: 5px;"><strong>Fecha de Pago:</strong> {paymentDate.ToString("f", culture)}</div>
+                      <div style="padding-bottom: 5px;"><strong>Método de Pago:</strong> {paymentMethodName}</div>
+                      {(string.IsNullOrEmpty(referenceNumber) ? "" : $"<div style=\"padding-bottom: 5px;\"><strong>Referencia:</strong> {WebUtility.HtmlEncode(referenceNumber)}</div>")}
+                      {(string.IsNullOrEmpty(notes) ? "" : $"<div style=\"padding-bottom: 20px;\"><strong>Notas:</strong> {WebUtility.HtmlEncode(notes)}</div>")}
+                
+                      <div style="padding-bottom: 10px; font-size: 16px; font-weight: bold;"><strong>Monto Pagado:</strong> {amountPaid.ToString("C", culture)}</div>
+                
+                      <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
+                
+                      <div style="padding-bottom: 10px;">
+                        Si tiene alguna pregunta sobre este comprobante, por favor contacte a su especialista.
+                      </div>
+                      <div style="padding-bottom: 10px;">
+                        Gracias por su preferencia.
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {GetEmailFooter()}
+                """;
+    }
 }
