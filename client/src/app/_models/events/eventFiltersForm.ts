@@ -2,8 +2,12 @@ import { createId } from "@paralleldrive/cuid2";
 import { eventFiltersFormInfo } from "src/app/_models/events/eventConstants";
 import { EventParams } from "src/app/_models/events/eventParams";
 import { FormGroup2 } from "src/app/_models/forms/formGroup2";
+import { SelectOption } from "src/app/_models/base/selectOption";
+import { femaleSelectOption, maleSelectOption } from "src/app/_models/base/options";
 
 export class EventFiltersForm extends FormGroup2<EventParams> {
+
+
   constructor() {
     super(EventParams as any, new EventParams(createId()), eventFiltersFormInfo);
   }

@@ -381,3 +381,25 @@ mat-sidenav-content.mat-sidenav-content {
   box-shadow: 0 0 6px #00000050 !important;
 }
 
+
+.control-multiselect-panel {
+  &.mat-mdc-select-panel {
+    margin-bottom: 44.28px !important;
+
+    .mat-mdc-select-content {
+      overflow-y: auto;
+      margin-bottom: 80px;
+    }
+
+    .multiselect-panel-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      background-color: var(--mat-select-panel-background-color, white);
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      z-index: 10;
+    }
+  }
+}

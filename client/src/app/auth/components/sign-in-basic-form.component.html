@@ -8,7 +8,7 @@
     @if (!requiresTwoFactor) {
       <div class="text-gray-600 fw-normal fs-6 w-100 d-flex justify-content-center mt-1">
         ¿Eres nuevo aquí?
-        <a routerLink="/auth/sign-up" class="link-primary fw-semibold ms-2">
+        <a [routerLink]="authNavigation.SIGN_UP_URL" class="link-primary fw-semibold ms-2">
           Crear una cuenta
         </a>
       </div>
@@ -33,7 +33,7 @@
         [showBottomMargin]="false"
       ></div>
     </div>
-    <a class="fs-6 link-primary" routerLink="/auth/sign-in/password-reset">¿Olvidaste tu contraseña?</a>
+    <a class="fs-6 link-primary" [routerLink]="authNavigation.PASSWORD_RESET_URL">¿Olvidaste tu contraseña?</a>
   } @else {
     <div
       templateControlText

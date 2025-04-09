@@ -1,3 +1,4 @@
+import { SelectOption } from "src/app/_models/base/selectOption";
 
 /**
  * Represents the options for a specific entity.
@@ -31,4 +32,23 @@ export class Options {
   constructor(init?: Partial<Options>) {
     Object.assign(this, init);
   }
+}
+
+
+export const femaleSelectOption: SelectOption = {
+  id: 0,
+  code: "femenino",
+  name: "Femenino",
+  enabled: true,
+  visible: true,
+  options: null
+}
+
+export const maleSelectOption: SelectOption = {
+  id: 1,
+  code: "masculino",
+  name: "Masculino",
+  enabled: true,
+  visible: true,
+  options: null
 }

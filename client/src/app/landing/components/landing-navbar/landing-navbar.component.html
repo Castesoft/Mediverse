@@ -22,7 +22,7 @@
           <div userDropdown dropdown triggers="hover" placement="bottom right" class="pt-2"></div>
         </div>
       } @else {
-        <a routerLink="/auth/sign-in" class="btn btn-pill btn-light-primary me-5">
+        <a [routerLink]="authNavigation.SIGN_IN_URL" class="btn btn-pill btn-light-primary me-5">
           Farmacia en Línea
         </a>
         <a [routerLink]="['/search']" class="btn btn-pill btn-primary">

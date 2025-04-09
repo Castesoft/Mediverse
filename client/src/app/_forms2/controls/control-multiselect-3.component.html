@@ -1,64 +1,162 @@
-<div class="d-flex flex-column align-items-start justify-content-start flex-grow-1" (click)="handleClick()">
+<div class="d-flex flex-column align-items-start justify-content-start flex-grow-1">
 
   <label [for]="control().id" class="form-label">{{ control().label }}</label>
-  <mat-select
-    [formControl]="control()"
-    class="form-select"
-    [required]="control().required"
-    multiple
-    [disabled]="control().disabled || control().selectOptions.length === 0"
-    [id]="control().id"
-    [attr.aria-label]="control().label + ' input'"
-    [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
-  >
-    <mat-select-trigger>
-      <div class="d-flex gap-2">
+  @if (displayMode() === 'dropdown') {
+    <mat-select
+      [formControl]="control()"
+      class="form-select"
+      [required]="control().required"
+      multiple
+      [disabled]="control().disabled || visibleOrEnabledOptions === 0"
+      [id]="control().id"
+      [attr.aria-label]="control().label + ' input'"
+      [attr.aria-describedby]="control().hint ? control().name + 'helpBlock' : null"
+      panelClass="control-multiselect-panel"
+    >
 
-        @for (option of value; track option) {
-          <div class="d-flex badge badge-primary gap-1" (click)="deselectOption(option); $event.stopPropagation()">
-            <div>
+      <mat-select-trigger>
+        <div class="d-flex flex-wrap gap-1 py-1">
+          @if (!value || value.length === 0) {
+            <span class="text-muted">{{ control().placeholder || 'Seleccionar...' }}</span>
+          } @else {
+            @for (option of value; track option.id) {
+
+              <div
+                class="d-inline-flex align-items-center badge badge-primary text-white text-bg-primary gap-1 cursor-pointer"
+                (click)="deselectOption(option); $event.stopPropagation()">
+
+                <span class="selected-option-text">
+                  @if (control().showCodeSpan && !!option.code && option.code !== option.name) {
+                    <span>({{ option.code }})</span>
+                  }
+                  {{ option.name }}
+                </span>
+
+                <button
+                  type="button"
+                  class="btn-close btn-secondary p-0 ms-1"
+                  style="font-size: 0.6em; outline: none; box-shadow: none; opacity: 0.7;"
+                  aria-label="Remove item">
+                </button>
+              </div>
+            }
+          }
+        </div>
+      </mat-select-trigger>
+
+
+      @for (option of control().selectOptions; track option.id) {
+        @if (option.visible) {
+          <mat-option [value]="option" [disabled]="!option.enabled">
+            @if (control().showCodeSpan && !!option.code && option.code !== option.name) {
+              <span>({{ option.code }})</span>
+            }
+            {{ option.name }}
+          </mat-option>
+        }
+      } @empty {
+        <mat-option disabled>No hay opciones disponibles</mat-option>
+      }
+
+
+      @if (visibleOrEnabledOptions > 0) {
+        <div
+          class="multiselect-panel-footer d-flex justify-content-between align-items-center px-3 py-2"
+          (click)="$event.stopPropagation()"
+        >
+          <button
+            type="button"
+            class="btn btn-sm btn-link btn-active-color-danger d-flex align-items-center gap-1 fs-8 nowrap"
+            style="min-width: auto; line-height: normal;"
+            [disabled]="!value || value.length === 0 || control().disabled"
+            (click)="clearOptions(); $event.stopPropagation()"
+          >
+            <fa-icon [icon]="icons.faXmark" class="icon-sm"></fa-icon>
+            <span>Deseleccionar Todos</span>
+          </button>
+
+
+          <button
+            type="button"
+            class="btn btn-sm btn-link btn-active-color-primary d-flex align-items-center gap-1 fs-8 nowrap"
+            style="min-width: auto; line-height: normal;"
+            [disabled]="optionsCount === count || control().disabled"
+            (click)="addAllOptions(); $event.stopPropagation()"
+          >
+            <fa-icon [icon]="icons.faCheckDouble" class="icon-sm"></fa-icon>
+            <span>Seleccionar Todos</span>
+          </button>
+        </div>
+      }
+
+
+    </mat-select>
+  } @else if (displayMode() === 'checkboxList') {
+    <div class="checkbox-list-container border rounded p-2 w-100" [id]="control().id">
+      @if (visibleOrEnabledOptions > 0) {
+        <div
+          class="checkbox-list-header d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom"
+        >
+          <button
+            type="button"
+            class="btn btn-sm btn-link btn-active-color-danger d-flex align-items-center gap-1 fs-8 nowrap"
+            style="min-width: auto; line-height: normal;"
+            [disabled]="!value || value.length === 0 || control().disabled"
+            (click)="clearOptions()"
+          >
+            <fa-icon [icon]="icons.faXmark" class="icon-sm"></fa-icon>
+            <span>Deseleccionar Todos</span>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-link btn-active-color-primary d-flex align-items-center gap-1 fs-8 nowrap"
+            style="min-width: auto; line-height: normal;"
+            [disabled]="optionsCount === count || control().disabled"
+            (click)="addAllOptions()"
+          >
+            <fa-icon [icon]="icons.faCheckDouble" class="icon-sm"></fa-icon>
+            <span>Seleccionar Todos</span>
+          </button>
+        </div>
+      }
+      <div class="checkbox-list-options">
+        @for (option of control().selectOptions; track option.id) {
+          @if (option.visible) {
+            <mat-checkbox
+              class="d-block"
+              [checked]="isOptionSelected(option)"
+              [disabled]="!option.enabled || control().disabled"
+              (change)="onCheckboxChange($event.checked, option)"
+            >
               @if (control().showCodeSpan && !!option.code && option.code !== option.name) {
                 <span>({{ option.code }})</span>
               }
               {{ option.name }}
-            </div>
-            <fa-icon [icon]="icons.faXmark"></fa-icon>
-          </div>
+            </mat-checkbox>
+          }
+        } @empty {
+          <span class="text-muted d-block">No hay opciones disponibles</span>
         }
       </div>
-    </mat-select-trigger>
-    @for (option of control().selectOptions; track option) {
-      @if (option.visible) {
-        <mat-option [value]="option" [disabled]="!option.enabled">
-          @if (control().showCodeSpan && !!option.code && option.code !== option.name) {
-            <span>({{ option.code }})</span>
-          }
-          {{ option.name }}
-        </mat-option>
-      }
-    }
-  </mat-select>
+    </div>
+  }
 
-  @if (control().errors) {
+
+  @if (control().errors && (root().submitted || control().dirty)) {
+
     <div class="invalid-feedback d-block" [id]="control().id + 'Error'">
       <div invalidFeedback3
            [(control)]="control"
            [(errors)]="control().validationErrors"
-           [submitted]="root().submitted || control().dirty || !control().untouched"></div>
+           [submitted]="root().submitted || control().dirty"></div>
     </div>
   }
 
-  @if (control().multiselectOptions.showActions) {
-    @if (optionsCount !== count) {
-      <button mat-icon-button (click)="addAllOptions()" type="button" [disabled]="control().disabled" class="me-1">
-        <mat-icon>add</mat-icon>
-      </button>
-    }
 
-    @if (value !== null && value.length && value.length > 0) {
-      <button mat-icon-button (click)="clearOptions()" type="button" [disabled]="control().disabled" class="me-1">
-        <mat-icon>clear</mat-icon>
-      </button>
-    }
+  @if (control().hint) {
+    <small [id]="control().id + 'HelpBlock'" class="form-text text-muted">{{ control().hint }}</small>
   }
+
+
 </div>

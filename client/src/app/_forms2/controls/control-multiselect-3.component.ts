@@ -43,6 +43,7 @@ export class ControlMultiselect3Component implements OnInit {
 
   control: ModelSignal<FormControl2<SelectOption[] | null>> = model.required();
   fromWrapper: ModelSignal<boolean> = model.required();
+  displayMode: ModelSignal<'dropdown' | 'checkboxList'> = model<'dropdown' | 'checkboxList'>('dropdown');
 
   onSelectionChange: OutputEmitterRef<SelectOption | null> = output();
 
@@ -60,19 +61,25 @@ export class ControlMultiselect3Component implements OnInit {
 
   constructor() {
     effect(() => {
+      let baseClass = 'mb-0'; 
       if (this.fromWrapper()) {
-        this.class += ' w-100';
+        baseClass += ' w-100';
       } else {
-        this.class += ' col-auto px-0';
+        baseClass += ' col-auto px-0';
       }
+      this.class = baseClass; 
 
       try {
         this.control.set(this.control().setValidation(this.root().validation));
       } catch (e) {
-        console.error(this.root())
+        console.error("Error setting validation in effect:", this.root())
         console.error(e);
       }
     });
+  }
+
+  get visibleOrEnabledOptions(): number {
+    return this.control().selectOptions.filter(option => option.visible && option.enabled).length;
   }
 
   get value(): SelectOption[] | null {
@@ -93,23 +100,27 @@ export class ControlMultiselect3Component implements OnInit {
 
   ngOnInit(): void {
     this.filteredOptions = this.control().valueChanges.pipe(
-      startWith(''),
-      map((value: string | SelectOption[] | null) => {
+      startWith(''), 
+      map((value: string | SelectOption[] | null | undefined) => { 
+        
         if (typeof value === 'string') {
           return this._filter(value as string)
         }
-
-        return this.control().selectOptions;
+        
+        return this.control().selectOptions.filter(opt => opt.visible); 
       }),
-    )
+    );
   }
 
   private _filter(value: string): SelectOption[] {
     const filterValue: string = this._normalizeValue(value);
-    return this.control().selectOptions.filter((option: SelectOption) => this._normalizeValue(option.name).includes(filterValue));
+    return this.control().selectOptions.filter((option: SelectOption) =>
+      option.visible && this._normalizeValue(option.name).includes(filterValue)
+    );
   }
 
   private _normalizeValue(value: string): string {
+    if (!value) return '';
     return value
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
@@ -118,9 +129,10 @@ export class ControlMultiselect3Component implements OnInit {
   }
 
   addAllOptions() {
+    const allAvailableOptions = this.control().selectOptions.filter(opt => opt.visible && opt.enabled);
     this.control.update(oldValue => {
-      oldValue.patchValue(this.control().selectOptions);
-
+      oldValue.patchValue(allAvailableOptions);
+      oldValue.markAsDirty();
       return oldValue;
     })
   }
@@ -140,17 +152,38 @@ export class ControlMultiselect3Component implements OnInit {
     });
   }
 
+  isOptionSelected(option: SelectOption): boolean {
+    return this.value?.some(v => v.id === option.id) ?? false;
+  }
+
   clearOptions() {
     this.control.update(oldValue => {
       oldValue.patchValue(null);
+      oldValue.markAsDirty();
       return oldValue;
     })
   }
 
-  optionChanged(event: any) {
-    const controlToUpdate = this.control();
-    controlToUpdate.setValue(event);
-    controlToUpdate.markAsDirty();
-    this.control.set(controlToUpdate);
+  onCheckboxChange(checked: boolean, option: SelectOption): void {
+    const currentValue = this.control().value || [];
+    let newValue: SelectOption[];
+
+    if (checked) {
+      // Add the option if it's not already present
+      if (!currentValue.some(v => v.id === option.id)) {
+        newValue = [...currentValue, option];
+      } else {
+        newValue = currentValue; // Should not happen if logic is correct, but safe fallback
+      }
+    } else {
+      // Remove the option
+      newValue = currentValue.filter(v => v.id !== option.id);
+    }
+
+    this.control.update(oldValue => {
+      oldValue.patchValue(newValue.length > 0 ? newValue : null);
+      oldValue.markAsDirty();
+      return oldValue;
+    });
   }
 }

@@ -2,6 +2,7 @@ import { EntityParams } from "src/app/_models/base/entityParams";
 import { SelectOption } from 'src/app/_models/base/selectOption';
 import Event from "src/app/_models/events/event";
 import { EventRoles } from "src/app/_models/events/eventTypes";
+import { femaleSelectOption, maleSelectOption } from "src/app/_models/base/options";
 
 
 export class EventParams extends EntityParams<Event> {
@@ -32,6 +33,8 @@ export class EventParams extends EntityParams<Event> {
   services: SelectOption[] = [];
   nurses: SelectOption[] = [];
   clinics: SelectOption[] = [];
+  sexes: SelectOption[] = [];
+  paymentStatuses: SelectOption[] = [];
 
   constructor(key: string | null, init?: Partial<EventParams>) {
     super(key, init);

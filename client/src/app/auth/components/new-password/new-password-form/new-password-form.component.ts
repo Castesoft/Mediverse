@@ -6,6 +6,7 @@ import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { ToastrService } from "ngx-toastr";
 import { AlertComponent } from "src/app/_forms2/helper/alert.component";
+import { AuthNavigationService } from 'src/app/_services/auth-navigation.service';
 
 @Component({
   selector: 'app-new-password-form',
@@ -18,7 +19,7 @@ export class NewPasswordFormComponent implements OnInit {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private toastr: ToastrService = inject(ToastrService);
   private fb: FormBuilder = inject(FormBuilder);
-  private router: Router = inject(Router);
+  private authNavigation: AuthNavigationService = inject(AuthNavigationService);
 
   form: FormGroup = this.fb.group(
     {
@@ -42,7 +43,7 @@ export class NewPasswordFormComponent implements OnInit {
 
       if (!paramEmail || !paramToken) {
         this.errorMessage = "Operación inválida, intentalo de nuevo";
-        this.router.navigateByUrl('/auth/sign-in').then(() => {});
+        this.authNavigation.navigateToSignIn().catch(console.error);
       }
 
       this.email = paramEmail!;
@@ -70,7 +71,7 @@ export class NewPasswordFormComponent implements OnInit {
         this.form.reset();
 
         this.toastr.success(`¡Contraseña reestablecida!`);
-        this.router.navigateByUrl('/auth/sign-in').then(() => {});
+        this.authNavigation.navigateToSignIn().catch(console.error);
       },
       error: (error: any) => {
         this.errorMessage = error.message;

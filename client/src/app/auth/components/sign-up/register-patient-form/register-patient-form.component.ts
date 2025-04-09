@@ -8,6 +8,7 @@ import {
 } from '../../terms-and-conditions-modal/terms-and-conditions-modal.component';
 import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 
 @Component({
   selector: 'app-register-patient-form',
@@ -21,6 +22,7 @@ export class RegisterPatientFormComponent implements OnInit {
   fromWrapper: WritableSignal<boolean> = signal(false);
 
   private bsModalService: BsModalService = inject(BsModalService);
+  authNavigation = inject(AuthNavigationService);
 
   ngOnInit() {
     const btnContainer: HTMLElement | null = document.getElementById('google-btn-signup');

@@ -5,6 +5,7 @@ import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { AccountService } from "src/app/_services/account.service";
 import { UtilsService } from "src/app/_services/utils.service";
 import { ValidationService } from "src/app/_services/validation.service";
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 import { MaterialModule } from "src/app/_shared/material.module";
 import { LoginForm } from "../models/login";
 import { Account } from "src/app/_models/account/account";
@@ -20,6 +21,7 @@ declare var google: any;
     CommonModule,
     MaterialModule,
   ],
+  standalone: true,
 })
 export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   private router: Router = inject(Router);
@@ -27,6 +29,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   route: ActivatedRoute = inject(ActivatedRoute);
   utils: UtilsService = inject(UtilsService);
   validation: ValidationService = inject(ValidationService);
+  authNavigation = inject(AuthNavigationService);
 
   form: LoginForm = new LoginForm();
 
@@ -34,7 +37,6 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   returnUrl: string = '/admin';
   focusOnEmail: boolean = false;
   focusOnPassword: boolean = false;
-  redirectUrl: string | null = "/cuenta";
   requiresTwoFactor: boolean = false;
   isSubmitting: boolean = false;
 
@@ -42,12 +44,6 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
 
   constructor() {
     effect((): LoginForm => this.form.setValidation(this.validation.active()));
-
-    this.route.queryParams.subscribe({
-      next: params => {
-        if (params['redirectUrl']) this.redirectUrl = params['redirectUrl'];
-      }
-    });
   }
 
   ngOnInit(): void {
@@ -88,11 +84,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
             this.requiresTwoFactor = true;
           } else {
             if (this.noRedirect()) return;
-            if (this.redirectUrl) {
-              this.router.navigate([ this.redirectUrl ]).then(() => {});
-            } else {
-              this.router.navigate([ this.returnUrl ]).then(() => {});
-            }
+            this.router.navigateByUrl(this.returnUrl || '/cuenta').then(() => {});
           }
         },
         error: (err) => {
@@ -108,11 +100,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
       this.accountService.twoFactorLogin(this.form.controls.email.value!, this.form.controls.twoFactorCode.value!).subscribe({
         next: (_) => {
           if (this.noRedirect()) return;
-          if (this.redirectUrl) {
-            this.router.navigate([ this.redirectUrl ]).then(() => {});
-          } else {
-            this.router.navigate([ this.returnUrl ]).then(() => {});
-          }
+          this.router.navigateByUrl(this.returnUrl || '/cuenta').then(() => {});
         },
         error: (err) => {
           console.error('Two-factor login error:', err);

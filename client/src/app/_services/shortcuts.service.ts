@@ -4,6 +4,7 @@ import { DevService } from 'src/app/_services/dev.service';
 import { SidebarService } from 'src/app/_services/sidebar.service';
 import { ThemeService } from 'src/app/_services/theme.service';
 import { ValidationService } from 'src/app/_services/validation.service';
+import { AuthNavigationService } from 'src/app/_services/auth-navigation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class ShortcutsService {
   private readonly validation = inject(ValidationService);
   private readonly dev = inject(DevService);
   private readonly sidebar = inject(SidebarService);
+  private readonly authNavigation = inject(AuthNavigationService);
 
   /**
    * Dictionary of shortcuts,
@@ -144,7 +146,7 @@ export class ShortcutsService {
   };
 
   private navigateToLogin = () => {
-    this.router.navigate([ '/auth/login' ], { queryParams: { returnUrl: this.router.url } });
+    this.authNavigation.navigateToSignIn({ returnUrl: this.router.url });
   };
 
   private toggleFormsValidationMode = () => {

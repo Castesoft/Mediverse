@@ -2,6 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 import { UserDropdownComponent } from 'src/app/_shared/template/components/user-dropdown.component';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
@@ -18,6 +19,7 @@ export class LandingNavbarComponent {
   @Input() isLightBackground: boolean = false;
 
   accountService: AccountService = inject(AccountService);
+  authNavigation = inject(AuthNavigationService);
   isCollapsed: boolean = true;
 
   isLoggedIn(): boolean {

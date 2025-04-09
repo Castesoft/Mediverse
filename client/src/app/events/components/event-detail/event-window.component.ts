@@ -82,8 +82,7 @@ import { ClinicalHistoryConsentService } from "src/app/_services/clinical-histor
 import { ToastrService } from "ngx-toastr";
 import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
 import { EventsService } from "src/app/events/events.service";
-import { PaymentsService } from "src/app/payments/payments.config";
-import { getPaymentStatusText, PaymentStatus } from "src/app/_models/payments/paymentConstants";
+import { PaymentStatus } from "src/app/_models/payments/paymentConstants";
 
 @Component({
   selector: 'div[eventWindow]',
@@ -119,7 +118,6 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
   private readonly consentService: ClinicalHistoryConsentService = inject(ClinicalHistoryConsentService);
   private readonly paymentNavigation: PaymentNavigationService = inject(PaymentNavigationService);
-  private readonly paymentService: PaymentsService = inject(PaymentsService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly toastr: ToastrService = inject(ToastrService);
   private readonly router: Router = inject(Router);
@@ -131,7 +129,6 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   readonly matDialog: MatDialog = inject(MatDialog);
 
   protected readonly PaymentStatus: typeof PaymentStatus = PaymentStatus;
-  protected readonly getPaymentStatusText = getPaymentStatusText;
 
   isConfirmingCash: WritableSignal<boolean> = signal(false);
 
@@ -161,8 +158,6 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
 
   nurseCuid: string = createId();
   nurseView: WritableSignal<View> = signal<View>('inline');
-  nurseUse: WritableSignal<FormUse> = signal<FormUse>(FormUse.CREATE);
-  nurseCatalogMode: WritableSignal<CatalogMode> = signal<CatalogMode>('select');
   nurseParams: WritableSignal<NurseParams> = signal<NurseParams>(new NurseParams(createId()));
 
 

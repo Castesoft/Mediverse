@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 
 @Component({
   selector: 'app-auth',
@@ -7,5 +8,5 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AuthComponent {
-
+  authNavigation = inject(AuthNavigationService);
 }

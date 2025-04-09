@@ -5,6 +5,7 @@ import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { PasswordResetForm } from 'src/app/_models/account';
 import { AccountService } from 'src/app/_services/account.service';
 import { AlertComponent } from "src/app/_forms2/helper/alert.component";
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 
 @Component({
   selector: '[passwordResetForm]',
@@ -14,11 +15,13 @@ import { AlertComponent } from "src/app/_forms2/helper/alert.component";
     ReactiveFormsModule,
     FormsModule,
     InputControlComponent,
-    AlertComponent
+    AlertComponent,
   ],
+  standalone: true,
 })
 export class PasswordResetFormComponent implements OnInit {
   private readonly accountService: AccountService = inject(AccountService);
+  authNavigation = inject(AuthNavigationService);
 
   form: PasswordResetForm = new PasswordResetForm();
   isSubmitting: boolean = false;

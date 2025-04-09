@@ -3,6 +3,7 @@ import { Component, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { BsDropdownDirective, BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { AccountService } from "src/app/_services/account.service";
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 import { UserDropdownComponent } from 'src/app/_shared/template/components/user-dropdown.component';
 
 @Component({
@@ -17,4 +18,5 @@ import { UserDropdownComponent } from 'src/app/_shared/template/components/user-
 
 export class SearchAuthComponent {
   service = inject(AccountService);
+  authNavigation = inject(AuthNavigationService);
 }

@@ -13,6 +13,7 @@ import {
 import { Router } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
+import { AuthNavigationService } from 'src/app/_services/auth-navigation.service';
 
 @Component({
   host: { class: 'd-flex flex-stack pt-15' },
@@ -21,6 +22,7 @@ import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientReg
 })
 export class FormActionsComponent {
   router: Router = inject(Router);
+  authNavigation: AuthNavigationService = inject(AuthNavigationService);
 
   totalSteps: InputSignal<number> = input.required<number>();
   currentStep: ModelSignal<number> = model.required<number>();
@@ -48,7 +50,7 @@ export class FormActionsComponent {
   }
 
   navigateToLogin() {
-    this.router.navigateByUrl('/auth/sign-in').then(() => {});
+    this.authNavigation.navigateToSignIn().catch(console.error);
   }
 
   nextStep() {

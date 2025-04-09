@@ -1,15 +1,16 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn } from '@angular/router';
 import { AccountService } from 'src/app/_services/account.service';
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 
 export const authGuard: CanActivateFn = (route, state) => {
-  const accountService = inject(AccountService);
-  const router = inject(Router);
+  const authNavigationService: AuthNavigationService = inject(AuthNavigationService);
+  const accountService: AccountService = inject(AccountService);
 
   if (accountService.current()) {
     return true;
   } else {
-    router.navigateByUrl('/');
+    authNavigationService.navigateToSignIn({ returnUrl: state.url }).catch(console.error);
     return false;
   }
 };

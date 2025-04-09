@@ -25,12 +25,15 @@ import CatalogInputSignals from 'src/app/_models/base/components/interfaces/cata
 import { EventsTableDisplayRole } from "src/app/_models/events/eventConstants";
 import { EventMonthDayCell } from "src/app/_models/event-month-day-cell/eventMonthDayCell";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { debounceTime, distinctUntilChanged, map, skip } from 'rxjs/operators';
 import { EventsService } from "src/app/events/events.service";
 import {
   CatalogLayoutSkeletonComponent
 } from "src/app/_shared/components/catalog-layout-skeleton/catalog-layout-skeleton.component";
 import { firstValueFrom } from "rxjs";
 import { SelectOption } from "src/app/_models/base/selectOption";
+import { femaleSelectOption, maleSelectOption } from "src/app/_models/base/options";
+import { getPaymentStatusText, PaymentStatus } from "src/app/_models/payments/paymentConstants";
 
 @Component({
   selector: '[eventsCatalog]',
@@ -86,26 +89,76 @@ export class EventsCatalogComponent extends BaseCatalog<Event, EventParams, Even
     super(EventsService, EventFiltersForm);
 
     effect(() => {
+      this.filtersForm().valueChanges.pipe(
+        skip(1),
+        debounceTime(100),
+        map(value => JSON.stringify(value)),
+        distinctUntilChanged(),
+        map(value => JSON.parse(value)),
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(formValues => {
+
+
+        const filterValuesToPatch = {
+          patients: formValues.patients,
+          services: formValues.services,
+          nurses: formValues.nurses,
+          clinics: formValues.clinics,
+          sexes: formValues.sexes,
+          paymentStatuses: formValues.paymentStatuses,
+          startDate: formValues.startDate,
+          endDate: formValues.endDate,
+        };
+
+        this.form.patchValue(filterValuesToPatch, { emitEvent: false });
+
+        console.log('Form values updated:', filterValuesToPatch);
+
+        if (this.calendarView() === 'calendar') {
+          this.params.update((prev: EventParams) => {
+            return {
+              ...prev,
+              ...filterValuesToPatch,
+              paramsValue: prev.paramsValue
+            };
+          });
+        } else {
+          this.onSubmit(this.key());
+        }
+      });
+    });
+
+    effect(() => {
       if (this.calendarView() === 'calendar') {
         this.service.getMonthViewPartial(this.key(), this.params()).subscribe();
       }
     });
 
-    this.retrieveFilterOptions().catch(console.error);
+    this.setFilterOptions().catch(console.error);
     this.subscribeToEventMonthDayCell();
   }
 
-  private async retrieveFilterOptions(): Promise<void> {
+  private async setFilterOptions(): Promise<void> {
     const clinicOptions: SelectOption[] = await firstValueFrom(this.clinics.getOptions());
     const patientOptions: SelectOption[] = await firstValueFrom(this.patients.getOptions());
     const serviceOptions: SelectOption[] = await firstValueFrom(this.services.getOptions());
     const nurseOptions: SelectOption[] = await firstValueFrom(this.nurses.getOptions());
+    const sexOptions: SelectOption[] = [ femaleSelectOption, maleSelectOption ];
+
+    const paymentStatusOptions: SelectOption[] = Object.keys(PaymentStatus).map((key, i) => (new SelectOption({
+      id: i,
+      name: getPaymentStatusText(PaymentStatus[key as keyof typeof PaymentStatus]),
+    })));
+
+    console.log('Payment status options:', paymentStatusOptions);
 
     this.filtersForm.update((prev) => {
       prev.controls.patients.selectOptions = patientOptions;
       prev.controls.services.selectOptions = serviceOptions;
       prev.controls.nurses.selectOptions = nurseOptions;
       prev.controls.clinics.selectOptions = clinicOptions;
+      prev.controls.sexes.selectOptions = sexOptions;
+      prev.controls.paymentStatuses.selectOptions = paymentStatusOptions;
 
       return prev;
     });

@@ -17,6 +17,9 @@ public class EventParams : BaseParams
     public string? Patients { get; set; }
     public string? Services { get; set; }
     public string? Nurses { get; set; }
+    public string? Clinics { get; set; }
+    public string? Sexes { get; set; }
+
     public int? ServiceId { get; set; }
     public int? DoctorId { get; set; }
     public int? NurseId { get; set; }
@@ -41,4 +44,6 @@ public class EventParams : BaseParams
     public List<int> GetNurses() => Nurses?.Split(',').Select(int.Parse).ToList() ?? [];
     public List<int> GetPatients() => Patients?.Split(',').Select(int.Parse).ToList() ?? [];
     public List<int> GetServices() => Services?.Split(',').Select(int.Parse).ToList() ?? [];
+    public List<int> GetClinics() => Clinics?.Split(',').Select(int.Parse).ToList() ?? [];
+    public List<string> GetSexes() => Sexes?.Split(',').Select(s => s.Trim()).ToList() ?? [];
 }

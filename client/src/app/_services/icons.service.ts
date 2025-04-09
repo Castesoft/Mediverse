@@ -93,7 +93,7 @@ import {
   faWheatAwn,
   faXmark,
   faBan,
-  faCircleXmark,
+  faCircleXmark, faCheckDouble,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faCalendar as faRegCalendar,
@@ -236,7 +236,8 @@ export class IconsService {
       faRegCircleQuestion,
       faEllipsisVertical,
       faBan,
-      faCircleXmark
+      faCircleXmark,
+      faCheckDouble
     );
   }
 
@@ -354,4 +355,5 @@ export class IconsService {
   faEllipsisVertical: IconDefinition = faEllipsisVertical;
   faBan: IconDefinition = faBan;
   faCircleXmark: IconDefinition = faCircleXmark;
+  faCheckDouble: IconDefinition = faCheckDouble;
 }

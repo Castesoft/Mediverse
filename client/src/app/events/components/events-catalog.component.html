@@ -46,10 +46,12 @@
     <form [id]="filtersForm().id" (ngSubmit)="onSubmit(key())">
       <div controlsRow3 [grid]="filterConfig().orientation == 'horizontal' ? 5 : 1">
         <div controlsWrapper3 [(control)]="filtersForm().controls.search" [showBottomMargin]="false"></div>
-        <div controlMultiselect3 [(control)]="filtersForm().controls.clinics" [fromWrapper]="true"></div>
+        <div controlMultiselect3 [(control)]="filtersForm().controls.clinics" [fromWrapper]="true" [displayMode]="'checkboxList'"></div>
         <div controlMultiselect3 [(control)]="filtersForm().controls.patients" [fromWrapper]="true"></div>
         <div controlMultiselect3 [(control)]="filtersForm().controls.services" [fromWrapper]="true"></div>
         <div controlMultiselect3 [(control)]="filtersForm().controls.nurses" [fromWrapper]="true"></div>
+        <div controlMultiselect3 [(control)]="filtersForm().controls.sexes" [fromWrapper]="true" [displayMode]="'checkboxList'"></div>
+        <div controlMultiselect3 [(control)]="filtersForm().controls.paymentStatuses" [fromWrapper]="true" [displayMode]="'checkboxList'"></div>
       </div>
     </form>
   </ng-template>

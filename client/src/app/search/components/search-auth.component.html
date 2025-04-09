@@ -4,7 +4,7 @@
       <div userDropdown dropdown triggers="hover" placement="bottom right" class="pt-2"></div>
     </div>
 } @else {
-  <a routerLink="/auth/sign-in" class="btn btn-light-primary me-3">Iniciar sesión</a>
-  <a routerLink="/auth/sign-up" class="btn btn-primary">Registrarse</a>
+  <a [routerLink]="authNavigation.SIGN_IN_URL" class="btn btn-light-primary me-3">Iniciar sesión</a>
+  <a [routerLink]="authNavigation.SIGN_UP_URL" class="btn btn-primary">Registrarse</a>
 }
 

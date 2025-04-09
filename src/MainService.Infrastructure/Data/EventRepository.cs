@@ -151,6 +151,34 @@ namespace MainService.Infrastructure.Data
                 );
             }
 
+            if (param.GetPatients().Count != 0)
+            {
+                query = query.Where(x => param.GetPatients().Contains(x.PatientEvent.PatientId));
+            }
+
+            if (param.GetServices().Count != 0)
+            {
+                query = query.Where(x => x.EventService.ServiceId != null &&
+                                         param.GetServices().Contains(x.EventService.ServiceId));
+            }
+            
+            if (param.GetNurses().Count != 0)
+            {
+                query = query.Where(x => x.NurseEvents.Any(y => param.GetNurses().Contains(y.NurseId)));
+            }
+            
+            if (param.GetClinics().Count != 0)
+            {
+                query = query.Where(x => x.EventClinic.ClinicId != null &&
+                                         param.GetClinics().Contains(x.EventClinic.ClinicId));
+            }
+
+            if (param.GetSexes().Count != 0)
+            {
+                query = query.Where(x => x.PatientEvent.Patient != null && x.PatientEvent.Patient.Sex != null &&
+                                         param.GetSexes().Contains(x.PatientEvent.Patient.Sex.ToLower()));
+            }
+            
             var allMonthEvents = await query
                 .ProjectTo<EventSummaryDto>(mapper.ConfigurationProvider)
                 .ToListAsync();

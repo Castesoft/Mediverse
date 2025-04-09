@@ -92,6 +92,20 @@ export const eventFiltersFormInfo: FormInfo<EventParams> = {
     multiselectOptions: { showActions: false },
     showCodeSpan: false,
   },
+  sexes: {
+    label: 'Sexo',
+    type: 'multiselect',
+    materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    multiselectOptions: { showActions: false },
+    showCodeSpan: false,
+  },
+  paymentStatuses: {
+    label: 'Estado de pago',
+    type: 'multiselect',
+    materialOptions: new MaterialOptions({ appearance: 'fill', }),
+    multiselectOptions: { showActions: false },
+    showCodeSpan: false,
+  },
 } as FormInfo<EventParams>;
 
 export const eventDictionary: NamingSubject = new NamingSubject(
