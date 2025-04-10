@@ -17,369 +17,407 @@ public class EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailSe
 
     public async Task SendMail(string to, string subject, string htmlMessage)
     {
-        try
-        {
-            using var message = new MailMessage();
-            message.From = new MailAddress(_emailSettings.FromAddress);
-            message.Subject = subject;
-            message.Body = htmlMessage;
-            message.IsBodyHtml = true;
-            message.To.Add(to);
+      try
+      {
+        using var message = new MailMessage();
+        message.From = new MailAddress(_emailSettings.FromAddress);
+        message.Subject = subject;
+        message.Body = htmlMessage;
+        message.IsBodyHtml = true;
+        message.To.Add(to);
 
-            using var client = new SmtpClient(_emailSettings.SmtpHost, _emailSettings.SmtpPort);
-            client.Credentials = new NetworkCredential(_emailSettings.SmtpUser, _emailSettings.SmtpPass);
-            client.EnableSsl = true;
+        using var client = new SmtpClient(_emailSettings.SmtpHost, _emailSettings.SmtpPort);
+        client.Credentials = new NetworkCredential(_emailSettings.SmtpUser, _emailSettings.SmtpPass);
+        client.EnableSsl = true;
 
-            await client.SendMailAsync(message);
-        }
-        catch (SmtpException ex)
-        {
-            logger.LogError(ex, "SMTP error sending email to {Email}", to);
-            throw;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Unexpected error sending email to {Email}", to);
-            throw;
-        }
+        await client.SendMailAsync(message);
+      }
+      catch (SmtpException ex)
+      {
+        logger.LogError(ex, "SMTP error sending email to {Email}", to);
+        throw;
+      }
+      catch (Exception ex)
+      {
+        logger.LogError(ex, "Unexpected error sending email to {Email}", to);
+        throw;
+      }
     }
 
     private static string GetEmailHeader() =>
-        """
-        <html>
-        <body>
-          <div style="font-family:Arial,Helvetica,sans-serif; line-height: 1.5; font-weight: normal; font-size: 15px; color: #2F3044; min-height: 100%; margin:0; padding:0; width:100%; background-color:#edf2f7">
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse; margin:0 auto; padding:0; max-width:600px">
-            <tr>
-              <td align="center" valign="center" style="text-align:center; padding: 40px">
-                <a href="https://dochub.mx" rel="noopener" target="_blank">
-                  <img alt="Logo" src="https://dochub.mx/media/logos/text/logo-text-blue.png" style="max-width: 250px;" />
-                </a>
-              </td>
-            </tr>
-        """;
+      """
+      <html>
+      <head>
+        <style>
+          @media screen and (max-width: 600px) {
+            .content-div { margin: 0 10px !important; padding: 20px !important; }
+            .logo-img { max-width: 200px !important; }
+            .cta-button { padding: 10px 20px !important; font-size: 14px !important; }
+          }
+        </style>
+      </head>
+      <body>
+        <div style="font-family:Arial,Helvetica,sans-serif; line-height: 1.5; font-weight: normal; font-size: 15px; color: #2F3044; min-height: 100%; margin:0; padding:0; width:100%; background-color:#edf2f7">
+          <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse; margin:0 auto; padding:0; max-width:600px">
+          <tbody>
+          <tr>
+            <td align="center" valign="center" style="text-align:center; padding: 40px">
+              <a href="https://dochub.mx" rel="noopener" target="_blank">
+                <img alt="Logo" src="https://dochub.mx/media/logos/text/logo-text-blue.png" style="max-width: 250px;" class="logo-img" />
+              </a>
+            </td>
+          </tr>
+      """;
 
     private static string GetEmailFooter() =>
-        """
-             <tr>
-               <td align="center" valign="center" style="font-size: 13px; text-align:center; padding: 20px; color: #6d6e7c;">
-                 <p>Dirección de DocHub, MX.</p>
-                 <p>Copyright &copy; 
-                 <a href="https://dochub.mx" rel="noopener" target="_blank">DocHub</a>.</p>
-               </td>
-             </tr>
-            </table>
-          </div>
-        </body>
-        </html>
-        """;
+      """
+           <tr>
+             <td align="center" valign="center" style="font-size: 13px; text-align:center; padding: 20px; color: #6d6e7c;">
+               <p style="margin-bottom: 5px;">Dirección de DocHub, MX.</p>
+               <p style="margin-top: 0;">Copyright ©
+               <a href="https://dochub.mx" rel="noopener" target="_blank" style="color: #284092; text-decoration: none;">DocHub</a>.</p>
+             </td>
+           </tr>
+          </tbody>
+          </table>
+        </div>
+      </body>
+      </html>
+      """;
 
     public string CreateAppointmentConfirmationEmail(string doctorName, string appointmentDate, string appointmentTime,
-        string service, int eventId)
+      string service, int eventId)
     {
-        var frontendBaseUrl = _configuration["ClientSettings:Url"] ?? "https://dochub.mx";
-        
-        return $"""
-                {GetEmailHeader()}
-                <tr>
-                  <td align="left" valign="center">
-                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
-                      <div style="padding-bottom: 30px; font-size: 17px;">
-                        <strong>¡Tu cita ha sido agendada!</strong>
-                      </div>
-                      <div style="padding-bottom: 20px">Estos son los detalles de tu cita.</div>
-                      <div style="padding-bottom: 20px">Expecialista: {doctorName}</div>
-                      <div style="padding-bottom: 20px">Día: {appointmentDate}</div>
-                      <div style="padding-bottom: 20px">Hora: {appointmentTime}</div>
-                      <div style="padding-bottom: 20px">Servicio: {service}</div>
-                      
-                      <div style="text-align: center; padding-top: 20px; padding-bottom: 20px;">
-                        <a href="{frontendBaseUrl}/cuenta/citas/{eventId}" target="_blank" style="display: inline-block; text-decoration: none; font-weight: bold; color: #fff; background-color: #284092; padding: 12px 25px; border-radius: 6px; font-size: 16px;">
-                          Confirmar Asistencia
-                        </a>
-                      </div>
-                      
-                      <div style="padding-bottom: 10px">Si alguna de esta información es incorrecta, por favor contacta a tu especialista.</div>
+      var frontendBaseUrl = _configuration["ClientSettings:Url"] ?? "https://dochub.mx";
+
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 30px; font-size: 17px;">
+                      <strong>¡Tu cita ha sido agendada!</strong>
                     </div>
-                  </td>
-                </tr>
-                {GetEmailFooter()}
-                """;
+                    <div style="padding-bottom: 20px; color: #5E6278;">Estos son los detalles de tu cita.</div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Expecialista:</strong> {WebUtility.HtmlEncode(doctorName)}</div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Día:</strong> {WebUtility.HtmlEncode(appointmentDate)}</div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Hora:</strong> {WebUtility.HtmlEncode(appointmentTime)}</div>
+                    <div style="padding-bottom: 30px; color: #5E6278;"><strong>Servicio:</strong> {WebUtility.HtmlEncode(service)}</div>
+              
+                    <div style="text-align: center; padding-top: 10px; padding-bottom: 30px;">
+                      <a href="{frontendBaseUrl}/cuenta/citas/{eventId}" target="_blank" class="cta-button" rel="noopener" style="display: inline-block; text-decoration: none; background-color: #284092; color: #ffffff; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 6px;">
+                        Ver Detalles / Confirmar Asistencia
+                      </a>
+                    </div>
+              
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si alguna de esta información es incorrecta, por favor contacta a tu especialista.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 
     public string CreateAppointmentCancellationEmail(string doctorName, string appointmentDate, string appointmentTime,
-        string service)
+      string service)
     {
-        return $"""
-                {GetEmailHeader()}
-                <tr>
-                  <td align="left" valign="center">
-                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
-                      <div style="padding-bottom: 30px; font-size: 17px;">
-                        <strong>Tu cita ha sido cancelada.</strong>
-                      </div>
-                      <div style="padding-bottom: 20px">Estos son los detalles de la cita cancelada:</div>
-                      <div style="padding-bottom: 20px">Expecialista: {doctorName}</div>
-                      <div style="padding-bottom: 20px">Día: {appointmentDate}</div>
-                      <div style="padding-bottom: 20px">Hora: {appointmentTime}</div>
-                      <div style="padding-bottom: 40px">Servicio: {service}</div>
-                      <div style="padding-bottom: 10px">Si tienes alguna pregunta o necesitas reagendar, por favor contacta a tu especialista.</div>
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 30px; font-size: 17px;">
+                      <strong>Tu cita ha sido cancelada.</strong>
                     </div>
-                  </td>
-                </tr>
-                {GetEmailFooter()}
-                """;
+                    <div style="padding-bottom: 20px; color: #5E6278;">Estos son los detalles de la cita cancelada:</div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Expecialista:</strong> {WebUtility.HtmlEncode(doctorName)}</div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Día:</strong> {WebUtility.HtmlEncode(appointmentDate)}</div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Hora:</strong> {WebUtility.HtmlEncode(appointmentTime)}</div>
+                    <div style="padding-bottom: 30px; color: #5E6278;"><strong>Servicio:</strong> {WebUtility.HtmlEncode(service)}</div>
+              
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si tienes alguna pregunta o necesitas reagendar, por favor contacta a tu especialista o visita nuestro sitio para buscar una nueva cita.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 
     public string CreateSubscriptionConfirmationEmail(AppUser user, decimal amount, DateTime subscriptionDate)
     {
-        return $"""
-                {GetEmailHeader()}
-                <tr>
-                  <td align="left" valign="center">
-                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
-                      <div style="padding-bottom: 30px; font-size: 17px;">
-                        <strong>¡Hola {user.FirstName}!</strong>
-                      </div>
-                      <div style="padding-bottom: 20px">
-                        <strong>Tu suscripción a DocHub Pro ha sido confirmada</strong> y el pago se ha procesado correctamente.
-                      </div>
-                      <div style="padding-bottom: 20px">
-                        <strong>Fecha de suscripción:</strong> {subscriptionDate:MMMM dd, yyyy}
-                      </div>
-                      <div style="padding-bottom: 20px">
-                        <strong>Monto pagado:</strong> ${amount:F2}
-                      </div>
-                      <div style="padding-bottom: 20px">
-                        Gracias por tu confianza. Disfruta de todas las ventajas que DocHub Pro te ofrece.
-                      </div>
-                      <div style="padding-bottom: 20px">
-                        Si tienes alguna duda o requieres asistencia, no dudes en contactarnos.
-                      </div>
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 20px; font-size: 17px;">
+                      <strong>¡Hola {WebUtility.HtmlEncode(user.FirstName)}!</strong>
                     </div>
-                  </td>
-                </tr>
-                {GetEmailFooter()}
-                """;
+                    <div style="padding-bottom: 20px; color: #5E6278;">
+                      <strong>Tu suscripción a DocHub Pro ha sido confirmada</strong> y el pago se ha procesado correctamente.
+                    </div>
+                    <div style="padding-bottom: 10px; color: #5E6278;">
+                      <strong>Fecha de suscripción:</strong> {subscriptionDate:MMMM dd, yyyy}
+                    </div>
+                    <div style="padding-bottom: 30px; color: #5E6278;">
+                      <strong>Monto pagado:</strong> ${amount:F2} MXN
+                    </div>
+                    <div style="padding-bottom: 10px; color: #5E6278;">
+                      Gracias por tu confianza. Disfruta de todas las ventajas que DocHub Pro te ofrece.
+                    </div>
+              
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si tienes alguna duda o requieres asistencia, no dudes en contactarnos.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 
     public string CreateSubscriptionCancellationEmail(AppUser user, DateTime cancellationDate, string? feedback = null)
     {
-        return $"""
-                {GetEmailHeader()}
-                <tr>
-                  <td align="left" valign="center">
-                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
-                      <div style="padding-bottom: 30px; font-size: 17px;">
-                        <strong>¡Hola {user.FirstName}!</strong>
-                      </div>
-                      <div style="padding-bottom: 20px">
-                        Tu suscripción a DocHub Pro ha sido cancelada.
-                      </div>
-                      <div style="padding-bottom: 20px">
-                        <strong>Fecha de cancelación:</strong> {cancellationDate:MMMM dd, yyyy}
-                      </div>
-                      {(string.IsNullOrEmpty(feedback) ? "" : $"<div style=\"padding-bottom: 20px\"><strong>Tu feedback:</strong> {feedback}</div>")}
-                      <div style="padding-bottom: 20px">
-                        Lamentamos verte partir. Si tienes preguntas o necesitas asistencia, no dudes en contactarnos.
-                      </div>
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 20px; font-size: 17px;">
+                      <strong>¡Hola {WebUtility.HtmlEncode(user.FirstName)}!</strong>
                     </div>
-                  </td>
-                </tr>
-                {GetEmailFooter()}
-                """;
+                    <div style="padding-bottom: 20px; color: #5E6278;">
+                      Confirmamos que tu suscripción a DocHub Pro ha sido cancelada.
+                    </div>
+                    <div style="padding-bottom: 20px; color: #5E6278;">
+                      <strong>Fecha de cancelación efectiva:</strong> {cancellationDate:MMMM dd, yyyy}
+                    </div>
+                    {(string.IsNullOrEmpty(feedback) ? "" : $"<div style=\"padding-bottom: 30px; color: #5E6278;\"><strong>Tu feedback:</strong> {WebUtility.HtmlEncode(feedback)}</div>")}
+                    <div style="padding-bottom: 10px; color: #5E6278;">
+                      Lamentamos verte partir y agradecemos el tiempo que estuviste con nosotros. Esperamos verte de regreso pronto.
+                    </div>
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si tienes preguntas o necesitas asistencia, no dudes en contactarnos.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
-
 
     public string CreateResetPasswordEmail(AppUser user, string resetUrl)
     {
-        return $"""
-                {GetEmailHeader()}
-                <tr>
-                  <td align="center" style="padding: 40px;">
-                    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 6px; text-align: center;">
-                      <h2 style="color: #2F3044; font-size: 20px; margin-bottom: 20px;">Restablecer contraseña</h2>
-                      <p style="color: #2F3044; font-size: 16px; margin-bottom: 30px;">Hola {user.FirstName},</p>
-                      <p style="color: #2F3044; font-size: 16px; margin-bottom: 30px;">
-                        Para restablecer tu contraseña, haz clic en el botón de abajo y elige una nueva.
-                      </p>
-                      <a href="{resetUrl}" target="_blank" style="display: inline-block; text-decoration: none; font-weight: bold; color: #fff; background-color: #284092; padding: 10px 20px; border-radius: 4px;">
-                        Restablecer contraseña
-                      </a>
-                      <p style="color: #2F3044; font-size: 14px; margin-top: 30px;">
-                        Si no solicitaste este cambio, por favor ignora este correo.
-                      </p>
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 20px; font-size: 17px;">
+                      <strong>Restablecer tu contraseña</strong>
                     </div>
-                  </td>
-                </tr>
-                {GetEmailFooter()}
-                """;
+                    <div style="padding-bottom: 20px; color: #5E6278;">Hola {WebUtility.HtmlEncode(user.FirstName)},</div>
+                    <div style="padding-bottom: 30px; color: #5E6278;">
+                      Recibimos una solicitud para restablecer la contraseña de tu cuenta DocHub. Haz clic en el botón de abajo para elegir una nueva contraseña.
+                    </div>
+              
+                    <div style="text-align: center; padding-bottom: 30px;">
+                      <a href="{resetUrl}" target="_blank" class="cta-button" rel="noopener" style="display: inline-block; text-decoration: none; background-color: #284092; color: #ffffff; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 6px;">
+                        Restablecer Contraseña
+                      </a>
+                    </div>
+              
+                    <div style="padding-bottom: 20px; text-align: center; font-size: 13px; color: #6d6e7c;">
+                       Si tienes problemas con el botón, copia y pega la siguiente URL en tu navegador:<br/> <a href="{resetUrl}" rel="noopener" target="_blank" style="color:#284092">{resetUrl}</a>
+                    </div>
+              
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si no solicitaste un restablecimiento de contraseña, puedes ignorar este correo electrónico de forma segura.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 
     public string CreateSatisfactionSurveyEmail(AppUser doctor, AppUser patient, Event @event)
     {
-        return $"""
-                {GetEmailHeader()}
-                <tr>
-                  <td align="center" valign="center" style="text-align:center; padding: 40px">
-                    <a href="https://dochub.mx" rel="noopener" target="_blank">
-                      <img alt="Logo" src="https://dochub.mx/media/logos/text/logo-text-blue.png" style="max-width: 250px;" />
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="left" valign="center">
-                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
-                      <div style="padding-bottom: 30px; font-size: 17px;">
-                        <strong>¡Cuéntanos sobre tu experiencia!</strong>
-                      </div>
-                      <div style="padding-bottom: 20px">Expecialista: {doctor.FirstName} {doctor.LastName}</div>
-                      <div style="padding-bottom: 20px">Fecha: {@event.DateFrom!.Value.ToLocalTime()}</div>
-                      <div style="padding-bottom: 40px">Servicio: {@event.EventService.Service.Name}</div>
-                      <a href="https://localhost:4400/account" rel="noopener" target="_blank">Clic aquí para completar la encuesta</a>.
-                      <div style="padding-bottom: 10px">Si alguna de esta información es incorrecta, por favor contacta a tu especialista.</div>
+      var surveyBaseUrl = _configuration["ClientSettings:SurveyUrl"] ?? "https://dochub.mx/encuesta";
+      var surveyUrl = $"{surveyBaseUrl}?eventId={@event.Id}";
+
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 20px; font-size: 17px;">
+                      <strong>¡Cuéntanos sobre tu experiencia!</strong>
                     </div>
-                  </td>
-                </tr>
-                {GetEmailFooter()}
-                """;
+                    <div style="padding-bottom: 20px; color: #5E6278;">
+                      Hola {WebUtility.HtmlEncode(patient.FirstName)}, valoramos tu opinión y nos gustaría saber cómo fue tu reciente cita en DocHub.
+                    </div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Expecialista:</strong> {WebUtility.HtmlEncode(doctor.FirstName)} {WebUtility.HtmlEncode(doctor.LastName)}</div>
+                    <div style="padding-bottom: 10px; color: #5E6278;"><strong>Fecha:</strong> {@event.DateFrom!.Value.ToLocalTime():dd/MM/yyyy HH:mm}</div>
+                    <div style="padding-bottom: 30px; color: #5E6278;"><strong>Servicio:</strong> {WebUtility.HtmlEncode(@event.EventService.Service.Name)}</div>
+              
+                    <div style="text-align: center; padding-bottom: 30px;">
+                      <a href="{surveyUrl}" target="_blank" class="cta-button" rel="noopener" style="display: inline-block; text-decoration: none; background-color: #284092; color: #ffffff; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 6px;">
+                        Completar Encuesta de Satisfacción
+                      </a>
+                    </div>
+              
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Tu feedback nos ayuda a mejorar nuestros servicios. Si tienes alguna pregunta, por favor contacta a tu especialista.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 
-    public string CreateVerifyEmailAddressEmailForRegister(AppUser user, string verificationUrl,
-        string verificationCode)
+    public string CreateVerifyEmailAddressEmailForRegister(AppUser user, string verificationCode)
     {
-        return $"""
-                <html>
-                    <body>
-                        <section class="border border-0 border-bottom" style="padding-top: 30px; padding-bottom: 60px;">
-                          <div class="container-fluid container-lg" style="max-width: 1320px;">
-                            <div class="row d-flex align-items-center">
-                              <div class="col" style="width: 50%;">
-                                <h1 class="display-4 fw-bold mb-4 lh-1">
-                                  Gracias por crear una cuenta con MS2FASample de Castesoft
-                                </h1>
-                                <p class="mb-4">
-                                  ¡Hola {user.FirstName} {user.LastName}, nos alegra verte con nosotros!
-                                </p>
-                                <a href="{verificationUrl}" class="btn btn-dark btn-lg">
-                                  Verificar correo
-                                </a>
-                              </div>
-                              <div class="col px-5 d-flex justify-content-center" style="width: 50%;">
-                                <div class="img-fluid bg-secondary-subtle" style="min-height: 300px; max-width: 300px; width: 300px; height: 300px;"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </section>
-                        <section class="py-5">
-                          <div class="container-fluid container-lg" style="max-width: 1320px;">
-                            <div class="row d-flex align-items-center">
-                              <div class="col" style="width: 50%;">
-                                <h1 class="display-5 fw-bold mb-4">
-                                  Verifica tu Correo
-                                </h1>
-                                <p>
-                                  Para concluir la creación de tu cuenta, por favor verifica tu correo electrónico usando el código a continuación.
-                                </p>
-                              </div>
-                              <div class="col" style="width: 50%;">
-                                <div class="border rounded p-3 d-flex">
-                                  <div class="img-fluid bg-secondary-subtle" style="max-width: 25%; width: 25%; height: 130px;"></div>
-                                  <div class="px-3">
-                                    <h3 class="fw-bold fs-3 mb-4">
-                                      Código de verificación
-                                    </h3>
-                                    <code class="font-monospace fs-2 fw-light p-3 bg-body-tertiary rounded-4">{verificationCode}</code>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </section>
-                        <section class="py-5 border border-0 border-top">
-                          <div class="container-fluid">
-                            <p class="fs-4 fw-light text-center">
-                              Si no creaste esta cuenta, favor de ignorar este correo.
-                            </p>
-                          </div>
-                        </section>
-                    </body>
-                </html>
-                """;
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 20px; font-size: 17px;">
+                      <strong>¡Hola {WebUtility.HtmlEncode(user.FirstName)}! Bienvenido a DocHub.</strong>
+                    </div>
+              <div style="padding-bottom: 20px; color: #5E6278;">
+                Gracias por registrarte. Para completar tu registro y activar tu cuenta, por favor usa el siguiente código de verificación en la página o aplicación:
+              </div>
+
+              <div style="text-align: center; padding: 15px; background-color: #f0f1f7; border-radius: 6px; margin-bottom: 30px;">
+                <div style="font-family: monospace, monospace; font-size: 24px; font-weight: bold; color: #284092; letter-spacing: 5px;">
+                  {verificationCode}
+                </div>
+              </div>
+
+              <div style="padding-bottom: 10px; color: #5E6278;">
+                 Este código es necesario para asegurar que la dirección te pertenece.
+              </div>
+                    </div>
+              
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si no creaste una cuenta en DocHub, puedes ignorar este correo electrónico de forma segura. Tu cuenta no será activada.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 
     public string CreateVerifyEmailAddressEmailForUpdate(AppUser user, string verificationCode)
     {
-        return $"""
-                <html>
-                    <body>
-                        <h1>¡Hola {user.FirstName}!</h1>
-                        <p>¡Gracias por actualizar tu correo electrónico! 🌟</p>
-                        <p>Para concluir la actualización, por favor verifica tu correo electrónico usando el código a continuación:</p>
-                        <code>{verificationCode}</code>
-                        <p>Si no solicitaste esta actualización, por favor ignora este correo. 🚫</p>
-                    </body>
-                </html>
-                """;
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 20px; font-size: 17px;">
+                      <strong>Verifica tu nueva dirección de correo</strong>
+                    </div>
+                    <div style="padding-bottom: 20px; color: #5E6278;">
+                      ¡Hola {WebUtility.HtmlEncode(user.FirstName)}!
+                    </div>
+                    <div style="padding-bottom: 20px; color: #5E6278;">
+                      Para completar la actualización de tu correo electrónico en DocHub, por favor usa el siguiente código de verificación en la página o aplicación:
+                    </div>
+              
+                    <div style="text-align: center; padding: 15px; background-color: #f0f1f7; border-radius: 6px; margin-bottom: 30px;">
+                      <div style="font-family: monospace, monospace; font-size: 24px; font-weight: bold; color: #284092; letter-spacing: 5px;">
+                        {verificationCode}
+                      </div>
+                    </div>
+              
+                    <div style="padding-bottom: 10px; color: #5E6278;">
+                       Este código es necesario para asegurar que la nueva dirección te pertenece.
+                    </div>
+              
+                    <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si no solicitaste esta actualización, por favor ignora este correo o contacta a soporte si tienes preocupaciones.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 
     public string CreateEventReceiptEmail(
-        string patientName,
-        string doctorName,
-        DateTime eventDate,
-        string serviceName,
-        decimal amountPaid,
-        string paymentMethodName,
-        DateTime paymentDate,
-        string? referenceNumber,
-        string? notes,
-        int eventId,
-        string clinicName)
+      string patientName,
+      string doctorName,
+      DateTime eventDate,
+      string serviceName,
+      decimal amountPaid,
+      string paymentMethodName,
+      DateTime paymentDate,
+      string? referenceNumber,
+      string? notes,
+      int eventId,
+      string clinicName)
     {
-        var culture = new CultureInfo("es-MX");
+      var culture = new CultureInfo("es-MX");
 
-        return $"""
-                {GetEmailHeader()}
-                <tr>
-                  <td align="left" valign="center">
-                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
-                      <div style="padding-bottom: 20px; font-size: 18px; font-weight: bold; text-align: center;">
-                        Comprobante de Pago - Cita #{eventId}
-                      </div>
-                
-                      <div style="padding-bottom: 15px;">
-                        Estimado(a) {patientName},
-                      </div>
-                      <div style="padding-bottom: 20px;">
-                        Adjuntamos el comprobante de pago para su cita con {doctorName} en {clinicName}.
-                      </div>
-                
-                      <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
-                
-                      <div style="padding-bottom: 10px;"><strong>Detalles de la Cita:</strong></div>
-                      <div style="padding-bottom: 5px;"><strong>Servicio:</strong> {serviceName}</div>
-                      <div style="padding-bottom: 20px;"><strong>Fecha y Hora:</strong> {eventDate.ToString("f", culture)}</div>
-                
-                      <div style="padding-bottom: 10px;"><strong>Detalles del Pago:</strong></div>
-                      <div style="padding-bottom: 5px;"><strong>Fecha de Pago:</strong> {paymentDate.ToString("f", culture)}</div>
-                      <div style="padding-bottom: 5px;"><strong>Método de Pago:</strong> {paymentMethodName}</div>
-                      {(string.IsNullOrEmpty(referenceNumber) ? "" : $"<div style=\"padding-bottom: 5px;\"><strong>Referencia:</strong> {WebUtility.HtmlEncode(referenceNumber)}</div>")}
-                      {(string.IsNullOrEmpty(notes) ? "" : $"<div style=\"padding-bottom: 20px;\"><strong>Notas:</strong> {WebUtility.HtmlEncode(notes)}</div>")}
-                
-                      <div style="padding-bottom: 10px; font-size: 16px; font-weight: bold;"><strong>Monto Pagado:</strong> {amountPaid.ToString("C", culture)}</div>
-                
-                      <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
-                
-                      <div style="padding-bottom: 10px;">
-                        Si tiene alguna pregunta sobre este comprobante, por favor contacte a su especialista.
-                      </div>
-                      <div style="padding-bottom: 10px;">
-                        Gracias por su preferencia.
-                      </div>
+      return $"""
+              {GetEmailHeader()}
+              <tr>
+                <td align="left" valign="center">
+                  <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                    <div style="padding-bottom: 20px; font-size: 18px; font-weight: bold; text-align: center; color: #2F3044;">
+                      Comprobante de Pago - Cita #{eventId}
                     </div>
-                  </td>
-                </tr>
-                {GetEmailFooter()}
-                """;
+              
+                    <div style="padding-bottom: 15px; color: #5E6278;">
+                      Estimado(a) {WebUtility.HtmlEncode(patientName)},
+                    </div>
+                    <div style="padding-bottom: 20px; color: #5E6278;">
+                      Adjuntamos el comprobante de pago para tu cita con {WebUtility.HtmlEncode(doctorName)} en {WebUtility.HtmlEncode(clinicName)}.
+                    </div>
+              
+                    <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
+              
+                    <div style="padding-bottom: 10px; color: #2F3044;"><strong>Detalles de la Cita:</strong></div>
+                    <div style="padding-bottom: 5px; color: #5E6278;"><strong>Servicio:</strong> {WebUtility.HtmlEncode(serviceName)}</div>
+                    <div style="padding-bottom: 20px; color: #5E6278;"><strong>Fecha y Hora:</strong> {eventDate.ToString("f", culture)}</div>
+              
+                    <div style="padding-bottom: 10px; color: #2F3044;"><strong>Detalles del Pago:</strong></div>
+                    <div style="padding-bottom: 5px; color: #5E6278;"><strong>Fecha de Pago:</strong> {paymentDate.ToString("f", culture)}</div>
+                    <div style="padding-bottom: 5px; color: #5E6278;"><strong>Método de Pago:</strong> {WebUtility.HtmlEncode(paymentMethodName)}</div>
+                    {(string.IsNullOrEmpty(referenceNumber) ? "" : $"<div style=\"padding-bottom: 5px; color: #5E6278;\"><strong>Referencia:</strong> {WebUtility.HtmlEncode(referenceNumber)}</div>")}
+                    {(string.IsNullOrEmpty(notes) ? "" : $"<div style=\"padding-bottom: 20px; color: #5E6278;\"><strong>Notas:</strong> {WebUtility.HtmlEncode(notes)}</div>")}
+              
+                    <div style="padding-top: 10px; padding-bottom: 10px; font-size: 16px; font-weight: bold; color: #2F3044;"><strong>Monto Pagado:</strong> {amountPaid.ToString("C", culture)}</div>
+              
+                    <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
+              
+                    <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                      Si tienes alguna pregunta sobre este comprobante, por favor contacta a tu especialista.
+                    </div>
+                    <div style="padding-top: 5px; font-size: 13px; color: #6d6e7c;">
+                      Gracias por tu preferencia.
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {GetEmailFooter()}
+              """;
     }
 }

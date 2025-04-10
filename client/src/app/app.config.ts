@@ -140,7 +140,6 @@ export const appConfig: ApplicationConfig = {
       },
       {
         path: 'auth',
-        canActivate: [ anonymousGuard ],
         loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
       },
       {

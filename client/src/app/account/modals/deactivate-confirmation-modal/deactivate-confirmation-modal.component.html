@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Confirmar Desactivación de Cuenta</h2>
+
+<mat-dialog-content>
+  <p>
+    Para confirmar la desactivación permanente de tu cuenta, por favor ingresa tu contraseña actual.
+    <strong>Esta acción no se puede deshacer.</strong>
+  </p>
+
+  <form [formGroup]="deactivationForm" id="deactivationForm">
+    <div inputControl
+      formControlName="password"
+      [label]="'Contraseña'"
+      [type]="'password'"
+      [placeholder]="'Ingresa tu contraseña'"
+      [required]="true">
+    </div>
+
+    @if (errorMessage()) {
+      <mat-error class="mt-2">{{ errorMessage() }}</mat-error>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onDismiss()">Cancelar</button>
+  <button
+    mat-raised-button
+    color="warn"
+    type="submit"
+    form="deactivationForm"
+    [disabled]="isLoading() || deactivationForm.invalid"
+    (click)="confirmDeactivation()"
+  >
+    @if (isLoading()) {
+      <mat-spinner diameter="20"></mat-spinner>
+    } @else {
+      Desactivar Cuenta Permanentemente
+    }
+  </button>
+</mat-dialog-actions>

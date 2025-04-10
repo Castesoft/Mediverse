@@ -10,6 +10,8 @@ export class AuthNavigationService {
   readonly SIGN_IN_URL: string = '/auth/sign-in';
   readonly SIGN_UP_URL: string = '/auth/sign-up';
   readonly PASSWORD_RESET_URL: string = '/auth/sign-in/password-reset';
+  readonly VERIFY_EMAIL_URL: string = '/auth/verify-email';
+  readonly ACCOUNT_URL: string = '/cuenta';
 
   navigateToSignIn(queryParams: Record<string, any> = {}): Promise<boolean> {
     return this.router.navigate([ this.SIGN_IN_URL ], { queryParams: queryParams });
@@ -21,5 +23,13 @@ export class AuthNavigationService {
 
   navigateToPasswordReset(queryParams: Record<string, any> = {}): Promise<boolean> {
     return this.router.navigate([ this.PASSWORD_RESET_URL ], { queryParams: queryParams });
+  }
+
+  navigateToVerifyEmail(queryParams: Record<string, any> = {}): Promise<boolean> {
+    return this.router.navigate([ this.VERIFY_EMAIL_URL ], { queryParams: queryParams });
+  }
+
+  navigateToAccount(queryParmams: Record<string, any> = {}): Promise<boolean> {
+    return this.router.navigate([ this.ACCOUNT_URL ], { queryParams: queryParmams });
   }
 }

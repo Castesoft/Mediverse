@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject, model, ModelSignal, signal, WritableSignal } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import BaseDetail from "src/app/_models/base/components/extensions/baseDetail";
 import { CatalogMode, View } from "src/app/_models/base/types";
 import { DetailInputSignals } from "src/app/_models/forms/formComponentInterfaces";
@@ -46,6 +46,7 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
 
   private readonly consentService: ClinicalHistoryConsentService = inject(ClinicalHistoryConsentService);
   private readonly accountsService: AccountService = inject(AccountService);
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
   router: Router = inject(Router);
 
@@ -73,9 +74,12 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
   constructor() {
     super(PatientsService);
 
-    effect(() => {
-      console.log('PatientFullDetailComponent', this.item(), this.eventParams());
+    const initialTab = this.route.snapshot.queryParamMap.get('tab');
+    if (initialTab) {
+      this.activeTab = initialTab;
+    }
 
+    effect(() => {
       this.currentAccount = this.accountsService.current();
       this.fetchConsentStatus();
 
@@ -110,6 +114,12 @@ export class PatientFullDetailComponent extends BaseDetail<Patient, PatientParam
 
   onSelectTab(tab: string) {
     this.activeTab = tab;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    }).catch(console.error);
   }
 
   getEarnings() {

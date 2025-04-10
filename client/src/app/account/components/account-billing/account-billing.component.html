@@ -98,7 +98,9 @@
     </div>
   </div>
 
-  <div>
-    <app-payment-method-preferences></app-payment-method-preferences>
-  </div>
+  @if (accountService.hasRole([ 'Doctor' ])) {
+    <div>
+      <app-payment-method-preferences></app-payment-method-preferences>
+    </div>
+  }
 </account-child-wrapper>

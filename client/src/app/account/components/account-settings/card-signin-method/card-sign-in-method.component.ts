@@ -1,42 +1,51 @@
-import { Component, inject, OnInit, output } from '@angular/core';
+import { Component, inject, OnInit, output, OutputEmitterRef } from '@angular/core';
 import { AbstractControlOptions, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputControlComponent } from 'src/app/_forms/input-control.component';
 import { AccountService } from 'src/app/_services/account.service';
 import { TemplateModule } from 'src/app/_shared/template/template.module';
+import {
+  EmailVerificationInputComponent
+} from 'src/app/_shared/components/email-verification-input/email-verification-input.component';
 
 @Component({
-  selector: 'app-card-signin-method',
-  standalone: true,
-  imports: [TemplateModule, ReactiveFormsModule, InputControlComponent],
-  templateUrl: './card-signin-method.component.html',
-  styleUrl: './card-signin-method.component.scss'
+  selector: 'app-card-sign-in-method',
+  templateUrl: './card-sign-in-method.component.html',
+  styleUrl: './card-sign-in-method.component.scss',
+  imports: [
+    TemplateModule,
+    ReactiveFormsModule,
+    InputControlComponent,
+    EmailVerificationInputComponent
+  ],
 })
-export class CardSigninMethodComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  accountService = inject(AccountService);
-  onSelectSection = output<string>();
+export class CardSignInMethodComponent implements OnInit {
+  private readonly fb: FormBuilder = inject(FormBuilder);
 
-  submitted = false;
-  isSettingUpTwoFactor = false;
+  readonly accountService: AccountService = inject(AccountService);
+  readonly onSelectSection: OutputEmitterRef<string> = output<string>();
+
+  submitted: boolean = false;
+  isSettingUpTwoFactor: boolean = false;
+
   twoFactorSetupInfo: any;
 
-  hideChangeEmailForm = true;
+  hideChangeEmailForm: boolean = true;
   changeEmailForm = this.fb.group({
-    email: ['', Validators.email],
-    password: ['', Validators.required]
+    email: [ '', Validators.email ],
+    password: [ '', Validators.required ]
   });
 
   hideChangePasswordForm = true;
   changePasswordForm = this.fb.group({
-    currentPassword: ['', Validators.required],
-    newPassword: ['', Validators.required],
-    confirmPassword: ['', Validators.required]
+    currentPassword: [ '', Validators.required ],
+    newPassword: [ '', Validators.required ],
+    confirmPassword: [ '', Validators.required ]
   }, {
-    validators: [this.accountService.equalFields('newPassword','confirmPassword')]
+    validators: [ this.accountService.equalFields('newPassword', 'confirmPassword') ]
   } as AbstractControlOptions);
 
   twoFactorAuthForm = this.fb.group({
-    verificationCode: ['', Validators.required]
+    verificationCode: [ '', Validators.required ]
   });
 
   ngOnInit() {
@@ -50,7 +59,7 @@ export class CardSigninMethodComponent implements OnInit {
   changeEmail() {
     this.submitted = true;
     if (this.changeEmailForm.get('email')?.value === this.accountService.current()?.email) {
-      this.changeEmailForm.get('email')?.setErrors({same: 'Ingresa un correo diferente al actual.'});
+      this.changeEmailForm.get('email')?.setErrors({ same: 'Ingresa un correo diferente al actual.' });
     }
     if (this.changeEmailForm.invalid) {
       return;

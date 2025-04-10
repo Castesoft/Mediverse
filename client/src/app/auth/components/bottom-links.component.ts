@@ -13,29 +13,31 @@ import { UseOfCookiesModalComponent } from './use-of-cookies-modal/use-of-cookie
         (click)="openTermsAndConditionsModal()"
         class="text-muted text-hover-primary px-2"
         style="cursor: pointer"
-        >Términos y condiciones</a
       >
+        Términos y condiciones
+      </a>
 
       <a
         (click)="openPrivacyPoliciesModal()"
         class="text-muted text-hover-primary px-2"
         style="cursor: pointer"
-        >Política de privacidad</a
       >
+        Política de privacidad
+      </a>
 
       <a
         (click)="openUseOfCookiesModal()"
         class="text-muted text-hover-primary px-2"
         style="cursor: pointer"
-        >Uso de cookies</a
       >
+        Uso de cookies
+      </a>
     </div>
   `,
-  standalone: true,
-  imports: [ RouterModule,  ],
+  imports: [ RouterModule ],
 })
 export class BottomLinksComponent {
-  private bsModalService = inject(BsModalService);
+  private bsModalService: BsModalService = inject(BsModalService);
 
   openTermsAndConditionsModal() {
     this.bsModalService.show(TermsAndConditionsModalComponent);

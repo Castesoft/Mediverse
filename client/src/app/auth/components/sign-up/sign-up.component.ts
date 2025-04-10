@@ -35,6 +35,7 @@ import {
 import {
   BillingDetailsComponent
 } from "src/app/auth/components/sign-up/register-doctor-form/billing-details/billing-details.component";
+import { AuthNavigationService } from "src/app/_services/auth-navigation.service";
 
 @Component({
   selector: 'app-sign-up',
@@ -55,6 +56,7 @@ import {
   ],
 })
 export class SignUpComponent implements OnInit {
+  private readonly authNavigationService: AuthNavigationService = inject(AuthNavigationService);
   private readonly accountService: AccountService = inject(AccountService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly router: Router = inject(Router);
@@ -192,6 +194,7 @@ export class SignUpComponent implements OnInit {
         this.firstName = account.firstName || undefined;
         this.currentStep.set(this.currentStep() + 1);
         this.isSubmitting.set(false);
+        this.authNavigationService.navigateToVerifyEmail().catch(console.error);
       },
       error: (error: BadRequest) => {
         this.patientRegisterForm().error = error;
@@ -278,7 +281,8 @@ export class SignUpComponent implements OnInit {
     }
 
     this.accountService.registerDoctor(formData).subscribe({
-      next: (_) => {
+      next: (account: Account) => {
+        this.firstName = account.firstName || undefined;
         this.currentStep.set(this.currentStep() + 1);
         this.isSubmitting.set(false);
       },

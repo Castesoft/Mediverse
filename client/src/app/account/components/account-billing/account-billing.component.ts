@@ -39,8 +39,9 @@ import {
 })
 export class AccountBillingComponent implements OnInit {
   private readonly bsModalService: BsModalService = inject(BsModalService);
-  private readonly accountService: AccountService = inject(AccountService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
+
+  readonly accountService: AccountService = inject(AccountService);
 
   billingDetails: BillingDetails | null = null;
 

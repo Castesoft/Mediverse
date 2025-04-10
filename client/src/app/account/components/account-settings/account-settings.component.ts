@@ -17,8 +17,8 @@ import {
   CardProfileDetailsComponent
 } from 'src/app/account/components/account-settings/card-profile-details/card-profile-details.component';
 import {
-  CardSigninMethodComponent
-} from 'src/app/account/components/account-settings/card-signin-method/card-signin-method.component';
+  CardSignInMethodComponent
+} from 'src/app/account/components/account-settings/card-signin-method/card-sign-in-method.component';
 import { NavMenuComponent } from 'src/app/account/components/account-settings/nav-menu/nav-menu.component';
 import {
   AccountChildWrapperComponent
@@ -31,7 +31,7 @@ import {
     TemplateModule,
     RouterModule,
     NavMenuComponent,
-    CardSigninMethodComponent,
+    CardSignInMethodComponent,
     CardProfileDetailsComponent,
     CardConnectedAccountsComponent,
     CardNotificationsComponent,

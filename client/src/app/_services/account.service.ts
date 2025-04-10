@@ -618,16 +618,14 @@ export class AccountService {
   }
 
   verifyEmail(email: string, code: string) {
-    return this.http
-      .post<Account>(`${this.baseUrl}email-verification`, {
-        email: email,
-        code: code,
-      })
-      .pipe(
-        map((response) => {
-          return response;
-        })
-      );
+    return this.http.post<Account>(`${this.baseUrl}email-verification`, { email, code }).pipe(
+      tap(response => {
+        if (response) {
+          this.setCurrentUser(response);
+        }
+      }),
+      map(response => response)
+    );
   }
 
   sendPhoneVerificationCode(
@@ -658,7 +656,11 @@ export class AccountService {
           return response;
         })
       );
-  }
+    }
+
+    resendEmailVerificationCode(): Observable<void> {
+      return this.http.get<void>(`${this.baseUrl}resend-email-verification`);
+    }
 
   updateEmail(email: string) {
     return this.http
@@ -704,8 +706,6 @@ export class AccountService {
     this.http.get<boolean>(
       `${this.baseUrl}usernameExists?username=${username}`
     );
-  resendEmailVerificationCode = () =>
-    this.http.get(`${this.baseUrl}resend-email-verification`);
   resendPhoneNumberVerificationCode = () =>
     this.http.get(`${this.baseUrl}resend-phone-verification`);
 
@@ -744,4 +744,24 @@ export class AccountService {
     }
   }
 
+  /**
+   * Sends a request to deactivate (delete) the user's account.
+   * Requires the user's current password for verification.
+   * @param password The user's current password.
+   * @returns An Observable that completes on success or errors on failure.
+   */
+  deleteAccount(password: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}deactivate`, {
+      body: { password }
+    }).pipe(
+      tap(() => {
+        this.toastr.success('Tu cuenta ha sido desactivada permanentemente.');
+        this.logout();
+      }),
+      catchError((err) => {
+        console.error('Error deactivating account:', err);
+        throw err;
+      })
+    );
+  }
 }

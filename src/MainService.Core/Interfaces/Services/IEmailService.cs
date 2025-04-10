@@ -6,7 +6,7 @@ public interface IEmailService
 {
     Task SendMail(string to, string subject, string htmlMessage);
     string CreateResetPasswordEmail(AppUser user, string resetUrl);
-    string CreateVerifyEmailAddressEmailForRegister(AppUser user, string verificationUrl, string verificationCode);
+    string CreateVerifyEmailAddressEmailForRegister(AppUser user, string verificationCode);
     string CreateSubscriptionConfirmationEmail(AppUser user, decimal amount, DateTime subscriptionDate);
     string CreateSubscriptionCancellationEmail(AppUser user, DateTime cancellationDate, string? feedback = null);
 

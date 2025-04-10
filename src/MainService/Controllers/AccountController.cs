@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+﻿﻿using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using CloudinaryDotNet;
@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MainService.Core.Extensions;
-using System.Text.Json;
 using MainService.Core.DTOs.MedicalRecord;
 using MainService.Core.DTOs.Payment;
 using MainService.Core.DTOs.Subscriptions;
@@ -63,7 +62,7 @@ public class AccountController(
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
         if (!result.Succeeded) return Unauthorized("Correo o contraseña incorrectos.");
-
+ 
         if (user.TwoFactorEnabled)
         {
             return Ok(new { RequiresTwoFactor = true });
@@ -241,7 +240,7 @@ public class AccountController(
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
         var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
         var htmlMessage =
-            emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
+            emailService.CreateVerifyEmailAddressEmailForRegister(user, emailVerificationCode);
         if (!string.IsNullOrEmpty(user.Email))
         {
             await emailService.SendMail(user.Email, subject, htmlMessage);
@@ -440,7 +439,7 @@ public class AccountController(
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
         var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
         var htmlMessage =
-            emailService.CreateVerifyEmailAddressEmailForRegister(user, verifyEmailUrl, emailVerificationCode);
+            emailService.CreateVerifyEmailAddressEmailForRegister(user, emailVerificationCode);
 
         await emailService.SendMail(email, subject, htmlMessage);
 
@@ -910,7 +909,6 @@ public class AccountController(
         var updateResult = await userManager.UpdateAsync(user);
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
-        // send email verification code
         var clientUrl = clientSettings.Value.Url;
         var subject = $"🔒 Verificación de correo para {user.FirstName}!";
         var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
@@ -922,7 +920,6 @@ public class AccountController(
             await emailService.SendMail(email, subject, htmlMessage);
         }
 
-        // return user
         return await usersService.GenerateAccountDtoAsync(user.Id);
     }
 
@@ -1022,7 +1019,7 @@ public class AccountController(
 
         return Ok();
     }
-
+ 
     [Authorize]
     [HttpGet("resend-phoneNumber-verification")]
     public async Task<ActionResult> SendPhoneNumberVerificationCodeForAccount()

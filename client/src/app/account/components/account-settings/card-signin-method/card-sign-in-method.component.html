@@ -1,0 +1,311 @@
+<div card id="account_settings_signin_method" (mouseenter)="selectSection('account_settings_signin_method')">
+  <div cardHeader>
+    <div cardTitle [title]="'Inicio de sesión'"></div>
+  </div>
+  <div class="card-body border-top">
+    <div class="d-flex flex-wrap align-items-center mb-2">
+      <div class="d-flex w-100 justify-content-between" [class.d-none]="!hideChangeEmailForm">
+        <div>
+          <div class="fs-6 fw-bold mb-1">Correo electrónico</div>
+          <div class="fw-semibold text-gray-600 d-flex align-items-center">
+            <span>{{ accountService.current()?.email }}</span>
+            @if (accountService.current()?.isEmailVerified) {
+              <span class="badge badge-light-success ms-2">Verificado</span>
+            } @else {
+              <span class="badge badge-light-warning ms-2">No Verificado</span>
+            }
+          </div>
+        </div>
+        @if (!accountService.current()?.linkedEmail) {
+          <button class="btn btn-light btn-active-light-primary" [disabled]="true">
+            Cambiar Email
+          </button>
+        } @else {
+          <button class="btn btn-light btn-active-light-primary" (click)="toggleChangeEmailForm()">
+            Cambiar Email
+          </button>
+        }
+      </div>
+      <div class="flex-row-fluid" [class.d-none]="hideChangeEmailForm">
+        <form
+          id="kt_signin_change_email"
+          class="form fv-plugins-bootstrap5 fv-plugins-framework"
+          novalidate="novalidate"
+          [formGroup]="changeEmailForm"
+          (ngSubmit)="changeEmail()"
+        >
+          <div class="row mb-6">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="email"
+                type="text"
+                [label]="'Ingresa Nuevo Correo Electrónico'"
+                [placeholder]="''"
+                [submitted]="submitted"
+                [errors]="{
+                      required: 'El correo electrónico es requerido.'
+                  }"
+              ></div>
+            </div>
+            <div class="col-lg-6">
+              <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="password"
+                type="password"
+                [label]="'Confirma Contraseña'"
+                [placeholder]="''"
+                [submitted]="submitted"
+                [errors]="{
+                      required: 'La contraseña es requerida.'
+                  }"
+              ></div>
+            </div>
+          </div>
+          <div class="d-flex">
+            <button
+              id="kt_signin_submit"
+              type="submit"
+              class="btn btn-primary me-2 px-6"
+            >
+              Actualizar Email
+            </button>
+            <button
+              id="kt_signin_cancel"
+              type="button"
+              class="btn btn-color-gray-500 btn-active-light-primary px-6"
+              (click)="toggleChangeEmailForm()"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    @if (accountService.current()?.linkedEmail && !accountService.current()?.isEmailVerified) {
+      <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6 mb-6">
+        <i class="ki-duotone ki-shield-slash fs-2tx text-warning me-4">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+        <div class="d-flex flex-column flex-grow-1">
+          <div class="fw-semibold">
+            <h4 class="text-gray-900 fw-bold">Verifica tu Correo Electrónico</h4>
+            <div class="fs-6 text-gray-700 pe-7 mb-4">
+              Tu correo electrónico no está verificado. Por favor, ingresa el código que enviamos
+              a {{ accountService.current()?.email }} o solicita uno nuevo.
+            </div>
+          </div>
+
+          <app-email-verification-input
+            [email]="accountService.current()?.email!">
+          </app-email-verification-input>
+        </div>
+      </div>
+    }
+
+
+    <div class="separator separator-dashed my-6"></div>
+    <div class="d-flex flex-wrap align-items-center mb-10">
+      <div class="d-flex w-100 justify-content-between" [class.d-none]="!hideChangePasswordForm">
+        <div>
+          <div class="fs-6 fw-bold mb-1">Contraseña</div>
+          <div class="fw-semibold text-gray-600">************</div>
+        </div>
+        @if (!accountService.current()?.linkedEmail) {
+          <button class="btn btn-light btn-active-light-primary" [disabled]="true">
+            Reestablecer Contraseña
+          </button>
+        } @else {
+          <button class="btn btn-light btn-active-light-primary" (click)="toggleChangePasswordForm()">
+            Reestablecer Contraseña
+          </button>
+        }
+      </div>
+      <div class="flex-row-fluid d-none" [class.d-none]="hideChangePasswordForm">
+        <form
+          class="form fv-plugins-bootstrap5 fv-plugins-framework"
+          novalidate="novalidate"
+          [formGroup]="changePasswordForm"
+          (ngSubmit)="changePassword()"
+        >
+          <div class="row mb-6">
+            <div class="col-lg-4">
+              <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="currentPassword"
+                type="password"
+                [label]="'Contraseña Actual'"
+                [placeholder]="''"
+                [submitted]="submitted"
+                [errors]="{
+                      required: 'La contraseña actual es requerida.'
+                  }"
+              ></div>
+            </div>
+            <div class="col-lg-4">
+              <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="newPassword"
+                type="password"
+                [label]="'Nueva Contraseña'"
+                [placeholder]="''"
+                [submitted]="submitted"
+                [errors]="{
+                      required: 'La nueva contraseña es requerida.'
+                  }"
+              ></div>
+            </div>
+            <div class="col-lg-4">
+              <div
+                class="fv-row fv-plugins-icon-container"
+                inputControl
+                formControlName="confirmPassword"
+                type="password"
+                [label]="'Confirmar Nueva Contraseña'"
+                [placeholder]="''"
+                [submitted]="submitted"
+                [errors]="{
+                      required: 'Confirma la nueva contraseña.'
+                  }"
+              ></div>
+            </div>
+          </div>
+          <div class="d-flex">
+            <button
+              type="submit"
+              class="btn btn-primary me-2 px-6"
+            >
+              Actualizar Contraseña
+            </button>
+            <button
+              type="button"
+              class="btn btn-color-gray-500 btn-active-light-primary px-6"
+              (click)="toggleChangePasswordForm()"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    @if (accountService.current()?.linkedEmail) {
+      @if (!accountService.current()?.twoFactorEnabled) {
+        @if (!isSettingUpTwoFactor) {
+          <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed p-6">
+            <i class="ki-duotone ki-shield-tick fs-2tx text-primary me-4">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+            <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+              <div class="mb-3 mb-md-0 fw-semibold">
+                <h4 class="text-gray-900 fw-bold">Asegura Tu Cuenta</h4>
+                <div class="fs-6 text-gray-700 pe-7">
+                  La autenticación de dos factores agrega una capa adicional de seguridad a tu cuenta.
+                  Para iniciar sesión, además necesitarás proporcionar un código de 6 dígitos
+                </div>
+              </div>
+              <a
+                class="btn btn-primary px-6 align-self-center text-nowrap"
+                (click)="enableTwoFactor()"
+              >Habilitar</a
+              >
+            </div>
+          </div>
+        } @else {
+          <div class="separator separator-dashed my-6"></div>
+          <div class="d-flex flex-wrap align-items-center">
+            <div class="d-flex w-100 justify-content-between">
+              <div>
+                <div class="fs-6 fw-bold mb-1">Autenticación de dos factores</div>
+                <div>
+                  <div>Paso 1</div>
+                  <div>Usando tu aplicación de 2FA preferida, escanea el siguiente código QR:</div>
+                  <div class="mt-3">
+                    <img
+                      src="{{'data:image/png;base64,' + twoFactorSetupInfo.qrCode}}"
+                      alt="QR Code"
+                      class="mw-100px mw-md-150px"
+                    />
+                  </div>
+                  <div>En su defecto, introduce el siguiente código en la aplicación:</div>
+                  <div class="fw-semibold text-gray-600">{{ twoFactorSetupInfo.sharedKey }}</div>
+                </div>
+
+                <div class="mt-3">
+                  <div class="fw-semibold">Paso 2</div>
+                  <div>Introduce el código de 6 dígitos generado por tu aplicación de 2FA:</div>
+                  <form [formGroup]="twoFactorAuthForm" (ngSubmit)="verifyTwoFactorAuth()">
+                    <div class="mt-3">
+                      <div
+                        class="fv-row fv-plugins-icon-container"
+                        inputControl
+                        formControlName="verificationCode"
+                        type="text"
+                        [label]="'Código de 2FA'"
+                        [placeholder]="'Introduce el código de 6 dígitos'"
+                        [submitted]="submitted"
+                        [errors]="{
+                              required: 'El código de 2FA es requerido.'
+                          }"
+                      ></div>
+                    </div>
+                    <div class="mt-3">
+                      <button
+                        type="submit"
+                        class="btn btn-primary me-2 px-6"
+                      >
+                        Activar
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-color-gray-500 btn-active-light-primary px-6"
+                        (click)="isSettingUpTwoFactor = false"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="separator separator-dashed my-6"></div>
+        <div class="d-flex flex-wrap align-items-center">
+          <div class="d-flex w-100 justify-content-between">
+            <div>
+              <div class="fs-6 fw-bold mb-1">Autenticación de dos factores</div>
+              <div class="fw-semibold text-gray-600">Habilitado</div>
+            </div>
+            <button class="btn btn-light btn-active-light-primary" (click)="disableTwoFactor()">Desactivar</button>
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6">
+        <i class="ki-duotone ki-information fs-2tx text-warning me-4">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+        <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+          <div class="mb-3 mb-md-0 fw-semibold">
+            <h4 class="text-gray-900 fw-bold">¡Atención!</h4>
+            <div class="fs-6 text-gray-700 pe-7">
+              Para modificar sus datos de inicio de sesión, primero debe vincular su cuenta con un correo electrónico y
+              asociarle una contraseña.
+              Para ello, por favor, siga las instrucciones en la sección de "Cuentas conectadas".
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

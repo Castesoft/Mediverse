@@ -1,0 +1,63 @@
+<div class="d-flex flex-column flex-lg-row flex-column-fluid">
+  <div
+    authAside
+    class="d-flex flex-column flex-lg-row-auto bg-primary w-xl-600px positon-xl-relative"
+  >
+  </div>
+
+  <div class="d-flex flex-column flex-lg-row-fluid py-10 bg-body">
+    <div class="d-flex flex-center flex-column flex-column-fluid">
+      <div class="w-lg-500px p-10 p-lg-15 mx-auto">
+        @if (account) {
+          <form class="form w-100" novalidate="novalidate">
+
+            <div class="mb-8">
+              <h1 class="text-white mb-3">Verifica tu Correo Electrónico</h1>
+              @if (account.email) {
+                <div class="text-gray-500 fw-semibold fs-6">
+                  Hemos enviado un código de verificación a <strong
+                  class="text-gray-300">{{ account.email }}</strong>.
+                </div>
+                <div class="text-gray-500 fw-semibold fs-6 mt-1">
+                  Por favor, ingresa el código a continuación o verifica más tarde.
+                </div>
+              } @else {
+                <div class="text-danger fw-semibold fs-6 mt-1">
+                  No se encontró el correo electrónico. Por favor, intenta registrarte de nuevo.
+                </div>
+              }
+            </div>
+
+            @if (account.email) {
+              <app-email-verification-input
+                [email]="account.email"
+                (verified)="onVerified()">
+              </app-email-verification-input>
+
+              <div class="text-center mt-5">
+                <button type="button" class="btn btn-lg btn-link fw-bold" (click)="skipVerification()">
+                  Verificar más tarde
+                </button>
+              </div>
+            } @else {
+              <div class="text-center mt-5">
+                <a routerLink="/auth/sign-up" class="btn btn-lg btn-primary fw-bold">Volver a Registro</a>
+              </div>
+            }
+          </form>
+
+        } @else {
+
+          <div class="d-flex w-100 h-100 justify-content-center align-items-center">
+            <span class="spinner-border spinner-border-lg text-white align-middle"></span>
+          </div>
+
+        }
+      </div>
+    </div>
+    <div
+      class="d-flex flex-center flex-wrap fs-6 p-5 pb-0"
+      bottomLinks
+    ></div>
+  </div>
+</div>
