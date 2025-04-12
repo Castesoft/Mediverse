@@ -42,8 +42,8 @@ export class AddPaymentMethodComponent implements OnInit {
   cardExpiry?: StripeCardExpiryElement;
   cardCvc?: StripeCardCvcElement;
   cardErrors: any;
+  isLoading: boolean = false;
 
-  submitted: boolean = false;
   paymentMethodForm = this.fb.group({
     DisplayName: [ '', [ Validators.required ] ],
     StripePaymentMethodId: [ '' ],
@@ -94,11 +94,12 @@ export class AddPaymentMethodComponent implements OnInit {
   }
 
   async onSubmit() {
-    this.submitted = true;
-
     if (!this.paymentMethodForm.valid || !this.stripe || !this.cardNumber) {
       return;
     }
+
+    this.isLoading = true; 
+    this.cardErrors = null; 
 
     const paymentMethod: PaymentMethodResult = await this.stripe?.createPaymentMethod({
       type: 'card',
@@ -107,6 +108,7 @@ export class AddPaymentMethodComponent implements OnInit {
 
     if (paymentMethod.error) {
       this.cardErrors = paymentMethod.error.message;
+      this.isLoading = false; 
       return;
     }
 
@@ -122,7 +124,12 @@ export class AddPaymentMethodComponent implements OnInit {
     this.accountService.addPaymentMethod(this.paymentMethodForm.value).subscribe({
       next: (_) => {
         this.bsModalRef.hide();
-        this.submitted = false
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error adding payment method:', err);
+        this.cardErrors = err.error;
+        this.isLoading = false;
       }
     });
   }

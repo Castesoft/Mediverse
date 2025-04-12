@@ -71,7 +71,7 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit {
     })
   }
 
-  private getUserPaymentMethods(triggerLoading?: boolean) {
+  getUserPaymentMethods(triggerLoading?: boolean) {
     if (triggerLoading) {
       this.isLoading = true;
     }
@@ -120,8 +120,10 @@ export class CheckoutPaymentMethodEntryCardComponent implements OnInit {
       class: "modal-dialog-centered"
     });
 
-    modalRef.onHidden?.subscribe(() => {
-      this.getUserPaymentMethods(false);
-    });
+    if (modalRef.onHide) {
+      modalRef.onHide.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+        this.getUserPaymentMethods(false);
+      });
+    }
   }
 }

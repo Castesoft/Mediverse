@@ -13,7 +13,6 @@ using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
 using MainService.Models.Enums;
 using Serilog;
-using System.Collections.Generic;
 
 namespace MainService.Controllers
 {

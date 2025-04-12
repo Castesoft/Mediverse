@@ -1,5 +1,4 @@
 using MainService.Core.DTOs.Payment;
-using MainService.Core.DTOs.User;
 
 namespace MainService.Core.Interfaces.Services;
 

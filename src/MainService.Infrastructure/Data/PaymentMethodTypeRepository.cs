@@ -36,6 +36,15 @@ public class PaymentMethodTypeRepository(DataContext context, IMapper mapper) : 
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
+    public async Task<List<PaymentMethodType>> GetAllAsync()
+    {
+        return await context.PaymentMethodTypes
+            .Include(x => x.DoctorPaymentMethodTypes)
+            .ThenInclude(x => x.Doctor)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<PaymentMethodType?> GetByIdAsync(int id) =>
         await context.PaymentMethodTypes
             .SingleOrDefaultAsync(x => x.Id == id);

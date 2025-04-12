@@ -5,6 +5,7 @@ using MainService.Models.Entities.Aggregate;
 namespace MainService.Core.Interfaces.Data;
 public interface IPaymentMethodTypeRepository
 {
+    Task<List<PaymentMethodType>> GetAllAsync();
     Task<PaymentMethodType?> GetByIdAsync(int id);
     Task<List<OptionDto>> GetOptionsAsync();
     Task<bool> ExistsByIdAsync(int id);

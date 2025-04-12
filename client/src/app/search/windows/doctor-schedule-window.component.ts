@@ -64,9 +64,9 @@ export class DoctorScheduleWindowComponent implements OnInit {
   constructor() {
     effect(() => {
 
-      if (this.query.isMobile() === true) {
+      if (this.query.isMobile()) {
         this.class = 'mobile-view';
-      } else if (this.query.isMobile() === false) {
+      } else if (!this.query.isMobile()) {
         this.class = 'desktop-view';
       }
 

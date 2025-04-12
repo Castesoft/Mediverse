@@ -1,7 +1,5 @@
 
 
-using MainService.Models.Entities.Aggregate;
-
 namespace MainService.Models.Entities
 {
     public class MedicalInsuranceCompany : BaseCodeEntity

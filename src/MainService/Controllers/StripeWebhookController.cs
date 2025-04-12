@@ -2,8 +2,7 @@ using MainService.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using MainService.Models.Helpers;
-using MainService.Models.Entities; // For SubscriptionStatus
-using System.IO;
+using MainService.Models.Entities; 
 
 namespace MainService.Controllers
 {
@@ -69,7 +68,7 @@ namespace MainService.Controllers
                 }
             }
 
-            // TODO: Add further event type handling as needed.
+            
 
             return Ok();
         }

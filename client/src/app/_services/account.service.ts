@@ -751,7 +751,7 @@ export class AccountService {
    * @returns An Observable that completes on success or errors on failure.
    */
   deleteAccount(password: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}deactivate`, {
+    return this.http.delete<void>(`${this.baseUrl}delete`, {
       body: { password }
     }).pipe(
       tap(() => {

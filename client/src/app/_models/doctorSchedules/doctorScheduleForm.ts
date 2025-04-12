@@ -121,14 +121,27 @@ export class DoctorScheduleForm extends FormGroup2<DoctorSchedule> {
   patchPaymentMethods(): this {
     if (this.doctorResult === null) throw new Error('Doctor result is not set');
 
-    this.controls.paymentMethodType.selectOptions = this.doctorResult.paymentMethods.map(paymentMethod => {
-      const constructedPaymentMethod = new PaymentMethodType({ ...paymentMethod });
+    
+    const activePaymentMethods = this.doctorResult.paymentMethods
+      .map(paymentMethod => {
+        
+        const constructedPaymentMethod = new PaymentMethodType({ ...paymentMethod });
+        return new SelectOption({
+          id: constructedPaymentMethod.id!,
+          name: constructedPaymentMethod.name!,
+          code: constructedPaymentMethod.name!,
+          enabled: constructedPaymentMethod.isEnabled,
+          visible: constructedPaymentMethod.isVisible,
+          isActive: paymentMethod.isActive 
+        });
+      })
+      .filter(option => option.isActive); 
 
-      return new SelectOption({ id: constructedPaymentMethod.id!, name: constructedPaymentMethod.name!, code: constructedPaymentMethod.name!, enabled: constructedPaymentMethod.isEnabled, visible: constructedPaymentMethod.isVisible });
-    });
+    this.controls.paymentMethodType.selectOptions = activePaymentMethods;
 
-    if (this.doctorResult!.paymentMethods.length === 1) {
-      this.controls.paymentMethodType.patchValue(new SelectOption({ ...this.doctorResult!.paymentMethods[0] }));
+    
+    if (activePaymentMethods.length === 1) {
+      this.controls.paymentMethodType.patchValue(activePaymentMethods[0]);
     }
 
 

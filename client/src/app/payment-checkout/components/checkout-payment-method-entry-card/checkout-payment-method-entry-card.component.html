@@ -52,6 +52,7 @@
              [paymentMethods]="paymentMethods"
              [confirmOnSelect]="true"
              [showPaymentMethodCreateCard]="true"
+             (paymentMethodsChanged)="getUserPaymentMethods()"
              (selectedPaymentMethod)="onPaymentMethodSelected($event)">
         </div>
       </div>

@@ -24,17 +24,17 @@ declare var google: any;
   standalone: true,
 })
 export class SignInBasicFormComponent implements OnInit, AfterViewInit {
-  private router: Router = inject(Router);
-  accountService: AccountService = inject(AccountService);
-  route: ActivatedRoute = inject(ActivatedRoute);
-  utils: UtilsService = inject(UtilsService);
-  validation: ValidationService = inject(ValidationService);
-  authNavigation = inject(AuthNavigationService);
+  private readonly router: Router = inject(Router);
+  readonly accountService: AccountService = inject(AccountService);
+  readonly route: ActivatedRoute = inject(ActivatedRoute);
+  readonly utils: UtilsService = inject(UtilsService);
+  readonly validation: ValidationService = inject(ValidationService);
+  readonly authNavigation: AuthNavigationService = inject(AuthNavigationService);
 
   form: LoginForm = new LoginForm();
 
   emailFromQuery: string = '';
-  returnUrl: string = '/admin';
+  returnUrl: string = '/cuenta';
   focusOnEmail: boolean = false;
   focusOnPassword: boolean = false;
   requiresTwoFactor: boolean = false;

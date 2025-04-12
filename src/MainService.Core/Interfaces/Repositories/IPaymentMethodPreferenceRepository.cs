@@ -1,7 +1,6 @@
+using System.Linq.Expressions;
 using MainService.Core.DTOs.Payment;
 using MainService.Models.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MainService.Core.Interfaces.Repositories
 {
@@ -13,6 +12,7 @@ namespace MainService.Core.Interfaces.Repositories
         Task<List<PaymentMethodPreferenceDto>> GetByUserIdAsync(int userId);
         Task<PaymentMethodPreferenceDto> GetByUserIdAndPaymentMethodTypeIdAsync(int userId, int paymentMethodTypeId);
         Task<PaymentMethodPreference> GetEntityByUserIdAndPaymentMethodTypeIdAsync(int userId, int paymentMethodTypeId);
+        Task<IQueryable<PaymentMethodPreference>> FindByConditionAsync(Expression<Func<PaymentMethodPreference, bool>> predicate);
         Task UnsetDefaultForUserAsync(int userId);
     }
 }

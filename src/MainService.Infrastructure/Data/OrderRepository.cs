@@ -7,9 +7,7 @@ using MainService.Core.Interfaces.Data;
 using MainService.Infrastructure.QueryExtensions;
 using MainService.Models;
 using MainService.Models.Entities;
-using MainService.Models.Helpers.Enums;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 
 namespace MainService.Infrastructure.Data;

@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
 

@@ -1,5 +1,3 @@
-using MainService.Models.Entities.Aggregate;
-
 namespace MainService.Models.Entities
 {
     public class DeliveryStatus : BaseCodeEntity

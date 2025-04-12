@@ -1,12 +1,10 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using MainService.Core.DTOs.Payment;
 using MainService.Core.Interfaces.Repositories;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MainService.Infrastructure.Data;
 
@@ -51,6 +49,13 @@ public class PaymentMethodPreferenceRepository(DataContext context, IMapper mapp
     {
         return await context.PaymentMethodPreferences
             .FirstOrDefaultAsync(p => p.UserId == userId && p.PaymentMethodTypeId == paymentMethodTypeId);
+    }
+
+    public Task<IQueryable<PaymentMethodPreference>> FindByConditionAsync(Expression<Func<PaymentMethodPreference, bool>> predicate)
+    {
+        return Task.FromResult(context.PaymentMethodPreferences
+            .Where(predicate)
+            .AsQueryable());
     }
 
     public async Task UnsetDefaultForUserAsync(int userId)

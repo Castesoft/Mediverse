@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using MainService.Models.Entities.Aggregate;
 
 namespace MainService.Core.DTOs.Addresses;
 

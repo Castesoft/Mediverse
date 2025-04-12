@@ -54,6 +54,7 @@
              [addresses]="addresses"
              [confirmOnSelect]="true"
              [showAddressCreateCard]="true"
+             (addressesChanged)="getUserAddresses()"
              (selectedAddress)="onAddressSelected($event)">
         </div>
       </div>

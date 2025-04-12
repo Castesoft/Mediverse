@@ -1,8 +1,6 @@
 using MainService.Models.Entities;
 using MainService.Core.Helpers.Params;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace MainService.Infrastructure.QueryExtensions
 {

@@ -69,11 +69,10 @@ export class CheckoutAddressEntryCardComponent implements OnInit {
     });
   }
 
-  private getUserAddresses(toggleLoading?: boolean) {
+  getUserAddresses(toggleLoading?: boolean) {
     if (toggleLoading) {
       this.isLoading = true;
     }
-
 
     if (!this.accountsService.current()) {
       console.error("User not authenticated");

@@ -394,19 +394,33 @@ public class AccountController(
         };
         user.PaymentMethods.Add(paymentMethod);
 
-        var acceptedPaymentMethods = request.AcceptedPaymentMethods.Split(',').Select(int.Parse).ToList();
-        foreach (var paymentMethodTypeId in acceptedPaymentMethods)
-        {
-            var paymentMethodType = new DoctorPaymentMethodType
-            {
-                DoctorId = user.Id,
-                PaymentMethodTypeId = paymentMethodTypeId
-            };
-            user.DoctorPaymentMethodTypes.Add(paymentMethodType);
-        }
+        var allPaymentMethodTypes = await uow.PaymentMethodTypeRepository.GetAllAsync();
+        user.DoctorPaymentMethodTypes.AddRange(allPaymentMethodTypes.Select(pmt => new DoctorPaymentMethodType(pmt.Id)));
 
+        var selectedPaymentMethodIds = request.AcceptedPaymentMethods
+            .Split(',')
+            .Select(int.Parse)
+            .ToHashSet(); 
+
+        var preferences = allPaymentMethodTypes
+            .Select((pmt, index) => new PaymentMethodPreference
+            {
+                UserId = user.Id,
+                PaymentMethodTypeId = pmt.Id,
+                DisplayOrder = index + 1,
+                IsDefault = pmt.Code == "cash", 
+                IsActive = selectedPaymentMethodIds.Contains(pmt.Id) 
+            }).ToList();
+
+        foreach (var pmt in preferences)
+        {
+            uow.PaymentMethodPreferenceRepository.Add(pmt);
+        }
+        
         if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
+        {
             return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
+        }
 
         var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
         {
@@ -432,8 +446,10 @@ public class AccountController(
         user.EmailVerificationCodeSalt = hmac.Key;
         user.EmailVerificationExpiryTime = DateTime.UtcNow.AddMinutes(30);
 
-        if (!(await userManager.UpdateAsync(user)).Succeeded)
-            return BadRequest("No pudo actualizarse la información del usuario.");
+        if (!await uow.Complete())
+        {
+            return BadRequest("No pudo guardarse la información del usuario y sus preferencias de pago.");
+        }
 
         var clientUrl = clientSettings.Value.Url;
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
@@ -2230,8 +2246,8 @@ public class AccountController(
             {
                 LicenseNumber = request.LicenseNumber,
                 SpecialtyLicense = request.SpecialtyLicense,
-                MedicalLicenseSpecialty = new(specialty),
-                MedicalLicenseDocument = new(new Document
+                MedicalLicenseSpecialty = new MedicalLicenseSpecialty(specialty),
+                MedicalLicenseDocument = new MedicalLicenseDocument(new Document
                 {
                     Url = uploadResult.SecureUrl.AbsoluteUri,
                     PublicId = uploadResult.PublicId,
@@ -2411,7 +2427,7 @@ public class AccountController(
             userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty.Specialty.Id != request.Specialty.Id.Value
         )
         {
-            userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty = new(specialty);
+            userMedicalLicense.MedicalLicense.MedicalLicenseSpecialty = new MedicalLicenseSpecialty(specialty);
         }
 
         if (uow.HasChanges())
@@ -2420,5 +2436,39 @@ public class AccountController(
         }
 
         return await usersService.GenerateAccountDtoAsync(userId);
+    }
+
+    // TODO: Handle cascade delete for user related entities
+    [Authorize]
+    [HttpDelete("delete")]
+    public async Task<ActionResult> DeleteAccountAsync([FromBody] DeleteAccountDto request)
+    {
+        if (string.IsNullOrEmpty(request.Password))
+        {
+            return BadRequest("No se ha proporcionado una contraseña.");
+        }
+
+        var userId = User.GetUserId();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return NotFound("No se ha encontrado al usuario.");
+        }
+
+        var passwordCheck = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        if (!passwordCheck.Succeeded)
+        {
+            return Unauthorized("La contraseña proporcionada es incorrecta.");
+        }
+
+        var result = await userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            return BadRequest("No se pudo eliminar la cuenta. Inténtalo de nuevo más tarde.");
+        }
+
+        Log.Information("User account {UserId} deleted successfully.", userId);
+
+        return Ok();
     }
 }

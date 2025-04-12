@@ -3,7 +3,6 @@ using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Orders;
 using MainService.Core.DTOs.Prescription;
 using MainService.Core.DTOs.User;
-using MainService.Core.Helpers.Resolvers;
 using MainService.Models.Entities;
 
 namespace MainService.Core.Helpers.MappingProfiles;

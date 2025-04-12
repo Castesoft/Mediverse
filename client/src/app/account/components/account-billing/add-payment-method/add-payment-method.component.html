@@ -16,7 +16,6 @@
         [label]="'Nombre en la tarjeta'"
         [type]="'text'"
         [placeholder]="''"
-        [submitted]="submitted"
         [errors]="{
                 required: 'El nombre es requerido.'
             }"
@@ -54,18 +53,20 @@
           type="reset"
           class="btn btn-light me-3"
           (click)="bsModalRef.hide()"
-          [disabled]="submitted"
+          [disabled]="isLoading"
         >
           Cancelar
         </button>
         <button
           type="submit" class="btn btn-primary"
-          [disabled]="submitted"
+          [disabled]="isLoading || !paymentMethodForm.valid"
         >
-          @if (!submitted) {
+          @if (!isLoading) {
             <span class="indicator-label">Guardar</span>
           } @else {
-            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+            <span class="indicator-progress" [style.display]="'block'">
+              <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+            </span>
           }
         </button>
       </div>

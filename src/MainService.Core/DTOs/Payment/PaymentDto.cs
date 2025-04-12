@@ -1,7 +1,6 @@
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.User;
 using MainService.Models.Entities;
-using MainService.Models.Entities.Aggregate;
 using MainService.Models.Enums;
 
 namespace MainService.Core.DTOs.Payment

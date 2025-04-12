@@ -10,7 +10,6 @@ using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using MainService.Models.Entities.Aggregate;
-using MainService.Models.Helpers.Enums;
 using MainService.Infrastructure.QueryExtensions;
 
 namespace MainService.Infrastructure.Data;

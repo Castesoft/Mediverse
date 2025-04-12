@@ -8,7 +8,8 @@ export class SelectOption {
   enabled: boolean = true;
   visible: boolean = true;
   options: Options | null = null;
-
+  isActive?: boolean = true; 
+  
   constructor(init?: Partial<SelectOption>, obj?: any) {
     Object.assign(this, init);
 

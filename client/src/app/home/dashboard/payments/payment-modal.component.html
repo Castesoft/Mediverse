@@ -28,6 +28,7 @@
     paymentMethodSelector
     class="mt-4"
     [paymentMethods]="paymentMethods"
+    (paymentMethodsChanged)="getUserPaymentMethods()"
     (selectedPaymentMethod)="selectPaymentMethod($event)"
   ></div>
 

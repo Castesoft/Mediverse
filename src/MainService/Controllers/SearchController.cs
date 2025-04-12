@@ -33,8 +33,18 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
         Response.AddPaginationHeader(new PaginationHeader(pagedList.CurrentPage, pagedList.PageSize,
             pagedList.TotalCount, pagedList.TotalPages));
 
+        var doctorIds = pagedList.Select(d => d.Id).ToList();
+        var allPreferences = await uow.PaymentMethodPreferenceRepository.FindByConditionAsync(p => doctorIds.Contains(p.UserId));
+        var preferencesLookup = allPreferences.ToLookup(p => p.UserId);
+
         foreach (DoctorSearchResultDto doctor in pagedList)
         {
+            var doctorPreferences = preferencesLookup[doctor.Id].ToDictionary(p => p.PaymentMethodTypeId, p => p.IsActive);
+            foreach (var pmOption in doctor.PaymentMethods)
+            {
+                pmOption.IsActive = doctorPreferences.TryGetValue(pmOption.Id ?? -1, out var isActive) ? isActive : false;
+            }
+
             doctor.AvailableDays = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Now.AddDays(i))
                 .Select((date, index) => new AvailableDayDto
@@ -102,6 +112,14 @@ public class SearchController(IUnitOfWork uow, IUsersService usersService, UserM
         DoctorSearchResultDto? doctor = await uow.SearchRepository.GetDoctorByIdAsync(id);
 
         if (doctor == null) return NotFound($"Doctor con ID {id} no encontrado.");
+
+        // Populate IsActive for PaymentMethods using preferences
+        var preferences = await uow.PaymentMethodPreferenceRepository.FindByConditionAsync(p => p.UserId == doctor.Id);
+        var preferenceLookup = preferences.ToDictionary(p => p.PaymentMethodTypeId, p => p.IsActive);
+        foreach (var pmOption in doctor.PaymentMethods)
+        {
+            pmOption.IsActive = preferenceLookup.TryGetValue(pmOption.Id ?? -1, out var isActive) ? isActive : false; // Default inactive if no preference
+        }
 
         doctor.AvailableDays = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Now.AddDays(i))

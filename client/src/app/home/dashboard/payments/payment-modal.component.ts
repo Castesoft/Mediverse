@@ -63,7 +63,7 @@ export class PaymentModalComponent implements OnInit {
     });
   }
 
-  private getUserPaymentMethods() {
+  getUserPaymentMethods() {
     this.paymentsService.getMethodsForUser(this.data.patientId).subscribe({
       next: (methods) => {
         this.paymentMethods = methods;

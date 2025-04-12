@@ -9,7 +9,6 @@ using MainService.Extensions;
 using MainService.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace MainService.Controllers;
 

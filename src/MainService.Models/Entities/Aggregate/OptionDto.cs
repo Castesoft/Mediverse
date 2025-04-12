@@ -31,7 +31,7 @@ public class OptionDto
     public Options? Options { get; set; }
     public bool Enabled { get; set; } = true;
     public bool Visible { get; set; } = true;
-
+    public bool? IsActive { get; set; }
 }
 
 

@@ -95,7 +95,7 @@
       } -->
     </div>
 
-<!--    <div class="card-body border-top">-->
+    <!--    <div class="card-body border-top">-->
     <!--      @if (accountService.hasRole([ 'Doctor' ])) {-->
     <!--        <div class="row mb-6">-->
     <!--          <label class="col-lg-4 col-form-label fw-semibold fs-6"-->
@@ -159,7 +159,7 @@
 </div>
 
 
-@if (accountService.current() !== null) {
+@if (accountService.current() !== null && accountService.hasRole([ 'Doctor' ])) {
   <div class="card mb-5 mb-xl-10">
     <div class="card-header">
       <div class="card-title">

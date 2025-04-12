@@ -1,10 +1,11 @@
-import { Component, effect, inject, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { Address } from "src/app/_models/addresses/address";
 import {
   AddressDisplayCardComponent
 } from "src/app/addresses/components/address-display-card/address-display-card.component";
-import { BsModalService } from "ngx-bootstrap/modal";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { AddAddressComponent } from "src/app/account/components/account-billing/add-address/add-address.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'div[addressSelector]',
@@ -14,12 +15,14 @@ import { AddAddressComponent } from "src/app/account/components/account-billing/
 })
 export class AddressSelectorComponent {
   private readonly bsModalService: BsModalService = inject(BsModalService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   addresses: InputSignal<Address[]> = input.required();
   confirmOnSelect: InputSignal<boolean> = input(false);
   showAddressCreateCard: InputSignal<boolean> = input(false);
 
   selectedAddress: OutputEmitterRef<Address> = output<Address>();
+  addressesChanged: OutputEmitterRef<void> = output<void>();
 
   private _selectedAddress: Address | null = null;
   pendingAddress: Address | null = null;
@@ -76,9 +79,15 @@ export class AddressSelectorComponent {
    * Opens a modal for creating a new address.
    */
   openAddressCreateModal() {
-    this.bsModalService.show(AddAddressComponent, {
+    const modalRef: BsModalRef<AddAddressComponent> | undefined = this.bsModalService.show(AddAddressComponent, {
       initialState: { title: 'Añadir nueva dirección' },
       class: "modal-dialog-centered"
     });
+
+    if (modalRef?.onHide) {
+      modalRef.onHide.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+        this.addressesChanged.emit();
+      });
+    }
   }
 }
