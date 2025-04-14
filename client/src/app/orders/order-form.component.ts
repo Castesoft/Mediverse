@@ -40,6 +40,7 @@ import {
 } from "src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component";
 import { PaymentNavigationService } from "src/app/payments/payment-navigation.service";
 import { MatDialog } from "@angular/material/dialog";
+import { AccountService } from "src/app/_services/account.service";
 
 @Component({
   selector: "[orderForm]",
@@ -67,6 +68,8 @@ export class OrderFormComponent extends BaseForm<Order, OrderParams, OrderFilter
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly confirmService: ConfirmService = inject(ConfirmService);
   private readonly matDialog: MatDialog = inject(MatDialog);
+
+  readonly accountsService: AccountService = inject(AccountService);
 
   item: ModelSignal<Order | null> = model.required();
   use: ModelSignal<FormUse> = model.required();

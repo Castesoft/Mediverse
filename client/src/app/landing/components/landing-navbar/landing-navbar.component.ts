@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AccountService } from 'src/app/_services/account.service';
@@ -12,14 +12,20 @@ import { LogoIconComponent } from "src/app/_shared/components/logo-icon/logo-ico
   selector: 'app-landing-navbar',
   templateUrl: './landing-navbar.component.html',
   styleUrls: [ '../landing.component.scss' ],
-  imports: [ RouterLink, RouterLinkActive, CommonModule, UserDropdownComponent, BsDropdownModule, CollapseModule, LogoIconComponent ],
   providers: [ BsDropdownDirective ],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    CommonModule,
+    UserDropdownComponent,
+    BsDropdownModule,
+    CollapseModule,
+    LogoIconComponent
+  ],
 })
 export class LandingNavbarComponent {
-  @Input() isLightBackground: boolean = false;
-
+  authNavigation: AuthNavigationService = inject(AuthNavigationService);
   accountService: AccountService = inject(AccountService);
-  authNavigation = inject(AuthNavigationService);
   isCollapsed: boolean = true;
 
   isLoggedIn(): boolean {

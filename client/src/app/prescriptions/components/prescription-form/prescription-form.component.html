@@ -32,13 +32,15 @@
         </div>
       </button>
 
-      <a
-        (click)="service.clickLink(null, key(), FormUse.CREATE, view(), undefined); $event.preventDefault()"
-        [href]="service.dictionary.createRoute"
-        class="btn btn-sm btn-primary d-flex gap-2 align-items-center">
-        <i class="ki-duotone ki-plus fs-2 pe-0"></i>
-        Agregar {{ service.dictionary.singular }}
-      </a>
+      @if (showAddButton()) {
+        <a
+          (click)="service.clickLink(null, key(), FormUse.CREATE, view(), undefined); $event.preventDefault()"
+          [href]="service.dictionary.createRoute"
+          class="btn btn-sm btn-primary d-flex gap-2 align-items-center">
+          <i class="ki-duotone ki-plus fs-2 pe-0"></i>
+          Agregar {{ service.dictionary.singular }}
+        </a>
+      }
     </div>
   </div>
 }

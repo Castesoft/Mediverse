@@ -1,6 +1,4 @@
 <account-child-wrapper>
-
-
   <span class="fw-semibold fs-4 text-gray-600">
     Cita #{{ event.id }} de
   </span>
@@ -25,7 +23,7 @@
                [routerLinkActive]="'active'"
                [queryParams]="{ inferiorTab: 'general' }"
                [queryParamsHandling]="'merge'"
-               (click)="selectedTab = 'general'">
+               (click)="selectedTab.set('general')">
               General
             </a>
           </li>
@@ -35,7 +33,7 @@
                [routerLinkActive]="'active'"
                [queryParams]="{ inferiorTab: 'recetas' }"
                [queryParamsHandling]="'merge'"
-               (click)="selectedTab = 'recetas'">
+               (click)="selectedTab.set('recetas')">
               Recetas
             </a>
           </li>
@@ -45,7 +43,7 @@
                [routerLinkActive]="'active'"
                [queryParams]="{ inferiorTab: 'especialistas' }"
                [queryParamsHandling]="'merge'"
-               (click)="selectedTab = 'especialistas'">
+               (click)="selectedTab.set('especialistas')">
               Especialistas
             </a>
           </li>
@@ -54,7 +52,7 @@
     </div>
 
     <div class="card-body">
-      @switch (selectedTab) {
+      @switch (selectedTab()) {
         @case ('general') {
           <div class="d-flex">
             <div class="symbol symbol-160px">
@@ -87,15 +85,91 @@
               </div>
             </div>
           </div>
+          @if (event.patient.isMedicalRecordComplete) {
+            @if (!consentStatus) {
+              <div class="notice d-flex rounded border border-dashed p-6 align-items-center mt-6"
+                   [ngClass]="'bg-light-warning border-warning'">
+                <i class="ki-duotone fs-2tx me-4"
+                   [ngClass]="'ki-information text-warning'">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+                <div class="d-flex flex-stack flex-grow-1">
+                  <div>
+                    <h4 class="text-gray-900 fw-bold mb-1">
+                      ¡El doctor no puede ver tu historial clínico!
+                    </h4>
+                    <div class="fs-6 text-gray-700 pe-7">
+                      Para que {{ getDoctorTitle() }} {{ event.doctor.firstName }} pueda ver tu historial clínico,
+                      necesitas compartirlo.
+                    </div>
+                  </div>
+                </div>
+                <button class="btn px-6 align-self-center text-nowrap"
+                        [ngClass]="'btn-warning'"
+                        (click)="onShareMedicalHistory()">
+                  Compartir historial clínico
+                </button>
+              </div>
+            }
+          } @else {
+            <div
+              class="notice d-flex bg-light-primary rounded border border-primary border-dashed p-6 align-items-center mt-6">
+              <i class="ki-duotone ki-notepad-edit fs-2tx text-primary me-4">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+              <div class="d-flex flex-stack flex-grow-1">
+                <div>
+                  <h4 class="text-gray-900 fw-bold mb-1">
+                    Completa tu historial clínico
+                  </h4>
+                  <div class="fs-6 text-gray-700 pe-7">
+                    Para poder compartir tu historial clínico con el doctor, primero necesitas llenarlo.
+                  </div>
+                </div>
+              </div>
+              <a routerLink="/cuenta/expediente" class="btn btn-primary px-6 align-self-center text-nowrap">
+                Llenar historial clínico
+              </a>
+            </div>
+          }
+
         }
         @case ('recetas') {
-          <div class="text-center py-15">
-            <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
-              <span class="path1"></span>
-              <span class="path2"></span>
-            </i>
-            <p class="fs-5 text-muted">Aún no existen recetas para esta cita</p>
-          </div>
+          @if (prescriptionsLoading()) {
+            <div class="d-flex justify-content-center py-10">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando recetas...</span>
+              </div>
+            </div>
+          } @else {
+            @if (detailedPrescriptions() && detailedPrescriptions()!.length > 0) {
+              @for (prescription of detailedPrescriptions(); track prescription.id; let i = $index) {
+                <div prescriptionForm
+                     [item]="prescription"
+                     [use]="FormUse.DETAIL"
+                     [view]="'modal'"
+                     [key]="'prescription-' + prescription.id"
+                     [showActions]="true"
+                     [showAddButton]="false"
+                     [fromEventWindow]="false"
+                     [id]="'prescription-form-' + prescription.id">
+                </div>
+              }
+            } @else {
+              <div class="text-center py-15">
+                <i class="ki-duotone ki-user-tick fs-3x text-muted mb-3">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+                <p class="fs-5 text-muted">
+                  No hay recetas asignadas a esta cita.
+                </p>
+              </div>
+            }
+          }
         }
         @case ('especialistas') {
           @if (event.nurses && event.nurses.length > 0) {
@@ -127,29 +201,6 @@
         }
       }
 
-      @if (!consentStatus) {
-        <div
-          class="notice d-flex bg-light-warning rounded border border-warning border-dashed p-6 align-items-center mt-6">
-          <i class="ki-duotone ki-information fs-2tx text-warning me-4">
-            <span class="path1"></span>
-            <span class="path2"></span>
-            <span class="path3"></span>
-          </i>
-          <div class="d-flex flex-stack flex-grow-1">
-            <div>
-              <h4 class="text-gray-900 fw-bold mb-1">
-                ¡El doctor no puede ver tu historial clínico!
-              </h4>
-              <div class="fs-6 text-gray-700 pe-7">
-                Para que el doctor pueda ver tu historial clínico, necesitas compartirlo.
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-warning px-6 align-self-center nowrap" (click)="onShareMedicalHistory()">
-            Compartir historial clínico
-          </button>
-        </div>
-      }
 
       @if (event.paymentStatus !== 'Succeeded') {
         <div class="notice d-flex bg-light-danger rounded border-danger border border-dashed p-6 mt-6">

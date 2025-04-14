@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import Event from 'src/app/_models/events/event';
@@ -26,7 +28,10 @@ import {
 } from 'src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NurseDisplayCardComponent } from 'src/app/nurses/components/nurse-display-card.component';
-
+import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.service';
+import {
+  PrescriptionFormComponent
+} from 'src/app/prescriptions/components/prescription-form/prescription-form.component';
 import { ClinicalHistoryConsentService } from 'src/app/_services/clinical-history-consent.service';
 import { ClinicalHistoryVerification } from 'src/app/_models/clinicalHistoryVerification';
 import {
@@ -35,10 +40,12 @@ import {
 } from 'src/app/clinical-history/clinical-history-consent-modal.component';
 import { Patient } from "src/app/_models/patients/patient";
 import { Address } from "src/app/_models/addresses/address";
+import { Prescription } from 'src/app/_models/prescriptions/prescription';
 import {
   AccountChildWrapperComponent
 } from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 import { PaymentSummaryComponent } from "src/app/payment-checkout/components/payment-summary/payment-summary.component";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: 'account-event-detail-route',
@@ -56,6 +63,7 @@ import { PaymentSummaryComponent } from "src/app/payment-checkout/components/pay
     NurseDisplayCardComponent,
     AccountChildWrapperComponent,
     PaymentSummaryComponent,
+    PrescriptionFormComponent,
   ]
 })
 export class AccountEventDetailComponent extends BaseRouteDetail<Event> implements OnInit {
@@ -63,12 +71,15 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
   private readonly paymentNavigationService: PaymentNavigationService = inject(PaymentNavigationService);
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
+  private readonly prescriptionsService: PrescriptionsService = inject(PrescriptionsService);
   private readonly toastr: ToastrService = inject(ToastrService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly titleService: Title = inject(Title);
 
   readonly PhotoShape: typeof PhotoShape = PhotoShape;
   readonly PhotoSize: typeof PhotoSize = PhotoSize;
+  readonly FormUse: typeof FormUse = FormUse;
 
   event!: Event;
   subtotal: number = 0;
@@ -77,7 +88,11 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
 
   selectedPaymentMethod: PaymentMethod | null = null;
   selectedAddress: any = null;
-  selectedTab: string = 'general';
+  selectedTab: WritableSignal<string> = signal('general');
+
+
+  detailedPrescriptions: WritableSignal<Prescription[] | null> = signal(null);
+  prescriptionsLoading: WritableSignal<boolean> = signal(false);
 
   isSubmittingPayment: boolean = false;
   showPaymentSection: boolean = false;
@@ -87,6 +102,16 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     super('events', FormUse.DETAIL);
     this.key.set(`${this.router.url}#account-event-detail`);
     this.initializeRouteData();
+
+
+    effect(() => {
+      const currentEvent: Event = this.event;
+      const currentTab: string = this.selectedTab();
+
+      if (currentEvent && currentTab === 'recetas' && this.detailedPrescriptions() === null && !this.prescriptionsLoading()) {
+        this.loadDetailedPrescriptions();
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -104,6 +129,7 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     this.subscribeToCheckoutData();
     this.subscribeToQueryParams();
     this.fetchConsentStatus();
+    this.setTitle();
   }
 
   private initializeRouteData(): void {
@@ -118,7 +144,7 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params: ParamMap) => {
       const inferiorTab: string | null = params.get('inferiorTab');
       if (inferiorTab) {
-        this.selectedTab = inferiorTab;
+        this.selectedTab.set(inferiorTab);
       }
     });
   }
@@ -144,6 +170,54 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
 
     this.consentService.getConsentStatus(userId, patientId).subscribe((status: ClinicalHistoryVerification) => {
       this.consentStatus = status.hasAccess;
+    });
+  }
+
+  private setTitle(): void {
+    const dateParsed = new Date(this.event.dateFrom as any);
+    let title: string = "DocHub | Cita";
+
+    if (dateParsed) {
+      title += ` del ${new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium' }).format(dateParsed)}`;
+    }
+
+    if (this.event.doctor && this.event.doctor.firstName && this.event.doctor.lastName) {
+      title += ` con ${this.getDoctorArticle()} ${this.getDoctorTitle()} ${this.event.doctor.firstName} ${this.event.doctor.lastName}`;
+    }
+
+    this.titleService.setTitle(title);
+  }
+
+
+  private loadDetailedPrescriptions(): void {
+    if (!this.event) {
+      console.warn('loadDetailedPrescriptions called before event was loaded.');
+      return;
+    }
+    const prescriptionIds = this.event.prescriptions?.map(p => p.id).filter((id): id is number => id !== null && id !== undefined);
+
+    if (!prescriptionIds || prescriptionIds.length === 0) {
+      this.detailedPrescriptions.set([]);
+      return;
+    }
+
+    this.prescriptionsLoading.set(true);
+    this.detailedPrescriptions.set(null);
+
+    const prescriptionObservables: Observable<Prescription | null>[] = prescriptionIds.map(id =>
+      this.prescriptionsService.getById(id).pipe(
+        catchError(error => {
+          console.error(`Error fetching prescription with ID ${id}:`, error);
+          this.toastr.error(`Error al cargar la receta #${id}.`);
+          return of(null);
+        })
+      )
+    );
+
+    forkJoin(prescriptionObservables).pipe(finalize(() => this.prescriptionsLoading.set(false))).subscribe((results: (Prescription | null)[]) => {
+
+      const successfullyLoadedPrescriptions = results.filter((p): p is Prescription => p !== null);
+      this.detailedPrescriptions.set(successfullyLoadedPrescriptions);
     });
   }
 
@@ -241,7 +315,43 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
     });
   }
 
+  getDoctorArticle(): string {
+    return this.event.doctor.sex as any === 'Femenino' ? 'la' : 'el';
+  }
+
   getDoctorTitle(): string {
     return this.event.doctor.sex as any === 'Femenino' ? 'Dra.' : 'Dr.';
+  }
+
+  async downloadPrescription(prescription: Prescription): Promise<void> {
+    const elementId = `prescription-form-${prescription.id}`;
+    const element = document.getElementById(elementId);
+    if (!element) {
+      console.error(`Element with ID ${elementId} not found for download.`);
+      this.toastr.error('No se pudo encontrar el elemento de la receta para descargar.');
+      return;
+    }
+    try {
+      await this.prescriptionsService.export(prescription, element, 'download');
+    } catch (error) {
+      console.error('Error downloading prescription:', error);
+      this.toastr.error('Error al descargar la receta.');
+    }
+  }
+
+  async printPrescription(prescription: Prescription): Promise<void> {
+    const elementId = `prescription-form-${prescription.id}`;
+    const element = document.getElementById(elementId);
+    if (!element) {
+      console.error(`Element with ID ${elementId} not found for printing.`);
+      this.toastr.error('No se pudo encontrar el elemento de la receta para imprimir.');
+      return;
+    }
+    try {
+      await this.prescriptionsService.export(prescription, element, 'print');
+    } catch (error) {
+      console.error('Error printing prescription:', error);
+      this.toastr.error('Error al imprimir la receta.');
+    }
   }
 }

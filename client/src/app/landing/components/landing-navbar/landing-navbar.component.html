@@ -18,6 +18,9 @@
         </a>
       </div>
       @if (isLoggedIn()) {
+        <a [routerLink]="['/search']" class="btn btn-pill btn-primary me-5">
+          Encontrar a un Doctor
+        </a>
         <div class="position-relative">
           <div userDropdown dropdown triggers="hover" placement="bottom right" class="pt-2"></div>
         </div>

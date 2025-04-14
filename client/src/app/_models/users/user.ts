@@ -55,6 +55,7 @@ export class User extends Entity {
   doctorPayments: Payment[] = [];
   medicalRecord: MedicalRecord = new MedicalRecord();
   hasPatientInformationAccess: boolean = false;
+  isMedicalRecordComplete: boolean | null = null;
 
   select: SelectOption | null = null;
 

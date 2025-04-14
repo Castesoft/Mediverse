@@ -252,11 +252,14 @@
            [title]="'Dirección de Entrega'"
            [address]="item()?.deliveryAddress || null"
       ></div>
-      <div orderAddressCard
-           class="flex-row-fluid"
-           [title]="'Dirección de Recogida'"
-           [address]="item()?.pickupAddress || null"
-      ></div>
+
+      @if (accountsService.hasRole([ 'Admin' ])) {
+        <div orderAddressCard
+             class="flex-row-fluid"
+             [title]="'Dirección de Recogida'"
+             [address]="item()?.pickupAddress || null"
+        ></div>
+      }
     </div>
   } @else {
     <div class="d-flex flex-grow-1 justify-content-end">

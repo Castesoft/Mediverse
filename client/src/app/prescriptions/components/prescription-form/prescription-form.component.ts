@@ -87,8 +87,10 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
 
   fromWrapper: WritableSignal<boolean> = signal<boolean>(false);
   fromEventWindow: InputSignal<boolean> = input<boolean>(false);
-  showActions: InputSignal<boolean> = input<boolean>(true);
   referenceId: InputSignal<string | undefined> = input();
+
+  showAddButton: InputSignal<boolean> = input<boolean>(true);
+  showActions: InputSignal<boolean> = input<boolean>(true);
 
   constructor() {
     super(PrescriptionsService, PrescriptionForm);
