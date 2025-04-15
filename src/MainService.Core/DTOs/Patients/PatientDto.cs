@@ -14,4 +14,5 @@ public class PatientDto : BaseUserDto
     public List<UserMedicalInsuranceCompanyDto> MedicalInsuranceCompanies { get; set; } = [];
     public MedicalRecordDto? MedicalRecord { get; set; }
     public bool HasAccount { get; set; }
+    public bool IsMedicalRecordComplete { get; set; }
 }

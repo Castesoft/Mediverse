@@ -204,7 +204,11 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.DoctorEvents, opt => opt.MapFrom(src => src.PatientEvents.Select(x => x.Event)))
             .ForMember(dest => dest.EventsCount, opt => opt.MapFrom(src => src.PatientEvents.Count))
             .ForMember(dest => dest.PrescriptionsCount, opt => opt.MapFrom(src => src.PatientPrescriptions.Count))
-            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count));
+            .ForMember(dest => dest.OrdersCount, opt => opt.MapFrom(src => src.PatientOrders.Count))
+            .ForMember(dest => dest.IsMedicalRecordComplete, opt => opt.MapFrom(src =>
+                src.UserMedicalRecord != null &&
+                src.UserMedicalRecord.MedicalRecord != null &&
+                src.UserMedicalRecord.MedicalRecord.BirthDate.HasValue)); // TODO: Check if the medical record is complete
 
         CreateMap<AppUser, BaseUserDto>()
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom<PhotoUrlResolver>())
