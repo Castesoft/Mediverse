@@ -14,12 +14,19 @@ namespace MainService.Infrastructure.Data;
 
 public class OrderRepository(DataContext context, IMapper mapper) : IOrderRepository
 {
-    public void Add(Order item) => context.Orders.Add(item);
+    public void Add(Order item)
+    {
+        context.Orders.Add(item);
+    }
 
-    public void Delete(Order item) => context.Orders.Remove(item);
+    public void Delete(Order item)
+    {
+        context.Orders.Remove(item);
+    }
 
-    public async Task<Order?> GetByIdAsync(int id) =>
-        await context.Orders
+    public async Task<Order?> GetByIdAsync(int id)
+    {
+        return await context.Orders
             .Include(x => x.OrderDeliveryStatus).ThenInclude(x => x.DeliveryStatus)
             .Include(x => x.OrderOrderStatus).ThenInclude(x => x.OrderStatus)
             .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
@@ -28,11 +35,16 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.OrderDeliveryAddress).ThenInclude(x => x.DeliveryAddress)
             .Include(x => x.OrderPickupAddress).ThenInclude(x => x.PickupAddress)
             .Where(x => x.Id == id).FirstOrDefaultAsync();
+    }
 
-    public async Task<bool> ExistsByIdAsync(int id) => await context.Orders.AnyAsync(x => x.Id == id);
+    public async Task<bool> ExistsByIdAsync(int id)
+    {
+        return await context.Orders.AnyAsync(x => x.Id == id);
+    }
 
-    public async Task<OrderDto?> GetDtoByIdAsync(int id) =>
-        await context.Orders
+    public async Task<OrderDto?> GetDtoByIdAsync(int id)
+    {
+        return await context.Orders
             .Include(x => x.OrderOrderStatus.OrderStatus)
             .Include(x => x.OrderDeliveryStatus.DeliveryStatus)
             .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
@@ -45,9 +57,22 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .AsNoTracking()
             .ProjectTo<OrderDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync(x => x.Id == id);
+    }
 
-    public async Task<Order?> GetByIdAsNoTrackingAsync(int id) =>
-        await context.Orders
+    public async Task<Order?> GetOrderWithItemsAndProductsAsync(int orderId)
+    {
+        return await context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+            .ThenInclude(p => p.ProductPhotos)
+            .ThenInclude(pp => pp.Photo)
+            .AsNoTracking()
+            .SingleOrDefaultAsync(o => o.Id == orderId);
+    }
+
+    public async Task<Order?> GetByIdAsNoTrackingAsync(int id)
+    {
+        return await context.Orders
             .Include(x => x.OrderOrderStatus.OrderStatus)
             .Include(x => x.OrderDeliveryStatus.DeliveryStatus)
             .Include(x => x.DoctorOrder).ThenInclude(x => x.Doctor)
@@ -57,6 +82,7 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .Include(x => x.PatientOrder).ThenInclude(x => x.Patient)
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
+    }
 
     public async Task<List<OrderHistoryDto>> GetHistoryByIdAsync(int orderId)
     {
@@ -69,8 +95,10 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
             .ToListAsync();
     }
 
-    public async Task<List<Order>> GetAllAsync() =>
-        await context.Orders.ToListAsync();
+    public async Task<List<Order>> GetAllAsync()
+    {
+        return await context.Orders.ToListAsync();
+    }
 
     public Task<List<OrderDto>> GetAllDtoAsync(OrderParams param)
     {
@@ -80,15 +108,14 @@ public class OrderRepository(DataContext context, IMapper mapper) : IOrderReposi
     public async Task<PagedList<OrderDto>> GetPagedListAsync(OrderParams param)
     {
         var query = context.Orders.AsQueryable();
-        
-        // Apply the query extensions
+
         query = query.ApplyFullIncludes()
-                     .ApplyAccessControl(param)
-                     .ApplyFiltering(param)
-                     .ApplySorting(param);
+            .ApplyAccessControl(param)
+            .ApplyFiltering(param)
+            .ApplySorting(param);
 
         return await PagedList<OrderDto>.CreateAsync(
-            query.AsNoTracking().ProjectTo<OrderDto>(mapper.ConfigurationProvider), 
+            query.AsNoTracking().ProjectTo<OrderDto>(mapper.ConfigurationProvider),
             param.PageNumber, param.PageSize);
     }
 }

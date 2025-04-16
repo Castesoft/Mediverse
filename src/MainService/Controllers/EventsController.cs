@@ -408,8 +408,8 @@ public class EventsController(
                 doctorFromRepo,
                 patientFromRepo,
                 serviceNoTracking,
-                request.DateFrom.Value,
-                request.DateTo.Value
+                eventToCreate.DateFrom.Value,
+                eventToCreate.DateTo.Value
             );
 
             if (!marketingSuccess)
@@ -600,8 +600,8 @@ public class EventsController(
             doctor,
             patient,
             serviceEntity,
-            request.DateFrom,
-            request.DateTo
+            newEvent.DateFrom.Value,
+            newEvent.DateTo.Value
         );
 
         if (!marketingSuccess)

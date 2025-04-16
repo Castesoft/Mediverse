@@ -59,7 +59,7 @@ namespace MainService.Core.Helpers.MappingProfiles
                 .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom<ProductPhotoUrlResolver>());
 
             CreateMap<Product, PrescriptionItemDto>()
-                .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))

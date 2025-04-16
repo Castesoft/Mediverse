@@ -16,4 +16,5 @@ public interface IOrderRepository
     Task<List<Order>> GetAllAsync();
     Task<List<OrderDto>> GetAllDtoAsync(OrderParams param);
     Task<PagedList<OrderDto>> GetPagedListAsync(OrderParams param);
+    Task<Order?> GetOrderWithItemsAndProductsAsync(int orderId);
 }
