@@ -10,6 +10,7 @@ import { SpecialtiesService } from "src/app/specialties/specialties.config";
 import { PaymentsService } from "src/app/payments/payments.config";
 import { ControlCheckComponent } from "src/app/_forms/control-check.component";
 import { AddressFormComponent } from "src/app/addresses/address-form/address-form.component";
+import { FormUse } from "src/app/_models/forms/formTypes";
 
 @Component({
   selector: 'app-account-details',
@@ -74,4 +75,6 @@ export class AccountDetailsComponent implements OnInit {
     const methods: string[] = paymentMethods.split(',');
     return methods.includes('1') || methods.includes('2');
   }
+
+  protected readonly FormUse = FormUse;
 }

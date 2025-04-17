@@ -61,6 +61,7 @@ export class InputControlComponent implements ControlValueAccessor, OnInit {
   @Input() role: string = 'presentation';
   @Input() spellcheck: boolean = false;
   @Input() autocomplete: string = 'disabled';
+  @Input() accept: string = '';
 
   writeValue(obj: any): void { }
 

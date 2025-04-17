@@ -61,6 +61,12 @@ public class DoctorRegisterDto
     [Required(ErrorMessage = "La especialidad es obligatoria.")]
     public required string SpecialtyId { get; set; }
 
+    [Required(ErrorMessage = "La cédula profesional es obligatoria.")]
+    public required string LicenseNumber { get; set; }
+
+    [Required(ErrorMessage = "La cédula de especialidad es obligatoria.")]
+    public required string SpecialtyLicense { get; set; }
+
     [Required(ErrorMessage = "Las formas de pago aceptadas son obligatorias.")]
     public required string AcceptedPaymentMethods { get; set; }
 

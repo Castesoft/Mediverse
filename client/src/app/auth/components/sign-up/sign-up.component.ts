@@ -135,6 +135,8 @@ export class SignUpComponent implements OnInit {
       ExteriorNumber: [ '', [ Validators.required ] ],
       InteriorNumber: [ '' ],
       SpecialtyId: [ '', [ Validators.required ] ],
+      SpecialtyLicense: [ '', [ Validators.required ] ],
+      LicenseNumber: [ '', [ Validators.required ] ],
       certification: [ '', [ Validators.required ] ],
       file: [ '' ],
       AcceptedPaymentMethods: [ '', [ Validators.required ] ],

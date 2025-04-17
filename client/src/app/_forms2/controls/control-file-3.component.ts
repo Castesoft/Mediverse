@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, model, computed, effect, HostBinding } from "@angular/core";
+import { Component, inject, model, computed, effect, HostBinding, input } from "@angular/core"; 
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Forms2HelperModule } from "src/app/_forms2/helper/forms-2-helper.module";
 import { FormControl2 } from "src/app/_models/forms/formControl2";
@@ -20,6 +20,8 @@ export class ControlFile3Component {
   root = computed<FormGroup2<any>>(() => {
     return this.control().root as FormGroup2<any>;
   });
+
+  accept = input<string>('');
 
   file: File | null = null;
 

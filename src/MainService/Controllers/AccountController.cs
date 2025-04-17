@@ -1,4 +1,4 @@
-﻿﻿using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using CloudinaryDotNet;
@@ -62,7 +62,7 @@ public class AccountController(
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
         if (!result.Succeeded) return Unauthorized("Correo o contraseña incorrectos.");
- 
+
         if (user.TwoFactorEnabled)
         {
             return Ok(new { RequiresTwoFactor = true });
@@ -248,33 +248,33 @@ public class AccountController(
 
         return await usersService.GenerateAccountDtoAsync(user.Id);
     }
-    
+
     [HttpGet("connect-onboarding-link/{id:int}")]
     public async Task<IActionResult> GetConnectOnboardingLinkAsync(int id)
     {
         var user = await uow.UserRepository.GetByIdAsync(id);
         if (user == null)
             return NotFound($"El usuario con id {id} no existe.");
-    
+
         var userStripeAccountId = user.StripeConnectAccountId;
         if (string.IsNullOrEmpty(userStripeAccountId))
         {
             var (account, accountLinkUrl) = await stripeService.CreateExpressAccountAsync(user);
             if (account == null || string.IsNullOrEmpty(account.Id))
                 return BadRequest("Doctor does not have a Stripe Connect account and creation failed.");
-    
+
             user.StripeConnectAccountId = account.Id;
             uow.UserRepository.Update(user);
             await uow.Complete();
             userStripeAccountId = account.Id;
-    
+
             if (!string.IsNullOrEmpty(accountLinkUrl))
             {
                 user.StripeOnboardingUrl = accountLinkUrl;
                 await uow.Complete();
             }
         }
-    
+
         var url = await stripeService.GetOnboardingLinkAsync(userStripeAccountId);
         return Ok(new { url });
     }
@@ -310,6 +310,15 @@ public class AccountController(
     public async Task<ActionResult<AccountDto?>> RegisterDoctorAsync([FromForm] IFormFile file,
         [FromForm] DoctorRegisterDto request)
     {
+        if (file == null || Path.GetExtension(file.FileName)?.ToLower() != ".pdf")
+            return BadRequest("Solo se permiten archivos con extensión .pdf.");
+        
+        if (file.Length == 0)
+            return BadRequest("El archivo está vacío.");
+                
+        if (file.ContentType != "application/pdf")
+            return BadRequest("El archivo debe ser de tipo PDF.");
+        
         using var hmac = new HMACSHA512();
 
         if (await userManager.FindByEmailAsync(request.Email) != null)
@@ -347,8 +356,7 @@ public class AccountController(
             IsBilling = request.SameAddress
         };
 
-        var (latitude, longitude) =
-            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mainAddress.Address));
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mainAddress.Address));
         mainAddress.Address.Latitude = latitude;
         mainAddress.Address.Longitude = longitude;
 
@@ -395,12 +403,13 @@ public class AccountController(
         user.PaymentMethods.Add(paymentMethod);
 
         var allPaymentMethodTypes = await uow.PaymentMethodTypeRepository.GetAllAsync();
-        user.DoctorPaymentMethodTypes.AddRange(allPaymentMethodTypes.Select(pmt => new DoctorPaymentMethodType(pmt.Id)));
+        user.DoctorPaymentMethodTypes.AddRange(
+            allPaymentMethodTypes.Select(pmt => new DoctorPaymentMethodType(pmt.Id)));
 
         var selectedPaymentMethodIds = request.AcceptedPaymentMethods
             .Split(',')
             .Select(int.Parse)
-            .ToHashSet(); 
+            .ToHashSet();
 
         var preferences = allPaymentMethodTypes
             .Select((pmt, index) => new PaymentMethodPreference
@@ -408,15 +417,15 @@ public class AccountController(
                 UserId = user.Id,
                 PaymentMethodTypeId = pmt.Id,
                 DisplayOrder = index + 1,
-                IsDefault = pmt.Code == "cash", 
-                IsActive = selectedPaymentMethodIds.Contains(pmt.Id) 
+                IsDefault = pmt.Code == "cash",
+                IsActive = selectedPaymentMethodIds.Contains(pmt.Id)
             }).ToList();
 
         foreach (var pmt in preferences)
         {
             uow.PaymentMethodPreferenceRepository.Add(pmt);
         }
-        
+
         if (await uow.SpecialtyRepository.GetByIdAsync(int.Parse(request.SpecialtyId)) == null)
         {
             return BadRequest($"La especialidad con id {request.SpecialtyId} no existe.");
@@ -425,12 +434,62 @@ public class AccountController(
         var uploadResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
         {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
-            Folder = "Mediverse/DoctorMedicalLicenses",
+            Folder = "Mediverse/CedulasProfesionales"
         });
-        if (uploadResult.Error != null) return BadRequest(uploadResult.Error.Message);
 
-        user.UserMedicalLicenses.Add(new UserMedicalLicense(int.Parse(request.SpecialtyId), uploadResult.PublicId,
-            uploadResult.SecureUrl.AbsoluteUri) { IsMain = true });
+        if (uploadResult.Error != null)
+        {
+            return BadRequest(uploadResult.Error.Message);
+        }
+
+        var uploadThumbnailResult = await cloudinaryService.UploadAsync(file, new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, file.OpenReadStream()),
+            Folder = "Mediverse/CedulasProfesionales/Thumbnails",
+            Format = "jpg",
+            Transformation = new Transformation()
+                .Page(1)
+                .Height(300).Width(400)
+                .Crop("fill")
+                .Gravity("north")
+        });
+
+        if (uploadThumbnailResult.Error != null)
+        {
+            return BadRequest(uploadThumbnailResult.Error.Message);
+        }
+
+        var document = new Document
+        {
+            Name = file.FileName,
+            Size = (int)file.Length,
+            Url = uploadResult.SecureUrl.AbsoluteUri,
+            PublicId = uploadResult.PublicId,
+            ThumbnailUrl = uploadThumbnailResult.SecureUrl.AbsoluteUri,
+            ThumbnailPublicId = uploadThumbnailResult.PublicId
+        };
+
+        var medicalLicenseDocument = new MedicalLicenseDocument
+        {
+            Document = document
+        };
+
+        var medicalLicense = new MedicalLicense
+        {
+            LicenseNumber = request.LicenseNumber,
+            SpecialtyLicense = request.SpecialtyLicense,
+            MedicalLicenseSpecialty = new MedicalLicenseSpecialty(int.Parse(request.SpecialtyId)),
+            MedicalLicenseDocument = medicalLicenseDocument
+        };
+
+        var userMedicalLicense = new UserMedicalLicense
+        {
+            User = user,
+            MedicalLicense = medicalLicense,
+            IsMain = true
+        };
+
+        user.UserMedicalLicenses.Add(userMedicalLicense);
 
         var email = user.Email;
 
@@ -1035,7 +1094,7 @@ public class AccountController(
 
         return Ok();
     }
- 
+
     [Authorize]
     [HttpGet("resend-phoneNumber-verification")]
     public async Task<ActionResult> SendPhoneNumberVerificationCodeForAccount()
@@ -1165,17 +1224,17 @@ public class AccountController(
 
         return mapper.Map<UserPaymentMethodDto>(user.PaymentMethods.Last());
     }
-    
+
     [HttpGet("payment-method-types/{userId:int}")]
     public async Task<ActionResult<List<PaymentMethodTypeDto>>> GetPaymentMethodTypes(int userId)
     {
         var requestingUserId = User.GetUserId();
-        
+
         if (requestingUserId != userId)
         {
             return Forbid("No tienes permisos para acceder a los métodos de pago de este usuario.");
         }
-        
+
         var user = await uow.UserRepository.GetByIdAsync(userId);
         if (user == null)
         {
@@ -2163,7 +2222,7 @@ public class AccountController(
 
         return Ok();
     }
-    
+
     [Authorize]
     [HttpGet("medical-licenses")]
     public async Task<ActionResult<List<UserMedicalLicenseDto>>?> GetMedicalLicensesAsync()

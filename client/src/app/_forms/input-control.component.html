@@ -16,6 +16,7 @@
        [attr.autofocus]="autofocus() ? 'autofocus' : null"
        [readonly]="isReadonly"
        class="form-control mb-3 mb-lg-0"
+       [accept]="accept"
        [class.form-control-solid]="solid()"
        [ngClass]="{
           'is-invalid': (control.touched || control.dirty || submitted()) && control.invalid,

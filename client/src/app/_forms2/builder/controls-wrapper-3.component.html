@@ -53,7 +53,7 @@
       @case ('material') {
         @switch (control().type) {
           @case ('file') {
-            <div controlFile3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>
+            <div controlFile3 [(control)]="control" [(fromWrapper)]="fromWrapper" [accept]="accept()"></div>
           }
           @case ('files') {
             <div controlFiles3 [(control)]="control" [(fromWrapper)]="fromWrapper"></div>

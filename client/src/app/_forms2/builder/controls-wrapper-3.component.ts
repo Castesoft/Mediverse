@@ -14,6 +14,7 @@ import { TemplateFormsModule } from 'src/app/_forms2/controls/template/template-
 })
 export class ControlsWrapper3Component {
   control = model.required<FormControl2<any>>();
+  accept = input<string>(''); // Added accept input signal
 
   pair = signal<FormGroup2<SelectOptionPair>>(new FormGroup2<SelectOptionPair>(SelectOptionPair, new SelectOptionPair(), {} as any));
   hasPair = signal<boolean>(false);

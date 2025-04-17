@@ -7,7 +7,33 @@
 <form class="form w-100" novalidate="novalidate" [formGroup]="form">
   <div addressForm [formGroup]="form" [solid]="true"></div>
 
-  <div class="row mb-5">
+
+  <div class="row mb-5 g-5">
+
+    <div class="col-xl-6">
+      <div
+        class="fv-row fv-plugins-icon-container"
+        inputControl
+        [solid]="true"
+        formControlName="LicenseNumber"
+        [label]="'Número de Licencia'"
+        [type]="'text'"
+        [placeholder]="''"
+        [errors]="{ required: 'El número de licencia es requerido.' }"></div>
+    </div>
+
+    <div class="col-xl-6">
+      <div
+        class="fv-row fv-plugins-icon-container"
+        inputControl
+        [solid]="true"
+        formControlName="SpecialtyLicense"
+        [label]="'Cédula de Especialidad'"
+        [type]="'text'"
+        [placeholder]="''"
+        [errors]="{ required: 'La cédula de especialidad es requerida.' }"></div>
+    </div>
+
     <div class="col-xl-6">
       <div
         class="fv-row fv-plugins-icon-container"
@@ -32,6 +58,7 @@
         [label]="'Cédula/Certificación'"
         [type]="'file'"
         [placeholder]="''"
+        accept=".pdf"
         [errors]="{
             required: 'La cédula o certificación es requerida.'
         }"

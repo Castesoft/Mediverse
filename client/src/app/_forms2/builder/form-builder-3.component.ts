@@ -16,6 +16,7 @@ import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 export class FormBuilder3Component {
   controls = model.required<FormControl2<any>[]>();
   cols = input<ControlRows>("responsive");
+  accept = input<string>(''); // Added accept input signal
 
   gap = input<any>();
 

@@ -4,7 +4,7 @@
        controlsRow3>
     @for (control of controls(); let idx = $index; track idx) {
       @if (control && !control.hidden) {
-        <div controlsWrapper3 [(control)]="controls()[idx]"></div>
+        <div controlsWrapper3 [(control)]="controls()[idx]" [accept]="accept()"></div> <!-- Added accept binding -->
       }
     }
     <ng-content></ng-content>
