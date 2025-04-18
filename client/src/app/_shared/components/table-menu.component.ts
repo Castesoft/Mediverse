@@ -1,4 +1,4 @@
-import { Component, input, InputSignal, output, OutputEmitterRef } from "@angular/core";
+import { Component, inject, input, InputSignal, output, OutputEmitterRef } from "@angular/core";
 import { CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
 import { Entity } from "src/app/_models/base/entity";
 import { EntityParams } from "src/app/_models/base/entityParams";
@@ -6,6 +6,9 @@ import { FormGroup2 } from "src/app/_models/forms/formGroup2";
 import { ServiceHelper } from "src/app/_utils/serviceHelper/serviceHelper";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
 import { FormUse } from "src/app/_models/forms/formTypes";
+import { MatDialog } from "@angular/material/dialog";
+import { PaymentDetailModalComponent } from "src/app/payments/payments.config";
+import { Payment } from "src/app/_models/payments/payment";
 
 @Component({
   selector: "div[tableMenu]",
@@ -23,6 +26,8 @@ export class TableMenuComponent<T extends Entity, P extends EntityParams<P>, F e
   downloadClicked: OutputEmitterRef<void> = output();
   printClicked: OutputEmitterRef<void> = output();
 
+  protected readonly dialog: MatDialog = inject(MatDialog);
+
   onPrintClicked(event: Event) {
     event.preventDefault();
     this.printClicked.emit();
@@ -31,5 +36,24 @@ export class TableMenuComponent<T extends Entity, P extends EntityParams<P>, F e
   onDownloadClicked(event: Event) {
     event.preventDefault();
     this.downloadClicked.emit();
+  }
+
+  openPaymentDetailModal(payment: Payment): void {
+    this.dialog.open(PaymentDetailModalComponent, {
+      data: {
+        item: payment,
+        use: FormUse.DETAIL,
+        view: 'modal',
+        key: this.key(),
+        title: 'Detalle de Pago'
+      },
+      disableClose: true,
+      hasBackdrop: false,
+      panelClass: [ "window" ]
+    });
+  }
+
+  isPaymentsService(): boolean {
+    return this.service().constructor.name === 'PaymentsService';
   }
 }

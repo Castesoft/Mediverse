@@ -702,7 +702,7 @@ public class EventsController(
         if (!authorizationResult.Succeeded)
         {
             Log.Warning("User {UserId} failed authorization check to cancel Event {EventId}.", userId, id);
-            return Forbid("No tienes permiso para cancelar esta cita.");
+            return Forbid();
         }
 
 

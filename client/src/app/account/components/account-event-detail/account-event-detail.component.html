@@ -9,10 +9,11 @@
         <div class="fs-2 fw-bolder">
           {{ event.dateFrom | date: 'dd/MM/yyyy' }}
         </div>
-        <div class="ms-4">
+        <div class="ms-4 d-flex align-items-center gap-2">
           <span class="fw-regular badge badge-lg badge-light-info">
             {{ event.dateFrom | date: 'HH:mm a' }} - {{ event.dateTo | date: 'HH:mm a' }}
           </span>
+          <payment-status-badge [paymentStatus]="event.paymentStatus"></payment-status-badge>
         </div>
       </div>
       <div class="card-toolbar m-0">
@@ -44,12 +45,32 @@
                [queryParams]="{ inferiorTab: 'especialistas' }"
                [queryParamsHandling]="'merge'"
                (click)="selectedTab.set('especialistas')">
-              Especialistas
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+               Especialistas
+             </a>
+           </li>
+           <li class="nav-item" role="presentation">
+             <a class="nav-link fs-5 fw-semibold me-3"
+                [routerLink]="[]"
+                [routerLinkActive]="'active'"
+                [queryParams]="{ inferiorTab: 'pagos' }"
+                [queryParamsHandling]="'merge'"
+                (click)="selectedTab.set('pagos')">
+               Pagos
+             </a>
+           </li>
+           <li class="nav-item" role="presentation">
+             <a class="nav-link fs-5 fw-semibold"
+                [routerLink]="[]"
+                [routerLinkActive]="'active'"
+                [queryParams]="{ inferiorTab: 'configuracion' }"
+                [queryParamsHandling]="'merge'"
+                (click)="selectedTab.set('configuracion')">
+               Configuración
+             </a>
+           </li>
+         </ul>
+       </div>
+     </div>
 
     <div class="card-body">
       @switch (selectedTab()) {
@@ -199,6 +220,48 @@
             </div>
           }
         }
+        @case ('pagos') {
+          <div paymentsCatalog
+               class="mb-5 mb-xl-10"
+               [title]="'Pagos del Evento'"
+               [item]="null"
+               [view]="'page'"
+               [key]="eventPaymentKey"
+               [isCompact]="true"
+               [embedded]="true"
+               [useCard]="false"
+               [mode]="'view'"
+               [params]="eventPaymentParams"
+          ></div>
+        }
+        @case ('configuracion') {
+          @if (event.paymentStatus !== 'Canceled') {
+            <div class="notice d-flex rounded border border-dashed p-6 align-items-center mt-6"
+                 [ngClass]="'bg-light-danger border-danger'">
+              <i class="ki-duotone fs-2tx me-4"
+                 [ngClass]="'ki-cross-square text-danger'">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+              <div class="d-flex flex-stack flex-grow-1">
+                <div>
+                  <h4 class="text-gray-900 fw-bold mb-1">
+                    Cancelar Cita
+                  </h4>
+                  <div class="fs-6 text-gray-700 pe-7">
+                    Si cancelas tu cita, esta acción no se podrá deshacer. Asegúrate de que deseas continuar.
+                  </div>
+                </div>
+              </div>
+              <button class="btn px-6 align-self-center text-nowrap"
+                      [ngClass]="'btn-danger'"
+                      (click)="openCancelConfirmation()">
+                Confirmar Cancelación
+              </button>
+            </div>
+          }
+        }
       }
 
 
@@ -227,7 +290,6 @@
       }
     </div>
   </div>
-
 
 
   @if (showPaymentSection) {

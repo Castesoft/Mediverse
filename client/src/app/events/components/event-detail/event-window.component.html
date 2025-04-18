@@ -341,7 +341,10 @@
             </div>
           }
           @case ("pagos") {
-            @if (item()?.paymentStatus === PaymentStatus.Succeeded || item()?.paymentStatus === PaymentStatus.AwaitingPayment) {
+            <div class="mb-3">
+              <payment-status-badge [paymentStatus]="item()?.paymentStatus ?? null"></payment-status-badge>
+            </div>
+            @if (item()?.paymentStatus === 'Succeeded' || item()?.paymentStatus === 'AwaitingPayment') {
               <div paymentsCatalog
                    [item]="paymentItem"
                    [view]="paymentView"
@@ -363,8 +366,7 @@
                   <span class="path6"></span>
                 </i>
                 <div class="d-flex flex-column text-muted ms-2">
-                  <span class="badge badge-light-secondary">
-                    Pago de la cita Pendiente</span>
+                  <payment-status-badge [paymentStatus]="item()?.paymentStatus ?? null"></payment-status-badge>
                 </div>
 
                 @if (!accountsService.hasRole([ 'Doctor' ])) {

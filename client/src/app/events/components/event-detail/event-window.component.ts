@@ -82,6 +82,7 @@ import { ClinicalHistoryConsentService } from "src/app/_services/clinical-histor
 import { ToastrService } from "ngx-toastr";
 import { PaymentsCatalogComponent } from "src/app/payments/payments-catalog.component";
 import { EventsService } from "src/app/events/events.service";
+import { PaymentStatusBadgeComponent } from "src/app/_shared/components/payment-status-badge/payment-status-badge.component";
 import { PaymentStatus } from "src/app/_models/payments/paymentConstants";
 
 @Component({
@@ -106,7 +107,8 @@ import { PaymentStatus } from "src/app/_models/payments/paymentConstants";
     PrescriptionsCatalogComponent,
     NurseDisplayCardComponent,
     PaymentsCatalogComponent,
-    MatMenuModule
+    MatMenuModule,
+    PaymentStatusBadgeComponent
   ]
 })
 export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFiltersForm, EventsService> implements OnInit, DetailInputSignals<Event> {
@@ -127,8 +129,6 @@ export class EventWindowComponent extends BaseDetail<Event, EventParams, EventFi
   readonly nurses: NursesService = inject(NursesService);
   readonly icons: IconsService = inject(IconsService);
   readonly matDialog: MatDialog = inject(MatDialog);
-
-  protected readonly PaymentStatus: typeof PaymentStatus = PaymentStatus;
 
   isConfirmingCash: WritableSignal<boolean> = signal(false);
 

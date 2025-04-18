@@ -19,7 +19,7 @@ import { TableWrapperComponent } from "src/app/_shared/template/components/table
 import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
 import { OrderParams } from "src/app/_models/orders/orderParams";
 import { AccountService } from "src/app/_services/account.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { Order } from "src/app/_models/orders/order";
 import { Account } from "src/app/_models/account/account";
 import { SiteSection } from "src/app/_models/sections/sectionTypes";
@@ -56,7 +56,8 @@ import { MatTooltip } from "@angular/material/tooltip";
     AddressTableCellComponent,
     OrdersDeliveryStatusBadgeComponent,
     PaymentMethodCellComponent,
-    MatTooltip
+    MatTooltip,
+    RouterLink
   ],
 })
 export class AccountOrdersComponent implements OnInit {

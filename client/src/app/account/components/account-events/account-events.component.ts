@@ -30,6 +30,7 @@ import {
 } from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 import { EventsService } from "src/app/events/events.service";
 import { AsyncPipe } from "@angular/common";
+import { EventsTableMenuComponent } from "src/app/events/components/events-table/events-table-menu.component";
 
 @Component({
   selector: 'app-account-events',
@@ -53,7 +54,8 @@ import { AsyncPipe } from "@angular/common";
     ControlDateComponent,
     CatalogLayoutSkeletonComponent,
     AccountChildWrapperComponent,
-    AsyncPipe
+    AsyncPipe,
+    EventsTableMenuComponent
   ],
 })
 export class AccountEventsComponent implements OnInit {

@@ -2,36 +2,43 @@
   <a
     cdkMenuItem
     class="dropdown-item px-3"
-    [href]="service.dictionary.catalogRoute + '/' + item().id"
+    [href]="service().dictionary.catalogRoute + '/' + item().id"
     (click)="
-          service.clickLink(item(), key(), 'detail', 'page');
+          service().clickLink(item(), key(), FormUse.DETAIL, 'page');
           $event.preventDefault()
         "
   >
-    Ver {{ service.dictionary.singular }}
+    Ver {{ service().dictionary.singular }}
   </a>
   <a
     cdkMenuItem
     class="dropdown-item px-3"
-    [href]="service.dictionary.catalogRoute + '/' + item().id"
+    [href]="service().dictionary.catalogRoute + '/' + item().id"
     (click)="
           $event.preventDefault();
-          service.clickLink(item(), key(), 'detail', 'modal')
+          service().clickLink(item(), key(), FormUse.DETAIL, 'modal')
         "
   >
-    Abrir {{ service.dictionary.singular }} en pantalla modal
+    Abrir {{ service().dictionary.singular }} en pantalla modal
   </a>
   <a
     cdkMenuItem
     class="dropdown-item px-3"
-    [routerLink]="[service.dictionary.catalogRoute, item().id, 'editar']"
+    [routerLink]="[service().dictionary.catalogRoute, item().id, 'editar']"
   >
     Editar
   </a>
   <button
     cdkMenuItem
+    class="dropdown-item px-3"
+    (click)="openCancelConfirmation()"
+  >
+    Cancelar
+  </button>
+  <button
+    cdkMenuItem
     class="dropdown-item px-3 text-danger"
-    (click)="service.delete$(item())"
+    (click)="service().delete$(item())"
   >
     Eliminar
   </button>

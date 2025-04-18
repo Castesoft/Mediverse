@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, filter, take } from 'rxjs/operators';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
 import BaseRouteDetail from 'src/app/_models/base/components/extensions/routes/baseRouteDetail';
 import Event from 'src/app/_models/events/event';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import { ProfilePictureComponent } from 'src/app/users/components/profile-picture/profile-picture.component';
 import { Navigation, ParamMap, RouterLink, RouterLinkActive } from '@angular/router';
+import { createId } from '@paralleldrive/cuid2';
 
+import { EventsService } from 'src/app/events/events.service';
+import { PaymentsCatalogComponent } from 'src/app/payments/payments-catalog.component';
+import { PaymentParams } from 'src/app/_models/payments/paymentParams';
 import { PaymentCheckoutService } from 'src/app/payment-checkout/payment-checkout.service';
 import { StripeGatewayService } from 'src/app/_services/stripe-gateway.service';
 import { PaymentNavigationService } from 'src/app/payments/payment-navigation.service';
@@ -27,6 +31,10 @@ import {
   RedirectWarningModalComponent
 } from 'src/app/_shared/components/redirect-warning-modal/redirect-warning-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  ConfirmationDialogData,
+  ConfirmationModalComponent
+} from 'src/app/_shared/components/confirmation-modal/confirmation-modal.component';
 import { NurseDisplayCardComponent } from 'src/app/nurses/components/nurse-display-card.component';
 import { PrescriptionsService } from 'src/app/prescriptions/prescriptions.service';
 import {
@@ -45,6 +53,7 @@ import {
   AccountChildWrapperComponent
 } from "src/app/account/components/account-child-wrapper/account-child-wrapper.component";
 import { PaymentSummaryComponent } from "src/app/payment-checkout/components/payment-summary/payment-summary.component";
+import { PaymentStatusBadgeComponent } from "src/app/_shared/components/payment-status-badge/payment-status-badge.component";
 import { Title } from "@angular/platform-browser";
 
 @Component({
@@ -64,6 +73,8 @@ import { Title } from "@angular/platform-browser";
     AccountChildWrapperComponent,
     PaymentSummaryComponent,
     PrescriptionFormComponent,
+    PaymentStatusBadgeComponent,
+    PaymentsCatalogComponent
   ]
 })
 export class AccountEventDetailComponent extends BaseRouteDetail<Event> implements OnInit {
@@ -72,6 +83,7 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
   private readonly paymentCheckoutService: PaymentCheckoutService = inject(PaymentCheckoutService);
   private readonly paymentGatewayService: StripeGatewayService = inject(StripeGatewayService);
   private readonly prescriptionsService: PrescriptionsService = inject(PrescriptionsService);
+  private readonly eventsService: EventsService = inject(EventsService);
   private readonly toastr: ToastrService = inject(ToastrService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly dialog: MatDialog = inject(MatDialog);
@@ -97,6 +109,9 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
   isSubmittingPayment: boolean = false;
   showPaymentSection: boolean = false;
   consentStatus: boolean = false;
+
+  eventPaymentKey: string = '';
+  eventPaymentParams!: PaymentParams;
 
   constructor() {
     super('events', FormUse.DETAIL);
@@ -125,12 +140,14 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
       this.id.set(this.event.id);
     }
 
-    this.subtotal = this.event.service.price || 0;
-    this.subscribeToCheckoutData();
-    this.subscribeToQueryParams();
-    this.fetchConsentStatus();
-    this.setTitle();
-  }
+     this.subtotal = this.event.service.price || 0;
+     this.eventPaymentKey = createId();
+     this.eventPaymentParams = new PaymentParams(this.eventPaymentKey, { eventId: this.event.id });
+     this.subscribeToCheckoutData();
+     this.subscribeToQueryParams();
+     this.fetchConsentStatus();
+     this.setTitle();
+   }
 
   private initializeRouteData(): void {
     const navigation: Navigation | null = this.router.getCurrentNavigation();
@@ -353,5 +370,47 @@ export class AccountEventDetailComponent extends BaseRouteDetail<Event> implemen
       console.error('Error printing prescription:', error);
       this.toastr.error('Error al imprimir la receta.');
     }
+  }
+
+  openCancelConfirmation(): void {
+    const event = this.event;
+    if (!event || !event.id) {
+      console.error('Cannot cancel event without a valid event object:', event);
+      this.toastr.warning('No se puede cancelar la cita en este momento.');
+      return;
+    }
+
+    const eventId = event.id;
+
+    const dialogData: ConfirmationDialogData = {
+      title: 'Confirmar Cancelación',
+      message: `¿Estás seguro de que deseas cancelar la cita #${eventId}? Esta acción no se puede deshacer.`,
+      confirmButtonText: 'Sí, Cancelar',
+      confirmButtonColor: 'warn'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+      data: dialogData,
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().pipe(
+      filter(result => result === true),
+      take(1)
+    ).subscribe(() => {
+      this.eventsService.cancelEvent(eventId)
+        .pipe(take(1))
+        .subscribe({
+          next: (updatedEvent) => {
+            console.log('Event cancelled successfully:', updatedEvent);
+            this.event = updatedEvent; // Update the local event object
+            this.toastr.success(`Cita #${eventId} cancelada exitosamente.`);
+          },
+          error: (err) => {
+            console.error('Error cancelling event:', err);
+            this.toastr.error('Error al cancelar la cita. Intente de nuevo.');
+          }
+        });
+    });
   }
 }
