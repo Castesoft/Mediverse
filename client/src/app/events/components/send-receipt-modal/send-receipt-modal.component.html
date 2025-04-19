@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content class="mat-typography">
+  <p>Por favor, introduce la dirección de correo electrónico a la que deseas enviar el comprobante.</p>
+  <div inputControl [formControl]="emailControl" [label]="'Correo Electrónico'" [type]="'email'"
+       [autofocus]="true"></div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="{ success: false }">Cancelar</button>
+  <button mat-button color="primary" [mat-dialog-close]="{ success: true, email: emailControl.value }"
+          [disabled]="!isFormValid()">Enviar
+  </button>
+</mat-dialog-actions>

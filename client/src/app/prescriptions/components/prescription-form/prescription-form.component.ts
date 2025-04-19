@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   effect,
+  EventEmitter,
   HostBinding,
   inject,
   input,
@@ -10,6 +11,7 @@ import {
   model,
   ModelSignal,
   OnInit,
+  Output,
   signal,
   ViewChild,
   WritableSignal,
@@ -88,6 +90,9 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
   fromWrapper: WritableSignal<boolean> = signal<boolean>(false);
   fromEventWindow: InputSignal<boolean> = input<boolean>(false);
   referenceId: InputSignal<string | undefined> = input();
+  shouldRedirectAfterSubmit: InputSignal<boolean> = input<boolean>(true);
+
+  @Output() prescriptionCreated = new EventEmitter<Prescription>();
 
   showAddButton: InputSignal<boolean> = input<boolean>(true);
   showActions: InputSignal<boolean> = input<boolean>(true);
@@ -172,12 +177,18 @@ export class PrescriptionFormComponent extends BaseForm<Prescription, Prescripti
   }
 
   handleSubmit(): void {
-    const submitOptions: SubmitOptions = {
+    let submitOptions: SubmitOptions = {
       value: this.form.payload,
-      redirectUrl: this.router.url.split('/').slice(0, -1).join('/'),
       useIdAfterResponseForRedirect: true,
       toastMessage: '¡Receta creada exitosamente!',
     };
+
+    if (this.shouldRedirectAfterSubmit()) {
+      submitOptions = {
+        ...submitOptions,
+        redirectUrl: this.router.url.split('/').slice(0, -1).join('/'),
+      };
+    }
 
     this.onSubmit(this.view, this.use, submitOptions)
   }

@@ -27,6 +27,8 @@ import {
   EventPaymentModalResult
 } from "src/app/events/components/event-payment-modal/eventPaymentModalData";
 import { PaymentStatus } from "src/app/_models/payments/paymentConstants";
+import { SendReceiptModalComponent } from "../send-receipt-modal/send-receipt-modal.component";
+import { SendReceiptModalData, SendReceiptModalResult } from "../send-receipt-modal/sendReceiptModalData";
 
 @Component({
   selector: 'event-detail-modal',
@@ -107,6 +109,45 @@ export class EventDetailModalComponent implements OnInit {
         console.log('Payment modal closed without success.');
       } else {
         console.log('Payment modal closed without returning a result (likely cancelled).');
+      }
+    });
+  }
+
+  sendReceipt(): void {
+    if (!this.event || !this.event.id) {
+      console.error('Attempted to send receipt without a valid event object:', this.event);
+      return;
+    }
+
+    const eventId: number = this.event.id;
+    const patientEmail = this.event.patient?.email || '';
+
+    const dialogData: SendReceiptModalData = {
+      title: `Enviar Comprobante Cita #${eventId}`,
+      patientEmail: patientEmail
+    };
+
+    const dialogRef = this.dialog.open(SendReceiptModalComponent, {
+      data: dialogData,
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe((result: SendReceiptModalResult | undefined) => {
+      console.log('Send Receipt modal closed with result:', result);
+      if (result?.success && result.email) {
+        console.log('Sending receipt to:', result.email);
+        this.eventsService.sendEventReceipt(eventId, result.email).subscribe({
+          next: () => {
+            console.log('Receipt sent successfully');
+
+          },
+          error: (err: any) => {
+            console.error('Error sending receipt:', err);
+
+          }
+        });
+      } else {
+        console.log('Receipt sending cancelled or no email provided.');
       }
     });
   }

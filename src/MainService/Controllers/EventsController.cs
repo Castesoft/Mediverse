@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net.Mail;
 using AutoMapper;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -764,24 +765,146 @@ public class EventsController(
         return Ok(updatedDto);
     }
 
-    private async Task<bool> ProcessEventMarketingAsync(Event? eventItem, AppUser? doctor, AppUser? patient, dynamic serviceEntity, DateTime dateFrom, DateTime dateTo, bool isCancellation = false)
+    [HttpPost("{eventId:int}/send-receipt")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> SendEventReceiptEmail(int eventId, [FromBody] SendReceiptRequestDto request)
     {
-        if (eventItem == null) {
+        var doctorId = User.GetUserId();
+
+        var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
+
+        if (eventItem == null)
+        {
+            return NotFound($"Evento con ID {eventId} no encontrado.");
+        }
+
+        if (eventItem.DoctorEvent?.DoctorId != doctorId)
+        {
+            return Unauthorized();
+        }
+
+        if (eventItem.PaymentStatus != PaymentStatus.Succeeded &&
+            eventItem.PaymentStatus != PaymentStatus.PartiallyPaid)
+        {
+            return BadRequest(
+                "El comprobante solo puede enviarse para eventos cuyo pago se haya completado exitosamente o parcialmente.");
+        }
+
+        var patient = eventItem.PatientEvent?.Patient;
+        if (patient == null)
+        {
+            return BadRequest("No se encontraron los detalles del paciente para este evento.");
+        }
+
+        var doctor = eventItem.DoctorEvent?.Doctor;
+        if (doctor == null)
+        {
+            return BadRequest("No se encontraron los detalles del doctor para este evento.");
+        }
+
+        var service = eventItem.EventService?.Service;
+        if (service == null)
+        {
+            return BadRequest("No se encontraron los detalles del servicio para este evento.");
+        }
+
+        var clinic = eventItem.EventClinic?.Clinic;
+
+        Payment? payment = null;
+        if (eventItem.PaymentStatus == PaymentStatus.PartiallyPaid)
+        {
+            payment = eventItem.Payments
+                .Where(p => p.PaymentStatus == PaymentStatus.Succeeded &&
+                            p.PaymentProcessingMode == PaymentProcessingMode.ManualConfirmation &&
+                            p.MarkedPaidByUserId == doctorId)
+                .OrderByDescending(p => p.Date)
+                .FirstOrDefault();
+        }
+        else if (eventItem.PaymentStatus == PaymentStatus.Succeeded)
+        {
+            payment = eventItem.Payments
+                .Where(p => p.PaymentStatus == PaymentStatus.Succeeded)
+                .OrderByDescending(p => p.Date)
+                .FirstOrDefault();
+        }
+
+        if (payment == null)
+        {
+            return BadRequest("No se pudieron encontrar los detalles del pago para el comprobante de este evento.");
+        }
+
+        var paymentMethodName = payment.ManualPaymentDetail?.PaymentMethodType?.Name ?? "Desconocido";
+
+        var patientFullName = $"{patient.FirstName} {patient.LastName}".Trim();
+        var doctorFullName = $"{doctor.FirstName} {doctor.LastName}".Trim();
+        var clinicName = clinic?.Name ?? "Clínica";
+
+        var subject = $"Comprobante de Pago - Cita #{eventId} - {service.Name}";
+
+        try
+        {
+            var htmlBody = emailService.CreateEventReceiptEmail(
+                patientName: patientFullName,
+                doctorName: doctorFullName,
+                eventDate: eventItem.DateFrom ?? DateTime.UtcNow,
+                serviceName: service.Name,
+                amountPaid: payment.Amount,
+                paymentMethodName: paymentMethodName,
+                paymentDate: payment.Date,
+                referenceNumber: payment.ManualPaymentDetail?.ReferenceNumber,
+                notes: payment.ManualPaymentDetail?.Notes,
+                eventId: eventItem.Id,
+                clinicName: clinicName
+            );
+
+            await emailService.SendMail(request.Email, subject, htmlBody);
+
+            eventItem.IsReceiptSent = true;
+            uow.EventRepository.Update(eventItem);
+
+            if (!await uow.Complete())
+            {
+                return BadRequest("Error al enviar el comprobante por correo electrónico.");
+            }
+
+            return Ok();
+        }
+        catch (SmtpException smtpEx)
+        {
+            Log.Error(smtpEx, "SMTP Error sending receipt email for Event ID {EventId} to {Email}", eventId,
+                request.Email);
+            return BadRequest("Error al enviar el comprobante por correo electrónico. Verifique la configuración SMTP.");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error sending receipt email for Event ID {EventId} to {Email}", eventId, request.Email);
+            return BadRequest("Ocurrió un error inesperado al intentar enviar el comprobante por correo electrónico.");
+        }
+    }
+
+    private async Task<bool> ProcessEventMarketingAsync(Event? eventItem, AppUser? doctor, AppUser? patient,
+        dynamic serviceEntity, DateTime dateFrom, DateTime dateTo, bool isCancellation = false)
+    {
+        if (eventItem == null)
+        {
             Log.Error("Event is null in ProcessEventMarketingAsync for Event {EventId}", eventItem?.Id);
             return false;
         }
 
-        if (doctor == null) {
+        if (doctor == null)
+        {
             Log.Error("Doctor is null in ProcessEventMarketingAsync for Event {EventId}", eventItem?.Id);
             return false;
         }
 
-        if (patient == null) {
+        if (patient == null)
+        {
             Log.Error("Patient is null in ProcessEventMarketingAsync for Event {EventId}", eventItem?.Id);
             return false;
         }
 
-        if (serviceEntity == null) {
+        if (serviceEntity == null)
+        {
             Log.Error("ServiceEntity is null in ProcessEventMarketingAsync for Event {EventId}", eventItem?.Id);
             return false;
         }
@@ -801,7 +924,9 @@ public class EventsController(
             if (isCancellation)
             {
                 const string cancelEmailSubject = "DocHub | Cancelación de cita";
-                var cancelHtmlMessage = emailService.CreateAppointmentCancellationEmail(doctorName, formattedDate, appointmentTime, serviceName);
+                var cancelHtmlMessage =
+                    emailService.CreateAppointmentCancellationEmail(doctorName, formattedDate, appointmentTime,
+                        serviceName);
                 var patientEmail = patient.Email;
                 if (!string.IsNullOrEmpty(patientEmail))
                 {

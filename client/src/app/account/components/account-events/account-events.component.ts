@@ -9,7 +9,7 @@ import { TableBodyComponent } from "src/app/_shared/template/components/tables/t
 import Event from "src/app/_models/events/event";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { TablePagerComponent } from "src/app/_shared/template/components/tables/table-pager.component";
-import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
+import { CdkContextMenuTrigger } from "@angular/cdk/menu";
 import { TableMenuCellComponent } from "src/app/_shared/template/components/tables/table-menu-cell.component";
 import { TimePeriodCellComponent } from "src/app/_shared/template/components/tables/cells/time-period-cell.component";
 import { UserTableCellComponent } from "src/app/users/components/user-table-cell.component";
@@ -42,8 +42,6 @@ import { EventsTableMenuComponent } from "src/app/events/components/events-table
     TableBodyComponent,
     TablePagerComponent,
     CdkContextMenuTrigger,
-    CdkMenu,
-    CdkMenuItem,
     TableMenuCellComponent,
     TimePeriodCellComponent,
     UserTableCellComponent,

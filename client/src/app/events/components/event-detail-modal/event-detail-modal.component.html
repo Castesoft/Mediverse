@@ -135,6 +135,11 @@
                 )</span>
             }
           </button>
+        } @else if (event.paymentStatus === PaymentStatus.Succeeded || event.paymentStatus === PaymentStatus.PartiallyPaid) {
+          <button class="btn btn-secondary btn-sm" (click)="sendReceipt()">
+            <fa-icon [icon]="iconsService.faEnvelope" class="fs-6 me-1"></fa-icon>
+            Enviar Comprobante
+          </button>
         } @else {
           <div></div>
         }

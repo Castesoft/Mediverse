@@ -19,7 +19,11 @@ namespace MainService.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PaymentsController(IUnitOfWork uow, IMapper mapper, IStripeService stripeService, IEmailService emailService) : BaseApiController
+    public class PaymentsController(
+        IUnitOfWork uow,
+        IMapper mapper,
+        IStripeService stripeService,
+        IEmailService emailService) : BaseApiController
     {
         private const int CommissionInCents = 5 * 100;
 
@@ -57,17 +61,15 @@ namespace MainService.Controllers
 
             return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
         }
-        
+
         [HttpPost("event/{eventId:int}/send-receipt")]
         [Authorize(Roles = "Doctor")]
         public async Task<IActionResult> SendEventReceiptEmail(int eventId, [FromBody] SendReceiptRequestDto request)
         {
             var doctorId = User.GetUserId();
 
-            // 1. Fetch Event with necessary related data
             var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
 
-            // 2. Validations
             if (eventItem == null)
             {
                 return NotFound($"Evento con ID {eventId} no encontrado.");
@@ -78,15 +80,15 @@ namespace MainService.Controllers
                 return Unauthorized("No está autorizado para enviar un comprobante para este evento.");
             }
 
-            if (eventItem.PaymentStatus != PaymentStatus.Succeeded)
+            if (eventItem.PaymentStatus != PaymentStatus.Succeeded && eventItem.PaymentStatus != PaymentStatus.PartiallyPaid)
             {
-                return BadRequest("El comprobante solo puede enviarse para eventos cuyo pago se haya completado exitosamente.");
+                return BadRequest("El comprobante solo puede enviarse para eventos cuyo pago se haya completado exitosamente o parcialmente.");
             }
 
             var patient = eventItem.PatientEvent?.Patient;
             if (patient == null)
             {
-                 return BadRequest("No se encontraron los detalles del paciente para este evento.");
+                return BadRequest("No se encontraron los detalles del paciente para este evento.");
             }
 
             var doctor = eventItem.DoctorEvent?.Doctor;
@@ -103,15 +105,23 @@ namespace MainService.Controllers
 
             var clinic = eventItem.EventClinic?.Clinic;
 
-             // 3. Find the relevant Payment record
-            var payment = eventItem.Payments
-                .FirstOrDefault(p => p.PaymentStatus == PaymentStatus.Succeeded &&
-                                     p.PaymentProcessingMode == PaymentProcessingMode.ManualConfirmation &&
-                                     p.MarkedPaidByUserId == doctorId); 
 
-            if (payment == null)
+            Payment? payment = null;
+            if (eventItem.PaymentStatus == PaymentStatus.PartiallyPaid)
             {
-                 payment = eventItem.Payments.FirstOrDefault(p => p.PaymentStatus == PaymentStatus.Succeeded);
+                payment = eventItem.Payments
+                    .Where(p => p.PaymentStatus == PaymentStatus.Succeeded &&
+                                p.PaymentProcessingMode == PaymentProcessingMode.ManualConfirmation &&
+                                p.MarkedPaidByUserId == doctorId)
+                    .OrderByDescending(p => p.Date)
+                    .FirstOrDefault();
+            }
+            else if (eventItem.PaymentStatus == PaymentStatus.Succeeded)
+            {
+                payment = eventItem.Payments
+                    .Where(p => p.PaymentStatus == PaymentStatus.Succeeded)
+                    .OrderByDescending(p => p.Date)
+                    .FirstOrDefault();
             }
 
             if (payment == null)
@@ -121,21 +131,21 @@ namespace MainService.Controllers
 
             var paymentMethodName = payment.ManualPaymentDetail?.PaymentMethodType?.Name ?? "Desconocido";
 
-            // 4. Prepare Email Content
-             var patientFullName = $"{patient.FirstName} {patient.LastName}".Trim();
-             var doctorFullName = $"{doctor.FirstName} {doctor.LastName}".Trim();
-             var clinicName = clinic?.Name ?? "Clínica"; 
 
-             var subject = $"Comprobante de Pago - Cita #{eventId} - {service.Name}";
+            var patientFullName = $"{patient.FirstName} {patient.LastName}".Trim();
+            var doctorFullName = $"{doctor.FirstName} {doctor.LastName}".Trim();
+            var clinicName = clinic?.Name ?? "Clínica";
+
+            var subject = $"Comprobante de Pago - Cita #{eventId} - {service.Name}";
 
             try
             {
-                 var htmlBody = emailService.CreateEventReceiptEmail(
+                var htmlBody = emailService.CreateEventReceiptEmail(
                     patientName: patientFullName,
                     doctorName: doctorFullName,
                     eventDate: eventItem.DateFrom ?? DateTime.UtcNow,
                     serviceName: service.Name,
-                    amountPaid: payment.Amount, 
+                    amountPaid: payment.Amount,
                     paymentMethodName: paymentMethodName,
                     paymentDate: payment.Date,
                     referenceNumber: payment.ManualPaymentDetail?.ReferenceNumber,
@@ -144,11 +154,11 @@ namespace MainService.Controllers
                     clinicName: clinicName
                 );
 
-                // 5. Send Email
+
                 await emailService.SendMail(request.Email, subject, htmlBody);
 
-                // 6. Update Event to mark receipt as sent
-                eventItem.IsReceiptSent = true; 
+
+                eventItem.IsReceiptSent = true;
                 uow.EventRepository.Update(eventItem);
 
 
@@ -161,8 +171,11 @@ namespace MainService.Controllers
             }
             catch (SmtpException smtpEx)
             {
-                 Log.Error(smtpEx, "SMTP Error sending receipt email for Event ID {EventId} to {Email}", eventId, request.Email);
-                 return Problem("Hubo un problema al enviar el correo electrónico debido a un inconveniente con la red o el servidor de correo.", statusCode: StatusCodes.Status503ServiceUnavailable);
+                Log.Error(smtpEx, "SMTP Error sending receipt email for Event ID {EventId} to {Email}", eventId,
+                    request.Email);
+                return Problem(
+                    "Hubo un problema al enviar el correo electrónico debido a un inconveniente con la red o el servidor de correo.",
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
             }
             catch (Exception ex)
             {
@@ -173,26 +186,31 @@ namespace MainService.Controllers
 
         [HttpPut("confirm-payment/event/{eventId:int}")]
         [Authorize(Roles = "Doctor")]
-        public async Task<ActionResult<EventDto>> ConfirmManualPaymentForEvent(int eventId, [FromQuery] PaymentConfirmationParams @params)
+        public async Task<ActionResult<EventDto>> ConfirmManualPaymentForEvent(int eventId,
+            [FromQuery] PaymentConfirmationParams @params)
         {
             var confirmingUserId = User.GetUserId();
 
             // 1. Validate Payment Method Type
-            var paymentMethodType = await uow.PaymentMethodTypeRepository.GetByIdAsync(@params.SelectedPaymentMethodTypeId);
+            var paymentMethodType =
+                await uow.PaymentMethodTypeRepository.GetByIdAsync(@params.SelectedPaymentMethodTypeId);
             if (paymentMethodType == null)
             {
                 return BadRequest($"ID de Tipo de Método de Pago inválido: {@params.SelectedPaymentMethodTypeId}.");
             }
 
             // 2. Check if Doctor accepts this payment type
-            var doctorAcceptsMethod = await uow.UserRepository.UserAcceptsPaymentMethodTypeByIdAsync(confirmingUserId, @params.SelectedPaymentMethodTypeId);
+            var doctorAcceptsMethod =
+                await uow.UserRepository.UserAcceptsPaymentMethodTypeByIdAsync(confirmingUserId,
+                    @params.SelectedPaymentMethodTypeId);
             if (!doctorAcceptsMethod)
             {
-                return BadRequest($"No has configurado tu cuenta para aceptar pagos del tipo '{paymentMethodType.Name}'.");
+                return BadRequest(
+                    $"No has configurado tu cuenta para aceptar pagos del tipo '{paymentMethodType.Name}'.");
             }
 
             // 3. Get and Validate Event
-            var eventItem = await uow.EventRepository.GetByIdAsync(eventId); 
+            var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
             if (eventItem == null)
             {
                 return NotFound($"Evento con ID {eventId} no encontrado.");
@@ -205,10 +223,14 @@ namespace MainService.Controllers
             }
 
             // 5. Check Event Payment Status - Allow confirmation if AwaitingPayment OR PartiallyPaid
-            if (eventItem.PaymentStatus != PaymentStatus.AwaitingPayment && eventItem.PaymentStatus != PaymentStatus.PartiallyPaid)
+            if (eventItem.PaymentStatus != PaymentStatus.AwaitingPayment &&
+                eventItem.PaymentStatus != PaymentStatus.PartiallyPaid)
             {
-                Log.Warning("Attempted to confirm payment for event {EventId} with status {Status}, expected AwaitingPayment or PartiallyPaid.", eventId, eventItem.PaymentStatus);
-                return BadRequest($"El evento no está pendiente de pago total o parcial (Actual: {eventItem.PaymentStatus}).");
+                Log.Warning(
+                    "Attempted to confirm payment for event {EventId} with status {Status}, expected AwaitingPayment or PartiallyPaid.",
+                    eventId, eventItem.PaymentStatus);
+                return BadRequest(
+                    $"El evento no está pendiente de pago total o parcial (Actual: {eventItem.PaymentStatus}).");
             }
 
 
@@ -252,20 +274,20 @@ namespace MainService.Controllers
                 Amount = paymentAmount,
                 Currency = "mxn",
                 Date = now,
-                PaymentStatus = PaymentStatus.Succeeded, 
+                PaymentStatus = PaymentStatus.Succeeded,
                 EventId = eventId,
                 MarkedPaidByUserId = confirmingUserId,
                 PaymentProcessingMode = PaymentProcessingMode.ManualConfirmation,
-                IsPartialPayment = isPartialPayment, 
-                FullAmount = originalFullAmount, 
-                RemainingAmount = currentAmountDue - paymentAmount 
+                IsPartialPayment = isPartialPayment,
+                FullAmount = originalFullAmount,
+                RemainingAmount = currentAmountDue - paymentAmount
             };
             uow.PaymentRepository.Add(manualPayment);
 
             // 8. Create ManualPaymentDetail Entity
             var paymentDetail = new ManualPaymentDetail
             {
-                Payment = manualPayment, 
+                Payment = manualPayment,
                 PaymentMethodTypeId = @params.SelectedPaymentMethodTypeId,
                 ReferenceNumber = @params.ReferenceNumber,
                 Notes = @params.Notes
@@ -274,7 +296,7 @@ namespace MainService.Controllers
 
             // 9. Update Event Status and Amounts
             eventItem.AmountPaid = (eventItem.AmountPaid ?? 0) + paymentAmount;
-            eventItem.AmountDue = originalFullAmount - eventItem.AmountPaid.Value; 
+            eventItem.AmountDue = originalFullAmount - eventItem.AmountPaid.Value;
 
             // Determine the final status of the event
             if (eventItem.AmountDue <= 0)
@@ -294,7 +316,8 @@ namespace MainService.Controllers
             if (!await uow.Complete())
             {
                 Log.Error("Failed to save manual payment confirmation for Event ID {EventId}", eventId);
-                return BadRequest("Error al confirmar el pago y actualizar los registros. Por favor, inténtalo de nuevo.");
+                return BadRequest(
+                    "Error al confirmar el pago y actualizar los registros. Por favor, inténtalo de nuevo.");
             }
 
             // 11. Return Updated Event DTO
@@ -313,40 +336,44 @@ namespace MainService.Controllers
         {
             return await uow.PaymentMethodTypeRepository.GetAllDtosAsync();
         }
-        
+
         [HttpGet("method-preferences/{userId:int}")]
         public async Task<ActionResult<List<PaymentMethodPreferenceDto>>> GetPaymentMethodPreferences(int userId)
         {
             if (userId != User.GetUserId())
                 return Unauthorized("You are not authorized to access this user's payment method preferences.");
-                
+
             var preferences = await uow.PaymentMethodPreferenceRepository.GetByUserIdAsync(userId);
             return Ok(preferences);
         }
-        
+
         [HttpPost("method-preferences")]
-        public async Task<ActionResult<PaymentMethodPreferenceDto>> CreatePaymentMethodPreference([FromBody] PaymentMethodPreferenceCreateDto dto)
+        public async Task<ActionResult<PaymentMethodPreferenceDto>> CreatePaymentMethodPreference(
+            [FromBody] PaymentMethodPreferenceCreateDto dto)
         {
             if (dto.UserId != User.GetUserId())
                 return Unauthorized("You are not authorized to create preferences for this user.");
-                
+
             var paymentMethodType = await uow.PaymentMethodTypeRepository.GetByIdAsync(dto.PaymentMethodTypeId);
             if (paymentMethodType == null)
                 return BadRequest($"Payment method type with ID {dto.PaymentMethodTypeId} not found.");
-                
-            var userAcceptsMethod = await uow.UserRepository.UserAcceptsPaymentMethodTypeByIdAsync(dto.UserId, dto.PaymentMethodTypeId);
+
+            var userAcceptsMethod =
+                await uow.UserRepository.UserAcceptsPaymentMethodTypeByIdAsync(dto.UserId, dto.PaymentMethodTypeId);
             if (!userAcceptsMethod)
                 return BadRequest($"User does not accept payment method type with ID {dto.PaymentMethodTypeId}.");
-                
-            var existingPreference = await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(dto.UserId, dto.PaymentMethodTypeId);
+
+            var existingPreference =
+                await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(dto.UserId,
+                    dto.PaymentMethodTypeId);
             if (existingPreference != null)
                 return BadRequest("Preference for this payment method type already exists.");
-                
+
             if (dto.IsDefault)
             {
                 await uow.PaymentMethodPreferenceRepository.UnsetDefaultForUserAsync(dto.UserId);
             }
-            
+
             var preference = new PaymentMethodPreference
             {
                 UserId = dto.UserId,
@@ -354,13 +381,15 @@ namespace MainService.Controllers
                 DisplayOrder = dto.DisplayOrder,
                 IsDefault = dto.IsDefault
             };
-            
+
             uow.PaymentMethodPreferenceRepository.Add(preference);
-            
+
             if (!await uow.Complete())
                 return BadRequest("Failed to create payment method preference.");
-                
-            var result = await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(dto.UserId, dto.PaymentMethodTypeId);
+
+            var result =
+                await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(dto.UserId,
+                    dto.PaymentMethodTypeId);
             return Ok(result);
         }
 
@@ -373,17 +402,22 @@ namespace MainService.Controllers
                 return Unauthorized("You are not authorized to update preferences for this user.");
             }
 
-            var preferenceDto = await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(userId, paymentMethodTypeId);
+            var preferenceDto =
+                await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(userId,
+                    paymentMethodTypeId);
             if (preferenceDto == null)
             {
-                return NotFound($"Preference for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
+                return NotFound(
+                    $"Preference for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
             }
 
-            var preference = await uow.PaymentMethodPreferenceRepository.GetEntityByUserIdAndPaymentMethodTypeIdAsync(userId,
-                    paymentMethodTypeId);
+            var preference = await uow.PaymentMethodPreferenceRepository.GetEntityByUserIdAndPaymentMethodTypeIdAsync(
+                userId,
+                paymentMethodTypeId);
             if (preference == null)
             {
-                return NotFound($"Preference entity for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
+                return NotFound(
+                    $"Preference entity for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
             }
 
 
@@ -417,22 +451,25 @@ namespace MainService.Controllers
                     paymentMethodTypeId);
             return Ok(result);
         }
-        
+
         [HttpDelete("method-preferences/{userId:int}/{paymentMethodTypeId:int}")]
         public async Task<ActionResult> DeletePaymentMethodPreference(int userId, int paymentMethodTypeId)
         {
             if (userId != User.GetUserId())
                 return Unauthorized("You are not authorized to delete preferences for this user.");
-                
-            var preference = await uow.PaymentMethodPreferenceRepository.GetEntityByUserIdAndPaymentMethodTypeIdAsync(userId, paymentMethodTypeId);
+
+            var preference =
+                await uow.PaymentMethodPreferenceRepository.GetEntityByUserIdAndPaymentMethodTypeIdAsync(userId,
+                    paymentMethodTypeId);
             if (preference == null)
-                return NotFound($"Preference for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
-                
+                return NotFound(
+                    $"Preference for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
+
             uow.PaymentMethodPreferenceRepository.Delete(preference);
-            
+
             if (!await uow.Complete())
                 return BadRequest("Failed to delete payment method preference.");
-                
+
             return Ok();
         }
 

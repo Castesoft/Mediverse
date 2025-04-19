@@ -97,4 +97,14 @@ export class EventsService extends ServiceHelper<Event, EventParams, FormGroup2<
       })
     );
   }
+
+  sendEventReceipt(eventId: number, email: string): Observable<void> {
+    const url = `${this.baseUrl}${eventId}/send-receipt`;
+    const body = { email: email };
+    return this.http.post<void>(url, body).pipe(
+      tap(() => {
+        this.toastr.success('Comprobante enviado exitosamente.');
+      })
+    );
+  }
 }

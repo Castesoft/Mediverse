@@ -9,7 +9,7 @@ import { prescriptionFormInfo } from 'src/app/_models/prescriptions/prescription
 import { isNullOrWhiteSpace } from 'src/app/_utils/util';
 import { medicalLicenseFormInfo } from 'src/app/_models/medicalLicenses/medicalLicenseConstants';
 import { MedicalLicense } from 'src/app/_models/medicalLicenses/medicalLicense';
-import { TypedFormGroup } from "src/app/_models/forms/formTypes";
+import { FormUse, TypedFormGroup } from "src/app/_models/forms/formTypes";
 import { Patient } from "src/app/_models/patients/patient";
 import Clinic from "src/app/_models/clinics/clinic";
 import { DoctorClinic } from "src/app/_models/doctors/doctorClinics/doctorClinic";
@@ -195,16 +195,16 @@ export class PrescriptionForm extends FormGroup2<Prescription> {
   setClinicOptions(value: SelectOption[]): this {
     this._clinicOptions = [ ...value ];
     this.controls.clinic.controls.select.selectOptions = this._clinicOptions;
+    this.controls.clinic.controls.select.enable({ emitEvent: false });
     return this;
   }
 
-
   patch(prescription: Prescription | null, fromEventWindow: boolean = false): void {
-    const currentUse = this.use;
+    const currentUse: FormUse = this.use;
 
     this.reset(new Prescription(), { emitEvent: false });
 
-    if (currentUse === 'create') {
+    if (currentUse === FormUse.CREATE) {
       if (prescription?.doctor) {
         const doctor: Doctor = prescription.doctor;
         this.controls.doctor.patchValue(doctor, { emitEvent: false });
