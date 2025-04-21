@@ -477,7 +477,7 @@ namespace MainService.Postgres.Migrations
                     Tax = table.Column<decimal>(type: "numeric", nullable: true),
                     AmountPaid = table.Column<decimal>(type: "numeric", nullable: true),
                     AmountDue = table.Column<decimal>(type: "numeric", nullable: true),
-                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
+                    PaymentStatus = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -1095,7 +1095,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_DoctorPatients_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1639,8 +1640,8 @@ namespace MainService.Postgres.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: true),
-                    ChangeType = table.Column<int>(type: "integer", nullable: false),
-                    Property = table.Column<int>(type: "integer", nullable: false),
+                    ChangeType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Property = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     OldValue = table.Column<string>(type: "text", nullable: true),
                     NewValue = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
@@ -1655,7 +1656,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_OrderHistories_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_OrderHistories_Orders_OrderId",
                         column: x => x.OrderId,
@@ -2934,7 +2936,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_Payments_AspNetUsers_MarkedPaidByUserId",
                         column: x => x.MarkedPaidByUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Payments_Events_EventId",
                         column: x => x.EventId,
@@ -2951,7 +2954,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_Payments_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
                         principalTable: "PaymentMethods",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
