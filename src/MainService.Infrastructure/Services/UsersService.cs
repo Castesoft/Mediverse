@@ -18,6 +18,17 @@ public class UsersService(
     ITokenService tokenService,
     DataContext context) : IUsersService
 {
+    public async Task<AppUser?> GetByIdAsync(int id)
+    {
+        var user = await context.Users
+            .Include(x => x.UserMedicalLicenses)
+            .Include(x => x.UserAddresses).ThenInclude(x => x.Address)
+            .Include(x => x.UserPhoto).ThenInclude(x => x.Photo)
+            .SingleOrDefaultAsync(x => x.Id == id);
+
+        return user;
+    }
+
     public async Task<bool> DeleteAsync(AppUser item)
     {
         if (!await DeleteUserPhotoAsync(item)) return false;

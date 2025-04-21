@@ -1313,7 +1313,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordColorBlindnesses_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1336,7 +1337,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordCompanions_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1358,7 +1360,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordEducationLevels_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1381,7 +1384,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordFamilyMembers_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1404,7 +1408,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordMaritalStatuses_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1428,7 +1433,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordPersonalDiseases_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1450,7 +1456,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_UserMedicalRecords_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1496,12 +1503,14 @@ namespace MainService.Postgres.Migrations
                         name: "FK_UserNotifications_AspNetUsers_AppUserId",
                         column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserNotifications_Notifications_NotificationId",
                         column: x => x.NotificationId,
                         principalTable: "Notifications",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1542,7 +1551,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordOccupations_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MedicalRecordOccupations_Occupations_OccupationId",
                         column: x => x.OccupationId,
@@ -1551,7 +1561,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DoctorOrder",
+                name: "DoctorOrders",
                 columns: table => new
                 {
                     DoctorId = table.Column<int>(type: "integer", nullable: false),
@@ -1559,15 +1569,14 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DoctorOrder", x => new { x.DoctorId, x.OrderId });
+                    table.PrimaryKey("PK_DoctorOrders", x => new { x.DoctorId, x.OrderId });
                     table.ForeignKey(
-                        name: "FK_DoctorOrder_AspNetUsers_DoctorId",
+                        name: "FK_DoctorOrders_AspNetUsers_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_DoctorOrder_Orders_OrderId",
+                        name: "FK_DoctorOrders_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -1680,7 +1689,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PatientOrder",
+                name: "PatientOrders",
                 columns: table => new
                 {
                     PatientId = table.Column<int>(type: "integer", nullable: false),
@@ -1688,15 +1697,14 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PatientOrder", x => new { x.PatientId, x.OrderId });
+                    table.PrimaryKey("PK_PatientOrders", x => new { x.PatientId, x.OrderId });
                     table.ForeignKey(
-                        name: "FK_PatientOrder_AspNetUsers_PatientId",
+                        name: "FK_PatientOrders_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PatientOrder_Orders_OrderId",
+                        name: "FK_PatientOrders_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -1748,7 +1756,7 @@ namespace MainService.Postgres.Migrations
                         column: x => x.PaymentMethodTypeId,
                         principalTable: "PaymentMethodTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2002,7 +2010,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DoctorPrescription",
+                name: "DoctorPrescriptions",
                 columns: table => new
                 {
                     DoctorId = table.Column<int>(type: "integer", nullable: false),
@@ -2010,15 +2018,14 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DoctorPrescription", x => new { x.DoctorId, x.PrescriptionId });
+                    table.PrimaryKey("PK_DoctorPrescriptions", x => new { x.DoctorId, x.PrescriptionId });
                     table.ForeignKey(
-                        name: "FK_DoctorPrescription_AspNetUsers_DoctorId",
+                        name: "FK_DoctorPrescriptions_AspNetUsers_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_DoctorPrescription_Prescriptions_PrescriptionId",
+                        name: "FK_DoctorPrescriptions_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
                         principalTable: "Prescriptions",
                         principalColumn: "Id",
@@ -2026,7 +2033,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PatientPrescription",
+                name: "PatientPrescriptions",
                 columns: table => new
                 {
                     PatientId = table.Column<int>(type: "integer", nullable: false),
@@ -2034,14 +2041,14 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PatientPrescription", x => new { x.PatientId, x.PrescriptionId });
+                    table.PrimaryKey("PK_PatientPrescriptions", x => new { x.PatientId, x.PrescriptionId });
                     table.ForeignKey(
-                        name: "FK_PatientPrescription_AspNetUsers_PatientId",
+                        name: "FK_PatientPrescriptions_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PatientPrescription_Prescriptions_PrescriptionId",
+                        name: "FK_PatientPrescriptions_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
                         principalTable: "Prescriptions",
                         principalColumn: "Id",
@@ -2259,7 +2266,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordFamilyDiseases_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MedicalRecordFamilyDiseases_RelativeTypes_RelativeTypeId",
                         column: x => x.RelativeTypeId,
@@ -2304,8 +2312,7 @@ namespace MainService.Postgres.Migrations
                         name: "FK_DoctorReviews_AspNetUsers_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_DoctorReviews_Reviews_ReviewId",
                         column: x => x.ReviewId,
@@ -2328,8 +2335,7 @@ namespace MainService.Postgres.Migrations
                         name: "FK_UserReviews_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserReviews_Reviews_ReviewId",
                         column: x => x.ReviewId,
@@ -2508,14 +2514,13 @@ namespace MainService.Postgres.Migrations
                         name: "FK_Subscriptions_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Subscriptions_SubscriptionPlans_SubscriptionPlanId",
                         column: x => x.SubscriptionPlanId,
                         principalTable: "SubscriptionPlans",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2592,7 +2597,8 @@ namespace MainService.Postgres.Migrations
                         name: "FK_MedicalRecordSubstances_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MedicalRecordSubstances_Substances_SubstanceId",
                         column: x => x.SubstanceId,
@@ -2622,7 +2628,7 @@ namespace MainService.Postgres.Migrations
                         column: x => x.TaxRegimeId,
                         principalTable: "TaxRegime",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2674,7 +2680,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DoctorEvent",
+                name: "DoctorEvents",
                 columns: table => new
                 {
                     DoctorId = table.Column<int>(type: "integer", nullable: false),
@@ -2682,15 +2688,14 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DoctorEvent", x => new { x.DoctorId, x.EventId });
+                    table.PrimaryKey("PK_DoctorEvents", x => new { x.DoctorId, x.EventId });
                     table.ForeignKey(
-                        name: "FK_DoctorEvent_AspNetUsers_DoctorId",
+                        name: "FK_DoctorEvents_AspNetUsers_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_DoctorEvent_Events_EventId",
+                        name: "FK_DoctorEvents_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
@@ -2818,7 +2823,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NurseEvent",
+                name: "NurseEvents",
                 columns: table => new
                 {
                     NurseId = table.Column<int>(type: "integer", nullable: false),
@@ -2826,15 +2831,14 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NurseEvent", x => new { x.NurseId, x.EventId });
+                    table.PrimaryKey("PK_NurseEvents", x => new { x.NurseId, x.EventId });
                     table.ForeignKey(
-                        name: "FK_NurseEvent_AspNetUsers_NurseId",
+                        name: "FK_NurseEvents_AspNetUsers_NurseId",
                         column: x => x.NurseId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_NurseEvent_Events_EventId",
+                        name: "FK_NurseEvents_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
@@ -2842,7 +2846,7 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PatientEvent",
+                name: "PatientEvents",
                 columns: table => new
                 {
                     PatientId = table.Column<int>(type: "integer", nullable: false),
@@ -2850,15 +2854,14 @@ namespace MainService.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PatientEvent", x => new { x.PatientId, x.EventId });
+                    table.PrimaryKey("PK_PatientEvents", x => new { x.PatientId, x.EventId });
                     table.ForeignKey(
-                        name: "FK_PatientEvent_AspNetUsers_PatientId",
+                        name: "FK_PatientEvents_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PatientEvent_Events_EventId",
+                        name: "FK_PatientEvents_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
@@ -2980,8 +2983,7 @@ namespace MainService.Postgres.Migrations
                         name: "FK_SubscriptionCancellations_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SubscriptionCancellations_Subscriptions_UserSubscriptionId",
                         column: x => x.UserSubscriptionId,
@@ -3167,8 +3169,8 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DoctorEvent_EventId",
-                table: "DoctorEvent",
+                name: "IX_DoctorEvents_EventId",
+                table: "DoctorEvents",
                 column: "EventId",
                 unique: true);
 
@@ -3189,8 +3191,8 @@ namespace MainService.Postgres.Migrations
                 column: "NurseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DoctorOrder_OrderId",
-                table: "DoctorOrder",
+                name: "IX_DoctorOrders_OrderId",
+                table: "DoctorOrders",
                 column: "OrderId",
                 unique: true);
 
@@ -3211,8 +3213,8 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DoctorPrescription_PrescriptionId",
-                table: "DoctorPrescription",
+                name: "IX_DoctorPrescriptions_PrescriptionId",
+                table: "DoctorPrescriptions",
                 column: "PrescriptionId",
                 unique: true);
 
@@ -3489,8 +3491,8 @@ namespace MainService.Postgres.Migrations
                 column: "SubstanceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NurseEvent_EventId",
-                table: "NurseEvent",
+                name: "IX_NurseEvents_EventId",
+                table: "NurseEvents",
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
@@ -3553,20 +3555,20 @@ namespace MainService.Postgres.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientEvent_EventId",
-                table: "PatientEvent",
+                name: "IX_PatientEvents_EventId",
+                table: "PatientEvents",
                 column: "EventId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientOrder_OrderId",
-                table: "PatientOrder",
+                name: "IX_PatientOrders_OrderId",
+                table: "PatientOrders",
                 column: "OrderId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientPrescription_PrescriptionId",
-                table: "PatientPrescription",
+                name: "IX_PatientPrescriptions_PrescriptionId",
+                table: "PatientPrescriptions",
                 column: "PrescriptionId",
                 unique: true);
 
@@ -3717,7 +3719,8 @@ namespace MainService.Postgres.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserMedicalLicenses_MedicalLicenseId",
                 table: "UserMedicalLicenses",
-                column: "MedicalLicenseId");
+                column: "MedicalLicenseId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserMedicalRecords_MedicalRecordId",
@@ -3822,7 +3825,7 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorClinics");
 
             migrationBuilder.DropTable(
-                name: "DoctorEvent");
+                name: "DoctorEvents");
 
             migrationBuilder.DropTable(
                 name: "DoctorLinks");
@@ -3834,7 +3837,7 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorNurses");
 
             migrationBuilder.DropTable(
-                name: "DoctorOrder");
+                name: "DoctorOrders");
 
             migrationBuilder.DropTable(
                 name: "DoctorPatients");
@@ -3846,7 +3849,7 @@ namespace MainService.Postgres.Migrations
                 name: "DoctorPhones");
 
             migrationBuilder.DropTable(
-                name: "DoctorPrescription");
+                name: "DoctorPrescriptions");
 
             migrationBuilder.DropTable(
                 name: "DoctorProducts");
@@ -3930,7 +3933,7 @@ namespace MainService.Postgres.Migrations
                 name: "MedicalRecordSubstances");
 
             migrationBuilder.DropTable(
-                name: "NurseEvent");
+                name: "NurseEvents");
 
             migrationBuilder.DropTable(
                 name: "OrderDeliveryAddress");
@@ -3951,13 +3954,13 @@ namespace MainService.Postgres.Migrations
                 name: "OrderPickupAddress");
 
             migrationBuilder.DropTable(
-                name: "PatientEvent");
+                name: "PatientEvents");
 
             migrationBuilder.DropTable(
-                name: "PatientOrder");
+                name: "PatientOrders");
 
             migrationBuilder.DropTable(
-                name: "PatientPrescription");
+                name: "PatientPrescriptions");
 
             migrationBuilder.DropTable(
                 name: "PaymentMethodPreferences");

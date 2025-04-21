@@ -18,8 +18,8 @@ public class DoctorEventConfiguration : IEntityTypeConfiguration<DoctorEvent>
         builder.HasOne(x => x.Doctor)
             .WithMany(x => x.DoctorEvents)
             .HasForeignKey(x => x.DoctorId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.HasOne(x => x.Event)
             .WithOne(x => x.DoctorEvent)
             .HasForeignKey<DoctorEvent>(x => x.EventId)

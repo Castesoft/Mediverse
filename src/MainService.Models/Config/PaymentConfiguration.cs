@@ -36,5 +36,17 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .WithMany(o => o.Payments)
             .HasForeignKey(p => p.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.PaymentMethod)
+            .WithMany(pm => pm.Payments)
+            .HasForeignKey(p => p.PaymentMethodId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(p => p.MarkedPaidByUser)
+            .WithMany()
+            .HasForeignKey(p => p.MarkedPaidByUserId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

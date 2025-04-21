@@ -1,5 +1,5 @@
 using MainService.Core.Interfaces.Data;
-using MainService.Core.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace MainService.Core.Interfaces.Services;
 
@@ -43,7 +43,18 @@ public interface IUnitOfWork
     IUserNotificationRepository UserNotificationRepository { get; }
     IManualPaymentDetailRepository ManualPaymentDetailRepository { get; }
     IPaymentMethodPreferenceRepository PaymentMethodPreferenceRepository { get; }
+    IUserMedicalRecordRepository UserMedicalRecordRepository { get; }
+    IUserReviewRepository UserReviewRepository { get; }
+    IDoctorReviewRepository DoctorReviewRepository { get; }
+    IDoctorPrescriptionRepository DoctorPrescriptionRepository { get; }
+    IDoctorOrderRepository DoctorOrderRepository { get; }
+    IDoctorEventRepository DoctorEventRepository { get; }
+    IPatientEventRepository PatientEventRepository { get; }
+    IPatientPrescriptionRepository PatientPrescriptionRepository { get; }
+    IPatientOrderRepository PatientOrderRepository { get; }
+    INurseEventRepository NurseEventRepository { get; }
     Task<bool> Complete();
+    Task<IDbContextTransaction> BeginTransactionAsync();
 
     bool HasChanges();
     void DetachEntity<T>(T entity) where T : class;

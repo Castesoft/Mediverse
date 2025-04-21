@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class DoctorServiceConfiguration : IEntityTypeConfiguration<DoctorService>
 {
     public void Configure(EntityTypeBuilder<DoctorService> builder)

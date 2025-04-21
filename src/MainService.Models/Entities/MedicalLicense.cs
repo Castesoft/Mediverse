@@ -68,6 +68,7 @@ public class MedicalLicense : BaseCodeEntity
     /// </para>
     /// </remarks>
     public MedicalLicenseDocument MedicalLicenseDocument { get; set; } = null!;
+    public UserMedicalLicense UserMedicalLicense { get; set; } = null!;
 
     public MedicalLicenseSpecialty MedicalLicenseSpecialty { get; set; } = null!;
     public List<MedicalLicenseSubSpecialty> MedicalLicenseSubSpecialties { get; set; } = [];

@@ -96,9 +96,9 @@ public class AppUser : IdentityUser<int>
     public List<DoctorPhone> DoctorPhones { get; set; } = [];
     public List<DoctorLink> DoctorLinks { get; set; } = [];
     public List<DoctorClinic> DoctorClinics { get; set; } = [];
-    public List<UserSubscription> Subscriptions { get; set; } = [];
-    public List<SubscriptionHistory> SubscriptionHistories { get; set; } = [];
-    public List<SubscriptionCancellation> SubscriptionCancellations { get; set; } = [];
+    public List<UserSubscription> UserSubscriptions { get; set; } = [];
+    public List<SubscriptionHistory> UserSubscriptionHistories { get; set; } = [];
+    public List<SubscriptionCancellation> UserSubscriptionCancellations { get; set; } = [];
 
     public List<UserNotification> UserNotifications { get; set; } = [];
 

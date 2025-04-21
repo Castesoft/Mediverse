@@ -5,6 +5,7 @@ namespace MainService.Core.Interfaces.Services;
 
 public interface IUsersService
 {
+    Task<AppUser?> GetByIdAsync(int id);
     Task<bool> DeleteAsync(AppUser item);
     Task<AccountDto?> GenerateAccountDtoAsync(int id);
     Task<bool> PhoneExistsAsync(string phoneNumber);

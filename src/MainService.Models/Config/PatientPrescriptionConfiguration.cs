@@ -13,11 +13,11 @@ public class PatientPrescriptionConfiguration : IEntityTypeConfiguration<Patient
         builder.HasOne(x => x.Patient)
             .WithMany(x => x.PatientPrescriptions)
             .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.NoAction); 
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(x => x.Prescription)
             .WithOne(x => x.PatientPrescription)
             .HasForeignKey<PatientPrescription>(x => x.PrescriptionId)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -19,7 +19,7 @@ public class DoctorClinicConfiguration : IEntityTypeConfiguration<DoctorClinic>
             .WithMany(x => x.DoctorClinics)
             .HasForeignKey(x => x.DoctorId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.HasOne(x => x.Clinic)
             .WithOne(x => x.DoctorClinic)
             .HasForeignKey<DoctorClinic>(x => x.ClinicId)

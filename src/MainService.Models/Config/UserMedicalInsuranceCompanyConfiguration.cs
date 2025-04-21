@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class UserMedicalInsuranceCompanyConfiguration : IEntityTypeConfiguration<UserMedicalInsuranceCompany>
 {
     public void Configure(EntityTypeBuilder<UserMedicalInsuranceCompany> builder)

@@ -136,7 +136,7 @@ namespace MainService.Controllers
             var doctorFullName = $"{doctor.FirstName} {doctor.LastName}".Trim();
             var clinicName = clinic?.Name ?? "Clínica";
 
-            var subject = $"Comprobante de Pago - Cita #{eventId} - {service.Name}";
+            var subject = $"DocHub | Comprobante de Pago - Cita #{eventId} - {service.Name}";
 
             try
             {

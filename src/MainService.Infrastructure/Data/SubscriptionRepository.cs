@@ -34,6 +34,20 @@ namespace MainService.Infrastructure.Data
                 .ProjectTo<SubscriptionDto>(mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
+        
+        public async Task<List<UserSubscription>> FindByUserIdAsync(int userId)
+        {
+            return await context.Subscriptions
+                .Includes()
+                .AsNoTracking()
+                .Where(s => s.UserId == userId)
+                .ToListAsync();
+        }
+
+        public void RemoveRange(List<UserSubscription> userSubscriptions)
+        {
+            context.Subscriptions.RemoveRange(userSubscriptions);
+        }
 
         public async Task<UserSubscription?> GetByStripeSubscriptionIdAsync(string stripeSubscriptionId)
         {

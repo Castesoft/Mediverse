@@ -15,5 +15,7 @@ public interface ISubscriptionRepository
 
     Task<List<UserSubscription>> GetSubscriptionsByUserIdAsync(int userId);
     Task<PagedList<SubscriptionDto>> GetPagedListAsync(SubscriptionParams param);
+    Task<List<UserSubscription>> FindByUserIdAsync(int userId);
+    void RemoveRange(List<UserSubscription> userSubscriptions);
     void Delete(UserSubscription userSubscription);
 }

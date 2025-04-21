@@ -16,10 +16,11 @@ public class DoctorPatientConfiguration : IEntityTypeConfiguration<DoctorPatient
             .HasForeignKey(dp => dp.DoctorId)
             .OnDelete(DeleteBehavior.Cascade);
 
+
         builder
             .HasOne(dp => dp.Patient)
             .WithMany(u => u.Doctors)
             .HasForeignKey(dp => dp.PatientId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

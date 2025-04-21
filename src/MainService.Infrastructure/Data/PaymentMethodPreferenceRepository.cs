@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using MainService.Core.DTOs.Payment;
-using MainService.Core.Interfaces.Repositories;
+using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
 using Microsoft.EntityFrameworkCore;

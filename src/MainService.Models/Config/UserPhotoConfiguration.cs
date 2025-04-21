@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class UserPhotoConfiguration : IEntityTypeConfiguration<UserPhoto>
 {
     public void Configure(EntityTypeBuilder<UserPhoto> builder)

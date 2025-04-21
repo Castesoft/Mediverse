@@ -14,7 +14,7 @@ namespace MainService.Models.Config
                 .HasOne(x => x.Doctor)
                 .WithMany(x => x.DoctorReviews)
                 .HasForeignKey(x => x.DoctorId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder
                 .HasOne(x => x.Review)

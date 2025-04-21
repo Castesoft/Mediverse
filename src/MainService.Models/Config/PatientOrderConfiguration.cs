@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class PatientOrderConfiguration : IEntityTypeConfiguration<PatientOrder>
 {
     public void Configure(EntityTypeBuilder<PatientOrder> builder)
@@ -12,7 +13,7 @@ public class PatientOrderConfiguration : IEntityTypeConfiguration<PatientOrder>
         builder.HasOne(x => x.Patient)
             .WithMany(x => x.PatientOrders)
             .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(x => x.Order)
             .WithOne(x => x.PatientOrder)

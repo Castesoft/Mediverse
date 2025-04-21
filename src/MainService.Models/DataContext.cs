@@ -95,6 +95,13 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<SubscriptionCancellation> SubscriptionCancellations { get; set; }
     public DbSet<ManualPaymentDetail> ManualPaymentDetails { get; set; }
     public DbSet<PaymentMethodPreference> PaymentMethodPreferences { get; set; }
+    public DbSet<DoctorPrescription> DoctorPrescriptions { get; set; }
+    public DbSet<DoctorOrder> DoctorOrders { get; set; }
+    public DbSet<DoctorEvent> DoctorEvents { get; set; }
+    public DbSet<PatientEvent> PatientEvents { get; set; }
+    public DbSet<PatientPrescription> PatientPrescriptions { get; set; }
+    public DbSet<PatientOrder> PatientOrders { get; set; }
+    public DbSet<NurseEvent> NurseEvents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

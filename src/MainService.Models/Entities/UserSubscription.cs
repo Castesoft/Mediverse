@@ -17,5 +17,5 @@ public class UserSubscription : BaseEntity
     public string? StripeCustomerId { get; set; }
 
     public List<SubscriptionHistory> SubscriptionHistories { get; set; } = [];
-    public List<SubscriptionCancellation> SubscriptionCancellations { get; set; } = [];
+    public List<SubscriptionCancellation> UserSubscriptionCancellations { get; set; } = [];
 }

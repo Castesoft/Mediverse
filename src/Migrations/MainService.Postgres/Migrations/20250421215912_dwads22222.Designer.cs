@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250403231951_Initial")]
-    partial class Initial
+    [Migration("20250421215912_dwads22222")]
+    partial class dwads22222
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -809,7 +809,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("EventId")
                         .IsUnique();
 
-                    b.ToTable("DoctorEvent");
+                    b.ToTable("DoctorEvents");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorLink", b =>
@@ -871,7 +871,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("DoctorOrder");
+                    b.ToTable("DoctorOrders");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorPatient", b =>
@@ -942,7 +942,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("PrescriptionId")
                         .IsUnique();
 
-                    b.ToTable("DoctorPrescription");
+                    b.ToTable("DoctorPrescriptions");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.DoctorProduct", b =>
@@ -1945,7 +1945,7 @@ namespace MainService.Postgres.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("NurseEvent");
+                    b.ToTable("NurseEvents");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Occupation", b =>
@@ -2014,8 +2014,10 @@ namespace MainService.Postgres.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("integer");
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal?>("Subtotal")
                         .HasColumnType("numeric");
@@ -2078,8 +2080,10 @@ namespace MainService.Postgres.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ChangeType")
-                        .HasColumnType("integer");
+                    b.Property<string>("ChangeType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -2099,8 +2103,10 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Property")
-                        .HasColumnType("integer");
+                    b.Property<string>("Property")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -2242,7 +2248,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("EventId")
                         .IsUnique();
 
-                    b.ToTable("PatientEvent");
+                    b.ToTable("PatientEvents");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientOrder", b =>
@@ -2258,7 +2264,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("PatientOrder");
+                    b.ToTable("PatientOrders");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.PatientPrescription", b =>
@@ -2274,7 +2280,7 @@ namespace MainService.Postgres.Migrations
                     b.HasIndex("PrescriptionId")
                         .IsUnique();
 
-                    b.ToTable("PatientPrescription");
+                    b.ToTable("PatientPrescriptions");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Payment", b =>
@@ -3306,7 +3312,8 @@ namespace MainService.Postgres.Migrations
 
                     b.HasKey("UserId", "MedicalLicenseId");
 
-                    b.HasIndex("MedicalLicenseId");
+                    b.HasIndex("MedicalLicenseId")
+                        .IsUnique();
 
                     b.ToTable("UserMedicalLicenses");
                 });
@@ -3940,7 +3947,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
                         .WithMany("DoctorEvents")
                         .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Event", "Event")
@@ -4016,7 +4023,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
                         .WithMany("DoctorOrders")
                         .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Order", "Order")
@@ -4041,7 +4048,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Patient")
                         .WithMany("Doctors")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Doctor");
@@ -4060,7 +4067,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.PaymentMethodType", "PaymentMethodType")
                         .WithMany("DoctorPaymentMethodTypes")
                         .HasForeignKey("PaymentMethodTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Doctor");
@@ -4092,7 +4099,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
                         .WithMany("DoctorPrescriptions")
                         .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Prescription", "Prescription")
@@ -4130,7 +4137,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Doctor")
                         .WithMany("DoctorReviews")
                         .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Review", "Review")
@@ -4449,7 +4456,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithOne("MedicalRecordColorBlindness")
                         .HasForeignKey("MainService.Models.Entities.MedicalRecordColorBlindness", "MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ColorBlindness");
@@ -4468,7 +4475,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithOne("MedicalRecordCompanion")
                         .HasForeignKey("MainService.Models.Entities.MedicalRecordCompanion", "MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Companion");
@@ -4487,7 +4494,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithOne("MedicalRecordEducationLevel")
                         .HasForeignKey("MainService.Models.Entities.MedicalRecordEducationLevel", "MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("EducationLevel");
@@ -4506,7 +4513,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithMany("MedicalRecordFamilyDiseases")
                         .HasForeignKey("MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.RelativeType", "RelativeType")
@@ -4533,7 +4540,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithMany("MedicalRecordFamilyMembers")
                         .HasForeignKey("MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FamilyMember");
@@ -4571,7 +4578,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithOne("MedicalRecordMaritalStatus")
                         .HasForeignKey("MainService.Models.Entities.MedicalRecordMaritalStatus", "MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("MaritalStatus");
@@ -4584,7 +4591,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithOne("MedicalRecordOccupation")
                         .HasForeignKey("MainService.Models.Entities.MedicalRecordOccupation", "MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Occupation", "Occupation")
@@ -4609,7 +4616,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithMany("MedicalRecordPersonalDiseases")
                         .HasForeignKey("MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Disease");
@@ -4628,7 +4635,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithMany("MedicalRecordSubstances")
                         .HasForeignKey("MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Substance", "Substance")
@@ -4655,7 +4662,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Nurse")
                         .WithMany("NurseEvents")
                         .HasForeignKey("NurseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -4711,7 +4718,8 @@ namespace MainService.Postgres.Migrations
 
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Order");
 
@@ -4786,7 +4794,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Patient")
                         .WithMany("PatientEvents")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -4805,7 +4813,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "Patient")
                         .WithMany("PatientOrders")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -4841,7 +4849,8 @@ namespace MainService.Postgres.Migrations
 
                     b.HasOne("MainService.Models.Entities.AppUser", "MarkedPaidByUser")
                         .WithMany()
-                        .HasForeignKey("MarkedPaidByUserId");
+                        .HasForeignKey("MarkedPaidByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("MainService.Models.Entities.Order", "Order")
                         .WithMany("Payments")
@@ -4850,7 +4859,8 @@ namespace MainService.Postgres.Migrations
 
                     b.HasOne("MainService.Models.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("Payments")
-                        .HasForeignKey("PaymentMethodId");
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Event");
 
@@ -5026,13 +5036,13 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SubscriptionCancellation", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
-                        .WithMany("SubscriptionCancellations")
+                        .WithMany("UserSubscriptionCancellations")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.UserSubscription", "UserSubscription")
-                        .WithMany("SubscriptionCancellations")
+                        .WithMany("UserSubscriptionCancellations")
                         .HasForeignKey("UserSubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -5045,7 +5055,7 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.SubscriptionHistory", b =>
                 {
                     b.HasOne("MainService.Models.Entities.AppUser", null)
-                        .WithMany("SubscriptionHistories")
+                        .WithMany("UserSubscriptionHistories")
                         .HasForeignKey("AppUserId");
 
                     b.HasOne("MainService.Models.Entities.UserSubscription", "UserSubscription")
@@ -5105,8 +5115,8 @@ namespace MainService.Postgres.Migrations
             modelBuilder.Entity("MainService.Models.Entities.UserMedicalLicense", b =>
                 {
                     b.HasOne("MainService.Models.Entities.MedicalLicense", "MedicalLicense")
-                        .WithMany()
-                        .HasForeignKey("MedicalLicenseId")
+                        .WithOne("UserMedicalLicense")
+                        .HasForeignKey("MainService.Models.Entities.UserMedicalLicense", "MedicalLicenseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -5126,7 +5136,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.MedicalRecord", "MedicalRecord")
                         .WithOne("UserMedicalRecord")
                         .HasForeignKey("MainService.Models.Entities.UserMedicalRecord", "MedicalRecordId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
@@ -5145,13 +5155,13 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "AppUser")
                         .WithMany("UserNotifications")
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.Notification", "Notification")
                         .WithMany("UserNotifications")
                         .HasForeignKey("NotificationId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AppUser");
@@ -5189,7 +5199,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
                         .WithMany("UserReviews")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Review");
@@ -5202,13 +5212,13 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.SubscriptionPlan", "SubscriptionPlan")
                         .WithMany("Subscriptions")
                         .HasForeignKey("SubscriptionPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
-                        .WithMany("Subscriptions")
+                        .WithMany("UserSubscriptions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("SubscriptionPlan");
@@ -5221,7 +5231,7 @@ namespace MainService.Postgres.Migrations
                     b.HasOne("MainService.Models.Entities.TaxRegime", "TaxRegime")
                         .WithOne("UserTaxRegime")
                         .HasForeignKey("MainService.Models.Entities.UserTaxRegime", "TaxRegimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MainService.Models.Entities.AppUser", "User")
@@ -5416,12 +5426,6 @@ namespace MainService.Postgres.Migrations
 
                     b.Navigation("PaymentMethods");
 
-                    b.Navigation("SubscriptionCancellations");
-
-                    b.Navigation("SubscriptionHistories");
-
-                    b.Navigation("Subscriptions");
-
                     b.Navigation("UserAddresses");
 
                     b.Navigation("UserMedicalInsuranceCompanies");
@@ -5441,6 +5445,12 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("UserReviews");
 
                     b.Navigation("UserRoles");
+
+                    b.Navigation("UserSubscriptionCancellations");
+
+                    b.Navigation("UserSubscriptionHistories");
+
+                    b.Navigation("UserSubscriptions");
 
                     b.Navigation("UserTaxRegimes");
                 });
@@ -5560,6 +5570,9 @@ namespace MainService.Postgres.Migrations
                         .IsRequired();
 
                     b.Navigation("MedicalLicenseSubSpecialties");
+
+                    b.Navigation("UserMedicalLicense")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.MedicalRecord", b =>
@@ -5784,9 +5797,9 @@ namespace MainService.Postgres.Migrations
 
             modelBuilder.Entity("MainService.Models.Entities.UserSubscription", b =>
                 {
-                    b.Navigation("SubscriptionCancellations");
-
                     b.Navigation("SubscriptionHistories");
+
+                    b.Navigation("UserSubscriptionCancellations");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.Warehouse", b =>

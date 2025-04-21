@@ -19,4 +19,17 @@ public class SubscriptionCancellationRepository(DataContext context) : ISubscrip
             .OrderByDescending(h => h.UpdatedAt)
             .ToListAsync();
     }
+
+    public Task<List<SubscriptionCancellation>> FindByUserIdAsync(int userId)
+    {
+        return context.SubscriptionCancellations
+            .Where(h => h.UserId == userId)
+            .OrderByDescending(h => h.UpdatedAt)
+            .ToListAsync();
+    }
+
+    public void RemoveRange(List<SubscriptionCancellation> cancellations)
+    {
+        context.SubscriptionCancellations.RemoveRange(cancellations);
+    }
 }

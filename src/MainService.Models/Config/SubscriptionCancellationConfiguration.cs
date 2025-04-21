@@ -14,14 +14,14 @@ public class SubscriptionCancellationConfiguration : IEntityTypeConfiguration<Su
 
         builder
             .HasOne(sc => sc.User)
-            .WithMany(u => u.SubscriptionCancellations)
+            .WithMany(u => u.UserSubscriptionCancellations)
             .HasForeignKey(sc => sc.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction); 
 
         builder
             .HasOne(sc => sc.UserSubscription)
-            .WithMany(us => us.SubscriptionCancellations)
+            .WithMany(us => us.UserSubscriptionCancellations)
             .HasForeignKey(sc => sc.UserSubscriptionId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade); 
     }
 }

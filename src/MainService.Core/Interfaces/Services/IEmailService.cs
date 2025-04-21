@@ -33,5 +33,6 @@ public interface IEmailService
         string clinicName
     );
 
+    string CreateAccountDeletionEmail(AppUser user);
     Task SendOrderPaymentRequestEmailAsync(AppUser patient, Order order, string paymentUrl);
 }

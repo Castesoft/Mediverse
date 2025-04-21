@@ -14,12 +14,12 @@ public class UserNotificationConfiguration : IEntityTypeConfiguration<UserNotifi
             .HasOne(x => x.Notification)
             .WithMany(x => x.UserNotifications)
             .HasForeignKey(x => x.NotificationId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(x => x.AppUser)
             .WithMany(x => x.UserNotifications)
             .HasForeignKey(x => x.AppUserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

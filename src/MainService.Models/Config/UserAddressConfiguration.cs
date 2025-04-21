@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class UserAddressConfiguration : IEntityTypeConfiguration<UserAddress>
 {
     public void Configure(EntityTypeBuilder<UserAddress> builder)

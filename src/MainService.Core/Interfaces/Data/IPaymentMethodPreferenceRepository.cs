@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using MainService.Core.DTOs.Payment;
 using MainService.Models.Entities;
 
-namespace MainService.Core.Interfaces.Repositories
+namespace MainService.Core.Interfaces.Data
 {
     public interface IPaymentMethodPreferenceRepository
     {

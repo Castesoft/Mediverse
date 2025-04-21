@@ -4,25 +4,25 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
 
-public class DoctorSignatureConfiguration : IEntityTypeConfiguration<DoctorSignature>
+public class DoctorPhoneConfiguration : IEntityTypeConfiguration<DoctorPhone>
 {
-    public void Configure(EntityTypeBuilder<DoctorSignature> builder)
+    public void Configure(EntityTypeBuilder<DoctorPhone> builder)
     {
         builder.HasKey(x =>
             new
             {
                 x.DoctorId,
-                x.SignatureId
+                x.PhoneId
             });
 
         builder.HasOne(x => x.Doctor)
-            .WithOne(x => x.DoctorSignature)
-            .HasForeignKey<DoctorSignature>(x => x.DoctorId)
+            .WithMany(x => x.DoctorPhones)
+            .HasForeignKey(x => x.DoctorId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasOne(x => x.Signature)
-            .WithOne(x => x.DoctorSignature)
-            .HasForeignKey<DoctorSignature>(x => x.SignatureId)
+
+        builder.HasOne(x => x.Phone)
+            .WithOne(x => x.DoctorPhone)
+            .HasForeignKey<DoctorPhone>(x => x.PhoneId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -429,6 +429,45 @@ public class EmailService(
                 """;
     }
 
+     public string CreateAccountDeletionEmail(AppUser user)
+    {
+        var firstName = WebUtility.HtmlEncode(user.FirstName);
+
+        return $"""
+                {GetEmailHeader()}
+                <tr>
+                  <td align="left" valign="center">
+                    <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                      <div style="padding-bottom: 20px; font-size: 17px;">
+                        <strong>Confirmación de Eliminación de Cuenta</strong>
+                      </div>
+                      <div style="padding-bottom: 20px; color: #5E6278;">
+                        Hola {firstName},
+                      </div>
+                      <div style="padding-bottom: 20px; color: #5E6278;">
+                        Confirmamos que tu cuenta en DocHub ha sido eliminada según tu solicitud.
+                      </div>
+                      <div style="padding-bottom: 30px; color: #5E6278;">
+                        Agradecemos el tiempo que pasaste con nosotros y esperamos que hayas encontrado útil nuestra plataforma.
+                      </div>
+                      <div style="padding-bottom: 10px; color: #5E6278;">
+                        Toda la información asociada a tu cuenta ha sido eliminada de acuerdo con nuestra política de privacidad.
+                      </div>
+
+                      <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                      <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                        Si no solicitaste esta acción o crees que fue un error, por favor contacta a nuestro equipo de soporte inmediatamente.
+                      </div>
+                       <div style="padding-top: 5px; font-size: 13px; color: #6d6e7c;">
+                        Te deseamos lo mejor.
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {GetEmailFooter()}
+                """;
+    }
+
     public async Task SendOrderPaymentRequestEmailAsync(AppUser patient, Order order, string paymentUrl)
     {
         if (patient == null) throw new ArgumentNullException(nameof(patient));
@@ -559,5 +598,6 @@ public class EmailService(
                 </tr>
                 {GetEmailFooter()}
                 """;
+        
     }
 }

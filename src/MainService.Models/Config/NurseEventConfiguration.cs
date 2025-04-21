@@ -18,7 +18,7 @@ public class NurseEventConfiguration : IEntityTypeConfiguration<NurseEvent>
         builder.HasOne(x => x.Nurse)
             .WithMany(x => x.NurseEvents)
             .HasForeignKey(x => x.NurseId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder
             .HasOne(x => x.Event)

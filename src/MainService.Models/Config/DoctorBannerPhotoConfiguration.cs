@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class DoctorBannerPhotoConfiguration : IEntityTypeConfiguration<DoctorBannerPhoto>
 {
     public void Configure(EntityTypeBuilder<DoctorBannerPhoto> builder)

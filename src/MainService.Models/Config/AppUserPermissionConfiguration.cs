@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class AppUserPermissionConfiguration : IEntityTypeConfiguration<AppUserPermission>
 {
     public void Configure(EntityTypeBuilder<AppUserPermission> builder)

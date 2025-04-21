@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainService.Models.Config;
+
 public class AppRoleConfiguration : IEntityTypeConfiguration<AppRole>
 {
     public void Configure(EntityTypeBuilder<AppRole> builder)

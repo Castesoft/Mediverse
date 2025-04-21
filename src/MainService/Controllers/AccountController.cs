@@ -41,7 +41,8 @@ public class AccountController(
     IOptions<ClientSettings> clientSettings,
     IPhotosService photosService,
     IStripeService stripeService,
-    IMedicalRecordsService medicalRecordsService
+    IMedicalRecordsService medicalRecordsService,
+    IAccountsService accountsService
 ) : BaseApiController
 {
     [Authorize]
@@ -238,7 +239,7 @@ public class AccountController(
 
         var clientUrl = clientSettings.Value.Url;
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
+        var subject = $"🔒 DocHub | Verifica tu correo {user.FirstName}!";
         var htmlMessage =
             emailService.CreateVerifyEmailAddressEmailForRegister(user, emailVerificationCode);
         if (!string.IsNullOrEmpty(user.Email))
@@ -512,7 +513,7 @@ public class AccountController(
 
         var clientUrl = clientSettings.Value.Url;
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
+        var subject = $"🔒 DocHub | Verifica tu correo {user.FirstName}!";
         var htmlMessage =
             emailService.CreateVerifyEmailAddressEmailForRegister(user, emailVerificationCode);
 
@@ -1783,7 +1784,7 @@ public class AccountController(
 
         var clientUrl = clientSettings.Value.Url;
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        var subject = $"🔒 DocHub: Verifica tu correo {user.FirstName}!";
+        var subject = $"🔒 DocHub | Verifica tu correo {user.FirstName}!";
         var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
         var email = user.Email;
@@ -2497,7 +2498,6 @@ public class AccountController(
         return await usersService.GenerateAccountDtoAsync(userId);
     }
 
-    // TODO: Handle cascade delete for user related entities
     [Authorize]
     [HttpDelete("delete")]
     public async Task<ActionResult> DeleteAccountAsync([FromBody] DeleteAccountDto request)
@@ -2507,27 +2507,97 @@ public class AccountController(
             return BadRequest("No se ha proporcionado una contraseña.");
         }
 
-        var userId = User.GetUserId();
-        var user = await userManager.FindByIdAsync(userId.ToString());
-        if (user == null)
+        int userId;
+        AppUser? userToDelete; 
+
+        try
         {
-            return NotFound("No se ha encontrado al usuario.");
+            userId = User.GetUserId();
+            
+            
+            userToDelete = await userManager.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (userToDelete == null)
+            {
+                
+                Log.Warning("Attempt to delete account for UserId {UserId}, but user not found.", userId);
+                return NotFound();
+            }
+
+            if (string.IsNullOrEmpty(userToDelete.Email))
+            {
+                Log.Warning("User {UserId} attempted account deletion, but has no email address.", userId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error retrieving UserId or fetching user details in DeleteAccountAsync.");
+            return BadRequest("Error retrieving user details.");
         }
 
-        var passwordCheck = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        if (!passwordCheck.Succeeded)
+        
+        bool success;
+        try
         {
-            return Unauthorized("La contraseña proporcionada es incorrecta.");
+            success = await accountsService.DeleteAccountAsync(userId, request.Password);
+        }
+        catch (UnauthorizedAccessException) 
+        {
+            return Unauthorized();
+        }
+        catch (Exception ex) 
+        {
+            Log.Error(ex, "Error occurred during account deletion process for UserId {UserId} in AccountsService.", userId);
+            
+            var userStillExistsCheck = await userManager.FindByIdAsync(userId.ToString()) != null;
+            if (!userStillExistsCheck)
+            {
+                Log.Warning("Account deletion service failed for UserId {UserId}, but user record seems deleted.", userId);
+                return Ok(); 
+            }
+
+            return BadRequest("No se pudo eliminar la cuenta. Si el problema persiste, contacta a soporte.");
         }
 
-        var result = await userManager.DeleteAsync(user);
-        if (!result.Succeeded)
+
+        if (success)
         {
-            return BadRequest("No se pudo eliminar la cuenta. Inténtalo de nuevo más tarde.");
+            
+            if (userToDelete != null && !string.IsNullOrEmpty(userToDelete.Email))
+            {
+                try
+                {
+                    var subject = "DocHub | Confirmación de Eliminación de Cuenta";
+                    var htmlMessage = emailService.CreateAccountDeletionEmail(userToDelete);
+                    await emailService.SendMail(userToDelete.Email, subject, htmlMessage);
+                    Log.Information("Account deletion confirmation email sent to {Email} for UserId {UserId}",
+                        userToDelete.Email, userId);
+                }
+                catch (Exception emailEx)
+                {
+                    Log.Error(emailEx, "Failed to send account deletion confirmation email to {Email} for UserId {UserId}, but account was deleted.", userToDelete.Email, userId);
+                }
+            }
+            else if (userToDelete != null && string.IsNullOrEmpty(userToDelete.Email))
+            {
+                Log.Warning("Account for UserId {UserId} deleted successfully, but no email address was found to send confirmation.", userId);
+            }
+            else if (userToDelete == null)
+            {
+                Log.Error("Account for UserId {UserId} deleted successfully, but user details were null. Cannot send confirmation email.", userId);
+            }
+
+            return Ok();
         }
 
-        Log.Information("User account {UserId} deleted successfully.", userId);
+        var userStillExists = await userManager.FindByIdAsync(userId.ToString()) != null;
+        if (userStillExists)
+        {
+            Log.Warning("Account deletion failed for UserId {UserId}, likely due to incorrect password (service returned false).", userId);
+            return Unauthorized("Contraseña incorrecta o error al eliminar.");
+        }
 
-        return Ok();
+        Log.Error("Account deletion service returned false for UserId {UserId}, but user record could not be found afterwards.", userId);
+        return BadRequest("No se pudo eliminar la cuenta. Estado inconsistente detectado.");
     }
 }
