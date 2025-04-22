@@ -80,6 +80,13 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAuthorizationHandler, OrderAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, ProductAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, ServiceAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, NotificationAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, PatientAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, NurseAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, UserAddressAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, UserPaymentMethodAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, SubscriptionAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, WarehouseAuthorizationHandler>();
 
         services.AddSignalR();
         

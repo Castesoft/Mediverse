@@ -1,4 +1,5 @@
 using AutoMapper;
+using MainService.Authorization.Operations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MainService.Core.Helpers.Pagination;
@@ -21,15 +22,25 @@ namespace MainService.Controllers
         IMapper mapper,
         IStripeService stripeService,
         IConfiguration configuration,
-        IEmailService emailService) : BaseApiController
+        IEmailService emailService,
+        IAuthorizationService authorizationService
+    ) : BaseApiController
     {
         [HttpGet]
         public async Task<ActionResult<PagedList<SubscriptionDto>>> GetPagedListAsync(
             [FromQuery] SubscriptionParams param)
         {
-            if (param.FromSection != SiteSection.Admin)
+            if (param.FromSection != SiteSection.Admin && !User.IsInRole("Admin"))
             {
                 param.DoctorId = User.GetUserId();
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                param.DoctorId = param.DoctorId;
+            }
+            else
+            {
+                return Forbid();
             }
 
             var pagedList = await uow.SubscriptionRepository.GetPagedListAsync(param);
@@ -136,6 +147,12 @@ namespace MainService.Controllers
             var subscription = await uow.SubscriptionRepository.GetByIdAsync(id);
             if (subscription == null) return NotFound($"Subscription with ID {id} not found.");
 
+            var authResult = await authorizationService.AuthorizeAsync(User, subscription, SubscriptionOperations.Read);
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             return mapper.Map<SubscriptionDto>(subscription);
         }
 
@@ -168,6 +185,12 @@ namespace MainService.Controllers
             {
                 return NotFound($"Subscription with ID {id} not found.");
             }
+            
+            var authResult = await authorizationService.AuthorizeAsync(User, subscription, SubscriptionOperations.Cancel);
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
 
             var requestingUserId = User.GetUserId();
             if (subscription.UserId != requestingUserId)
@@ -180,7 +203,7 @@ namespace MainService.Controllers
             {
                 return NotFound("El usuario no existe.");
             }
-
+            
             var subscriptionCancellation = new SubscriptionCancellation
             {
                 CancellationDate = DateTime.UtcNow,

@@ -1,31 +1,27 @@
-using System.Security.Claims;
-using MainService.Core.Interfaces.Services;
-using MainService.Errors;
 using Microsoft.AspNetCore.Authorization;
+using Serilog;
+using MainService.Core.Extensions;
 
 namespace MainService.Authorization.Handlers;
 
-public class PermissionAuthorizationHandler(IPermissionManager permissionManager)
-    : AuthorizationHandler<PermissionRequirement>
+public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
-        PermissionRequirement requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
-        var permissionsClaim = context.User.Claims.FirstOrDefault(c => c.Value == requirement.Permission);
+        var permissionsClaim =
+            context.User.Claims.FirstOrDefault(c => c.Type == "permission" && c.Value == requirement.Permission);
 
         if (permissionsClaim != null)
         {
+            Log.Debug("Permission '{PermissionName}' found for User {UserId}. Succeeding requirement.", requirement.Permission, context.User?.GetUserId() ?? 0);
             context.Succeed(requirement);
         }
         else
         {
-            string permissionDescription =
-                await permissionManager.GetPermissionDescriptionByName(requirement.Permission);
-            string? email = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-            throw new PermissionDeniedException(email, permissionDescription);
+            Log.Warning("Permission '{PermissionName}' NOT FOUND for User {UserId}. Failing requirement.", requirement.Permission, context.User?.GetUserId() ?? 0);
+            context.Fail();
         }
 
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 }

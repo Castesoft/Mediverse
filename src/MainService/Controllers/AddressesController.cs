@@ -36,17 +36,24 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service) : B
     }
 
     [HttpPost("user/{userId:int}")]
-    public async Task<ActionResult<AddressDto>> CreateForUserByIdAsync([FromRoute] int userId,
-        [FromBody] AddressCreateDto request)
+    public async Task<ActionResult<AddressDto>> CreateForUserByIdAsync([FromRoute] int userId, [FromBody] AddressCreateDto request)
     {
         if (userId != User.GetUserId())
-            return Unauthorized("No tienes permiso para crear una dirección para otro usuario.");
+        {
+            return Forbid();
+        }
 
         var user = await uow.UserRepository.GetByIdAsync(userId);
-        if (user == null) return BadRequest("Usuario no encontrado.");
+        if (user == null) 
+        {
+            return BadRequest("Usuario no encontrado.");
+        }
 
         var dto = await uow.AddressRepository.CreateForUserByIdAsync(user, request);
-        if (dto == null) return BadRequest("Error al crear la dirección.");
+        if (dto == null) 
+        {
+            return BadRequest("Error al crear la dirección.");
+        }
 
         return dto;
     }
@@ -54,6 +61,10 @@ public class AddressesController(IUnitOfWork uow, IAddressesService service) : B
     [HttpGet("options/user/{id:int}")]
     public async Task<ActionResult<List<AddressDto>>> GetOptionsByUserId(int id)
     {
+        if (id != User.GetUserId() && !User.IsInRole("Admin")) {
+            return Forbid();
+        }
+        
         return await uow.AddressRepository.GetDtosByUserId(id);
     }
 

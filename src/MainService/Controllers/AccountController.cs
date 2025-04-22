@@ -3,6 +3,7 @@ using System.Text;
 using AutoMapper;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using MainService.Authorization.Operations;
 using MainService.Core.DTOs.User;
 using MainService.Core.Interfaces.Services;
 using MainService.Core.Settings;
@@ -19,6 +20,7 @@ using MainService.Core.DTOs.Payment;
 using MainService.Core.DTOs.Subscriptions;
 using MainService.Models.Entities.Aggregate;
 using MainService.Models.Helpers;
+using Microsoft.IdentityModel.Logging;
 using Serilog;
 
 namespace MainService.Controllers;
@@ -42,7 +44,8 @@ public class AccountController(
     IPhotosService photosService,
     IStripeService stripeService,
     IMedicalRecordsService medicalRecordsService,
-    IAccountsService accountsService
+    IAccountsService accountsService,
+    IAuthorizationService authorizationService
 ) : BaseApiController
 {
     [Authorize]
@@ -626,6 +629,11 @@ public class AccountController(
             .SingleOrDefaultAsync(x => x.Email == email);
 
         if (item == null) return NotFound($"El usuario de correo {email} no existe.");
+        
+        if (item.Id != User.GetUserId() && !User.IsInRole("Admin"))
+        {
+            return Forbid();
+        }
 
         var deleteResult = await usersService.DeleteAsync(item);
 
@@ -1255,20 +1263,39 @@ public class AccountController(
             .Include(x => x.PaymentMethods)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
-        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+        if (user == null)
+        {
+            return NotFound($"El usuario con id {userId} no existe.");
+        }
 
-        var paymentMethod =
-            user.PaymentMethods.SingleOrDefault(x => x.StripePaymentMethodId == paymentMethodId);
-        if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
+        var paymentMethod = user.PaymentMethods.SingleOrDefault(x => x.StripePaymentMethodId == paymentMethodId);
+        if (paymentMethod == null)
+        {
+            return NotFound($"El método de pago con id {paymentMethodId} no existe.");
+        }
+        
+        var authResult = await authorizationService.AuthorizeAsync(User, paymentMethod, UserPaymentMethodOperations.Delete);
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
 
-        if (paymentMethod.IsDefault) return BadRequest("No puedes eliminar tu método de pago principal.");
+        if (paymentMethod.IsDefault)
+        {
+            return BadRequest("No puedes eliminar tu método de pago principal.");
+        }
 
         user.PaymentMethods.Remove(paymentMethod);
-
+        
         if (!await stripeService.DeletePaymentMethodAsync(paymentMethodId))
+        {
             return BadRequest("Error eliminando el método de pago de Stripe.");
+        }
 
-        if (!await uow.Complete()) return BadRequest("Error eliminando el método de pago.");
+        if (!await uow.Complete())
+        {
+            return BadRequest("Error eliminando el método de pago.");
+        }
 
         return Ok();
     }
@@ -1285,14 +1312,28 @@ public class AccountController(
 
         if (user == null) return NotFound($"El usuario con id {userId} no existe.");
 
-        var paymentMethod =
-            user.PaymentMethods.SingleOrDefault(x => x.StripePaymentMethodId == paymentMethodId);
-        if (paymentMethod == null) return NotFound($"El método de pago con id {paymentMethodId} no existe.");
+        var paymentMethod = user.PaymentMethods.SingleOrDefault(x => x.StripePaymentMethodId == paymentMethodId);
+        if (paymentMethod == null)
+        {
+            return NotFound($"El método de pago con id {paymentMethodId} no existe.");
+        }
+        
+        var authResult = await authorizationService.AuthorizeAsync(User, paymentMethod, UserPaymentMethodOperations.Update);
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
 
         var mainPaymentMethod = user.PaymentMethods.SingleOrDefault(x => x.IsDefault);
         if (mainPaymentMethod?.StripePaymentMethodId == paymentMethodId)
+        {
             return BadRequest("Este método de pago ya es el principal.");
-        if (mainPaymentMethod != null) mainPaymentMethod.IsDefault = false;
+        }
+        
+        if (mainPaymentMethod != null)
+        {
+            mainPaymentMethod.IsDefault = false;
+        }
 
         paymentMethod.IsDefault = true;
 
@@ -1367,41 +1408,83 @@ public class AccountController(
     public async Task<ActionResult> DeleteAddress(int addressId)
     {
         var userId = User.GetUserId();
+        
+        var userAddress = await uow.AddressRepository.GetByIdAsync(addressId);
+        if (userAddress == null)
+        {
+            return NotFound($"La dirección con id {addressId} no existe o no pertenece al usuario.");
+        }
+
+        var authResult = await authorizationService.AuthorizeAsync(User, userAddress, UserAddressOperations.Delete);
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
 
         var user = await userManager.Users
             .Include(x => x.UserAddresses)
             .ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
-        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+        if (user == null) 
+        {
+            return NotFound($"El usuario con id {userId} no existe.");
+        }
 
         var address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
-        if (address == null) return NotFound($"La dirección con id {addressId} no existe.");
+        if (address == null) 
+        {
+            return NotFound($"La dirección con id {addressId} no existe.");
+        }
 
-        if (address.IsMain) return BadRequest("No puedes eliminar tu dirección principal.");
+        if (address.IsMain) 
+        {
+            return BadRequest("No puedes eliminar tu dirección principal.");
+        }
 
         user.UserAddresses.Remove(address);
 
-        if (!await uow.Complete()) return BadRequest("Error eliminando la dirección.");
+        if (!await uow.Complete())
+        {
+            return BadRequest("Error eliminando la dirección.");
+        }
 
         return Ok();
     }
 
     [Authorize]
-    [HttpPut("address/{addressId}")]
+    [HttpPut("address/{addressId:int}")]
     public async Task<ActionResult> UpdateAddress(int addressId, UserAddressUpdateDto request)
     {
         var userId = User.GetUserId();
+        
+        var userAddress = await uow.AddressRepository.GetByIdAsync(addressId); 
+        if (userAddress == null)
+        {
+            return NotFound($"La dirección con id {addressId} no existe o no pertenece al usuario.");
+        }
+
+        var authResult = await authorizationService.AuthorizeAsync(User, userAddress, UserAddressOperations.Update);
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
 
         var user = await userManager.Users
             .Include(x => x.UserAddresses)
             .ThenInclude(x => x.Address)
             .SingleOrDefaultAsync(x => x.Id == userId);
 
-        if (user == null) return NotFound($"El usuario con id {userId} no existe.");
+        if (user == null) 
+        {
+            return NotFound($"El usuario con id {userId} no existe.");
+        }
 
         var address = user.UserAddresses.SingleOrDefault(x => x.Address.Id == addressId);
-        if (address == null) return NotFound($"La dirección con id {addressId} no existe.");
+        if (address == null) 
+        {
+            return NotFound($"La dirección con id {addressId} no existe.");
+        }
 
         if (request.IsMain)
         {
@@ -1415,8 +1498,7 @@ public class AccountController(
             if (billingAddress != null) billingAddress.IsBilling = false;
         }
 
-        var (latitude, longitude) =
-            await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
+        var (latitude, longitude) = await googleService.GetAddressCoordinatesAsync(googleService.GetAddressText(mapper.Map<Address>(request)));
 
         address.IsMain = request.IsMain;
         address.IsBilling = request.IsBilling;
@@ -1430,8 +1512,15 @@ public class AccountController(
         address.Address.ExteriorNumber = request.ExteriorNumber;
         address.Address.InteriorNumber = request.InteriorNumber;
 
-        if (!uow.HasChanges()) return Ok();
-        if (!await uow.Complete()) return BadRequest("Error actualizando la dirección.");
+        if (!uow.HasChanges()) 
+        {
+            return Ok();
+        }
+        
+        if (!await uow.Complete()) 
+        {
+            return BadRequest("Error actualizando la dirección.");
+        }
 
         return Ok();
     }
@@ -1867,71 +1956,84 @@ public class AccountController(
 
         if (roles.Contains("Doctor"))
         {
-            await HandleMedicalLicenseUpdate(user, request);
+            bool isLicenseUpdateIntended =
+                request.GetSpecialty()?.Id != null ||
+                !string.IsNullOrWhiteSpace(request.LicenseNumber) ||
+                !string.IsNullOrWhiteSpace(request.SpecialtyLicense) ||
+                (request.File != null && request.File.Length > 0);
+
+            if (isLicenseUpdateIntended)
+            {
+                await HandleMedicalLicenseUpdate(user, request);
+            }
+
             HandlePaymentMethodsUpdate(user, request);
         }
 
         await HandlePhotoUpdate(user, request);
-        await uow.Complete();
+
+        if (uow.HasChanges())
+        {
+            if (!await uow.Complete())
+            {
+                throw new ApplicationException($"Failed to save updates for user {user.Id}");
+            }
+        }
     }
 
     private async Task HandleMedicalLicenseUpdate(AppUser user, AccountDetailsUpdateDto request)
     {
-        if (request.GetSpecialty()?.Id == null)
-            throw new ArgumentException("Specialty information is required");
-
-        var mainLicense = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain);
-        var shouldUpdateLicense = mainLicense?.MedicalLicense.MedicalLicenseSpecialty.SpecialtyId !=
-                                  request.GetSpecialty()?.Id.Value;
-
-        // TODO - Handle specialty change
-        if (shouldUpdateLicense)
+        
+        var mainLicenseLink = user.UserMedicalLicenses.FirstOrDefault(x => x.IsMain);
+        if (mainLicenseLink?.MedicalLicense == null)
         {
-            await HandleSpecialtyChange(user, request, request.GetSpecialty().Id.Value, mainLicense);
+            
+            return;
         }
-        else if (request.File != null && request.File.Length > 0)
+
+        var medicalLicense = mainLicenseLink.MedicalLicense; 
+        if (request.File != null && request.File.Length > 0)
         {
-            await UpdateExistingMedicalLicense(mainLicense!, request.File);
+            
+            await UpdateExistingMedicalLicense(mainLicenseLink, request.File);
         }
-    }
 
-    private async Task HandleSpecialtyChange(AppUser user, AccountDetailsUpdateDto request, int specialtyId,
-        UserMedicalLicense? existingLicense)
-    {
-        // TODO - File handling
-        // if (request.File == null || request.File.Length == 0)
-        //     throw new ArgumentException("Medical license proof is required for specialty change");
-        // var uploadResult = await HandleFileUpload(request.File, "Mediverse/DoctorMedicalLicenses");
-        // await RemoveExistingMedicalLicense(existingLicense);
+        
+        var intendedSpecialtyId = request.GetSpecialty()?.Id;
+        var currentSpecialtyId = medicalLicense.MedicalLicenseSpecialty?.SpecialtyId;
 
-        var specialty = await uow.SpecialtyRepository.GetByIdAsync(specialtyId);
-        if (specialty == null) throw new ArgumentException($"Specialty with id {specialtyId} does not exist");
-
-        user.DoctorSpecialty = new DoctorSpecialty(specialty);
-
-        // user.UserMedicalLicenses.Clear();
-        // user.UserMedicalLicenses.Add(CreateNewMedicalLicense(specialtyId, uploadResult));
-    }
-
-    private async Task RemoveExistingMedicalLicense(UserMedicalLicense? license)
-    {
-        if (license?.MedicalLicense.MedicalLicenseDocument?.Document?.PublicId == null) return;
-
-        var deletionResult =
-            await cloudinaryService.DeleteAsync(license.MedicalLicense.MedicalLicenseDocument.Document.PublicId);
-        if (deletionResult.Error != null)
-            throw new ApplicationException("Error deleting previous medical license: " + deletionResult.Error.Message);
-    }
-
-    private static UserMedicalLicense CreateNewMedicalLicense(int specialtyId, ImageUploadResult uploadResult)
-    {
-        return new UserMedicalLicense(
-            specialtyId,
-            uploadResult.PublicId,
-            uploadResult.SecureUrl.AbsoluteUri)
+        if (intendedSpecialtyId.HasValue && intendedSpecialtyId != currentSpecialtyId)
         {
-            IsMain = true
-        };
+            var newSpecialty = await uow.SpecialtyRepository.GetByIdAsync(intendedSpecialtyId.Value);
+            if (newSpecialty != null)
+            {
+                
+                if (medicalLicense.MedicalLicenseSpecialty == null)
+                {
+                    medicalLicense.MedicalLicenseSpecialty = new MedicalLicenseSpecialty();
+                }
+                medicalLicense.MedicalLicenseSpecialty.Specialty = newSpecialty;
+
+                
+                if (user.DoctorSpecialty == null)
+                {
+                    user.DoctorSpecialty = new DoctorSpecialty();
+                }
+                
+                user.DoctorSpecialty.Specialty = newSpecialty;
+            }
+        }
+
+        
+        if (!string.IsNullOrWhiteSpace(request.LicenseNumber) && medicalLicense.LicenseNumber != request.LicenseNumber)
+        {
+            medicalLicense.LicenseNumber = request.LicenseNumber;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.SpecialtyLicense) && medicalLicense.SpecialtyLicense != request.SpecialtyLicense)
+        {
+            medicalLicense.SpecialtyLicense = request.SpecialtyLicense;
+        }
     }
 
     private async Task<ImageUploadResult> HandleFileUpload(IFormFile file, string folder)

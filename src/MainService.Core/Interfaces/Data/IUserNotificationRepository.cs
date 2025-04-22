@@ -7,10 +7,13 @@ namespace MainService.Core.Interfaces.Data;
 
 public interface IUserNotificationRepository
 {
+    public void Delete(UserNotification userNotification);
     public Task<UserNotification> AddAsync(UserNotification userNotification);
-    Task<PagedList<NotificationDto>> GetPagedListAsync(NotificationParams notificationParams);
+    public Task<PagedList<NotificationDto>> GetPagedListAsync(NotificationParams notificationParams);
     public Task<UserNotification> UpdateAsync(UserNotification userNotification);
     public Task<List<UserNotification>> GetAllAsync();
     public Task<List<UserNotification>> GetByUserIdAsync(int userId);
-    public Task<UserNotification?> GetByIdAsync(int id);
+    Task<UserNotification?> GetByNotificationIdAsync(int notificationId);
+    Task<UserNotification?> GetByCompositeKeyAsync(int userId, int notificationId);
+    public Task<int> MarkAllAsReadForUserByIdAsync(int userId);
 }

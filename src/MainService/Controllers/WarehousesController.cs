@@ -1,4 +1,5 @@
 using AutoMapper;
+using MainService.Authorization.Operations;
 using MainService.Core.DTOs.Warehouses;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MainService.Controllers;
 
 [Authorize]
-public class WarehousesController(IUnitOfWork uow, IMapper mapper, IWarehousesService service) : BaseApiController
+public class WarehousesController(IUnitOfWork uow, IMapper mapper, IWarehousesService service, IAuthorizationService authorizationService) : BaseApiController
 {
     private static readonly string subject = "dirección";
     private static readonly string subjectArticle = "La";
@@ -38,14 +39,18 @@ public class WarehousesController(IUnitOfWork uow, IMapper mapper, IWarehousesSe
     [HttpGet("{id:int}")]
     public async Task<ActionResult<WarehouseDto?>> GetByIdAsync([FromRoute] int id)
     {
-        var item = await uow.WarehouseRepository.GetDtoByIdAsync(id);
+        var warehouse = await uow.WarehouseRepository.GetDtoByIdAsync(id);
+        if (warehouse == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
 
-        if (item == null) return NotFound($"{subjectArticle} {subject} de ID {id} no fue encontrado.");
+        var authResult = await authorizationService.AuthorizeAsync(User, warehouse, WarehouseOperations.Read);
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
 
-        return item;
+        return warehouse;
     }
 
-    // [Authorize(Policy = "RequireAdminRole")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteByIdAsync(int id)
     {
@@ -93,7 +98,15 @@ public class WarehousesController(IUnitOfWork uow, IMapper mapper, IWarehousesSe
     {
         var warehouse = await uow.WarehouseRepository.GetByIdAsync(id);
         if (warehouse == null)
+        {
             return NotFound($"Warehouse with ID {id} not found.");
+        }
+
+        var authResult = await authorizationService.AuthorizeAsync(User, warehouse, WarehouseOperations.ManageStock);
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
 
         foreach (var wpDto in updateDto.WarehouseProducts)
         {

@@ -1,5 +1,6 @@
 using System.Net.Mail;
 using AutoMapper;
+using MainService.Authorization.Operations;
 using MainService.Core.DTOs.Events;
 using MainService.Core.DTOs.Payment;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,8 @@ namespace MainService.Controllers
         IUnitOfWork uow,
         IMapper mapper,
         IStripeService stripeService,
-        IEmailService emailService) : BaseApiController
+        IEmailService emailService,
+        IAuthorizationService authorizationService) : BaseApiController
     {
         private const int CommissionInCents = 5 * 100;
 
@@ -53,11 +55,16 @@ namespace MainService.Controllers
         [HttpGet("methods/{id:int}")]
         public async Task<ActionResult<List<UserPaymentMethodDto>>> GetPaymentMethodsByUserById(int id)
         {
-            if (id != User.GetUserId())
-                return Unauthorized("You are not authorized to access this user's payment methods.");
-
+            if (id != User.GetUserId() && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+            
             var user = await uow.UserRepository.GetByIdAsync(id);
-            if (user == null) return BadRequest("User not found.");
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
 
             return await uow.PaymentMethodRepository.GetAllByUserIdAsync(id);
         }
@@ -340,8 +347,10 @@ namespace MainService.Controllers
         [HttpGet("method-preferences/{userId:int}")]
         public async Task<ActionResult<List<PaymentMethodPreferenceDto>>> GetPaymentMethodPreferences(int userId)
         {
-            if (userId != User.GetUserId())
-                return Unauthorized("You are not authorized to access this user's payment method preferences.");
+            if (userId != User.GetUserId() && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
 
             var preferences = await uow.PaymentMethodPreferenceRepository.GetByUserIdAsync(userId);
             return Ok(preferences);
@@ -352,22 +361,27 @@ namespace MainService.Controllers
             [FromBody] PaymentMethodPreferenceCreateDto dto)
         {
             if (dto.UserId != User.GetUserId())
-                return Unauthorized("You are not authorized to create preferences for this user.");
+            {
+                return Forbid();
+            }
 
             var paymentMethodType = await uow.PaymentMethodTypeRepository.GetByIdAsync(dto.PaymentMethodTypeId);
             if (paymentMethodType == null)
+            {
                 return BadRequest($"Payment method type with ID {dto.PaymentMethodTypeId} not found.");
+            }
 
-            var userAcceptsMethod =
-                await uow.UserRepository.UserAcceptsPaymentMethodTypeByIdAsync(dto.UserId, dto.PaymentMethodTypeId);
+            var userAcceptsMethod = await uow.UserRepository.UserAcceptsPaymentMethodTypeByIdAsync(dto.UserId, dto.PaymentMethodTypeId);
             if (!userAcceptsMethod)
+            {
                 return BadRequest($"User does not accept payment method type with ID {dto.PaymentMethodTypeId}.");
+            }
 
-            var existingPreference =
-                await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(dto.UserId,
-                    dto.PaymentMethodTypeId);
+            var existingPreference = await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(dto.UserId, dto.PaymentMethodTypeId);
             if (existingPreference != null)
+            {
                 return BadRequest("Preference for this payment method type already exists.");
+            }
 
             if (dto.IsDefault)
             {
@@ -397,27 +411,21 @@ namespace MainService.Controllers
         public async Task<ActionResult<PaymentMethodPreferenceDto>> UpdatePaymentMethodPreference(int userId,
             int paymentMethodTypeId, [FromBody] PaymentMethodPreferenceUpdateDto request)
         {
-            if (userId != User.GetUserId())
+            if (userId != User.GetUserId() && !User.IsInRole("Admin"))
             {
                 return Unauthorized("You are not authorized to update preferences for this user.");
             }
 
-            var preferenceDto =
-                await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(userId,
-                    paymentMethodTypeId);
+            var preferenceDto = await uow.PaymentMethodPreferenceRepository.GetByUserIdAndPaymentMethodTypeIdAsync(userId, paymentMethodTypeId);
             if (preferenceDto == null)
             {
-                return NotFound(
-                    $"Preference for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
+                return NotFound($"Preference for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
             }
 
-            var preference = await uow.PaymentMethodPreferenceRepository.GetEntityByUserIdAndPaymentMethodTypeIdAsync(
-                userId,
-                paymentMethodTypeId);
+            var preference = await uow.PaymentMethodPreferenceRepository.GetEntityByUserIdAndPaymentMethodTypeIdAsync(userId, paymentMethodTypeId);
             if (preference == null)
             {
-                return NotFound(
-                    $"Preference entity for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
+                return NotFound($"Preference entity for user ID {userId} and payment method type ID {paymentMethodTypeId} not found.");
             }
 
 
@@ -455,8 +463,10 @@ namespace MainService.Controllers
         [HttpDelete("method-preferences/{userId:int}/{paymentMethodTypeId:int}")]
         public async Task<ActionResult> DeletePaymentMethodPreference(int userId, int paymentMethodTypeId)
         {
-            if (userId != User.GetUserId())
+            if (userId != User.GetUserId() && !User.IsInRole("Admin"))
+            {
                 return Unauthorized("You are not authorized to delete preferences for this user.");
+            }
 
             var preference =
                 await uow.PaymentMethodPreferenceRepository.GetEntityByUserIdAndPaymentMethodTypeIdAsync(userId,
@@ -478,10 +488,20 @@ namespace MainService.Controllers
             [FromBody] CreatePaymentIntentRequestDto request)
         {
             var requestingUserId = User.GetUserId();
-
             var order = await uow.OrderRepository.GetByIdAsync(orderId);
             if (order == null)
                 return NotFound($"Order with ID {orderId} not found.");
+
+            var orderAuthResult = await authorizationService.AuthorizeAsync(User, order, OrderOperations.Read); // Or a specific Pay operation if defined
+            if (!orderAuthResult.Succeeded)
+            {
+                return Forbid("You are not authorized to access this order.");
+            }
+            
+            if (order.PatientOrder?.PatientId != requestingUserId)
+            {
+                return Forbid("You are not authorized to create a payment intent for this order.");
+            }
 
             var shippingAddress = await uow.AddressRepository.GetByIdAsync(request.AddressId);
             if (shippingAddress == null)
@@ -602,6 +622,12 @@ namespace MainService.Controllers
             var eventItem = await uow.EventRepository.GetByIdAsync(eventId);
             if (eventItem == null)
                 return NotFound($"Event with ID {eventId} not found.");
+            
+            var eventAuthResult = await authorizationService.AuthorizeAsync(User, eventItem, EventOperations.Pay);
+            if (!eventAuthResult.Succeeded)
+            {
+                return Forbid("You are not authorized to pay for this event.");
+            }
 
             var billingAddress = await uow.AddressRepository.GetByIdAsync(request.AddressId);
             if (billingAddress == null)
