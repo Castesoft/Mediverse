@@ -9,11 +9,7 @@ import { Navigation } from "@angular/router";
   template: `
     <div breadcrumbs></div>
     <div post>
-      <div nurseForm
-           [(item)]="item"
-           [(key)]="key"
-           [(use)]="use"
-           [(view)]="view"></div>
+      <div nurseAssociateForm></div>
     </div>
   `,
   standalone: false,

@@ -83,6 +83,16 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
           if (response.requiresTwoFactor) {
             this.requiresTwoFactor = true;
           } else {
+            const pendingToken = localStorage.getItem('pendingInvitationToken');
+            if (pendingToken) {
+              console.log('Pending invitation token found after login:', pendingToken);
+              localStorage.removeItem('pendingInvitationToken');
+              this.router.navigate(['/auth/accept-invitation'], { queryParams: { token: pendingToken } })
+                .then(() => console.log('Redirected to accept invitation after login.'))
+                .catch(err => console.error('Failed to redirect to accept invitation after login:', err));
+              return;
+            }
+
             if (this.noRedirect()) return;
             this.router.navigateByUrl(this.returnUrl || '/cuenta').then(() => {});
           }

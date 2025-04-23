@@ -994,7 +994,7 @@ public class AccountController(
         if (!updateResult.Succeeded) return BadRequest("Error al actualizar información del usuario.");
 
         var clientUrl = clientSettings.Value.Url;
-        var subject = $"🔒 Verificación de correo para {user.FirstName}!";
+        var subject = $"DocHub | 📫 Verifica tu Correo";
         var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
         var email = user.Email;
@@ -1090,7 +1090,7 @@ public class AccountController(
 
         // send email verification code
         var clientUrl = configuration.GetValue<string>("ClientUrl");
-        var subject = $"🔒 Verificación de correo para {user.FirstName}!";
+        var subject = $"DocHub | 📫 Verifica tu Correo";
         var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
         var email = user.Email;

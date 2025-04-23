@@ -78,6 +78,9 @@ import { ClinicFormComponent } from 'src/app/clinics/clinic-form.component';
 import {
   DashboardSidenavComponent
 } from "src/app/_shared/components/dashboard/dashboard-sidenav/dashboard-sidenav.component";
+import {
+  NurseAssociateFormComponent
+} from "src/app/nurses/components/nurse-associate-form/nurse-associate-form.component";
 
 @NgModule({
   declarations: [
@@ -150,6 +153,7 @@ import {
     ClinicFormComponent,
     NurseFormComponent,
     DashboardSidenavComponent,
+    NurseAssociateFormComponent,
   ],
   exports: [ HomeComponent ],
 })

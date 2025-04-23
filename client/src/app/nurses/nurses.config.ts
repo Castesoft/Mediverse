@@ -19,7 +19,7 @@ import { CatalogMode, View } from 'src/app/_models/base/types';
 import { DetailInputSignals } from 'src/app/_models/forms/formComponentInterfaces';
 import { FormUse } from 'src/app/_models/forms/formTypes';
 import Nurse from 'src/app/_models/nurses/nurse';
-import { nurseColumns, nurseDictionary } from 'src/app/_models/nurses/nurseConstants';
+import { NurseAssociationRequest, nurseColumns, nurseDictionary } from 'src/app/_models/nurses/nurseConstants';
 import { NurseFiltersForm } from 'src/app/_models/nurses/nurseFiltersForm';
 import { NurseParams } from 'src/app/_models/nurses/nurseParams';
 import { CdkModule } from 'src/app/_shared/cdk.module';
@@ -29,6 +29,8 @@ import { ServiceHelper } from 'src/app/_utils/serviceHelper/serviceHelper';
 import { NursesCatalogComponent } from 'src/app/nurses/components/nurses-catalog.component';
 import { NurseFormComponent } from 'src/app/nurses/nurse-form.component';
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Account } from "src/app/_models/account/account";
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'nurses-catalog-modal',
@@ -154,6 +156,10 @@ export class NurseDetailModalComponent {
 export class NursesService extends ServiceHelper<Nurse, NurseParams, NurseFiltersForm> {
   constructor() {
     super(NurseParams, 'nurses', nurseDictionary, nurseColumns);
+  }
+
+  associateOrInviteNurse(payload: NurseAssociationRequest): Observable<Account | { message: string }> {
+    return this.http.post<Account | { message: string }>(`${this.baseUrl}associate`, payload);
   }
 
   showCatalogModal(event: MouseEvent, key: string, mode: CatalogMode, view: View): void {

@@ -1100,6 +1100,44 @@ namespace MainService.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Invitations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    InvitingUserId = table.Column<int>(type: "integer", nullable: false),
+                    InviteeEmail = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    RoleInvitedAs = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    Token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AcceptedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    AcceptedUserId = table.Column<int>(type: "integer", nullable: true),
+                    ContextId = table.Column<int>(type: "integer", nullable: true),
+                    ContextType = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invitations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invitations_AspNetUsers_AcceptedUserId",
+                        column: x => x.AcceptedUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Invitations_AspNetUsers_InvitingUserId",
+                        column: x => x.InvitingUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PaymentMethods",
                 columns: table => new
                 {
@@ -3336,6 +3374,32 @@ namespace MainService.Postgres.Migrations
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Invitations_AcceptedUserId",
+                table: "Invitations",
+                column: "AcceptedUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_ExpiryDate",
+                table: "Invitations",
+                column: "ExpiryDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_InvitingUserId",
+                table: "Invitations",
+                column: "InvitingUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_Status",
+                table: "Invitations",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_Token",
+                table: "Invitations",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ManualPaymentDetails_PaymentId",
                 table: "ManualPaymentDetails",
                 column: "PaymentId",
@@ -3890,6 +3954,9 @@ namespace MainService.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "EventService");
+
+            migrationBuilder.DropTable(
+                name: "Invitations");
 
             migrationBuilder.DropTable(
                 name: "ManualPaymentDetails");

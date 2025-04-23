@@ -1320,6 +1320,79 @@ namespace MainService.Postgres.Migrations
                     b.ToTable("FamilyMembers");
                 });
 
+            modelBuilder.Entity("MainService.Models.Entities.Invitation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("AcceptedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("AcceptedUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ContextId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ContextType")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InviteeEmail")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("InvitingUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleInvitedAs")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcceptedUserId");
+
+                    b.HasIndex("ExpiryDate");
+
+                    b.HasIndex("InvitingUserId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("Invitations");
+                });
+
             modelBuilder.Entity("MainService.Models.Entities.Link", b =>
                 {
                     b.Property<int>("Id")
@@ -4345,6 +4418,24 @@ namespace MainService.Postgres.Migrations
                     b.Navigation("Event");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("MainService.Models.Entities.Invitation", b =>
+                {
+                    b.HasOne("MainService.Models.Entities.AppUser", "AcceptedUser")
+                        .WithMany()
+                        .HasForeignKey("AcceptedUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("MainService.Models.Entities.AppUser", "InvitingUser")
+                        .WithMany()
+                        .HasForeignKey("InvitingUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AcceptedUser");
+
+                    b.Navigation("InvitingUser");
                 });
 
             modelBuilder.Entity("MainService.Models.Entities.ManualPaymentDetail", b =>

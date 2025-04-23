@@ -1,22 +1,24 @@
-using System.Globalization;
 using AutoMapper;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
+using CloudinaryDotNet; 
+using CloudinaryDotNet.Actions; 
 using MainService.Authorization.Operations;
-using MainService.Core.DTOs.Nurses;
+using MainService.Core.DTOs.Notification;
+using MainService.Core.DTOs.Nurses; 
 using MainService.Core.DTOs.User;
 using MainService.Core.Extensions;
 using MainService.Core.Helpers.Pagination;
 using MainService.Core.Helpers.Params;
 using MainService.Core.Interfaces.Services;
 using MainService.Extensions;
+using MainService.Hubs;
 using MainService.Models.Entities;
 using MainService.Models.Entities.Aggregate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
+using MainService.Models.Enums;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MainService.Controllers;
 
@@ -24,11 +26,12 @@ namespace MainService.Controllers;
 public class NursesController(
     IUnitOfWork uow,
     UserManager<AppUser> userManager,
-    IMapper mapper,
-    IUsersService service,
-    ICloudinaryService cloudinaryService,
+    ICloudinaryService cloudinaryService, 
     IAuthorizationService authorizationService,
-    ILogger<NursesController> logger
+    INotificationsService notificationsService,
+    IHubContext<NotificationHub> hubContext,
+    IMapper mapper,
+    IEmailService emailService
 ) : BaseApiController
 {
     [HttpGet]
@@ -73,7 +76,6 @@ public class NursesController(
             return Unauthorized();
         }
 
-
         if (!User.IsInRole("Admin"))
         {
             param.DoctorId = requestingDoctorId;
@@ -84,215 +86,226 @@ public class NursesController(
             Log.Information("Admin user requested nurse options without specifying DoctorId. Returning all associated nurses.");
         }
 
-
         var options = await uow.NurseRepository.GetOptionsAsync(param);
         return Ok(options);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<UserDto>> CreateAsync([FromForm] NurseCreateDto request)
+    [HttpPost("associate")]
+    public async Task<ActionResult<UserDto>> AssociateNurseAsync([FromBody] NurseAssociateDto request) 
     {
-        var createAuthResult = await authorizationService.AuthorizeAsync(User, null, NurseOperations.CreateAssociation);
+        var doctorNurse = new DoctorNurse();
+        
+        var requestingDoctorId = User.GetUserId();
+        if (requestingDoctorId <= 0)
+        {
+            return Unauthorized("Información de doctor inválida.");
+        }
+
+        doctorNurse.DoctorId = requestingDoctorId;
+        
+        var createAuthResult = await authorizationService.AuthorizeAsync(User, doctorNurse, NurseOperations.CreateAssociation);
         if (!createAuthResult.Succeeded)
         {
-            Log.Warning("CreateAsync Nurse: Forbidden attempt by User {UserId}. Missing CreateAssociation permission.", User.GetUserId());
+            Log.Warning("AssociateNurseAsync: Forbidden attempt by User {UserId}. Missing CreateAssociation permission.", User.GetUserId());
             return Forbid();
         }
 
+        var requestingDoctor = await uow.UserRepository.GetByIdAsync(requestingDoctorId);
+        if (requestingDoctor == null)
+        {
+            return NotFound("Doctor solicitante no encontrado.");
+        }
 
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-
-        if (request.Files != null && request.Files.Count > 1)
+        
+        if (request.Email.Equals(requestingDoctor.Email, StringComparison.OrdinalIgnoreCase))
         {
-            return BadRequest("Solo puedes subir una foto de perfil.");
+            return BadRequest("No puedes asociarte a ti mismo como especialista.");
         }
 
+        var potentialNurseUser = await userManager.FindByEmailAsync(request.Email);
 
-        var requestingDoctorId = User.GetUserId();
-        var requestingDoctorEmail = User.GetEmail();
-
-        if (requestingDoctorId <= 0 || string.IsNullOrEmpty(requestingDoctorEmail))
+        if (potentialNurseUser != null)
         {
-            Log.Error("CreateAsync Nurse: Invalid requesting user state - ID: {UserId}, Email: {Email}", requestingDoctorId, requestingDoctorEmail);
-            return BadRequest("Información del doctor solicitante inválida.");
-        }
+            // Scenario 1: Nurse User Exists
+            Log.Information("User found with email {Email}. Checking association and role.", request.Email);
 
-
-        var requestingDoctor = await userManager.Users
-            .Include(u => u.DoctorNurses)
-            .SingleOrDefaultAsync(x => x.Id == requestingDoctorId);
-
-        if (requestingDoctor == null)
-        {
-            Log.Error("CreateAsync Nurse: Requesting doctor (ID: {DoctorId}) not found in DB despite claims.", requestingDoctorId);
-            return BadRequest("Doctor solicitante no encontrado.");
-        }
-
-        if (request.Email == requestingDoctorEmail)
-        {
-            Log.Warning("CreateAsync Nurse: Doctor {DoctorId} attempted to add themselves.", requestingDoctorId);
-            return BadRequest("No puedes agregarte a ti mismo como especialista.");
-        }
-
-
-        var nurse = await userManager.Users
-            .Include(x => x.Doctors)
-            .Include(x => x.UserPhoto).ThenInclude(p => p.Photo)
-            .SingleOrDefaultAsync(x => x.Email == request.Email);
-
-        bool isNewUser = false;
-
-        if (nurse != null)
-        {
-            if (nurse.Doctors.Any(dp => dp.DoctorId == requestingDoctorId))
+            bool alreadyAssociated = await uow.DoctorNurseRepository.FindByCompositeKeyAsync(requestingDoctorId, potentialNurseUser.Id) != null;
+            if (alreadyAssociated)
             {
-                Log.Warning(
-                    "CreateAsync Nurse: Nurse {NurseEmail} (ID: {NurseId}) is already associated with Doctor {DoctorId}.",
-                    request.Email, nurse.Id, requestingDoctorId);
-                return BadRequest($"El especialista con email {request.Email} ya está registrado contigo.");
+                Log.Warning("Nurse {NurseId} is already associated with Doctor {DoctorId}.", potentialNurseUser.Id, requestingDoctorId);
+                return Conflict($"Este/a especialista ({request.Email}) ya está asociado/a contigo.");
+            }
+            
+            bool isNurse = await userManager.IsInRoleAsync(potentialNurseUser, "Nurse");
+            if (!isNurse)
+            {
+                Log.Warning("User {UserId} exists but lacks 'Nurse' role. Association denied.", potentialNurseUser.Id);
+                return BadRequest($"El usuario con correo {request.Email} existe, pero no está registrado como Especialista en la plataforma. Pídeles que actualicen su perfil o invítalos correctamente.");
             }
 
-            if (!await userManager.IsInRoleAsync(nurse, "Nurse"))
+            Log.Information("Associating existing Nurse {NurseId} with Doctor {DoctorId}.", potentialNurseUser.Id, requestingDoctorId);
+            doctorNurse.DoctorId = requestingDoctorId;
+            uow.DoctorNurseRepository.Add(doctorNurse);
+
+            var nurseNotification = await notificationsService.CreateForNurseAssociated(potentialNurseUser, requestingDoctor);
+            
+            if (!await uow.Complete())
             {
-                Log.Information("CreateAsync Nurse: Found user {NurseEmail} (ID: {NurseId}) but they lack 'Nurse' role. Adding role.",
-                    request.Email, nurse.Id);
-                var addRoleResult = await userManager.AddToRoleAsync(nurse, "Nurse");
-                if (!addRoleResult.Succeeded)
+                Log.Error("Failed to save DoctorNurse association between Doctor {DoctorId} and Nurse {NurseId}.", requestingDoctorId, potentialNurseUser.Id);
+                return BadRequest("Error al guardar la asociación con el/la especialista.");
+            }
+
+            if (nurseNotification != null)
+            {
+                await uow.UserNotificationRepository.AddAsync(nurseNotification);
+                if (await uow.Complete())
                 {
-                    Log.Error("CreateAsync Nurse: Failed to add 'Nurse' role to existing user {NurseEmail} (ID: {NurseId}). Errors: {@Errors}",
-                        request.Email, nurse.Id, addRoleResult.Errors);
-                    return BadRequest($"Error al asignar rol de especialista al usuario existente con email {request.Email}.");
-                }
-            }
-        }
-        else
-        {
-            isNewUser = true;
-            nurse = mapper.Map<AppUser>(request);
-            if (DateTime.TryParse(request.DateOfBirth.ToString(CultureInfo.InvariantCulture), out var dob))
-            {
-                nurse.DateOfBirth = DateOnly.FromDateTime(dob);
-            }
-            else
-            {
-                Log.Warning("CreateAsync Nurse: Invalid DateOfBirth format provided: {DateOfBirth}", request.DateOfBirth);
-                ModelState.AddModelError(nameof(request.DateOfBirth), "Formato de fecha de nacimiento inválido.");
-                return BadRequest(ModelState);
-            }
-
-            nurse.UserName = request.Email;
-
-
-            var createResult = await userManager.CreateAsync(nurse, "Pa$$w0rd");
-            if (!createResult.Succeeded)
-            {
-                Log.Error("CreateAsync Nurse: Failed to create new user for email {Email}. Errors: {@Errors}", request.Email, createResult.Errors);
-                return BadRequest($"Error al crear especialista con email {request.Email}: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
-            }
-
-            var roleResult = await userManager.AddToRoleAsync(nurse, "Nurse");
-            if (!roleResult.Succeeded)
-            {
-                Log.Error("CreateAsync Nurse: Failed to add 'Nurse' role to newly created user {Email} (ID: {NurseId}). Errors: {@Errors}", request.Email, nurse.Id, roleResult.Errors);
-                return BadRequest($"Error al agregar rol de especialista al nuevo usuario con email {request.Email}.");
-            }
-
-            Log.Information("CreateAsync Nurse: Successfully created new Nurse user {Email} (ID: {NurseId}).", request.Email, nurse.Id);
-        }
-
-
-        requestingDoctor.DoctorNurses.Add(new DoctorNurse(nurse.Id));
-
-
-        bool photoUpdated = false;
-        if (request.Files != null && request.Files.Count == 1)
-        {
-            var file = request.Files.First();
-            try
-            {
-                if (nurse.UserPhoto?.Photo != null && !string.IsNullOrEmpty(nurse.UserPhoto.Photo.PublicId))
-                {
-                    Log.Information("CreateAsync Nurse: Deleting existing photo {PublicId} for Nurse {NurseId} before uploading new one.", nurse.UserPhoto.Photo.PublicId, nurse.Id);
-                    await cloudinaryService.DeleteAsync(nurse.UserPhoto.Photo.PublicId);
-                    uow.PhotoRepository.Delete(nurse.UserPhoto.Photo);
-                    nurse.UserPhoto = null;
-                    await uow.Complete();
-                }
-
-                var uploadResult = await UploadImage(file);
-                if (uploadResult != null)
-                {
-                    var newPhoto = new Photo
-                    {
-                        Url = uploadResult.SecureUrl,
-                        PublicId = uploadResult.PublicId,
-                        Size = (int?)file.Length
-                    };
-
-                    nurse.UserPhoto = new UserPhoto { Photo = newPhoto };
-
-                    photoUpdated = true;
+                    await NotifyUserAsync(potentialNurseUser.Id, mapper.Map<NotificationDto>(nurseNotification));
                 }
                 else
                 {
-                    Log.Warning("CreateAsync Nurse: Photo upload failed for Nurse {NurseId}, proceeding without photo update.", nurse.Id);
+                    Log.Warning("Failed to save UserNotification link for Nurse {NurseId} associated by Doctor {DoctorId}.", potentialNurseUser.Id, requestingDoctorId);
                 }
+            }
+
+            var nurseDto = await uow.UserRepository.GetDtoByIdAsync(potentialNurseUser.Id);
+            return Ok(nurseDto);
+        }
+        else
+        {
+            // Scenario 2: User Does Not Exist - Invitation Flow
+            Log.Information("User with email {Email} not found. Initiating invitation flow.", request.Email);
+
+            var token = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+            var expiryDate = DateTime.UtcNow.AddDays(7);
+
+            var invitation = new Invitation
+            {
+                InvitingUserId = requestingDoctorId,
+                InviteeEmail = request.Email,
+                RoleInvitedAs = "Nurse", 
+                Status = InvitationStatus.Pending,
+                Token = token,
+                ExpiryDate = expiryDate,
+            };
+
+            await uow.InvitationRepository.AddAsync(invitation);
+            
+            var doctorInviteNotification = await notificationsService.CreateForDoctorInvitationSent(requestingDoctor, request.Email);
+
+            if (!await uow.Complete())
+            {
+                Log.Error("Failed to save invitation record for email {Email} invited by Doctor {DoctorId}.", request.Email, requestingDoctorId);
+                return BadRequest("Error al guardar la invitación.");
+            }
+            
+            if (doctorInviteNotification != null)
+            {
+                await uow.UserNotificationRepository.AddAsync(doctorInviteNotification);
+                if (await uow.Complete())
+                {
+                    await NotifyUserAsync(requestingDoctorId, mapper.Map<NotificationDto>(doctorInviteNotification));
+                } else {
+                    Log.Warning("Failed to save UserNotification link for doctor invitation sent confirmation DoctorId {DoctorId}.", requestingDoctorId);
+                }
+            }
+
+            try
+            {
+                await emailService.SendNurseInvitationEmailAsync(requestingDoctor, request.Email, token, expiryDate, request.FirstName);
+                Log.Information("Invitation email sent to {Email} for Doctor {DoctorId}.", request.Email, requestingDoctorId);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "CreateAsync Nurse: Exception during photo handling for Nurse {NurseId}.", nurse.Id);
+                Log.Error(ex, "Failed to send invitation email to {Email} for Doctor {DoctorId}.", request.Email, requestingDoctorId);
+                return Ok(new
+                {
+                    message = $"Invitación creada para {request.Email}, pero hubo un problema al enviar el correo. Pídeles que revisen su bandeja de entrada o spam, o contáctales directamente."
+                });
             }
-        }
 
-
-        var doctorUpdateResult = await userManager.UpdateAsync(requestingDoctor);
-        if (!doctorUpdateResult.Succeeded)
-        {
-            Log.Error("CreateAsync Nurse: Failed to update requesting Doctor {DoctorId} after adding nurse association. Errors: {@Errors}", requestingDoctorId, doctorUpdateResult.Errors);
-            return BadRequest("Error al actualizar la información del doctor después de agregar al especialista.");
-        }
-
-
-        if (isNewUser || photoUpdated || !(await userManager.IsInRoleAsync(nurse, "Nurse")))
-        {
-            var nurseUpdateResult = await userManager.UpdateAsync(nurse);
-            if (!nurseUpdateResult.Succeeded)
+            return Ok(new
             {
-                Log.Error("CreateAsync Nurse: Failed to update Nurse user {NurseId} (Email: {Email}). Errors: {@Errors}", nurse.Id, nurse.Email, nurseUpdateResult.Errors);
-                return BadRequest("Error al actualizar la información del especialista.");
-            }
+                message = $"Invitación enviada a {request.Email}. Necesitan registrarse o iniciar sesión para aceptar."
+            });
+        }
+    }
+
+    [HttpDelete("dissociate/{nurseId:int}")]
+    [Authorize(Roles = "Doctor, Admin")]
+    public async Task<IActionResult> DissociateNurseAsync(int nurseId)
+    {
+        var requestingDoctorId = User.GetUserId();
+        if (requestingDoctorId <= 0) return Unauthorized();
+
+        var nurseUser = await uow.UserRepository.GetByIdAsync(nurseId);
+        if (nurseUser == null)
+        {
+            return NotFound("Especialista no encontrado/a.");
         }
 
-
-        if (uow.HasChanges())
+        AppUser? nurseToNotify = null;
+        
+        var association = await uow.DoctorNurseRepository.FindByCompositeKeyAsync(requestingDoctorId, nurseId);
+        if (association == null)
         {
-            if (!await uow.Complete())
+            return NotFound("La asociación entre este doctor y especialista no existe.");
+        }
+        
+        nurseToNotify = association.Nurse;
+
+        var authResult = await authorizationService.AuthorizeAsync(User, association, NurseOperations.DeleteAssociation);
+        if (!authResult.Succeeded)
+        {
+            Log.Warning("DissociateNurseAsync: Authorization failed for User {UserId} on DoctorNurse resource (Doctor {DoctorId}, Nurse {NurseId}).", User.GetUserId(), association.DoctorId, association.NurseId);
+            return Forbid();
+        }
+
+        uow.DoctorNurseRepository.Remove(association);
+        
+        var nurseDissociatedNotification = await notificationsService.CreateForNurseDissociated(nurseToNotify, association.Doctor); 
+
+        if (!await uow.Complete())
+        {
+            Log.Error("Failed to remove DoctorNurse association between Doctor {DoctorId} and Nurse {NurseId}.", requestingDoctorId, nurseId);
+            return BadRequest("Error al eliminar la asociación.");
+        }
+        
+        if (nurseDissociatedNotification != null)
+        {
+            await uow.UserNotificationRepository.AddAsync(nurseDissociatedNotification);
+            if (await uow.Complete())
             {
-                Log.Error("CreateAsync Nurse: Final UoW save failed after associating Nurse {NurseId} with Doctor {DoctorId}.", nurse.Id, requestingDoctorId);
-                return BadRequest("Error final al guardar los cambios del especialista.");
+                await NotifyUserAsync(nurseToNotify.Id, mapper.Map<NotificationDto>(nurseDissociatedNotification));
+            } else {
+                Log.Warning("Failed to save UserNotification for nurse dissociation (NurseId {NurseId}).", nurseToNotify.Id);
             }
         }
 
-
-        Log.Information("CreateAsync Nurse: Successfully associated Nurse {NurseId} with Doctor {DoctorId}.", nurse.Id, requestingDoctorId);
-
-        var nurseDto = await uow.UserRepository.GetDtoByIdAsync(nurse.Id);
-        if (nurseDto == null)
+        Log.Information("Successfully removed DoctorNurse association between Doctor {DoctorId} and Nurse {NurseId}.", requestingDoctorId, nurseId);
+        return NoContent(); 
+    }
+    
+    private async Task NotifyUserAsync(int userId, NotificationDto? notification)
+    {
+        if (notification == null) return;
+        try
         {
-            Log.Error("CreateAsync Nurse: Failed to retrieve DTO for associated Nurse {NurseId} after successful operation.",
-                nurse.Id);
-
-            return BadRequest("Especialista asociado correctamente, pero no se pudieron recuperar los detalles actualizados.");
+            await hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveNotification", notification);
+            Log.Information("SignalR notification '{NotificationType}' sent to User {UserId}", notification.Type, userId);
         }
-
-        return Ok(nurseDto);
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to send SignalR notification to User {UserId} for NotificationId {NotificationId}", userId, notification.Id);
+        }
     }
 
 
-    private async Task<ImageUploadResult?> UploadImage(IFormFile file)
+    private async Task<ImageUploadResult?> UploadImage(IFormFile? file)
     {
         if (file == null || file.Length == 0)
         {
@@ -318,16 +331,14 @@ public class NursesController(
                 Log.Information("UploadImage: Successfully uploaded image to Cloudinary. PublicId: {PublicId}, Url: {Url}", uploadResult.PublicId, uploadResult.SecureUrl);
                 return uploadResult;
             }
-            else
-            {
-                Log.Error("UploadImage: Cloudinary upload failed for file {OriginalFileName}. Status: {StatusCode}, Error: {ErrorMessage}", file.FileName, uploadResult.StatusCode, uploadResult.Error?.Message ?? "N/A");
-                return null;
-            }
+
+            Log.Error("UploadImage: Cloudinary upload failed for file {OriginalFileName}. Status: {StatusCode}, Error: {ErrorMessage}", file.FileName, uploadResult.StatusCode, uploadResult.Error?.Message ?? "N/A");
+            return null;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "UploadImage: Exception occurred during Cloudinary upload for file {OriginalFileName}", file.FileName);
-            throw;
+            return null;
         }
     }
 }

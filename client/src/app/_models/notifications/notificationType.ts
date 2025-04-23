@@ -7,5 +7,9 @@ export enum NotificationType {
   SYSTEM_ALERT = "system-alert",
   FEEDBACK_REQUEST = "feedback-request",
   SECURITY = "security",
-  APPOINTMENT_CANCELLED = "appointment-cancelled"
+  APPOINTMENT_CANCELLED = "appointment-cancelled",
+  NURSE_ASSOCIATED = "nurse-associated",
+  NURSE_INVITATION_SENT = "nurse-invitation-sent",
+  NURSE_INVITATION_ACCEPTED = "nurse-invitation-accepted",
+  NURSE_DISSOCIATED = "nurse-dissociated",
 }

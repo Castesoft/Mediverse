@@ -1,7 +1,8 @@
 namespace MainService.Models.Entities;
 
 /// <summary>
-/// Defines the types of notifications that can be sent.
+/// Defines the types of notifications that can be sent within the system.
+/// These constants are used to categorize notifications for display, filtering, or handling logic.
 /// </summary>
 public static class NotificationType
 {
@@ -11,42 +12,65 @@ public static class NotificationType
     public const string General = "general";
 
     /// <summary>
-    /// A notification that a new appointment has been scheduled.
+    /// A notification indicating that a new appointment has been successfully scheduled.
+    /// Typically sent to both patient and doctor.
     /// </summary>
     public const string AppointmentScheduled = "appointment-scheduled";
 
     /// <summary>
-    /// A reminder for upcoming appointments.
+    /// A notification sent as a reminder for an upcoming appointment.
+    /// Usually sent to the patient.
     /// </summary>
     public const string AppointmentReminder = "appointment-reminder";
 
     /// <summary>
-    /// A notification regarding prescription updates or refills.
+    /// A notification related to updates or refills for a patient's prescription.
     /// </summary>
     public const string PrescriptionUpdate = "prescription-update";
 
     /// <summary>
-    /// A notification related to billing events.
+    /// A notification concerning billing activities, such as invoices, payments, or subscription renewals.
     /// </summary>
     public const string BillingAlert = "billing-alert";
 
     /// <summary>
-    /// A system-wide alert or notification.
+    /// An important announcement or alert broadcast to a wide range of users or all users.
     /// </summary>
     public const string SystemAlert = "system-alert";
 
     /// <summary>
-    /// A request for feedback or review.
+    /// A notification prompting the user (usually a patient) to provide feedback or a review, often after an appointment.
     /// </summary>
     public const string FeedbackRequest = "feedback-request";
 
     /// <summary>
-    /// A security-related notification, such as account changes or suspicious activity.
+    /// A notification related to account security, like password changes, login attempts, or suspicious activity.
     /// </summary>
     public const string Security = "security";
 
     /// <summary>
-    /// A notification that an appointment has been cancelled.
+    /// A notification informing relevant parties that an appointment has been cancelled.
+    /// Typically sent to both patient and doctor.
     /// </summary>
     public const string AppointmentCancelled = "appointment-cancelled";
+
+    /// <summary>
+    /// A notification sent to a Nurse when a Doctor associates them with their team/profile.
+    /// </summary>
+    public const string NurseAssociated = "nurse-associated";
+
+    /// <summary>
+    /// A notification sent to a Doctor confirming that an invitation email has been dispatched to a potential Nurse.
+    /// </summary>
+    public const string NurseInvitationSent = "nurse-invitation-sent";
+
+    /// <summary>
+    /// A notification sent to a Doctor when a Nurse they invited has accepted the invitation and joined the platform/team.
+    /// </summary>
+    public const string NurseInvitationAccepted = "nurse-invitation-accepted";
+
+    /// <summary>
+    /// A notification sent to a Nurse when a Doctor removes the association (dissociates them) from their team/profile.
+    /// </summary>
+    public const string NurseDissociated = "nurse-dissociated";
 }

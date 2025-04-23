@@ -49,10 +49,12 @@ public interface IUnitOfWork
     IDoctorPrescriptionRepository DoctorPrescriptionRepository { get; }
     IDoctorOrderRepository DoctorOrderRepository { get; }
     IDoctorEventRepository DoctorEventRepository { get; }
+    IDoctorNurseRepository DoctorNurseRepository { get; }
     IPatientEventRepository PatientEventRepository { get; }
     IPatientPrescriptionRepository PatientPrescriptionRepository { get; }
     IPatientOrderRepository PatientOrderRepository { get; }
     INurseEventRepository NurseEventRepository { get; }
+    IInvitationRepository InvitationRepository { get; }
     Task<bool> Complete();
     Task<IDbContextTransaction> BeginTransactionAsync();
 

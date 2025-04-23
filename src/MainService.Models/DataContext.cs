@@ -102,6 +102,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<PatientPrescription> PatientPrescriptions { get; set; }
     public DbSet<PatientOrder> PatientOrders { get; set; }
     public DbSet<NurseEvent> NurseEvents { get; set; }
+    public DbSet<Invitation> Invitations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

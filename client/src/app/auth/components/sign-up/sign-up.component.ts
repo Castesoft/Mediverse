@@ -196,6 +196,18 @@ export class SignUpComponent implements OnInit {
         this.firstName = account.firstName || undefined;
         this.currentStep.set(this.currentStep() + 1);
         this.isSubmitting.set(false);
+
+        const pendingToken: string | null = localStorage.getItem('pendingInvitationToken');
+        if (pendingToken) {
+          console.log('Pending invitation token found after registration:', pendingToken);
+          localStorage.removeItem('pendingInvitationToken');
+
+          this.router.navigate([ '/auth/accept-invitation' ], { queryParams: { token: pendingToken } })
+            .then(() => console.log('Redirected to accept invitation after registration.'))
+            .catch(err => console.error('Failed to redirect to accept invitation after registration:', err));
+          return;
+        }
+
         this.authNavigationService.navigateToVerifyEmail().catch(console.error);
       },
       error: (error: BadRequest) => {
@@ -287,6 +299,17 @@ export class SignUpComponent implements OnInit {
         this.firstName = account.firstName || undefined;
         this.currentStep.set(this.currentStep() + 1);
         this.isSubmitting.set(false);
+
+        const pendingToken: string | null = localStorage.getItem('pendingInvitationToken');
+        if (pendingToken) {
+          console.log('Pending invitation token found after DOCTOR registration:', pendingToken);
+          localStorage.removeItem('pendingInvitationToken');
+          this.router.navigate([ '/auth/accept-invitation' ], { queryParams: { token: pendingToken } })
+            .then(() => console.log('Redirected to accept invitation after DOCTOR registration.'))
+            .catch(err => console.error('Failed to redirect to accept invitation after DOCTOR registration:', err));
+          return;
+        }
+
       },
       error: (error: BadRequest) => {
         this.submissionErrors.set(error);

@@ -70,6 +70,7 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
 
     public IDoctorOrderRepository DoctorOrderRepository => new DoctorOrderRepository(context, mapper);
     public IDoctorEventRepository DoctorEventRepository => new DoctorEventRepository(context, mapper);
+    public IDoctorNurseRepository DoctorNurseRepository => new DoctorNurseRepository(context, mapper);
     public IPatientEventRepository PatientEventRepository => new PatientEventRepository(context, mapper);
 
     public IPatientPrescriptionRepository PatientPrescriptionRepository =>
@@ -77,6 +78,8 @@ public class UnitOfWork(DataContext context, IMapper mapper, IGoogleService goog
 
     public IPatientOrderRepository PatientOrderRepository => new PatientOrderRepository(context, mapper);
     public INurseEventRepository NurseEventRepository => new NurseEventRepository(context, mapper);
+    public IInvitationRepository InvitationRepository => new InvitationRepository(context);
+    
     public async Task<bool> Complete() => await context.SaveChangesAsync() > 0;
 
     public Task<IDbContextTransaction> BeginTransactionAsync()

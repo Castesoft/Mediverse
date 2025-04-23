@@ -63,7 +63,31 @@
         </i>
       </span>
     }
-    @case (NotificationType.SYSTEM_ALERT) {
+    @case (NotificationType.NURSE_INVITATION_ACCEPTED) {
+      <span
+        class="symbol-label bg-light-success"
+        [placement]="'left'"
+        [tooltip]="'Invitación de especialista aceptada'">
+        <i class="ki-duotone ki-message-add fs-2 text-success">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.NURSE_INVITATION_SENT) {
+      <span
+        class="symbol-label bg-light-primary"
+        [placement]="'left'"
+        [tooltip]="'Invitación de especialista envíada'">
+        <i class="ki-duotone ki-sms fs-2 text-primary">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i>
+      </span>
+    }
+    @case (NotificationType.SYSTEM_ALERT || NotificationType.NURSE_DISSOCIATED || NotificationType.NURSE_ASSOCIATED) {
       <span
         class="symbol-label bg-light-danger"
         [placement]="'left'"
@@ -106,7 +130,7 @@
         class="symbol-label bg-light-danger"
         [placement]="'left'"
         [tooltip]="'Cita cancelada'">
-        <i class="ki-duotone ki-information-5 fs-2 text-danger"> 
+        <i class="ki-duotone ki-information-5 fs-2 text-danger">
           <span class="path1"></span>
           <span class="path2"></span>
           <span class="path3"></span>

@@ -22,9 +22,5 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Helpers\Enums\" />
-  </ItemGroup>
 
 </Project>

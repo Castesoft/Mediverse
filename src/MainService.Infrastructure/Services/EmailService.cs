@@ -495,7 +495,6 @@ public class EmailService(
         }
     }
 
-
     private string CreateOrderPaymentRequestEmailHtml(AppUser patient, Order order, string paymentUrl)
     {
         var culture = new CultureInfo("es-MX");
@@ -600,4 +599,58 @@ public class EmailService(
                 """;
         
     }
+
+    public async Task SendNurseInvitationEmailAsync(AppUser invitingDoctor, string inviteeEmail, string token,
+      DateTime expiryDate, string? inviteeFirstName = null)
+    {
+      var frontendBaseUrl = _configuration["ClientSettings:Url"] ?? "https://dochub.mx";
+      var acceptUrl =
+        $"{frontendBaseUrl}/auth/accept-invitation?token={WebUtility.UrlEncode(token)}";
+
+      var doctorName = $"{invitingDoctor.FirstName} {invitingDoctor.LastName}".Trim();
+      var greeting = string.IsNullOrEmpty(inviteeFirstName)
+        ? "Hola,"
+        : $"Hola {WebUtility.HtmlEncode(inviteeFirstName)},";
+
+      var body = $"""
+                  {GetEmailHeader()}
+                  <tr>
+                    <td align="left" valign="center">
+                      <div class="content-div" style="text-align:left; margin: 0 20px; padding: 40px; background-color:#ffffff; border-radius: 6px">
+                        <div style="padding-bottom: 20px; font-size: 17px;">
+                          <strong>Invitación para unirte a DocHub</strong>
+                        </div>
+                        <div style="padding-bottom: 20px; color: #5E6278;">
+                          {greeting}
+                        </div>
+                        <div style="padding-bottom: 20px; color: #5E6278;">
+                          El Dr./La Dra. {WebUtility.HtmlEncode(doctorName)} te ha invitado a unirte a su equipo en DocHub como Especialista.
+                        </div>
+                        <div style="padding-bottom: 30px; color: #5E6278;">
+                          Haz clic en el siguiente botón para registrarte o iniciar sesión y aceptar la invitación. Esta invitación expirará el {expiryDate:dd/MM/yyyy 'a las' HH:mm 'UTC'}.
+                        </div>
+                  
+                        <div style="text-align: center; padding-bottom: 30px;">
+                          <a href="{acceptUrl}" target="_blank" class="cta-button" rel="noopener" style="display: inline-block; text-decoration: none; background-color: #284092; color: #ffffff; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 6px;">
+                            Aceptar Invitación
+                          </a>
+                        </div>
+                  
+                         <div style="padding-bottom: 20px; text-align: center; font-size: 13px; color: #6d6e7c;">
+                           Si tienes problemas con el botón, copia y pega la siguiente URL en tu navegador:<br/> <a href="{acceptUrl}" rel="noopener" target="_blank" style="color:#284092">{acceptUrl}</a>
+                        </div>
+                  
+                        <div style="border-bottom: 1px solid #eeeeee; margin: 20px 0;"></div>
+                        <div style="padding-top: 10px; font-size: 13px; color: #6d6e7c;">
+                          Si no esperabas esta invitación, puedes ignorarla de forma segura.
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {GetEmailFooter()}
+                  """;
+
+      await SendMail(inviteeEmail, $"DocHub | Invitación de {doctorName} para unirte a DocHub", body);
+    }
+    
 }

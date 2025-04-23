@@ -35,4 +35,7 @@ public interface IEmailService
 
     string CreateAccountDeletionEmail(AppUser user);
     Task SendOrderPaymentRequestEmailAsync(AppUser patient, Order order, string paymentUrl);
+
+    Task SendNurseInvitationEmailAsync(AppUser invitingDoctor, string inviteeEmail, string token, DateTime expiryDate,
+        string? inviteeFirstName = null);
 }

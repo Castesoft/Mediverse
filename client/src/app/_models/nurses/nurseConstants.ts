@@ -90,4 +90,8 @@ export const nurseCells: PartialCellsOf<Nurse> = {
   taxId: new TableCellItem<string, 'taxId'>('taxId', 'string'),
 } as PartialCellsOf<Nurse>;
 
-
+export interface NurseAssociationRequest {
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+}
