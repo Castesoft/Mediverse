@@ -1,6 +1,7 @@
 using MainService.Core.Interfaces.Data;
 using MainService.Models;
 using MainService.Models.Entities;
+using MainService.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainService.Infrastructure.Data;
@@ -17,6 +18,35 @@ public class InvitationRepository(DataContext context) : IInvitationRepository
         return await context.Invitations
             .Include(i => i.InvitingUser)
             .FirstOrDefaultAsync(i => i.Token == token);
+    }
+
+    public async Task<Invitation?> GetPendingInvitationAsync(int invitingUserId, string inviteeEmail,
+        string roleInvitedAs)
+    {
+        return await context.Invitations
+            .Where(i =>
+                i.InvitingUserId == invitingUserId &&
+                i.InviteeEmail.ToLower() == inviteeEmail.ToLower() &&
+                i.RoleInvitedAs == roleInvitedAs &&
+                i.Status == InvitationStatus.Pending &&
+                i.ExpiryDate > DateTime.UtcNow
+            )
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Invitation?> GetByTokenAsync(string token, bool includeInvitingUser = false)
+    {
+        var query = context.Invitations.AsQueryable();
+
+        if (includeInvitingUser)
+        {
+            query = query
+                .Include(i => i.InvitingUser)
+                .ThenInclude(i => i.UserPhoto)
+                .ThenInclude(i => i.Photo);
+        }
+
+        return await query.FirstOrDefaultAsync(i => i.Token == token);
     }
 
     public void Update(Invitation invitation)

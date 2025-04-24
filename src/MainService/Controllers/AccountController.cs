@@ -242,7 +242,7 @@ public class AccountController(
 
         var clientUrl = clientSettings.Value.Url;
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        var subject = $"🔒 DocHub | Verifica tu correo {user.FirstName}!";
+        var subject = $"🔒 DocHub | Verifica tu Correo";
         var htmlMessage =
             emailService.CreateVerifyEmailAddressEmailForRegister(user, emailVerificationCode);
         if (!string.IsNullOrEmpty(user.Email))
@@ -516,7 +516,7 @@ public class AccountController(
 
         var clientUrl = clientSettings.Value.Url;
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        var subject = $"🔒 DocHub | Verifica tu correo {user.FirstName}!";
+        var subject = $"🔒 DocHub | Verifica tu Correo";
         var htmlMessage =
             emailService.CreateVerifyEmailAddressEmailForRegister(user, emailVerificationCode);
 
@@ -1873,7 +1873,7 @@ public class AccountController(
 
         var clientUrl = clientSettings.Value.Url;
         var verifyEmailUrl = $"{clientUrl}/auth/verify-email?email={user.Email}";
-        var subject = $"🔒 DocHub | Verifica tu correo {user.FirstName}!";
+        var subject = $"🔒 DocHub | Verifica tu Correo";
         var htmlMessage = emailService.CreateVerifyEmailAddressEmailForUpdate(user, emailVerificationCode);
 
         var email = user.Email;

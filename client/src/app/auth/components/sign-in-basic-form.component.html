@@ -8,7 +8,7 @@
     @if (!requiresTwoFactor) {
       <div class="text-gray-600 fw-normal fs-6 w-100 d-flex justify-content-center mt-1">
         ¿Eres nuevo aquí?
-        <a [routerLink]="authNavigation.SIGN_UP_URL" class="link-primary fw-semibold ms-2">
+        <a [routerLink]="authNavigation.SIGN_UP_URL" queryParamsHandling="preserve" class="link-primary fw-semibold ms-2">
           Crear una cuenta
         </a>
       </div>

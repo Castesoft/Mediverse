@@ -60,13 +60,13 @@ declare var google: any;
   imports: [ RouterOutlet, MaterialModule, ScrolltopComponent, ToastContainerDirective ],
 })
 export class AppComponent implements OnInit {
-  private readonly bsModalService = inject(BsModalService);
-  private readonly accountService = inject(AccountService);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-  private readonly shortcuts = inject(ShortcutsService);
+  private readonly bsModalService: BsModalService = inject(BsModalService);
+  private readonly accountService: AccountService = inject(AccountService);
+  private readonly shortcuts: ShortcutsService = inject(ShortcutsService);
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly router: Router = inject(Router);
 
-  cookiesAccepted = 'true';
+  cookiesAccepted: string = 'true';
 
   ngOnInit(): void {
     this.cookiesAccepted = localStorage.getItem('cookiesAccepted') || '';
@@ -81,11 +81,19 @@ export class AppComponent implements OnInit {
       client_id: environment.google_client_id,
       use_fedcm_for_prompt: true,
       callback: (resp: any) => {
+        const currentUrl = this.router.url;
+        console.log("Google Sign-In Callback - Current URL:", currentUrl);
+
         if (this.accountService.current() === null) {
-          this.accountService.loginWithSocialAuth('GOOGLE', resp.credential).subscribe({
-            next: () => {
-              if (this.route.snapshot.queryParams['noredirect']) return;
-              this.router.navigate([ '/cuenta' ]);
+          this.accountService.loginWithSocialAuth('GOOGLE', resp.credential, currentUrl).subscribe({
+            next: (loginResult) => {
+              if (loginResult && !(loginResult as any).navigationHandled) {
+                if (this.route.snapshot.queryParams['noredirect']) return;
+                this.router.navigate([ '/cuenta' ]).catch(console.error);
+              }
+            },
+            error: (err) => {
+              console.error("Social login error:", err);
             }
           });
         } else {
@@ -93,7 +101,6 @@ export class AppComponent implements OnInit {
         }
       }
     });
-
   }
 
   accept() {

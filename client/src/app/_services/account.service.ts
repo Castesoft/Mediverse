@@ -3,7 +3,7 @@ import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@a
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { Role } from "src/app/_models/types";
-import { Router } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { FormGroup, ValidationErrors } from '@angular/forms';
 import { UserInsuranceModalComponent } from "src/app/account/modals/user-insurance-modal.component";
 import { MatDialog } from "@angular/material/dialog";
@@ -33,6 +33,7 @@ import { PaymentMethodType } from "src/app/_models/paymentMethodTypes/paymentMet
   providedIn: 'root',
 })
 export class AccountService {
+  private route: ActivatedRoute = inject(ActivatedRoute);
   private toastr: ToastrService = inject(ToastrService);
   private matDialog: MatDialog = inject(MatDialog);
   private http: HttpClient = inject(HttpClient);
@@ -141,14 +142,39 @@ export class AccountService {
     );
   }
 
-  loginWithSocialAuth(provider: string, token: string) {
+  loginWithSocialAuth(provider: string, token: string, currentUrl: string) {
     return this.http.post<Account>(`${this.baseUrl}login-social`, { provider, accessToken: token }).pipe(
       map(response => {
         if (response) {
           this.setCurrentUser(response);
           this.toastr.success(`Bienvenido ${response.firstName}!`);
+
+          try {
+            const url = new URL(currentUrl, window.location.origin);
+            const params = new URLSearchParams(url.search);
+            const invitationToken = params.get('invitationToken');
+            const invitationReturnUrl = params.get('returnUrl');
+
+            if (invitationToken && invitationReturnUrl) {
+              console.log(`Invitation context found after social login via URL. Token: ${invitationToken}, Redirecting to: ${invitationReturnUrl}`);
+              this.router.navigateByUrl(invitationReturnUrl).catch(err => {
+                console.error('Failed to redirect back to accept invitation after social login:', err);
+                this.router.navigateByUrl('/cuenta').catch(console.error);
+              });
+              return { ...response, navigationHandled: true };
+            }
+          } catch (e) {
+            console.error("Error parsing currentUrl for social login:", e);
+          }
         }
+
         return response;
+      }),
+      tap(response => {
+        if (response && !(response as any).navigationHandled) {
+          console.log("No invitation context in social login, navigating to /cuenta");
+          this.router.navigate([ '/cuenta' ]).catch(console.error);
+        }
       })
     );
   }
@@ -656,11 +682,11 @@ export class AccountService {
           return response;
         })
       );
-    }
+  }
 
-    resendEmailVerificationCode(): Observable<void> {
-      return this.http.get<void>(`${this.baseUrl}resend-email-verification`);
-    }
+  resendEmailVerificationCode(): Observable<void> {
+    return this.http.get<void>(`${this.baseUrl}resend-email-verification`);
+  }
 
   updateEmail(email: string) {
     return this.http

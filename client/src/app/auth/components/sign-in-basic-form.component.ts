@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, Component, effect, inject, input, InputSignal, OnInit } from "@angular/core";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { Forms2Module } from "src/app/_forms2/forms-2.module";
 import { AccountService } from "src/app/_services/account.service";
 import { UtilsService } from "src/app/_services/utils.service";
@@ -21,7 +21,6 @@ declare var google: any;
     CommonModule,
     MaterialModule,
   ],
-  standalone: true,
 })
 export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   private readonly router: Router = inject(Router);
@@ -43,7 +42,7 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
   noRedirect: InputSignal<boolean> = input(false);
 
   constructor() {
-    effect((): LoginForm => this.form.setValidation(this.validation.active()));
+    effect(() => this.form.setValidation(this.validation.active()));
   }
 
   ngOnInit(): void {
@@ -54,26 +53,37 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
         relativeTo: this.route,
         queryParams: { noredirect: 'true' },
         queryParamsHandling: 'merge',
-      });
+      }).catch(console.error);
     }
   }
 
   ngAfterViewInit() {
-    google.accounts.id.renderButton(document.getElementById('google-btn'), {
-      theme: 'outline',
-      size: 'large',
-      text: 'continue_with',
-      locale: 'es',
-      width: document.getElementById('google-btn')?.offsetWidth.toFixed(0).toString(),
-      height: '80'
-    });
+    const queryParams: ParamMap = this.route.snapshot.queryParamMap;
+    const hasInvitationContext: boolean = queryParams.has('invitationToken') && queryParams.has('returnUrl');
+
+    if (!hasInvitationContext) {
+      const googleBtnElement: HTMLElement | null = document.getElementById('google-btn');
+      if (googleBtnElement) {
+        google.accounts.id.renderButton(googleBtnElement, {
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          locale: 'es',
+          width: googleBtnElement.offsetWidth.toFixed(0).toString(),
+          height: '80'
+        });
+      } else {
+        console.warn("Google button container 'google-btn' not found.");
+      }
+    }
   }
 
   onSubmit() {
     this.form.submitted = true;
-
-    if (!this.form.valid) return;
-
+    if (!this.form.valid) {
+      this.isSubmitting = false;
+      return;
+    }
     this.isSubmitting = true;
 
     if (!this.requiresTwoFactor) {
@@ -82,19 +92,34 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
           this.form.submitted = false;
           if (response.requiresTwoFactor) {
             this.requiresTwoFactor = true;
+            this.isSubmitting = false;
           } else {
-            const pendingToken = localStorage.getItem('pendingInvitationToken');
-            if (pendingToken) {
-              console.log('Pending invitation token found after login:', pendingToken);
-              localStorage.removeItem('pendingInvitationToken');
-              this.router.navigate(['/auth/accept-invitation'], { queryParams: { token: pendingToken } })
-                .then(() => console.log('Redirected to accept invitation after login.'))
-                .catch(err => console.error('Failed to redirect to accept invitation after login:', err));
-              return;
+
+            const queryParams: ParamMap = this.route.snapshot.queryParamMap;
+            const invitationToken: string | null = queryParams.get('invitationToken');
+            const invitationReturnUrl: string | null = queryParams.get('returnUrl');
+
+            if (invitationToken && invitationReturnUrl) {
+              console.log(`Invitation context found after login. Token: ${invitationToken}, Redirecting to: ${invitationReturnUrl}`);
+
+              this.router.navigateByUrl(invitationReturnUrl).catch(err => {
+                console.error('Failed to redirect back to accept invitation after login:', err);
+
+                this.router.navigateByUrl(this.returnUrl || '/cuenta').catch(console.error);
+              });
+            } else {
+
+              console.log("No invitation context found, proceeding with normal login flow.");
+              if (this.noRedirect()) {
+
+                console.log("noRedirect is true, staying on page.");
+                this.isSubmitting = false;
+                return;
+              }
+
+              this.router.navigateByUrl(this.returnUrl || '/cuenta').catch(console.error);
             }
 
-            if (this.noRedirect()) return;
-            this.router.navigateByUrl(this.returnUrl || '/cuenta').then(() => {});
           }
         },
         error: (err) => {
@@ -102,40 +127,63 @@ export class SignInBasicFormComponent implements OnInit, AfterViewInit {
           this.form.error = err;
           this.isSubmitting = false;
         },
-        complete: () => {
-          this.isSubmitting = false;
-        }
+
       });
     } else {
+
       this.accountService.twoFactorLogin(this.form.controls.email.value!, this.form.controls.twoFactorCode.value!).subscribe({
         next: (_) => {
-          if (this.noRedirect()) return;
-          this.router.navigateByUrl(this.returnUrl || '/cuenta').then(() => {});
+          const queryParams: ParamMap = this.route.snapshot.queryParamMap;
+          const invitationToken: string | null = queryParams.get('invitationToken');
+          const invitationReturnUrl: string | null = queryParams.get('returnUrl');
+
+          if (invitationToken && invitationReturnUrl) {
+            console.log(`Invitation context found after 2FA. Token: ${invitationToken}, Redirecting to: ${invitationReturnUrl}`);
+            this.router.navigateByUrl(invitationReturnUrl).catch(err => {
+              console.error('Failed to redirect back to accept invitation after 2FA:', err);
+              this.router.navigateByUrl(this.returnUrl || '/cuenta').catch(console.error);
+            });
+          } else {
+
+            console.log("No invitation context found after 2FA, proceeding with normal flow.");
+            if (this.noRedirect()) {
+              console.log("noRedirect is true after 2FA, staying on page.");
+              this.isSubmitting = false;
+              return;
+            }
+            this.router.navigateByUrl(this.returnUrl || '/cuenta').catch(console.error);
+          }
+
         },
         error: (err) => {
           console.error('Two-factor login error:', err);
+          this.form.controls.twoFactorCode?.setErrors({ invalidCode: true });
           this.isSubmitting = false;
         },
-        complete: () => {
-          this.isSubmitting = false;
-        }
       });
     }
   }
 
   getQueryParams() {
-    this.route.queryParams.subscribe({
-      next: params => {
-        if (params['email']) {
-          this.emailFromQuery = params['email'];
-          this.focusOnPassword = true;
-          this.focusOnEmail = false;
-        } else {
-          this.focusOnEmail = true;
-          this.focusOnPassword = false;
-        }
-        if (params['returnUrl']) this.returnUrl = params['returnUrl'];
-      }
-    });
+    const params: ParamMap = this.route.snapshot.queryParamMap;
+    if (params.has('email')) {
+      this.emailFromQuery = params.get('email')!;
+      this.form.controls.email.patchValue(this.emailFromQuery);
+      this.focusOnPassword = true;
+      this.focusOnEmail = false;
+    } else {
+      this.focusOnEmail = true;
+      this.focusOnPassword = false;
+    }
+
+    const generalReturnUrl: string | null = params.get('returnUrl');
+    const invitationReturnUrl: string | null = params.get('invitationReturnUrl');
+
+    if (generalReturnUrl && !invitationReturnUrl) {
+      this.returnUrl = generalReturnUrl;
+    } else if (!generalReturnUrl && !invitationReturnUrl) {
+      this.returnUrl = '/cuenta';
+    }
+
   }
 }

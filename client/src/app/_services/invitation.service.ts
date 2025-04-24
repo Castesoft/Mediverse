@@ -14,6 +14,20 @@ export interface InvitationAcceptAuthRequiredResponse {
   message: string;
 }
 
+export interface InvitationDetailsResponse {
+  isValid: boolean;
+  message?: string;
+  invitingDoctor: InvitingDoctorSummary | null;
+  roleInvitedAs: string | null;
+}
+
+export interface InvitingDoctorSummary {
+  id: number;
+  fullName: string;
+  photoUrl: string | null;
+  mainSpecialty: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,4 +50,20 @@ export class InvitationService {
         })
       );
   }
+
+  getInvitationDetails(token: string): Observable<InvitationDetailsResponse> {
+    return this.http.get<InvitationDetailsResponse>(`${this.baseUrl}/details/${token}`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error("Error fetching invitation details:", error);
+          return throwError(() => ({
+            isValid: false,
+            message: error.error?.message || error.message || 'Error al obtener detalles de la invitación.',
+            invitingDoctor: null,
+            roleInvitedAs: null
+          } as InvitationDetailsResponse));
+        })
+      );
+  }
+
 }

@@ -14,22 +14,22 @@ export class AuthNavigationService {
   readonly ACCOUNT_URL: string = '/cuenta';
 
   navigateToSignIn(queryParams: Record<string, any> = {}): Promise<boolean> {
-    return this.router.navigate([ this.SIGN_IN_URL ], { queryParams: queryParams });
+    return this.router.navigate([ this.SIGN_IN_URL ], { queryParams: queryParams, queryParamsHandling: 'merge' });
   }
 
   navigateToSignUp(queryParams: Record<string, any> = {}): Promise<boolean> {
-    return this.router.navigate([ this.SIGN_UP_URL ], { queryParams: queryParams });
+    return this.router.navigate([ this.SIGN_UP_URL ], { queryParams: queryParams, queryParamsHandling: 'merge' });
   }
 
   navigateToPasswordReset(queryParams: Record<string, any> = {}): Promise<boolean> {
-    return this.router.navigate([ this.PASSWORD_RESET_URL ], { queryParams: queryParams });
+    return this.router.navigate([ this.PASSWORD_RESET_URL ], { queryParams: queryParams, queryParamsHandling: 'merge' });
   }
 
   navigateToVerifyEmail(queryParams: Record<string, any> = {}): Promise<boolean> {
-    return this.router.navigate([ this.VERIFY_EMAIL_URL ], { queryParams: queryParams });
+    return this.router.navigate([ this.VERIFY_EMAIL_URL ], { queryParams: queryParams, queryParamsHandling: 'merge' });
   }
 
   navigateToAccount(queryParmams: Record<string, any> = {}): Promise<boolean> {
-    return this.router.navigate([ this.ACCOUNT_URL ], { queryParams: queryParmams });
+    return this.router.navigate([ this.ACCOUNT_URL ], { queryParams: queryParmams, queryParamsHandling: 'merge' });
   }
 }

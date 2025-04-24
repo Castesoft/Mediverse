@@ -1,6 +1,7 @@
 using AutoMapper;
 using Google.Apis.Auth;
 using MainService.Core.DTOs;
+using MainService.Core.DTOs.Invitations;
 using MainService.Core.DTOs.Nurses;
 using MainService.Core.DTOs.Patients;
 using MainService.Core.DTOs.Search;
@@ -50,6 +51,21 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.MedicalInsuranceCompanies,
                 opt => opt.MapFrom(
                     src => src.DoctorMedicalInsuranceCompanies.Select(x => x.MedicalInsuranceCompany)));
+        
+        CreateMap<AppUser, InvitingDoctorSummary>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src =>
+                (src.UserPhoto != null && src.UserPhoto.Photo != null && src.UserPhoto.Photo.Url != null)
+                    ? src.UserPhoto.Photo.Url.AbsoluteUri
+                    : null))
+            .ForMember(dest => dest.MainSpecialty, opt => opt.MapFrom(src =>
+                (src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain) != null &&
+                 src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense != null &&
+                 src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense.MedicalLicenseSpecialty !=
+                 null)
+                    ? src.UserMedicalLicenses.FirstOrDefault(x => x.IsMain).MedicalLicense.MedicalLicenseSpecialty
+                        .Specialty.Name
+                    : string.Empty));
 
         // Map Review to DoctorReviewDto.
         CreateMap<Review, DoctorReviewDto>()

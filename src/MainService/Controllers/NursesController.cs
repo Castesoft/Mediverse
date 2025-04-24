@@ -93,21 +93,18 @@ public class NursesController(
     [HttpPost("associate")]
     public async Task<ActionResult<UserDto>> AssociateNurseAsync([FromBody] NurseAssociateDto request) 
     {
-        var doctorNurse = new DoctorNurse();
-        
         var requestingDoctorId = User.GetUserId();
         if (requestingDoctorId <= 0)
         {
             return Unauthorized("Información de doctor inválida.");
         }
-
-        doctorNurse.DoctorId = requestingDoctorId;
         
-        var createAuthResult = await authorizationService.AuthorizeAsync(User, doctorNurse, NurseOperations.CreateAssociation);
-        if (!createAuthResult.Succeeded)
+        var inviteAuthCheckObject = new DoctorNurse { DoctorId = requestingDoctorId }; 
+        var inviteAuthResult = await authorizationService.AuthorizeAsync(User, inviteAuthCheckObject, NurseOperations.CreateAssociation); 
+        if (!inviteAuthResult.Succeeded)
         {
-            Log.Warning("AssociateNurseAsync: Forbidden attempt by User {UserId}. Missing CreateAssociation permission.", User.GetUserId());
-            return Forbid();
+            Log.Warning("InviteNurseAsync: Forbidden attempt by User {UserId}. Missing permission.", User.GetUserId());
+            return Forbid("No tienes permiso para invitar especialistas.");
         }
 
         var requestingDoctor = await uow.UserRepository.GetByIdAsync(requestingDoctorId);
@@ -120,119 +117,85 @@ public class NursesController(
         {
             return BadRequest(ModelState);
         }
-        
+
         if (request.Email.Equals(requestingDoctor.Email, StringComparison.OrdinalIgnoreCase))
         {
-            return BadRequest("No puedes asociarte a ti mismo como especialista.");
+            return BadRequest("No puedes invitarte a ti mismo como especialista.");
         }
 
         var potentialNurseUser = await userManager.FindByEmailAsync(request.Email);
 
         if (potentialNurseUser != null)
         {
-            // Scenario 1: Nurse User Exists
-            Log.Information("User found with email {Email}. Checking association and role.", request.Email);
-
-            bool alreadyAssociated = await uow.DoctorNurseRepository.FindByCompositeKeyAsync(requestingDoctorId, potentialNurseUser.Id) != null;
-            if (alreadyAssociated)
-            {
-                Log.Warning("Nurse {NurseId} is already associated with Doctor {DoctorId}.", potentialNurseUser.Id, requestingDoctorId);
-                return Conflict($"Este/a especialista ({request.Email}) ya está asociado/a contigo.");
-            }
-            
-            bool isNurse = await userManager.IsInRoleAsync(potentialNurseUser, "Nurse");
-            if (!isNurse)
-            {
-                Log.Warning("User {UserId} exists but lacks 'Nurse' role. Association denied.", potentialNurseUser.Id);
-                return BadRequest($"El usuario con correo {request.Email} existe, pero no está registrado como Especialista en la plataforma. Pídeles que actualicen su perfil o invítalos correctamente.");
-            }
-
-            Log.Information("Associating existing Nurse {NurseId} with Doctor {DoctorId}.", potentialNurseUser.Id, requestingDoctorId);
-            doctorNurse.DoctorId = requestingDoctorId;
-            uow.DoctorNurseRepository.Add(doctorNurse);
-
-            var nurseNotification = await notificationsService.CreateForNurseAssociated(potentialNurseUser, requestingDoctor);
-            
-            if (!await uow.Complete())
-            {
-                Log.Error("Failed to save DoctorNurse association between Doctor {DoctorId} and Nurse {NurseId}.", requestingDoctorId, potentialNurseUser.Id);
-                return BadRequest("Error al guardar la asociación con el/la especialista.");
-            }
-
-            if (nurseNotification != null)
-            {
-                await uow.UserNotificationRepository.AddAsync(nurseNotification);
-                if (await uow.Complete())
-                {
-                    await NotifyUserAsync(potentialNurseUser.Id, mapper.Map<NotificationDto>(nurseNotification));
-                }
-                else
-                {
-                    Log.Warning("Failed to save UserNotification link for Nurse {NurseId} associated by Doctor {DoctorId}.", potentialNurseUser.Id, requestingDoctorId);
-                }
-            }
-
-            var nurseDto = await uow.UserRepository.GetDtoByIdAsync(potentialNurseUser.Id);
-            return Ok(nurseDto);
+             bool alreadyAssociated = await uow.DoctorNurseRepository.FindByCompositeKeyAsync(requestingDoctorId, potentialNurseUser.Id) != null;
+             if (alreadyAssociated)
+             {
+                 Log.Warning("Nurse {NurseId} is already associated with Doctor {DoctorId}.", potentialNurseUser.Id, requestingDoctorId);
+                 return Conflict($"Este/a especialista ({request.Email}) ya está asociado/a contigo.");
+             }
         }
-        else
+        
+        Log.Information("Proceeding with invitation flow for email {Email} by Doctor {DoctorId}.", request.Email, requestingDoctorId);
+
+        var existingPendingInvitation = await uow.InvitationRepository.GetPendingInvitationAsync(requestingDoctorId, request.Email, "Nurse");
+         if (existingPendingInvitation != null)
+         {
+             Log.Information("An identical pending invitation already exists for {Email} from Doctor {DoctorId}. Informing doctor.", request.Email, requestingDoctorId);
+             return Ok(new { message = $"Ya existe una invitación pendiente para {request.Email}. Se le recordará que la acepte." });
+         }
+
+        var token = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+        var expiryDate = DateTime.UtcNow.AddDays(7);
+
+        var invitation = new Invitation
         {
-            // Scenario 2: User Does Not Exist - Invitation Flow
-            Log.Information("User with email {Email} not found. Initiating invitation flow.", request.Email);
+            InvitingUserId = requestingDoctorId,
+            InviteeEmail = request.Email,
+            RoleInvitedAs = "Nurse", 
+            Status = InvitationStatus.Pending,
+            Token = token,
+            ExpiryDate = expiryDate,
+        };
 
-            var token = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
-            var expiryDate = DateTime.UtcNow.AddDays(7);
-
-            var invitation = new Invitation
+        await uow.InvitationRepository.AddAsync(invitation);
+        
+        if (!await uow.Complete())
+        {
+            Log.Error("Failed to save invitation record for email {Email} invited by Doctor {DoctorId}.", request.Email, requestingDoctorId);
+            return BadRequest("Error al guardar la invitación.");
+        }
+        
+        var doctorInviteNotification = await notificationsService.CreateForDoctorInvitationSent(requestingDoctor, request.Email, "Especialista"); 
+        if (doctorInviteNotification != null)
+        {
+            await uow.UserNotificationRepository.AddAsync(doctorInviteNotification);
+            if (await uow.Complete()) 
             {
-                InvitingUserId = requestingDoctorId,
-                InviteeEmail = request.Email,
-                RoleInvitedAs = "Nurse", 
-                Status = InvitationStatus.Pending,
-                Token = token,
-                ExpiryDate = expiryDate,
-            };
-
-            await uow.InvitationRepository.AddAsync(invitation);
+                await NotifyUserAsync(requestingDoctorId, mapper.Map<NotificationDto>(doctorInviteNotification));
+            } else {
+                Log.Warning("Failed to save UserNotification link for doctor invitation sent confirmation DoctorId {DoctorId}.", requestingDoctorId);
+            }
+        }
+        
+        try
+        {
+            await emailService.SendNurseInvitationEmailAsync(requestingDoctor, request.Email, token, expiryDate, request.FirstName);
+            Log.Information("Invitation email sent to {Email} for Doctor {DoctorId}.", request.Email, requestingDoctorId);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to send invitation email to {Email} for Doctor {DoctorId}.", request.Email, requestingDoctorId);
             
-            var doctorInviteNotification = await notificationsService.CreateForDoctorInvitationSent(requestingDoctor, request.Email);
-
-            if (!await uow.Complete())
+             return Ok(new
             {
-                Log.Error("Failed to save invitation record for email {Email} invited by Doctor {DoctorId}.", request.Email, requestingDoctorId);
-                return BadRequest("Error al guardar la invitación.");
-            }
-            
-            if (doctorInviteNotification != null)
-            {
-                await uow.UserNotificationRepository.AddAsync(doctorInviteNotification);
-                if (await uow.Complete())
-                {
-                    await NotifyUserAsync(requestingDoctorId, mapper.Map<NotificationDto>(doctorInviteNotification));
-                } else {
-                    Log.Warning("Failed to save UserNotification link for doctor invitation sent confirmation DoctorId {DoctorId}.", requestingDoctorId);
-                }
-            }
-
-            try
-            {
-                await emailService.SendNurseInvitationEmailAsync(requestingDoctor, request.Email, token, expiryDate, request.FirstName);
-                Log.Information("Invitation email sent to {Email} for Doctor {DoctorId}.", request.Email, requestingDoctorId);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Failed to send invitation email to {Email} for Doctor {DoctorId}.", request.Email, requestingDoctorId);
-                return Ok(new
-                {
-                    message = $"Invitación creada para {request.Email}, pero hubo un problema al enviar el correo. Pídeles que revisen su bandeja de entrada o spam, o contáctales directamente."
-                });
-            }
-
-            return Ok(new
-            {
-                message = $"Invitación enviada a {request.Email}. Necesitan registrarse o iniciar sesión para aceptar."
+                message = $"Invitación creada para {request.Email}, pero hubo un problema al enviar el correo. Pídeles que revisen su bandeja de entrada o spam, o contáctales directamente."
             });
         }
+
+        return Ok(new
+        {
+            message = $"Invitación enviada a {request.Email}. Necesitan registrarse o iniciar sesión para aceptar."
+        });
     }
 
     [HttpDelete("dissociate/{nurseId:int}")]

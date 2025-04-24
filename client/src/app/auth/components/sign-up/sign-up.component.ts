@@ -15,7 +15,7 @@ import { RegisterPatientFormComponent } from "./register-patient-form/register-p
 import { AccountService } from 'src/app/_services/account.service';
 import { AccountCompletedComponent } from './account-completed/account-completed.component';
 import PatientRegisterForm from 'src/app/_models/auth/patientRegister/patientRegisterForm';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { createId } from '@paralleldrive/cuid2';
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { Forms2Module } from 'src/app/_forms2/forms-2.module';
@@ -93,23 +93,19 @@ export class SignUpComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const type: string = this.route.snapshot.queryParams['type'];
-    switch (type) {
-      case 'doctor':
-        this.accountType.set('doctor');
-        break;
-      case 'patient':
-        this.accountType.set('patient');
-        this.formId.set(this.patientRegisterForm().id);
-        break;
+    const typeParam = this.route.snapshot.queryParamMap.get('type');
+    if (typeParam === 'doctor') {
+      this.accountType.set('doctor');
+    } else {
+      this.accountType.set('patient');
+      this.formId.set(this.patientRegisterForm().id);
     }
 
-    const step: number | undefined = this.route.snapshot.queryParams['step'];
-    if (step) {
-      this.currentStep.set(+step);
+    const stepParam = this.route.snapshot.queryParamMap.get('step');
+    if (stepParam) {
+      this.currentStep.set(parseInt(stepParam, 10) || 1);
     }
   }
-
 
   patientRegisterForm: WritableSignal<PatientRegisterForm> = signal(new PatientRegisterForm());
 
@@ -168,13 +164,19 @@ export class SignUpComponent implements OnInit {
   }
 
   onNextStep() {
+
     if (this.accountType() === 'doctor') {
+      let currentFormGroup: FormGroup | null = null;
       if (this.currentStep() === 2) {
-        if (!this.doctorForm.get('accountSettingsForm')?.valid) {
-          return;
-        }
+        currentFormGroup = this.doctorForm.get('accountSettingsForm') as FormGroup;
       } else if (this.currentStep() === 3) {
-        if (!this.doctorForm.get('accountDetailsForm')?.valid) {
+        currentFormGroup = this.doctorForm.get('accountDetailsForm') as FormGroup;
+      }
+
+      if (currentFormGroup) {
+        currentFormGroup.markAllAsTouched();
+        if (!currentFormGroup.valid) {
+          console.log(`Doctor form step ${this.currentStep()} is invalid.`);
           return;
         }
       }
@@ -189,6 +191,10 @@ export class SignUpComponent implements OnInit {
 
   submitPatientRegisterForm() {
     this.patientRegisterForm().submitted = true;
+    if (!this.patientRegisterForm().valid) {
+      this.isSubmitting.set(false);
+      return;
+    }
     this.isSubmitting.set(true);
 
     this.accountService.register(this.patientRegisterForm().getRawValue()).subscribe({
@@ -197,18 +203,20 @@ export class SignUpComponent implements OnInit {
         this.currentStep.set(this.currentStep() + 1);
         this.isSubmitting.set(false);
 
-        const pendingToken: string | null = localStorage.getItem('pendingInvitationToken');
-        if (pendingToken) {
-          console.log('Pending invitation token found after registration:', pendingToken);
-          localStorage.removeItem('pendingInvitationToken');
+        const queryParams: ParamMap = this.route.snapshot.queryParamMap;
+        const invitationToken = queryParams.get('invitationToken');
+        const invitationReturnUrl = queryParams.get('returnUrl');
 
-          this.router.navigate([ '/auth/accept-invitation' ], { queryParams: { token: pendingToken } })
-            .then(() => console.log('Redirected to accept invitation after registration.'))
-            .catch(err => console.error('Failed to redirect to accept invitation after registration:', err));
-          return;
+        if (invitationToken && invitationReturnUrl) {
+          console.log(`Invitation context found after patient signup. Token: ${invitationToken}, Redirecting to: ${invitationReturnUrl}`);
+          this.router.navigateByUrl(invitationReturnUrl).catch(err => {
+            console.error('Failed to redirect back to accept invitation after patient signup:', err);
+            this.authNavigationService.navigateToVerifyEmail().catch(console.error);
+          });
+        } else {
+          console.log("No invitation context found, proceeding with email verification flow.");
+          this.authNavigationService.navigateToVerifyEmail().catch(console.error);
         }
-
-        this.authNavigationService.navigateToVerifyEmail().catch(console.error);
       },
       error: (error: BadRequest) => {
         this.patientRegisterForm().error = error;
@@ -219,17 +227,42 @@ export class SignUpComponent implements OnInit {
 
   async submitDoctorRegisterForm() {
     this.doctorForm.markAllAsTouched();
+    if (!this.doctorForm.valid || !this.billingDetails?.stripe || !this.billingDetails?.cardNumber) {
+      this.isSubmitting.set(false);
+      console.log("Doctor form invalid or billing details missing.");
+      return;
+    }
     this.isSubmitting.set(true);
 
-    if (!this.doctorForm.valid || !this.billingDetails.stripe || !this.billingDetails.cardNumber) {
+    let paymentMethod: PaymentMethodResult | undefined;
+    try {
+      paymentMethod = await this.billingDetails.stripe.createPaymentMethod({
+        type: 'card',
+        card: this.billingDetails.cardNumber!
+      });
+
+      if (paymentMethod.error) {
+        console.error("Stripe PaymentMethod creation error:", paymentMethod.error);
+        this.submissionErrors.set({
+          type: 'BadRequest',
+          message: `Error al crear método de pago: ${paymentMethod.error.message}`,
+          validationErrors: [],
+          error: { status: 400, message: paymentMethod.error.message } as any
+        });
+        this.isSubmitting.set(false);
+        return;
+      }
+    } catch (stripeError) {
+      console.error("Error during Stripe operation:", stripeError);
+      this.submissionErrors.set({
+        type: 'BadRequest',
+        message: 'Ocurrió un error con el procesador de pagos. Por favor, inténtelo de nuevo.',
+        validationErrors: [],
+        error: { status: 500, message: 'Stripe Error' } as any
+      });
       this.isSubmitting.set(false);
       return;
     }
-
-    const paymentMethod: PaymentMethodResult = await this.billingDetails.stripe.createPaymentMethod({
-      type: 'card',
-      card: this.billingDetails.cardNumber!
-    });
 
     this.doctorForm.get('billingDetailsForm.StripePaymentMethodId')?.setValue(paymentMethod?.paymentMethod?.id);
     this.doctorForm.get('billingDetailsForm.Last4')?.setValue(paymentMethod?.paymentMethod?.card?.last4);
@@ -269,29 +302,21 @@ export class SignUpComponent implements OnInit {
     });
 
     const billingMapping: { [key: string]: string } = {
-      State: 'BillingState',
-      City: 'BillingCity',
-      Street: 'BillingStreet',
-      Zipcode: 'BillingZipcode',
-      Neighborhood: 'BillingNeighborhood',
-      ExteriorNumber: 'BillingExteriorNumber',
-      InteriorNumber: 'BillingInteriorNumber'
+      State: 'BillingState', City: 'BillingCity', Street: 'BillingStreet',
+      Zipcode: 'BillingZipcode', Neighborhood: 'BillingNeighborhood',
+      ExteriorNumber: 'BillingExteriorNumber', InteriorNumber: 'BillingInteriorNumber'
     };
 
     Object.keys(billingDetailsFormData).forEach((key: string) => {
       const value: any = billingDetailsFormData[key];
       if (value !== null && value !== undefined) {
-        if (billingMapping.hasOwnProperty(key)) {
-          formData.append(billingMapping[key], value.toString());
-        } else {
-          formData.append(key, value.toString());
-        }
+        formData.append(billingMapping[key] || key, value.toString());
       }
     });
 
     const fileValue: any = this.doctorForm.get('accountDetailsForm.file')?.value;
-    if (fileValue) {
-      formData.append('file', fileValue);
+    if (fileValue instanceof File) {
+      formData.append('file', fileValue, fileValue.name);
     }
 
     this.accountService.registerDoctor(formData).subscribe({
@@ -300,16 +325,20 @@ export class SignUpComponent implements OnInit {
         this.currentStep.set(this.currentStep() + 1);
         this.isSubmitting.set(false);
 
-        const pendingToken: string | null = localStorage.getItem('pendingInvitationToken');
-        if (pendingToken) {
-          console.log('Pending invitation token found after DOCTOR registration:', pendingToken);
-          localStorage.removeItem('pendingInvitationToken');
-          this.router.navigate([ '/auth/accept-invitation' ], { queryParams: { token: pendingToken } })
-            .then(() => console.log('Redirected to accept invitation after DOCTOR registration.'))
-            .catch(err => console.error('Failed to redirect to accept invitation after DOCTOR registration:', err));
-          return;
-        }
+        const queryParams: ParamMap = this.route.snapshot.queryParamMap;
+        const invitationToken = queryParams.get('invitationToken');
+        const invitationReturnUrl = queryParams.get('returnUrl');
 
+        if (invitationToken && invitationReturnUrl) {
+          console.log(`Invitation context found after doctor signup. Token: ${invitationToken}, Redirecting to: ${invitationReturnUrl}`);
+          this.router.navigateByUrl(invitationReturnUrl).catch(err => {
+            console.error('Failed to redirect back to accept invitation after doctor signup:', err);
+            this.authNavigationService.navigateToVerifyEmail().catch(console.error);
+          });
+        } else {
+          console.log("No invitation context found, proceeding with email verification flow.");
+          this.authNavigationService.navigateToVerifyEmail().catch(console.error);
+        }
       },
       error: (error: BadRequest) => {
         this.submissionErrors.set(error);
@@ -318,10 +347,7 @@ export class SignUpComponent implements OnInit {
     });
   }
 
-
   async onSubmit() {
-    console.log('Submitting form in sign-up.component.ts');
-
     switch (this.accountType()) {
       case 'doctor':
         await this.submitDoctorRegisterForm();

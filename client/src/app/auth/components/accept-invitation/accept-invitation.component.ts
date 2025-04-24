@@ -12,18 +12,21 @@ import { AuthNavigationService } from 'src/app/_services/auth-navigation.service
 import { BadRequest } from 'src/app/_models/forms/badRequest';
 import { MaterialModule } from 'src/app/_shared/material.module';
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  InvitationDetailsComponent
+} from "src/app/invitations/components/invitation-details/invitation-details.component";
 
-type InvitationState = 'loading' | 'requires_auth' | 'success' | 'error' | 'idle';
+type InvitationState = 'loading' | 'requires_auth' | 'success' | 'error' | 'idle' | 'requires_acceptance';
 
 @Component({
   selector: 'app-accept-invitation',
-  standalone: true,
-  imports: [ CommonModule, RouterModule, MaterialModule ],
   templateUrl: './accept-invitation.component.html',
-  styleUrls: [ './accept-invitation.component.scss' ]
+  styleUrls: [ './accept-invitation.component.scss' ],
+  imports: [ CommonModule, RouterModule, MaterialModule, InvitationDetailsComponent ],
 })
 export class AcceptInvitationComponent implements OnInit {
-  private authNavigation:AuthNavigationService = inject(AuthNavigationService);
+
+  private authNavigation: AuthNavigationService = inject(AuthNavigationService);
   private invitationService: InvitationService = inject(InvitationService);
   private accountService: AccountService = inject(AccountService);
   private route: ActivatedRoute = inject(ActivatedRoute);
@@ -38,13 +41,14 @@ export class AcceptInvitationComponent implements OnInit {
   message: WritableSignal<string | null> = signal(null);
   token: WritableSignal<string | null> = signal(null);
 
-  readonly STATE_LOADING = 'loading';
-  readonly STATE_REQUIRES_AUTH = 'requires_auth';
-  readonly STATE_SUCCESS = 'success';
-  readonly STATE_ERROR = 'error';
+  readonly STATE_REQUIRES_ACCEPTANCE: InvitationState = 'requires_acceptance';
+  readonly STATE_REQUIRES_AUTH: InvitationState = 'requires_auth';
+  readonly STATE_LOADING: InvitationState = 'loading';
+  readonly STATE_SUCCESS: InvitationState = 'success';
+  readonly STATE_ERROR: InvitationState = 'error';
 
   ngOnInit(): void {
-    this.currentState.set('loading');
+    this.currentState.set(this.STATE_LOADING);
     this.message.set('Validando invitación...');
 
     this.routeSub = this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
@@ -56,30 +60,25 @@ export class AcceptInvitationComponent implements OnInit {
         return;
       }
 
-      const pendingToken = localStorage.getItem('pendingInvitationToken');
-      if (pendingToken && pendingToken === currentToken) {
-        localStorage.removeItem('pendingInvitationToken');
-        if (this.accountService.current()) {
-          console.log("Retrying invitation acceptance after authentication.");
-          this.attemptAcceptInvitation(currentToken);
-        } else {
-          console.warn("Pending token found, but user is not logged in. Requiring auth again.");
-          this.handleRequiresAuth(currentToken, 'Hubo un problema al verificar tu sesión. Por favor, inicia sesión de nuevo.');
-        }
-      } else if (this.accountService.current()) {
-
-        console.log("User already logged in. Attempting invitation acceptance.");
-        this.attemptAcceptInvitation(currentToken);
+      if (this.accountService.current()) {
+        console.log("User logged in. Waiting for manual invitation acceptance.");
+        this.currentState.set(this.STATE_REQUIRES_ACCEPTANCE);
+        this.message.set('Estás a punto de unirte usando esta invitación.');
       } else {
-
         console.log("User not logged in. Requiring authentication.");
-        this.handleRequiresAuth(currentToken);
+        const currentUrl = this.router.url;
+        this.handleRequiresAuth(currentToken, currentUrl);
       }
     });
   }
 
-  private attemptAcceptInvitation(token: string): void {
-    this.currentState.set('loading');
+  attemptAcceptInvitation(token: string): void {
+    if (!token) {
+      this.handleErrorState("No se proporcionó un token válido.");
+      return;
+    }
+
+    this.currentState.set(this.STATE_LOADING);
     this.message.set('Procesando invitación...');
 
     this.acceptSub?.unsubscribe();
@@ -88,22 +87,19 @@ export class AcceptInvitationComponent implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((error: HttpErrorResponse) => {
-          if (error.status === 401 && error.error?.requiresAuthentication === true) {
-            this.handleRequiresAuth(token, error.error.message || 'Por favor, inicia sesión o regístrate para aceptar.');
+          if (error.status === 401) {
+            const errMsg = error.error?.message || 'Tu sesión ha expirado o es inválida. Por favor, cierra sesión y vuelve a intentarlo.';
+            this.handleErrorState(errMsg);
           } else {
-
             this.handleApiError(error);
           }
           return EMPTY;
         })
       )
       .subscribe((response) => {
-
         if (this.isAuthRequiredResponse(response)) {
-
-          this.handleRequiresAuth(response.token, response.message);
+          this.handleRequiresAuth(response.token, this.router.url, response.message);
         } else {
-
           this.handleSuccessState(response.message);
         }
       });
@@ -113,24 +109,34 @@ export class AcceptInvitationComponent implements OnInit {
     return response && typeof response === 'object' && response.requiresAuthentication === true;
   }
 
-  private handleRequiresAuth(token: string, msg?: string): void {
+  /**
+   * Handles the state where authentication is required.
+   * Redirects the user to the sign-in page, passing the invitation token
+   * and the current full URL (as returnUrl) in query parameters.
+   * @param token The invitation token.
+   * @param returnUrl The URL to return to after successful login.
+   * @param msg Optional message to display.
+   */
+  private handleRequiresAuth(token: string, returnUrl: string, msg?: string): void {
     this.currentState.set(this.STATE_REQUIRES_AUTH);
     this.message.set(msg || 'Necesitas iniciar sesión o registrarte para aceptar esta invitación.');
 
-    localStorage.setItem('pendingInvitationToken', token);
-    console.log(`Stored pending token: ${token}. Redirecting to sign-in.`);
+    console.log(`Authentication required. Redirecting to sign-in. Token: ${token}, Return URL: ${returnUrl}`);
 
-    const returnUrl = `/auth/accept-invitation?token=${encodeURIComponent(token)}`;
-    this.authNavigation.navigateToSignIn({ returnUrl: returnUrl }).catch(err => {
+    this.authNavigation.navigateToSignIn({
+      invitationToken: token,
+      returnUrl: returnUrl
+    }).catch(err => {
       console.error("Failed to navigate to sign-in:", err);
       this.handleErrorState("No se pudo redirigir a la página de inicio de sesión.");
     });
   }
 
-  private handleSuccessState(successMessage: string): void {
+  private handleSuccessState(successMessage?: string): void {
     this.currentState.set(this.STATE_SUCCESS);
-    this.message.set(successMessage || '¡Invitación aceptada con éxito!');
-    this.toastr.success(this.message()!);
+    const finalMessage = successMessage || '¡Invitación aceptada con éxito!';
+    this.message.set(finalMessage);
+    this.toastr.success(finalMessage);
 
     setTimeout(() => {
       this.authNavigation.navigateToAccount().catch(err => {
@@ -138,6 +144,20 @@ export class AcceptInvitationComponent implements OnInit {
 
       });
     }, 3000);
+  }
+
+  handleAcceptClick(): void {
+    const currentToken: string | null = this.token();
+    if (currentToken) {
+      this.attemptAcceptInvitation(currentToken);
+    } else {
+      this.handleErrorState("No se encontró el token para aceptar la invitación.");
+    }
+  }
+
+  handleCancelClick(): void {
+    this.toastr.info("Invitación rechazada.");
+    this.goToHome();
   }
 
   private handleApiError(error: HttpErrorResponse): void {
@@ -151,12 +171,13 @@ export class AcceptInvitationComponent implements OnInit {
     } else if (error.status === 400) {
       const badRequest = new BadRequest(error);
       if (badRequest.type === "ValidationError" && badRequest.validationErrors.length > 0) {
-        displayMessage = `Error: ${badRequest.validationErrors.join('. ')}`;
+        displayMessage = `Error de validación: ${badRequest.validationErrors.join('. ')}`;
       } else {
-        displayMessage = badRequest.message || 'Error en la solicitud. Verifica que la invitación sea para tu cuenta.';
+
+        displayMessage = badRequest.message || 'Error en la solicitud. Verifique los datos de la invitación.';
       }
     } else if (error.status === 403) {
-      displayMessage = "No tienes permiso para realizar esta acción.";
+      displayMessage = error.error?.message || "No tienes permiso para aceptar esta invitación.";
     }
 
     this.handleErrorState(displayMessage);

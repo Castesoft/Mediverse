@@ -1,0 +1,35 @@
+<div class="invitation-details-container text-center">
+  @switch (state()) {
+    @case (STATE_LOADING) {
+      <mat-spinner diameter="40" class="mx-auto my-5"></mat-spinner>
+      <p class="text-muted">Cargando detalles de la invitación...</p>
+    }
+    @case (STATE_LOADED) {
+      @if (doctorDetails(); as doctor) {
+        <app-logo-icon></app-logo-icon>
+        <div class="mb-4 mt-8">
+          <div userProfilePicture [size]="PhotoSize.MEDIUM" [fullName]="doctor.fullName"
+               [photoUrl]="doctor.photoUrl"></div>
+        </div>
+        <h4 class="fw-bold mb-2">Dr(a). {{ doctor.fullName }}</h4>
+        @if (doctor.mainSpecialty) {
+          <p class="text-muted fw-semibold fs-6 mb-8">{{ doctor.mainSpecialty }}</p>
+        }
+        <p class="fs-5 mb-8">
+          Te ha invitado a unirte a DocHub como <strong class="text-primary">{{ getRoleDisplayName() }}</strong>.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+          <button class="btn btn-light-danger" (click)="onCancel()">Rechazar</button>
+          <button class="btn btn-primary" (click)="onAccept()">Aceptar Invitación</button>
+        </div>
+      }
+    }
+    @case (STATE_ERROR) {
+      <div class="my-5 text-danger">
+        <mat-icon color="warn" class="fs-3hx">error_outline</mat-icon>
+        <p class="my-4 fw-semibold">{{ errorMessage() || 'No se pudieron cargar los detalles de la invitación.' }}</p>
+        <button class="btn btn-light-primary" (click)="onCancel()">Volver</button>
+      </div>
+    }
+  }
+</div>
