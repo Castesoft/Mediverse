@@ -1,0 +1,65 @@
+<thead
+  tableHeader
+  [(columns)]="displayColumns"
+  [(dictionary)]="service.dictionary"
+  [(params)]="params"
+  [(mode)]="mode"
+  [(isCompact)]="isCompact"
+  (selectedChange)="service.toggleMultipleSelectedArray$(key() || '', data())"
+></thead>
+<tbody templateTableBody>
+  @for (item of data(); track item.doctorId + '-' + item.nurseId; let idx = $index) {
+    <tr
+      class="hover-actions-trigger btn-reveal-trigger position-static"
+      [cdkContextMenuTriggerFor]="context_menu"
+    >
+      <td
+        tableCheckCell
+        [isCompact]="isCompact()"
+        [isChecked]="item.isSelected"
+        (click)="service.toggleMultipleSelected$(key() || '', item)"
+      ></td>
+
+      @if (dev.isDev()) {
+        <td
+          class="name align-middle white-space-nowrap px-0 py-0"
+          [ngStyle]="isCompact() ? {} : { cursor: 'pointer' }"
+        >
+          <div class="d-flex align-items-center justify-content-start px-0">
+            <a
+              class="fw-semibold text-primary"
+            >#{{ item.doctorId }}/{{ item.nurseId }}</a>
+          </div>
+        </td>
+      }
+
+      <td userCell [user]="getUserForCell(item)" [role]="getRoleForCell()"></td>
+
+      @if (viewingRole === 'nurse') {
+        <td>
+          {{ item.doctorSpecialty || 'N/A' }}
+        </td>
+      }
+
+      <td tableCell2 [item]="cells()['associationDate']!" [(isCompact)]="isCompact"
+          [value]="item['associationDate']"></td>
+
+      <td
+        tableMenuCell
+        [item]="item"
+        [contextMenu]="context_menu"
+        [(isCompact)]="isCompact"
+      ></td>
+      <ng-template #context_menu>
+        @defer {
+          @if (key()) {
+            <div doctorsAssociationsTableMenu
+                 [item]="item"
+                 [key]="key()!"
+                 [service]="service"></div>
+          }
+        }
+      </ng-template>
+    </tr>
+  }
+</tbody>

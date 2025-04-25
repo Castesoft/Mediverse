@@ -848,6 +848,9 @@ namespace MainService.Postgres.Migrations
                     b.Property<int>("NurseId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("DoctorId", "NurseId");
 
                     b.HasIndex("NurseId");

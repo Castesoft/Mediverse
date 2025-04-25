@@ -72,6 +72,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<INotificationsService, NotificationsService>();
         services.AddScoped<IAccountsService, AccountsService>();
+        services.AddScoped<IDoctorNursesService, DoctorNursesService>();
         
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, PrescriptionAuthorizationHandler>();

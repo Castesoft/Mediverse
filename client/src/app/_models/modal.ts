@@ -1,24 +1,36 @@
-export class Modal {
-  title: string | null = 'Confirmación';
-  message: string | null = '¿Quieres continuar?';
-  btnOkText: string | null = 'Ok';
-  btnCancelText: string | null = 'Cancelar';
-  result: boolean | null = null;
-
-  constructor(init?: Partial<Modal>) {
-    Object.assign(this, init);
-
-    if (this.title === null) this.title = 'Confirmación';
-    if (this.message === null) this.message = '¿Quieres continuar?';
-    if (this.btnOkText === null) this.btnOkText = 'Ok';
-    if (this.btnCancelText === null) this.btnCancelText = 'Cancelar';
-  }
-}
-
 export interface IModal {
   title: string;
   message: string;
   btnOkText: string;
   btnCancelText: string;
   result: boolean | null;
+  /**
+   * Optional color variant for the confirm button
+   * - danger
+   * - primary (default)
+   * - secondary
+   * - success
+   * - warning
+   * - info
+   */
+  btnColor?: 'danger' | 'primary' | 'secondary' | 'success' | 'warning' | 'info';
+}
+
+export class Modal implements IModal {
+  title: string = 'Confirmación';
+  message: string = '¿Quieres continuar?';
+  btnOkText: string = 'Ok';
+  btnCancelText: string = 'Cancelar';
+  result: boolean | null = null;
+  btnColor: 'danger' | 'primary' | 'secondary' | 'success' | 'warning' | 'info' = 'primary';
+
+  constructor(init?: Partial<Modal>) {
+    Object.assign(this, init);
+
+    this.title = this.title ?? 'Confirmación';
+    this.message = this.message ?? '¿Quieres continuar?';
+    this.btnOkText = this.btnOkText ?? 'Ok';
+    this.btnCancelText = this.btnCancelText ?? 'Cancelar';
+    this.btnColor = this.btnColor || 'primary';
+  }
 }

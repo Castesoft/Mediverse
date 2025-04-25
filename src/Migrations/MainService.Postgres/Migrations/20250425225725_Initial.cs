@@ -1053,7 +1053,8 @@ namespace MainService.Postgres.Migrations
                 columns: table => new
                 {
                     DoctorId = table.Column<int>(type: "integer", nullable: false),
-                    NurseId = table.Column<int>(type: "integer", nullable: false)
+                    NurseId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

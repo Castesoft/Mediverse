@@ -9,6 +9,13 @@
 
       <app-card-profile-details (onSelectSection)="selectSection($event)"></app-card-profile-details>
 
+      @if (accountService.hasRole([ 'Doctor' ]) || accountService.hasRole([ 'Nurse' ])) {
+        <app-card-doctor-associations
+          id="account_settings_associations"
+          (mouseenter)="selectSection('account_settings_associations')"
+        ></app-card-doctor-associations>
+      }
+
       <app-card-connected-accounts (onSelectSection)="selectSection($event)"></app-card-connected-accounts>
 
       <app-card-notifications (onSelectSection)="selectSection($event)"></app-card-notifications>

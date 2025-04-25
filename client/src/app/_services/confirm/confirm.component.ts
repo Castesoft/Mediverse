@@ -1,32 +1,36 @@
+import { Component, inject, model, ModelSignal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Component, inject, model } from "@angular/core";
+import { MaterialModule } from "src/app/_shared/material.module";
+import { CdkModule } from "src/app/_shared/cdk.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { IModal } from "src/app/_models/modal";
-import { CdkModule } from "src/app/_shared/cdk.module";
-import { MaterialModule } from "src/app/_shared/material.module";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { IconsService } from "src/app/_services/icons.service";
 
 @Component({
   selector: "confirm-modal",
-  template: `
-      <h2 mat-dialog-title>{{ data.title }}
-          <!-- <code>{{result() | json}}</code> -->
-      </h2>
-      <mat-dialog-content>
-          <p>{{ data.message }}</p>
-      </mat-dialog-content>
-      <mat-dialog-actions>
-          <button mat-button (click)="onCancel()">{{ data.btnCancelText }}</button>
-          <button mat-button (click)="onConfirm()" cdkFocusInitial>{{ data.btnOkText }}</button>
-      </mat-dialog-actions>
-  `,
-  standalone: true,
-  imports: [ CommonModule, MaterialModule, CdkModule, FormsModule, ReactiveFormsModule, ],
+  templateUrl: "./confirm.component.html",
+  imports: [
+    CommonModule,
+    MaterialModule,
+    CdkModule,
+    FormsModule,
+    ReactiveFormsModule,
+    FaIconComponent,
+  ],
 })
 export class ConfirmComponent {
-  readonly dialogRef = inject(MatDialogRef<ConfirmComponent>);
-  readonly data = inject<IModal>(MAT_DIALOG_DATA);
-  readonly result = model(this.data.result);
+  readonly dialogRef: MatDialogRef<any, any> = inject(MatDialogRef<ConfirmComponent>);
+  readonly data: IModal = inject<IModal>(MAT_DIALOG_DATA);
+  readonly result: ModelSignal<boolean | null> = model(this.data.result);
+  readonly iconsService: IconsService = inject(IconsService);
+
+  btnColorClass: string = "";
+
+  constructor() {
+    this.btnColorClass = this.data.btnColor ? `btn-${this.data.btnColor}` : "btn-primary";
+  }
 
   onCancel(): void {
     this.result.set(false);

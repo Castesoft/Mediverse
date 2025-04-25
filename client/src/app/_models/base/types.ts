@@ -10,5 +10,6 @@ export const confirmActionModal: Modal = {
   message: "¿Está seguro de que desea guardar los cambios?",
   btnOkText: "Guardar",
   btnCancelText: "Cancelar",
+  btnColor: "primary",
   result: false,
 };

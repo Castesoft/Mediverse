@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainService.Postgres.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250423230243_Initial")]
+    [Migration("20250425225725_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -850,6 +850,9 @@ namespace MainService.Postgres.Migrations
 
                     b.Property<int>("NurseId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("DoctorId", "NurseId");
 

@@ -78,7 +78,14 @@ public class AppUser : IdentityUser<int>
     public List<DoctorService> DoctorServices { get; set; } = [];
     public List<DoctorProduct> DoctorProducts { get; set; } = [];
 
+    /// <summary>
+    /// Associated nurses for the doctor.
+    /// </summary>
     public List<DoctorNurse> DoctorNurses { get; set; } = [];
+    
+    /// <summary>
+    /// Doctors the nurse is associated with.
+    /// </summary>
     public List<DoctorNurse> NursesDoctor { get; set; } = [];
 
     public DoctorSignature DoctorSignature { get; set; } = null!;

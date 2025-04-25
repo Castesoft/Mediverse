@@ -1,0 +1,37 @@
+<div class="card shadow-sm">
+  <div class="card-header py-0 px-8">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="fw-bold fs-4">{{ data.title }}</span>
+    </h3>
+    <div class="card-toolbar">
+      <button
+        class="btn btn-sm btn-icon btn-active-light-primary"
+        type="button"
+        aria-label="Close"
+        mat-dialog-close>
+        <fa-icon [icon]="iconsService.faTimes" class="fs-4"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="pt-8 pb-2 card-body px-8 border-top">
+    <p class="m-0">{{ data.message }}</p>
+  </div>
+
+  <mat-dialog-actions class="d-flex justify-content-end gap-2">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="onCancel()"
+    >
+      {{ data.btnCancelText }}
+    </button>
+    <button
+      type="button"
+      [class]="'btn' + ' ' + btnColorClass"
+      (click)="onConfirm()"
+    >
+      {{ data.btnOkText }}
+    </button>
+  </mat-dialog-actions>
+</div>

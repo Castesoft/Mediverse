@@ -1,0 +1,50 @@
+<div class="card mb-5 mb-xl-10">
+  <div class="card-header card-header-stretch border-bottom border-gray-200">
+    <div class="card-title">
+      <h3 class="fw-bold m-0">Asociaciones Profesionales</h3>
+    </div>
+    <div class="card-toolbar m-0 h-100">
+      <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold card-px" role="tablist">
+        @if (canViewAsDoctor) {
+          <li class="nav-item h-100 mt-4" role="presentation">
+            <a class="nav-link text-active-primary pb-4 cursor-pointer"
+               [class.active]="activeTab() === 'doctorView'"
+               (click)="selectTab('doctorView')"
+               role="tab">
+              Mis Especialistas
+            </a>
+          </li>
+        }
+
+        @if (canViewAsNurse) {
+          <li class="nav-item h-100 mt-4" role="presentation">
+            <a class="nav-link text-active-primary pb-4 cursor-pointer"
+               [class.active]="activeTab() === 'nurseView'"
+               (click)="selectTab('nurseView')"
+               role="tab">
+              Mis Médicos Asociados
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+  <div class="card-body pt-0">
+    <div doctorsAssociationsCatalog
+         [(item)]="doctorAssociationItem"
+         [(view)]="doctorAssociationView"
+         [(key)]="catalogKey"
+         [(isCompact)]="doctorAssociationIsCompact"
+         [(mode)]="doctorAssociationMode"
+         [(params)]="catalogParams"
+         [(embedded)]="doctorAssociationEmbedded"
+         [useCard]="false">
+    </div>
+  </div>
+
+  @if (activeTab() === 'doctorView') {
+    <div class="card-footer border-top d-flex justify-content-end">
+      <button class="btn btn-primary" (click)="requestAddAssociation()">Invitar/Asociar Especialista</button>
+    </div>
+  }
+</div>

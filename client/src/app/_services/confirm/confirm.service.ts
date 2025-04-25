@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
-import { Modal, IModal } from 'src/app/_models/modal';
+import { IModal, Modal } from 'src/app/_models/modal';
 import { ConfirmComponent } from 'src/app/_services/confirm/confirm.component';
 
 @Injectable({
@@ -19,8 +19,10 @@ export class ConfirmService {
         btnOkText: modal.btnOkText,
         message: modal.message,
         title: modal.title,
+        btnColor: modal.btnColor || 'primary',
         result: this.result(),
       } as IModal,
+      autoFocus: false
     });
 
     return dialogRef.afterClosed().pipe(map(result => result))

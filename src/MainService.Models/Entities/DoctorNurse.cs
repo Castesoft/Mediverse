@@ -27,4 +27,5 @@ public class DoctorNurse
     public AppUser Doctor { get; set; } = null!;
     public int NurseId { get; set; }
     public AppUser Nurse { get; set; } = null!;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
